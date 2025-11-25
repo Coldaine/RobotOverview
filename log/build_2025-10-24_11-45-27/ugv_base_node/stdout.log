@@ -1,0 +1,4 @@
+[35m[1mConsolidate compiler generated dependencies of target base_node[0m
+[35m[1mConsolidate compiler generated dependencies of target base_node_ekf[0m
+[ 75%] Built target base_node
+[ 75%] [32mBuilding CXX object CMakeFiles/base_node_ekf.dir/src/base_node_ekf.cpp.o[0m

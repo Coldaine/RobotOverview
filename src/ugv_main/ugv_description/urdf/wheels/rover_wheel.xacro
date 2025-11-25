@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<robot name="wheel" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:macro name="wheel" params="wheel_prefix *inertial *link_pose *joint_pose">
+
+<link name="${wheel_prefix}_wheel_link">
+  <xacro:insert_block name="inertial"/>
+  <visual>
+    <xacro:insert_block name="link_pose"/>
+    <geometry>
+      <mesh filename="file://$(find ugv_description)/meshes/wheels/rover/${wheel_prefix}_wheel_link.stl" />
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <xacro:insert_block name="link_pose"/>
+    <geometry>
+      <mesh filename="file://$(find ugv_description)/meshes/wheels/rover/${wheel_prefix}_wheel_link.stl" />
+    </geometry>  
+  </collision>
+</link>
+
+<joint name="${wheel_prefix}_wheel_link_joint" type="continuous">
+  <xacro:insert_block name="joint_pose"/>
+  <parent link="base_link" />
+  <child link="${wheel_prefix}_wheel_link" />
+  <axis xyz="0 0 1" />      
+</joint>
+
+</xacro:macro>
+
+</robot>

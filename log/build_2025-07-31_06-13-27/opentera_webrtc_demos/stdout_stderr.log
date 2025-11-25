@@ -1,0 +1,15 @@
+[ 33%] [34m[1mGenerating node_modules.stamp[0m
+npm ERR! code 128
+npm ERR! An unknown git error occurred
+npm ERR! command git --no-replace-objects ls-remote ssh://git@github.com/introlab/opentera-webrtc:web-client-v1.2.2.git
+npm ERR! No user exists for uid 1000
+npm ERR! fatal: Could not read from remote repository.
+npm ERR! 
+npm ERR! Please make sure you have the correct access rights
+npm ERR! and the repository exists.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /root/.npm/_logs/2025-07-31T06_13_29_680Z-debug-0.log
+gmake[2]: *** [CMakeFiles/opentera_werbrtc_teleop_frontend-install.dir/build.make:73: node_modules.stamp] Error 128
+gmake[1]: *** [CMakeFiles/Makefile2:139: CMakeFiles/opentera_werbrtc_teleop_frontend-install.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

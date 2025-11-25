@@ -1,0 +1,143 @@
+[0.000000] (-) TimerEvent: {}
+[0.000922] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.001707] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.001786] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.002279] (-) JobUnselected: {'identifier': 'audio_utils'}
+[0.002353] (-) JobUnselected: {'identifier': 'audio_utils_msgs'}
+[0.002855] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.003014] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.003135] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.003206] (-) JobUnselected: {'identifier': 'cv_camera'}
+[0.003325] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.003433] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.003540] (-) JobUnselected: {'identifier': 'face_cropping'}
+[0.003644] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.003750] (-) JobUnselected: {'identifier': 'map_image_generator'}
+[0.003861] (-) JobUnselected: {'identifier': 'odas_ros'}
+[0.003975] (-) JobUnselected: {'identifier': 'odas_ros_msgs'}
+[0.004042] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.004105] (-) JobUnselected: {'identifier': 'opentera_client_ros'}
+[0.004244] (-) JobUnselected: {'identifier': 'opentera_protobuf_messages'}
+[0.004361] (-) JobUnselected: {'identifier': 'opentera_webrtc_robot_gui'}
+[0.004469] (-) JobUnselected: {'identifier': 'opentera_webrtc_ros'}
+[0.004575] (-) JobUnselected: {'identifier': 'opentera_webrtc_ros_msgs'}
+[0.004679] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.004783] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.004888] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.004989] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.005091] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.005193] (-) JobUnselected: {'identifier': 'turtlebot3_beam_description'}
+[0.005294] (-) JobUnselected: {'identifier': 'ugv_base_node'}
+[0.005397] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.005500] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.005603] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.005707] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.005809] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.005912] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.006013] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.006114] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.006218] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.006282] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.006390] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.006493] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.006599] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.006704] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.006808] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.006920] (opentera_webrtc_demos) JobQueued: {'identifier': 'opentera_webrtc_demos', 'dependencies': OrderedDict([('audio_utils_msgs', '/home/ws/ugv_ws/install/audio_utils_msgs'), ('cv_camera', '/home/ws/ugv_ws/install/cv_camera'), ('odas_ros_msgs', '/home/ws/ugv_ws/install/odas_ros_msgs'), ('opentera_protobuf_messages', '/home/ws/ugv_ws/install/opentera_protobuf_messages'), ('opentera_webrtc_ros_msgs', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs'), ('map_image_generator', '/home/ws/ugv_ws/install/map_image_generator'), ('opentera_client_ros', '/home/ws/ugv_ws/install/opentera_client_ros'), ('opentera_webrtc_ros', '/home/ws/ugv_ws/install/opentera_webrtc_ros')])}
+[0.007079] (opentera_webrtc_demos) JobStarted: {'identifier': 'opentera_webrtc_demos'}
+[0.098880] (-) TimerEvent: {}
+[0.102626] (opentera_webrtc_demos) JobProgress: {'identifier': 'opentera_webrtc_demos', 'progress': 'cmake'}
+[0.106034] (opentera_webrtc_demos) JobProgress: {'identifier': 'opentera_webrtc_demos', 'progress': 'build'}
+[0.108115] (opentera_webrtc_demos) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/opentera_webrtc_demos', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/opentera_webrtc_demos', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 57519 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros/lib:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/root'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install:/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros/bin:/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/face_cropping:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/opentera_webrtc_demos'), ('SSH_CONNECTION', '192.168.9.183 57519 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/face_cropping:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.199091] (-) TimerEvent: {}
+[0.299749] (-) TimerEvent: {}
+[0.306804] (opentera_webrtc_demos) StdoutLine: {'line': b'[ 33%] \x1b[34m\x1b[1mGenerating node_modules.stamp\x1b[0m\n'}
+[0.399933] (-) TimerEvent: {}
+[0.501273] (-) TimerEvent: {}
+[0.601920] (-) TimerEvent: {}
+[0.703194] (-) TimerEvent: {}
+[0.804182] (-) TimerEvent: {}
+[0.905478] (-) TimerEvent: {}
+[1.006444] (-) TimerEvent: {}
+[1.107738] (-) TimerEvent: {}
+[1.208900] (-) TimerEvent: {}
+[1.311082] (-) TimerEvent: {}
+[1.412229] (-) TimerEvent: {}
+[1.515373] (-) TimerEvent: {}
+[1.616434] (-) TimerEvent: {}
+[1.717630] (-) TimerEvent: {}
+[1.822932] (-) TimerEvent: {}
+[1.924121] (-) TimerEvent: {}
+[2.025257] (-) TimerEvent: {}
+[2.126368] (-) TimerEvent: {}
+[2.227485] (-) TimerEvent: {}
+[2.328630] (-) TimerEvent: {}
+[2.429392] (-) TimerEvent: {}
+[2.532317] (-) TimerEvent: {}
+[2.633323] (-) TimerEvent: {}
+[2.734335] (-) TimerEvent: {}
+[2.835479] (-) TimerEvent: {}
+[2.936773] (-) TimerEvent: {}
+[3.037966] (-) TimerEvent: {}
+[3.139226] (-) TimerEvent: {}
+[3.240324] (-) TimerEvent: {}
+[3.340983] (-) TimerEvent: {}
+[3.442021] (-) TimerEvent: {}
+[3.548318] (-) TimerEvent: {}
+[3.649354] (-) TimerEvent: {}
+[3.750386] (-) TimerEvent: {}
+[3.851503] (-) TimerEvent: {}
+[3.956328] (-) TimerEvent: {}
+[4.057350] (-) TimerEvent: {}
+[4.160326] (-) TimerEvent: {}
+[4.261587] (-) TimerEvent: {}
+[4.364858] (-) TimerEvent: {}
+[4.468331] (-) TimerEvent: {}
+[4.569530] (-) TimerEvent: {}
+[4.670211] (-) TimerEvent: {}
+[4.770937] (-) TimerEvent: {}
+[4.871766] (-) TimerEvent: {}
+[4.972978] (-) TimerEvent: {}
+[5.075210] (-) TimerEvent: {}
+[5.179133] (-) TimerEvent: {}
+[5.280324] (-) TimerEvent: {}
+[5.381025] (-) TimerEvent: {}
+[5.481830] (-) TimerEvent: {}
+[5.588223] (-) TimerEvent: {}
+[5.689414] (-) TimerEvent: {}
+[5.790701] (-) TimerEvent: {}
+[5.892039] (-) TimerEvent: {}
+[5.993300] (-) TimerEvent: {}
+[6.094585] (-) TimerEvent: {}
+[6.195635] (-) TimerEvent: {}
+[6.296947] (-) TimerEvent: {}
+[6.397954] (-) TimerEvent: {}
+[6.499151] (-) TimerEvent: {}
+[6.600400] (-) TimerEvent: {}
+[6.701437] (-) TimerEvent: {}
+[6.802756] (-) TimerEvent: {}
+[6.903799] (-) TimerEvent: {}
+[7.005151] (-) TimerEvent: {}
+[7.106195] (-) TimerEvent: {}
+[7.207511] (-) TimerEvent: {}
+[7.308636] (-) TimerEvent: {}
+[7.409900] (-) TimerEvent: {}
+[7.489747] (opentera_webrtc_demos) StderrLine: {'line': b'npm ERR! code 128\n'}
+[7.491383] (opentera_webrtc_demos) StderrLine: {'line': b'npm ERR! An unknown git error occurred\n'}
+[7.492519] (opentera_webrtc_demos) StderrLine: {'line': b'npm ERR! command git --no-replace-objects ls-remote ssh://git@github.com/introlab/opentera-webrtc:web-client-v1.2.2.git\n'}
+[7.492864] (opentera_webrtc_demos) StderrLine: {'line': b'npm ERR! No user exists for uid 1000\n'}
+[7.493114] (opentera_webrtc_demos) StderrLine: {'line': b'npm ERR! fatal: Could not read from remote repository.\n'}
+[7.493357] (opentera_webrtc_demos) StderrLine: {'line': b'npm ERR! \n'}
+[7.493613] (opentera_webrtc_demos) StderrLine: {'line': b'npm ERR! Please make sure you have the correct access rights\n'}
+[7.493859] (opentera_webrtc_demos) StderrLine: {'line': b'npm ERR! and the repository exists.\n'}
+[7.494149] (opentera_webrtc_demos) StderrLine: {'line': b'\n'}
+[7.494418] (opentera_webrtc_demos) StderrLine: {'line': b'npm ERR! A complete log of this run can be found in:\n'}
+[7.495049] (opentera_webrtc_demos) StderrLine: {'line': b'npm ERR!     /root/.npm/_logs/2025-07-31T06_15_53_096Z-debug-0.log\n'}
+[7.495722] (opentera_webrtc_demos) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/opentera_werbrtc_teleop_frontend-install.dir/build.make:73: node_modules.stamp] Error 128\n'}
+[7.496933] (opentera_webrtc_demos) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:139: CMakeFiles/opentera_werbrtc_teleop_frontend-install.dir/all] Error 2\n'}
+[7.497810] (opentera_webrtc_demos) StderrLine: {'line': b'gmake: *** [Makefile:146: all] Error 2\n'}
+[7.498862] (opentera_webrtc_demos) CommandEnded: {'returncode': 2}
+[7.510044] (-) TimerEvent: {}
+[7.611775] (-) TimerEvent: {}
+[7.614472] (opentera_webrtc_demos) JobEnded: {'identifier': 'opentera_webrtc_demos', 'rc': 2}
+[7.625701] (-) EventReactorShutdown: {}

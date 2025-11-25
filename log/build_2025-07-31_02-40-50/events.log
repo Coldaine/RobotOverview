@@ -1,0 +1,138 @@
+[0.000000] (-) TimerEvent: {}
+[0.000747] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.001314] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.001869] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.002734] (-) JobUnselected: {'identifier': 'audio_utils'}
+[0.003234] (-) JobUnselected: {'identifier': 'audio_utils_msgs'}
+[0.003737] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.003897] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.004050] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.004171] (-) JobUnselected: {'identifier': 'cv_camera'}
+[0.004283] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.004395] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.004545] (-) JobUnselected: {'identifier': 'face_cropping'}
+[0.004657] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.004763] (-) JobUnselected: {'identifier': 'map_image_generator'}
+[0.004871] (-) JobUnselected: {'identifier': 'odas_ros'}
+[0.004976] (-) JobUnselected: {'identifier': 'odas_ros_msgs'}
+[0.005082] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.005189] (-) JobUnselected: {'identifier': 'opentera_client_ros'}
+[0.005294] (-) JobUnselected: {'identifier': 'opentera_protobuf_messages'}
+[0.005402] (-) JobUnselected: {'identifier': 'opentera_webrtc_demos'}
+[0.005506] (-) JobUnselected: {'identifier': 'opentera_webrtc_robot_gui'}
+[0.005611] (-) JobUnselected: {'identifier': 'opentera_webrtc_ros_msgs'}
+[0.005714] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.005815] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.005876] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.005977] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.006079] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.006182] (-) JobUnselected: {'identifier': 'turtlebot3_beam_description'}
+[0.006311] (-) JobUnselected: {'identifier': 'ugv_base_node'}
+[0.006423] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.006530] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.006634] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.006739] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.006842] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.006944] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.007049] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.007155] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.007258] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.007363] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.007468] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.007554] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.007674] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.007758] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.007987] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.008109] (opentera_webrtc_ros) JobQueued: {'identifier': 'opentera_webrtc_ros', 'dependencies': OrderedDict([('audio_utils_msgs', '/home/ws/ugv_ws/install/audio_utils_msgs'), ('cv_camera', '/home/ws/ugv_ws/install/cv_camera'), ('odas_ros_msgs', '/home/ws/ugv_ws/install/odas_ros_msgs'), ('opentera_webrtc_ros_msgs', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs'), ('map_image_generator', '/home/ws/ugv_ws/install/map_image_generator')])}
+[0.008220] (opentera_webrtc_ros) JobStarted: {'identifier': 'opentera_webrtc_ros'}
+[0.086200] (opentera_webrtc_ros) JobProgress: {'identifier': 'opentera_webrtc_ros', 'progress': 'cmake'}
+[0.089981] (opentera_webrtc_ros) Command: {'cmd': ['/usr/bin/cmake', '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros', '-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/opentera_webrtc_ros'], 'cwd': '/home/ws/ugv_ws/build/opentera_webrtc_ros', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install:/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/opentera_webrtc_ros'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.098884] (-) TimerEvent: {}
+[0.123362] (opentera_webrtc_ros) StdoutLine: {'line': b'Not searching for unused variables given on the command line.\n'}
+[0.154534] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.199014] (-) TimerEvent: {}
+[0.299726] (-) TimerEvent: {}
+[0.400815] (-) TimerEvent: {}
+[0.501394] (-) TimerEvent: {}
+[0.601988] (-) TimerEvent: {}
+[0.703337] (-) TimerEvent: {}
+[0.727795] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.786883] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.803469] (-) TimerEvent: {}
+[0.874180] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.882353] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.900074] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.903565] (-) TimerEvent: {}
+[0.937323] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.984638] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[1.003733] (-) TimerEvent: {}
+[1.091459] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[1.102267] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[1.103826] (-) TimerEvent: {}
+[1.204334] (-) TimerEvent: {}
+[1.305646] (-) TimerEvent: {}
+[1.406724] (-) TimerEvent: {}
+[1.507345] (-) TimerEvent: {}
+[1.521310] (opentera_webrtc_ros) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[1.607535] (-) TimerEvent: {}
+[1.677471] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found rclpy: 3.3.14 (/opt/ros/humble/share/rclpy/cmake)\n'}
+[1.679274] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found std_srvs: 4.2.4 (/opt/ros/humble/share/std_srvs/cmake)\n'}
+[1.705826] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found sensor_msgs: 4.2.4 (/opt/ros/humble/share/sensor_msgs/cmake)\n'}
+[1.707639] (-) TimerEvent: {}
+[1.797093] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found audio_utils_msgs: 0.0.0 (/home/ws/ugv_ws/install/audio_utils_msgs/share/audio_utils_msgs/cmake)\n'}
+[1.807792] (-) TimerEvent: {}
+[1.836056] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found opentera_webrtc_ros_msgs: 0.0.0 (/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake)\n'}
+[1.898308] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found map_image_generator: 0.0.0 (/home/ws/ugv_ws/install/map_image_generator/share/map_image_generator/cmake)\n'}
+[1.899699] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Found cv_bridge: 3.2.1 (/opt/ros/humble/share/cv_bridge/cmake)\n'}
+[1.907970] (-) TimerEvent: {}
+[1.947591] (opentera_webrtc_ros) StdoutLine: {'line': b'-- opentera-webrtc-native-client Version : 1.2.6\n'}
+[2.008124] (-) TimerEvent: {}
+[2.109073] (-) TimerEvent: {}
+[2.210184] (-) TimerEvent: {}
+[2.311013] (-) TimerEvent: {}
+[2.414357] (-) TimerEvent: {}
+[2.518376] (-) TimerEvent: {}
+[2.619035] (-) TimerEvent: {}
+[2.722349] (-) TimerEvent: {}
+[2.822958] (-) TimerEvent: {}
+[2.923640] (-) TimerEvent: {}
+[2.965926] (opentera_webrtc_ros) StdoutLine: {'line': b'-- OpenCV library status:\n'}
+[2.966708] (opentera_webrtc_ros) StdoutLine: {'line': b'--     config: /usr/lib/aarch64-linux-gnu/cmake/opencv4\n'}
+[2.967089] (opentera_webrtc_ros) StdoutLine: {'line': b'--     version: 4.5.4\n'}
+[2.967385] (opentera_webrtc_ros) StdoutLine: {'line': b'--     libraries: opencv_calib3d;opencv_core;opencv_dnn;opencv_features2d;opencv_flann;opencv_highgui;opencv_imgcodecs;opencv_imgproc;opencv_ml;opencv_objdetect;opencv_photo;opencv_stitching;opencv_video;opencv_videoio;opencv_alphamat;opencv_aruco;opencv_barcode;opencv_bgsegm;opencv_bioinspired;opencv_ccalib;opencv_datasets;opencv_dnn_objdetect;opencv_dnn_superres;opencv_dpm;opencv_face;opencv_freetype;opencv_fuzzy;opencv_hdf;opencv_hfs;opencv_img_hash;opencv_intensity_transform;opencv_line_descriptor;opencv_mcc;opencv_optflow;opencv_phase_unwrapping;opencv_plot;opencv_quality;opencv_rapid;opencv_reg;opencv_rgbd;opencv_saliency;opencv_shape;opencv_stereo;opencv_structured_light;opencv_superres;opencv_surface_matching;opencv_text;opencv_tracking;opencv_videostab;opencv_viz;opencv_wechat_qrcode;opencv_ximgproc;opencv_xobjdetect;opencv_xphoto;opencv_core;opencv_imgproc;opencv_core;opencv_imgproc\n'}
+[2.967755] (opentera_webrtc_ros) StdoutLine: {'line': b'--     include path: /usr/include/opencv4\n'}
+[2.968043] (opentera_webrtc_ros) StdoutLine: {'line': b'-- CMAKE_INSTALL_PREFIX : /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/dist/Debug/opentera-webrtc-native-client-1.2.6\n'}
+[3.023786] (-) TimerEvent: {}
+[3.126366] (-) TimerEvent: {}
+[3.226991] (-) TimerEvent: {}
+[3.314542] (opentera_webrtc_ros) StdoutLine: {'line': b'-- pybind11 v2.13.1 \n'}
+[3.327144] (-) TimerEvent: {}
+[3.427951] (-) TimerEvent: {}
+[3.528774] (-) TimerEvent: {}
+[3.549775] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Using the multi-header code from /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/3rdParty/json/include/\n'}
+[3.554878] (opentera_webrtc_ros) StdoutLine: {'line': b'-- TLS configured to use openssl\n'}
+[3.555455] (opentera_webrtc_ros) StdoutLine: {'line': b'-- OpenSSL: 3.0.2\n'}
+[3.628922] (-) TimerEvent: {}
+[3.729906] (-) TimerEvent: {}
+[3.830843] (-) TimerEvent: {}
+[3.931888] (-) TimerEvent: {}
+[4.032537] (-) TimerEvent: {}
+[4.133175] (-) TimerEvent: {}
+[4.234105] (-) TimerEvent: {}
+[4.334845] (-) TimerEvent: {}
+[4.393428] (opentera_webrtc_ros) StdoutLine: {'line': b"-- Checking for module 'gstreamer-1.0'\n"}
+[4.406911] (opentera_webrtc_ros) StdoutLine: {'line': b"--   Package 'libunwind', required by 'gstreamer-1.0', not found\n"}
+[4.407374] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[4.407690] (opentera_webrtc_ros) StdoutLine: {'line': b'See also "/home/ws/ugv_ws/build/opentera_webrtc_ros/CMakeFiles/CMakeOutput.log".\n'}
+[4.407983] (opentera_webrtc_ros) StderrLine: {'line': b'\x1b[31mCMake Error at /usr/share/cmake-3.22/Modules/FindPkgConfig.cmake:603 (message):\n'}
+[4.408293] (opentera_webrtc_ros) StderrLine: {'line': b'  A required package was not found\n'}
+[4.408563] (opentera_webrtc_ros) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[4.408818] (opentera_webrtc_ros) StderrLine: {'line': b'  /usr/share/cmake-3.22/Modules/FindPkgConfig.cmake:825 (_pkg_check_modules_internal)\n'}
+[4.409074] (opentera_webrtc_ros) StderrLine: {'line': b'  opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/CMakeLists.txt:15 (pkg_check_modules)\n'}
+[4.409339] (opentera_webrtc_ros) StderrLine: {'line': b'\n'}
+[4.409626] (opentera_webrtc_ros) StderrLine: {'line': b'\x1b[0m\n'}
+[4.435113] (-) TimerEvent: {}
+[4.445289] (opentera_webrtc_ros) CommandEnded: {'returncode': 1}
+[4.524857] (opentera_webrtc_ros) JobEnded: {'identifier': 'opentera_webrtc_ros', 'rc': 1}
+[4.535308] (-) TimerEvent: {}
+[4.536957] (-) EventReactorShutdown: {}

@@ -1,0 +1,25 @@
+[35m[1mConsolidate compiler generated dependencies of target base_node[0m
+[35m[1mConsolidate compiler generated dependencies of target base_node_ekf[0m
+[ 75%] Built target base_node
+[ 75%] [32mBuilding CXX object CMakeFiles/base_node_ekf.dir/src/base_node_ekf.cpp.o[0m
+[01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:[m[K In member function ‘[01m[Kvoid OdomPublisher::handle_imu(std::shared_ptr<sensor_msgs::msg::Imu_<std::allocator<void> > >)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:123:9:[m[K [01;31m[Kerror: [m[K‘[01m[Kimu_valid[m[K’ was not declared in this scope
+  123 |         [01;31m[Kimu_valid[m[K = true;
+      |         [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:[m[K In member function ‘[01m[Kvoid OdomPublisher::handle_odom(std::shared_ptr<std_msgs::msg::Float32MultiArray_<std::allocator<void> > >)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:162:28:[m[K [01;31m[Kerror: [m[K‘[01m[Kyaw[m[K’ was not declared in this scope; did you mean ‘[01m[Kyaw_[m[K’?
+  162 |             x_pos_ += (cos([01;31m[Kyaw[m[K) * dx - sin(yaw) * dy);
+      |                            [01;31m[K^~~[m[K
+      |                            [32m[Kyaw_[m[K
+[01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:171:9:[m[K [01;31m[Kerror: [m[K‘[01m[Kyaw[m[K’ was not declared in this scope; did you mean ‘[01m[Kyaw_[m[K’?
+  171 |         [01;31m[Kyaw[m[K = odom_yaw_;
+      |         [01;31m[K^~~[m[K
+      |         [32m[Kyaw_[m[K
+[01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:[m[K In member function ‘[01m[Kvoid OdomPublisher::publish_odom()[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:192:44:[m[K [01;31m[Kerror: [m[K‘[01m[Kyaw[m[K’ was not declared in this scope; did you mean ‘[01m[Kyaw_[m[K’?
+  192 |         odom.pose.pose.orientation.z = sin([01;31m[Kyaw[m[K / 2.0);
+      |                                            [01;31m[K^~~[m[K
+      |                                            [32m[Kyaw_[m[K
+gmake[2]: *** [CMakeFiles/base_node_ekf.dir/build.make:76: CMakeFiles/base_node_ekf.dir/src/base_node_ekf.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:165: CMakeFiles/base_node_ekf.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

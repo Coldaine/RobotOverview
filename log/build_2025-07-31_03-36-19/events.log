@@ -1,0 +1,1297 @@
+[0.000000] (-) TimerEvent: {}
+[0.001844] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.002551] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.002728] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.002936] (-) JobUnselected: {'identifier': 'audio_utils'}
+[0.003138] (-) JobUnselected: {'identifier': 'audio_utils_msgs'}
+[0.003330] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.003471] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.003629] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.003792] (-) JobUnselected: {'identifier': 'cv_camera'}
+[0.003939] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.004083] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.004235] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.004386] (-) JobUnselected: {'identifier': 'map_image_generator'}
+[0.004546] (-) JobUnselected: {'identifier': 'odas_ros'}
+[0.004698] (-) JobUnselected: {'identifier': 'odas_ros_msgs'}
+[0.004844] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.004985] (-) JobUnselected: {'identifier': 'opentera_client_ros'}
+[0.005144] (-) JobUnselected: {'identifier': 'opentera_protobuf_messages'}
+[0.005305] (-) JobUnselected: {'identifier': 'opentera_webrtc_demos'}
+[0.005463] (-) JobUnselected: {'identifier': 'opentera_webrtc_robot_gui'}
+[0.005624] (-) JobUnselected: {'identifier': 'opentera_webrtc_ros'}
+[0.005778] (-) JobUnselected: {'identifier': 'opentera_webrtc_ros_msgs'}
+[0.005951] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.006097] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.006229] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.006375] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.006544] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.006716] (-) JobUnselected: {'identifier': 'turtlebot3_beam_description'}
+[0.007233] (-) JobUnselected: {'identifier': 'ugv_base_node'}
+[0.007375] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.007797] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.007963] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.008054] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.008170] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.008748] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.008903] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.008972] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.009034] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.009096] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.009158] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.009238] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.009302] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.009363] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.009424] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.009495] (face_cropping) JobQueued: {'identifier': 'face_cropping', 'dependencies': OrderedDict([('audio_utils_msgs', '/home/ws/ugv_ws/install/audio_utils_msgs'), ('opentera_webrtc_ros_msgs', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs')])}
+[0.009584] (face_cropping) JobStarted: {'identifier': 'face_cropping'}
+[0.097794] (-) TimerEvent: {}
+[0.108091] (face_cropping) JobProgress: {'identifier': 'face_cropping', 'progress': 'cmake'}
+[0.108934] (face_cropping) Command: {'cmd': ['/usr/bin/cmake', '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/face_cropping', '-DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/face_cropping'], 'cwd': '/home/ws/ugv_ws/build/face_cropping', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/opentera_webrtc_ros/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install:/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros/bin:/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/face_cropping'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.198027] (-) TimerEvent: {}
+[0.299141] (-) TimerEvent: {}
+[0.332948] (face_cropping) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.399330] (-) TimerEvent: {}
+[0.500030] (-) TimerEvent: {}
+[0.518104] (face_cropping) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.537326] (face_cropping) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.601806] (-) TimerEvent: {}
+[0.702560] (-) TimerEvent: {}
+[0.771384] (face_cropping) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.803119] (-) TimerEvent: {}
+[0.810190] (face_cropping) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.810910] (face_cropping) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.812650] (face_cropping) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.821641] (face_cropping) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.903630] (-) TimerEvent: {}
+[1.006370] (-) TimerEvent: {}
+[1.091290] (face_cropping) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[1.106542] (-) TimerEvent: {}
+[1.117331] (face_cropping) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[1.118204] (face_cropping) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[1.119699] (face_cropping) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[1.147662] (face_cropping) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[1.206731] (-) TimerEvent: {}
+[1.307891] (-) TimerEvent: {}
+[1.408507] (-) TimerEvent: {}
+[1.509116] (-) TimerEvent: {}
+[1.610031] (-) TimerEvent: {}
+[1.710762] (-) TimerEvent: {}
+[1.811506] (-) TimerEvent: {}
+[1.912221] (-) TimerEvent: {}
+[1.943584] (face_cropping) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[2.012511] (-) TimerEvent: {}
+[2.114315] (-) TimerEvent: {}
+[2.215317] (-) TimerEvent: {}
+[2.316338] (-) TimerEvent: {}
+[2.417219] (-) TimerEvent: {}
+[2.518200] (-) TimerEvent: {}
+[2.619223] (-) TimerEvent: {}
+[2.627270] (face_cropping) StdoutLine: {'line': b'-- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[2.719393] (-) TimerEvent: {}
+[2.820649] (-) TimerEvent: {}
+[2.921614] (-) TimerEvent: {}
+[2.982798] (face_cropping) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[3.021774] (-) TimerEvent: {}
+[3.039734] (face_cropping) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[3.108084] (face_cropping) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[3.121937] (-) TimerEvent: {}
+[3.196968] (face_cropping) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[3.222124] (-) TimerEvent: {}
+[3.318657] (face_cropping) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[3.322258] (-) TimerEvent: {}
+[3.422892] (-) TimerEvent: {}
+[3.523921] (-) TimerEvent: {}
+[3.624897] (-) TimerEvent: {}
+[3.672536] (face_cropping) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[3.709004] (face_cropping) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[3.725089] (-) TimerEvent: {}
+[3.825848] (-) TimerEvent: {}
+[3.928521] (-) TimerEvent: {}
+[4.031132] (-) TimerEvent: {}
+[4.131833] (-) TimerEvent: {}
+[4.147242] (face_cropping) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[4.232010] (-) TimerEvent: {}
+[4.267246] (face_cropping) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[4.332229] (-) TimerEvent: {}
+[4.433218] (-) TimerEvent: {}
+[4.456054] (face_cropping) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[4.533403] (-) TimerEvent: {}
+[4.543968] (face_cropping) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[4.633577] (-) TimerEvent: {}
+[4.735169] (-) TimerEvent: {}
+[4.799960] (face_cropping) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[4.801873] (face_cropping) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[4.836029] (-) TimerEvent: {}
+[4.936707] (-) TimerEvent: {}
+[5.037408] (-) TimerEvent: {}
+[5.055275] (face_cropping) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[5.055887] (face_cropping) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[5.137594] (-) TimerEvent: {}
+[5.238406] (-) TimerEvent: {}
+[5.332020] (face_cropping) StdoutLine: {'line': b'-- Found rclpy: 3.3.14 (/opt/ros/humble/share/rclpy/cmake)\n'}
+[5.338580] (-) TimerEvent: {}
+[5.358111] (face_cropping) StdoutLine: {'line': b'-- Found sensor_msgs: 4.2.4 (/opt/ros/humble/share/sensor_msgs/cmake)\n'}
+[5.438749] (-) TimerEvent: {}
+[5.482087] (face_cropping) StdoutLine: {'line': b'-- Found opentera_webrtc_ros_msgs: 0.0.0 (/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake)\n'}
+[5.538979] (-) TimerEvent: {}
+[5.639816] (-) TimerEvent: {}
+[5.658773] (face_cropping) StdoutLine: {'line': b'-- Found cv_bridge: 3.2.1 (/opt/ros/humble/share/cv_bridge/cmake)\n'}
+[5.739992] (-) TimerEvent: {}
+[5.744916] (face_cropping) StdoutLine: {'line': b'-- Found image_transport: 3.1.9 (/opt/ros/humble/share/image_transport/cmake)\n'}
+[5.840161] (-) TimerEvent: {}
+[5.940809] (-) TimerEvent: {}
+[6.018489] (face_cropping) StdoutLine: {'line': b'-- Found OpenCV: /usr (found version "4.5.4") \n'}
+[6.041008] (-) TimerEvent: {}
+[6.142060] (-) TimerEvent: {}
+[6.243158] (-) TimerEvent: {}
+[6.347104] (-) TimerEvent: {}
+[6.447839] (-) TimerEvent: {}
+[6.548561] (-) TimerEvent: {}
+[6.649561] (-) TimerEvent: {}
+[6.751174] (-) TimerEvent: {}
+[6.851863] (-) TimerEvent: {}
+[6.952586] (-) TimerEvent: {}
+[7.055230] (-) TimerEvent: {}
+[7.151273] (face_cropping) StderrLine: {'line': b'\x1b[33mCMake Warning at CMakeLists.txt:130 (message):\n'}
+[7.151798] (face_cropping) StderrLine: {'line': b'  Torch is not supported for the CPU architecture.\n'}
+[7.152064] (face_cropping) StderrLine: {'line': b'\n'}
+[7.152323] (face_cropping) StderrLine: {'line': b'\x1b[0m\n'}
+[7.155347] (-) TimerEvent: {}
+[7.239279] (face_cropping) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[7.255670] (-) TimerEvent: {}
+[7.356827] (-) TimerEvent: {}
+[7.457984] (-) TimerEvent: {}
+[7.558918] (-) TimerEvent: {}
+[7.660425] (-) TimerEvent: {}
+[7.761731] (-) TimerEvent: {}
+[7.780922] (face_cropping) StdoutLine: {'line': b"-- Added test 'copyright' to check source files copyright and LICENSE\n"}
+[7.797232] (face_cropping) StdoutLine: {'line': b"-- Added test 'cppcheck' to perform static code analysis on C / C++ code\n"}
+[7.798744] (face_cropping) StdoutLine: {'line': b'-- Configured cppcheck include dirs: \n'}
+[7.799476] (face_cropping) StdoutLine: {'line': b'-- Configured cppcheck exclude dirs and/or files: \n'}
+[7.812468] (face_cropping) StdoutLine: {'line': b"-- Added test 'cpplint' to check C / C++ code against the Google style\n"}
+[7.813798] (face_cropping) StdoutLine: {'line': b'-- Configured cpplint exclude dirs and/or files: \n'}
+[7.817986] (face_cropping) StdoutLine: {'line': b"-- Added test 'flake8' to check Python code syntax and style conventions\n"}
+[7.824736] (face_cropping) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[7.830123] (face_cropping) StdoutLine: {'line': b"-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257\n"}
+[7.844513] (face_cropping) StdoutLine: {'line': b"-- Added test 'uncrustify' to check C / C++ code style\n"}
+[7.845620] (face_cropping) StdoutLine: {'line': b'-- Configured uncrustify additional arguments: \n'}
+[7.849978] (face_cropping) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[7.859367] (face_cropping) StdoutLine: {'line': b'-- Configuring done\n'}
+[7.861866] (-) TimerEvent: {}
+[7.942824] (face_cropping) StdoutLine: {'line': b'-- Generating done\n'}
+[7.951376] (face_cropping) StdoutLine: {'line': b'-- Build files have been written to: /home/ws/ugv_ws/build/face_cropping\n'}
+[7.962231] (-) TimerEvent: {}
+[7.983848] (face_cropping) CommandEnded: {'returncode': 0}
+[7.990807] (face_cropping) JobProgress: {'identifier': 'face_cropping', 'progress': 'build'}
+[7.991258] (face_cropping) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/face_cropping', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/face_cropping', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/opentera_webrtc_ros/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install:/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros/bin:/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/face_cropping'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[8.062388] (-) TimerEvent: {}
+[8.163606] (-) TimerEvent: {}
+[8.177731] (face_cropping) StdoutLine: {'line': b'[  6%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_node.dir/src/OpencvFaceDetector.cpp.o\x1b[0m\n'}
+[8.183262] (face_cropping) StdoutLine: {'line': b'[ 12%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_webrtc_node.dir/src/FaceDetector.cpp.o\x1b[0m\n'}
+[8.215405] (face_cropping) StdoutLine: {'line': b'[ 18%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_node.dir/src/FaceDetector.cpp.o\x1b[0m\n'}
+[8.217341] (face_cropping) StdoutLine: {'line': b'[ 25%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_node.dir/src/TorchFaceDetector.cpp.o\x1b[0m\n'}
+[8.264999] (-) TimerEvent: {}
+[8.371225] (-) TimerEvent: {}
+[8.472033] (-) TimerEvent: {}
+[8.572851] (-) TimerEvent: {}
+[8.673598] (-) TimerEvent: {}
+[8.774414] (-) TimerEvent: {}
+[8.875266] (-) TimerEvent: {}
+[8.976061] (-) TimerEvent: {}
+[9.076841] (-) TimerEvent: {}
+[9.179466] (-) TimerEvent: {}
+[9.280358] (-) TimerEvent: {}
+[9.383545] (-) TimerEvent: {}
+[9.484584] (-) TimerEvent: {}
+[9.587460] (-) TimerEvent: {}
+[9.688392] (-) TimerEvent: {}
+[9.791549] (-) TimerEvent: {}
+[9.892462] (-) TimerEvent: {}
+[9.995451] (-) TimerEvent: {}
+[10.096369] (-) TimerEvent: {}
+[10.199194] (-) TimerEvent: {}
+[10.303148] (-) TimerEvent: {}
+[10.404476] (-) TimerEvent: {}
+[10.505628] (-) TimerEvent: {}
+[10.606830] (-) TimerEvent: {}
+[10.711129] (-) TimerEvent: {}
+[10.817438] (-) TimerEvent: {}
+[10.918655] (-) TimerEvent: {}
+[11.031260] (-) TimerEvent: {}
+[11.132336] (-) TimerEvent: {}
+[11.235186] (-) TimerEvent: {}
+[11.336137] (-) TimerEvent: {}
+[11.437028] (-) TimerEvent: {}
+[11.543218] (-) TimerEvent: {}
+[11.644192] (-) TimerEvent: {}
+[11.745069] (-) TimerEvent: {}
+[11.847450] (-) TimerEvent: {}
+[11.951613] (-) TimerEvent: {}
+[12.052653] (-) TimerEvent: {}
+[12.155590] (-) TimerEvent: {}
+[12.256944] (-) TimerEvent: {}
+[12.363179] (-) TimerEvent: {}
+[12.465135] (-) TimerEvent: {}
+[12.571176] (-) TimerEvent: {}
+[12.672285] (-) TimerEvent: {}
+[12.775672] (-) TimerEvent: {}
+[12.879571] (-) TimerEvent: {}
+[12.983383] (-) TimerEvent: {}
+[13.084249] (-) TimerEvent: {}
+[13.185164] (-) TimerEvent: {}
+[13.291530] (-) TimerEvent: {}
+[13.392502] (-) TimerEvent: {}
+[13.493552] (-) TimerEvent: {}
+[13.594527] (-) TimerEvent: {}
+[13.695598] (-) TimerEvent: {}
+[13.799496] (-) TimerEvent: {}
+[13.900888] (-) TimerEvent: {}
+[14.003518] (-) TimerEvent: {}
+[14.107530] (-) TimerEvent: {}
+[14.209280] (-) TimerEvent: {}
+[14.315523] (-) TimerEvent: {}
+[14.419163] (-) TimerEvent: {}
+[14.520140] (-) TimerEvent: {}
+[14.621025] (-) TimerEvent: {}
+[14.722206] (-) TimerEvent: {}
+[14.823518] (-) TimerEvent: {}
+[14.928278] (-) TimerEvent: {}
+[15.029836] (-) TimerEvent: {}
+[15.136051] (-) TimerEvent: {}
+[15.237410] (-) TimerEvent: {}
+[15.338839] (-) TimerEvent: {}
+[15.440312] (-) TimerEvent: {}
+[15.543501] (-) TimerEvent: {}
+[15.645333] (-) TimerEvent: {}
+[15.748763] (-) TimerEvent: {}
+[15.852846] (-) TimerEvent: {}
+[15.956691] (-) TimerEvent: {}
+[16.061632] (-) TimerEvent: {}
+[16.163119] (-) TimerEvent: {}
+[16.264886] (-) TimerEvent: {}
+[16.367981] (-) TimerEvent: {}
+[16.471124] (-) TimerEvent: {}
+[16.572596] (-) TimerEvent: {}
+[16.675955] (-) TimerEvent: {}
+[16.779467] (-) TimerEvent: {}
+[16.883543] (-) TimerEvent: {}
+[16.985200] (-) TimerEvent: {}
+[17.091377] (-) TimerEvent: {}
+[17.192708] (-) TimerEvent: {}
+[17.293981] (-) TimerEvent: {}
+[17.403210] (-) TimerEvent: {}
+[17.504680] (-) TimerEvent: {}
+[17.605869] (-) TimerEvent: {}
+[17.707128] (-) TimerEvent: {}
+[17.808494] (-) TimerEvent: {}
+[17.910923] (-) TimerEvent: {}
+[18.014277] (-) TimerEvent: {}
+[18.119644] (-) TimerEvent: {}
+[18.227149] (-) TimerEvent: {}
+[18.328448] (-) TimerEvent: {}
+[18.429789] (-) TimerEvent: {}
+[18.531290] (-) TimerEvent: {}
+[18.635161] (-) TimerEvent: {}
+[18.736149] (-) TimerEvent: {}
+[18.837182] (-) TimerEvent: {}
+[18.939857] (-) TimerEvent: {}
+[19.043507] (-) TimerEvent: {}
+[19.144426] (-) TimerEvent: {}
+[19.248240] (-) TimerEvent: {}
+[19.352632] (-) TimerEvent: {}
+[19.453574] (-) TimerEvent: {}
+[19.554596] (-) TimerEvent: {}
+[19.659583] (-) TimerEvent: {}
+[19.721663] (face_cropping) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/face_cropping/src/FaceDetector.cpp:\x1b[m\x1b[K In function \xe2\x80\x98\x1b[01m\x1b[Kstd::shared_ptr<FaceDetector> createFaceDetector(rclcpp::Node&, const string&, bool)\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[19.722517] (face_cropping) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/face_cropping/src/FaceDetector.cpp:7:38:\x1b[m\x1b[K \x1b[01;35m\x1b[Kwarning: \x1b[m\x1b[Kunused parameter \xe2\x80\x98\x1b[01m\x1b[KnodeHandle\x1b[m\x1b[K\xe2\x80\x99 [\x1b[01;35m\x1b[K-Wunused-parameter\x1b[m\x1b[K]\n'}
+[19.727619] (face_cropping) StderrLine: {'line': b'    7 |     createFaceDetector(\x1b[01;35m\x1b[Krclcpp::Node& nodeHandle\x1b[m\x1b[K, const std::string& name, bool useGpuIfAvailable)\n'}
+[19.728314] (face_cropping) StderrLine: {'line': b'      |                        \x1b[01;35m\x1b[K~~~~~~~~~~~~~~^~~~~~~~~~\x1b[m\x1b[K\n'}
+[19.728804] (face_cropping) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/face_cropping/src/FaceDetector.cpp:7:80:\x1b[m\x1b[K \x1b[01;35m\x1b[Kwarning: \x1b[m\x1b[Kunused parameter \xe2\x80\x98\x1b[01m\x1b[KuseGpuIfAvailable\x1b[m\x1b[K\xe2\x80\x99 [\x1b[01;35m\x1b[K-Wunused-parameter\x1b[m\x1b[K]\n'}
+[19.729345] (face_cropping) StderrLine: {'line': b'    7 |     createFaceDetector(rclcpp::Node& nodeHandle, const std::string& name, \x1b[01;35m\x1b[Kbool useGpuIfAvailable\x1b[m\x1b[K)\n'}
+[19.729881] (face_cropping) StderrLine: {'line': b'      |                                                                           \x1b[01;35m\x1b[K~~~~~^~~~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[19.759837] (-) TimerEvent: {}
+[19.867154] (-) TimerEvent: {}
+[19.968140] (-) TimerEvent: {}
+[20.071160] (-) TimerEvent: {}
+[20.189401] (-) TimerEvent: {}
+[20.296296] (-) TimerEvent: {}
+[20.316479] (face_cropping) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/face_cropping/src/FaceDetector.cpp:\x1b[m\x1b[K In function \xe2\x80\x98\x1b[01m\x1b[Kstd::shared_ptr<FaceDetector> createFaceDetector(rclcpp::Node&, const string&, bool)\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[20.317502] (face_cropping) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/face_cropping/src/FaceDetector.cpp:7:38:\x1b[m\x1b[K \x1b[01;35m\x1b[Kwarning: \x1b[m\x1b[Kunused parameter \xe2\x80\x98\x1b[01m\x1b[KnodeHandle\x1b[m\x1b[K\xe2\x80\x99 [\x1b[01;35m\x1b[K-Wunused-parameter\x1b[m\x1b[K]\n'}
+[20.323201] (face_cropping) StderrLine: {'line': b'    7 |     createFaceDetector(\x1b[01;35m\x1b[Krclcpp::Node& nodeHandle\x1b[m\x1b[K, const std::string& name, bool useGpuIfAvailable)\n'}
+[20.325729] (face_cropping) StderrLine: {'line': b'      |                        \x1b[01;35m\x1b[K~~~~~~~~~~~~~~^~~~~~~~~~\x1b[m\x1b[K\n'}
+[20.326436] (face_cropping) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/face_cropping/src/FaceDetector.cpp:7:80:\x1b[m\x1b[K \x1b[01;35m\x1b[Kwarning: \x1b[m\x1b[Kunused parameter \xe2\x80\x98\x1b[01m\x1b[KuseGpuIfAvailable\x1b[m\x1b[K\xe2\x80\x99 [\x1b[01;35m\x1b[K-Wunused-parameter\x1b[m\x1b[K]\n'}
+[20.327029] (face_cropping) StderrLine: {'line': b'    7 |     createFaceDetector(rclcpp::Node& nodeHandle, const std::string& name, \x1b[01;35m\x1b[Kbool useGpuIfAvailable\x1b[m\x1b[K)\n'}
+[20.327613] (face_cropping) StderrLine: {'line': b'      |                                                                           \x1b[01;35m\x1b[K~~~~~^~~~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[20.396524] (-) TimerEvent: {}
+[20.503153] (-) TimerEvent: {}
+[20.604688] (-) TimerEvent: {}
+[20.706251] (-) TimerEvent: {}
+[20.807778] (-) TimerEvent: {}
+[20.909054] (-) TimerEvent: {}
+[21.011828] (-) TimerEvent: {}
+[21.115518] (-) TimerEvent: {}
+[21.219154] (-) TimerEvent: {}
+[21.320152] (-) TimerEvent: {}
+[21.427149] (-) TimerEvent: {}
+[21.528118] (-) TimerEvent: {}
+[21.629065] (-) TimerEvent: {}
+[21.730025] (-) TimerEvent: {}
+[21.831005] (-) TimerEvent: {}
+[21.932119] (-) TimerEvent: {}
+[22.033029] (-) TimerEvent: {}
+[22.035296] (face_cropping) StdoutLine: {'line': b'[ 31%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_node.dir/src/SinglePositionKalmanFilter.cpp.o\x1b[0m\n'}
+[22.135160] (-) TimerEvent: {}
+[22.175643] (face_cropping) StdoutLine: {'line': b'[ 37%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_webrtc_node.dir/src/OpencvFaceDetector.cpp.o\x1b[0m\n'}
+[22.239197] (-) TimerEvent: {}
+[22.340407] (-) TimerEvent: {}
+[22.415452] (face_cropping) StdoutLine: {'line': b'[ 43%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_webrtc_node.dir/src/TorchFaceDetector.cpp.o\x1b[0m\n'}
+[22.440662] (-) TimerEvent: {}
+[22.543436] (face_cropping) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_node.dir/src/FaceCropper.cpp.o\x1b[0m\n'}
+[22.544889] (-) TimerEvent: {}
+[22.653125] (-) TimerEvent: {}
+[22.759231] (-) TimerEvent: {}
+[22.862205] (-) TimerEvent: {}
+[22.963540] (-) TimerEvent: {}
+[23.067003] (-) TimerEvent: {}
+[23.168587] (-) TimerEvent: {}
+[23.271439] (-) TimerEvent: {}
+[23.375234] (-) TimerEvent: {}
+[23.476220] (-) TimerEvent: {}
+[23.577823] (-) TimerEvent: {}
+[23.683540] (-) TimerEvent: {}
+[23.784352] (-) TimerEvent: {}
+[23.885299] (-) TimerEvent: {}
+[23.986219] (-) TimerEvent: {}
+[24.087148] (-) TimerEvent: {}
+[24.191673] (-) TimerEvent: {}
+[24.292644] (-) TimerEvent: {}
+[24.393557] (-) TimerEvent: {}
+[24.494685] (-) TimerEvent: {}
+[24.599463] (-) TimerEvent: {}
+[24.700355] (-) TimerEvent: {}
+[24.801243] (-) TimerEvent: {}
+[24.902149] (-) TimerEvent: {}
+[25.007560] (-) TimerEvent: {}
+[25.108441] (-) TimerEvent: {}
+[25.209586] (-) TimerEvent: {}
+[25.311296] (-) TimerEvent: {}
+[25.415487] (-) TimerEvent: {}
+[25.516423] (-) TimerEvent: {}
+[25.617537] (-) TimerEvent: {}
+[25.723141] (-) TimerEvent: {}
+[25.824019] (-) TimerEvent: {}
+[25.924988] (-) TimerEvent: {}
+[26.025929] (-) TimerEvent: {}
+[26.126919] (-) TimerEvent: {}
+[26.231563] (-) TimerEvent: {}
+[26.332893] (-) TimerEvent: {}
+[26.434011] (-) TimerEvent: {}
+[26.539516] (-) TimerEvent: {}
+[26.640828] (-) TimerEvent: {}
+[26.742327] (-) TimerEvent: {}
+[26.847502] (-) TimerEvent: {}
+[26.948930] (-) TimerEvent: {}
+[27.055136] (-) TimerEvent: {}
+[27.156494] (-) TimerEvent: {}
+[27.258596] (-) TimerEvent: {}
+[27.364002] (-) TimerEvent: {}
+[27.465367] (-) TimerEvent: {}
+[27.571193] (-) TimerEvent: {}
+[27.672535] (-) TimerEvent: {}
+[27.774043] (-) TimerEvent: {}
+[27.879628] (-) TimerEvent: {}
+[27.980860] (-) TimerEvent: {}
+[28.083592] (-) TimerEvent: {}
+[28.187698] (-) TimerEvent: {}
+[28.291185] (-) TimerEvent: {}
+[28.392069] (-) TimerEvent: {}
+[28.495592] (-) TimerEvent: {}
+[28.597062] (-) TimerEvent: {}
+[28.699206] (-) TimerEvent: {}
+[28.803697] (-) TimerEvent: {}
+[28.904991] (-) TimerEvent: {}
+[29.006344] (-) TimerEvent: {}
+[29.111525] (-) TimerEvent: {}
+[29.212786] (-) TimerEvent: {}
+[29.314484] (-) TimerEvent: {}
+[29.419951] (-) TimerEvent: {}
+[29.521678] (-) TimerEvent: {}
+[29.627488] (-) TimerEvent: {}
+[29.654557] (face_cropping) StdoutLine: {'line': b'[ 56%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_node.dir/src/FaceCroppingNodeConfiguration.cpp.o\x1b[0m\n'}
+[29.727715] (-) TimerEvent: {}
+[29.831627] (-) TimerEvent: {}
+[29.933152] (-) TimerEvent: {}
+[30.047152] (-) TimerEvent: {}
+[30.151990] (-) TimerEvent: {}
+[30.259798] (-) TimerEvent: {}
+[30.361145] (-) TimerEvent: {}
+[30.467263] (-) TimerEvent: {}
+[30.579139] (-) TimerEvent: {}
+[30.680036] (-) TimerEvent: {}
+[30.780915] (-) TimerEvent: {}
+[30.883496] (-) TimerEvent: {}
+[30.984863] (-) TimerEvent: {}
+[31.087577] (-) TimerEvent: {}
+[31.191587] (-) TimerEvent: {}
+[31.292519] (-) TimerEvent: {}
+[31.393494] (-) TimerEvent: {}
+[31.499305] (-) TimerEvent: {}
+[31.600206] (-) TimerEvent: {}
+[31.701161] (-) TimerEvent: {}
+[31.802115] (-) TimerEvent: {}
+[31.903100] (-) TimerEvent: {}
+[32.007169] (-) TimerEvent: {}
+[32.108247] (-) TimerEvent: {}
+[32.209287] (-) TimerEvent: {}
+[32.315596] (-) TimerEvent: {}
+[32.416610] (-) TimerEvent: {}
+[32.517672] (-) TimerEvent: {}
+[32.618614] (-) TimerEvent: {}
+[32.719878] (-) TimerEvent: {}
+[32.823167] (-) TimerEvent: {}
+[32.924169] (-) TimerEvent: {}
+[33.026978] (-) TimerEvent: {}
+[33.131140] (-) TimerEvent: {}
+[33.232070] (-) TimerEvent: {}
+[33.333017] (-) TimerEvent: {}
+[33.439153] (-) TimerEvent: {}
+[33.540102] (-) TimerEvent: {}
+[33.641821] (-) TimerEvent: {}
+[33.742881] (-) TimerEvent: {}
+[33.843887] (-) TimerEvent: {}
+[33.951149] (-) TimerEvent: {}
+[34.052090] (-) TimerEvent: {}
+[34.153212] (-) TimerEvent: {}
+[34.254137] (-) TimerEvent: {}
+[34.355274] (-) TimerEvent: {}
+[34.457350] (-) TimerEvent: {}
+[34.563574] (-) TimerEvent: {}
+[34.664564] (-) TimerEvent: {}
+[34.765796] (-) TimerEvent: {}
+[34.866910] (-) TimerEvent: {}
+[34.971154] (-) TimerEvent: {}
+[35.072109] (-) TimerEvent: {}
+[35.173217] (-) TimerEvent: {}
+[35.274158] (-) TimerEvent: {}
+[35.379179] (-) TimerEvent: {}
+[35.480208] (-) TimerEvent: {}
+[35.581637] (-) TimerEvent: {}
+[35.682938] (-) TimerEvent: {}
+[35.787373] (-) TimerEvent: {}
+[35.888390] (-) TimerEvent: {}
+[35.990717] (-) TimerEvent: {}
+[36.033850] (face_cropping) StdoutLine: {'line': b'[ 62%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_node.dir/src/face_cropping_node.cpp.o\x1b[0m\n'}
+[36.091091] (-) TimerEvent: {}
+[36.192308] (-) TimerEvent: {}
+[36.295483] (-) TimerEvent: {}
+[36.400377] (-) TimerEvent: {}
+[36.507680] (-) TimerEvent: {}
+[36.537760] (face_cropping) StdoutLine: {'line': b'[ 68%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_webrtc_node.dir/src/SinglePositionKalmanFilter.cpp.o\x1b[0m\n'}
+[36.608023] (-) TimerEvent: {}
+[36.662974] (face_cropping) StdoutLine: {'line': b'[ 75%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_webrtc_node.dir/src/FaceCropper.cpp.o\x1b[0m\n'}
+[36.708181] (-) TimerEvent: {}
+[36.817424] (-) TimerEvent: {}
+[36.918745] (-) TimerEvent: {}
+[37.020311] (-) TimerEvent: {}
+[37.123427] (-) TimerEvent: {}
+[37.227605] (-) TimerEvent: {}
+[37.329462] (-) TimerEvent: {}
+[37.435147] (-) TimerEvent: {}
+[37.536066] (-) TimerEvent: {}
+[37.636993] (-) TimerEvent: {}
+[37.737981] (-) TimerEvent: {}
+[37.839119] (-) TimerEvent: {}
+[37.940055] (-) TimerEvent: {}
+[38.043563] (-) TimerEvent: {}
+[38.144412] (-) TimerEvent: {}
+[38.245746] (-) TimerEvent: {}
+[38.349492] (-) TimerEvent: {}
+[38.455156] (-) TimerEvent: {}
+[38.556066] (-) TimerEvent: {}
+[38.656966] (-) TimerEvent: {}
+[38.758602] (-) TimerEvent: {}
+[38.863582] (-) TimerEvent: {}
+[38.965065] (-) TimerEvent: {}
+[39.067016] (-) TimerEvent: {}
+[39.171146] (-) TimerEvent: {}
+[39.272034] (-) TimerEvent: {}
+[39.373535] (-) TimerEvent: {}
+[39.479516] (-) TimerEvent: {}
+[39.580561] (-) TimerEvent: {}
+[39.682023] (-) TimerEvent: {}
+[39.787501] (-) TimerEvent: {}
+[39.889005] (-) TimerEvent: {}
+[39.990797] (-) TimerEvent: {}
+[40.095353] (-) TimerEvent: {}
+[40.196716] (-) TimerEvent: {}
+[40.298001] (-) TimerEvent: {}
+[40.403978] (-) TimerEvent: {}
+[40.505520] (-) TimerEvent: {}
+[40.606799] (-) TimerEvent: {}
+[40.708130] (-) TimerEvent: {}
+[40.810871] (-) TimerEvent: {}
+[40.915921] (-) TimerEvent: {}
+[41.017164] (-) TimerEvent: {}
+[41.123144] (-) TimerEvent: {}
+[41.224558] (-) TimerEvent: {}
+[41.326632] (-) TimerEvent: {}
+[41.428811] (-) TimerEvent: {}
+[41.531954] (-) TimerEvent: {}
+[41.636031] (-) TimerEvent: {}
+[41.743539] (-) TimerEvent: {}
+[41.845518] (-) TimerEvent: {}
+[41.947194] (-) TimerEvent: {}
+[42.051180] (-) TimerEvent: {}
+[42.155139] (-) TimerEvent: {}
+[42.256513] (-) TimerEvent: {}
+[42.359941] (-) TimerEvent: {}
+[42.461612] (-) TimerEvent: {}
+[42.568316] (-) TimerEvent: {}
+[42.669932] (-) TimerEvent: {}
+[42.731812] (face_cropping) StdoutLine: {'line': b'[ 81%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_webrtc_node.dir/src/FaceCroppingNodeConfiguration.cpp.o\x1b[0m\n'}
+[42.775182] (-) TimerEvent: {}
+[42.877124] (-) TimerEvent: {}
+[42.979660] (-) TimerEvent: {}
+[43.083151] (-) TimerEvent: {}
+[43.184673] (-) TimerEvent: {}
+[43.286115] (-) TimerEvent: {}
+[43.391537] (-) TimerEvent: {}
+[43.492455] (-) TimerEvent: {}
+[43.593424] (-) TimerEvent: {}
+[43.694391] (-) TimerEvent: {}
+[43.795334] (-) TimerEvent: {}
+[43.899487] (-) TimerEvent: {}
+[44.000416] (-) TimerEvent: {}
+[44.101390] (-) TimerEvent: {}
+[44.203469] (-) TimerEvent: {}
+[44.305180] (-) TimerEvent: {}
+[44.411517] (-) TimerEvent: {}
+[44.512708] (-) TimerEvent: {}
+[44.613957] (-) TimerEvent: {}
+[44.715113] (-) TimerEvent: {}
+[44.819530] (-) TimerEvent: {}
+[44.920533] (-) TimerEvent: {}
+[45.021464] (-) TimerEvent: {}
+[45.127541] (-) TimerEvent: {}
+[45.228460] (-) TimerEvent: {}
+[45.331491] (-) TimerEvent: {}
+[45.432399] (-) TimerEvent: {}
+[45.535195] (-) TimerEvent: {}
+[45.636356] (-) TimerEvent: {}
+[45.739520] (-) TimerEvent: {}
+[45.840438] (-) TimerEvent: {}
+[45.941544] (-) TimerEvent: {}
+[46.047650] (-) TimerEvent: {}
+[46.148642] (-) TimerEvent: {}
+[46.249642] (-) TimerEvent: {}
+[46.351018] (-) TimerEvent: {}
+[46.451972] (-) TimerEvent: {}
+[46.555235] (-) TimerEvent: {}
+[46.656182] (-) TimerEvent: {}
+[46.693867] (face_cropping) StdoutLine: {'line': b'[ 87%] \x1b[32mBuilding CXX object CMakeFiles/face_cropping_webrtc_node.dir/src/face_cropping_webrtc_node.cpp.o\x1b[0m\n'}
+[46.759144] (-) TimerEvent: {}
+[46.860484] (-) TimerEvent: {}
+[46.961641] (-) TimerEvent: {}
+[47.063590] (-) TimerEvent: {}
+[47.167543] (-) TimerEvent: {}
+[47.268479] (-) TimerEvent: {}
+[47.370083] (-) TimerEvent: {}
+[47.475527] (-) TimerEvent: {}
+[47.576848] (-) TimerEvent: {}
+[47.678520] (-) TimerEvent: {}
+[47.783886] (-) TimerEvent: {}
+[47.885616] (-) TimerEvent: {}
+[47.991493] (-) TimerEvent: {}
+[48.093303] (-) TimerEvent: {}
+[48.199421] (-) TimerEvent: {}
+[48.300734] (-) TimerEvent: {}
+[48.402773] (-) TimerEvent: {}
+[48.507508] (-) TimerEvent: {}
+[48.609744] (-) TimerEvent: {}
+[48.715401] (-) TimerEvent: {}
+[48.816701] (-) TimerEvent: {}
+[48.918470] (-) TimerEvent: {}
+[49.023881] (-) TimerEvent: {}
+[49.125900] (-) TimerEvent: {}
+[49.231153] (-) TimerEvent: {}
+[49.332510] (-) TimerEvent: {}
+[49.434566] (-) TimerEvent: {}
+[49.539922] (-) TimerEvent: {}
+[49.641781] (-) TimerEvent: {}
+[49.743104] (-) TimerEvent: {}
+[49.847495] (-) TimerEvent: {}
+[49.951536] (-) TimerEvent: {}
+[50.055461] (-) TimerEvent: {}
+[50.157425] (-) TimerEvent: {}
+[50.263178] (-) TimerEvent: {}
+[50.364055] (-) TimerEvent: {}
+[50.464907] (-) TimerEvent: {}
+[50.565896] (-) TimerEvent: {}
+[50.668297] (-) TimerEvent: {}
+[50.770032] (-) TimerEvent: {}
+[50.870991] (-) TimerEvent: {}
+[50.972303] (-) TimerEvent: {}
+[51.073249] (-) TimerEvent: {}
+[51.174632] (-) TimerEvent: {}
+[51.275599] (-) TimerEvent: {}
+[51.376497] (-) TimerEvent: {}
+[51.478220] (-) TimerEvent: {}
+[51.580016] (-) TimerEvent: {}
+[51.682420] (-) TimerEvent: {}
+[51.784202] (-) TimerEvent: {}
+[51.885639] (-) TimerEvent: {}
+[51.992137] (-) TimerEvent: {}
+[52.093664] (-) TimerEvent: {}
+[52.195763] (-) TimerEvent: {}
+[52.297547] (-) TimerEvent: {}
+[52.398822] (-) TimerEvent: {}
+[52.499742] (-) TimerEvent: {}
+[52.603007] (-) TimerEvent: {}
+[52.707352] (-) TimerEvent: {}
+[52.808282] (-) TimerEvent: {}
+[52.910254] (-) TimerEvent: {}
+[53.011738] (-) TimerEvent: {}
+[53.113638] (-) TimerEvent: {}
+[53.215001] (-) TimerEvent: {}
+[53.316983] (-) TimerEvent: {}
+[53.418878] (-) TimerEvent: {}
+[53.520409] (-) TimerEvent: {}
+[53.623295] (-) TimerEvent: {}
+[53.724565] (-) TimerEvent: {}
+[53.827011] (-) TimerEvent: {}
+[53.928844] (-) TimerEvent: {}
+[54.031030] (-) TimerEvent: {}
+[54.132961] (-) TimerEvent: {}
+[54.235047] (-) TimerEvent: {}
+[54.336342] (-) TimerEvent: {}
+[54.438168] (-) TimerEvent: {}
+[54.539090] (-) TimerEvent: {}
+[54.640913] (-) TimerEvent: {}
+[54.742277] (-) TimerEvent: {}
+[54.843247] (-) TimerEvent: {}
+[54.944962] (-) TimerEvent: {}
+[55.046328] (-) TimerEvent: {}
+[55.148165] (-) TimerEvent: {}
+[55.249495] (-) TimerEvent: {}
+[55.351268] (-) TimerEvent: {}
+[55.452605] (-) TimerEvent: {}
+[55.554342] (-) TimerEvent: {}
+[55.655888] (-) TimerEvent: {}
+[55.757661] (-) TimerEvent: {}
+[55.859795] (-) TimerEvent: {}
+[55.961565] (-) TimerEvent: {}
+[56.063390] (-) TimerEvent: {}
+[56.164893] (-) TimerEvent: {}
+[56.266891] (-) TimerEvent: {}
+[56.368306] (-) TimerEvent: {}
+[56.470061] (-) TimerEvent: {}
+[56.571700] (-) TimerEvent: {}
+[56.673044] (-) TimerEvent: {}
+[56.774891] (-) TimerEvent: {}
+[56.876920] (-) TimerEvent: {}
+[56.979200] (-) TimerEvent: {}
+[57.080599] (-) TimerEvent: {}
+[57.182425] (-) TimerEvent: {}
+[57.283836] (-) TimerEvent: {}
+[57.387180] (-) TimerEvent: {}
+[57.488151] (-) TimerEvent: {}
+[57.589321] (-) TimerEvent: {}
+[57.690141] (-) TimerEvent: {}
+[57.791338] (-) TimerEvent: {}
+[57.892500] (-) TimerEvent: {}
+[57.993342] (-) TimerEvent: {}
+[58.094502] (-) TimerEvent: {}
+[58.195401] (-) TimerEvent: {}
+[58.296541] (-) TimerEvent: {}
+[58.397426] (-) TimerEvent: {}
+[58.498759] (-) TimerEvent: {}
+[58.599879] (-) TimerEvent: {}
+[58.701020] (-) TimerEvent: {}
+[58.801857] (-) TimerEvent: {}
+[58.902709] (-) TimerEvent: {}
+[59.003561] (-) TimerEvent: {}
+[59.104352] (-) TimerEvent: {}
+[59.205141] (-) TimerEvent: {}
+[59.306277] (-) TimerEvent: {}
+[59.407103] (-) TimerEvent: {}
+[59.508242] (-) TimerEvent: {}
+[59.609091] (-) TimerEvent: {}
+[59.710238] (-) TimerEvent: {}
+[59.811119] (-) TimerEvent: {}
+[59.911964] (-) TimerEvent: {}
+[60.012862] (-) TimerEvent: {}
+[60.113689] (-) TimerEvent: {}
+[60.214459] (-) TimerEvent: {}
+[60.315273] (-) TimerEvent: {}
+[60.416064] (-) TimerEvent: {}
+[60.516834] (-) TimerEvent: {}
+[60.617622] (-) TimerEvent: {}
+[60.718410] (-) TimerEvent: {}
+[60.819325] (-) TimerEvent: {}
+[60.920477] (-) TimerEvent: {}
+[61.021280] (-) TimerEvent: {}
+[61.122069] (-) TimerEvent: {}
+[61.222863] (-) TimerEvent: {}
+[61.323693] (-) TimerEvent: {}
+[61.424484] (-) TimerEvent: {}
+[61.525295] (-) TimerEvent: {}
+[61.626142] (-) TimerEvent: {}
+[61.726999] (-) TimerEvent: {}
+[61.827746] (-) TimerEvent: {}
+[61.928514] (-) TimerEvent: {}
+[62.029243] (-) TimerEvent: {}
+[62.129960] (-) TimerEvent: {}
+[62.230685] (-) TimerEvent: {}
+[62.331500] (-) TimerEvent: {}
+[62.432229] (-) TimerEvent: {}
+[62.532992] (-) TimerEvent: {}
+[62.633778] (-) TimerEvent: {}
+[62.734559] (-) TimerEvent: {}
+[62.835368] (-) TimerEvent: {}
+[62.936153] (-) TimerEvent: {}
+[63.036959] (-) TimerEvent: {}
+[63.138153] (-) TimerEvent: {}
+[63.239209] (-) TimerEvent: {}
+[63.340355] (-) TimerEvent: {}
+[63.441275] (-) TimerEvent: {}
+[63.542825] (-) TimerEvent: {}
+[63.643758] (-) TimerEvent: {}
+[63.745541] (-) TimerEvent: {}
+[63.846760] (-) TimerEvent: {}
+[63.948621] (-) TimerEvent: {}
+[64.049912] (-) TimerEvent: {}
+[64.150765] (-) TimerEvent: {}
+[64.251959] (-) TimerEvent: {}
+[64.352810] (-) TimerEvent: {}
+[64.455431] (-) TimerEvent: {}
+[64.559432] (-) TimerEvent: {}
+[64.660194] (-) TimerEvent: {}
+[64.763431] (-) TimerEvent: {}
+[64.864621] (-) TimerEvent: {}
+[64.966159] (-) TimerEvent: {}
+[65.067077] (-) TimerEvent: {}
+[65.167965] (-) TimerEvent: {}
+[65.268831] (-) TimerEvent: {}
+[65.369789] (-) TimerEvent: {}
+[65.470677] (-) TimerEvent: {}
+[65.571565] (-) TimerEvent: {}
+[65.672433] (-) TimerEvent: {}
+[65.773285] (-) TimerEvent: {}
+[65.875699] (-) TimerEvent: {}
+[65.977155] (-) TimerEvent: {}
+[66.078034] (-) TimerEvent: {}
+[66.178908] (-) TimerEvent: {}
+[66.279799] (-) TimerEvent: {}
+[66.380601] (-) TimerEvent: {}
+[66.481393] (-) TimerEvent: {}
+[66.582190] (-) TimerEvent: {}
+[66.683028] (-) TimerEvent: {}
+[66.784135] (-) TimerEvent: {}
+[66.885006] (-) TimerEvent: {}
+[66.986166] (-) TimerEvent: {}
+[67.087022] (-) TimerEvent: {}
+[67.187779] (-) TimerEvent: {}
+[67.288547] (-) TimerEvent: {}
+[67.389313] (-) TimerEvent: {}
+[67.495660] (-) TimerEvent: {}
+[67.596453] (-) TimerEvent: {}
+[67.697302] (-) TimerEvent: {}
+[67.798199] (-) TimerEvent: {}
+[67.899102] (-) TimerEvent: {}
+[67.999953] (-) TimerEvent: {}
+[68.100804] (-) TimerEvent: {}
+[68.201627] (-) TimerEvent: {}
+[68.302460] (-) TimerEvent: {}
+[68.403308] (-) TimerEvent: {}
+[68.509862] (-) TimerEvent: {}
+[68.610717] (-) TimerEvent: {}
+[68.711612] (-) TimerEvent: {}
+[68.812480] (-) TimerEvent: {}
+[68.913257] (-) TimerEvent: {}
+[69.014122] (-) TimerEvent: {}
+[69.119144] (-) TimerEvent: {}
+[69.219961] (-) TimerEvent: {}
+[69.320770] (-) TimerEvent: {}
+[69.421652] (-) TimerEvent: {}
+[69.522531] (-) TimerEvent: {}
+[69.623467] (-) TimerEvent: {}
+[69.724311] (-) TimerEvent: {}
+[69.825176] (-) TimerEvent: {}
+[69.926029] (-) TimerEvent: {}
+[70.026918] (-) TimerEvent: {}
+[70.128218] (-) TimerEvent: {}
+[70.229115] (-) TimerEvent: {}
+[70.330384] (-) TimerEvent: {}
+[70.431344] (-) TimerEvent: {}
+[70.532501] (-) TimerEvent: {}
+[70.633325] (-) TimerEvent: {}
+[70.734501] (-) TimerEvent: {}
+[70.835370] (-) TimerEvent: {}
+[70.936549] (-) TimerEvent: {}
+[71.037381] (-) TimerEvent: {}
+[71.138256] (-) TimerEvent: {}
+[71.239446] (-) TimerEvent: {}
+[71.340263] (-) TimerEvent: {}
+[71.443173] (-) TimerEvent: {}
+[71.544409] (-) TimerEvent: {}
+[71.645980] (-) TimerEvent: {}
+[71.747590] (-) TimerEvent: {}
+[71.848771] (-) TimerEvent: {}
+[71.949656] (-) TimerEvent: {}
+[72.050834] (-) TimerEvent: {}
+[72.152557] (-) TimerEvent: {}
+[72.253784] (-) TimerEvent: {}
+[72.355444] (-) TimerEvent: {}
+[72.456661] (-) TimerEvent: {}
+[72.558262] (-) TimerEvent: {}
+[72.659496] (-) TimerEvent: {}
+[72.760312] (-) TimerEvent: {}
+[72.861948] (-) TimerEvent: {}
+[72.963142] (-) TimerEvent: {}
+[73.064872] (-) TimerEvent: {}
+[73.166566] (-) TimerEvent: {}
+[73.267445] (-) TimerEvent: {}
+[73.369327] (-) TimerEvent: {}
+[73.470627] (-) TimerEvent: {}
+[73.572369] (-) TimerEvent: {}
+[73.673605] (-) TimerEvent: {}
+[73.775224] (-) TimerEvent: {}
+[73.876094] (-) TimerEvent: {}
+[73.978622] (-) TimerEvent: {}
+[74.079819] (-) TimerEvent: {}
+[74.181397] (-) TimerEvent: {}
+[74.282552] (-) TimerEvent: {}
+[74.383375] (-) TimerEvent: {}
+[74.484943] (-) TimerEvent: {}
+[74.586135] (-) TimerEvent: {}
+[74.687726] (-) TimerEvent: {}
+[74.788894] (-) TimerEvent: {}
+[74.889682] (-) TimerEvent: {}
+[74.991273] (-) TimerEvent: {}
+[75.092821] (-) TimerEvent: {}
+[75.194383] (-) TimerEvent: {}
+[75.295981] (-) TimerEvent: {}
+[75.397472] (-) TimerEvent: {}
+[75.498246] (-) TimerEvent: {}
+[75.599838] (-) TimerEvent: {}
+[75.701045] (-) TimerEvent: {}
+[75.802629] (-) TimerEvent: {}
+[75.903440] (-) TimerEvent: {}
+[76.004210] (-) TimerEvent: {}
+[76.105732] (-) TimerEvent: {}
+[76.207062] (-) TimerEvent: {}
+[76.308727] (-) TimerEvent: {}
+[76.410360] (-) TimerEvent: {}
+[76.512164] (-) TimerEvent: {}
+[76.613750] (-) TimerEvent: {}
+[76.714556] (-) TimerEvent: {}
+[76.815485] (-) TimerEvent: {}
+[76.916366] (-) TimerEvent: {}
+[77.017373] (-) TimerEvent: {}
+[77.118523] (-) TimerEvent: {}
+[77.223150] (-) TimerEvent: {}
+[77.324409] (-) TimerEvent: {}
+[77.425393] (-) TimerEvent: {}
+[77.526084] (-) TimerEvent: {}
+[77.627050] (-) TimerEvent: {}
+[77.727710] (-) TimerEvent: {}
+[77.828622] (-) TimerEvent: {}
+[77.929355] (-) TimerEvent: {}
+[78.030790] (-) TimerEvent: {}
+[78.131621] (-) TimerEvent: {}
+[78.232725] (-) TimerEvent: {}
+[78.333509] (-) TimerEvent: {}
+[78.439125] (-) TimerEvent: {}
+[78.539881] (-) TimerEvent: {}
+[78.641927] (-) TimerEvent: {}
+[78.743432] (-) TimerEvent: {}
+[78.845646] (-) TimerEvent: {}
+[78.946893] (-) TimerEvent: {}
+[79.048452] (-) TimerEvent: {}
+[79.149953] (-) TimerEvent: {}
+[79.251416] (-) TimerEvent: {}
+[79.352705] (-) TimerEvent: {}
+[79.453984] (-) TimerEvent: {}
+[79.555261] (-) TimerEvent: {}
+[79.656549] (-) TimerEvent: {}
+[79.757607] (-) TimerEvent: {}
+[79.858727] (-) TimerEvent: {}
+[79.961877] (-) TimerEvent: {}
+[80.064198] (-) TimerEvent: {}
+[80.085639] (face_cropping) StdoutLine: {'line': b'[ 93%] \x1b[32m\x1b[1mLinking CXX executable face_cropping_node\x1b[0m\n'}
+[80.167189] (-) TimerEvent: {}
+[80.268451] (-) TimerEvent: {}
+[80.369489] (-) TimerEvent: {}
+[80.471456] (-) TimerEvent: {}
+[80.572486] (-) TimerEvent: {}
+[80.673562] (-) TimerEvent: {}
+[80.774505] (-) TimerEvent: {}
+[80.875741] (-) TimerEvent: {}
+[80.977399] (-) TimerEvent: {}
+[81.078678] (-) TimerEvent: {}
+[81.180552] (-) TimerEvent: {}
+[81.282287] (-) TimerEvent: {}
+[81.383522] (-) TimerEvent: {}
+[81.485251] (-) TimerEvent: {}
+[81.586396] (-) TimerEvent: {}
+[81.687704] (-) TimerEvent: {}
+[81.788618] (-) TimerEvent: {}
+[81.889767] (-) TimerEvent: {}
+[81.990764] (-) TimerEvent: {}
+[82.091996] (-) TimerEvent: {}
+[82.193177] (-) TimerEvent: {}
+[82.294940] (-) TimerEvent: {}
+[82.395695] (-) TimerEvent: {}
+[82.496974] (-) TimerEvent: {}
+[82.597715] (-) TimerEvent: {}
+[82.698784] (-) TimerEvent: {}
+[82.799643] (-) TimerEvent: {}
+[82.900886] (-) TimerEvent: {}
+[83.001645] (-) TimerEvent: {}
+[83.102986] (-) TimerEvent: {}
+[83.203936] (-) TimerEvent: {}
+[83.307112] (-) TimerEvent: {}
+[83.408208] (-) TimerEvent: {}
+[83.509269] (-) TimerEvent: {}
+[83.610039] (-) TimerEvent: {}
+[83.711476] (-) TimerEvent: {}
+[83.812521] (-) TimerEvent: {}
+[83.913902] (-) TimerEvent: {}
+[84.015211] (-) TimerEvent: {}
+[84.116619] (-) TimerEvent: {}
+[84.217848] (-) TimerEvent: {}
+[84.318923] (-) TimerEvent: {}
+[84.418402] (face_cropping) StdoutLine: {'line': b'[ 93%] Built target face_cropping_node\n'}
+[84.419392] (-) TimerEvent: {}
+[84.520169] (-) TimerEvent: {}
+[84.620955] (-) TimerEvent: {}
+[84.721736] (-) TimerEvent: {}
+[84.822493] (-) TimerEvent: {}
+[84.923300] (-) TimerEvent: {}
+[85.024044] (-) TimerEvent: {}
+[85.124800] (-) TimerEvent: {}
+[85.225541] (-) TimerEvent: {}
+[85.326277] (-) TimerEvent: {}
+[85.427288] (-) TimerEvent: {}
+[85.528038] (-) TimerEvent: {}
+[85.628749] (-) TimerEvent: {}
+[85.729498] (-) TimerEvent: {}
+[85.830234] (-) TimerEvent: {}
+[85.931022] (-) TimerEvent: {}
+[86.031764] (-) TimerEvent: {}
+[86.132519] (-) TimerEvent: {}
+[86.233256] (-) TimerEvent: {}
+[86.334005] (-) TimerEvent: {}
+[86.434746] (-) TimerEvent: {}
+[86.535551] (-) TimerEvent: {}
+[86.636280] (-) TimerEvent: {}
+[86.737024] (-) TimerEvent: {}
+[86.837773] (-) TimerEvent: {}
+[86.938517] (-) TimerEvent: {}
+[87.039219] (-) TimerEvent: {}
+[87.139898] (-) TimerEvent: {}
+[87.240611] (-) TimerEvent: {}
+[87.341320] (-) TimerEvent: {}
+[87.442048] (-) TimerEvent: {}
+[87.543110] (-) TimerEvent: {}
+[87.643890] (-) TimerEvent: {}
+[87.744888] (-) TimerEvent: {}
+[87.845743] (-) TimerEvent: {}
+[87.946772] (-) TimerEvent: {}
+[88.047517] (-) TimerEvent: {}
+[88.148491] (-) TimerEvent: {}
+[88.249223] (-) TimerEvent: {}
+[88.350230] (-) TimerEvent: {}
+[88.451039] (-) TimerEvent: {}
+[88.551774] (-) TimerEvent: {}
+[88.652545] (-) TimerEvent: {}
+[88.753291] (-) TimerEvent: {}
+[88.854030] (-) TimerEvent: {}
+[88.954761] (-) TimerEvent: {}
+[89.055582] (-) TimerEvent: {}
+[89.156335] (-) TimerEvent: {}
+[89.257055] (-) TimerEvent: {}
+[89.357780] (-) TimerEvent: {}
+[89.458520] (-) TimerEvent: {}
+[89.559284] (-) TimerEvent: {}
+[89.660051] (-) TimerEvent: {}
+[89.760792] (-) TimerEvent: {}
+[89.861546] (-) TimerEvent: {}
+[89.962287] (-) TimerEvent: {}
+[90.063082] (-) TimerEvent: {}
+[90.163818] (-) TimerEvent: {}
+[90.264531] (-) TimerEvent: {}
+[90.365325] (-) TimerEvent: {}
+[90.465981] (-) TimerEvent: {}
+[90.567023] (-) TimerEvent: {}
+[90.667738] (-) TimerEvent: {}
+[90.768730] (-) TimerEvent: {}
+[90.869450] (-) TimerEvent: {}
+[90.970446] (-) TimerEvent: {}
+[91.071214] (-) TimerEvent: {}
+[91.172211] (-) TimerEvent: {}
+[91.272941] (-) TimerEvent: {}
+[91.373672] (-) TimerEvent: {}
+[91.474704] (-) TimerEvent: {}
+[91.575457] (-) TimerEvent: {}
+[91.676629] (-) TimerEvent: {}
+[91.777495] (-) TimerEvent: {}
+[91.878588] (-) TimerEvent: {}
+[91.979341] (-) TimerEvent: {}
+[92.080336] (-) TimerEvent: {}
+[92.181036] (-) TimerEvent: {}
+[92.282090] (-) TimerEvent: {}
+[92.382763] (-) TimerEvent: {}
+[92.483506] (-) TimerEvent: {}
+[92.584520] (-) TimerEvent: {}
+[92.685245] (-) TimerEvent: {}
+[92.786251] (-) TimerEvent: {}
+[92.887045] (-) TimerEvent: {}
+[92.988029] (-) TimerEvent: {}
+[93.088779] (-) TimerEvent: {}
+[93.189777] (-) TimerEvent: {}
+[93.290521] (-) TimerEvent: {}
+[93.391565] (-) TimerEvent: {}
+[93.492552] (-) TimerEvent: {}
+[93.593252] (-) TimerEvent: {}
+[93.694253] (-) TimerEvent: {}
+[93.795034] (-) TimerEvent: {}
+[93.896065] (-) TimerEvent: {}
+[93.996800] (-) TimerEvent: {}
+[94.097830] (-) TimerEvent: {}
+[94.198556] (-) TimerEvent: {}
+[94.299609] (-) TimerEvent: {}
+[94.400277] (-) TimerEvent: {}
+[94.501033] (-) TimerEvent: {}
+[94.601771] (-) TimerEvent: {}
+[94.702482] (-) TimerEvent: {}
+[94.803230] (-) TimerEvent: {}
+[94.903971] (-) TimerEvent: {}
+[95.004704] (-) TimerEvent: {}
+[95.105441] (-) TimerEvent: {}
+[95.206094] (-) TimerEvent: {}
+[95.306819] (-) TimerEvent: {}
+[95.407540] (-) TimerEvent: {}
+[95.508241] (-) TimerEvent: {}
+[95.608934] (-) TimerEvent: {}
+[95.709617] (-) TimerEvent: {}
+[95.810307] (-) TimerEvent: {}
+[95.911054] (-) TimerEvent: {}
+[96.011741] (-) TimerEvent: {}
+[96.112447] (-) TimerEvent: {}
+[96.213169] (-) TimerEvent: {}
+[96.313862] (-) TimerEvent: {}
+[96.414614] (-) TimerEvent: {}
+[96.515676] (-) TimerEvent: {}
+[96.616414] (-) TimerEvent: {}
+[96.717539] (-) TimerEvent: {}
+[96.818251] (-) TimerEvent: {}
+[96.919274] (-) TimerEvent: {}
+[97.019954] (-) TimerEvent: {}
+[97.120974] (-) TimerEvent: {}
+[97.221661] (-) TimerEvent: {}
+[97.322693] (-) TimerEvent: {}
+[97.423446] (-) TimerEvent: {}
+[97.524177] (-) TimerEvent: {}
+[97.625182] (-) TimerEvent: {}
+[97.725925] (-) TimerEvent: {}
+[97.826922] (-) TimerEvent: {}
+[97.927655] (-) TimerEvent: {}
+[98.028689] (-) TimerEvent: {}
+[98.129709] (-) TimerEvent: {}
+[98.230827] (-) TimerEvent: {}
+[98.331649] (-) TimerEvent: {}
+[98.432288] (-) TimerEvent: {}
+[98.533300] (-) TimerEvent: {}
+[98.634051] (-) TimerEvent: {}
+[98.735104] (-) TimerEvent: {}
+[98.835827] (-) TimerEvent: {}
+[98.936850] (-) TimerEvent: {}
+[99.037585] (-) TimerEvent: {}
+[99.138272] (-) TimerEvent: {}
+[99.239359] (-) TimerEvent: {}
+[99.340079] (-) TimerEvent: {}
+[99.441097] (-) TimerEvent: {}
+[99.542085] (-) TimerEvent: {}
+[99.642888] (-) TimerEvent: {}
+[99.744421] (-) TimerEvent: {}
+[99.845044] (-) TimerEvent: {}
+[99.945895] (-) TimerEvent: {}
+[100.046525] (-) TimerEvent: {}
+[100.147154] (-) TimerEvent: {}
+[100.247747] (-) TimerEvent: {}
+[100.348592] (-) TimerEvent: {}
+[100.449215] (-) TimerEvent: {}
+[100.550087] (-) TimerEvent: {}
+[100.650717] (-) TimerEvent: {}
+[100.751624] (-) TimerEvent: {}
+[100.852259] (-) TimerEvent: {}
+[100.953132] (-) TimerEvent: {}
+[101.053785] (-) TimerEvent: {}
+[101.154414] (-) TimerEvent: {}
+[101.255298] (-) TimerEvent: {}
+[101.355939] (-) TimerEvent: {}
+[101.456530] (-) TimerEvent: {}
+[101.557199] (-) TimerEvent: {}
+[101.657876] (-) TimerEvent: {}
+[101.758518] (-) TimerEvent: {}
+[101.859161] (-) TimerEvent: {}
+[101.959773] (-) TimerEvent: {}
+[102.060370] (-) TimerEvent: {}
+[102.160986] (-) TimerEvent: {}
+[102.261578] (-) TimerEvent: {}
+[102.362170] (-) TimerEvent: {}
+[102.463084] (-) TimerEvent: {}
+[102.563743] (-) TimerEvent: {}
+[102.664357] (-) TimerEvent: {}
+[102.764967] (-) TimerEvent: {}
+[102.865568] (-) TimerEvent: {}
+[102.966166] (-) TimerEvent: {}
+[103.066777] (-) TimerEvent: {}
+[103.167421] (-) TimerEvent: {}
+[103.268009] (-) TimerEvent: {}
+[103.368618] (-) TimerEvent: {}
+[103.469229] (-) TimerEvent: {}
+[103.570217] (-) TimerEvent: {}
+[103.670824] (-) TimerEvent: {}
+[103.771515] (-) TimerEvent: {}
+[104.137258] (-) TimerEvent: {}
+[104.239182] (-) TimerEvent: {}
+[104.339879] (-) TimerEvent: {}
+[104.440577] (-) TimerEvent: {}
+[104.541879] (-) TimerEvent: {}
+[104.643071] (-) TimerEvent: {}
+[104.744171] (-) TimerEvent: {}
+[104.845446] (-) TimerEvent: {}
+[104.946564] (-) TimerEvent: {}
+[105.047817] (-) TimerEvent: {}
+[105.148903] (-) TimerEvent: {}
+[105.249973] (-) TimerEvent: {}
+[105.351275] (-) TimerEvent: {}
+[105.452032] (-) TimerEvent: {}
+[105.552718] (-) TimerEvent: {}
+[105.653379] (-) TimerEvent: {}
+[105.754713] (-) TimerEvent: {}
+[105.856442] (-) TimerEvent: {}
+[105.957433] (-) TimerEvent: {}
+[106.058754] (-) TimerEvent: {}
+[106.159758] (-) TimerEvent: {}
+[106.261093] (-) TimerEvent: {}
+[106.362084] (-) TimerEvent: {}
+[106.462770] (-) TimerEvent: {}
+[106.564138] (-) TimerEvent: {}
+[106.665903] (-) TimerEvent: {}
+[106.769213] (-) TimerEvent: {}
+[106.871135] (-) TimerEvent: {}
+[106.973162] (-) TimerEvent: {}
+[107.074254] (-) TimerEvent: {}
+[107.175723] (-) TimerEvent: {}
+[107.277103] (-) TimerEvent: {}
+[107.378359] (-) TimerEvent: {}
+[107.483151] (-) TimerEvent: {}
+[107.583870] (-) TimerEvent: {}
+[107.685636] (-) TimerEvent: {}
+[107.725548] (face_cropping) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX executable face_cropping_webrtc_node\x1b[0m\n'}
+[107.785875] (-) TimerEvent: {}
+[107.887576] (-) TimerEvent: {}
+[107.989100] (-) TimerEvent: {}
+[108.091223] (-) TimerEvent: {}
+[108.192816] (-) TimerEvent: {}
+[108.294886] (-) TimerEvent: {}
+[108.396232] (-) TimerEvent: {}
+[108.498108] (-) TimerEvent: {}
+[108.599370] (-) TimerEvent: {}
+[108.700713] (-) TimerEvent: {}
+[108.802444] (-) TimerEvent: {}
+[108.904292] (-) TimerEvent: {}
+[109.005813] (-) TimerEvent: {}
+[109.107198] (-) TimerEvent: {}
+[109.209162] (-) TimerEvent: {}
+[109.310800] (-) TimerEvent: {}
+[109.412763] (-) TimerEvent: {}
+[109.514690] (-) TimerEvent: {}
+[109.616675] (-) TimerEvent: {}
+[109.718459] (-) TimerEvent: {}
+[109.819883] (-) TimerEvent: {}
+[109.921322] (-) TimerEvent: {}
+[110.022604] (-) TimerEvent: {}
+[110.123440] (-) TimerEvent: {}
+[110.224155] (-) TimerEvent: {}
+[110.324801] (-) TimerEvent: {}
+[110.425452] (-) TimerEvent: {}
+[110.526739] (-) TimerEvent: {}
+[110.628142] (-) TimerEvent: {}
+[110.728726] (-) TimerEvent: {}
+[110.829945] (-) TimerEvent: {}
+[110.930906] (-) TimerEvent: {}
+[111.032128] (-) TimerEvent: {}
+[111.133316] (-) TimerEvent: {}
+[111.233944] (-) TimerEvent: {}
+[111.335391] (-) TimerEvent: {}
+[111.437059] (-) TimerEvent: {}
+[111.538600] (-) TimerEvent: {}
+[111.639484] (-) TimerEvent: {}
+[111.742042] (-) TimerEvent: {}
+[111.842701] (-) TimerEvent: {}
+[111.943759] (-) TimerEvent: {}
+[112.044482] (-) TimerEvent: {}
+[112.145127] (-) TimerEvent: {}
+[112.165246] (face_cropping) StdoutLine: {'line': b'[100%] Built target face_cropping_webrtc_node\n'}
+[112.203596] (face_cropping) CommandEnded: {'returncode': 0}
+[112.245307] (-) TimerEvent: {}
+[112.336301] (face_cropping) JobProgress: {'identifier': 'face_cropping', 'progress': 'install'}
+[112.345469] (-) TimerEvent: {}
+[112.367270] (face_cropping) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ws/ugv_ws/build/face_cropping'], 'cwd': '/home/ws/ugv_ws/build/face_cropping', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/opentera_webrtc_ros/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install:/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros/bin:/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/face_cropping'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[112.397146] (face_cropping) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[112.400026] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/lib/face_cropping/face_cropping_node\n'}
+[112.410465] (face_cropping) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/face_cropping/lib/face_cropping/face_cropping_node" to ""\n'}
+[112.412014] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/lib/face_cropping/face_cropping_webrtc_node\n'}
+[112.431444] (face_cropping) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/face_cropping/lib/face_cropping/face_cropping_webrtc_node" to ""\n'}
+[112.432359] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models\n'}
+[112.432623] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.25_silu_320.pt\n'}
+[112.440278] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.25_silu_320.pt.cuda\n'}
+[112.445580] (-) TimerEvent: {}
+[112.448265] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.25_silu_160.pt\n'}
+[112.461524] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.25_silu_640.pt.cuda\n'}
+[112.545736] (-) TimerEvent: {}
+[112.646305] (-) TimerEvent: {}
+[112.740309] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/haarcascade_frontalface_default.xml\n'}
+[112.746412] (-) TimerEvent: {}
+[112.763235] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.5_silu_320.pt.cuda\n'}
+[112.772224] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.25_silu_640.pt\n'}
+[112.780488] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.25_silu_160.pt.cuda\n'}
+[112.788704] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/lbpcascade_frontalface_improved.xml\n'}
+[112.791165] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.5_silu_320.pt\n'}
+[112.800321] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.5_silu_160.pt\n'}
+[112.809067] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.5_silu_640.pt.cuda\n'}
+[112.817822] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.5_silu_640.pt\n'}
+[112.826529] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/models/small_yunet_0.5_silu_160.pt.cuda\n'}
+[112.835720] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/lib/face_cropping/peer_image_display.py\n'}
+[112.836369] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/lib/face_cropping/peer_image_mock.py\n'}
+[112.837150] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/launch\n'}
+[112.837609] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/launch/test_face_cropping.launch.xml\n'}
+[112.838048] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/launch/test_face_cropping_webrtc.launch.xml\n'}
+[112.838995] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/launch/face_cropping_webrtc.launch.xml\n'}
+[112.839753] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/launch/face_cropping.launch.xml\n'}
+[112.841969] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/ament_index/resource_index/package_run_dependencies/face_cropping\n'}
+[112.842413] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/ament_index/resource_index/parent_prefix_path/face_cropping\n'}
+[112.842813] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/environment/ament_prefix_path.sh\n'}
+[112.843217] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/environment/ament_prefix_path.dsv\n'}
+[112.843655] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/environment/path.sh\n'}
+[112.844200] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/environment/path.dsv\n'}
+[112.845231] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/local_setup.bash\n'}
+[112.845615] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/local_setup.sh\n'}
+[112.846023] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/local_setup.zsh\n'}
+[112.846565] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/local_setup.dsv\n'}
+[112.846883] (-) TimerEvent: {}
+[112.847710] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/package.dsv\n'}
+[112.848296] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/ament_index/resource_index/packages/face_cropping\n'}
+[112.849162] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/cmake/face_croppingConfig.cmake\n'}
+[112.849553] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/cmake/face_croppingConfig-version.cmake\n'}
+[112.850033] (face_cropping) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/face_cropping/share/face_cropping/package.xml\n'}
+[112.854372] (face_cropping) CommandEnded: {'returncode': 0}
+[112.947132] (-) TimerEvent: {}
+[113.048518] (-) TimerEvent: {}
+[113.087154] (face_cropping) JobEnded: {'identifier': 'face_cropping', 'rc': 0}
+[113.090055] (-) EventReactorShutdown: {}

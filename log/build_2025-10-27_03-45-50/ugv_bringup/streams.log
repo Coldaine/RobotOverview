@@ -1,0 +1,36 @@
+[1.470s] Invoking command in '/home/ws/ugv_ws/build/ugv_bringup': PYTHONPATH=/home/ws/ugv_ws/build/ugv_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_bringup/build --no-deps symlink_data
+[1.819s] running develop
+[1.821s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[1.824s]   warnings.warn(
+[2.026s] running egg_info
+[2.027s] creating ugv_bringup.egg-info
+[2.027s] writing ugv_bringup.egg-info/PKG-INFO
+[2.028s] writing dependency_links to ugv_bringup.egg-info/dependency_links.txt
+[2.028s] writing entry points to ugv_bringup.egg-info/entry_points.txt
+[2.028s] writing requirements to ugv_bringup.egg-info/requires.txt
+[2.028s] writing top-level names to ugv_bringup.egg-info/top_level.txt
+[2.028s] writing manifest file 'ugv_bringup.egg-info/SOURCES.txt'
+[2.030s] reading manifest file 'ugv_bringup.egg-info/SOURCES.txt'
+[2.031s] writing manifest file 'ugv_bringup.egg-info/SOURCES.txt'
+[2.034s] running build_ext
+[2.034s] Creating /home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages/ugv-bringup.egg-link (link to .)
+[2.035s] Installing ugv_bringup script to /home/ws/ugv_ws/install/ugv_bringup/lib/ugv_bringup
+[2.035s] 
+[2.035s] Installed /home/ws/ugv_ws/build/ugv_bringup
+[2.035s] running symlink_data
+[2.035s] creating /home/ws/ugv_ws/install/ugv_bringup/share/ament_index
+[2.035s] creating /home/ws/ugv_ws/install/ugv_bringup/share/ament_index/resource_index
+[2.035s] creating /home/ws/ugv_ws/install/ugv_bringup/share/ament_index/resource_index/packages
+[2.035s] symbolically linking /home/ws/ugv_ws/build/ugv_bringup/resource/ugv_bringup -> /home/ws/ugv_ws/install/ugv_bringup/share/ament_index/resource_index/packages
+[2.035s] symbolically linking /home/ws/ugv_ws/build/ugv_bringup/package.xml -> /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup
+[2.035s] creating /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup/launch
+[2.036s] symbolically linking /home/ws/ugv_ws/build/ugv_bringup/launch/bringup_lidar.launch.py -> /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup/launch
+[2.036s] symbolically linking /home/ws/ugv_ws/build/ugv_bringup/launch/bringup_imu_ekf.launch.py -> /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup/launch
+[2.036s] symbolically linking /home/ws/ugv_ws/build/ugv_bringup/launch/bringup_imu_origin.launch.py -> /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup/launch
+[2.036s] creating /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup/rviz
+[2.036s] symbolically linking /home/ws/ugv_ws/build/ugv_bringup/rviz/view_bringup.rviz -> /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup/rviz
+[2.036s] creating /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup/param
+[2.036s] symbolically linking /home/ws/ugv_ws/build/ugv_bringup/param/ekf.yaml -> /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup/param
+[2.037s] symbolically linking /home/ws/ugv_ws/build/ugv_bringup/param/imu_filter.yaml -> /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup/param
+[2.038s] symbolically linking /home/ws/ugv_ws/build/ugv_bringup/param/imu_complementary_filter.yaml -> /home/ws/ugv_ws/install/ugv_bringup/share/ugv_bringup/param
+[2.103s] Invoked command in '/home/ws/ugv_ws/build/ugv_bringup' returned '0': PYTHONPATH=/home/ws/ugv_ws/build/ugv_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_bringup/build --no-deps symlink_data

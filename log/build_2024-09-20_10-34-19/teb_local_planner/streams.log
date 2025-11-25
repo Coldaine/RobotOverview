@@ -1,0 +1,32 @@
+[0.038s] Invoking command in '/home/ws/ugv_ws/build/teb_local_planner': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --build /home/ws/ugv_ws/build/teb_local_planner -- -j4 -l4
+[0.094s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.276s] -- Found costmap_converter: 0.1.2 (/home/ws/ugv_ws/install/costmap_converter/share/costmap_converter/cmake)
+[0.313s] -- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.316s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.323s] -- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.336s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.350s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.529s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.532s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.675s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[0.956s] -- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+[1.153s] -- Found dwb_critics: 1.1.16 (/opt/ros/humble/share/dwb_critics/cmake)
+[1.375s] -- Found teb_msgs: 0.0.1 (/home/ws/ugv_ws/install/teb_msgs/share/teb_msgs/cmake)
+[1.410s] -- Found tf2_eigen: 0.25.7 (/opt/ros/humble/share/tf2_eigen/cmake)
+[1.414s] -- System: Linux-6.6.31+rpt-rpi-2712
+[1.414s] -- /opt/ros/humble/share/tinyxml2_vendor/cmake/Modules;/opt/ros/humble/share/eigen3_cmake_module/cmake/Modules;/opt/ros/humble/share/fastrtps_cmake_module/cmake/Modules;/home/ws/ugv_ws/src/ugv_else/teb_local_planner/teb_local_planner/cmake_modules
+[1.417s] -- Found SuiteSparse
+[1.418s] -- Searching for g2o ...
+[1.418s] -- Found g2o headers in: /opt/ros/humble/include/g2o
+[1.418s] -- Found libg2o: /opt/ros/humble/lib/aarch64-linux-gnu/libg2o_csparse_extension.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_core.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_stuff.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_types_slam2d.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_types_slam3d.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_solver_cholmod.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_solver_pcg.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_solver_csparse.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_incremental.so
+[2.631s] -- Found ament_cmake_gtest: 1.3.10 (/opt/ros/humble/share/ament_cmake_gtest/cmake)
+[2.748s] -- Configuring done
+[2.974s] -- Generating done
+[3.004s] -- Build files have been written to: /home/ws/ugv_ws/build/teb_local_planner
+[3.075s] [35m[1mConsolidate compiler generated dependencies of target teb_local_planner[0m
+[3.228s] [ 10%] [32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/timed_elastic_band.cpp.o[0m
+[3.303s] [ 30%] [32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/obstacles.cpp.o[0m
+[3.303s] [ 30%] [32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/optimal_planner.cpp.o[0m
+[3.311s] [ 40%] [32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/visualization.cpp.o[0m
+[9.340s] [ 50%] [32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/recovery_behaviors.cpp.o[0m
+[14.783s] [ 60%] [32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/teb_config.cpp.o[0m

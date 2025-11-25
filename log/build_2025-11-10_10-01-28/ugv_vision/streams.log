@@ -1,0 +1,26 @@
+[1.669s] Invoking command in '/home/ws/ugv_ws/build/ugv_vision': PYTHONPATH=/home/ws/ugv_ws/build/ugv_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_vision/build --no-deps symlink_data
+[2.043s] running develop
+[2.047s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[2.047s]   warnings.warn(
+[2.291s] running egg_info
+[2.292s] writing ugv_vision.egg-info/PKG-INFO
+[2.292s] writing dependency_links to ugv_vision.egg-info/dependency_links.txt
+[2.297s] writing entry points to ugv_vision.egg-info/entry_points.txt
+[2.299s] writing requirements to ugv_vision.egg-info/requires.txt
+[2.301s] writing top-level names to ugv_vision.egg-info/top_level.txt
+[2.309s] reading manifest file 'ugv_vision.egg-info/SOURCES.txt'
+[2.310s] writing manifest file 'ugv_vision.egg-info/SOURCES.txt'
+[2.313s] running build_ext
+[2.313s] Creating /home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages/ugv-vision.egg-link (link to .)
+[2.314s] Installing apriltag_track_nav2 script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[2.315s] Installing apriltag_track_pid script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[2.315s] Installing cam_oak_webrtc script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[2.315s] Installing cam_webrtc script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[2.315s] Installing color_track_line_pid script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[2.315s] Installing color_track_pid script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[2.315s] Installing pt_color_track script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[2.315s] 
+[2.315s] Installed /home/ws/ugv_ws/build/ugv_vision
+[2.315s] running symlink_data
+[2.316s] error: can't copy '/home/ws/ugv_ws/build/ugv_vision/launch/apriltag_track.launch.py': doesn't exist or not a regular file
+[2.392s] Invoked command in '/home/ws/ugv_ws/build/ugv_vision' returned '1': PYTHONPATH=/home/ws/ugv_ws/build/ugv_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_vision/build --no-deps symlink_data

@@ -1,0 +1,27 @@
+[1.352s] Invoking command in '/home/ws/ugv_ws/build/ugv_vision': PYTHONPATH=/home/ws/ugv_ws/build/ugv_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_vision/build --no-deps symlink_data
+[1.699s] running develop
+[1.699s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[1.699s]   warnings.warn(
+[1.887s] running egg_info
+[1.888s] writing ugv_vision.egg-info/PKG-INFO
+[1.888s] writing dependency_links to ugv_vision.egg-info/dependency_links.txt
+[1.892s] writing entry points to ugv_vision.egg-info/entry_points.txt
+[1.893s] writing requirements to ugv_vision.egg-info/requires.txt
+[1.893s] writing top-level names to ugv_vision.egg-info/top_level.txt
+[1.896s] reading manifest file 'ugv_vision.egg-info/SOURCES.txt'
+[1.897s] writing manifest file 'ugv_vision.egg-info/SOURCES.txt'
+[1.900s] running build_ext
+[1.900s] Creating /home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages/ugv-vision.egg-link (link to .)
+[1.901s] Installing apriltag_ctrl script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[1.902s] Installing apriltag_track_0 script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[1.902s] Installing apriltag_track_1 script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[1.902s] Installing apriltag_track_2 script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[1.902s] Installing color_track script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[1.902s] Installing gesture_ctrl script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[1.902s] Installing kcf_track script to /home/ws/ugv_ws/install/ugv_vision/lib/ugv_vision
+[1.903s] 
+[1.903s] Installed /home/ws/ugv_ws/build/ugv_vision
+[1.903s] running symlink_data
+[1.903s] symbolically linking /home/ws/ugv_ws/build/ugv_vision/resource/ugv_vision -> /home/ws/ugv_ws/install/ugv_vision/share/ament_index/resource_index/packages
+[1.904s] error: [Errno 17] File exists: '/home/ws/ugv_ws/build/ugv_vision/resource/ugv_vision' -> '/home/ws/ugv_ws/install/ugv_vision/share/ament_index/resource_index/packages/ugv_vision'
+[1.975s] Invoked command in '/home/ws/ugv_ws/build/ugv_vision' returned '1': PYTHONPATH=/home/ws/ugv_ws/build/ugv_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_vision/build --no-deps symlink_data

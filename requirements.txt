@@ -1,0 +1,4 @@
+pyserial
+flask
+requests
+dt_apriltags

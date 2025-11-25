@@ -1,0 +1,187 @@
+[0.047s] Invoking command in '/home/ws/ugv_ws/build/ugv_interface': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_interface -- -j4 -l4
+[0.266s] [  2%] Built target ugv_interface__cpp
+[0.270s] [ 12%] Built target ugv_interface__rosidl_generator_c
+[0.359s] [ 12%] Built target ament_cmake_python_copy_ugv_interface
+[0.368s] [ 23%] Built target ugv_interface__rosidl_typesupport_fastrtps_cpp
+[0.370s] [ 33%] Built target ugv_interface__rosidl_typesupport_cpp
+[0.423s] [ 43%] Built target ugv_interface__rosidl_typesupport_introspection_cpp
+[0.430s] [ 53%] Built target ugv_interface__rosidl_typesupport_fastrtps_c
+[0.437s] [ 64%] Built target ugv_interface__rosidl_typesupport_introspection_c
+[0.448s] [ 74%] Built target ugv_interface__rosidl_typesupport_c
+[0.521s] [ 74%] Built target ugv_interface
+[0.605s] [ 76%] Built target ugv_interface__py
+[0.710s] [ 84%] Built target ugv_interface__rosidl_generator_py
+[0.804s] [ 89%] Built target ugv_interface__rosidl_typesupport_introspection_c__pyext
+[0.826s] [ 94%] Built target ugv_interface__rosidl_typesupport_fastrtps_c__pyext
+[0.839s] [100%] Built target ugv_interface__rosidl_typesupport_c__pyext
+[1.432s] running egg_info
+[1.434s] writing ugv_interface.egg-info/PKG-INFO
+[1.439s] writing dependency_links to ugv_interface.egg-info/dependency_links.txt
+[1.450s] writing top-level names to ugv_interface.egg-info/top_level.txt
+[1.465s] reading manifest file 'ugv_interface.egg-info/SOURCES.txt'
+[1.467s] writing manifest file 'ugv_interface.egg-info/SOURCES.txt'
+[1.727s] [100%] Built target ament_cmake_python_build_ugv_interface_egg
+[1.774s] Invoked command in '/home/ws/ugv_ws/build/ugv_interface' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_interface -- -j4 -l4
+[2.203s] Invoking command in '/home/ws/ugv_ws/build/ugv_interface': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/ugv_interface
+[2.233s] -- Install configuration: ""
+[2.234s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ament_index/resource_index/rosidl_interfaces/ugv_interface
+[2.234s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface
+[2.235s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/msg
+[2.235s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/msg/rosidl_generator_c__visibility_control.h
+[2.235s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv
+[2.235s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/map_save.h
+[2.235s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail
+[2.236s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__functions.h
+[2.236s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__type_support.h
+[2.236s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__struct.h
+[2.236s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__functions.c
+[2.236s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action
+[2.236s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/behavior.h
+[2.237s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail
+[2.242s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__type_support.h
+[2.243s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__struct.h
+[2.243s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__functions.c
+[2.243s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__functions.h
+[2.247s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/environment/library_path.sh
+[2.247s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/environment/library_path.dsv
+[2.249s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/lib/libugv_interface__rosidl_generator_c.so
+[2.249s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface
+[2.249s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/msg
+[2.249s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+[2.250s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv
+[2.250s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail
+[2.250s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__rosidl_typesupport_fastrtps_c.h
+[2.250s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action
+[2.250s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail
+[2.250s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__rosidl_typesupport_fastrtps_c.h
+[2.252s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/lib/libugv_interface__rosidl_typesupport_fastrtps_c.so
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/msg
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/msg/rosidl_typesupport_introspection_c__visibility_control.h
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__rosidl_typesupport_introspection_c.h
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__type_support.c
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__rosidl_typesupport_introspection_c.h
+[2.255s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__type_support.c
+[2.256s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/lib/libugv_interface__rosidl_typesupport_introspection_c.so
+[2.263s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/lib/libugv_interface__rosidl_typesupport_c.so
+[2.263s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface
+[2.263s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv
+[2.263s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail
+[2.263s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__builder.hpp
+[2.263s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__traits.hpp
+[2.264s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__struct.hpp
+[2.264s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/map_save.hpp
+[2.264s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action
+[2.264s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/behavior.hpp
+[2.264s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail
+[2.264s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__traits.hpp
+[2.264s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__builder.hpp
+[2.264s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__struct.hpp
+[2.264s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface
+[2.266s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/msg
+[2.267s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+[2.267s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv
+[2.267s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail
+[2.267s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/dds_fastrtps
+[2.267s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__rosidl_typesupport_fastrtps_cpp.hpp
+[2.267s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action
+[2.267s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail
+[2.267s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__rosidl_typesupport_fastrtps_cpp.hpp
+[2.267s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/dds_fastrtps
+[2.267s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/lib/libugv_interface__rosidl_typesupport_fastrtps_cpp.so
+[2.268s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface
+[2.268s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv
+[2.268s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail
+[2.268s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__type_support.cpp
+[2.268s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/srv/detail/map_save__rosidl_typesupport_introspection_cpp.hpp
+[2.268s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action
+[2.268s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail
+[2.268s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__rosidl_typesupport_introspection_cpp.hpp
+[2.268s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/include/ugv_interface/ugv_interface/action/detail/behavior__type_support.cpp
+[2.269s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/lib/libugv_interface__rosidl_typesupport_introspection_cpp.so
+[2.279s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/lib/libugv_interface__rosidl_typesupport_cpp.so
+[2.279s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/environment/pythonpath.sh
+[2.279s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/environment/pythonpath.dsv
+[2.279s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface-0.0.0-py3.10.egg-info
+[2.279s] -- Installing: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface-0.0.0-py3.10.egg-info/PKG-INFO
+[2.280s] -- Installing: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface-0.0.0-py3.10.egg-info/top_level.txt
+[2.280s] -- Installing: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface-0.0.0-py3.10.egg-info/dependency_links.txt
+[2.280s] -- Installing: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface-0.0.0-py3.10.egg-info/SOURCES.txt
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/libugv_interface__rosidl_generator_py.so
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/ugv_interface_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/_ugv_interface_s.ep.rosidl_typesupport_c.c
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/ugv_interface_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/srv
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/srv/_map_save_s.c
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/srv/__init__.py
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/srv/_map_save.py
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/_ugv_interface_s.ep.rosidl_typesupport_fastrtps_c.c
+[2.283s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/ugv_interface_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so
+[2.284s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/__init__.py
+[2.284s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/_ugv_interface_s.ep.rosidl_typesupport_introspection_c.c
+[2.284s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/action
+[2.284s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/action/_behavior.py
+[2.284s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/action/_behavior_s.c
+[2.284s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/action/__init__.py
+[2.450s] Listing '/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface'...
+[2.451s] Listing '/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/action'...
+[2.451s] Listing '/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/srv'...
+[2.478s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/ugv_interface_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so
+[2.480s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/ugv_interface_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so
+[2.487s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages/ugv_interface/ugv_interface_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so
+[2.487s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/lib/libugv_interface__rosidl_generator_py.so
+[2.487s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/srv/MapSave.idl
+[2.487s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/action/Behavior.idl
+[2.487s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/srv/MapSave.srv
+[2.487s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/srv/MapSave_Request.msg
+[2.487s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/srv/MapSave_Response.msg
+[2.487s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/action/Behavior.action
+[2.487s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/srv
+[2.487s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/srv/MapSave.srv
+[2.488s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/action
+[2.488s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/action/Behavior.action
+[2.491s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ament_index/resource_index/package_run_dependencies/ugv_interface
+[2.493s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ament_index/resource_index/parent_prefix_path/ugv_interface
+[2.493s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/environment/ament_prefix_path.sh
+[2.493s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/environment/ament_prefix_path.dsv
+[2.493s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/environment/path.sh
+[2.493s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/environment/path.dsv
+[2.494s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/local_setup.bash
+[2.494s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/local_setup.sh
+[2.494s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/local_setup.zsh
+[2.494s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/local_setup.dsv
+[2.494s] -- Installing: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/package.dsv
+[2.495s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ament_index/resource_index/packages/ugv_interface
+[2.497s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/export_ugv_interface__rosidl_generator_cExport.cmake
+[2.497s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/export_ugv_interface__rosidl_generator_cExport-noconfig.cmake
+[2.507s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/export_ugv_interface__rosidl_typesupport_fastrtps_cExport.cmake
+[2.508s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/export_ugv_interface__rosidl_typesupport_fastrtps_cExport-noconfig.cmake
+[2.511s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ugv_interface__rosidl_typesupport_introspection_cExport.cmake
+[2.511s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ugv_interface__rosidl_typesupport_introspection_cExport-noconfig.cmake
+[2.511s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ugv_interface__rosidl_typesupport_cExport.cmake
+[2.511s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ugv_interface__rosidl_typesupport_cExport-noconfig.cmake
+[2.511s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/export_ugv_interface__rosidl_generator_cppExport.cmake
+[2.512s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/export_ugv_interface__rosidl_typesupport_fastrtps_cppExport.cmake
+[2.512s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/export_ugv_interface__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake
+[2.513s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ugv_interface__rosidl_typesupport_introspection_cppExport.cmake
+[2.513s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ugv_interface__rosidl_typesupport_introspection_cppExport-noconfig.cmake
+[2.514s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ugv_interface__rosidl_typesupport_cppExport.cmake
+[2.514s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ugv_interface__rosidl_typesupport_cppExport-noconfig.cmake
+[2.519s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/export_ugv_interface__rosidl_generator_pyExport.cmake
+[2.519s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/export_ugv_interface__rosidl_generator_pyExport-noconfig.cmake
+[2.519s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/rosidl_cmake-extras.cmake
+[2.519s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ament_cmake_export_dependencies-extras.cmake
+[2.519s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ament_cmake_export_include_directories-extras.cmake
+[2.519s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ament_cmake_export_libraries-extras.cmake
+[2.519s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ament_cmake_export_targets-extras.cmake
+[2.520s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+[2.520s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+[2.520s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ugv_interfaceConfig.cmake
+[2.520s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/cmake/ugv_interfaceConfig-version.cmake
+[2.520s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_interface/share/ugv_interface/package.xml
+[2.536s] Invoked command in '/home/ws/ugv_ws/build/ugv_interface' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/ugv_interface

@@ -1,0 +1,558 @@
+[0.000000] (-) TimerEvent: {}
+[0.001522] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.002101] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.002310] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.002677] (-) JobUnselected: {'identifier': 'audio_utils'}
+[0.002844] (-) JobUnselected: {'identifier': 'audio_utils_msgs'}
+[0.002987] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.003079] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.003147] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.003212] (-) JobUnselected: {'identifier': 'cv_camera'}
+[0.003275] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.003336] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.003398] (-) JobUnselected: {'identifier': 'face_cropping'}
+[0.003460] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.003521] (-) JobUnselected: {'identifier': 'map_image_generator'}
+[0.003581] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.003642] (-) JobUnselected: {'identifier': 'opentera_client_ros'}
+[0.003703] (-) JobUnselected: {'identifier': 'opentera_protobuf_messages'}
+[0.003764] (-) JobUnselected: {'identifier': 'opentera_webrtc_demos'}
+[0.003823] (-) JobUnselected: {'identifier': 'opentera_webrtc_robot_gui'}
+[0.003894] (-) JobUnselected: {'identifier': 'opentera_webrtc_ros'}
+[0.003958] (-) JobUnselected: {'identifier': 'opentera_webrtc_ros_msgs'}
+[0.004018] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.004081] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.004141] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.004282] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.004350] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.004410] (-) JobUnselected: {'identifier': 'turtlebot3_beam_description'}
+[0.004471] (-) JobUnselected: {'identifier': 'ugv_base_node'}
+[0.004533] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.004594] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.004671] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.004736] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.004796] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.004855] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.004912] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.004970] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.005027] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.005084] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.005141] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.005198] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.005256] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.005312] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.005370] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.005437] (odas_ros_msgs) JobQueued: {'identifier': 'odas_ros_msgs', 'dependencies': OrderedDict()}
+[0.005508] (odas_ros) JobQueued: {'identifier': 'odas_ros', 'dependencies': OrderedDict([('audio_utils_msgs', '/home/ws/ugv_ws/install/audio_utils_msgs'), ('odas_ros_msgs', '/home/ws/ugv_ws/install/odas_ros_msgs')])}
+[0.005587] (odas_ros_msgs) JobStarted: {'identifier': 'odas_ros_msgs'}
+[0.054309] (odas_ros_msgs) JobProgress: {'identifier': 'odas_ros_msgs', 'progress': 'cmake'}
+[0.060486] (odas_ros_msgs) JobProgress: {'identifier': 'odas_ros_msgs', 'progress': 'build'}
+[0.062859] (odas_ros_msgs) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/odas_ros_msgs', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/odas_ros_msgs', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install:/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/odas_ros_msgs'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/audio_utils/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.099694] (-) TimerEvent: {}
+[0.200579] (-) TimerEvent: {}
+[0.262284] (odas_ros_msgs) StdoutLine: {'line': b'[  1%] \x1b[34m\x1b[1mGenerating C code for ROS interfaces\x1b[0m\n'}
+[0.296402] (odas_ros_msgs) StdoutLine: {'line': b'[  3%] \x1b[34m\x1b[1mGenerating C++ code for ROS interfaces\x1b[0m\n'}
+[0.301260] (-) TimerEvent: {}
+[0.332434] (odas_ros_msgs) StdoutLine: {'line': b'[  3%] Built target ament_cmake_python_symlink_odas_ros_msgs\n'}
+[0.401589] (-) TimerEvent: {}
+[0.503842] (-) TimerEvent: {}
+[0.604942] (-) TimerEvent: {}
+[0.706214] (-) TimerEvent: {}
+[0.807268] (-) TimerEvent: {}
+[0.907961] (-) TimerEvent: {}
+[1.009062] (-) TimerEvent: {}
+[1.109745] (-) TimerEvent: {}
+[1.210791] (-) TimerEvent: {}
+[1.311417] (-) TimerEvent: {}
+[1.412735] (-) TimerEvent: {}
+[1.513793] (-) TimerEvent: {}
+[1.615161] (-) TimerEvent: {}
+[1.716090] (-) TimerEvent: {}
+[1.722925] (odas_ros_msgs) StdoutLine: {'line': b'running egg_info\n'}
+[1.724387] (odas_ros_msgs) StdoutLine: {'line': b'writing odas_ros_msgs.egg-info/PKG-INFO\n'}
+[1.728035] (odas_ros_msgs) StdoutLine: {'line': b'writing dependency_links to odas_ros_msgs.egg-info/dependency_links.txt\n'}
+[1.731627] (odas_ros_msgs) StdoutLine: {'line': b'writing top-level names to odas_ros_msgs.egg-info/top_level.txt\n'}
+[1.744109] (odas_ros_msgs) StdoutLine: {'line': b"reading manifest file 'odas_ros_msgs.egg-info/SOURCES.txt'\n"}
+[1.747116] (odas_ros_msgs) StdoutLine: {'line': b"writing manifest file 'odas_ros_msgs.egg-info/SOURCES.txt'\n"}
+[1.816395] (-) TimerEvent: {}
+[1.888838] (odas_ros_msgs) StdoutLine: {'line': b'[  3%] Built target ament_cmake_python_build_odas_ros_msgs_egg\n'}
+[1.916654] (-) TimerEvent: {}
+[2.020396] (-) TimerEvent: {}
+[2.121786] (-) TimerEvent: {}
+[2.223142] (-) TimerEvent: {}
+[2.228485] (odas_ros_msgs) StdoutLine: {'line': b'[  3%] Built target odas_ros_msgs__cpp\n'}
+[2.287872] (odas_ros_msgs) StdoutLine: {'line': b'[  5%] \x1b[34m\x1b[1mGenerating C++ type support dispatch for ROS interfaces\x1b[0m\n'}
+[2.325689] (-) TimerEvent: {}
+[2.367117] (odas_ros_msgs) StdoutLine: {'line': b'[  7%] \x1b[34m\x1b[1mGenerating C++ type support for eProsima Fast-RTPS\x1b[0m\n'}
+[2.384415] (odas_ros_msgs) StdoutLine: {'line': b'[  9%] \x1b[34m\x1b[1mGenerating C++ introspection for ROS interfaces\x1b[0m\n'}
+[2.425847] (-) TimerEvent: {}
+[2.526660] (-) TimerEvent: {}
+[2.627564] (-) TimerEvent: {}
+[2.633239] (odas_ros_msgs) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/odas_ros_msgs/msg/detail/odas_ssl__functions.c.o\x1b[0m\n'}
+[2.727737] (-) TimerEvent: {}
+[2.828628] (-) TimerEvent: {}
+[2.880425] (odas_ros_msgs) StdoutLine: {'line': b'[ 12%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__functions.c.o\x1b[0m\n'}
+[2.928861] (-) TimerEvent: {}
+[3.029780] (-) TimerEvent: {}
+[3.108242] (odas_ros_msgs) StdoutLine: {'line': b'[ 14%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/odas_ros_msgs/msg/detail/odas_sst__functions.c.o\x1b[0m\n'}
+[3.129974] (-) TimerEvent: {}
+[3.232661] (-) TimerEvent: {}
+[3.312494] (odas_ros_msgs) StdoutLine: {'line': b'[ 16%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/odas_ros_msgs/msg/detail/odas_sst_array_stamped__functions.c.o\x1b[0m\n'}
+[3.336362] (-) TimerEvent: {}
+[3.437194] (-) TimerEvent: {}
+[3.523137] (odas_ros_msgs) StdoutLine: {'line': b'[ 18%] \x1b[32m\x1b[1mLinking C shared library libodas_ros_msgs__rosidl_generator_c.so\x1b[0m\n'}
+[3.537389] (-) TimerEvent: {}
+[3.638097] (-) TimerEvent: {}
+[3.740582] (-) TimerEvent: {}
+[3.746370] (odas_ros_msgs) StdoutLine: {'line': b'[ 18%] Built target odas_ros_msgs__rosidl_generator_c\n'}
+[3.839173] (odas_ros_msgs) StdoutLine: {'line': b'[ 20%] \x1b[34m\x1b[1mGenerating C type support for eProsima Fast-RTPS\x1b[0m\n'}
+[3.844084] (-) TimerEvent: {}
+[3.927313] (odas_ros_msgs) StdoutLine: {'line': b'[ 21%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/odas_ros_msgs/msg/odas_ssl__type_support.cpp.o\x1b[0m\n'}
+[3.948370] (-) TimerEvent: {}
+[4.049756] (-) TimerEvent: {}
+[4.150968] (-) TimerEvent: {}
+[4.260350] (-) TimerEvent: {}
+[4.361371] (-) TimerEvent: {}
+[4.403665] (odas_ros_msgs) StdoutLine: {'line': b'[ 23%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/odas_ros_msgs/msg/detail/odas_ssl__type_support.cpp.o\x1b[0m\n'}
+[4.461601] (-) TimerEvent: {}
+[4.546802] (odas_ros_msgs) StdoutLine: {'line': b'[ 25%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/odas_ros_msgs/msg/detail/dds_fastrtps/odas_ssl__type_support.cpp.o\x1b[0m\n'}
+[4.564300] (-) TimerEvent: {}
+[4.665074] (-) TimerEvent: {}
+[4.766171] (-) TimerEvent: {}
+[4.868353] (-) TimerEvent: {}
+[4.972338] (-) TimerEvent: {}
+[5.073158] (-) TimerEvent: {}
+[5.174128] (-) TimerEvent: {}
+[5.276400] (-) TimerEvent: {}
+[5.379589] (-) TimerEvent: {}
+[5.444629] (odas_ros_msgs) StdoutLine: {'line': b'[ 27%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/odas_ros_msgs/msg/odas_ssl_array_stamped__type_support.cpp.o\x1b[0m\n'}
+[5.484335] (-) TimerEvent: {}
+[5.585231] (-) TimerEvent: {}
+[5.686547] (-) TimerEvent: {}
+[5.787978] (-) TimerEvent: {}
+[5.892901] (-) TimerEvent: {}
+[5.996363] (-) TimerEvent: {}
+[6.097998] (-) TimerEvent: {}
+[6.204338] (-) TimerEvent: {}
+[6.305324] (-) TimerEvent: {}
+[6.348533] (odas_ros_msgs) StdoutLine: {'line': b'[ 29%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/odas_ros_msgs/msg/detail/odas_ssl__type_support_c.cpp.o\x1b[0m\n'}
+[6.408375] (-) TimerEvent: {}
+[6.509322] (-) TimerEvent: {}
+[6.606551] (odas_ros_msgs) StdoutLine: {'line': b'[ 30%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__type_support.cpp.o\x1b[0m\n'}
+[6.612358] (-) TimerEvent: {}
+[6.713170] (-) TimerEvent: {}
+[6.816704] (-) TimerEvent: {}
+[6.904388] (odas_ros_msgs) StdoutLine: {'line': b'[ 32%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/odas_ros_msgs/msg/detail/dds_fastrtps/odas_ssl_array_stamped__type_support.cpp.o\x1b[0m\n'}
+[6.916973] (-) TimerEvent: {}
+[6.980783] (odas_ros_msgs) StdoutLine: {'line': b'[ 34%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/odas_ros_msgs/msg/odas_sst__type_support.cpp.o\x1b[0m\n'}
+[7.017210] (-) TimerEvent: {}
+[7.120659] (-) TimerEvent: {}
+[7.224384] (-) TimerEvent: {}
+[7.325399] (-) TimerEvent: {}
+[7.426943] (-) TimerEvent: {}
+[7.532851] (-) TimerEvent: {}
+[7.633730] (-) TimerEvent: {}
+[7.735411] (-) TimerEvent: {}
+[7.840895] (-) TimerEvent: {}
+[7.944377] (-) TimerEvent: {}
+[8.045452] (-) TimerEvent: {}
+[8.149072] (-) TimerEvent: {}
+[8.252765] (-) TimerEvent: {}
+[8.356729] (-) TimerEvent: {}
+[8.419479] (odas_ros_msgs) StdoutLine: {'line': b'[ 36%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__type_support_c.cpp.o\x1b[0m\n'}
+[8.440382] (odas_ros_msgs) StdoutLine: {'line': b'[ 38%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/odas_ros_msgs/msg/odas_sst_array_stamped__type_support.cpp.o\x1b[0m\n'}
+[8.457045] (-) TimerEvent: {}
+[8.558503] (-) TimerEvent: {}
+[8.659825] (-) TimerEvent: {}
+[8.761387] (-) TimerEvent: {}
+[8.864698] (-) TimerEvent: {}
+[8.966054] (-) TimerEvent: {}
+[9.068748] (-) TimerEvent: {}
+[9.090166] (odas_ros_msgs) StdoutLine: {'line': b'[ 40%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/odas_ros_msgs/msg/detail/odas_sst__type_support.cpp.o\x1b[0m\n'}
+[9.172364] (-) TimerEvent: {}
+[9.273604] (-) TimerEvent: {}
+[9.375451] (-) TimerEvent: {}
+[9.478990] (-) TimerEvent: {}
+[9.644927] (-) TimerEvent: {}
+[9.662244] (odas_ros_msgs) StdoutLine: {'line': b'[ 41%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/odas_ros_msgs/msg/detail/dds_fastrtps/odas_sst__type_support.cpp.o\x1b[0m\n'}
+[9.748354] (-) TimerEvent: {}
+[9.849551] (-) TimerEvent: {}
+[9.871161] (odas_ros_msgs) StdoutLine: {'line': b'[ 43%] \x1b[32m\x1b[1mLinking CXX shared library libodas_ros_msgs__rosidl_typesupport_cpp.so\x1b[0m\n'}
+[9.949818] (-) TimerEvent: {}
+[10.052793] (-) TimerEvent: {}
+[10.131381] (odas_ros_msgs) StdoutLine: {'line': b'[ 43%] Built target odas_ros_msgs__rosidl_typesupport_cpp\n'}
+[10.153024] (-) TimerEvent: {}
+[10.183526] (odas_ros_msgs) StdoutLine: {'line': b'[ 45%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/odas_ros_msgs/msg/detail/odas_sst_array_stamped__type_support.cpp.o\x1b[0m\n'}
+[10.253245] (-) TimerEvent: {}
+[10.354200] (-) TimerEvent: {}
+[10.456669] (-) TimerEvent: {}
+[10.478843] (odas_ros_msgs) StdoutLine: {'line': b'[ 47%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/odas_ros_msgs/msg/detail/odas_sst__type_support_c.cpp.o\x1b[0m\n'}
+[10.556907] (-) TimerEvent: {}
+[10.658497] (-) TimerEvent: {}
+[10.760710] (-) TimerEvent: {}
+[10.864349] (-) TimerEvent: {}
+[10.965356] (-) TimerEvent: {}
+[11.066295] (-) TimerEvent: {}
+[11.172732] (-) TimerEvent: {}
+[11.245335] (odas_ros_msgs) StdoutLine: {'line': b'[ 49%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/odas_ros_msgs/msg/detail/dds_fastrtps/odas_sst_array_stamped__type_support.cpp.o\x1b[0m\n'}
+[11.272952] (-) TimerEvent: {}
+[11.373913] (-) TimerEvent: {}
+[11.476728] (-) TimerEvent: {}
+[11.580666] (-) TimerEvent: {}
+[11.681571] (-) TimerEvent: {}
+[11.784689] (-) TimerEvent: {}
+[11.888787] (-) TimerEvent: {}
+[11.989871] (-) TimerEvent: {}
+[11.999190] (odas_ros_msgs) StdoutLine: {'line': b'[ 50%] \x1b[34m\x1b[1mGenerating C introspection for ROS interfaces\x1b[0m\n'}
+[12.092323] (-) TimerEvent: {}
+[12.193185] (-) TimerEvent: {}
+[12.296616] (-) TimerEvent: {}
+[12.397874] (-) TimerEvent: {}
+[12.504380] (-) TimerEvent: {}
+[12.508449] (odas_ros_msgs) StdoutLine: {'line': b'[ 52%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/odas_ros_msgs/msg/detail/odas_sst_array_stamped__type_support_c.cpp.o\x1b[0m\n'}
+[12.604550] (-) TimerEvent: {}
+[12.680924] (odas_ros_msgs) StdoutLine: {'line': b'[ 54%] \x1b[32m\x1b[1mLinking CXX shared library libodas_ros_msgs__rosidl_typesupport_introspection_cpp.so\x1b[0m\n'}
+[12.705932] (-) TimerEvent: {}
+[12.806767] (-) TimerEvent: {}
+[12.912309] (-) TimerEvent: {}
+[13.013123] (-) TimerEvent: {}
+[13.069240] (odas_ros_msgs) StdoutLine: {'line': b'[ 54%] Built target odas_ros_msgs__rosidl_typesupport_introspection_cpp\n'}
+[13.113317] (-) TimerEvent: {}
+[13.129290] (odas_ros_msgs) StdoutLine: {'line': b'[ 56%] \x1b[34m\x1b[1mGenerating C type support dispatch for ROS interfaces\x1b[0m\n'}
+[13.216335] (-) TimerEvent: {}
+[13.317443] (-) TimerEvent: {}
+[13.424351] (-) TimerEvent: {}
+[13.525474] (-) TimerEvent: {}
+[13.626642] (-) TimerEvent: {}
+[13.727915] (-) TimerEvent: {}
+[13.831609] (-) TimerEvent: {}
+[13.936618] (-) TimerEvent: {}
+[14.032427] (odas_ros_msgs) StdoutLine: {'line': b'[ 58%] \x1b[32m\x1b[1mLinking CXX shared library libodas_ros_msgs__rosidl_typesupport_fastrtps_cpp.so\x1b[0m\n'}
+[14.037449] (-) TimerEvent: {}
+[14.138773] (-) TimerEvent: {}
+[14.244691] (-) TimerEvent: {}
+[14.262711] (odas_ros_msgs) StdoutLine: {'line': b'[ 60%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/odas_ros_msgs/msg/detail/odas_ssl__type_support.c.o\x1b[0m\n'}
+[14.344897] (-) TimerEvent: {}
+[14.425942] (odas_ros_msgs) StdoutLine: {'line': b'[ 61%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__type_support.c.o\x1b[0m\n'}
+[14.448373] (-) TimerEvent: {}
+[14.477855] (odas_ros_msgs) StdoutLine: {'line': b'[ 61%] Built target odas_ros_msgs__rosidl_typesupport_fastrtps_cpp\n'}
+[14.524306] (odas_ros_msgs) StdoutLine: {'line': b'[ 63%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/odas_ros_msgs/msg/detail/odas_sst__type_support.c.o\x1b[0m\n'}
+[14.548581] (-) TimerEvent: {}
+[14.628141] (odas_ros_msgs) StdoutLine: {'line': b'[ 65%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/odas_ros_msgs/msg/detail/odas_sst_array_stamped__type_support.c.o\x1b[0m\n'}
+[14.648838] (-) TimerEvent: {}
+[14.721475] (odas_ros_msgs) StdoutLine: {'line': b'[ 67%] \x1b[32m\x1b[1mLinking CXX shared library libodas_ros_msgs__rosidl_typesupport_fastrtps_c.so\x1b[0m\n'}
+[14.752393] (-) TimerEvent: {}
+[14.805397] (odas_ros_msgs) StdoutLine: {'line': b'[ 69%] \x1b[32m\x1b[1mLinking C shared library libodas_ros_msgs__rosidl_typesupport_introspection_c.so\x1b[0m\n'}
+[14.840488] (odas_ros_msgs) StdoutLine: {'line': b'[ 70%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/odas_ros_msgs/msg/odas_ssl__type_support.cpp.o\x1b[0m\n'}
+[14.845232] (odas_ros_msgs) StdoutLine: {'line': b'[ 72%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/odas_ros_msgs/msg/odas_ssl_array_stamped__type_support.cpp.o\x1b[0m\n'}
+[14.856421] (-) TimerEvent: {}
+[14.957456] (-) TimerEvent: {}
+[14.988624] (odas_ros_msgs) StdoutLine: {'line': b'[ 74%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/odas_ros_msgs/msg/odas_sst__type_support.cpp.o\x1b[0m\n'}
+[14.995621] (odas_ros_msgs) StdoutLine: {'line': b'[ 74%] Built target odas_ros_msgs__rosidl_typesupport_introspection_c\n'}
+[15.008701] (odas_ros_msgs) StdoutLine: {'line': b'[ 76%] \x1b[32mBuilding CXX object CMakeFiles/odas_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/odas_ros_msgs/msg/odas_sst_array_stamped__type_support.cpp.o\x1b[0m\n'}
+[15.059682] (-) TimerEvent: {}
+[15.096787] (odas_ros_msgs) StdoutLine: {'line': b'[ 76%] Built target odas_ros_msgs__rosidl_typesupport_fastrtps_c\n'}
+[15.131778] (odas_ros_msgs) StdoutLine: {'line': b'[ 78%] \x1b[32m\x1b[1mLinking CXX shared library libodas_ros_msgs__rosidl_typesupport_c.so\x1b[0m\n'}
+[15.159863] (-) TimerEvent: {}
+[15.260530] (odas_ros_msgs) StdoutLine: {'line': b'[ 78%] Built target odas_ros_msgs__rosidl_typesupport_c\n'}
+[15.261534] (-) TimerEvent: {}
+[15.336340] (odas_ros_msgs) StdoutLine: {'line': b'[ 78%] Built target odas_ros_msgs\n'}
+[15.362045] (-) TimerEvent: {}
+[15.409509] (odas_ros_msgs) StdoutLine: {'line': b'[ 80%] \x1b[34m\x1b[1mGenerating Python code for ROS interfaces\x1b[0m\n'}
+[15.462151] (-) TimerEvent: {}
+[15.562804] (-) TimerEvent: {}
+[15.663438] (-) TimerEvent: {}
+[15.764179] (-) TimerEvent: {}
+[15.864797] (-) TimerEvent: {}
+[15.965415] (-) TimerEvent: {}
+[16.066039] (-) TimerEvent: {}
+[16.166667] (-) TimerEvent: {}
+[16.267284] (-) TimerEvent: {}
+[16.367963] (-) TimerEvent: {}
+[16.468625] (-) TimerEvent: {}
+[16.569245] (-) TimerEvent: {}
+[16.670132] (-) TimerEvent: {}
+[16.770956] (-) TimerEvent: {}
+[16.871885] (-) TimerEvent: {}
+[16.972834] (-) TimerEvent: {}
+[17.073757] (-) TimerEvent: {}
+[17.174711] (-) TimerEvent: {}
+[17.275625] (-) TimerEvent: {}
+[17.376538] (-) TimerEvent: {}
+[17.477675] (-) TimerEvent: {}
+[17.578731] (-) TimerEvent: {}
+[17.634447] (odas_ros_msgs) StdoutLine: {'line': b'[ 80%] Built target odas_ros_msgs__py\n'}
+[17.679999] (-) TimerEvent: {}
+[17.709290] (odas_ros_msgs) StdoutLine: {'line': b'[ 83%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/odas_ros_msgs/msg/_odas_ssl_s.c.o\x1b[0m\n'}
+[17.712693] (odas_ros_msgs) StdoutLine: {'line': b'[ 83%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/odas_ros_msgs/msg/_odas_ssl_array_stamped_s.c.o\x1b[0m\n'}
+[17.713403] (odas_ros_msgs) StdoutLine: {'line': b'[ 85%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/odas_ros_msgs/msg/_odas_sst_array_stamped_s.c.o\x1b[0m\n'}
+[17.713760] (odas_ros_msgs) StdoutLine: {'line': b'[ 87%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/odas_ros_msgs/msg/_odas_sst_s.c.o\x1b[0m\n'}
+[17.784404] (-) TimerEvent: {}
+[17.888359] (-) TimerEvent: {}
+[17.989176] (-) TimerEvent: {}
+[18.092050] (-) TimerEvent: {}
+[18.196679] (-) TimerEvent: {}
+[18.262028] (odas_ros_msgs) StdoutLine: {'line': b'[ 89%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/odas_ros_msgs/libodas_ros_msgs__rosidl_generator_py.so\x1b[0m\n'}
+[18.296584] (-) TimerEvent: {}
+[18.397814] (-) TimerEvent: {}
+[18.416607] (odas_ros_msgs) StdoutLine: {'line': b'[ 89%] Built target odas_ros_msgs__rosidl_generator_py\n'}
+[18.498133] (-) TimerEvent: {}
+[18.505910] (odas_ros_msgs) StdoutLine: {'line': b'[ 90%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/odas_ros_msgs/_odas_ros_msgs_s.ep.rosidl_typesupport_introspection_c.c.o\x1b[0m\n'}
+[18.509598] (odas_ros_msgs) StdoutLine: {'line': b'[ 92%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/odas_ros_msgs/_odas_ros_msgs_s.ep.rosidl_typesupport_c.c.o\x1b[0m\n'}
+[18.512904] (odas_ros_msgs) StdoutLine: {'line': b'[ 94%] \x1b[32mBuilding C object CMakeFiles/odas_ros_msgs__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/odas_ros_msgs/_odas_ros_msgs_s.ep.rosidl_typesupport_fastrtps_c.c.o\x1b[0m\n'}
+[18.598345] (-) TimerEvent: {}
+[18.699487] (-) TimerEvent: {}
+[18.800321] (-) TimerEvent: {}
+[18.904377] (-) TimerEvent: {}
+[18.940498] (odas_ros_msgs) StdoutLine: {'line': b'[ 96%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/odas_ros_msgs/odas_ros_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\x1b[0m\n'}
+[18.941363] (odas_ros_msgs) StdoutLine: {'line': b'[ 98%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/odas_ros_msgs/odas_ros_msgs_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\x1b[0m\n'}
+[18.942389] (odas_ros_msgs) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/odas_ros_msgs/odas_ros_msgs_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\x1b[0m\n'}
+[19.004735] (-) TimerEvent: {}
+[19.108830] (-) TimerEvent: {}
+[19.154453] (odas_ros_msgs) StdoutLine: {'line': b'[100%] Built target odas_ros_msgs__rosidl_typesupport_c__pyext\n'}
+[19.155798] (odas_ros_msgs) StdoutLine: {'line': b'[100%] Built target odas_ros_msgs__rosidl_typesupport_fastrtps_c__pyext\n'}
+[19.165379] (odas_ros_msgs) StdoutLine: {'line': b'[100%] Built target odas_ros_msgs__rosidl_typesupport_introspection_c__pyext\n'}
+[19.204141] (odas_ros_msgs) CommandEnded: {'returncode': 0}
+[19.209670] (-) TimerEvent: {}
+[19.311374] (-) TimerEvent: {}
+[19.412465] (-) TimerEvent: {}
+[19.513739] (-) TimerEvent: {}
+[19.551347] (odas_ros_msgs) JobProgress: {'identifier': 'odas_ros_msgs', 'progress': 'install'}
+[19.622488] (-) TimerEvent: {}
+[19.622921] (odas_ros_msgs) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ws/ugv_ws/build/odas_ros_msgs'], 'cwd': '/home/ws/ugv_ws/build/odas_ros_msgs', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install:/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/odas_ros_msgs'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/audio_utils/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[19.628905] (odas_ros_msgs) StdoutLine: {'line': b'-- Install configuration: "Debug"\n'}
+[19.631009] (odas_ros_msgs) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[19.632093] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/ament_index/resource_index/rosidl_interfaces/odas_ros_msgs\n'}
+[19.662324] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl__functions.h\n'}
+[19.690081] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl__struct.h\n'}
+[19.717211] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl__type_support.h\n'}
+[19.722634] (-) TimerEvent: {}
+[19.746284] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__functions.h\n'}
+[19.774477] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__struct.h\n'}
+[19.801771] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__type_support.h\n'}
+[19.824319] (-) TimerEvent: {}
+[19.829747] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst__functions.h\n'}
+[19.857295] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst__struct.h\n'}
+[19.887848] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst__type_support.h\n'}
+[19.916109] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst_array_stamped__functions.h\n'}
+[19.924489] (-) TimerEvent: {}
+[19.945017] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst_array_stamped__struct.h\n'}
+[19.973623] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst_array_stamped__type_support.h\n'}
+[20.000832] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/odas_ssl.h\n'}
+[20.024622] (-) TimerEvent: {}
+[20.029672] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/odas_ssl_array_stamped.h\n'}
+[20.058782] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/odas_sst.h\n'}
+[20.087502] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/odas_sst_array_stamped.h\n'}
+[20.114941] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/rosidl_generator_c__visibility_control.h\n'}
+[20.124760] (-) TimerEvent: {}
+[20.144745] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/environment/library_path.sh\n'}
+[20.172627] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/environment/library_path.dsv\n'}
+[20.202265] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl__rosidl_typesupport_fastrtps_c.h\n'}
+[20.224937] (-) TimerEvent: {}
+[20.229975] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__rosidl_typesupport_fastrtps_c.h\n'}
+[20.257198] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst__rosidl_typesupport_fastrtps_c.h\n'}
+[20.285357] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst_array_stamped__rosidl_typesupport_fastrtps_c.h\n'}
+[20.313012] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[20.325109] (-) TimerEvent: {}
+[20.342324] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl__builder.hpp\n'}
+[20.369887] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl__struct.hpp\n'}
+[20.397922] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl__traits.hpp\n'}
+[20.425469] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__builder.hpp\n'}
+[20.425951] (-) TimerEvent: {}
+[20.452747] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__struct.hpp\n'}
+[20.480732] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__traits.hpp\n'}
+[20.509829] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst__builder.hpp\n'}
+[20.526159] (-) TimerEvent: {}
+[20.538059] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst__struct.hpp\n'}
+[20.564611] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst__traits.hpp\n'}
+[20.592124] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst_array_stamped__builder.hpp\n'}
+[20.620233] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst_array_stamped__struct.hpp\n'}
+[20.626270] (-) TimerEvent: {}
+[20.648470] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst_array_stamped__traits.hpp\n'}
+[20.676926] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/odas_ssl.hpp\n'}
+[20.705120] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/odas_ssl_array_stamped.hpp\n'}
+[20.726417] (-) TimerEvent: {}
+[20.733575] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/odas_sst.hpp\n'}
+[20.760568] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/odas_sst_array_stamped.hpp\n'}
+[20.789791] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[20.817967] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[20.828571] (-) TimerEvent: {}
+[20.845160] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[20.872069] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst_array_stamped__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[20.901590] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[20.929691] (-) TimerEvent: {}
+[20.932417] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl__rosidl_typesupport_introspection_c.h\n'}
+[20.961261] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__rosidl_typesupport_introspection_c.h\n'}
+[20.990262] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst__rosidl_typesupport_introspection_c.h\n'}
+[21.017926] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst_array_stamped__rosidl_typesupport_introspection_c.h\n'}
+[21.029854] (-) TimerEvent: {}
+[21.045755] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[21.076519] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl__rosidl_typesupport_introspection_cpp.hpp\n'}
+[21.103004] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_ssl_array_stamped__rosidl_typesupport_introspection_cpp.hpp\n'}
+[21.130034] (-) TimerEvent: {}
+[21.130855] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst__rosidl_typesupport_introspection_cpp.hpp\n'}
+[21.157780] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/include/odas_ros_msgs/odas_ros_msgs/msg/detail/odas_sst_array_stamped__rosidl_typesupport_introspection_cpp.hpp\n'}
+[21.186198] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/environment/pythonpath.sh\n'}
+[21.214525] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/environment/pythonpath.dsv\n'}
+[21.230202] (-) TimerEvent: {}
+[21.243478] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs-0.0.0-py3.10.egg-info/PKG-INFO\n'}
+[21.270512] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs-0.0.0-py3.10.egg-info/SOURCES.txt\n'}
+[21.298545] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs-0.0.0-py3.10.egg-info/dependency_links.txt\n'}
+[21.326222] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs-0.0.0-py3.10.egg-info/top_level.txt\n'}
+[21.330332] (-) TimerEvent: {}
+[21.356104] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/__init__.py\n'}
+[21.383339] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/_odas_ros_msgs_s.ep.rosidl_typesupport_c.c\n'}
+[21.412006] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/_odas_ros_msgs_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[21.430488] (-) TimerEvent: {}
+[21.439122] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/_odas_ros_msgs_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[21.466379] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/libodas_ros_msgs__rosidl_generator_py.so\n'}
+[21.493683] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/__init__.py\n'}
+[21.521601] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_ssl.py\n'}
+[21.530624] (-) TimerEvent: {}
+[21.548929] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_ssl_array_stamped.py\n'}
+[21.576810] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_ssl_array_stamped_s.c\n'}
+[21.604348] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_ssl_s.c\n'}
+[21.630785] (-) TimerEvent: {}
+[21.631575] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_sst.py\n'}
+[21.659163] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_sst_array_stamped.py\n'}
+[21.686675] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_sst_array_stamped_s.c\n'}
+[21.716115] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_sst_s.c\n'}
+[21.730945] (-) TimerEvent: {}
+[21.744046] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/odas_ros_msgs_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.771423] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/odas_ros_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.799038] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/odas_ros_msgs_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.829599] (odas_ros_msgs) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/odas_ros_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.830853] (odas_ros_msgs) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/odas_ros_msgs_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.831244] (-) TimerEvent: {}
+[21.832243] (odas_ros_msgs) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/odas_ros_msgs_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.833290] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/msg/OdasSsl.idl\n'}
+[21.860677] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/msg/OdasSslArrayStamped.idl\n'}
+[21.889857] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/msg/OdasSst.idl\n'}
+[21.919990] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/msg/OdasSstArrayStamped.idl\n'}
+[21.931409] (-) TimerEvent: {}
+[21.947906] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/msg/OdasSsl.msg\n'}
+[21.976949] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/msg/OdasSslArrayStamped.msg\n'}
+[22.004790] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/msg/OdasSst.msg\n'}
+[22.031535] (-) TimerEvent: {}
+[22.033017] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/msg/OdasSstArrayStamped.msg\n'}
+[22.060885] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/ament_index/resource_index/package_run_dependencies/odas_ros_msgs\n'}
+[22.089215] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/ament_index/resource_index/parent_prefix_path/odas_ros_msgs\n'}
+[22.117221] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/environment/ament_prefix_path.sh\n'}
+[22.131695] (-) TimerEvent: {}
+[22.145415] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/environment/ament_prefix_path.dsv\n'}
+[22.173038] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/environment/path.sh\n'}
+[22.203633] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/environment/path.dsv\n'}
+[22.231909] (-) TimerEvent: {}
+[22.233268] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/local_setup.bash\n'}
+[22.262760] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/local_setup.sh\n'}
+[22.289930] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/local_setup.zsh\n'}
+[22.318685] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/local_setup.dsv\n'}
+[22.332096] (-) TimerEvent: {}
+[22.346529] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/package.dsv\n'}
+[22.374367] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/ament_index/resource_index/packages/odas_ros_msgs\n'}
+[22.401980] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/rosidl_cmake-extras.cmake\n'}
+[22.429733] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[22.432281] (-) TimerEvent: {}
+[22.457830] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[22.486089] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[22.514499] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[22.532484] (-) TimerEvent: {}
+[22.543541] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[22.571429] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[22.599827] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/odas_ros_msgsConfig.cmake\n'}
+[22.628080] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/odas_ros_msgsConfig-version.cmake\n'}
+[22.632610] (-) TimerEvent: {}
+[22.656792] (odas_ros_msgs) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/package.xml\n'}
+[22.685057] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_generator_c.so\n'}
+[22.685768] (odas_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_generator_c.so" to ""\n'}
+[22.686152] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_fastrtps_c.so\n'}
+[22.687699] (odas_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_fastrtps_c.so" to ""\n'}
+[22.688300] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_fastrtps_cpp.so\n'}
+[22.690284] (odas_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_fastrtps_cpp.so" to ""\n'}
+[22.690842] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_introspection_c.so\n'}
+[22.691616] (odas_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_introspection_c.so" to ""\n'}
+[22.692095] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_c.so\n'}
+[22.692964] (odas_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_c.so" to ""\n'}
+[22.693461] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_introspection_cpp.so\n'}
+[22.695199] (odas_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_introspection_cpp.so" to ""\n'}
+[22.695765] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_cpp.so\n'}
+[22.696632] (odas_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_typesupport_cpp.so" to ""\n'}
+[22.732739] (-) TimerEvent: {}
+[22.833305] (-) TimerEvent: {}
+[22.880941] (odas_ros_msgs) StdoutLine: {'line': b"Listing '/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs'...\n"}
+[22.882176] (odas_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/__init__.py'...\n"}
+[22.882974] (odas_ros_msgs) StdoutLine: {'line': b"Listing '/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg'...\n"}
+[22.883697] (odas_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/__init__.py'...\n"}
+[22.884583] (odas_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_ssl.py'...\n"}
+[22.885571] (odas_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_ssl_array_stamped.py'...\n"}
+[22.886116] (odas_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_sst.py'...\n"}
+[22.886767] (odas_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages/odas_ros_msgs/msg/_odas_sst_array_stamped.py'...\n"}
+[22.905501] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_generator_py.so\n'}
+[22.906668] (odas_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/odas_ros_msgs/lib/libodas_ros_msgs__rosidl_generator_py.so" to ""\n'}
+[22.910957] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/export_odas_ros_msgs__rosidl_generator_cExport.cmake\n'}
+[22.912019] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/export_odas_ros_msgs__rosidl_generator_cExport-debug.cmake\n'}
+[22.913057] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/export_odas_ros_msgs__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[22.914296] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/export_odas_ros_msgs__rosidl_typesupport_fastrtps_cExport-debug.cmake\n'}
+[22.915230] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/export_odas_ros_msgs__rosidl_generator_cppExport.cmake\n'}
+[22.916292] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/export_odas_ros_msgs__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[22.917685] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/export_odas_ros_msgs__rosidl_typesupport_fastrtps_cppExport-debug.cmake\n'}
+[22.918520] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/odas_ros_msgs__rosidl_typesupport_introspection_cExport.cmake\n'}
+[22.919589] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/odas_ros_msgs__rosidl_typesupport_introspection_cExport-debug.cmake\n'}
+[22.920367] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/odas_ros_msgs__rosidl_typesupport_cExport.cmake\n'}
+[22.921484] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/odas_ros_msgs__rosidl_typesupport_cExport-debug.cmake\n'}
+[22.922777] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/odas_ros_msgs__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[22.923558] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/odas_ros_msgs__rosidl_typesupport_introspection_cppExport-debug.cmake\n'}
+[22.924918] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/odas_ros_msgs__rosidl_typesupport_cppExport.cmake\n'}
+[22.925835] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/odas_ros_msgs__rosidl_typesupport_cppExport-debug.cmake\n'}
+[22.927120] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/export_odas_ros_msgs__rosidl_generator_pyExport.cmake\n'}
+[22.927932] (odas_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake/export_odas_ros_msgs__rosidl_generator_pyExport-debug.cmake\n'}
+[22.933609] (-) TimerEvent: {}
+[22.934616] (odas_ros_msgs) CommandEnded: {'returncode': 0}
+[23.035398] (-) TimerEvent: {}
+[23.136080] (-) TimerEvent: {}
+[23.237678] (-) TimerEvent: {}
+[23.338365] (-) TimerEvent: {}
+[23.439428] (-) TimerEvent: {}
+[23.497275] (odas_ros_msgs) JobEnded: {'identifier': 'odas_ros_msgs', 'rc': 0}
+[23.502981] (odas_ros) JobStarted: {'identifier': 'odas_ros'}
+[23.539559] (-) TimerEvent: {}
+[23.577711] (odas_ros) JobProgress: {'identifier': 'odas_ros', 'progress': 'cmake'}
+[23.578343] (odas_ros) Command: {'cmd': ['/usr/bin/cmake', '/home/ws/ugv_ws/src/ugv_else/odas_ros/odas_ros', '-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/odas_ros'], 'cwd': '/home/ws/ugv_ws/build/odas_ros', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install:/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/odas_ros'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[23.604182] (odas_ros) StdoutLine: {'line': b'Not searching for unused variables given on the command line.\n'}
+[23.639732] (-) TimerEvent: {}
+[23.740879] (-) TimerEvent: {}
+[23.766877] (odas_ros) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[23.841052] (-) TimerEvent: {}
+[23.942044] (-) TimerEvent: {}
+[23.946696] (odas_ros) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[23.965360] (odas_ros) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[24.042803] (-) TimerEvent: {}
+[24.143633] (-) TimerEvent: {}
+[24.203408] (odas_ros) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[24.229309] (odas_ros) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[24.231054] (odas_ros) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[24.231609] (odas_ros) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[24.239632] (odas_ros) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[24.243800] (-) TimerEvent: {}
+[24.348333] (-) TimerEvent: {}
+[24.449008] (-) TimerEvent: {}
+[24.497357] (odas_ros) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[24.523228] (odas_ros) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[24.524177] (odas_ros) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[24.527841] (odas_ros) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[24.539701] (odas_ros) StdoutLine: {'line': b'-- Found PkgConfig: /usr/bin/pkg-config (found version "0.29.2") \n'}
+[24.541714] (odas_ros) StdoutLine: {'line': b"-- Checking for module 'fftw3f'\n"}
+[24.548705] (odas_ros) StderrLine: {'line': b'\x1b[31mCMake Error at /usr/share/cmake-3.22/Modules/FindPkgConfig.cmake:603 (message):\n'}
+[24.678933] (-) TimerEvent: {}
+[24.679846] (odas_ros) StderrLine: {'line': b'  A required package was not found\n'}
+[24.680568] (odas_ros) StderrLine: {'line': b'Call Stack (most recent call first):\n'}
+[24.681068] (odas_ros) StderrLine: {'line': b'  /usr/share/cmake-3.22/Modules/FindPkgConfig.cmake:825 (_pkg_check_modules_internal)\n'}
+[24.681532] (odas_ros) StderrLine: {'line': b'  src/odas/CMakeLists.txt:15 (pkg_check_modules)\n'}
+[24.681995] (odas_ros) StderrLine: {'line': b'\n'}
+[24.682507] (odas_ros) StderrLine: {'line': b'\x1b[0m\n'}
+[24.682918] (odas_ros) StdoutLine: {'line': b"--   No package 'fftw3f' found\n"}
+[24.683309] (odas_ros) StdoutLine: {'line': b'-- Configuring incomplete, errors occurred!\n'}
+[24.683699] (odas_ros) StdoutLine: {'line': b'See also "/home/ws/ugv_ws/build/odas_ros/CMakeFiles/CMakeOutput.log".\n'}
+[24.687400] (odas_ros) CommandEnded: {'returncode': 1}
+[24.739158] (odas_ros) JobEnded: {'identifier': 'odas_ros', 'rc': 1}
+[24.750485] (-) EventReactorShutdown: {}

@@ -1,0 +1,485 @@
+[0.000000] (-) TimerEvent: {}
+[0.000548] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.000589] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.000609] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.000628] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.000646] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.000664] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.000682] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.000699] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.000716] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.000733] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.000751] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.000768] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.000785] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.000802] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.000819] (-) JobUnselected: {'identifier': 'ugv_base_node'}
+[0.000896] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.001043] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.001063] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.001080] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.001098] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.001116] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.001133] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.001149] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.001166] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.001183] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.001200] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.001217] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.001234] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.001251] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.001268] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.001288] (emcl2) JobQueued: {'identifier': 'emcl2', 'dependencies': OrderedDict()}
+[0.001310] (emcl2) JobStarted: {'identifier': 'emcl2'}
+[0.062207] (emcl2) JobProgress: {'identifier': 'emcl2', 'progress': 'cmake'}
+[0.064179] (emcl2) JobProgress: {'identifier': 'emcl2', 'progress': 'build'}
+[0.064959] (emcl2) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/emcl2', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/emcl2', 'env': OrderedDict([('USER', 'root'), ('SSH_CLIENT', '192.168.10.185 50747 23'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws/ugv_ws'), ('SSH_TTY', '/dev/pts/3'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('DISPLAY', 'localhost:12.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('PWD', '/home/ws/ugv_ws/build/emcl2'), ('SSH_CONNECTION', '192.168.10.185 50747 192.168.10.197 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/teb_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.099660] (-) TimerEvent: {}
+[0.199969] (-) TimerEvent: {}
+[0.300286] (-) TimerEvent: {}
+[0.397463] (emcl2) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target emcl2_node\x1b[0m\n'}
+[0.400346] (-) TimerEvent: {}
+[0.494593] (emcl2) StdoutLine: {'line': b'[ 11%] \x1b[32mBuilding CXX object CMakeFiles/emcl2_node.dir/src/Mcl.cpp.o\x1b[0m\n'}
+[0.500422] (-) TimerEvent: {}
+[0.600675] (-) TimerEvent: {}
+[0.700957] (-) TimerEvent: {}
+[0.801178] (-) TimerEvent: {}
+[0.901404] (-) TimerEvent: {}
+[1.001713] (-) TimerEvent: {}
+[1.102054] (-) TimerEvent: {}
+[1.202351] (-) TimerEvent: {}
+[1.302606] (-) TimerEvent: {}
+[1.402901] (-) TimerEvent: {}
+[1.503224] (-) TimerEvent: {}
+[1.603550] (-) TimerEvent: {}
+[1.703892] (-) TimerEvent: {}
+[1.804176] (-) TimerEvent: {}
+[1.904465] (-) TimerEvent: {}
+[2.004765] (-) TimerEvent: {}
+[2.105134] (-) TimerEvent: {}
+[2.205425] (-) TimerEvent: {}
+[2.305682] (-) TimerEvent: {}
+[2.405942] (-) TimerEvent: {}
+[2.506208] (-) TimerEvent: {}
+[2.606513] (-) TimerEvent: {}
+[2.706807] (-) TimerEvent: {}
+[2.807040] (-) TimerEvent: {}
+[2.907309] (-) TimerEvent: {}
+[3.007570] (-) TimerEvent: {}
+[3.107871] (-) TimerEvent: {}
+[3.208170] (-) TimerEvent: {}
+[3.308451] (-) TimerEvent: {}
+[3.408743] (-) TimerEvent: {}
+[3.509027] (-) TimerEvent: {}
+[3.609325] (-) TimerEvent: {}
+[3.709629] (-) TimerEvent: {}
+[3.809871] (-) TimerEvent: {}
+[3.910139] (-) TimerEvent: {}
+[4.010414] (-) TimerEvent: {}
+[4.110719] (-) TimerEvent: {}
+[4.210989] (-) TimerEvent: {}
+[4.311241] (-) TimerEvent: {}
+[4.411510] (-) TimerEvent: {}
+[4.511775] (-) TimerEvent: {}
+[4.612062] (-) TimerEvent: {}
+[4.712342] (-) TimerEvent: {}
+[4.812599] (-) TimerEvent: {}
+[4.912863] (-) TimerEvent: {}
+[4.997382] (emcl2) StdoutLine: {'line': b'[ 22%] \x1b[32mBuilding CXX object CMakeFiles/emcl2_node.dir/src/LikelihoodFieldMap.cpp.o\x1b[0m\n'}
+[5.012981] (-) TimerEvent: {}
+[5.113282] (-) TimerEvent: {}
+[5.213550] (-) TimerEvent: {}
+[5.313817] (-) TimerEvent: {}
+[5.414101] (-) TimerEvent: {}
+[5.514374] (-) TimerEvent: {}
+[5.614664] (-) TimerEvent: {}
+[5.714962] (-) TimerEvent: {}
+[5.815245] (-) TimerEvent: {}
+[5.915523] (-) TimerEvent: {}
+[6.015801] (-) TimerEvent: {}
+[6.116109] (-) TimerEvent: {}
+[6.155764] (emcl2) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding CXX object CMakeFiles/emcl2_node.dir/src/emcl2_node.cpp.o\x1b[0m\n'}
+[6.216211] (-) TimerEvent: {}
+[6.316544] (-) TimerEvent: {}
+[6.416845] (-) TimerEvent: {}
+[6.517158] (-) TimerEvent: {}
+[6.617462] (-) TimerEvent: {}
+[6.717784] (-) TimerEvent: {}
+[6.818086] (-) TimerEvent: {}
+[6.918361] (-) TimerEvent: {}
+[7.018638] (-) TimerEvent: {}
+[7.119117] (-) TimerEvent: {}
+[7.219470] (-) TimerEvent: {}
+[7.319953] (-) TimerEvent: {}
+[7.420271] (-) TimerEvent: {}
+[7.520685] (-) TimerEvent: {}
+[7.621030] (-) TimerEvent: {}
+[7.721371] (-) TimerEvent: {}
+[7.821646] (-) TimerEvent: {}
+[7.921903] (-) TimerEvent: {}
+[8.022222] (-) TimerEvent: {}
+[8.122571] (-) TimerEvent: {}
+[8.222852] (-) TimerEvent: {}
+[8.323130] (-) TimerEvent: {}
+[8.423394] (-) TimerEvent: {}
+[8.523671] (-) TimerEvent: {}
+[8.623959] (-) TimerEvent: {}
+[8.724286] (-) TimerEvent: {}
+[8.824583] (-) TimerEvent: {}
+[8.924867] (-) TimerEvent: {}
+[9.025172] (-) TimerEvent: {}
+[9.125491] (-) TimerEvent: {}
+[9.225798] (-) TimerEvent: {}
+[9.326074] (-) TimerEvent: {}
+[9.426327] (-) TimerEvent: {}
+[9.526756] (-) TimerEvent: {}
+[9.627036] (-) TimerEvent: {}
+[9.727291] (-) TimerEvent: {}
+[9.827572] (-) TimerEvent: {}
+[9.927832] (-) TimerEvent: {}
+[10.028150] (-) TimerEvent: {}
+[10.128491] (-) TimerEvent: {}
+[10.228802] (-) TimerEvent: {}
+[10.329091] (-) TimerEvent: {}
+[10.429361] (-) TimerEvent: {}
+[10.529672] (-) TimerEvent: {}
+[10.629977] (-) TimerEvent: {}
+[10.730253] (-) TimerEvent: {}
+[10.830497] (-) TimerEvent: {}
+[10.930737] (-) TimerEvent: {}
+[11.031060] (-) TimerEvent: {}
+[11.131404] (-) TimerEvent: {}
+[11.231733] (-) TimerEvent: {}
+[11.332017] (-) TimerEvent: {}
+[11.432271] (-) TimerEvent: {}
+[11.532567] (-) TimerEvent: {}
+[11.632889] (-) TimerEvent: {}
+[11.733166] (-) TimerEvent: {}
+[11.833411] (-) TimerEvent: {}
+[11.933660] (-) TimerEvent: {}
+[12.034077] (-) TimerEvent: {}
+[12.134640] (-) TimerEvent: {}
+[12.234971] (-) TimerEvent: {}
+[12.335251] (-) TimerEvent: {}
+[12.435537] (-) TimerEvent: {}
+[12.535826] (-) TimerEvent: {}
+[12.636121] (-) TimerEvent: {}
+[12.736399] (-) TimerEvent: {}
+[12.836651] (-) TimerEvent: {}
+[12.936910] (-) TimerEvent: {}
+[13.037235] (-) TimerEvent: {}
+[13.137733] (-) TimerEvent: {}
+[13.238051] (-) TimerEvent: {}
+[13.338318] (-) TimerEvent: {}
+[13.438597] (-) TimerEvent: {}
+[13.538883] (-) TimerEvent: {}
+[13.639198] (-) TimerEvent: {}
+[13.739499] (-) TimerEvent: {}
+[13.839753] (-) TimerEvent: {}
+[13.940026] (-) TimerEvent: {}
+[14.040697] (-) TimerEvent: {}
+[14.141111] (-) TimerEvent: {}
+[14.241423] (-) TimerEvent: {}
+[14.341688] (-) TimerEvent: {}
+[14.441976] (-) TimerEvent: {}
+[14.542232] (-) TimerEvent: {}
+[14.642539] (-) TimerEvent: {}
+[14.742813] (-) TimerEvent: {}
+[14.843077] (-) TimerEvent: {}
+[14.943370] (-) TimerEvent: {}
+[15.043613] (-) TimerEvent: {}
+[15.143878] (-) TimerEvent: {}
+[15.244189] (-) TimerEvent: {}
+[15.344470] (-) TimerEvent: {}
+[15.444783] (-) TimerEvent: {}
+[15.545104] (-) TimerEvent: {}
+[15.645444] (-) TimerEvent: {}
+[15.745700] (-) TimerEvent: {}
+[15.845954] (-) TimerEvent: {}
+[15.946223] (-) TimerEvent: {}
+[16.046494] (-) TimerEvent: {}
+[16.146831] (-) TimerEvent: {}
+[16.247177] (-) TimerEvent: {}
+[16.347450] (-) TimerEvent: {}
+[16.447732] (-) TimerEvent: {}
+[16.548014] (-) TimerEvent: {}
+[16.648322] (-) TimerEvent: {}
+[16.748601] (-) TimerEvent: {}
+[16.848871] (-) TimerEvent: {}
+[16.949146] (-) TimerEvent: {}
+[17.049399] (-) TimerEvent: {}
+[17.149699] (-) TimerEvent: {}
+[17.250028] (-) TimerEvent: {}
+[17.350321] (-) TimerEvent: {}
+[17.450584] (-) TimerEvent: {}
+[17.550848] (-) TimerEvent: {}
+[17.651149] (-) TimerEvent: {}
+[17.751431] (-) TimerEvent: {}
+[17.851749] (-) TimerEvent: {}
+[17.952004] (-) TimerEvent: {}
+[18.052249] (-) TimerEvent: {}
+[18.152552] (-) TimerEvent: {}
+[18.252897] (-) TimerEvent: {}
+[18.353180] (-) TimerEvent: {}
+[18.453428] (-) TimerEvent: {}
+[18.553684] (-) TimerEvent: {}
+[18.654096] (-) TimerEvent: {}
+[18.754390] (-) TimerEvent: {}
+[18.854755] (-) TimerEvent: {}
+[18.955038] (-) TimerEvent: {}
+[19.055425] (-) TimerEvent: {}
+[19.155731] (-) TimerEvent: {}
+[19.256060] (-) TimerEvent: {}
+[19.356353] (-) TimerEvent: {}
+[19.456636] (-) TimerEvent: {}
+[19.556972] (-) TimerEvent: {}
+[19.657294] (-) TimerEvent: {}
+[19.757624] (-) TimerEvent: {}
+[19.857923] (-) TimerEvent: {}
+[19.958200] (-) TimerEvent: {}
+[20.058521] (-) TimerEvent: {}
+[20.158830] (-) TimerEvent: {}
+[20.259151] (-) TimerEvent: {}
+[20.359435] (-) TimerEvent: {}
+[20.459704] (-) TimerEvent: {}
+[20.559996] (-) TimerEvent: {}
+[20.660290] (-) TimerEvent: {}
+[20.760568] (-) TimerEvent: {}
+[20.860829] (-) TimerEvent: {}
+[20.961089] (-) TimerEvent: {}
+[21.061350] (-) TimerEvent: {}
+[21.161618] (-) TimerEvent: {}
+[21.261925] (-) TimerEvent: {}
+[21.362212] (-) TimerEvent: {}
+[21.462466] (-) TimerEvent: {}
+[21.562739] (-) TimerEvent: {}
+[21.663024] (-) TimerEvent: {}
+[21.763296] (-) TimerEvent: {}
+[21.863562] (-) TimerEvent: {}
+[21.963812] (-) TimerEvent: {}
+[22.064080] (-) TimerEvent: {}
+[22.164352] (-) TimerEvent: {}
+[22.264647] (-) TimerEvent: {}
+[22.364874] (-) TimerEvent: {}
+[22.465109] (-) TimerEvent: {}
+[22.565399] (-) TimerEvent: {}
+[22.665684] (-) TimerEvent: {}
+[22.765939] (-) TimerEvent: {}
+[22.866179] (-) TimerEvent: {}
+[22.966408] (-) TimerEvent: {}
+[23.066674] (-) TimerEvent: {}
+[23.166940] (-) TimerEvent: {}
+[23.267233] (-) TimerEvent: {}
+[23.367480] (-) TimerEvent: {}
+[23.467713] (-) TimerEvent: {}
+[23.567992] (-) TimerEvent: {}
+[23.668273] (-) TimerEvent: {}
+[23.768533] (-) TimerEvent: {}
+[23.868797] (-) TimerEvent: {}
+[23.969094] (-) TimerEvent: {}
+[24.069356] (-) TimerEvent: {}
+[24.169613] (-) TimerEvent: {}
+[24.269909] (-) TimerEvent: {}
+[24.370176] (-) TimerEvent: {}
+[24.470471] (-) TimerEvent: {}
+[24.570741] (-) TimerEvent: {}
+[24.671032] (-) TimerEvent: {}
+[24.771301] (-) TimerEvent: {}
+[24.871543] (-) TimerEvent: {}
+[24.971781] (-) TimerEvent: {}
+[25.071997] (-) TimerEvent: {}
+[25.172262] (-) TimerEvent: {}
+[25.272642] (-) TimerEvent: {}
+[25.372958] (-) TimerEvent: {}
+[25.473220] (-) TimerEvent: {}
+[25.573493] (-) TimerEvent: {}
+[25.673778] (-) TimerEvent: {}
+[25.774038] (-) TimerEvent: {}
+[25.874290] (-) TimerEvent: {}
+[25.974545] (-) TimerEvent: {}
+[26.074778] (-) TimerEvent: {}
+[26.175052] (-) TimerEvent: {}
+[26.275349] (-) TimerEvent: {}
+[26.375621] (-) TimerEvent: {}
+[26.475888] (-) TimerEvent: {}
+[26.576159] (-) TimerEvent: {}
+[26.676442] (-) TimerEvent: {}
+[26.776692] (-) TimerEvent: {}
+[26.876958] (-) TimerEvent: {}
+[26.977228] (-) TimerEvent: {}
+[27.077494] (-) TimerEvent: {}
+[27.177781] (-) TimerEvent: {}
+[27.278086] (-) TimerEvent: {}
+[27.378339] (-) TimerEvent: {}
+[27.478604] (-) TimerEvent: {}
+[27.578859] (-) TimerEvent: {}
+[27.679150] (-) TimerEvent: {}
+[27.779393] (-) TimerEvent: {}
+[27.879629] (-) TimerEvent: {}
+[27.979885] (-) TimerEvent: {}
+[28.080123] (-) TimerEvent: {}
+[28.180420] (-) TimerEvent: {}
+[28.280714] (-) TimerEvent: {}
+[28.380982] (-) TimerEvent: {}
+[28.481264] (-) TimerEvent: {}
+[28.581535] (-) TimerEvent: {}
+[28.681822] (-) TimerEvent: {}
+[28.782100] (-) TimerEvent: {}
+[28.882361] (-) TimerEvent: {}
+[28.982613] (-) TimerEvent: {}
+[29.082856] (-) TimerEvent: {}
+[29.183146] (-) TimerEvent: {}
+[29.283465] (-) TimerEvent: {}
+[29.383781] (-) TimerEvent: {}
+[29.484088] (-) TimerEvent: {}
+[29.584398] (-) TimerEvent: {}
+[29.684686] (-) TimerEvent: {}
+[29.784941] (-) TimerEvent: {}
+[29.885191] (-) TimerEvent: {}
+[29.985423] (-) TimerEvent: {}
+[30.085660] (-) TimerEvent: {}
+[30.185963] (-) TimerEvent: {}
+[30.286287] (-) TimerEvent: {}
+[30.386563] (-) TimerEvent: {}
+[30.486798] (-) TimerEvent: {}
+[30.587057] (-) TimerEvent: {}
+[30.687340] (-) TimerEvent: {}
+[30.787592] (-) TimerEvent: {}
+[30.887869] (-) TimerEvent: {}
+[30.988139] (-) TimerEvent: {}
+[31.088401] (-) TimerEvent: {}
+[31.188678] (-) TimerEvent: {}
+[31.289006] (-) TimerEvent: {}
+[31.389281] (-) TimerEvent: {}
+[31.489531] (-) TimerEvent: {}
+[31.589818] (-) TimerEvent: {}
+[31.690114] (-) TimerEvent: {}
+[31.790426] (-) TimerEvent: {}
+[31.890695] (-) TimerEvent: {}
+[31.990946] (-) TimerEvent: {}
+[32.091210] (-) TimerEvent: {}
+[32.191464] (-) TimerEvent: {}
+[32.291767] (-) TimerEvent: {}
+[32.392029] (-) TimerEvent: {}
+[32.492273] (-) TimerEvent: {}
+[32.592562] (-) TimerEvent: {}
+[32.692860] (-) TimerEvent: {}
+[32.793105] (-) TimerEvent: {}
+[32.893368] (-) TimerEvent: {}
+[32.993608] (-) TimerEvent: {}
+[33.093889] (-) TimerEvent: {}
+[33.194188] (-) TimerEvent: {}
+[33.294514] (-) TimerEvent: {}
+[33.394811] (-) TimerEvent: {}
+[33.495060] (-) TimerEvent: {}
+[33.595338] (-) TimerEvent: {}
+[33.695629] (-) TimerEvent: {}
+[33.795895] (-) TimerEvent: {}
+[33.896136] (-) TimerEvent: {}
+[33.996357] (-) TimerEvent: {}
+[34.096546] (-) TimerEvent: {}
+[34.196918] (-) TimerEvent: {}
+[34.297275] (-) TimerEvent: {}
+[34.397541] (-) TimerEvent: {}
+[34.497844] (-) TimerEvent: {}
+[34.551362] (emcl2) StdoutLine: {'line': b'[ 44%] \x1b[32mBuilding CXX object CMakeFiles/emcl2_node.dir/src/Scan.cpp.o\x1b[0m\n'}
+[34.597937] (-) TimerEvent: {}
+[34.698274] (-) TimerEvent: {}
+[34.798566] (-) TimerEvent: {}
+[34.898803] (-) TimerEvent: {}
+[34.999044] (-) TimerEvent: {}
+[35.085341] (emcl2) StdoutLine: {'line': b'[ 55%] \x1b[32mBuilding CXX object CMakeFiles/emcl2_node.dir/src/ExpResetMcl2.cpp.o\x1b[0m\n'}
+[35.099147] (-) TimerEvent: {}
+[35.199485] (-) TimerEvent: {}
+[35.299799] (-) TimerEvent: {}
+[35.400063] (-) TimerEvent: {}
+[35.500347] (-) TimerEvent: {}
+[35.600602] (-) TimerEvent: {}
+[35.700870] (-) TimerEvent: {}
+[35.801144] (-) TimerEvent: {}
+[35.901392] (-) TimerEvent: {}
+[36.001635] (-) TimerEvent: {}
+[36.101853] (-) TimerEvent: {}
+[36.202112] (-) TimerEvent: {}
+[36.302431] (-) TimerEvent: {}
+[36.402698] (-) TimerEvent: {}
+[36.502975] (-) TimerEvent: {}
+[36.603237] (-) TimerEvent: {}
+[36.703497] (-) TimerEvent: {}
+[36.803767] (-) TimerEvent: {}
+[36.904017] (-) TimerEvent: {}
+[37.004306] (-) TimerEvent: {}
+[37.104546] (-) TimerEvent: {}
+[37.204813] (-) TimerEvent: {}
+[37.305129] (-) TimerEvent: {}
+[37.405384] (-) TimerEvent: {}
+[37.505658] (-) TimerEvent: {}
+[37.605931] (-) TimerEvent: {}
+[37.706227] (-) TimerEvent: {}
+[37.806462] (-) TimerEvent: {}
+[37.906686] (-) TimerEvent: {}
+[38.006941] (-) TimerEvent: {}
+[38.107179] (-) TimerEvent: {}
+[38.207483] (-) TimerEvent: {}
+[38.307784] (-) TimerEvent: {}
+[38.408037] (-) TimerEvent: {}
+[38.508295] (-) TimerEvent: {}
+[38.608534] (-) TimerEvent: {}
+[38.660302] (emcl2) StdoutLine: {'line': b'[ 66%] \x1b[32m\x1b[1mLinking CXX executable emcl2_node\x1b[0m\n'}
+[38.708921] (-) TimerEvent: {}
+[38.809261] (-) TimerEvent: {}
+[38.909569] (-) TimerEvent: {}
+[39.010072] (-) TimerEvent: {}
+[39.110365] (-) TimerEvent: {}
+[39.210689] (-) TimerEvent: {}
+[39.233004] (emcl2) StdoutLine: {'line': b'[100%] Built target emcl2_node\n'}
+[39.243496] (emcl2) CommandEnded: {'returncode': 0}
+[39.290257] (emcl2) JobProgress: {'identifier': 'emcl2', 'progress': 'install'}
+[39.302130] (emcl2) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ws/ugv_ws/build/emcl2'], 'cwd': '/home/ws/ugv_ws/build/emcl2', 'env': OrderedDict([('USER', 'root'), ('SSH_CLIENT', '192.168.10.185 50747 23'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws/ugv_ws'), ('SSH_TTY', '/dev/pts/3'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('DISPLAY', 'localhost:12.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('PWD', '/home/ws/ugv_ws/build/emcl2'), ('SSH_CONNECTION', '192.168.10.185 50747 192.168.10.197 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/teb_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[39.310777] (-) TimerEvent: {}
+[39.315515] (emcl2) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[39.317483] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/lib/emcl2/test.bash\n'}
+[39.317873] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/lib/emcl2/test_gui.bash\n'}
+[39.318383] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/include\n'}
+[39.318658] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/include/emcl2\n'}
+[39.319166] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/include/emcl2/Particle.h\n'}
+[39.319273] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/include/emcl2/OdomModel.h\n'}
+[39.319406] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/include/emcl2/LikelihoodFieldMap.h\n'}
+[39.319547] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/include/emcl2/emcl2_node.h\n'}
+[39.319709] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/include/emcl2/Scan.h\n'}
+[39.319993] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/include/emcl2/Mcl.h\n'}
+[39.320065] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/include/emcl2/Pose.h\n'}
+[39.320161] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/include/emcl2/ExpResetMcl2.h\n'}
+[39.322396] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/lib/emcl2/emcl2_node\n'}
+[39.324446] (emcl2) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/emcl2/lib/emcl2/emcl2_node" to ""\n'}
+[39.324678] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/config\n'}
+[39.325595] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/config/emcl2_quick_start.param.yaml\n'}
+[39.325712] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/config/emcl2.param.yaml\n'}
+[39.326118] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/launch\n'}
+[39.327368] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/launch/emcl2.launch.py\n'}
+[39.328011] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/test\n'}
+[39.328460] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/test/test.bash\n'}
+[39.328572] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/test/demo.bash\n'}
+[39.329073] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/test/test_gui.bash\n'}
+[39.329169] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/test/test.launch.xml\n'}
+[39.330159] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/ament_index/resource_index/package_run_dependencies/emcl2\n'}
+[39.330452] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/ament_index/resource_index/parent_prefix_path/emcl2\n'}
+[39.331213] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/environment/ament_prefix_path.sh\n'}
+[39.331324] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/environment/ament_prefix_path.dsv\n'}
+[39.331687] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/environment/path.sh\n'}
+[39.331856] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/environment/path.dsv\n'}
+[39.332151] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/local_setup.bash\n'}
+[39.332328] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/local_setup.sh\n'}
+[39.332406] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/local_setup.zsh\n'}
+[39.332476] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/local_setup.dsv\n'}
+[39.332635] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/package.dsv\n'}
+[39.333271] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/ament_index/resource_index/packages/emcl2\n'}
+[39.334132] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[39.334318] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[39.334411] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/cmake/emcl2Config.cmake\n'}
+[39.334481] (emcl2) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/emcl2/share/emcl2/cmake/emcl2Config-version.cmake\n'}
+[39.334542] (emcl2) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/emcl2/share/emcl2/package.xml\n'}
+[39.339224] (emcl2) CommandEnded: {'returncode': 0}
+[39.410919] (-) TimerEvent: {}
+[39.473147] (emcl2) JobEnded: {'identifier': 'emcl2', 'rc': 0}
+[39.473985] (-) EventReactorShutdown: {}

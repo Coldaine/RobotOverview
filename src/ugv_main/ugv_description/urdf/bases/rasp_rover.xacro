@@ -1,0 +1,163 @@
+<?xml version="1.0" ?>
+<robot name="rasp_rover" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:macro name="use_gazebo" params="use_gazebo"></xacro:macro>
+<xacro:arg name="use_gazebo" default="false"/>
+<xacro:property name="use_gazebo" value="$(arg use_gazebo)"/>
+
+<xacro:macro name="add_pt" params="add_pt"></xacro:macro>
+<xacro:arg name="add_pt" default="true"/>
+<xacro:property name="add_pt" value="$(arg add_pt)"/>
+
+<xacro:arg name="robot_namespace" default="/" />
+<xacro:arg name="urdf_extras" default="empty.urdf" />
+
+<xacro:include filename="$(find ugv_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find ugv_description)/urdf/wheels/rover_wheel.xacro" />
+<xacro:include filename="$(find ugv_description)/urdf/sensors/lidar.xacro" />
+<xacro:property name="lidar_joint_pose">
+  <origin xyz="0.03170 -0.00102 0.097648" rpy="0 0 1.5708"/>
+</xacro:property>
+<xacro:lidar> 
+<xacro:insert_block name="lidar_joint_pose" />
+</xacro:lidar>
+
+<xacro:if value="${add_pt}">
+<xacro:include filename="$(find ugv_description)/urdf/sensors/pt.xacro"/>
+<xacro:pt use_gazebo="$(arg use_gazebo)" pt_base_link_joint_pose_z="0.097648"/>
+</xacro:if>
+
+<xacro:include filename="$(find ugv_description)/urdf/gazebo/rasp_rover.gazebo"/>
+
+<xacro:property name="base_inertial">
+  <inertial>
+    <origin xyz="0.0012 0 0.049" rpy="0 0 0" />
+    <mass value="0.8175429" />
+    <inertia ixx="0.001928799" ixy="0" ixz="0" iyy="0.002969208" iyz="0" izz="0.003597819" />
+  </inertial>
+</xacro:property>
+
+<xacro:property name="base_pose">
+  <origin xyz="0 0 0" rpy="0 0 0" />
+</xacro:property>
+
+<xacro:property name="base_joint_pose">
+  <origin xyz="0 0 0.033252" rpy="0 0 0"/>
+</xacro:property>
+    
+<link name="base_footprint"></link>
+
+<link name="base_link">
+  <xacro:insert_block name="base_inertial" />
+  <visual>
+    <xacro:insert_block name="base_pose"/>
+    <geometry>
+      <mesh filename="file://$(find ugv_description)/meshes/bases/rasp_rover_base.stl" scale="1.0 1.0 1.0"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <xacro:insert_block name="base_pose"/>
+    <geometry>
+      <mesh filename="file://$(find ugv_description)/meshes/bases/rasp_rover_base.stl" scale="1.0 1.0 1.0"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="base_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+  <xacro:insert_block name="base_joint_pose" />
+</joint>
+
+<xacro:property name="wheel_inertial_pose_z" value="0.027"/>
+
+<xacro:macro name="wheel_inertial" params="inertial_pose_z">
+  <inertial>
+    <origin xyz="0 0 ${inertial_pose_z}" rpy="0 0 0" />
+    <mass value="0.1153110" />
+    <inertia ixx="8.06312E-05" ixy="0" ixz="0" iyy="8.06312E-05" iyz="0" izz="0.000127361" />
+  </inertial>
+</xacro:macro>
+
+<xacro:property name="wheel_pose">
+  <origin xyz="0 0 0" rpy="1.5708 -0 0" />
+</xacro:property>
+
+<xacro:property name="up_wheel_joint_pose_x" value="0.0494657123506755"/>
+<xacro:property name="down_wheel_joint_pose_x" value="0.0475324306493252"/>
+<xacro:property name="wheel_joint_pose_y" value="0.0380100014305094"/>
+<xacro:property name="wheel_joint_pose_z" value="0.00674802802973084"/>
+<xacro:property name="wheel_joint_pose_rpy" value="-1.5708 0 0"/>
+
+<xacro:wheel wheel_prefix="left_up">
+  <xacro:wheel_inertial inertial_pose_z="${wheel_inertial_pose_z}"></xacro:wheel_inertial>
+  <xacro:insert_block name="wheel_pose" />
+  
+  <origin xyz="${up_wheel_joint_pose_x} ${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="${wheel_joint_pose_rpy}" />
+</xacro:wheel>
+
+<xacro:wheel wheel_prefix="left_down">
+  <xacro:wheel_inertial inertial_pose_z="${wheel_inertial_pose_z}"></xacro:wheel_inertial>
+  <xacro:insert_block name="wheel_pose" />
+  
+  <origin xyz="-${down_wheel_joint_pose_x} ${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="${wheel_joint_pose_rpy}" />
+</xacro:wheel>
+
+<xacro:wheel wheel_prefix="right_up">
+  <xacro:wheel_inertial inertial_pose_z="-${wheel_inertial_pose_z}"></xacro:wheel_inertial>
+  <xacro:insert_block name="wheel_pose" />
+  
+  <origin xyz="${up_wheel_joint_pose_x} -${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="${wheel_joint_pose_rpy}" />
+</xacro:wheel>
+
+<xacro:wheel wheel_prefix="right_down">
+  <xacro:wheel_inertial inertial_pose_z="-${wheel_inertial_pose_z}"></xacro:wheel_inertial>
+  <xacro:insert_block name="wheel_pose" />
+  
+  <origin xyz="-${down_wheel_joint_pose_x} -${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="${wheel_joint_pose_rpy}" />
+</xacro:wheel>  
+
+<ros2_control name="WheelHardware" type="system">
+  <hardware>
+    <plugin>mock_components/GenericSystem</plugin>
+  </hardware>
+
+  <joint name="left_up_wheel_link_joint">
+    <command_interface name="position"/>
+    <state_interface name="position">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+    <state_interface name="velocity">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+  </joint>
+  <joint name="left_down_wheel_link_joint">
+    <command_interface name="position"/>
+    <state_interface name="position">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+    <state_interface name="velocity">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+  </joint>
+  <joint name="right_up_wheel_link_joint">
+    <command_interface name="position"/>
+    <state_interface name="position">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+    <state_interface name="velocity">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+  </joint>
+  <joint name="right_down_wheel_link_joint">
+    <command_interface name="position"/>
+    <state_interface name="position">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+  </joint>    
+</ros2_control>
+    
+<xacro:include filename="$(arg urdf_extras)" />
+
+</robot>

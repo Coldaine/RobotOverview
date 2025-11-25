@@ -1,0 +1,22 @@
+[0.850s] Invoking command in '/home/ws/ugv_ws/build/ugv_bringup': PYTHONPATH=/home/ws/ugv_ws/build/ugv_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_bringup/build --no-deps symlink_data
+[1.168s] running develop
+[1.170s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[1.170s]   warnings.warn(
+[1.347s] running egg_info
+[1.348s] writing ugv_bringup.egg-info/PKG-INFO
+[1.348s] writing dependency_links to ugv_bringup.egg-info/dependency_links.txt
+[1.351s] writing entry points to ugv_bringup.egg-info/entry_points.txt
+[1.352s] writing requirements to ugv_bringup.egg-info/requires.txt
+[1.356s] writing top-level names to ugv_bringup.egg-info/top_level.txt
+[1.359s] reading manifest file 'ugv_bringup.egg-info/SOURCES.txt'
+[1.361s] writing manifest file 'ugv_bringup.egg-info/SOURCES.txt'
+[1.363s] running build_ext
+[1.363s] Creating /home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages/ugv-bringup.egg-link (link to .)
+[1.365s] Installing ugv_bringup script to /home/ws/ugv_ws/install/ugv_bringup/lib/ugv_bringup
+[1.365s] Installing ugv_driver script to /home/ws/ugv_ws/install/ugv_bringup/lib/ugv_bringup
+[1.365s] 
+[1.365s] Installed /home/ws/ugv_ws/build/ugv_bringup
+[1.365s] running symlink_data
+[1.365s] symbolically linking /home/ws/ugv_ws/build/ugv_bringup/resource/ugv_bringup -> /home/ws/ugv_ws/install/ugv_bringup/share/ament_index/resource_index/packages
+[1.365s] error: [Errno 17] File exists: '/home/ws/ugv_ws/build/ugv_bringup/resource/ugv_bringup' -> '/home/ws/ugv_ws/install/ugv_bringup/share/ament_index/resource_index/packages/ugv_bringup'
+[1.426s] Invoked command in '/home/ws/ugv_ws/build/ugv_bringup' returned '1': PYTHONPATH=/home/ws/ugv_ws/build/ugv_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_bringup/build --no-deps symlink_data

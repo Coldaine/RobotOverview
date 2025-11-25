@@ -1,0 +1,13 @@
+[0.017s] Invoking command in '/home/ws/ugv_ws/build/ugv_base_node': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_voice:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_base_node -- -j4 -l4
+[0.087s] [ 50%] [32mBuilding CXX object CMakeFiles/base_node.dir/src/base_node.cpp.o[0m
+[2.991s] [01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:[m[K In member function ‘[01m[Kvoid OdomPublisher::publish_odom()[m[K’:
+[2.991s] [01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:259:43:[m[K [01;31m[Kerror: [m[K‘[01m[KtoMsg[m[K’ is not a member of ‘[01m[Ktf2[m[K’
+[2.991s]   259 |         odom.pose.pose.orientation = tf2::[01;31m[KtoMsg[m[K(q);
+[2.991s]       |                                           [01;31m[K^~~~~[m[K
+[2.991s] [01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:298:47:[m[K [01;31m[Kerror: [m[K‘[01m[KtoMsg[m[K’ is not a member of ‘[01m[Ktf2[m[K’
+[2.991s]   298 |             odom.pose.pose.orientation = tf2::[01;31m[KtoMsg[m[K(q);
+[2.991s]       |                                               [01;31m[K^~~~~[m[K
+[7.004s] gmake[2]: *** [CMakeFiles/base_node.dir/build.make:76: CMakeFiles/base_node.dir/src/base_node.cpp.o] Error 1
+[7.004s] gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/base_node.dir/all] Error 2
+[7.004s] gmake: *** [Makefile:146: all] Error 2
+[7.005s] Invoked command in '/home/ws/ugv_ws/build/ugv_base_node' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_voice:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_base_node -- -j4 -l4

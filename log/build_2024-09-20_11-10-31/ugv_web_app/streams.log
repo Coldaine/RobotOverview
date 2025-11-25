@@ -1,0 +1,20 @@
+[0.871s] Invoking command in '/home/ws/ugv_ws/build/ugv_web_app': PYTHONPATH=/home/ws/ugv_ws/build/ugv_web_app/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_web_app/build --no-deps symlink_data
+[1.180s] running develop
+[1.180s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[1.180s]   warnings.warn(
+[1.354s] running egg_info
+[1.354s] writing ugv_web_app.egg-info/PKG-INFO
+[1.355s] writing dependency_links to ugv_web_app.egg-info/dependency_links.txt
+[1.358s] writing entry points to ugv_web_app.egg-info/entry_points.txt
+[1.358s] writing requirements to ugv_web_app.egg-info/requires.txt
+[1.359s] writing top-level names to ugv_web_app.egg-info/top_level.txt
+[1.362s] reading manifest file 'ugv_web_app.egg-info/SOURCES.txt'
+[1.363s] writing manifest file 'ugv_web_app.egg-info/SOURCES.txt'
+[1.365s] running build_ext
+[1.365s] Creating /home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages/ugv-web-app.egg-link (link to .)
+[1.366s] 
+[1.366s] Installed /home/ws/ugv_ws/build/ugv_web_app
+[1.366s] running symlink_data
+[1.366s] symbolically linking /home/ws/ugv_ws/build/ugv_web_app/resource/ugv_web_app -> /home/ws/ugv_ws/install/ugv_web_app/share/ament_index/resource_index/packages
+[1.366s] error: [Errno 17] File exists: '/home/ws/ugv_ws/build/ugv_web_app/resource/ugv_web_app' -> '/home/ws/ugv_ws/install/ugv_web_app/share/ament_index/resource_index/packages/ugv_web_app'
+[1.426s] Invoked command in '/home/ws/ugv_ws/build/ugv_web_app' returned '1': PYTHONPATH=/home/ws/ugv_ws/build/ugv_web_app/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_web_app/build --no-deps symlink_data

@@ -1,0 +1,202 @@
+npm WARN deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+npm WARN deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+npm WARN deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm WARN deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm WARN deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+npm WARN deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm WARN deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm WARN deprecated glob@8.1.0: Glob versions prior to v9 are no longer supported
+npm WARN deprecated @babel/plugin-proposal-object-rest-spread@7.20.7: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-object-rest-spread instead.
+npm WARN deprecated sinon@7.5.0: 16.1.1
+npm WARN deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+npm ERR! code 1
+npm ERR! path /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client
+npm ERR! command failed
+npm ERR! command sh -c -- npm-run-all clean build
+npm ERR! > opentera-webrtc-web-client@1.0.0 clean
+npm ERR! > rimraf dist lib coverage
+npm ERR! 
+npm ERR! 
+npm ERR! > opentera-webrtc-web-client@1.0.0 build
+npm ERR! > npm-run-all build:*
+npm ERR! 
+npm ERR! 
+npm ERR! > opentera-webrtc-web-client@1.0.0 build:umdmin
+npm ERR! > webpack --mode=production --env output-library-target=umd
+npm ERR! 
+npm ERR! assets by status 74.3 KiB [cached] 1 asset
+npm ERR! orphan modules 141 KiB [orphan] 19 modules
+npm ERR! runtime modules 997 bytes 4 modules
+npm ERR! cacheable modules 166 KiB
+npm ERR!   ./index.js 42 bytes [built] [code generated]
+npm ERR!   ./src/index.js + 19 modules 141 KiB [built] [code generated]
+npm ERR!   ../../../node_modules/webrtc-adapter/node_modules/sdp/sdp.js 24.8 KiB [built] [code generated]
+npm ERR! 
+npm ERR! WARNING in [eslint] 
+npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/Signaling/SignalingClient.js
+npm ERR!    77:11  warning  'ids' is defined but never used        @typescript-eslint/no-unused-vars
+npm ERR!    86:12  warning  'toId' is defined but never used       @typescript-eslint/no-unused-vars
+npm ERR!    86:18  warning  'offer' is defined but never used      @typescript-eslint/no-unused-vars
+npm ERR!    91:22  warning  'toId' is defined but never used       @typescript-eslint/no-unused-vars
+npm ERR!    91:28  warning  'answer' is defined but never used     @typescript-eslint/no-unused-vars
+npm ERR!    96:14  warning  'toId' is defined but never used       @typescript-eslint/no-unused-vars
+npm ERR!   101:20  warning  'toId' is defined but never used       @typescript-eslint/no-unused-vars
+npm ERR!   101:26  warning  'candidate' is defined but never used  @typescript-eslint/no-unused-vars
+npm ERR! 
+npm ERR! ✖ 17 problems (9 errors, 8 warnings)
+npm ERR! 
+npm ERR! ERROR in [eslint] 
+npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/DataChannelClient.js
+npm ERR!    49:40  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    50:37  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    51:38  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    58:9   error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+npm ERR!    61:11  error  'dataChannel' is never reassigned. Use 'const' instead        prefer-const
+npm ERR!    84:45  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   113:35  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   114:32  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   115:33  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   116:33  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   131:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+npm ERR!   170:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+npm ERR! 
+npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/Signaling/SignalingClient.js
+npm ERR!   10:45  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+npm ERR!   11:46  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+npm ERR!   12:46  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+npm ERR!   14:39  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+npm ERR!   16:32  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+npm ERR!   17:36  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+npm ERR!   18:42  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+npm ERR!   19:40  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+npm ERR!   21:43  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+npm ERR! 
+npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/Signaling/WebSocketSignalingClient.js
+npm ERR!    36:11  error  'data' is never reassigned. Use 'const' instead             prefer-const
+npm ERR!    57:13  error  'eventName' is never reassigned. Use 'const' instead        prefer-const
+npm ERR!    90:3   error  Identifier '_handle_join_room_answer' is not in camel case  @typescript-eslint/camelcase
+npm ERR!   107:29  error  Unexpected empty arrow function                             @typescript-eslint/no-empty-function
+npm ERR!   108:30  error  Unexpected empty arrow function                             @typescript-eslint/no-empty-function
+npm ERR!   109:30  error  Unexpected empty arrow function                             @typescript-eslint/no-empty-function
+npm ERR!   110:32  error  Unexpected empty arrow function                             @typescript-eslint/no-empty-function
+npm ERR!   126:9   error  'data' is never reassigned. Use 'const' instead             prefer-const
+npm ERR!   131:9   error  'data' is never reassigned. Use 'const' instead             prefer-const
+npm ERR!   136:9   error  'data' is never reassigned. Use 'const' instead             prefer-const
+npm ERR!   141:9   error  'data' is never reassigned. Use 'const' instead             prefer-const
+npm ERR! 
+npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/StreamClient.js
+npm ERR!    58:37  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    71:9   error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+npm ERR!   111:39  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   124:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+npm ERR!   241:11  error  'senders' is never reassigned. Use 'const' instead            prefer-const
+npm ERR!   252:11  error  'receivers' is never reassigned. Use 'const' instead          prefer-const
+npm ERR! 
+npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/StreamDataChannelClient.js
+npm ERR!    66:40  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    67:37  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    68:38  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    73:37  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    85:9   error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+npm ERR!    88:11  error  'dataChannel' is never reassigned. Use 'const' instead        prefer-const
+npm ERR!   139:45  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   140:39  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   169:35  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   170:32  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   171:33  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   172:33  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   192:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+npm ERR!   201:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+npm ERR!   321:11  error  'senders' is never reassigned. Use 'const' instead            prefer-const
+npm ERR!   332:11  error  'receivers' is never reassigned. Use 'const' instead          prefer-const
+npm ERR!   356:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+npm ERR! 
+npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/WebrtcClient.js
+npm ERR!    39:22  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    52:45  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    53:46  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    54:46  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    55:39  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    58:32  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    60:35  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    61:38  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!    62:42  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   122:11  error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+npm ERR!   128:11  error  'answer' is never reassigned. Use 'const' instead             prefer-const
+npm ERR!   142:11  error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+npm ERR!   169:13  error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+npm ERR!   173:13  error  'offer' is never reassigned. Use 'const' instead              prefer-const
+npm ERR!   228:46  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   229:55  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+npm ERR!   248:9   error  'newClients' is never reassigned. Use 'const' instead         prefer-const
+npm ERR!   284:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+npm ERR! 
+npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/devices.js
+npm ERR!   66:5  error  'devices' is never reassigned. Use 'const' instead  prefer-const
+npm ERR! 
+npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/iceServers.js
+npm ERR!    8:7  error  'response' is never reassigned. Use 'const' instead    prefer-const
+npm ERR!   16:5  error  'iceServers' is never reassigned. Use 'const' instead  prefer-const
+npm ERR! 
+npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/index.js
+npm ERR!   10:5  error  'openteraWebrtcWebClient' is never reassigned. Use 'const' instead  prefer-const
+npm ERR! 
+npm ERR! ✖ 85 problems (77 errors, 8 warnings)
+npm ERR!   32 errors and 0 warnings potentially fixable with the `--fix` option.
+npm ERR! 
+npm ERR! webpack 5.101.0 compiled with 1 error and 1 warning in 13647 ms
+npm ERR! npm WARN logfile Error: EACCES: permission denied, scandir '/root/.npm/_logs'
+npm ERR! npm WARN logfile  error cleaning log files [Error: EACCES: permission denied, scandir '/root/.npm/_logs'] {
+npm ERR! npm WARN logfile   errno: -13,
+npm ERR! npm WARN logfile   code: 'EACCES',
+npm ERR! npm WARN logfile   syscall: 'scandir',
+npm ERR! npm WARN logfile   path: '/root/.npm/_logs'
+npm ERR! npm WARN logfile }
+npm ERR! npm WARN logfile Error: EACCES: permission denied, scandir '/root/.npm/_logs'
+npm ERR! npm WARN logfile  error cleaning log files [Error: EACCES: permission denied, scandir '/root/.npm/_logs'] {
+npm ERR! npm WARN logfile   errno: -13,
+npm ERR! npm WARN logfile   code: 'EACCES',
+npm ERR! npm WARN logfile   syscall: 'scandir',
+npm ERR! npm WARN logfile   path: '/root/.npm/_logs'
+npm ERR! npm WARN logfile }
+npm ERR! npm ERR! code EACCES
+npm ERR! npm ERR! syscall mkdir
+npm ERR! npm ERR! path /root/.npm/_cacache/tmp
+npm ERR! npm ERR! errno -13
+npm ERR! npm ERR! 
+npm ERR! npm ERR! Your cache folder contains root-owned files, due to a bug in
+npm ERR! npm ERR! previous versions of npm which has since been addressed.
+npm ERR! npm ERR! 
+npm ERR! npm ERR! To permanently fix this problem, please run:
+npm ERR! npm ERR!   sudo chown -R 1000:1000 "/root/.npm"
+npm ERR! 
+npm ERR! npm ERR! Log files were not written due to an error writing to the directory: /root/.npm/_logs
+npm ERR! npm ERR! You can rerun the command with `--loglevel=verbose` to see the logs in your terminal
+npm ERR! npm WARN logfile Error: EACCES: permission denied, scandir '/root/.npm/_logs'
+npm ERR! npm WARN logfile  error cleaning log files [Error: EACCES: permission denied, scandir '/root/.npm/_logs'] {
+npm ERR! npm WARN logfile   errno: -13,
+npm ERR! npm WARN logfile   code: 'EACCES',
+npm ERR! npm WARN logfile   syscall: 'scandir',
+npm ERR! npm WARN logfile   path: '/root/.npm/_logs'
+npm ERR! npm WARN logfile }
+npm ERR! npm ERR! code EACCES
+npm ERR! npm ERR! syscall mkdir
+npm ERR! npm ERR! path /root/.npm/_cacache/tmp
+npm ERR! npm ERR! errno -13
+npm ERR! npm ERR! 
+npm ERR! npm ERR! Your cache folder contains root-owned files, due to a bug in
+npm ERR! npm ERR! previous versions of npm which has since been addressed.
+npm ERR! npm ERR! 
+npm ERR! npm ERR! To permanently fix this problem, please run:
+npm ERR! npm ERR!   sudo chown -R 1000:1000 "/root/.npm"
+npm ERR! 
+npm ERR! npm ERR! Log files were not written due to an error writing to the directory: /root/.npm/_logs
+npm ERR! npm ERR! You can rerun the command with `--loglevel=verbose` to see the logs in your terminal
+npm ERR! ERROR: "build:umdmin" exited with 243.
+npm ERR! ERROR: "build" exited with 243.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /root/.npm/_logs/2025-07-31T06_32_15_508Z-debug-0.log
+gmake[2]: *** [CMakeFiles/opentera_werbrtc_teleop_frontend-install.dir/build.make:73: node_modules.stamp] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:139: CMakeFiles/opentera_werbrtc_teleop_frontend-install.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

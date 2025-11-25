@@ -1,0 +1,246 @@
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/GStreamerVideoDecoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Decoders/GStreamerVideoDecoder.cpp:26[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/GStreamerVideoDecoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Decoders/GStreamerVideoDecoder.cpp:26[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/GStreamerVideoDecoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/H264GStreamerVideoDecoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Decoders/H264GStreamerVideoDecoders.cpp:18[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/GStreamerVideoDecoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/H264GStreamerVideoDecoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Decoders/H264GStreamerVideoDecoders.cpp:18[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/GStreamerVideoDecoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/Vp8GStreamerVideoDecoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Decoders/Vp8GStreamerVideoDecoders.cpp:18[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/GStreamerVideoDecoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/Vp8GStreamerVideoDecoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Decoders/Vp8GStreamerVideoDecoders.cpp:18[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/GStreamerVideoDecoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/Vp9GStreamerVideoDecoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Decoders/Vp9GStreamerVideoDecoders.cpp:18[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/GStreamerVideoDecoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/Vp9GStreamerVideoDecoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Decoders/Vp9GStreamerVideoDecoders.cpp:18[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/GStreamerVideoEncoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Encoders/GStreamerVideoEncoder.cpp:28[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/GStreamerVideoEncoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Encoders/GStreamerVideoEncoder.cpp:28[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/GStreamerVideoEncoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/H264GStreamerVideoEncoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Encoders/H264GStreamerVideoEncoders.cpp:24[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/GStreamerVideoEncoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/H264GStreamerVideoEncoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Encoders/H264GStreamerVideoEncoders.cpp:24[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/GStreamerVideoEncoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/Vp8GStreamerVideoEncoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Encoders/Vp8GStreamerVideoEncoders.cpp:24[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/GStreamerVideoEncoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/Vp8GStreamerVideoEncoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Encoders/Vp8GStreamerVideoEncoders.cpp:24[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/GStreamerVideoEncoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/Vp9GStreamerVideoEncoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Encoders/Vp9GStreamerVideoEncoders.cpp:18[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/GStreamerVideoEncoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/Vp9GStreamerVideoEncoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Encoders/Vp9GStreamerVideoEncoders.cpp:18[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+/usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/GStreamerVideoDecoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/H264GStreamerVideoDecoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Factories/WebRtcGStreamerVideoDecoderFactory.cpp:2[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/GStreamerVideoDecoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Decoders/H264GStreamerVideoDecoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Factories/WebRtcGStreamerVideoDecoderFactory.cpp:2[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/GStreamerVideoEncoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/H264GStreamerVideoEncoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Factories/WebRtcGStreamerVideoEncoderFactory.cpp:2[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/GStreamerVideoEncoder.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Encoders/H264GStreamerVideoEncoders.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Factories/WebRtcGStreamerVideoEncoderFactory.cpp:2[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Pipeline/GStreamerDecoderPipeline.cpp:18[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerDecoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Pipeline/GStreamerDecoderPipeline.cpp:18[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Pipeline/GStreamerEncoderPipeline.cpp:26[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Pipeline/GStreamerEncoderPipeline.h:21[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Pipeline/GStreamerEncoderPipeline.cpp:26[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Utils/GStreamerHelpers.cpp:1[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Utils/GStreamerHelpers.cpp:1[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Utils/GStreamerSupport.cpp:2[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Utils/GStreamerSupport.cpp:2[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerBufferPool.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Utils/GStreamerBufferPool.cpp:1[m[K:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:[m[K In constructor ‘[01m[Kgst::GstRequestPad::GstRequestPad(GstElement*, const gchar*)[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:169:68:[m[K [01;35m[Kwarning: [m[K‘[01m[KGstPad* gst_element_get_request_pad(GstElement*, const gchar*)[m[K’ is deprecated: Use 'gst_element_request_pad_simple' instead [[01;35m[K-Wdeprecated-declarations[m[K]
+  169 |               pad_{gst::unique_from_ptr([01;35m[Kgst_element_get_request_pad(element, name)[m[K)}
+      |                                         [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~[m[K
+In file included from [01m[K/usr/include/gstreamer-1.0/gst/gstbin.h:27[m[K,
+                 from [01m[K/usr/include/gstreamer-1.0/gst/gst.h:35[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerHelpers.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/include/OpenteraWebrtcNativeGStreamer/Utils/GStreamerBufferPool.h:20[m[K,
+                 from [01m[K/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros/opentera-webrtc/opentera-webrtc-native-client/OpenteraWebrtcNativeGStreamer/src/Utils/GStreamerBufferPool.cpp:1[m[K:
+[01m[K/usr/include/gstreamer-1.0/gst/gstelement.h:1042:25:[m[K [01;36m[Knote: [m[Kdeclared here
+ 1042 | GstPad*                 [01;36m[Kgst_element_get_request_pad[m[K     (GstElement *element, const gchar *name);
+      |                         [01;36m[K^~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+/usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(

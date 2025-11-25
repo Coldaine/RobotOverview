@@ -1,0 +1,33 @@
+[0.018s] Invoking command in '/home/ws/ugv_ws/build/ugv_base_node': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_base_node -- -j4 -l4
+[0.068s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.305s] -- Found tf2: 0.25.7 (/opt/ros/humble/share/tf2/cmake)
+[0.378s] -- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.384s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.397s] -- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.420s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.447s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.525s] -- Found tf2_ros: 0.25.7 (/opt/ros/humble/share/tf2_ros/cmake)
+[0.627s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.634s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.885s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.076s] -- Found nav_msgs: 4.2.4 (/opt/ros/humble/share/nav_msgs/cmake)
+[1.108s] -- Found sensor_msgs: 4.2.4 (/opt/ros/humble/share/sensor_msgs/cmake)
+[1.140s] -- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)
+[1.263s] [31mCMake Error at CMakeLists.txt:47 (install):
+[1.263s]   install TARGETS given target "base_node_ekf" which does not exist.
+[1.263s] 
+[1.263s] [0m
+[1.277s] -- Added test 'copyright' to check source files copyright and LICENSE
+[1.279s] -- Added test 'cppcheck' to perform static code analysis on C / C++ code
+[1.279s] -- Configured cppcheck include dirs: 
+[1.279s] -- Configured cppcheck exclude dirs and/or files: 
+[1.280s] -- Added test 'cpplint' to check C / C++ code against the Google style
+[1.280s] -- Configured cpplint exclude dirs and/or files: 
+[1.281s] -- Added test 'lint_cmake' to check CMake code style
+[1.283s] -- Added test 'uncrustify' to check C / C++ code style
+[1.283s] -- Configured uncrustify additional arguments: 
+[1.284s] -- Added test 'xmllint' to check XML markup files
+[1.289s] -- Configuring incomplete, errors occurred!
+[1.289s] See also "/home/ws/ugv_ws/build/ugv_base_node/CMakeFiles/CMakeOutput.log".
+[1.298s] gmake: *** [Makefile:308: cmake_check_build_system] Error 1
+[1.300s] Invoked command in '/home/ws/ugv_ws/build/ugv_base_node' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_base_node -- -j4 -l4

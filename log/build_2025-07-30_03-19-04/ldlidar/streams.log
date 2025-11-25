@@ -1,0 +1,37 @@
+[0.054s] Invoking command in '/home/ws/ugv_ws/build/ldlidar': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ldlidar -- -j4 -l4
+[0.197s] [35m[1mConsolidate compiler generated dependencies of target ldlidar_node[0m
+[0.268s] [ 12%] [32mBuilding CXX object CMakeFiles/ldlidar_node.dir/src/demo.cpp.o[0m
+[15.589s] [ 25%] [32m[1mLinking CXX executable ldlidar_node[0m
+[16.524s] [100%] Built target ldlidar_node
+[16.559s] Invoked command in '/home/ws/ugv_ws/build/ldlidar' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ldlidar -- -j4 -l4
+[16.701s] Invoking command in '/home/ws/ugv_ws/build/ldlidar': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/ldlidar
+[16.726s] -- Install configuration: ""
+[16.726s] -- Installing: /home/ws/ugv_ws/install/ldlidar/lib/ldlidar/ldlidar_node
+[16.731s] -- Set runtime path of "/home/ws/ugv_ws/install/ldlidar/lib/ldlidar/ldlidar_node" to ""
+[16.732s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//launch
+[16.732s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//launch/ld06.launch.py
+[16.733s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//launch/ldlidar.launch.py
+[16.733s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//launch/viewer_ldlidar.launch.py
+[16.734s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//launch/viewer_stl27l.launch.py
+[16.734s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//launch/stl27l.launch.py
+[16.734s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//launch/viewer_ld19.launch.py
+[16.735s] -- Installing: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//launch/ld19.launch.py
+[16.735s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//launch/viewer_ld06.launch.py
+[16.735s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//rviz
+[16.736s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar//rviz/view.rviz
+[16.736s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ament_index/resource_index/package_run_dependencies/ldlidar
+[16.736s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ament_index/resource_index/parent_prefix_path/ldlidar
+[16.737s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/environment/ament_prefix_path.sh
+[16.738s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/environment/ament_prefix_path.dsv
+[16.738s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/environment/path.sh
+[16.739s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/environment/path.dsv
+[16.739s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/local_setup.bash
+[16.740s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/local_setup.sh
+[16.741s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/local_setup.zsh
+[16.742s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/local_setup.dsv
+[16.742s] -- Installing: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/package.dsv
+[16.742s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ament_index/resource_index/packages/ldlidar
+[16.742s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/cmake/ldlidarConfig.cmake
+[16.743s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/cmake/ldlidarConfig-version.cmake
+[16.744s] -- Up-to-date: /home/ws/ugv_ws/install/ldlidar/share/ldlidar/package.xml
+[16.745s] Invoked command in '/home/ws/ugv_ws/build/ldlidar' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/ldlidar

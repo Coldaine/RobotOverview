@@ -1,0 +1,148 @@
+[0.078s] Invoking command in '/home/ws/ugv_ws/build/opentera_protobuf_messages': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/opentera_protobuf_messages
+[0.116s] Not searching for unused variables given on the command line.
+[0.301s] -- The C compiler identification is GNU 11.4.0
+[0.510s] -- The CXX compiler identification is GNU 11.4.0
+[0.530s] -- Detecting C compiler ABI info
+[0.797s] -- Detecting C compiler ABI info - done
+[0.828s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.828s] -- Detecting C compile features
+[0.830s] -- Detecting C compile features - done
+[0.841s] -- Detecting CXX compiler ABI info
+[1.137s] -- Detecting CXX compiler ABI info - done
+[1.166s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.167s] -- Detecting CXX compile features
+[1.169s] -- Detecting CXX compile features - done
+[1.192s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[2.050s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[2.409s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[3.423s] -- Found Protobuf: /usr/lib/aarch64-linux-gnu/libprotobuf.so (found version "3.12.4") 
+[3.432s] -- Protobuf: processing opentera_messages/proto/CreateSession.proto
+[3.435s] -- Protobuf: processing opentera_messages/proto/DatabaseEvent.proto
+[3.437s] -- Protobuf: processing opentera_messages/proto/DeviceEvent.proto
+[3.438s] -- Protobuf: processing opentera_messages/proto/JoinSessionEvent.proto
+[3.440s] -- Protobuf: processing opentera_messages/proto/JoinSessionReplyEvent.proto
+[3.441s] -- Protobuf: processing opentera_messages/proto/LeaveSessionEvent.proto
+[3.442s] -- Protobuf: processing opentera_messages/proto/LogEvent.proto
+[3.442s] -- Protobuf: processing opentera_messages/proto/ParticipantEvent.proto
+[3.443s] -- Protobuf: processing opentera_messages/proto/RPCMessage.proto
+[3.443s] -- Protobuf: processing opentera_messages/proto/Result.proto
+[3.443s] -- Protobuf: processing opentera_messages/proto/ServerCommand.proto
+[3.443s] -- Protobuf: processing opentera_messages/proto/StopSessionEvent.proto
+[3.444s] -- Protobuf: processing opentera_messages/proto/TeraEvent.proto
+[3.450s] -- Protobuf: processing opentera_messages/proto/TeraMessage.proto
+[3.452s] -- Protobuf: processing opentera_messages/proto/TeraModuleMessage.proto
+[3.453s] -- Protobuf: processing opentera_messages/proto/UserEvent.proto
+[3.454s] -- Protobuf: processing opentera_messages/proto/UserRegisterToEvent.proto
+[4.205s] -- Configuring done
+[4.251s] -- Generating done
+[4.259s] -- Build files have been written to: /home/ws/ugv_ws/build/opentera_protobuf_messages
+[4.285s] Invoked command in '/home/ws/ugv_ws/build/opentera_protobuf_messages' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/opentera_protobuf_messages
+[4.287s] Invoking command in '/home/ws/ugv_ws/build/opentera_protobuf_messages': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/opentera_protobuf_messages -- -j4 -l4
+[4.494s] [  5%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/DatabaseEvent_pb2.py[0m
+[4.514s] [ 11%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/CreateSession_pb2.py[0m
+[4.522s] [ 17%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/UserRegisterToEvent_pb2.py[0m
+[4.566s] [ 23%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/DeviceEvent_pb2.py[0m
+[4.570s] [ 23%] Built target opentera_messages_DatabaseEvent.proto.target
+[4.585s] [ 23%] Built target opentera_messages_UserRegisterToEvent.proto.target
+[4.654s] [ 29%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/JoinSessionEvent_pb2.py[0m
+[4.670s] [ 35%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/JoinSessionReplyEvent_pb2.py[0m
+[4.741s] [ 35%] Built target opentera_messages_JoinSessionReplyEvent.proto.target
+[4.745s] [ 35%] Built target opentera_messages_DeviceEvent.proto.target
+[4.752s] [ 35%] Built target opentera_messages_CreateSession.proto.target
+[4.781s] [ 35%] Built target opentera_messages_JoinSessionEvent.proto.target
+[4.831s] [ 41%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/LeaveSessionEvent_pb2.py[0m
+[4.853s] [ 47%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/LogEvent_pb2.py[0m
+[4.886s] [ 52%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/RPCMessage_pb2.py[0m
+[4.888s] [ 58%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/ParticipantEvent_pb2.py[0m
+[4.913s] [ 58%] Built target opentera_messages_LeaveSessionEvent.proto.target
+[4.928s] [ 58%] Built target opentera_messages_LogEvent.proto.target
+[4.953s] [ 58%] Built target opentera_messages_RPCMessage.proto.target
+[4.983s] [ 58%] Built target opentera_messages_ParticipantEvent.proto.target
+[5.025s] [ 64%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/Result_pb2.py[0m
+[5.051s] [ 70%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/ServerCommand_pb2.py[0m
+[5.074s] [ 76%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/StopSessionEvent_pb2.py[0m
+[5.094s] [ 76%] Built target opentera_messages_Result.proto.target
+[5.119s] [ 82%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/TeraEvent_pb2.py[0m
+[5.128s] [ 82%] Built target opentera_messages_StopSessionEvent.proto.target
+[5.145s] [ 82%] Built target opentera_messages_ServerCommand.proto.target
+[5.187s] [ 82%] Built target opentera_messages_TeraEvent.proto.target
+[5.211s] [ 88%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/TeraMessage_pb2.py[0m
+[5.266s] [ 94%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/TeraModuleMessage_pb2.py[0m
+[5.290s] [100%] [34m[1mGenerating /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages/opentera_protobuf_messages/UserEvent_pb2.py[0m
+[5.307s] [100%] Built target opentera_messages_TeraMessage.proto.target
+[5.345s] [100%] Built target opentera_messages_UserEvent.proto.target
+[5.358s] [100%] Built target opentera_messages_TeraModuleMessage.proto.target
+[5.371s] [100%] Built target ament_cmake_python_symlink_opentera_protobuf_messages
+[5.455s] [100%] Built target python-messages
+[6.607s] running egg_info
+[6.610s] creating opentera_protobuf_messages.egg-info
+[6.612s] writing opentera_protobuf_messages.egg-info/PKG-INFO
+[6.614s] writing dependency_links to opentera_protobuf_messages.egg-info/dependency_links.txt
+[6.615s] writing top-level names to opentera_protobuf_messages.egg-info/top_level.txt
+[6.619s] writing manifest file 'opentera_protobuf_messages.egg-info/SOURCES.txt'
+[6.627s] reading manifest file 'opentera_protobuf_messages.egg-info/SOURCES.txt'
+[6.631s] writing manifest file 'opentera_protobuf_messages.egg-info/SOURCES.txt'
+[6.754s] [100%] Built target ament_cmake_python_build_opentera_protobuf_messages_egg
+[6.809s] Invoked command in '/home/ws/ugv_ws/build/opentera_protobuf_messages' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/opentera_protobuf_messages -- -j4 -l4
+[6.968s] Invoking command in '/home/ws/ugv_ws/build/opentera_protobuf_messages': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/opentera_protobuf_messages
+[6.992s] -- Install configuration: "Debug"
+[6.994s] -- Execute custom install script
+[6.995s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/environment/pythonpath.sh
+[7.024s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/environment/pythonpath.dsv
+[7.054s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages-0.0.0-py3.10.egg-info/PKG-INFO
+[7.084s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages-0.0.0-py3.10.egg-info/SOURCES.txt
+[7.115s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages-0.0.0-py3.10.egg-info/dependency_links.txt
+[7.148s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages-0.0.0-py3.10.egg-info/top_level.txt
+[7.182s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/CreateSession_pb2.py
+[7.215s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/DatabaseEvent_pb2.py
+[7.247s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/DeviceEvent_pb2.py
+[7.283s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/JoinSessionEvent_pb2.py
+[7.314s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/JoinSessionReplyEvent_pb2.py
+[7.347s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/LeaveSessionEvent_pb2.py
+[7.386s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/LogEvent_pb2.py
+[7.414s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/ParticipantEvent_pb2.py
+[7.444s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/RPCMessage_pb2.py
+[7.475s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/Result_pb2.py
+[7.505s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/ServerCommand_pb2.py
+[7.536s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/StopSessionEvent_pb2.py
+[7.569s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/TeraEvent_pb2.py
+[7.600s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/TeraMessage_pb2.py
+[7.634s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/TeraModuleMessage_pb2.py
+[7.665s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/UserEvent_pb2.py
+[7.697s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/UserRegisterToEvent_pb2.py
+[7.739s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/__init__.py
+[7.771s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/ament_index/resource_index/package_run_dependencies/opentera_protobuf_messages
+[7.806s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/ament_index/resource_index/parent_prefix_path/opentera_protobuf_messages
+[7.843s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/environment/ament_prefix_path.sh
+[7.873s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/environment/ament_prefix_path.dsv
+[7.904s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/environment/path.sh
+[7.936s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/environment/path.dsv
+[7.965s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/local_setup.bash
+[7.996s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/local_setup.sh
+[8.029s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/local_setup.zsh
+[8.061s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/local_setup.dsv
+[8.094s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/package.dsv
+[8.126s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/ament_index/resource_index/packages/opentera_protobuf_messages
+[8.160s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/cmake/opentera_protobuf_messagesConfig.cmake
+[8.195s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/cmake/opentera_protobuf_messagesConfig-version.cmake
+[8.227s] -- Symlinking: /home/ws/ugv_ws/install/opentera_protobuf_messages/share/opentera_protobuf_messages/package.xml
+[8.482s] Listing '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages'...
+[8.483s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/CreateSession_pb2.py'...
+[8.485s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/DatabaseEvent_pb2.py'...
+[8.486s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/DeviceEvent_pb2.py'...
+[8.486s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/JoinSessionEvent_pb2.py'...
+[8.487s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/JoinSessionReplyEvent_pb2.py'...
+[8.489s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/LeaveSessionEvent_pb2.py'...
+[8.490s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/LogEvent_pb2.py'...
+[8.490s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/ParticipantEvent_pb2.py'...
+[8.491s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/RPCMessage_pb2.py'...
+[8.492s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/Result_pb2.py'...
+[8.493s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/ServerCommand_pb2.py'...
+[8.494s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/StopSessionEvent_pb2.py'...
+[8.495s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/TeraEvent_pb2.py'...
+[8.495s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/TeraMessage_pb2.py'...
+[8.496s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/TeraModuleMessage_pb2.py'...
+[8.497s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/UserEvent_pb2.py'...
+[8.498s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/UserRegisterToEvent_pb2.py'...
+[8.498s] Compiling '/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages/opentera_protobuf_messages/__init__.py'...
+[8.513s] Invoked command in '/home/ws/ugv_ws/build/opentera_protobuf_messages' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/opentera_protobuf_messages

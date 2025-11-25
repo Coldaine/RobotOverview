@@ -1,0 +1,372 @@
+[0.000000] (-) TimerEvent: {}
+[0.000554] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.000588] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.000608] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.000626] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.000644] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.000661] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.000678] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.000695] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.000712] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.000728] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.000745] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.000761] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.000778] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.000795] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.000813] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.000834] (-) JobUnselected: {'identifier': 'ugv_base_node'}
+[0.000851] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.000867] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.000883] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.000900] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.001073] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.001091] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.001112] (ugv_bringup) JobQueued: {'identifier': 'ugv_bringup', 'dependencies': OrderedDict()}
+[0.001134] (ugv_chat_ai) JobQueued: {'identifier': 'ugv_chat_ai', 'dependencies': OrderedDict()}
+[0.001151] (ugv_description) JobQueued: {'identifier': 'ugv_description', 'dependencies': OrderedDict()}
+[0.001168] (ugv_gazebo) JobQueued: {'identifier': 'ugv_gazebo', 'dependencies': OrderedDict()}
+[0.001185] (ugv_nav) JobQueued: {'identifier': 'ugv_nav', 'dependencies': OrderedDict()}
+[0.001202] (ugv_slam) JobQueued: {'identifier': 'ugv_slam', 'dependencies': OrderedDict()}
+[0.001219] (ugv_tools) JobQueued: {'identifier': 'ugv_tools', 'dependencies': OrderedDict()}
+[0.001235] (ugv_vision) JobQueued: {'identifier': 'ugv_vision', 'dependencies': OrderedDict()}
+[0.001252] (ugv_web_app) JobQueued: {'identifier': 'ugv_web_app', 'dependencies': OrderedDict()}
+[0.001270] (ugv_bringup) JobStarted: {'identifier': 'ugv_bringup'}
+[0.099589] (-) TimerEvent: {}
+[0.199886] (-) TimerEvent: {}
+[0.300185] (-) TimerEvent: {}
+[0.400486] (-) TimerEvent: {}
+[0.500794] (-) TimerEvent: {}
+[0.601104] (-) TimerEvent: {}
+[0.701408] (-) TimerEvent: {}
+[0.798746] (ugv_chat_ai) JobStarted: {'identifier': 'ugv_chat_ai'}
+[0.801484] (-) TimerEvent: {}
+[0.901742] (-) TimerEvent: {}
+[1.002205] (-) TimerEvent: {}
+[1.102538] (-) TimerEvent: {}
+[1.202999] (-) TimerEvent: {}
+[1.303330] (-) TimerEvent: {}
+[1.403665] (-) TimerEvent: {}
+[1.503988] (-) TimerEvent: {}
+[1.604327] (-) TimerEvent: {}
+[1.704655] (-) TimerEvent: {}
+[1.804995] (-) TimerEvent: {}
+[1.905309] (-) TimerEvent: {}
+[2.005622] (-) TimerEvent: {}
+[2.105942] (-) TimerEvent: {}
+[2.206255] (-) TimerEvent: {}
+[2.306566] (-) TimerEvent: {}
+[2.406924] (-) TimerEvent: {}
+[2.507241] (-) TimerEvent: {}
+[2.607606] (-) TimerEvent: {}
+[2.707930] (-) TimerEvent: {}
+[2.808257] (-) TimerEvent: {}
+[2.908582] (-) TimerEvent: {}
+[3.008891] (-) TimerEvent: {}
+[3.109198] (-) TimerEvent: {}
+[3.209507] (-) TimerEvent: {}
+[3.309823] (-) TimerEvent: {}
+[3.381491] (ugv_description) JobStarted: {'identifier': 'ugv_description'}
+[3.388400] (ugv_gazebo) JobStarted: {'identifier': 'ugv_gazebo'}
+[3.409927] (-) TimerEvent: {}
+[3.510406] (-) TimerEvent: {}
+[3.611012] (-) TimerEvent: {}
+[3.711341] (-) TimerEvent: {}
+[3.811810] (-) TimerEvent: {}
+[3.912152] (-) TimerEvent: {}
+[4.012618] (-) TimerEvent: {}
+[4.112951] (-) TimerEvent: {}
+[4.213426] (-) TimerEvent: {}
+[4.313770] (-) TimerEvent: {}
+[4.414112] (-) TimerEvent: {}
+[4.514618] (-) TimerEvent: {}
+[4.615179] (-) TimerEvent: {}
+[4.715590] (-) TimerEvent: {}
+[4.816166] (-) TimerEvent: {}
+[4.916579] (-) TimerEvent: {}
+[5.017158] (-) TimerEvent: {}
+[5.117562] (-) TimerEvent: {}
+[5.218107] (-) TimerEvent: {}
+[5.318509] (-) TimerEvent: {}
+[5.419070] (-) TimerEvent: {}
+[5.519478] (-) TimerEvent: {}
+[5.619869] (-) TimerEvent: {}
+[5.720378] (-) TimerEvent: {}
+[5.820790] (-) TimerEvent: {}
+[5.921180] (-) TimerEvent: {}
+[6.158581] (-) TimerEvent: {}
+[6.259127] (-) TimerEvent: {}
+[6.359513] (-) TimerEvent: {}
+[6.460045] (-) TimerEvent: {}
+[6.560579] (-) TimerEvent: {}
+[6.661030] (-) TimerEvent: {}
+[6.761437] (-) TimerEvent: {}
+[6.861851] (-) TimerEvent: {}
+[6.962251] (-) TimerEvent: {}
+[7.062667] (-) TimerEvent: {}
+[7.163077] (-) TimerEvent: {}
+[7.263482] (-) TimerEvent: {}
+[7.363884] (-) TimerEvent: {}
+[7.464277] (-) TimerEvent: {}
+[7.564675] (-) TimerEvent: {}
+[7.665072] (-) TimerEvent: {}
+[7.765464] (-) TimerEvent: {}
+[7.865856] (-) TimerEvent: {}
+[7.966251] (-) TimerEvent: {}
+[8.066662] (-) TimerEvent: {}
+[8.167062] (-) TimerEvent: {}
+[8.267494] (-) TimerEvent: {}
+[8.367888] (-) TimerEvent: {}
+[8.468294] (-) TimerEvent: {}
+[8.568710] (-) TimerEvent: {}
+[8.669098] (-) TimerEvent: {}
+[8.769492] (-) TimerEvent: {}
+[8.869881] (-) TimerEvent: {}
+[8.970340] (-) TimerEvent: {}
+[9.070686] (-) TimerEvent: {}
+[9.171404] (-) TimerEvent: {}
+[9.271787] (-) TimerEvent: {}
+[9.372141] (-) TimerEvent: {}
+[9.472722] (-) TimerEvent: {}
+[9.573324] (-) TimerEvent: {}
+[9.673732] (-) TimerEvent: {}
+[9.774125] (-) TimerEvent: {}
+[9.874523] (-) TimerEvent: {}
+[9.974933] (-) TimerEvent: {}
+[10.075329] (-) TimerEvent: {}
+[10.175790] (-) TimerEvent: {}
+[10.276196] (-) TimerEvent: {}
+[10.376606] (-) TimerEvent: {}
+[10.477005] (-) TimerEvent: {}
+[10.577439] (-) TimerEvent: {}
+[10.677847] (-) TimerEvent: {}
+[10.778323] (-) TimerEvent: {}
+[10.878765] (-) TimerEvent: {}
+[10.979186] (-) TimerEvent: {}
+[11.079589] (-) TimerEvent: {}
+[12.590443] (-) TimerEvent: {}
+[12.690864] (-) TimerEvent: {}
+[12.791260] (-) TimerEvent: {}
+[12.891652] (-) TimerEvent: {}
+[12.992049] (-) TimerEvent: {}
+[13.092457] (-) TimerEvent: {}
+[13.192864] (-) TimerEvent: {}
+[13.293185] (-) TimerEvent: {}
+[13.393594] (-) TimerEvent: {}
+[13.493953] (-) TimerEvent: {}
+[13.594391] (-) TimerEvent: {}
+[13.694731] (-) TimerEvent: {}
+[13.795060] (-) TimerEvent: {}
+[13.895528] (-) TimerEvent: {}
+[13.995862] (-) TimerEvent: {}
+[14.096334] (-) TimerEvent: {}
+[14.196676] (-) TimerEvent: {}
+[14.297148] (-) TimerEvent: {}
+[14.397486] (-) TimerEvent: {}
+[14.497960] (-) TimerEvent: {}
+[14.598312] (-) TimerEvent: {}
+[14.698643] (-) TimerEvent: {}
+[14.798963] (-) TimerEvent: {}
+[14.899279] (-) TimerEvent: {}
+[14.999607] (-) TimerEvent: {}
+[15.099932] (-) TimerEvent: {}
+[15.200258] (-) TimerEvent: {}
+[15.300580] (-) TimerEvent: {}
+[15.400908] (-) TimerEvent: {}
+[15.501250] (-) TimerEvent: {}
+[15.601587] (-) TimerEvent: {}
+[15.701913] (-) TimerEvent: {}
+[15.802274] (-) TimerEvent: {}
+[15.902601] (-) TimerEvent: {}
+[16.002952] (-) TimerEvent: {}
+[16.103344] (-) TimerEvent: {}
+[16.203666] (-) TimerEvent: {}
+[16.303983] (-) TimerEvent: {}
+[16.404306] (-) TimerEvent: {}
+[16.504669] (-) TimerEvent: {}
+[16.605080] (-) TimerEvent: {}
+[16.705545] (-) TimerEvent: {}
+[16.805882] (-) TimerEvent: {}
+[16.906373] (-) TimerEvent: {}
+[17.006713] (-) TimerEvent: {}
+[17.107052] (-) TimerEvent: {}
+[17.207515] (-) TimerEvent: {}
+[17.307851] (-) TimerEvent: {}
+[17.408321] (-) TimerEvent: {}
+[17.508709] (-) TimerEvent: {}
+[19.561484] (ugv_description) JobProgress: {'identifier': 'ugv_description', 'progress': 'cmake'}
+[19.561618] (-) TimerEvent: {}
+[19.661910] (-) TimerEvent: {}
+[19.668461] (ugv_description) JobProgress: {'identifier': 'ugv_description', 'progress': 'build'}
+[19.669483] (ugv_description) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/ugv_description', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/ugv_description', 'env': OrderedDict([('USER', 'root'), ('SSH_CLIENT', '192.168.10.185 53930 23'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws/ugv_ws'), ('SSH_TTY', '/dev/pts/2'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('PWD', '/home/ws/ugv_ws/build/ugv_description'), ('SSH_CONNECTION', '192.168.10.185 53930 192.168.10.197 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/teb_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[19.675396] (ugv_gazebo) JobProgress: {'identifier': 'ugv_gazebo', 'progress': 'cmake'}
+[19.762025] (-) TimerEvent: {}
+[19.771204] (ugv_gazebo) JobProgress: {'identifier': 'ugv_gazebo', 'progress': 'build'}
+[19.771818] (ugv_gazebo) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/ugv_gazebo', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/ugv_gazebo', 'env': OrderedDict([('USER', 'root'), ('SSH_CLIENT', '192.168.10.185 53930 23'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws/ugv_ws'), ('SSH_TTY', '/dev/pts/2'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('PWD', '/home/ws/ugv_ws/build/ugv_gazebo'), ('SSH_CONNECTION', '192.168.10.185 53930 192.168.10.197 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/teb_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[19.862739] (-) TimerEvent: {}
+[19.964397] (-) TimerEvent: {}
+[20.064984] (-) TimerEvent: {}
+[20.165551] (-) TimerEvent: {}
+[20.266051] (-) TimerEvent: {}
+[20.366550] (-) TimerEvent: {}
+[20.467058] (-) TimerEvent: {}
+[20.567565] (-) TimerEvent: {}
+[20.667893] (-) TimerEvent: {}
+[20.768228] (-) TimerEvent: {}
+[20.868570] (-) TimerEvent: {}
+[20.968905] (-) TimerEvent: {}
+[21.069234] (-) TimerEvent: {}
+[21.169563] (-) TimerEvent: {}
+[21.269896] (-) TimerEvent: {}
+[21.370235] (-) TimerEvent: {}
+[21.470564] (-) TimerEvent: {}
+[21.570989] (-) TimerEvent: {}
+[21.671322] (-) TimerEvent: {}
+[21.771653] (-) TimerEvent: {}
+[21.871983] (-) TimerEvent: {}
+[21.972297] (-) TimerEvent: {}
+[22.072604] (-) TimerEvent: {}
+[22.172909] (-) TimerEvent: {}
+[22.273227] (-) TimerEvent: {}
+[22.373550] (-) TimerEvent: {}
+[22.473877] (-) TimerEvent: {}
+[22.574199] (-) TimerEvent: {}
+[26.744052] (-) TimerEvent: {}
+[26.844463] (-) TimerEvent: {}
+[26.945011] (-) TimerEvent: {}
+[27.045420] (-) TimerEvent: {}
+[27.145833] (-) TimerEvent: {}
+[27.246395] (-) TimerEvent: {}
+[27.347151] (-) TimerEvent: {}
+[27.447548] (-) TimerEvent: {}
+[27.547943] (-) TimerEvent: {}
+[30.316874] (-) TimerEvent: {}
+[30.417245] (-) TimerEvent: {}
+[30.517603] (-) TimerEvent: {}
+[30.617958] (-) TimerEvent: {}
+[30.718297] (-) TimerEvent: {}
+[30.818651] (-) TimerEvent: {}
+[30.918997] (-) TimerEvent: {}
+[31.019358] (-) TimerEvent: {}
+[31.119728] (-) TimerEvent: {}
+[31.220055] (-) TimerEvent: {}
+[31.320382] (-) TimerEvent: {}
+[31.420683] (-) TimerEvent: {}
+[31.520916] (-) TimerEvent: {}
+[31.621161] (-) TimerEvent: {}
+[31.721468] (-) TimerEvent: {}
+[31.821701] (-) TimerEvent: {}
+[31.921907] (-) TimerEvent: {}
+[32.022138] (-) TimerEvent: {}
+[32.122370] (-) TimerEvent: {}
+[32.222660] (-) TimerEvent: {}
+[32.322929] (-) TimerEvent: {}
+[32.423211] (-) TimerEvent: {}
+[32.523511] (-) TimerEvent: {}
+[32.893752] (-) TimerEvent: {}
+[32.930738] (ugv_description) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[34.309659] (-) TimerEvent: {}
+[34.330749] (ugv_gazebo) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[34.344264] (ugv_description) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[34.409778] (-) TimerEvent: {}
+[34.510387] (-) TimerEvent: {}
+[34.610889] (-) TimerEvent: {}
+[34.637128] (ugv_gazebo) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[34.710976] (-) TimerEvent: {}
+[34.811259] (-) TimerEvent: {}
+[34.911551] (-) TimerEvent: {}
+[35.011801] (-) TimerEvent: {}
+[35.112074] (-) TimerEvent: {}
+[35.212389] (-) TimerEvent: {}
+[35.312666] (-) TimerEvent: {}
+[35.413072] (-) TimerEvent: {}
+[35.513359] (-) TimerEvent: {}
+[35.613683] (-) TimerEvent: {}
+[35.714074] (-) TimerEvent: {}
+[35.814444] (-) TimerEvent: {}
+[35.914799] (-) TimerEvent: {}
+[36.015145] (-) TimerEvent: {}
+[36.115479] (-) TimerEvent: {}
+[36.215842] (-) TimerEvent: {}
+[36.316208] (-) TimerEvent: {}
+[36.416551] (-) TimerEvent: {}
+[36.516971] (-) TimerEvent: {}
+[36.617370] (-) TimerEvent: {}
+[36.717746] (-) TimerEvent: {}
+[36.818053] (-) TimerEvent: {}
+[36.918348] (-) TimerEvent: {}
+[37.018651] (-) TimerEvent: {}
+[37.118946] (-) TimerEvent: {}
+[37.219255] (-) TimerEvent: {}
+[37.319576] (-) TimerEvent: {}
+[37.419945] (-) TimerEvent: {}
+[37.520291] (-) TimerEvent: {}
+[37.620674] (-) TimerEvent: {}
+[37.721093] (-) TimerEvent: {}
+[37.821472] (-) TimerEvent: {}
+[37.921880] (-) TimerEvent: {}
+[38.323657] (-) TimerEvent: {}
+[38.424021] (-) TimerEvent: {}
+[38.524290] (-) TimerEvent: {}
+[38.624600] (-) TimerEvent: {}
+[38.725004] (-) TimerEvent: {}
+[38.825311] (-) TimerEvent: {}
+[38.925574] (-) TimerEvent: {}
+[39.025829] (-) TimerEvent: {}
+[39.126095] (-) TimerEvent: {}
+[39.226400] (-) TimerEvent: {}
+[39.326776] (-) TimerEvent: {}
+[39.427123] (-) TimerEvent: {}
+[39.527388] (-) TimerEvent: {}
+[39.627679] (-) TimerEvent: {}
+[39.728073] (-) TimerEvent: {}
+[39.828418] (-) TimerEvent: {}
+[39.928760] (-) TimerEvent: {}
+[40.029053] (-) TimerEvent: {}
+[40.129386] (-) TimerEvent: {}
+[40.229753] (-) TimerEvent: {}
+[40.330053] (-) TimerEvent: {}
+[40.430335] (-) TimerEvent: {}
+[40.530598] (-) TimerEvent: {}
+[40.630909] (-) TimerEvent: {}
+[40.731280] (-) TimerEvent: {}
+[40.831559] (-) TimerEvent: {}
+[40.931825] (-) TimerEvent: {}
+[41.032141] (-) TimerEvent: {}
+[41.132450] (-) TimerEvent: {}
+[41.232818] (-) TimerEvent: {}
+[41.333189] (-) TimerEvent: {}
+[41.433541] (-) TimerEvent: {}
+[41.533835] (-) TimerEvent: {}
+[41.634152] (-) TimerEvent: {}
+[41.734493] (-) TimerEvent: {}
+[41.834830] (-) TimerEvent: {}
+[41.935123] (-) TimerEvent: {}
+[42.035396] (-) TimerEvent: {}
+[42.135653] (-) TimerEvent: {}
+[42.235935] (-) TimerEvent: {}
+[42.336199] (-) TimerEvent: {}
+[42.436492] (-) TimerEvent: {}
+[42.536759] (-) TimerEvent: {}
+[42.637075] (-) TimerEvent: {}
+[42.737470] (-) TimerEvent: {}
+[42.805817] (ugv_gazebo) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)\n'}
+[42.806222] (ugv_description) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)\n'}
+[42.837549] (-) TimerEvent: {}
+[42.938011] (-) TimerEvent: {}
+[43.038327] (-) TimerEvent: {}
+[43.138794] (-) TimerEvent: {}
+[43.239132] (-) TimerEvent: {}
+[43.339623] (-) TimerEvent: {}
+[43.440904] (-) TimerEvent: {}
+[43.541298] (-) TimerEvent: {}
+[43.641731] (-) TimerEvent: {}
+[43.694674] (ugv_description) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[43.695016] (ugv_gazebo) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[43.697488] (ugv_description) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[43.698408] (ugv_gazebo) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[43.741878] (-) TimerEvent: {}
+[43.751506] (ugv_description) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[43.752499] (ugv_gazebo) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[43.841974] (-) TimerEvent: {}
+[43.942287] (-) TimerEvent: {}
+[44.042526] (-) TimerEvent: {}

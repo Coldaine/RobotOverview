@@ -1,0 +1,327 @@
+[0.062s] Invoking command in '/home/ws/ugv_ws/build/vizanti_server': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_cmd:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/vizanti/vizanti_server -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/vizanti_server
+[0.904s] -- The C compiler identification is GNU 11.4.0
+[1.511s] -- The CXX compiler identification is GNU 11.4.0
+[1.534s] -- Detecting C compiler ABI info
+[1.783s] -- Detecting C compiler ABI info - done
+[1.807s] -- Check for working C compiler: /usr/bin/cc - skipped
+[1.809s] -- Detecting C compile features
+[1.812s] -- Detecting C compile features - done
+[1.823s] -- Detecting CXX compiler ABI info
+[2.102s] -- Detecting CXX compiler ABI info - done
+[2.125s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[2.126s] -- Detecting CXX compile features
+[2.128s] -- Detecting CXX compile features - done
+[2.164s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[2.925s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[3.567s] -- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)
+[3.896s] -- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[3.950s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[4.013s] -- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[4.097s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[4.212s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[4.540s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[4.573s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[4.989s] -- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[5.113s] -- Found FastRTPS: /opt/ros/humble/include  
+[5.289s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[5.371s] -- Looking for pthread.h
+[5.664s] -- Looking for pthread.h - found
+[5.665s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[5.915s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[5.917s] -- Found Threads: TRUE  
+[6.187s] -- Found rclpy: 3.3.14 (/opt/ros/humble/share/rclpy/cmake)
+[6.212s] -- Found std_srvs: 4.2.4 (/opt/ros/humble/share/std_srvs/cmake)
+[6.264s] -- Found tf2_msgs: 0.25.7 (/opt/ros/humble/share/tf2_msgs/cmake)
+[6.507s] -- Found vizanti_msgs: 0.1.0 (/home/ws/ugv_ws/install/vizanti_msgs/share/vizanti_msgs/cmake)
+[6.741s] -- Found rosbridge_suite: 2.0.1 (/opt/ros/humble/share/rosbridge_suite/cmake)
+[7.035s] -- Configuring done
+[7.048s] -- Generating done
+[7.053s] -- Build files have been written to: /home/ws/ugv_ws/build/vizanti_server
+[7.083s] Invoked command in '/home/ws/ugv_ws/build/vizanti_server' returned '0': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_cmd:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/vizanti/vizanti_server -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/vizanti_server
+[7.088s] Invoking command in '/home/ws/ugv_ws/build/vizanti_server': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_cmd:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/vizanti_server -- -j4 -l4
+[7.214s] Invoked command in '/home/ws/ugv_ws/build/vizanti_server' returned '0': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_cmd:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/vizanti_server -- -j4 -l4
+[7.308s] Invoking command in '/home/ws/ugv_ws/build/vizanti_server': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_cmd:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/vizanti_server
+[7.334s] -- Install configuration: ""
+[7.336s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//launch
+[7.336s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//launch/vizanti_server.launch.py
+[7.338s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//launch/vizanti_rws.launch.py
+[7.340s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public
+[7.341s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates
+[7.342s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/compressedimage
+[7.343s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/compressedimage/compressedimage_icon.html
+[7.345s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/compressedimage/compressedimage_modal.html
+[7.346s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/compressedimage/compressedimage_script.js
+[7.346s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/compressedimage/compressedimage_view.html
+[7.348s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/folder
+[7.348s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/folder/folder_script.js
+[7.348s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/folder/folder_modal.html
+[7.349s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/folder/folder_icon.html
+[7.349s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/scan
+[7.349s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/scan/scan_modal.html
+[7.349s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/scan/scan_view.html
+[7.350s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/scan/scan_icon.html
+[7.350s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/scan/scan_script.js
+[7.355s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/pointcloud
+[7.356s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/pointcloud/pointcloud_view.html
+[7.356s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/pointcloud/pointcloud_script.js
+[7.356s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/pointcloud/pointcloud_icon.html
+[7.356s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/pointcloud/pointcloud_modal.html
+[7.357s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/posewithcovariancestamped
+[7.357s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/posewithcovariancestamped/posewithcovariancestamped_icon.html
+[7.357s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/posewithcovariancestamped/posewithcovariancestamped_script.js
+[7.357s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/posewithcovariancestamped/posewithcovariancestamped_view.html
+[7.358s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/posewithcovariancestamped/posewithcovariancestamped_modal.html
+[7.358s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/rosbridge
+[7.364s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/rosbridge/rosbridge_script.js
+[7.364s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/rosbridge/rosbridge_modal.html
+[7.365s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/rosbridge/rosbridge_icon.html
+[7.365s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/mjpegimage
+[7.366s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/mjpegimage/mjpegimage_script.js
+[7.366s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/mjpegimage/mjpegimage_icon.html
+[7.366s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/mjpegimage/mjpegimage_view.html
+[7.367s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/mjpegimage/mjpegimage_modal.html
+[7.367s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/temperature
+[7.368s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/temperature/temperature_modal.html
+[7.368s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/temperature/temperature_script.js
+[7.368s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/temperature/temperature_icon.html
+[7.369s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/reconfigure
+[7.369s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/reconfigure/reconfigure_icon.html
+[7.369s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/reconfigure/reconfigure_modal.html
+[7.370s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/reconfigure/reconfigure_script.js
+[7.370s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/area
+[7.371s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/area/area_modal.html
+[7.371s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/area/area_view.html
+[7.371s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/area/area_icon.html
+[7.372s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/area/area_script.js
+[7.372s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/range
+[7.372s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/range/range_modal.html
+[7.373s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/range/range_script.js
+[7.374s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/range/range_icon.html
+[7.375s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/range/range_view.html
+[7.376s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/simplegoal
+[7.376s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/simplegoal/simplegoal_icon.html
+[7.376s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/simplegoal/simplegoal_script.js
+[7.377s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/simplegoal/simplegoal_view.html
+[7.377s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/simplegoal/simplegoal_modal.html
+[7.377s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/markerarray
+[7.378s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/markerarray/markerarray_icon.html
+[7.378s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/markerarray/markerarray_script.js
+[7.379s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/markerarray/markerarray_view.html
+[7.379s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/markerarray/markerarray_modal.html
+[7.379s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/rosbag
+[7.380s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/rosbag/rosbag_script.js
+[7.380s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/rosbag/rosbag_icon.html
+[7.380s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/rosbag/rosbag_modal.html
+[7.381s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/satelite
+[7.381s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/satelite/satelite_script.js
+[7.382s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/satelite/satelite_view.html
+[7.382s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/satelite/satelite_modal.html
+[7.382s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/satelite/satelite_icon.html
+[7.383s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/waypoints
+[7.383s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/waypoints/waypoints_icon.html
+[7.383s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/waypoints/waypoints_script.js
+[7.384s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/waypoints/waypoints_modal.html
+[7.384s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/waypoints/waypoints_view.html
+[7.384s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/webrtcvideo
+[7.385s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/webrtcvideo/webrtcvideo_modal.html
+[7.386s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/webrtcvideo/webrtcvideo_script.js
+[7.387s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/webrtcvideo/webrtcvideo_view.html
+[7.388s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/webrtcvideo/webrtcvideo_icon.html
+[7.388s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/tf
+[7.388s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/tf/tf_icon.html
+[7.389s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/tf/tf_view.html
+[7.389s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/tf/tf_script.js
+[7.389s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/tf/tf_modal.html
+[7.390s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/teleop
+[7.390s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/teleop/teleop_view.html
+[7.391s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/teleop/teleop_modal.html
+[7.391s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/teleop/teleop_icon.html
+[7.391s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/teleop/teleop_script.js
+[7.392s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/gridcells
+[7.392s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/gridcells/gridcells_icon.html
+[7.392s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/gridcells/gridcells_script.js
+[7.393s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/gridcells/gridcells_modal.html
+[7.393s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/gridcells/gridcells_view.html
+[7.393s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/path
+[7.394s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/path/path_modal.html
+[7.394s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/path/path_script.js
+[7.395s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/path/path_view.html
+[7.395s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/path/path_icon.html
+[7.395s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/robotmodel
+[7.396s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/robotmodel/robotmodel_icon.html
+[7.396s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/robotmodel/robotmodel_view.html
+[7.397s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/robotmodel/robotmodel_modal.html
+[7.398s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/robotmodel/robotmodel_script.js
+[7.399s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/initialpose
+[7.399s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/initialpose/initialpose_modal.html
+[7.400s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/initialpose/initialpose_script.js
+[7.400s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/initialpose/initialpose_view.html
+[7.400s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/initialpose/initialpose_icon.html
+[7.400s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/button
+[7.401s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/button/button_icon.html
+[7.401s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/button/button_modal.html
+[7.401s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/button/button_script.js
+[7.402s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/grid
+[7.402s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/grid/grid_script.js
+[7.403s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/grid/grid_icon.html
+[7.403s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/grid/grid_view.html
+[7.403s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/grid/grid_modal.html
+[7.404s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/posearray
+[7.404s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/posearray/posearray_view.html
+[7.404s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/posearray/posearray_script.js
+[7.405s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/posearray/posearray_modal.html
+[7.405s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/posearray/posearray_icon.html
+[7.405s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/altimeter
+[7.406s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/altimeter/altimeter_modal.html
+[7.406s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/altimeter/altimeter_icon.html
+[7.407s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/altimeter/altimeter_script.js
+[7.407s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/altimeter/altimeter_view.html
+[7.407s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/settings
+[7.408s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/settings/settings_modal.html
+[7.408s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/settings/settings_script.js
+[7.408s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/settings/settings_icon.html
+[7.409s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/add
+[7.410s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/add/add_modal.html
+[7.410s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/add/add_icon.html
+[7.410s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/add/add_script.js
+[7.412s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/map
+[7.412s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/map/map_worker.js
+[7.412s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/map/map_script.js
+[7.413s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/map/map_view.html
+[7.413s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/map/map_modal.html
+[7.413s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/map/map_icon.html
+[7.414s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/battery
+[7.414s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/battery/battery_script.js
+[7.415s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/battery/battery_icon.html
+[7.415s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/battery/battery_modal.html
+[7.416s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/nodemgr
+[7.416s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/nodemgr/nodemgr_icon.html
+[7.416s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/nodemgr/nodemgr_script.js
+[7.417s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/templates/nodemgr/nodemgr_modal.html
+[7.417s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/index.html
+[7.418s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets
+[7.418s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/rosbridge_connected.svg
+[7.418s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/satelite.svg
+[7.419s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/waypoints.svg
+[7.419s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/node_restart.svg
+[7.419s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/marker.svg
+[7.420s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/settings.svg
+[7.420s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/battery_60.svg
+[7.421s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/altimeter_arrow_green.svg
+[7.421s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/path.svg
+[7.421s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/grid.svg
+[7.422s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/battery_80.svg
+[7.423s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/temp_hot.svg
+[7.423s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/posewithcovariancestamped.svg
+[7.424s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/button_false.svg
+[7.425s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/joypos.svg
+[7.425s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/gridcells.svg
+[7.425s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/posearray.svg
+[7.426s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/altimeter_green.svg
+[7.426s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/costmap.svg
+[7.427s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/temp_cold.svg
+[7.427s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/markerarray.svg
+[7.427s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/button_true.svg
+[7.428s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/nodemgr.svg
+[7.428s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/battery_100.svg
+[7.428s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/battery_20.svg
+[7.429s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/rawmap.svg
+[7.429s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/tile_loading.png
+[7.429s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model
+[7.430s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_dog.png
+[7.430s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_tortoise.png
+[7.430s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_4wd.png
+[7.431s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_arrow.png
+[7.431s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_tuna.png
+[7.432s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_2wd.png
+[7.432s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_hatchback.png
+[7.432s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_pancake.png
+[7.433s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_orca.png
+[7.433s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_sandwich.png
+[7.433s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robot_model/_rccar.png
+[7.434s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/icon
+[7.434s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/icon/preview.jpg
+[7.435s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/icon/icon.svg
+[7.436s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/icon/192.png
+[7.436s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/icon/32.png
+[7.436s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/icon/manifest.json
+[7.437s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/icon/96.png
+[7.437s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/icon/16.png
+[7.437s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/icon/152.png
+[7.437s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/icon/512.png
+[7.438s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/rosbridge_reconnect.svg
+[7.439s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/add.svg
+[7.442s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/node_kill.svg
+[7.443s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/pointcloud.svg
+[7.444s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/altimeter.svg
+[7.444s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/image.svg
+[7.444s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/reconfigure.svg
+[7.445s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/simplegoal.png
+[7.446s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/battery_40.svg
+[7.446s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/robotmodel.svg
+[7.447s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/temp_warm.svg
+[7.447s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/tile_error.png
+[7.448s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/altimeter_arrow.svg
+[7.448s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/rosbag_active.svg
+[7.449s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/folder.svg
+[7.450s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/map.svg
+[7.450s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/battery_unknown.svg
+[7.451s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/temp_unknown.svg
+[7.452s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/simplegoal.svg
+[7.452s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/button.svg
+[7.453s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/range.svg
+[7.453s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/initialpose.png
+[7.454s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/initialpose.svg
+[7.454s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/rosbridge_disconnected.svg
+[7.455s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/scan.svg
+[7.455s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/joystick.svg
+[7.456s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/rosbag.svg
+[7.456s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/area.svg
+[7.457s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/default_layout.json
+[7.457s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/assets/tf.svg
+[7.457s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js
+[7.458s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/lib
+[7.458s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/lib/nipplejs.js
+[7.459s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/lib/nipplejs.min.js
+[7.459s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/lib/quaternionjs_LICENSE.txt
+[7.459s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/lib/nipplejs_LICENSE.txt
+[7.460s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/lib/roslibjs_LICENSE.txt
+[7.460s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/lib/webrtc_reader.js
+[7.461s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/lib/roslib.min.js
+[7.462s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/lib/quaternion.min.js
+[7.463s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/main.js
+[7.464s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/setup.js
+[7.464s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules
+[7.466s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules/elements.js
+[7.467s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules/rosbridge.js
+[7.467s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules/joystick.js
+[7.468s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules/view.js
+[7.468s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules/navsat.js
+[7.468s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules/persistent.js
+[7.469s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules/tf.js
+[7.469s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules/status.js
+[7.469s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules/util.js
+[7.470s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/js/modules/database.js
+[7.470s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/iconbar.html
+[7.471s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/css
+[7.471s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/css/style.css
+[7.471s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server//public/head.html
+[7.472s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/lib/vizanti_server/server.py
+[7.472s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/lib/vizanti_server/service_handler.py
+[7.472s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/lib/vizanti_server/rosapi_launch.py
+[7.473s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/ament_index/resource_index/package_run_dependencies/vizanti_server
+[7.474s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/ament_index/resource_index/parent_prefix_path/vizanti_server
+[7.474s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/environment/ament_prefix_path.sh
+[7.474s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/environment/ament_prefix_path.dsv
+[7.475s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/environment/path.sh
+[7.476s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/environment/path.dsv
+[7.476s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/local_setup.bash
+[7.476s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/local_setup.sh
+[7.477s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/local_setup.zsh
+[7.477s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/local_setup.dsv
+[7.477s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/package.dsv
+[7.478s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/ament_index/resource_index/packages/vizanti_server
+[7.478s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/cmake/vizanti_serverConfig.cmake
+[7.478s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/cmake/vizanti_serverConfig-version.cmake
+[7.479s] -- Installing: /home/ws/ugv_ws/install/vizanti_server/share/vizanti_server/package.xml
+[7.479s] Invoked command in '/home/ws/ugv_ws/build/vizanti_server' returned '0': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_cmd:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/vizanti_server

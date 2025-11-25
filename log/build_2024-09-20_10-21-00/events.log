@@ -1,0 +1,295 @@
+[0.000000] (-) TimerEvent: {}
+[0.000343] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.000601] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.000622] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.000652] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.000790] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.000809] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.000826] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.000843] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.000859] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.000876] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.000893] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.000909] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.000925] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.000942] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.000958] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.000975] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.000991] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.001008] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.001024] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.001041] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.001058] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.001074] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.001091] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.001107] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.001123] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.001139] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.001156] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.001172] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.001188] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.001205] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.001224] (ugv_base_node) JobQueued: {'identifier': 'ugv_base_node', 'dependencies': OrderedDict()}
+[0.001246] (ugv_base_node) JobStarted: {'identifier': 'ugv_base_node'}
+[0.017060] (ugv_base_node) JobProgress: {'identifier': 'ugv_base_node', 'progress': 'cmake'}
+[0.019242] (ugv_base_node) JobProgress: {'identifier': 'ugv_base_node', 'progress': 'build'}
+[0.020017] (ugv_base_node) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/ugv_base_node', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/ugv_base_node', 'env': OrderedDict([('USER', 'root'), ('SSH_CLIENT', '192.168.10.185 50747 23'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws/ugv_ws'), ('SSH_TTY', '/dev/pts/3'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('DISPLAY', 'localhost:12.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('PWD', '/home/ws/ugv_ws/build/ugv_base_node'), ('SSH_CONNECTION', '192.168.10.185 50747 192.168.10.197 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/teb_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.060780] (ugv_base_node) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.099654] (-) TimerEvent: {}
+[0.199934] (-) TimerEvent: {}
+[0.236817] (ugv_base_node) StdoutLine: {'line': b'-- Found tf2: 0.25.7 (/opt/ros/humble/share/tf2/cmake)\n'}
+[0.263424] (ugv_base_node) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.266519] (ugv_base_node) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.273554] (ugv_base_node) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.286527] (ugv_base_node) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.299990] (-) TimerEvent: {}
+[0.302877] (ugv_base_node) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.355423] (ugv_base_node) StdoutLine: {'line': b'-- Found tf2_ros: 0.25.7 (/opt/ros/humble/share/tf2_ros/cmake)\n'}
+[0.400073] (-) TimerEvent: {}
+[0.413409] (ugv_base_node) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.416167] (ugv_base_node) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.500168] (-) TimerEvent: {}
+[0.558568] (ugv_base_node) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.600244] (-) TimerEvent: {}
+[0.691996] (ugv_base_node) StdoutLine: {'line': b'-- Found nav_msgs: 4.2.4 (/opt/ros/humble/share/nav_msgs/cmake)\n'}
+[0.700311] (-) TimerEvent: {}
+[0.721935] (ugv_base_node) StdoutLine: {'line': b'-- Found sensor_msgs: 4.2.4 (/opt/ros/humble/share/sensor_msgs/cmake)\n'}
+[0.745756] (ugv_base_node) StdoutLine: {'line': b'-- Found ament_lint_auto: 0.12.11 (/opt/ros/humble/share/ament_lint_auto/cmake)\n'}
+[0.800408] (-) TimerEvent: {}
+[0.861666] (ugv_base_node) StdoutLine: {'line': b"-- Added test 'copyright' to check source files copyright and LICENSE\n"}
+[0.862911] (ugv_base_node) StdoutLine: {'line': b"-- Added test 'cppcheck' to perform static code analysis on C / C++ code\n"}
+[0.863145] (ugv_base_node) StdoutLine: {'line': b'-- Configured cppcheck include dirs: \n'}
+[0.863212] (ugv_base_node) StdoutLine: {'line': b'-- Configured cppcheck exclude dirs and/or files: \n'}
+[0.863738] (ugv_base_node) StdoutLine: {'line': b"-- Added test 'cpplint' to check C / C++ code against the Google style\n"}
+[0.863821] (ugv_base_node) StdoutLine: {'line': b'-- Configured cpplint exclude dirs and/or files: \n'}
+[0.864257] (ugv_base_node) StdoutLine: {'line': b"-- Added test 'lint_cmake' to check CMake code style\n"}
+[0.864916] (ugv_base_node) StdoutLine: {'line': b"-- Added test 'uncrustify' to check C / C++ code style\n"}
+[0.865004] (ugv_base_node) StdoutLine: {'line': b'-- Configured uncrustify additional arguments: \n'}
+[0.865285] (ugv_base_node) StdoutLine: {'line': b"-- Added test 'xmllint' to check XML markup files\n"}
+[0.866876] (ugv_base_node) StdoutLine: {'line': b'-- Configuring done\n'}
+[0.900474] (-) TimerEvent: {}
+[0.901003] (ugv_base_node) StdoutLine: {'line': b'-- Generating done\n'}
+[0.906810] (ugv_base_node) StdoutLine: {'line': b'-- Build files have been written to: /home/ws/ugv_ws/build/ugv_base_node\n'}
+[0.944814] (ugv_base_node) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target base_node_ekf\x1b[0m\n'}
+[0.947079] (ugv_base_node) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target base_node\x1b[0m\n'}
+[0.963661] (ugv_base_node) StdoutLine: {'line': b'[ 25%] \x1b[32mBuilding CXX object CMakeFiles/base_node_ekf.dir/src/base_node_ekf.cpp.o\x1b[0m\n'}
+[0.967386] (ugv_base_node) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/base_node.dir/src/base_node.cpp.o\x1b[0m\n'}
+[1.000604] (-) TimerEvent: {}
+[1.101090] (-) TimerEvent: {}
+[1.201449] (-) TimerEvent: {}
+[1.301836] (-) TimerEvent: {}
+[1.404181] (-) TimerEvent: {}
+[1.504723] (-) TimerEvent: {}
+[1.605149] (-) TimerEvent: {}
+[1.705536] (-) TimerEvent: {}
+[1.805931] (-) TimerEvent: {}
+[1.906264] (-) TimerEvent: {}
+[2.006617] (-) TimerEvent: {}
+[2.106948] (-) TimerEvent: {}
+[2.207297] (-) TimerEvent: {}
+[2.307645] (-) TimerEvent: {}
+[2.407958] (-) TimerEvent: {}
+[2.508269] (-) TimerEvent: {}
+[2.608608] (-) TimerEvent: {}
+[2.709129] (-) TimerEvent: {}
+[2.809500] (-) TimerEvent: {}
+[2.909834] (-) TimerEvent: {}
+[3.010135] (-) TimerEvent: {}
+[3.110453] (-) TimerEvent: {}
+[3.210767] (-) TimerEvent: {}
+[3.311085] (-) TimerEvent: {}
+[3.411374] (-) TimerEvent: {}
+[3.511677] (-) TimerEvent: {}
+[3.611993] (-) TimerEvent: {}
+[3.712333] (-) TimerEvent: {}
+[3.812857] (-) TimerEvent: {}
+[3.913345] (-) TimerEvent: {}
+[4.013844] (-) TimerEvent: {}
+[4.114192] (-) TimerEvent: {}
+[4.214725] (-) TimerEvent: {}
+[4.315100] (-) TimerEvent: {}
+[4.415618] (-) TimerEvent: {}
+[4.515988] (-) TimerEvent: {}
+[4.616509] (-) TimerEvent: {}
+[4.716892] (-) TimerEvent: {}
+[4.817468] (-) TimerEvent: {}
+[4.917839] (-) TimerEvent: {}
+[5.018392] (-) TimerEvent: {}
+[5.118760] (-) TimerEvent: {}
+[5.219273] (-) TimerEvent: {}
+[5.319659] (-) TimerEvent: {}
+[5.420163] (-) TimerEvent: {}
+[5.520547] (-) TimerEvent: {}
+[5.621045] (-) TimerEvent: {}
+[5.721402] (-) TimerEvent: {}
+[5.821878] (-) TimerEvent: {}
+[5.922261] (-) TimerEvent: {}
+[6.025660] (-) TimerEvent: {}
+[6.126151] (-) TimerEvent: {}
+[6.226483] (-) TimerEvent: {}
+[6.326936] (-) TimerEvent: {}
+[6.427270] (-) TimerEvent: {}
+[6.527753] (-) TimerEvent: {}
+[6.628093] (-) TimerEvent: {}
+[6.728576] (-) TimerEvent: {}
+[6.829035] (-) TimerEvent: {}
+[6.929369] (-) TimerEvent: {}
+[7.029837] (-) TimerEvent: {}
+[7.130183] (-) TimerEvent: {}
+[7.230666] (-) TimerEvent: {}
+[7.331036] (-) TimerEvent: {}
+[7.431533] (-) TimerEvent: {}
+[7.531873] (-) TimerEvent: {}
+[7.632316] (-) TimerEvent: {}
+[7.732714] (-) TimerEvent: {}
+[7.833070] (-) TimerEvent: {}
+[7.933558] (-) TimerEvent: {}
+[8.033916] (-) TimerEvent: {}
+[8.134378] (-) TimerEvent: {}
+[8.234883] (-) TimerEvent: {}
+[8.335242] (-) TimerEvent: {}
+[8.435746] (-) TimerEvent: {}
+[8.536171] (-) TimerEvent: {}
+[8.637097] (-) TimerEvent: {}
+[8.737489] (-) TimerEvent: {}
+[8.838090] (-) TimerEvent: {}
+[8.938620] (-) TimerEvent: {}
+[9.039064] (-) TimerEvent: {}
+[9.139818] (-) TimerEvent: {}
+[9.240366] (-) TimerEvent: {}
+[9.340928] (-) TimerEvent: {}
+[9.441284] (-) TimerEvent: {}
+[9.541811] (-) TimerEvent: {}
+[9.642165] (-) TimerEvent: {}
+[9.742688] (-) TimerEvent: {}
+[9.843026] (-) TimerEvent: {}
+[9.943530] (-) TimerEvent: {}
+[10.043914] (-) TimerEvent: {}
+[10.144278] (-) TimerEvent: {}
+[10.244800] (-) TimerEvent: {}
+[10.345119] (-) TimerEvent: {}
+[10.445597] (-) TimerEvent: {}
+[10.545936] (-) TimerEvent: {}
+[10.646408] (-) TimerEvent: {}
+[10.746774] (-) TimerEvent: {}
+[10.847274] (-) TimerEvent: {}
+[10.947615] (-) TimerEvent: {}
+[11.048097] (-) TimerEvent: {}
+[11.148428] (-) TimerEvent: {}
+[11.248919] (-) TimerEvent: {}
+[11.349256] (-) TimerEvent: {}
+[11.449707] (-) TimerEvent: {}
+[11.550026] (-) TimerEvent: {}
+[11.650499] (-) TimerEvent: {}
+[11.750842] (-) TimerEvent: {}
+[11.851329] (-) TimerEvent: {}
+[11.951699] (-) TimerEvent: {}
+[12.052167] (-) TimerEvent: {}
+[12.152526] (-) TimerEvent: {}
+[12.253021] (-) TimerEvent: {}
+[12.353333] (-) TimerEvent: {}
+[12.453781] (-) TimerEvent: {}
+[12.554111] (-) TimerEvent: {}
+[12.654556] (-) TimerEvent: {}
+[12.754916] (-) TimerEvent: {}
+[12.855395] (-) TimerEvent: {}
+[12.955727] (-) TimerEvent: {}
+[13.056156] (-) TimerEvent: {}
+[13.156507] (-) TimerEvent: {}
+[13.256959] (-) TimerEvent: {}
+[13.360156] (-) TimerEvent: {}
+[13.460492] (-) TimerEvent: {}
+[13.560975] (-) TimerEvent: {}
+[13.661320] (-) TimerEvent: {}
+[13.761811] (-) TimerEvent: {}
+[13.862337] (-) TimerEvent: {}
+[13.962689] (-) TimerEvent: {}
+[14.063199] (-) TimerEvent: {}
+[14.163551] (-) TimerEvent: {}
+[14.264034] (-) TimerEvent: {}
+[14.364389] (-) TimerEvent: {}
+[14.464912] (-) TimerEvent: {}
+[14.565242] (-) TimerEvent: {}
+[14.665694] (-) TimerEvent: {}
+[14.766012] (-) TimerEvent: {}
+[14.866486] (-) TimerEvent: {}
+[15.029534] (-) TimerEvent: {}
+[15.129908] (-) TimerEvent: {}
+[15.230131] (-) TimerEvent: {}
+[15.330372] (-) TimerEvent: {}
+[15.430541] (-) TimerEvent: {}
+[15.530760] (-) TimerEvent: {}
+[15.630921] (-) TimerEvent: {}
+[15.731582] (-) TimerEvent: {}
+[15.832089] (-) TimerEvent: {}
+[15.932679] (-) TimerEvent: {}
+[16.033067] (-) TimerEvent: {}
+[16.133644] (-) TimerEvent: {}
+[16.234050] (-) TimerEvent: {}
+[16.334625] (-) TimerEvent: {}
+[16.435150] (-) TimerEvent: {}
+[16.536073] (-) TimerEvent: {}
+[16.636678] (-) TimerEvent: {}
+[16.737333] (-) TimerEvent: {}
+[16.838448] (-) TimerEvent: {}
+[16.939078] (-) TimerEvent: {}
+[17.039588] (-) TimerEvent: {}
+[17.139951] (-) TimerEvent: {}
+[17.240159] (-) TimerEvent: {}
+[17.340393] (-) TimerEvent: {}
+[17.440551] (-) TimerEvent: {}
+[17.540766] (-) TimerEvent: {}
+[17.640918] (-) TimerEvent: {}
+[17.741072] (-) TimerEvent: {}
+[17.838715] (ugv_base_node) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX executable base_node\x1b[0m\n'}
+[17.839392] (ugv_base_node) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking CXX executable base_node_ekf\x1b[0m\n'}
+[17.841197] (-) TimerEvent: {}
+[17.944821] (-) TimerEvent: {}
+[18.045589] (-) TimerEvent: {}
+[18.147122] (-) TimerEvent: {}
+[18.248280] (-) TimerEvent: {}
+[18.349533] (-) TimerEvent: {}
+[18.451053] (-) TimerEvent: {}
+[18.552321] (-) TimerEvent: {}
+[18.653705] (-) TimerEvent: {}
+[18.755002] (-) TimerEvent: {}
+[18.857681] (-) TimerEvent: {}
+[18.959015] (-) TimerEvent: {}
+[19.060752] (-) TimerEvent: {}
+[19.161625] (-) TimerEvent: {}
+[19.262389] (-) TimerEvent: {}
+[19.362674] (-) TimerEvent: {}
+[19.463118] (-) TimerEvent: {}
+[19.563596] (-) TimerEvent: {}
+[19.664039] (-) TimerEvent: {}
+[19.764499] (-) TimerEvent: {}
+[19.849063] (ugv_base_node) StdoutLine: {'line': b'[100%] Built target base_node\n'}
+[19.857272] (ugv_base_node) StdoutLine: {'line': b'[100%] Built target base_node_ekf\n'}
+[19.864761] (-) TimerEvent: {}
+[19.868035] (ugv_base_node) CommandEnded: {'returncode': 0}
+[19.893986] (ugv_base_node) JobProgress: {'identifier': 'ugv_base_node', 'progress': 'install'}
+[19.903447] (ugv_base_node) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ws/ugv_ws/build/ugv_base_node'], 'cwd': '/home/ws/ugv_ws/build/ugv_base_node', 'env': OrderedDict([('USER', 'root'), ('SSH_CLIENT', '192.168.10.185 50747 23'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws/ugv_ws'), ('SSH_TTY', '/dev/pts/3'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('DISPLAY', 'localhost:12.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('PWD', '/home/ws/ugv_ws/build/ugv_base_node'), ('SSH_CONNECTION', '192.168.10.185 50747 192.168.10.197 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/teb_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[19.912748] (ugv_base_node) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[19.915333] (ugv_base_node) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/ugv_base_node/lib/ugv_base_node/base_node\n'}
+[19.920621] (ugv_base_node) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/ugv_base_node/lib/ugv_base_node/base_node" to ""\n'}
+[19.922930] (ugv_base_node) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/ugv_base_node/lib/ugv_base_node/base_node_ekf\n'}
+[19.928415] (ugv_base_node) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/ugv_base_node/lib/ugv_base_node/base_node_ekf" to ""\n'}
+[19.929047] (ugv_base_node) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ament_index/resource_index/package_run_dependencies/ugv_base_node\n'}
+[19.929321] (ugv_base_node) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/ugv_base_node/share/ament_index/resource_index/parent_prefix_path/ugv_base_node\n'}
+[19.929942] (ugv_base_node) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/environment/ament_prefix_path.sh\n'}
+[19.930031] (ugv_base_node) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/environment/ament_prefix_path.dsv\n'}
+[19.930132] (ugv_base_node) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/environment/path.sh\n'}
+[19.930204] (ugv_base_node) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/environment/path.dsv\n'}
+[19.930306] (ugv_base_node) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/local_setup.bash\n'}
+[19.930373] (ugv_base_node) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/local_setup.sh\n'}
+[19.930448] (ugv_base_node) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/local_setup.zsh\n'}
+[19.930524] (ugv_base_node) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/local_setup.dsv\n'}
+[19.930597] (ugv_base_node) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/package.dsv\n'}
+[19.930901] (ugv_base_node) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ament_index/resource_index/packages/ugv_base_node\n'}
+[19.931156] (ugv_base_node) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/cmake/ugv_base_nodeConfig.cmake\n'}
+[19.931236] (ugv_base_node) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/cmake/ugv_base_nodeConfig-version.cmake\n'}
+[19.931313] (ugv_base_node) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/package.xml\n'}
+[19.932861] (ugv_base_node) CommandEnded: {'returncode': 0}
+[19.964882] (-) TimerEvent: {}
+[19.987228] (ugv_base_node) JobEnded: {'identifier': 'ugv_base_node', 'rc': 0}
+[19.987959] (-) EventReactorShutdown: {}

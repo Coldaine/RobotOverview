@@ -1,0 +1,442 @@
+[0.053s] Invoking command in '/home/ws/ugv_ws/build/odas_ros': AMENT_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib PYTHONPATH=/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/odas_ros/odas_ros -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/odas_ros
+[0.076s] Not searching for unused variables given on the command line.
+[0.102s] -- Checking for module 'fftw3f'
+[0.132s] --   Found fftw3f, version 3.3.8
+[0.217s] -- Checking for module 'alsa'
+[0.251s] --   Found alsa, version 1.2.6.1
+[0.330s] -- Checking for module 'libconfig'
+[0.361s] --   Found libconfig, version 1.5
+[0.441s] -- Checking for module 'libpulse-simple'
+[0.474s] --   Found libpulse-simple, version 15.99.1
+[0.591s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[1.338s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.645s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.977s] -- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)
+[2.537s] -- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[2.538s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[2.538s] -- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[2.538s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[2.595s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[2.916s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[2.948s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[3.332s] -- Found OpenSSL: /usr/lib/aarch64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[3.443s] -- Found FastRTPS: /opt/ros/humble/include  
+[3.620s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[3.700s] -- Looking for pthread.h
+[3.940s] -- Looking for pthread.h - found
+[3.941s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[4.184s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[4.187s] -- Found Threads: TRUE  
+[4.455s] -- Found rclpy: 3.3.14 (/opt/ros/humble/share/rclpy/cmake)
+[4.457s] -- Found odas_ros_msgs: 0.0.0 (/home/ws/ugv_ws/install/odas_ros_msgs/share/odas_ros_msgs/cmake)
+[4.501s] -- Found audio_utils_msgs: 0.0.0 (/home/ws/ugv_ws/install/audio_utils_msgs/share/audio_utils_msgs/cmake)
+[5.242s] -- Configuring done
+[5.358s] -- Generating done
+[5.364s] -- Build files have been written to: /home/ws/ugv_ws/build/odas_ros
+[5.392s] Invoked command in '/home/ws/ugv_ws/build/odas_ros' returned '0': AMENT_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib PYTHONPATH=/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/odas_ros/odas_ros -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/odas_ros
+[5.396s] Invoking command in '/home/ws/ugv_ws/build/odas_ros': AMENT_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib PYTHONPATH=/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/ws/ugv_ws/build/odas_ros -- -j4 -l4
+[5.588s] [  1%] [32mBuilding C object CMakeFiles/odas_shared_srcs_objlib.dir/src/odas/demo/odaslive/configs.c.o[0m
+[5.597s] [  1%] [32mBuilding C object CMakeFiles/odas_shared_srcs_objlib.dir/src/odas/demo/odaslive/objects.c.o[0m
+[5.608s] [  1%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/general/format.c.o[0m
+[5.622s] [  1%] Built target ament_cmake_python_symlink_odas_ros
+[5.660s] [  2%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/general/interface.c.o[0m
+[5.767s] [  3%] [32mBuilding C object CMakeFiles/odas_shared_srcs_objlib.dir/src/odas/demo/odaslive/parameters.c.o[0m
+[5.830s] [  3%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/general/link.c.o[0m
+[5.985s] [  4%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/general/mic.c.o[0m
+[6.186s] [  4%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/general/samplerate.c.o[0m
+[6.228s] [  5%] [32mBuilding C object CMakeFiles/odas_shared_srcs_objlib.dir/src/odas/demo/odaslive/profiler.c.o[0m
+[6.356s] [  6%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/general/soundspeed.c.o[0m
+[6.456s] [  7%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/general/spatialfilter.c.o[0m
+[6.471s] [  7%] [32mBuilding C object CMakeFiles/odas_shared_srcs_objlib.dir/src/odas/demo/odaslive/threads.c.o[0m
+[6.524s] [  7%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/general/thread.c.o[0m
+[6.628s] [  8%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/init/combining.c.o[0m
+[6.694s] [  8%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/init/delay.c.o[0m
+[6.781s] [  9%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/init/directivity.c.o[0m
+[6.930s] [ 10%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/init/hit.c.o[0m
+[6.975s] [ 10%] Built target odas_shared_srcs_objlib
+[7.017s] [ 10%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/init/linking.c.o[0m
+[7.040s] [ 11%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/init/scanning.c.o[0m
+[7.157s] [ 11%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/init/space.c.o[0m
+[7.224s] [ 12%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/init/windowing.c.o[0m
+[7.238s] [ 13%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/acorr.c.o[0m
+[7.414s] [ 13%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/aimg.c.o[0m
+[7.419s] [ 14%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/area.c.o[0m
+[7.564s] [ 14%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/assignation.c.o[0m
+[7.572s] [ 15%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/beampattern.c.o[0m
+[7.582s] [ 16%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/category.c.o[0m
+[7.716s] [ 16%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/coherence.c.o[0m
+[7.726s] [ 17%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/delta.c.o[0m
+[7.744s] [ 17%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/demixing.c.o[0m
+[7.873s] [ 18%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/env.c.o[0m
+[7.894s] [ 18%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/frame.c.o[0m
+[7.918s] [ 19%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/freq.c.o[0m
+[8.044s] [ 20%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/gain.c.o[0m
+[8.050s] [ 20%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/hop.c.o[0m
+[8.064s] running egg_info
+[8.064s] creating odas_ros.egg-info
+[8.064s] writing odas_ros.egg-info/PKG-INFO
+[8.065s] writing dependency_links to odas_ros.egg-info/dependency_links.txt
+[8.066s] writing top-level names to odas_ros.egg-info/top_level.txt
+[8.067s] writing manifest file 'odas_ros.egg-info/SOURCES.txt'
+[8.076s] reading manifest file 'odas_ros.egg-info/SOURCES.txt'
+[8.080s] writing manifest file 'odas_ros.egg-info/SOURCES.txt'
+[8.107s] [ 21%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/index.c.o[0m
+[8.241s] [ 21%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/kalman.c.o[0m
+[8.252s] [ 22%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/map.c.o[0m
+[8.263s] [ 22%] Built target ament_cmake_python_build_odas_ros_egg
+[8.292s] [ 23%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/mask.c.o[0m
+[8.305s] [ 23%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/mixture.c.o[0m
+[8.403s] [ 24%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/pair.c.o[0m
+[8.438s] [ 24%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/particle.c.o[0m
+[8.466s] [ 25%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/pitch.c.o[0m
+[8.499s] [ 26%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/point.c.o[0m
+[8.571s] [ 26%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/postprob.c.o[0m
+[8.613s] [ 27%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/pot.c.o[0m
+[8.622s] [ 27%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/scan.c.o[0m
+[8.659s] [ 28%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/spatialgain.c.o[0m
+[8.736s] [ 29%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/spatialindex.c.o[0m
+[8.782s] [ 29%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/spatialmask.c.o[0m
+[8.792s] [ 30%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/steer.c.o[0m
+[8.835s] [ 30%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/target.c.o[0m
+[8.902s] [ 31%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/tau.c.o[0m
+[8.939s] [ 31%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/tdoa.c.o[0m
+[8.970s] [ 32%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/track.c.o[0m
+[9.008s] [ 33%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/triangle.c.o[0m
+[9.068s] [ 33%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/window.c.o[0m
+[9.104s] [ 34%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/signal/xcorr.c.o[0m
+[9.155s] [ 34%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/acorr2pitch.c.o[0m
+[9.175s] [ 35%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/demixing2env.c.o[0m
+[9.219s] [ 36%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/demixing2freq.c.o[0m
+[9.270s] [ 36%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/env2env.c.o[0m
+[9.337s] [ 37%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/hop2hop.c.o[0m
+[9.359s] [ 37%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/hop2frame.c.o[0m
+[9.416s] [ 38%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/frame2freq.c.o[0m
+[9.532s] [ 39%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/freq2acorr.c.o[0m
+[9.587s] [ 39%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/freq2env.c.o[0m
+[9.637s] [ 40%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/freq2freq.c.o[0m
+[9.714s] [ 40%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/freq2frame.c.o[0m
+[9.749s] [ 41%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/freq2xcorr.c.o[0m
+[9.867s] [ 42%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/frame2hop.c.o[0m
+[9.887s] [ 42%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/gain2mask.c.o[0m
+[9.915s] [ 43%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/kalman2coherence.c.o[0m
+[9.920s] [ 43%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/kalman2kalman.c.o[0m
+[10.034s] [ 45%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/mixture2mixture.c.o[0m
+[10.035s] [ 45%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/particle2coherence.c.o[0m
+[10.128s] [ 45%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/particle2particle.c.o[0m
+[10.179s] [ 46%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/pitch2category.c.o[0m
+[10.235s] [ 46%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/steer2demixing.c.o[0m
+[10.263s] [ 47%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/track2gain.c.o[0m
+[10.391s] [ 47%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/track2steer.c.o[0m
+[10.415s] [ 48%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/xcorr2aimg.c.o[0m
+[10.479s] [ 49%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/system/xcorr2xcorr.c.o[0m
+[10.570s] [ 49%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/utils/cmatrix.c.o[0m
+[10.577s] [ 50%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/utils/fft.c.o[0m
+[10.619s] [ 50%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/utils/fifo.c.o[0m
+[10.666s] [ 51%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/utils/gaussian.c.o[0m
+[10.752s] [ 52%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/utils/gaussjordan.c.o[0m
+[10.800s] [ 52%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/utils/inverse.c.o[0m
+[10.802s] [ 53%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/utils/matrix.c.o[0m
+[10.960s] [ 53%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/utils/pcm.c.o[0m
+[10.987s] [ 54%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/utils/random.c.o[0m
+[11.003s] [ 55%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/utils/transcendental.c.o[0m
+[11.051s] [ 55%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/aconnector/acon_categories.c.o[0m
+[11.129s] [ 56%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/aconnector/acon_hops.c.o[0m
+[11.189s] [ 56%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/aconnector/acon_pots.c.o[0m
+[11.205s] [ 57%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/aconnector/acon_powers.c.o[0m
+[11.226s] [ 58%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/aconnector/acon_spectra.c.o[0m
+[11.306s] [ 58%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/aconnector/acon_targets.c.o[0m
+[11.367s] [ 59%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/aconnector/acon_tracks.c.o[0m
+[11.387s] [ 59%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/ainjector/ainj_targets.c.o[0m
+[11.401s] [ 60%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amessage/amsg_categories.c.o[0m
+[11.496s] [ 60%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amessage/amsg_hops.c.o[0m
+[11.550s] [ 61%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amessage/amsg_pots.c.o[0m
+[11.580s] [ 62%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amessage/amsg_powers.c.o[0m
+[11.585s] [ 62%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amessage/amsg_spectra.c.o[0m
+[11.684s] [ 63%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amessage/amsg_targets.c.o[0m
+[11.745s] [ 63%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amessage/amsg_tracks.c.o[0m
+[11.750s] [ 64%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amodule/amod_classify.c.o[0m
+[11.760s] [ 65%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amodule/amod_istft.c.o[0m
+[11.871s] [ 65%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amodule/amod_mapping.c.o[0m
+[11.920s] [ 66%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amodule/amod_noise.c.o[0m
+[11.974s] [ 66%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amodule/amod_resample.c.o[0m
+[12.000s] [ 67%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amodule/amod_ssl.c.o[0m
+[12.091s] [ 68%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amodule/amod_sss.c.o[0m
+[12.140s] [ 68%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amodule/amod_sst.c.o[0m
+[12.207s] [ 69%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amodule/amod_stft.c.o[0m
+[12.227s] [ 69%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/amodule/amod_volume.c.o[0m
+[12.328s] [ 70%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/asink/asnk_categories.c.o[0m
+[12.381s] [ 71%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/asink/asnk_hops.c.o[0m
+[12.430s] [ 71%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/asink/asnk_pots.c.o[0m
+[12.433s] [ 72%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/asink/asnk_powers.c.o[0m
+[12.561s] [ 72%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/asink/asnk_spectra.c.o[0m
+[12.604s] [ 73%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/asink/asnk_tracks.c.o[0m
+[12.617s] [ 74%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/asource/asrc_hops.c.o[0m
+[12.644s] [ 74%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/connector/con_categories.c.o[0m
+[12.734s] [ 75%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/connector/con_hops.c.o[0m
+[12.793s] [ 75%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/connector/con_pots.c.o[0m
+[12.799s] [ 76%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/connector/con_powers.c.o[0m
+[12.913s] [ 76%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/connector/con_spectra.c.o[0m
+[12.918s] [ 77%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/connector/con_targets.c.o[0m
+[12.959s] [ 78%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/connector/con_tracks.c.o[0m
+[12.960s] [ 78%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/injector/inj_targets.c.o[0m
+[13.070s] [ 79%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/message/msg_categories.c.o[0m
+[13.079s] [ 79%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/message/msg_hops.c.o[0m
+[13.112s] [ 80%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/message/msg_pots.c.o[0m
+[13.152s] [ 81%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/message/msg_powers.c.o[0m
+[13.229s] [ 81%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/message/msg_spectra.c.o[0m
+[13.265s] [ 82%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/message/msg_targets.c.o[0m
+[13.284s] [ 82%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/message/msg_tracks.c.o[0m
+[13.320s] [ 83%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/module/mod_classify.c.o[0m
+[13.404s] [ 84%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/module/mod_istft.c.o[0m
+[13.432s] [ 84%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/module/mod_mapping.c.o[0m
+[13.439s] [ 85%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/module/mod_noise.c.o[0m
+[13.557s] [ 85%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/module/mod_resample.c.o[0m
+[13.641s] [ 86%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/module/mod_ssl.c.o[0m
+[13.651s] [ 87%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/module/mod_sss.c.o[0m
+[13.653s] [ 87%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/module/mod_sst.c.o[0m
+[13.875s] [ 88%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/module/mod_stft.c.o[0m
+[13.922s] [ 88%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/module/mod_volume.c.o[0m
+[13.999s] [ 89%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/sink/snk_categories.c.o[0m
+[14.090s] [ 89%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/sink/snk_hops.c.o[0m
+[14.117s] [ 90%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/sink/snk_pots.c.o[0m
+[14.140s] [ 91%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/sink/snk_powers.c.o[0m
+[14.283s] [ 91%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/sink/snk_spectra.c.o[0m
+[14.322s] [ 92%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/sink/snk_tracks.c.o[0m
+[14.387s] [ 92%] [32mBuilding C object src/odas/CMakeFiles/odas.dir/src/source/src_hops.c.o[0m
+[14.702s] [ 93%] [32m[1mLinking C shared library lib/libodas.so[0m
+[15.148s] [ 93%] Built target odas
+[15.225s] [ 94%] [32mBuilding C object src/odas/CMakeFiles/odaslive.dir/demo/odaslive/configs.c.o[0m
+[15.225s] [ 94%] [32mBuilding CXX object CMakeFiles/odas_core_node.dir/src/odas_core_node.cpp.o[0m
+[15.226s] [ 96%] [32mBuilding C object src/odas/CMakeFiles/odasserver.dir/demo/odasserver/main.c.o[0m
+[15.226s] [ 96%] [32mBuilding C object src/odas/CMakeFiles/odaslive.dir/demo/odaslive/main.c.o[0m
+[15.339s] [ 97%] [32m[1mLinking C executable bin/odasserver[0m
+[15.607s] [ 97%] Built target odasserver
+[15.651s] [ 98%] [32mBuilding C object src/odas/CMakeFiles/odaslive.dir/demo/odaslive/objects.c.o[0m
+[15.658s] [ 99%] [32mBuilding C object src/odas/CMakeFiles/odaslive.dir/demo/odaslive/parameters.c.o[0m
+[15.676s] [ 99%] [32mBuilding C object src/odas/CMakeFiles/odaslive.dir/demo/odaslive/profiler.c.o[0m
+[15.884s] [100%] [32mBuilding C object src/odas/CMakeFiles/odaslive.dir/demo/odaslive/threads.c.o[0m
+[16.353s] [100%] [32m[1mLinking C executable bin/odaslive[0m
+[16.673s] [100%] Built target odaslive
+[27.912s] [100%] [32m[1mLinking CXX executable odas_core_node[0m
+[28.498s] [100%] Built target odas_core_node
+[28.541s] Invoked command in '/home/ws/ugv_ws/build/odas_ros' returned '0': AMENT_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib PYTHONPATH=/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --build /home/ws/ugv_ws/build/odas_ros -- -j4 -l4
+[28.672s] Invoking command in '/home/ws/ugv_ws/build/odas_ros': AMENT_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib PYTHONPATH=/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/ws/ugv_ws/build/odas_ros
+[28.697s] -- Install configuration: "Debug"
+[28.698s] -- Execute custom install script
+[28.699s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/lib/odas_ros/odas_core_node
+[28.728s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/environment/pythonpath.sh
+[28.757s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/environment/pythonpath.dsv
+[28.789s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages/odas_ros-0.0.0-py3.10.egg-info/PKG-INFO
+[28.818s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages/odas_ros-0.0.0-py3.10.egg-info/SOURCES.txt
+[28.847s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages/odas_ros-0.0.0-py3.10.egg-info/dependency_links.txt
+[28.876s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages/odas_ros-0.0.0-py3.10.egg-info/top_level.txt
+[28.905s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages/odas_ros/__init__.py
+[28.933s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages/odas_ros/lib_odas_server_node.py
+[28.966s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/lib/odas_ros/echocancel.sh
+[28.994s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/lib/odas_ros/movesinks.sh
+[29.023s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/lib/odas_ros/setvolume.sh
+[29.053s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/lib/odas_ros/odas_echocancel_filter_server_node.py
+[29.082s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/lib/odas_ros/odas_server_node.py
+[29.109s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/lib/odas_ros/odas_visualization_node.py
+[29.142s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/launch/odas.launch.xml
+[29.173s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/launch/odas_core_node.launch.xml
+[29.204s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/config/configuration.cfg
+[29.234s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/config/configuration_XMOS.cfg
+[29.262s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/config/configuration_beam.cfg
+[29.291s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/config/configuration_beam_echo_cancelled.cfg
+[29.319s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/config/configuration_beam_pulseaudio.cfg
+[29.347s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/config/configuration_movo.cfg
+[29.376s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/config/rviz/odas_rviz.rviz
+[29.404s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/ament_index/resource_index/package_run_dependencies/odas_ros
+[29.433s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/ament_index/resource_index/parent_prefix_path/odas_ros
+[29.463s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/environment/ament_prefix_path.sh
+[29.491s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/environment/ament_prefix_path.dsv
+[29.520s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/environment/path.sh
+[29.549s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/environment/path.dsv
+[29.577s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/local_setup.bash
+[29.606s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/local_setup.sh
+[29.634s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/local_setup.zsh
+[29.663s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/local_setup.dsv
+[29.692s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/package.dsv
+[29.721s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/ament_index/resource_index/packages/odas_ros
+[29.750s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/cmake/odas_rosConfig.cmake
+[29.779s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/cmake/odas_rosConfig-version.cmake
+[29.811s] -- Symlinking: /home/ws/ugv_ws/install/odas_ros/share/odas_ros/package.xml
+[30.021s] Listing '/home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages/odas_ros'...
+[30.024s] Compiling '/home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages/odas_ros/__init__.py'...
+[30.027s] Compiling '/home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages/odas_ros/lib_odas_server_node.py'...
+[30.044s] -- Installing: /home/ws/ugv_ws/install/odas_ros/lib/libodas.so
+[30.047s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include
+[30.048s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas
+[30.048s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/asource
+[30.048s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/asource/asrc_hops.h
+[30.049s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/sink
+[30.049s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/sink/snk_powers.h
+[30.049s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/sink/snk_pots.h
+[30.050s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/sink/snk_hops.h
+[30.050s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/sink/snk_categories.h
+[30.050s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/sink/snk_spectra.h
+[30.051s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/sink/snk_tracks.h
+[30.051s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/injector
+[30.052s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/injector/inj_targets.h
+[30.052s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule
+[30.052s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule/amod_sss.h
+[30.052s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule/amod_ssl.h
+[30.053s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule/amod_resample.h
+[30.053s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule/amod_sst.h
+[30.053s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule/amod_stft.h
+[30.053s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule/amod_volume.h
+[30.054s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule/amod_noise.h
+[30.054s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule/amod_istft.h
+[30.055s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule/amod_classify.h
+[30.055s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amodule/amod_mapping.h
+[30.056s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/odas.h
+[30.056s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/init
+[30.056s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/init/directivity.h
+[30.056s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/init/delay.h
+[30.057s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/init/windowing.h
+[30.057s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/init/combining.h
+[30.057s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/init/scanning.h
+[30.057s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/init/linking.h
+[30.058s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/init/space.h
+[30.058s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/init/hit.h
+[30.058s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal
+[30.059s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/assignation.h
+[30.059s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/mask.h
+[30.059s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/scan.h
+[30.059s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/track.h
+[30.060s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/spatialmask.h
+[30.060s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/frame.h
+[30.060s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/spatialgain.h
+[30.060s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/point.h
+[30.060s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/freq.h
+[30.061s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/impulse.h
+[30.063s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/area.h
+[30.064s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/delta.h
+[30.064s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/particle.h
+[30.064s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/env.h
+[30.065s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/map.h
+[30.065s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/target.h
+[30.065s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/spatialindex.h
+[30.066s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/postprob.h
+[30.066s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/triangle.h
+[30.066s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/tdoa.h
+[30.066s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/category.h
+[30.067s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/mixture.h
+[30.067s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/demixing.h
+[30.067s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/tau.h
+[30.068s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/pitch.h
+[30.068s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/window.h
+[30.068s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/coherence.h
+[30.068s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/acorr.h
+[30.069s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/hop.h
+[30.069s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/pot.h
+[30.070s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/kalman.h
+[30.070s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/beampattern.h
+[30.071s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/steer.h
+[30.071s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/aimg.h
+[30.071s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/index.h
+[30.072s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/pair.h
+[30.072s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/xcorr.h
+[30.072s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/signal/gain.h
+[30.073s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system
+[30.073s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/steer2demixing.h
+[30.073s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/particle2particle.h
+[30.073s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/track2gain.h
+[30.074s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/xcorr2aimg.h
+[30.075s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/freq2acorr.h
+[30.075s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/hop2hop.h
+[30.075s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/particle2coherence.h
+[30.076s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/mixture2mixture.h
+[30.076s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/demixing2env.h
+[30.076s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/pitch2category.h
+[30.076s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/track2steer.h
+[30.077s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/freq2freq.h
+[30.077s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/xcorr2xcorr.h
+[30.077s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/hop2frame.h
+[30.077s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/frame2freq.h
+[30.078s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/freq2frame.h
+[30.078s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/kalman2coherence.h
+[30.079s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/kalman2kalman.h
+[30.079s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/acorr2pitch.h
+[30.079s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/freq2xcorr.h
+[30.080s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/freq2env.h
+[30.080s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/demixing2freq.h
+[30.080s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/gain2mask.h
+[30.081s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/frame2hop.h
+[30.081s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/system/env2env.h
+[30.082s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/message
+[30.082s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/message/msg_hops.h
+[30.082s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/message/msg_categories.h
+[30.083s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/message/msg_powers.h
+[30.083s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/message/msg_tracks.h
+[30.084s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/message/msg_targets.h
+[30.084s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/message/msg_pots.h
+[30.084s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/message/msg_spectra.h
+[30.085s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module
+[30.085s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module/mod_sst.h
+[30.085s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module/mod_resample.h
+[30.086s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module/mod_ssl.h
+[30.086s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module/mod_noise.h
+[30.086s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module/mod_volume.h
+[30.086s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module/mod_istft.h
+[30.087s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module/mod_stft.h
+[30.087s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module/mod_classify.h
+[30.088s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module/mod_sss.h
+[30.088s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/module/mod_mapping.h
+[30.088s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/asink
+[30.088s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/asink/asnk_hops.h
+[30.089s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/asink/asnk_powers.h
+[30.089s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/asink/asnk_spectra.h
+[30.089s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/asink/asnk_categories.h
+[30.089s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/asink/asnk_pots.h
+[30.090s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/asink/asnk_tracks.h
+[30.090s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/source
+[30.090s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/source/src_hops.h
+[30.091s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils
+[30.091s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils/matrix.h
+[30.092s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils/gaussjordan.h
+[30.092s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils/transcendental.h
+[30.092s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils/cmatrix.h
+[30.092s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils/inverse.h
+[30.093s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils/fft.h
+[30.093s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils/random.h
+[30.093s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils/fifo.h
+[30.093s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils/gaussian.h
+[30.094s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/utils/pcm.h
+[30.094s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/aconnector
+[30.094s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/aconnector/acon_spectra.h
+[30.094s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/aconnector/acon_pots.h
+[30.096s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/aconnector/acon_categories.h
+[30.096s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/aconnector/acon_targets.h
+[30.097s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/aconnector/acon_tracks.h
+[30.097s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/aconnector/acon_hops.h
+[30.098s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/aconnector/acon_powers.h
+[30.098s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/connector
+[30.098s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/connector/con_pots.h
+[30.099s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/connector/con_targets.h
+[30.099s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/connector/con_tracks.h
+[30.100s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/connector/con_powers.h
+[30.100s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/connector/con_hops.h
+[30.100s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/connector/con_spectra.h
+[30.100s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/connector/con_categories.h
+[30.101s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amessage
+[30.101s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amessage/amsg_powers.h
+[30.101s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amessage/amsg_pots.h
+[30.101s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amessage/amsg_targets.h
+[30.102s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amessage/amsg_tracks.h
+[30.102s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amessage/amsg_spectra.h
+[30.102s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amessage/amsg_categories.h
+[30.103s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/amessage/amsg_hops.h
+[30.103s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/general
+[30.104s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/general/thread.h
+[30.104s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/general/format.h
+[30.105s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/general/soundspeed.h
+[30.105s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/general/interface.h
+[30.106s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/general/samplerate.h
+[30.107s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/general/link.h
+[30.108s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/general/spatialfilter.h
+[30.110s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/general/mic.h
+[30.111s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/ainjector
+[30.111s] -- Installing: /home/ws/ugv_ws/install/odas_ros/include/odas/ainjector/ainj_targets.h
+[30.112s] Invoked command in '/home/ws/ugv_ws/build/odas_ros' returned '0': AMENT_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib PYTHONPATH=/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:${PYTHONPATH} /usr/bin/cmake --install /home/ws/ugv_ws/build/odas_ros

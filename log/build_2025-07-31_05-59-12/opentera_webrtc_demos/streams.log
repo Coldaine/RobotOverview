@@ -1,0 +1,879 @@
+[0.099s] Invoking command in '/home/ws/ugv_ws/build/opentera_webrtc_demos': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/face_cropping:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/opentera_webrtc_ros/lib:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --build /home/ws/ugv_ws/build/opentera_webrtc_demos -- -j4 -l4
+[0.269s] [ 33%] [34m[1mGenerating node_modules.stamp[0m
+[151.469s] [ 33%] Built target opentera_werbrtc_teleop_frontend-install
+[151.849s] [ 66%] [34m[1mGenerating dist.stamp[0m
+[209.830s] 
+[209.838s] > teleop-vue@0.1.0 build
+[209.840s] > vue-cli-service build
+[209.844s] 
+[209.845s] 
+[209.847s] -  Building for production...
+[209.852s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[209.853s] 
+[209.854s] More info: https://sass-lang.com/d/legacy-js-api
+[209.855s] 
+[209.856s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.857s] 
+[209.858s] More info and automated migrator: https://sass-lang.com/d/import
+[209.858s] 
+[209.859s]   ╷
+[209.859s] 1 │ @import "~@/app.scss";
+[209.860s]   │         ^^^^^^^^^^^^^
+[209.861s]   ╵
+[209.862s]     stdin 1:9  root stylesheet
+[209.862s] 
+[209.863s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.864s] 
+[209.865s] More info and automated migrator: https://sass-lang.com/d/import
+[209.866s] 
+[209.868s]    ╷
+[209.869s] 96 │ @import "./scss/button.scss";
+[209.870s]    │         ^^^^^^^^^^^^^^^^^^^^
+[209.871s]    ╵
+[209.871s]     src/app.scss 96:9  @import
+[209.872s]     stdin 1:9          root stylesheet
+[209.873s] 
+[209.876s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.877s] 
+[209.883s] More info and automated migrator: https://sass-lang.com/d/import
+[209.887s] 
+[209.888s]    ╷
+[209.892s] 97 │ @import "./scss/grid.scss";
+[209.896s]    │         ^^^^^^^^^^^^^^^^^^
+[209.897s]    ╵
+[209.898s]     src/app.scss 97:9  @import
+[209.898s]     stdin 1:9          root stylesheet
+[209.899s] 
+[209.901s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[209.902s] 
+[209.903s] More info: https://sass-lang.com/d/legacy-js-api
+[209.904s] 
+[209.905s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.906s] 
+[209.907s] More info and automated migrator: https://sass-lang.com/d/import
+[209.907s] 
+[209.908s]   ╷
+[209.912s] 1 │ @import "~@/app.scss";
+[209.913s]   │         ^^^^^^^^^^^^^
+[209.913s]   ╵
+[209.914s]     stdin 1:9  root stylesheet
+[209.914s] 
+[209.915s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.916s] 
+[209.917s] More info and automated migrator: https://sass-lang.com/d/import
+[209.918s] 
+[209.918s]   ╷
+[209.919s] 3 │ @import "./NotFoundView.scss";
+[209.919s]   │         ^^^^^^^^^^^^^^^^^^^^^
+[209.919s]   ╵
+[209.920s]     stdin 3:9  root stylesheet
+[209.920s] 
+[209.921s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.921s] 
+[209.921s] More info and automated migrator: https://sass-lang.com/d/import
+[209.922s] 
+[209.922s]    ╷
+[209.923s] 96 │ @import "./scss/button.scss";
+[209.923s]    │         ^^^^^^^^^^^^^^^^^^^^
+[209.924s]    ╵
+[209.925s]     src/app.scss 96:9  @import
+[209.925s]     stdin 1:9          root stylesheet
+[209.926s] 
+[209.926s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.928s] 
+[209.928s] More info and automated migrator: https://sass-lang.com/d/import
+[209.929s] 
+[209.930s]    ╷
+[209.931s] 97 │ @import "./scss/grid.scss";
+[209.931s]    │         ^^^^^^^^^^^^^^^^^^
+[209.932s]    ╵
+[209.933s]     src/app.scss 97:9  @import
+[209.933s]     stdin 1:9          root stylesheet
+[209.938s] 
+[209.939s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[209.939s] 
+[209.940s] More info: https://sass-lang.com/d/legacy-js-api
+[209.940s] 
+[209.942s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.943s] 
+[209.944s] More info and automated migrator: https://sass-lang.com/d/import
+[209.946s] 
+[209.947s]   ╷
+[209.947s] 1 │ @import "~@/app.scss";
+[209.950s]   │         ^^^^^^^^^^^^^
+[209.953s]   ╵
+[209.953s]     stdin 1:9  root stylesheet
+[209.954s] 
+[209.955s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.956s] 
+[209.956s] More info and automated migrator: https://sass-lang.com/d/import
+[209.959s] 
+[209.962s]   ╷
+[209.965s] 3 │ @import "./ExpandableMap.scss";
+[209.966s]   │         ^^^^^^^^^^^^^^^^^^^^^^
+[209.966s]   ╵
+[209.967s]     stdin 3:9  root stylesheet
+[209.968s] 
+[209.968s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.970s] 
+[209.971s] More info and automated migrator: https://sass-lang.com/d/import
+[209.973s] 
+[209.973s]    ╷
+[209.974s] 96 │ @import "./scss/button.scss";
+[209.976s]    │         ^^^^^^^^^^^^^^^^^^^^
+[209.976s]    ╵
+[209.977s]     src/app.scss 96:9  @import
+[209.978s]     stdin 1:9          root stylesheet
+[209.978s] 
+[209.979s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[209.981s] 
+[209.981s] More info and automated migrator: https://sass-lang.com/d/import
+[209.982s] 
+[209.983s]    ╷
+[209.984s] 97 │ @import "./scss/grid.scss";
+[209.985s]    │         ^^^^^^^^^^^^^^^^^^
+[209.986s]    ╵
+[209.989s]     src/app.scss 97:9  @import
+[209.990s]     stdin 1:9          root stylesheet
+[209.991s] 
+[209.992s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[209.993s] 
+[209.994s] More info: https://sass-lang.com/d/legacy-js-api
+[209.995s] 
+[209.996s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.001s] 
+[210.003s] More info and automated migrator: https://sass-lang.com/d/import
+[210.003s] 
+[210.004s]   ╷
+[210.004s] 1 │ @import "~@/app.scss";
+[210.005s]   │         ^^^^^^^^^^^^^
+[210.010s]   ╵
+[210.011s]     stdin 1:9  root stylesheet
+[210.013s] 
+[210.014s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.015s] 
+[210.018s] More info and automated migrator: https://sass-lang.com/d/import
+[210.019s] 
+[210.021s]   ╷
+[210.022s] 3 │ @import "./Slider.scss";
+[210.024s]   │         ^^^^^^^^^^^^^^^
+[210.025s]   ╵
+[210.026s]     stdin 3:9  root stylesheet
+[210.027s] 
+[210.028s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.030s] 
+[210.031s] More info and automated migrator: https://sass-lang.com/d/import
+[210.033s] 
+[210.034s]    ╷
+[210.037s] 96 │ @import "./scss/button.scss";
+[210.038s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.039s]    ╵
+[210.040s]     src/app.scss 96:9  @import
+[210.043s]     stdin 1:9          root stylesheet
+[210.044s] 
+[210.045s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.047s] 
+[210.049s] More info and automated migrator: https://sass-lang.com/d/import
+[210.050s] 
+[210.051s]    ╷
+[210.052s] 97 │ @import "./scss/grid.scss";
+[210.054s]    │         ^^^^^^^^^^^^^^^^^^
+[210.055s]    ╵
+[210.057s]     src/app.scss 97:9  @import
+[210.057s]     stdin 1:9          root stylesheet
+[210.059s] 
+[210.060s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.062s] 
+[210.064s] More info: https://sass-lang.com/d/legacy-js-api
+[210.067s] 
+[210.068s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.070s] 
+[210.071s] More info and automated migrator: https://sass-lang.com/d/import
+[210.076s] 
+[210.080s]   ╷
+[210.081s] 1 │ @import "~@/app.scss";
+[210.082s]   │         ^^^^^^^^^^^^^
+[210.084s]   ╵
+[210.085s]     stdin 1:9  root stylesheet
+[210.087s] 
+[210.087s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.088s] 
+[210.089s] More info and automated migrator: https://sass-lang.com/d/import
+[210.090s] 
+[210.091s]   ╷
+[210.094s] 3 │ @import "./UserVideo.scss";
+[210.095s]   │         ^^^^^^^^^^^^^^^^^^
+[210.097s]   ╵
+[210.098s]     stdin 3:9  root stylesheet
+[210.099s] 
+[210.100s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.101s] 
+[210.102s] More info: https://sass-lang.com/d/legacy-js-api
+[210.103s] 
+[210.104s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.106s] 
+[210.116s] More info and automated migrator: https://sass-lang.com/d/import
+[210.120s] 
+[210.122s]   ╷
+[210.126s] 1 │ @import "~@/app.scss";
+[210.127s]   │         ^^^^^^^^^^^^^
+[210.129s]   ╵
+[210.133s]     stdin 1:9  root stylesheet
+[210.134s] 
+[210.136s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.142s] 
+[210.144s] More info and automated migrator: https://sass-lang.com/d/import
+[210.149s] 
+[210.150s]   ╷
+[210.152s] 3 │ @import "./DeviceSettings.scss";
+[210.153s]   │         ^^^^^^^^^^^^^^^^^^^^^^^
+[210.157s]   ╵
+[210.160s]     stdin 3:9  root stylesheet
+[210.163s] 
+[210.165s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.167s] 
+[210.168s] More info and automated migrator: https://sass-lang.com/d/import
+[210.168s] 
+[210.169s]    ╷
+[210.170s] 96 │ @import "./scss/button.scss";
+[210.170s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.170s]    ╵
+[210.171s]     src/app.scss 96:9  @import
+[210.171s]     stdin 1:9          root stylesheet
+[210.172s] 
+[210.172s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.173s] 
+[210.173s] More info and automated migrator: https://sass-lang.com/d/import
+[210.173s] 
+[210.174s]    ╷
+[210.175s] 97 │ @import "./scss/grid.scss";
+[210.175s]    │         ^^^^^^^^^^^^^^^^^^
+[210.176s]    ╵
+[210.176s]     src/app.scss 97:9  @import
+[210.177s]     stdin 1:9          root stylesheet
+[210.177s] 
+[210.178s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.180s] 
+[210.180s] More info and automated migrator: https://sass-lang.com/d/import
+[210.181s] 
+[210.181s]    ╷
+[210.181s] 96 │ @import "./scss/button.scss";
+[210.182s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.183s]    ╵
+[210.183s]     src/app.scss 96:9  @import
+[210.184s]     stdin 1:9          root stylesheet
+[210.184s] 
+[210.185s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.185s] 
+[210.186s] More info and automated migrator: https://sass-lang.com/d/import
+[210.186s] 
+[210.187s]    ╷
+[210.187s] 97 │ @import "./scss/grid.scss";
+[210.188s]    │         ^^^^^^^^^^^^^^^^^^
+[210.188s]    ╵
+[210.189s]     src/app.scss 97:9  @import
+[210.189s]     stdin 1:9          root stylesheet
+[210.189s] 
+[210.190s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.190s] 
+[210.192s] More info: https://sass-lang.com/d/legacy-js-api
+[210.195s] 
+[210.195s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.196s] 
+[210.197s] More info and automated migrator: https://sass-lang.com/d/import
+[210.197s] 
+[210.198s]   ╷
+[210.198s] 1 │ @import "~@/app.scss";
+[210.198s]   │         ^^^^^^^^^^^^^
+[210.199s]   ╵
+[210.199s]     stdin 1:9  root stylesheet
+[210.200s] 
+[210.200s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.201s] 
+[210.201s] More info and automated migrator: https://sass-lang.com/d/import
+[210.202s] 
+[210.203s]   ╷
+[210.204s] 3 │ @import "./ActionButton.scss";
+[210.204s]   │         ^^^^^^^^^^^^^^^^^^^^^
+[210.205s]   ╵
+[210.205s]     stdin 3:9  root stylesheet
+[210.206s] 
+[210.206s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.207s] 
+[210.207s] More info: https://sass-lang.com/d/legacy-js-api
+[210.207s] 
+[210.208s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.208s] 
+[210.208s] More info and automated migrator: https://sass-lang.com/d/import
+[210.209s] 
+[210.209s]   ╷
+[210.210s] 1 │ @import "~@/app.scss";
+[210.210s]   │         ^^^^^^^^^^^^^
+[210.210s]   ╵
+[210.211s]     stdin 1:9  root stylesheet
+[210.211s] 
+[210.211s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.212s] 
+[210.212s] More info and automated migrator: https://sass-lang.com/d/import
+[210.213s] 
+[210.213s]   ╷
+[210.213s] 3 │ @import "./Dropdown.scss";
+[210.214s]   │         ^^^^^^^^^^^^^^^^^
+[210.214s]   ╵
+[210.214s]     stdin 3:9  root stylesheet
+[210.215s] 
+[210.215s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.215s] 
+[210.218s] More info: https://sass-lang.com/d/legacy-js-api
+[210.218s] 
+[210.219s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.219s] 
+[210.219s] More info and automated migrator: https://sass-lang.com/d/import
+[210.220s] 
+[210.220s]   ╷
+[210.221s] 1 │ @import "~@/app.scss";
+[210.221s]   │         ^^^^^^^^^^^^^
+[210.222s]   ╵
+[210.222s]     stdin 1:9  root stylesheet
+[210.223s] 
+[210.224s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.224s] 
+[210.225s] More info and automated migrator: https://sass-lang.com/d/import
+[210.225s] 
+[210.226s]   ╷
+[210.226s] 3 │ @import "./Popup.scss";
+[210.226s]   │         ^^^^^^^^^^^^^^
+[210.227s]   ╵
+[210.227s]     stdin 3:9  root stylesheet
+[210.227s] 
+[210.228s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.228s] 
+[210.229s] More info: https://sass-lang.com/d/legacy-js-api
+[210.229s] 
+[210.230s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.230s] 
+[210.230s] More info and automated migrator: https://sass-lang.com/d/import
+[210.231s] 
+[210.231s]   ╷
+[210.231s] 1 │ @import "~@/app.scss";
+[210.232s]   │         ^^^^^^^^^^^^^
+[210.232s]   ╵
+[210.232s]     stdin 1:9  root stylesheet
+[210.233s] 
+[210.233s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.234s] 
+[210.234s] More info and automated migrator: https://sass-lang.com/d/import
+[210.235s] 
+[210.235s]   ╷
+[210.236s] 3 │ @import "./DropdownMenu.scss";
+[210.236s]   │         ^^^^^^^^^^^^^^^^^^^^^
+[210.237s]   ╵
+[210.239s]     stdin 3:9  root stylesheet
+[210.239s] 
+[210.239s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.239s] 
+[210.239s] More info and automated migrator: https://sass-lang.com/d/import
+[210.240s] 
+[210.240s]    ╷
+[210.240s] 96 │ @import "./scss/button.scss";
+[210.240s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.241s]    ╵
+[210.241s]     src/app.scss 96:9  @import
+[210.241s]     stdin 1:9          root stylesheet
+[210.241s] 
+[210.242s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.242s] 
+[210.242s] More info and automated migrator: https://sass-lang.com/d/import
+[210.242s] 
+[210.242s]    ╷
+[210.243s] 97 │ @import "./scss/grid.scss";
+[210.243s]    │         ^^^^^^^^^^^^^^^^^^
+[210.243s]    ╵
+[210.243s]     src/app.scss 97:9  @import
+[210.243s]     stdin 1:9          root stylesheet
+[210.244s] 
+[210.244s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.244s] 
+[210.244s] More info and automated migrator: https://sass-lang.com/d/import
+[210.244s] 
+[210.245s]    ╷
+[210.245s] 96 │ @import "./scss/button.scss";
+[210.245s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.245s]    ╵
+[210.245s]     src/app.scss 96:9  @import
+[210.246s]     stdin 1:9          root stylesheet
+[210.246s] 
+[210.246s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.246s] 
+[210.246s] More info and automated migrator: https://sass-lang.com/d/import
+[210.247s] 
+[210.247s]    ╷
+[210.247s] 97 │ @import "./scss/grid.scss";
+[210.247s]    │         ^^^^^^^^^^^^^^^^^^
+[210.247s]    ╵
+[210.248s]     src/app.scss 97:9  @import
+[210.248s]     stdin 1:9          root stylesheet
+[210.248s] 
+[210.248s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.248s] 
+[210.249s] More info and automated migrator: https://sass-lang.com/d/import
+[210.249s] 
+[210.249s]    ╷
+[210.249s] 96 │ @import "./scss/button.scss";
+[210.249s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.250s]    ╵
+[210.250s]     src/app.scss 96:9  @import
+[210.250s]     stdin 1:9          root stylesheet
+[210.250s] 
+[210.250s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.251s] 
+[210.251s] More info and automated migrator: https://sass-lang.com/d/import
+[210.251s] 
+[210.251s]    ╷
+[210.251s] 97 │ @import "./scss/grid.scss";
+[210.252s]    │         ^^^^^^^^^^^^^^^^^^
+[210.252s]    ╵
+[210.252s]     src/app.scss 97:9  @import
+[210.252s]     stdin 1:9          root stylesheet
+[210.252s] 
+[210.253s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.253s] 
+[210.253s] More info and automated migrator: https://sass-lang.com/d/import
+[210.253s] 
+[210.253s]    ╷
+[210.254s] 96 │ @import "./scss/button.scss";
+[210.254s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.254s]    ╵
+[210.254s]     src/app.scss 96:9  @import
+[210.254s]     stdin 1:9          root stylesheet
+[210.254s] 
+[210.255s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.255s] 
+[210.255s] More info and automated migrator: https://sass-lang.com/d/import
+[210.255s] 
+[210.255s]    ╷
+[210.256s] 97 │ @import "./scss/grid.scss";
+[210.256s]    │         ^^^^^^^^^^^^^^^^^^
+[210.256s]    ╵
+[210.256s]     src/app.scss 97:9  @import
+[210.256s]     stdin 1:9          root stylesheet
+[210.257s] 
+[210.257s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.257s] 
+[210.257s] More info: https://sass-lang.com/d/legacy-js-api
+[210.257s] 
+[210.258s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.258s] 
+[210.258s] More info and automated migrator: https://sass-lang.com/d/import
+[210.258s] 
+[210.258s]   ╷
+[210.259s] 1 │ @import "~@/app.scss";
+[210.259s]   │         ^^^^^^^^^^^^^
+[210.259s]   ╵
+[210.259s]     stdin 1:9  root stylesheet
+[210.259s] 
+[210.260s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.260s] 
+[210.260s] More info and automated migrator: https://sass-lang.com/d/import
+[210.260s] 
+[210.260s]   ╷
+[210.261s] 3 │ @import "./DefaultTemplate.scss";
+[210.261s]   │         ^^^^^^^^^^^^^^^^^^^^^^^^
+[210.261s]   ╵
+[210.261s]     stdin 3:9  root stylesheet
+[210.261s] 
+[210.262s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.262s] 
+[210.262s] More info and automated migrator: https://sass-lang.com/d/import
+[210.262s] 
+[210.262s]    ╷
+[210.263s] 96 │ @import "./scss/button.scss";
+[210.263s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.263s]    ╵
+[210.263s]     src/app.scss 96:9  @import
+[210.263s]     stdin 1:9          root stylesheet
+[210.264s] 
+[210.264s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.264s] 
+[210.264s] More info and automated migrator: https://sass-lang.com/d/import
+[210.264s] 
+[210.265s]    ╷
+[210.265s] 97 │ @import "./scss/grid.scss";
+[210.265s]    │         ^^^^^^^^^^^^^^^^^^
+[210.265s]    ╵
+[210.265s]     src/app.scss 97:9  @import
+[210.266s]     stdin 1:9          root stylesheet
+[210.266s] 
+[210.266s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.266s] 
+[210.266s] More info: https://sass-lang.com/d/legacy-js-api
+[210.266s] 
+[210.267s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.267s] 
+[210.267s] More info and automated migrator: https://sass-lang.com/d/import
+[210.267s] 
+[210.267s]   ╷
+[210.268s] 1 │ @import "~@/app.scss";
+[210.268s]   │         ^^^^^^^^^^^^^
+[210.268s]   ╵
+[210.268s]     stdin 1:9  root stylesheet
+[210.268s] 
+[210.269s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.269s] 
+[210.269s] More info and automated migrator: https://sass-lang.com/d/import
+[210.269s] 
+[210.269s]   ╷
+[210.270s] 3 │ @import "./VideoParticipant.scss";
+[210.270s]   │         ^^^^^^^^^^^^^^^^^^^^^^^^^
+[210.270s]   ╵
+[210.270s]     stdin 3:9  root stylesheet
+[210.270s] 
+[210.271s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.271s] 
+[210.271s] More info: https://sass-lang.com/d/legacy-js-api
+[210.271s] 
+[210.271s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.272s] 
+[210.272s] More info and automated migrator: https://sass-lang.com/d/import
+[210.272s] 
+[210.272s]   ╷
+[210.272s] 1 │ @import "~@/app.scss";
+[210.273s]   │         ^^^^^^^^^^^^^
+[210.273s]   ╵
+[210.273s]     stdin 1:9  root stylesheet
+[210.273s] 
+[210.273s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.274s] 
+[210.274s] More info and automated migrator: https://sass-lang.com/d/import
+[210.274s] 
+[210.274s]   ╷
+[210.274s] 3 │ @import "./ParticipantsList.scss";
+[210.275s]   │         ^^^^^^^^^^^^^^^^^^^^^^^^^
+[210.275s]   ╵
+[210.275s]     stdin 3:9  root stylesheet
+[210.275s] 
+[210.275s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.276s] 
+[210.276s] More info and automated migrator: https://sass-lang.com/d/import
+[210.276s] 
+[210.276s]    ╷
+[210.276s] 96 │ @import "./scss/button.scss";
+[210.277s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.277s]    ╵
+[210.277s]     src/app.scss 96:9  @import
+[210.277s]     stdin 1:9          root stylesheet
+[210.277s] 
+[210.278s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.278s] 
+[210.278s] More info and automated migrator: https://sass-lang.com/d/import
+[210.278s] 
+[210.278s]    ╷
+[210.279s] 97 │ @import "./scss/grid.scss";
+[210.279s]    │         ^^^^^^^^^^^^^^^^^^
+[210.279s]    ╵
+[210.279s]     src/app.scss 97:9  @import
+[210.279s]     stdin 1:9          root stylesheet
+[210.280s] 
+[210.280s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.280s] 
+[210.280s] More info and automated migrator: https://sass-lang.com/d/import
+[210.280s] 
+[210.281s]    ╷
+[210.281s] 96 │ @import "./scss/button.scss";
+[210.281s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.281s]    ╵
+[210.281s]     src/app.scss 96:9  @import
+[210.282s]     stdin 1:9          root stylesheet
+[210.282s] 
+[210.282s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.282s] 
+[210.282s] More info and automated migrator: https://sass-lang.com/d/import
+[210.283s] 
+[210.283s]    ╷
+[210.283s] 97 │ @import "./scss/grid.scss";
+[210.283s]    │         ^^^^^^^^^^^^^^^^^^
+[210.283s]    ╵
+[210.284s]     src/app.scss 97:9  @import
+[210.284s]     stdin 1:9          root stylesheet
+[210.284s] 
+[210.284s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.285s] 
+[210.285s] More info: https://sass-lang.com/d/legacy-js-api
+[210.285s] 
+[210.285s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.286s] 
+[210.286s] More info and automated migrator: https://sass-lang.com/d/import
+[210.286s] 
+[210.286s]   ╷
+[210.286s] 1 │ @import "~@/app.scss";
+[210.287s]   │         ^^^^^^^^^^^^^
+[210.287s]   ╵
+[210.287s]     stdin 1:9  root stylesheet
+[210.287s] 
+[210.287s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.288s] 
+[210.288s] More info and automated migrator: https://sass-lang.com/d/import
+[210.288s] 
+[210.288s]    ╷
+[210.288s] 96 │ @import "./scss/button.scss";
+[210.289s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.289s]    ╵
+[210.289s]     src/app.scss 96:9  @import
+[210.289s]     stdin 1:9          root stylesheet
+[210.289s] 
+[210.290s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.290s] 
+[210.290s] More info and automated migrator: https://sass-lang.com/d/import
+[210.290s] 
+[210.290s]    ╷
+[210.291s] 97 │ @import "./scss/grid.scss";
+[210.291s]    │         ^^^^^^^^^^^^^^^^^^
+[210.291s]    ╵
+[210.291s]     src/app.scss 97:9  @import
+[210.291s]     stdin 1:9          root stylesheet
+[210.292s] 
+[210.292s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.292s] 
+[210.292s] More info: https://sass-lang.com/d/legacy-js-api
+[210.292s] 
+[210.293s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.293s] 
+[210.293s] More info and automated migrator: https://sass-lang.com/d/import
+[210.293s] 
+[210.293s]   ╷
+[210.294s] 1 │ @import "~@/app.scss";
+[210.294s]   │         ^^^^^^^^^^^^^
+[210.294s]   ╵
+[210.294s]     stdin 1:9  root stylesheet
+[210.294s] 
+[210.295s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.295s] 
+[210.295s] More info and automated migrator: https://sass-lang.com/d/import
+[210.295s] 
+[210.295s]   ╷
+[210.295s] 3 │ @import "./ParticipantOptions.scss";
+[210.296s]   │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[210.296s]   ╵
+[210.296s]     stdin 3:9  root stylesheet
+[210.296s] 
+[210.297s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.297s] 
+[210.297s] More info and automated migrator: https://sass-lang.com/d/import
+[210.297s] 
+[210.297s]    ╷
+[210.297s] 96 │ @import "./scss/button.scss";
+[210.298s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.298s]    ╵
+[210.298s]     src/app.scss 96:9  @import
+[210.298s]     stdin 1:9          root stylesheet
+[210.299s] 
+[210.299s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.299s] 
+[210.299s] More info and automated migrator: https://sass-lang.com/d/import
+[210.300s] 
+[210.300s]    ╷
+[210.300s] 97 │ @import "./scss/grid.scss";
+[210.300s]    │         ^^^^^^^^^^^^^^^^^^
+[210.301s]    ╵
+[210.301s]     src/app.scss 97:9  @import
+[210.301s]     stdin 1:9          root stylesheet
+[210.301s] 
+[210.301s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.302s] 
+[210.302s] More info: https://sass-lang.com/d/legacy-js-api
+[210.302s] 
+[210.302s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.302s] 
+[210.303s] More info and automated migrator: https://sass-lang.com/d/import
+[210.303s] 
+[210.303s]   ╷
+[210.303s] 1 │ @import "~@/app.scss";
+[210.303s]   │         ^^^^^^^^^^^^^
+[210.304s]   ╵
+[210.304s]     stdin 1:9  root stylesheet
+[210.304s] 
+[210.304s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.304s] 
+[210.305s] More info and automated migrator: https://sass-lang.com/d/import
+[210.305s] 
+[210.305s]   ╷
+[210.305s] 3 │ @import "./NavigationBar.scss";
+[210.305s]   │         ^^^^^^^^^^^^^^^^^^^^^^
+[210.306s]   ╵
+[210.306s]     stdin 3:9  root stylesheet
+[210.306s] 
+[210.306s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.306s] 
+[210.307s] More info and automated migrator: https://sass-lang.com/d/import
+[210.307s] 
+[210.307s]    ╷
+[210.307s] 96 │ @import "./scss/button.scss";
+[210.307s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.308s]    ╵
+[210.308s]     src/app.scss 96:9  @import
+[210.308s]     stdin 1:9          root stylesheet
+[210.308s] 
+[210.308s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.309s] 
+[210.309s] More info and automated migrator: https://sass-lang.com/d/import
+[210.309s] 
+[210.309s]    ╷
+[210.309s] 97 │ @import "./scss/grid.scss";
+[210.310s]    │         ^^^^^^^^^^^^^^^^^^
+[210.310s]    ╵
+[210.310s]     src/app.scss 97:9  @import
+[210.310s]     stdin 1:9          root stylesheet
+[210.310s] 
+[210.311s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.311s] 
+[210.311s] More info: https://sass-lang.com/d/legacy-js-api
+[210.311s] 
+[210.311s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.312s] 
+[210.312s] More info and automated migrator: https://sass-lang.com/d/import
+[210.312s] 
+[210.312s]   ╷
+[210.312s] 1 │ @import "~@/app.scss";
+[210.313s]   │         ^^^^^^^^^^^^^
+[210.313s]   ╵
+[210.313s]     stdin 1:9  root stylesheet
+[210.313s] 
+[210.313s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.314s] 
+[210.314s] More info and automated migrator: https://sass-lang.com/d/import
+[210.314s] 
+[210.314s]   ╷
+[210.314s] 3 │ @import "./BatteryIndicator.scss";
+[210.315s]   │         ^^^^^^^^^^^^^^^^^^^^^^^^^
+[210.315s]   ╵
+[210.315s]     stdin 3:9  root stylesheet
+[210.315s] 
+[210.315s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.316s] 
+[210.316s] More info: https://sass-lang.com/d/legacy-js-api
+[210.316s] 
+[210.316s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.316s] 
+[210.317s] More info and automated migrator: https://sass-lang.com/d/import
+[210.317s] 
+[210.317s]   ╷
+[210.317s] 1 │ @import "~@/app.scss";
+[210.317s]   │         ^^^^^^^^^^^^^
+[210.318s]   ╵
+[210.318s]     stdin 1:9  root stylesheet
+[210.318s] 
+[210.318s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.318s] 
+[210.319s] More info and automated migrator: https://sass-lang.com/d/import
+[210.319s] 
+[210.319s]   ╷
+[210.319s] 3 │ @import "./SignalStrengthIndicator.scss";
+[210.319s]   │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[210.319s]   ╵
+[210.320s]     stdin 3:9  root stylesheet
+[210.320s] 
+[210.320s] DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+[210.320s] 
+[210.321s] More info: https://sass-lang.com/d/legacy-js-api
+[210.321s] 
+[210.321s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.321s] 
+[210.321s] More info and automated migrator: https://sass-lang.com/d/import
+[210.322s] 
+[210.322s]   ╷
+[210.322s] 1 │ @import "~@/app.scss";
+[210.322s]   │         ^^^^^^^^^^^^^
+[210.322s]   ╵
+[210.322s]     stdin 1:9  root stylesheet
+[210.323s] 
+[210.323s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.323s] 
+[210.323s] More info and automated migrator: https://sass-lang.com/d/import
+[210.323s] 
+[210.324s]   ╷
+[210.324s] 3 │ @import "./ActionsMenu.scss";
+[210.324s]   │         ^^^^^^^^^^^^^^^^^^^^
+[210.324s]   ╵
+[210.324s]     stdin 3:9  root stylesheet
+[210.325s] 
+[210.325s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.325s] 
+[210.325s] More info and automated migrator: https://sass-lang.com/d/import
+[210.325s] 
+[210.326s]    ╷
+[210.326s] 96 │ @import "./scss/button.scss";
+[210.326s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.326s]    ╵
+[210.326s]     src/app.scss 96:9  @import
+[210.327s]     stdin 1:9          root stylesheet
+[210.327s] 
+[210.327s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.327s] 
+[210.327s] More info and automated migrator: https://sass-lang.com/d/import
+[210.328s] 
+[210.328s]    ╷
+[210.328s] 97 │ @import "./scss/grid.scss";
+[210.328s]    │         ^^^^^^^^^^^^^^^^^^
+[210.328s]    ╵
+[210.329s]     src/app.scss 97:9  @import
+[210.329s]     stdin 1:9          root stylesheet
+[210.329s] 
+[210.329s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.329s] 
+[210.330s] More info and automated migrator: https://sass-lang.com/d/import
+[210.330s] 
+[210.330s]    ╷
+[210.330s] 96 │ @import "./scss/button.scss";
+[210.330s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.331s]    ╵
+[210.331s]     src/app.scss 96:9  @import
+[210.331s]     stdin 1:9          root stylesheet
+[210.331s] 
+[210.331s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.332s] 
+[210.332s] More info and automated migrator: https://sass-lang.com/d/import
+[210.332s] 
+[210.332s]    ╷
+[210.332s] 97 │ @import "./scss/grid.scss";
+[210.333s]    │         ^^^^^^^^^^^^^^^^^^
+[210.333s]    ╵
+[210.333s]     src/app.scss 97:9  @import
+[210.333s]     stdin 1:9          root stylesheet
+[210.333s] 
+[210.334s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.334s] 
+[210.334s] More info and automated migrator: https://sass-lang.com/d/import
+[210.334s] 
+[210.334s]    ╷
+[210.335s] 96 │ @import "./scss/button.scss";
+[210.335s]    │         ^^^^^^^^^^^^^^^^^^^^
+[210.335s]    ╵
+[210.335s]     src/app.scss 96:9  @import
+[210.335s]     stdin 1:9          root stylesheet
+[210.336s] 
+[210.336s] DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+[210.336s] 
+[210.336s] More info and automated migrator: https://sass-lang.com/d/import
+[210.336s] 
+[210.337s]    ╷
+[210.337s] 97 │ @import "./scss/grid.scss";
+[210.337s]    │         ^^^^^^^^^^^^^^^^^^
+[210.337s]    ╵
+[210.337s]     src/app.scss 97:9  @import
+[210.338s]     stdin 1:9          root stylesheet
+[210.338s] 
+[210.339s]  ERROR  Failed to compile with 6 errors6:02:43 AM
+[210.339s] 
+[210.339s] These dependencies were not found:
+[210.339s] 
+[210.339s] * @smartweb/vue-flash-message in ./src/main.ts
+[210.340s] * @vue/reactivity in ./src/components/DeviceSettings/useCameras.ts
+[210.340s] * @vue/runtime-core in ./node_modules/cache-loader/dist/cjs.js??ref--1-0!./node_modules/@vue/cli-service/node_modules/vue-loader-v16/dist??ref--1-1!./src/components/DeviceSettings/DeviceSettings.vue?vue&type=script&lang=js
+[210.340s] * tslib in ./src/components/DeviceSettings/useCameras.ts, ./src/store/modules/clientStore.ts and 1 other
+[210.340s] 
+[210.341s] To install them, you can run: npm install --save @smartweb/vue-flash-message @vue/reactivity @vue/runtime-core tslib
+[210.341s]  ERROR  Build failed with errors.
+[210.341s] gmake[2]: *** [CMakeFiles/opentera_werbrtc_teleop_frontend-build.dir/build.make:181: dist.stamp] Error 1
+[210.341s] gmake[1]: *** [CMakeFiles/Makefile2:165: CMakeFiles/opentera_werbrtc_teleop_frontend-build.dir/all] Error 2
+[210.341s] gmake: *** [Makefile:146: all] Error 2
+[210.342s] Invoked command in '/home/ws/ugv_ws/build/opentera_webrtc_demos' returned '2': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/face_cropping:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/opentera_webrtc_ros/lib:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --build /home/ws/ugv_ws/build/opentera_webrtc_demos -- -j4 -l4

@@ -1,0 +1,10 @@
+[01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:[m[K In member function ‘[01m[Kvoid OdomPublisher::publish_odom()[m[K’:
+[01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:259:43:[m[K [01;31m[Kerror: [m[K‘[01m[KtoMsg[m[K’ is not a member of ‘[01m[Ktf2[m[K’
+  259 |         odom.pose.pose.orientation = tf2::[01;31m[KtoMsg[m[K(q);
+      |                                           [01;31m[K^~~~~[m[K
+[01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:298:47:[m[K [01;31m[Kerror: [m[K‘[01m[KtoMsg[m[K’ is not a member of ‘[01m[Ktf2[m[K’
+  298 |             odom.pose.pose.orientation = tf2::[01;31m[KtoMsg[m[K(q);
+      |                                               [01;31m[K^~~~~[m[K
+gmake[2]: *** [CMakeFiles/base_node.dir/build.make:76: CMakeFiles/base_node.dir/src/base_node.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/base_node.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

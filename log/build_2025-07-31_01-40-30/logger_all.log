@@ -1,0 +1,1138 @@
+[0.534s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--symlink-install', '--cmake-args', '-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']
+[0.535s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=4, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, cmake_args=['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, mixin_files=None, mixin=None, verb_parser=<colcon_mixin.mixin.mixin_argument.MixinArgumentDecorator object at 0x7fb0ec8c10>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7fb0ec8760>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7fb0ec8760>>, mixin_verb=('build',))
+[1.217s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[1.219s] INFO:colcon.colcon_metadata.package_discovery.colcon_meta:Using configuration from '/root/.colcon/metadata/default/Gazebo.meta'
+[1.221s] INFO:colcon.colcon_metadata.package_discovery.colcon_meta:Using configuration from '/root/.colcon/metadata/default/fastrtps.meta'
+[1.222s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[1.222s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[1.222s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[1.222s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[1.222s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[1.222s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/ws/ugv_ws'
+[1.223s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[1.223s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[1.223s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[1.224s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[1.224s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[1.224s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[1.224s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[1.224s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[1.224s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[1.265s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[1.266s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[1.266s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[1.266s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[1.266s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[1.267s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[1.267s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[1.267s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[1.268s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[1.268s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[1.268s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[1.269s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[1.269s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[1.269s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[1.269s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[1.270s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[1.270s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[1.270s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[1.270s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[1.270s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[1.271s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[1.271s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[1.271s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[1.271s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[1.271s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[1.271s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[1.272s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[1.272s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[1.272s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extensions ['ignore', 'ignore_ament_install']
+[1.272s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extension 'ignore'
+[1.273s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extension 'ignore_ament_install'
+[1.273s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extensions ['colcon_pkg']
+[1.273s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extension 'colcon_pkg'
+[1.273s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extensions ['colcon_meta']
+[1.273s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extension 'colcon_meta'
+[1.273s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extensions ['ros']
+[1.274s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extension 'ros'
+[1.274s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extensions ['cmake', 'python']
+[1.274s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extension 'cmake'
+[1.274s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extension 'python'
+[1.274s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extensions ['python_setup_py']
+[1.274s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else) by extension 'python_setup_py'
+[1.275s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extensions ['ignore', 'ignore_ament_install']
+[1.275s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extension 'ignore'
+[1.275s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extension 'ignore_ament_install'
+[1.276s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extensions ['colcon_pkg']
+[1.276s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extension 'colcon_pkg'
+[1.276s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extensions ['colcon_meta']
+[1.276s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extension 'colcon_meta'
+[1.276s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extensions ['ros']
+[1.276s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extension 'ros'
+[1.277s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extensions ['cmake', 'python']
+[1.277s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extension 'cmake'
+[1.277s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extension 'python'
+[1.277s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extensions ['python_setup_py']
+[1.277s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros) by extension 'python_setup_py'
+[1.278s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag) by extensions ['ignore', 'ignore_ament_install']
+[1.278s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag) by extension 'ignore'
+[1.278s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag) by extension 'ignore_ament_install'
+[1.278s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag) by extensions ['colcon_pkg']
+[1.279s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag) by extension 'colcon_pkg'
+[1.279s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag) by extensions ['colcon_meta']
+[1.279s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag) by extension 'colcon_meta'
+[1.279s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag) by extensions ['ros']
+[1.279s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag) by extension 'ros'
+[1.294s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/apriltag_ros/apriltag' with type 'ros.cmake' and name 'apriltag'
+[1.294s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_msgs) by extensions ['ignore', 'ignore_ament_install']
+[1.295s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_msgs) by extension 'ignore'
+[1.295s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_msgs) by extension 'ignore_ament_install'
+[1.295s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_msgs) by extensions ['colcon_pkg']
+[1.295s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_msgs) by extension 'colcon_pkg'
+[1.295s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_msgs) by extensions ['colcon_meta']
+[1.295s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_msgs) by extension 'colcon_meta'
+[1.296s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_msgs) by extensions ['ros']
+[1.296s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_msgs) by extension 'ros'
+[1.298s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/apriltag_ros/apriltag_msgs' with type 'ros.ament_cmake' and name 'apriltag_msgs'
+[1.299s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_ros) by extensions ['ignore', 'ignore_ament_install']
+[1.299s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_ros) by extension 'ignore'
+[1.299s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_ros) by extension 'ignore_ament_install'
+[1.299s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_ros) by extensions ['colcon_pkg']
+[1.299s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_ros) by extension 'colcon_pkg'
+[1.300s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_ros) by extensions ['colcon_meta']
+[1.300s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_ros) by extension 'colcon_meta'
+[1.300s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_ros) by extensions ['ros']
+[1.300s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/apriltag_ros/apriltag_ros) by extension 'ros'
+[1.306s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/apriltag_ros/apriltag_ros' with type 'ros.ament_cmake' and name 'apriltag_ros'
+[1.306s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extensions ['ignore', 'ignore_ament_install']
+[1.307s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extension 'ignore'
+[1.307s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extension 'ignore_ament_install'
+[1.307s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extensions ['colcon_pkg']
+[1.307s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extension 'colcon_pkg'
+[1.308s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extensions ['colcon_meta']
+[1.308s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extension 'colcon_meta'
+[1.308s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extensions ['ros']
+[1.308s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extension 'ros'
+[1.308s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extensions ['cmake', 'python']
+[1.309s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extension 'cmake'
+[1.309s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extension 'python'
+[1.309s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extensions ['python_setup_py']
+[1.309s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils) by extension 'python_setup_py'
+[1.309s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils) by extensions ['ignore', 'ignore_ament_install']
+[1.310s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils) by extension 'ignore'
+[1.310s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils) by extension 'ignore_ament_install'
+[1.310s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils) by extensions ['colcon_pkg']
+[1.310s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils) by extension 'colcon_pkg'
+[1.311s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils) by extensions ['colcon_meta']
+[1.311s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils) by extension 'colcon_meta'
+[1.311s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils) by extensions ['ros']
+[1.311s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils) by extension 'ros'
+[1.315s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/audio_utils/audio_utils' with type 'ros.ament_cmake' and name 'audio_utils'
+[1.315s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils_msgs) by extensions ['ignore', 'ignore_ament_install']
+[1.315s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils_msgs) by extension 'ignore'
+[1.316s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils_msgs) by extension 'ignore_ament_install'
+[1.316s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils_msgs) by extensions ['colcon_pkg']
+[1.316s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils_msgs) by extension 'colcon_pkg'
+[1.316s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils_msgs) by extensions ['colcon_meta']
+[1.316s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils_msgs) by extension 'colcon_meta'
+[1.317s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils_msgs) by extensions ['ros']
+[1.317s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/audio_utils/audio_utils_msgs) by extension 'ros'
+[1.320s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/audio_utils/audio_utils_msgs' with type 'ros.ament_cmake' and name 'audio_utils_msgs'
+[1.320s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cartographer) by extensions ['ignore', 'ignore_ament_install']
+[1.321s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cartographer) by extension 'ignore'
+[1.321s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cartographer) by extension 'ignore_ament_install'
+[1.321s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cartographer) by extensions ['colcon_pkg']
+[1.321s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cartographer) by extension 'colcon_pkg'
+[1.321s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cartographer) by extensions ['colcon_meta']
+[1.321s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cartographer) by extension 'colcon_meta'
+[1.322s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cartographer) by extensions ['ros']
+[1.322s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cartographer) by extension 'ros'
+[1.323s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/cartographer' with type 'ros.ament_cmake' and name 'cartographer'
+[1.324s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extensions ['ignore', 'ignore_ament_install']
+[1.324s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extension 'ignore'
+[1.325s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extension 'ignore_ament_install'
+[1.325s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extensions ['colcon_pkg']
+[1.325s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extension 'colcon_pkg'
+[1.325s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extensions ['colcon_meta']
+[1.325s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extension 'colcon_meta'
+[1.325s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extensions ['ros']
+[1.326s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extension 'ros'
+[1.326s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extensions ['cmake', 'python']
+[1.326s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extension 'cmake'
+[1.326s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extension 'python'
+[1.326s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extensions ['python_setup_py']
+[1.326s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter) by extension 'python_setup_py'
+[1.327s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter) by extensions ['ignore', 'ignore_ament_install']
+[1.327s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter) by extension 'ignore'
+[1.327s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter) by extension 'ignore_ament_install'
+[1.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter) by extensions ['colcon_pkg']
+[1.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter) by extension 'colcon_pkg'
+[1.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter) by extensions ['colcon_meta']
+[1.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter) by extension 'colcon_meta'
+[1.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter) by extensions ['ros']
+[1.328s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter) by extension 'ros'
+[1.332s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/costmap_converter/costmap_converter' with type 'ros.ament_cmake' and name 'costmap_converter'
+[1.333s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter_msgs) by extensions ['ignore', 'ignore_ament_install']
+[1.333s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter_msgs) by extension 'ignore'
+[1.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter_msgs) by extension 'ignore_ament_install'
+[1.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter_msgs) by extensions ['colcon_pkg']
+[1.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter_msgs) by extension 'colcon_pkg'
+[1.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter_msgs) by extensions ['colcon_meta']
+[1.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter_msgs) by extension 'colcon_meta'
+[1.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter_msgs) by extensions ['ros']
+[1.334s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/costmap_converter/costmap_converter_msgs) by extension 'ros'
+[1.337s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/costmap_converter/costmap_converter_msgs' with type 'ros.ament_cmake' and name 'costmap_converter_msgs'
+[1.337s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cv_camera) by extensions ['ignore', 'ignore_ament_install']
+[1.338s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cv_camera) by extension 'ignore'
+[1.338s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cv_camera) by extension 'ignore_ament_install'
+[1.338s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cv_camera) by extensions ['colcon_pkg']
+[1.338s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cv_camera) by extension 'colcon_pkg'
+[1.338s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cv_camera) by extensions ['colcon_meta']
+[1.338s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cv_camera) by extension 'colcon_meta'
+[1.339s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cv_camera) by extensions ['ros']
+[1.339s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/cv_camera) by extension 'ros'
+[1.342s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/cv_camera' with type 'ros.ament_cmake' and name 'cv_camera'
+[1.343s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/emcl2_ros2) by extensions ['ignore', 'ignore_ament_install']
+[1.343s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/emcl2_ros2) by extension 'ignore'
+[1.343s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/emcl2_ros2) by extension 'ignore_ament_install'
+[1.343s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/emcl2_ros2) by extensions ['colcon_pkg']
+[1.343s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/emcl2_ros2) by extension 'colcon_pkg'
+[1.344s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/emcl2_ros2) by extensions ['colcon_meta']
+[1.344s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/emcl2_ros2) by extension 'colcon_meta'
+[1.344s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/emcl2_ros2) by extensions ['ros']
+[1.344s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/emcl2_ros2) by extension 'ros'
+[1.349s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/emcl2_ros2' with type 'ros.ament_cmake' and name 'emcl2'
+[1.349s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/explore_lite) by extensions ['ignore', 'ignore_ament_install']
+[1.349s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/explore_lite) by extension 'ignore'
+[1.350s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/explore_lite) by extension 'ignore_ament_install'
+[1.350s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/explore_lite) by extensions ['colcon_pkg']
+[1.350s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/explore_lite) by extension 'colcon_pkg'
+[1.350s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/explore_lite) by extensions ['colcon_meta']
+[1.350s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/explore_lite) by extension 'colcon_meta'
+[1.350s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/explore_lite) by extensions ['ros']
+[1.351s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/explore_lite) by extension 'ros'
+[1.356s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/explore_lite' with type 'ros.ament_cmake' and name 'explore_lite'
+[1.356s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extensions ['ignore', 'ignore_ament_install']
+[1.356s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extension 'ignore'
+[1.357s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extension 'ignore_ament_install'
+[1.357s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extensions ['colcon_pkg']
+[1.357s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extension 'colcon_pkg'
+[1.357s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extensions ['colcon_meta']
+[1.357s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extension 'colcon_meta'
+[1.357s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extensions ['ros']
+[1.358s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extension 'ros'
+[1.358s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extensions ['cmake', 'python']
+[1.358s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extension 'cmake'
+[1.358s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extension 'python'
+[1.358s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extensions ['python_setup_py']
+[1.358s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping) by extension 'python_setup_py'
+[1.359s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/openslam_gmapping) by extensions ['ignore', 'ignore_ament_install']
+[1.359s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/openslam_gmapping) by extension 'ignore'
+[1.359s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/openslam_gmapping) by extension 'ignore_ament_install'
+[1.360s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/openslam_gmapping) by extensions ['colcon_pkg']
+[1.360s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/openslam_gmapping) by extension 'colcon_pkg'
+[1.360s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/openslam_gmapping) by extensions ['colcon_meta']
+[1.360s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/openslam_gmapping) by extension 'colcon_meta'
+[1.360s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/openslam_gmapping) by extensions ['ros']
+[1.360s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/openslam_gmapping) by extension 'ros'
+[1.362s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/gmapping/openslam_gmapping' with type 'ros.ament_cmake' and name 'openslam_gmapping'
+[1.363s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/slam_gmapping) by extensions ['ignore', 'ignore_ament_install']
+[1.363s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/slam_gmapping) by extension 'ignore'
+[1.363s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/slam_gmapping) by extension 'ignore_ament_install'
+[1.364s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/slam_gmapping) by extensions ['colcon_pkg']
+[1.364s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/slam_gmapping) by extension 'colcon_pkg'
+[1.364s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/slam_gmapping) by extensions ['colcon_meta']
+[1.364s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/slam_gmapping) by extension 'colcon_meta'
+[1.364s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/slam_gmapping) by extensions ['ros']
+[1.364s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/gmapping/slam_gmapping) by extension 'ros'
+[1.373s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/gmapping/slam_gmapping' with type 'ros.ament_cmake' and name 'slam_gmapping'
+[1.373s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/ldlidar) by extensions ['ignore', 'ignore_ament_install']
+[1.374s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/ldlidar) by extension 'ignore'
+[1.374s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/ldlidar) by extension 'ignore_ament_install'
+[1.374s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/ldlidar) by extensions ['colcon_pkg']
+[1.374s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/ldlidar) by extension 'colcon_pkg'
+[1.374s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/ldlidar) by extensions ['colcon_meta']
+[1.374s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/ldlidar) by extension 'colcon_meta'
+[1.375s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/ldlidar) by extensions ['ros']
+[1.375s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/ldlidar) by extension 'ros'
+[1.377s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/ldlidar' with type 'ros.ament_cmake' and name 'ldlidar'
+[1.378s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extensions ['ignore', 'ignore_ament_install']
+[1.378s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extension 'ignore'
+[1.378s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extension 'ignore_ament_install'
+[1.378s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extensions ['colcon_pkg']
+[1.379s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extension 'colcon_pkg'
+[1.379s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extensions ['colcon_meta']
+[1.379s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extension 'colcon_meta'
+[1.379s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extensions ['ros']
+[1.379s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extension 'ros'
+[1.379s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extensions ['cmake', 'python']
+[1.380s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extension 'cmake'
+[1.380s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extension 'python'
+[1.380s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extensions ['python_setup_py']
+[1.380s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros) by extension 'python_setup_py'
+[1.380s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros) by extensions ['ignore', 'ignore_ament_install']
+[1.381s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros) by extension 'ignore'
+[1.381s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros) by extension 'ignore_ament_install'
+[1.381s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros) by extensions ['colcon_pkg']
+[1.381s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros) by extension 'colcon_pkg'
+[1.381s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros) by extensions ['colcon_meta']
+[1.382s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros) by extension 'colcon_meta'
+[1.382s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros) by extensions ['ros']
+[1.382s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros) by extension 'ros'
+[1.385s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/odas_ros/odas_ros' with type 'ros.ament_cmake' and name 'odas_ros'
+[1.386s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros_msgs) by extensions ['ignore', 'ignore_ament_install']
+[1.386s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros_msgs) by extension 'ignore'
+[1.387s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros_msgs) by extension 'ignore_ament_install'
+[1.387s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros_msgs) by extensions ['colcon_pkg']
+[1.387s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros_msgs) by extension 'colcon_pkg'
+[1.387s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros_msgs) by extensions ['colcon_meta']
+[1.387s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros_msgs) by extension 'colcon_meta'
+[1.387s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros_msgs) by extensions ['ros']
+[1.388s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/odas_ros/odas_ros_msgs) by extension 'ros'
+[1.390s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/odas_ros/odas_ros_msgs' with type 'ros.ament_cmake' and name 'odas_ros_msgs'
+[1.390s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extensions ['ignore', 'ignore_ament_install']
+[1.391s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extension 'ignore'
+[1.391s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extension 'ignore_ament_install'
+[1.391s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extensions ['colcon_pkg']
+[1.391s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extension 'colcon_pkg'
+[1.391s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extensions ['colcon_meta']
+[1.391s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extension 'colcon_meta'
+[1.392s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extensions ['ros']
+[1.392s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extension 'ros'
+[1.392s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extensions ['cmake', 'python']
+[1.392s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extension 'cmake'
+[1.392s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extension 'python'
+[1.393s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extensions ['python_setup_py']
+[1.393s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros) by extension 'python_setup_py'
+[1.393s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extensions ['ignore', 'ignore_ament_install']
+[1.393s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extension 'ignore'
+[1.394s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extension 'ignore_ament_install'
+[1.394s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extensions ['colcon_pkg']
+[1.394s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extension 'colcon_pkg'
+[1.394s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extensions ['colcon_meta']
+[1.394s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extension 'colcon_meta'
+[1.394s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extensions ['ros']
+[1.395s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extension 'ros'
+[1.395s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extensions ['cmake', 'python']
+[1.395s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extension 'cmake'
+[1.395s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extension 'python'
+[1.395s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extensions ['python_setup_py']
+[1.395s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/drawings) by extension 'python_setup_py'
+[1.396s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/face_cropping) by extensions ['ignore', 'ignore_ament_install']
+[1.396s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/face_cropping) by extension 'ignore'
+[1.396s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/face_cropping) by extension 'ignore_ament_install'
+[1.397s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/face_cropping) by extensions ['colcon_pkg']
+[1.397s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/face_cropping) by extension 'colcon_pkg'
+[1.397s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/face_cropping) by extensions ['colcon_meta']
+[1.397s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/face_cropping) by extension 'colcon_meta'
+[1.397s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/face_cropping) by extensions ['ros']
+[1.397s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/face_cropping) by extension 'ros'
+[1.402s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/opentera-webrtc-ros/face_cropping' with type 'ros.ament_cmake' and name 'face_cropping'
+[1.402s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/map_image_generator) by extensions ['ignore', 'ignore_ament_install']
+[1.403s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/map_image_generator) by extension 'ignore'
+[1.403s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/map_image_generator) by extension 'ignore_ament_install'
+[1.403s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/map_image_generator) by extensions ['colcon_pkg']
+[1.403s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/map_image_generator) by extension 'colcon_pkg'
+[1.403s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/map_image_generator) by extensions ['colcon_meta']
+[1.403s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/map_image_generator) by extension 'colcon_meta'
+[1.404s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/map_image_generator) by extensions ['ros']
+[1.404s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/map_image_generator) by extension 'ros'
+[1.442s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/opentera-webrtc-ros/map_image_generator' with type 'ros.ament_cmake' and name 'map_image_generator'
+[1.442s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_client_ros) by extensions ['ignore', 'ignore_ament_install']
+[1.443s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_client_ros) by extension 'ignore'
+[1.443s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_client_ros) by extension 'ignore_ament_install'
+[1.443s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_client_ros) by extensions ['colcon_pkg']
+[1.443s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_client_ros) by extension 'colcon_pkg'
+[1.444s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_client_ros) by extensions ['colcon_meta']
+[1.444s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_client_ros) by extension 'colcon_meta'
+[1.444s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_client_ros) by extensions ['ros']
+[1.444s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_client_ros) by extension 'ros'
+[1.448s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/opentera-webrtc-ros/opentera_client_ros' with type 'ros.ament_cmake' and name 'opentera_client_ros'
+[1.448s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages) by extensions ['ignore', 'ignore_ament_install']
+[1.449s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages) by extension 'ignore'
+[1.449s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages) by extension 'ignore_ament_install'
+[1.449s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages) by extensions ['colcon_pkg']
+[1.449s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages) by extension 'colcon_pkg'
+[1.449s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages) by extensions ['colcon_meta']
+[1.449s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages) by extension 'colcon_meta'
+[1.450s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages) by extensions ['ros']
+[1.450s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages) by extension 'ros'
+[1.452s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages' with type 'ros.ament_cmake' and name 'opentera_protobuf_messages'
+[1.453s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos) by extensions ['ignore', 'ignore_ament_install']
+[1.453s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos) by extension 'ignore'
+[1.453s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos) by extension 'ignore_ament_install'
+[1.454s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos) by extensions ['colcon_pkg']
+[1.454s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos) by extension 'colcon_pkg'
+[1.454s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos) by extensions ['colcon_meta']
+[1.454s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos) by extension 'colcon_meta'
+[1.454s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos) by extensions ['ros']
+[1.454s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos) by extension 'ros'
+[1.458s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos' with type 'ros.ament_cmake' and name 'opentera_webrtc_demos'
+[1.459s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui) by extensions ['ignore', 'ignore_ament_install']
+[1.459s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui) by extension 'ignore'
+[1.459s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui) by extension 'ignore_ament_install'
+[1.459s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui) by extensions ['colcon_pkg']
+[1.460s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui) by extension 'colcon_pkg'
+[1.460s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui) by extensions ['colcon_meta']
+[1.460s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui) by extension 'colcon_meta'
+[1.460s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui) by extensions ['ros']
+[1.460s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui) by extension 'ros'
+[1.464s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui' with type 'ros.ament_cmake' and name 'opentera_webrtc_robot_gui'
+[1.465s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros) by extensions ['ignore', 'ignore_ament_install']
+[1.465s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros) by extension 'ignore'
+[1.466s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros) by extension 'ignore_ament_install'
+[1.466s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros) by extensions ['colcon_pkg']
+[1.466s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros) by extension 'colcon_pkg'
+[1.466s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros) by extensions ['colcon_meta']
+[1.466s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros) by extension 'colcon_meta'
+[1.466s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros) by extensions ['ros']
+[1.467s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros) by extension 'ros'
+[1.472s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros' with type 'ros.ament_cmake' and name 'opentera_webrtc_ros'
+[1.472s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs) by extensions ['ignore', 'ignore_ament_install']
+[1.473s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs) by extension 'ignore'
+[1.473s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs) by extension 'ignore_ament_install'
+[1.473s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs) by extensions ['colcon_pkg']
+[1.473s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs) by extension 'colcon_pkg'
+[1.473s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs) by extensions ['colcon_meta']
+[1.473s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs) by extension 'colcon_meta'
+[1.474s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs) by extensions ['ros']
+[1.474s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs) by extension 'ros'
+[1.477s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs' with type 'ros.ament_cmake' and name 'opentera_webrtc_ros_msgs'
+[1.478s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description) by extensions ['ignore', 'ignore_ament_install']
+[1.478s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description) by extension 'ignore'
+[1.478s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description) by extension 'ignore_ament_install'
+[1.479s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description) by extensions ['colcon_pkg']
+[1.479s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description) by extension 'colcon_pkg'
+[1.479s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description) by extensions ['colcon_meta']
+[1.479s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description) by extension 'colcon_meta'
+[1.479s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description) by extensions ['ros']
+[1.479s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description) by extension 'ros'
+[1.483s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description' with type 'ros.ament_cmake' and name 'turtlebot3_beam_description'
+[1.483s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/rf2o_laser_odometry) by extensions ['ignore', 'ignore_ament_install']
+[1.484s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/rf2o_laser_odometry) by extension 'ignore'
+[1.484s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/rf2o_laser_odometry) by extension 'ignore_ament_install'
+[1.484s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/rf2o_laser_odometry) by extensions ['colcon_pkg']
+[1.484s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/rf2o_laser_odometry) by extension 'colcon_pkg'
+[1.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/rf2o_laser_odometry) by extensions ['colcon_meta']
+[1.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/rf2o_laser_odometry) by extension 'colcon_meta'
+[1.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/rf2o_laser_odometry) by extensions ['ros']
+[1.485s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/rf2o_laser_odometry) by extension 'ros'
+[1.489s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/rf2o_laser_odometry' with type 'ros.ament_cmake' and name 'rf2o_laser_odometry'
+[1.490s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/robot_pose_publisher) by extensions ['ignore', 'ignore_ament_install']
+[1.490s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/robot_pose_publisher) by extension 'ignore'
+[1.490s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/robot_pose_publisher) by extension 'ignore_ament_install'
+[1.490s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/robot_pose_publisher) by extensions ['colcon_pkg']
+[1.490s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/robot_pose_publisher) by extension 'colcon_pkg'
+[1.491s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/robot_pose_publisher) by extensions ['colcon_meta']
+[1.491s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/robot_pose_publisher) by extension 'colcon_meta'
+[1.491s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/robot_pose_publisher) by extensions ['ros']
+[1.491s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/robot_pose_publisher) by extension 'ros'
+[1.494s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/robot_pose_publisher' with type 'ros.ament_cmake' and name 'robot_pose_publisher'
+[1.494s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extensions ['ignore', 'ignore_ament_install']
+[1.494s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extension 'ignore'
+[1.495s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extension 'ignore_ament_install'
+[1.495s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extensions ['colcon_pkg']
+[1.495s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extension 'colcon_pkg'
+[1.495s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extensions ['colcon_meta']
+[1.495s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extension 'colcon_meta'
+[1.495s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extensions ['ros']
+[1.496s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extension 'ros'
+[1.496s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extensions ['cmake', 'python']
+[1.496s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extension 'cmake'
+[1.496s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extension 'python'
+[1.496s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extensions ['python_setup_py']
+[1.497s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner) by extension 'python_setup_py'
+[1.497s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_local_planner) by extensions ['ignore', 'ignore_ament_install']
+[1.497s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_local_planner) by extension 'ignore'
+[1.497s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_local_planner) by extension 'ignore_ament_install'
+[1.498s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_local_planner) by extensions ['colcon_pkg']
+[1.498s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_local_planner) by extension 'colcon_pkg'
+[1.498s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_local_planner) by extensions ['colcon_meta']
+[1.498s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_local_planner) by extension 'colcon_meta'
+[1.498s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_local_planner) by extensions ['ros']
+[1.498s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_local_planner) by extension 'ros'
+[1.506s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/teb_local_planner/teb_local_planner' with type 'ros.ament_cmake' and name 'teb_local_planner'
+[1.506s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_msgs) by extensions ['ignore', 'ignore_ament_install']
+[1.507s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_msgs) by extension 'ignore'
+[1.507s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_msgs) by extension 'ignore_ament_install'
+[1.507s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_msgs) by extensions ['colcon_pkg']
+[1.507s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_msgs) by extension 'colcon_pkg'
+[1.507s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_msgs) by extensions ['colcon_meta']
+[1.508s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_msgs) by extension 'colcon_meta'
+[1.508s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_msgs) by extensions ['ros']
+[1.508s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/teb_local_planner/teb_msgs) by extension 'ros'
+[1.510s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/teb_local_planner/teb_msgs' with type 'ros.ament_cmake' and name 'teb_msgs'
+[1.511s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extensions ['ignore', 'ignore_ament_install']
+[1.511s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extension 'ignore'
+[1.512s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extension 'ignore_ament_install'
+[1.512s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extensions ['colcon_pkg']
+[1.512s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extension 'colcon_pkg'
+[1.512s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extensions ['colcon_meta']
+[1.512s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extension 'colcon_meta'
+[1.512s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extensions ['ros']
+[1.513s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extension 'ros'
+[1.513s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extensions ['cmake', 'python']
+[1.513s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extension 'cmake'
+[1.513s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extension 'python'
+[1.513s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extensions ['python_setup_py']
+[1.514s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti) by extension 'python_setup_py'
+[1.514s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti) by extensions ['ignore', 'ignore_ament_install']
+[1.514s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti) by extension 'ignore'
+[1.515s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti) by extension 'ignore_ament_install'
+[1.515s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti) by extensions ['colcon_pkg']
+[1.515s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti) by extension 'colcon_pkg'
+[1.515s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti) by extensions ['colcon_meta']
+[1.515s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti) by extension 'colcon_meta'
+[1.515s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti) by extensions ['ros']
+[1.516s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti) by extension 'ros'
+[1.518s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/vizanti/vizanti' with type 'ros.ament_cmake' and name 'vizanti'
+[1.518s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_cpp) by extensions ['ignore', 'ignore_ament_install']
+[1.519s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_cpp) by extension 'ignore'
+[1.519s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_cpp) by extension 'ignore_ament_install'
+[1.519s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_cpp) by extensions ['colcon_pkg']
+[1.519s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_cpp) by extension 'colcon_pkg'
+[1.520s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_cpp) by extensions ['colcon_meta']
+[1.520s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_cpp) by extension 'colcon_meta'
+[1.520s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_cpp) by extensions ['ros']
+[1.520s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_cpp) by extension 'ros'
+[1.523s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/vizanti/vizanti_cpp' with type 'ros.ament_cmake' and name 'vizanti_cpp'
+[1.524s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_demos) by extensions ['ignore', 'ignore_ament_install']
+[1.524s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_demos) by extension 'ignore'
+[1.524s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_demos) by extension 'ignore_ament_install'
+[1.525s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_demos) by extensions ['colcon_pkg']
+[1.525s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_demos) by extension 'colcon_pkg'
+[1.525s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_demos) by extensions ['colcon_meta']
+[1.525s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_demos) by extension 'colcon_meta'
+[1.525s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_demos) by extensions ['ros']
+[1.525s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_demos) by extension 'ros'
+[1.530s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/vizanti/vizanti_demos' with type 'ros.ament_cmake' and name 'vizanti_demos'
+[1.530s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_msgs) by extensions ['ignore', 'ignore_ament_install']
+[1.530s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_msgs) by extension 'ignore'
+[1.531s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_msgs) by extension 'ignore_ament_install'
+[1.531s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_msgs) by extensions ['colcon_pkg']
+[1.531s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_msgs) by extension 'colcon_pkg'
+[1.531s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_msgs) by extensions ['colcon_meta']
+[1.531s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_msgs) by extension 'colcon_meta'
+[1.532s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_msgs) by extensions ['ros']
+[1.532s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_msgs) by extension 'ros'
+[1.535s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/vizanti/vizanti_msgs' with type 'ros.ament_cmake' and name 'vizanti_msgs'
+[1.536s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_server) by extensions ['ignore', 'ignore_ament_install']
+[1.536s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_server) by extension 'ignore'
+[1.536s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_server) by extension 'ignore_ament_install'
+[1.537s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_server) by extensions ['colcon_pkg']
+[1.537s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_server) by extension 'colcon_pkg'
+[1.537s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_server) by extensions ['colcon_meta']
+[1.537s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_server) by extension 'colcon_meta'
+[1.537s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_server) by extensions ['ros']
+[1.537s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_else/vizanti/vizanti_server) by extension 'ros'
+[1.542s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_else/vizanti/vizanti_server' with type 'ros.ament_cmake' and name 'vizanti_server'
+[1.542s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extensions ['ignore', 'ignore_ament_install']
+[1.543s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extension 'ignore'
+[1.543s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extension 'ignore_ament_install'
+[1.543s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extensions ['colcon_pkg']
+[1.543s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extension 'colcon_pkg'
+[1.543s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extensions ['colcon_meta']
+[1.543s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extension 'colcon_meta'
+[1.544s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extensions ['ros']
+[1.544s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extension 'ros'
+[1.544s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extensions ['cmake', 'python']
+[1.544s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extension 'cmake'
+[1.544s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extension 'python'
+[1.545s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extensions ['python_setup_py']
+[1.545s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main) by extension 'python_setup_py'
+[1.545s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_base_node) by extensions ['ignore', 'ignore_ament_install']
+[1.545s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_base_node) by extension 'ignore'
+[1.546s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_base_node) by extension 'ignore_ament_install'
+[1.546s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_base_node) by extensions ['colcon_pkg']
+[1.546s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_base_node) by extension 'colcon_pkg'
+[1.546s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_base_node) by extensions ['colcon_meta']
+[1.546s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_base_node) by extension 'colcon_meta'
+[1.546s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_base_node) by extensions ['ros']
+[1.546s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_base_node) by extension 'ros'
+[1.550s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_base_node' with type 'ros.ament_cmake' and name 'ugv_base_node'
+[1.550s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_bringup) by extensions ['ignore', 'ignore_ament_install']
+[1.551s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_bringup) by extension 'ignore'
+[1.551s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_bringup) by extension 'ignore_ament_install'
+[1.551s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_bringup) by extensions ['colcon_pkg']
+[1.551s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_bringup) by extension 'colcon_pkg'
+[1.551s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_bringup) by extensions ['colcon_meta']
+[1.551s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_bringup) by extension 'colcon_meta'
+[1.552s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_bringup) by extensions ['ros']
+[1.552s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_bringup) by extension 'ros'
+[1.554s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_bringup' with type 'ros.ament_python' and name 'ugv_bringup'
+[1.555s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_chat_ai) by extensions ['ignore', 'ignore_ament_install']
+[1.555s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_chat_ai) by extension 'ignore'
+[1.555s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_chat_ai) by extension 'ignore_ament_install'
+[1.555s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_chat_ai) by extensions ['colcon_pkg']
+[1.556s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_chat_ai) by extension 'colcon_pkg'
+[1.556s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_chat_ai) by extensions ['colcon_meta']
+[1.556s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_chat_ai) by extension 'colcon_meta'
+[1.556s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_chat_ai) by extensions ['ros']
+[1.556s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_chat_ai) by extension 'ros'
+[1.558s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_chat_ai' with type 'ros.ament_python' and name 'ugv_chat_ai'
+[1.559s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_description) by extensions ['ignore', 'ignore_ament_install']
+[1.559s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_description) by extension 'ignore'
+[1.560s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_description) by extension 'ignore_ament_install'
+[1.560s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_description) by extensions ['colcon_pkg']
+[1.560s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_description) by extension 'colcon_pkg'
+[1.560s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_description) by extensions ['colcon_meta']
+[1.560s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_description) by extension 'colcon_meta'
+[1.561s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_description) by extensions ['ros']
+[1.561s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_description) by extension 'ros'
+[1.564s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_description' with type 'ros.ament_cmake' and name 'ugv_description'
+[1.565s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_gazebo) by extensions ['ignore', 'ignore_ament_install']
+[1.565s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_gazebo) by extension 'ignore'
+[1.565s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_gazebo) by extension 'ignore_ament_install'
+[1.565s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_gazebo) by extensions ['colcon_pkg']
+[1.566s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_gazebo) by extension 'colcon_pkg'
+[1.566s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_gazebo) by extensions ['colcon_meta']
+[1.566s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_gazebo) by extension 'colcon_meta'
+[1.566s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_gazebo) by extensions ['ros']
+[1.566s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_gazebo) by extension 'ros'
+[1.569s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_gazebo' with type 'ros.ament_cmake' and name 'ugv_gazebo'
+[1.570s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_interface) by extensions ['ignore', 'ignore_ament_install']
+[1.570s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_interface) by extension 'ignore'
+[1.570s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_interface) by extension 'ignore_ament_install'
+[1.570s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_interface) by extensions ['colcon_pkg']
+[1.571s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_interface) by extension 'colcon_pkg'
+[1.571s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_interface) by extensions ['colcon_meta']
+[1.571s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_interface) by extension 'colcon_meta'
+[1.571s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_interface) by extensions ['ros']
+[1.571s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_interface) by extension 'ros'
+[1.575s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_interface' with type 'ros.ament_cmake' and name 'ugv_interface'
+[1.575s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_nav) by extensions ['ignore', 'ignore_ament_install']
+[1.576s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_nav) by extension 'ignore'
+[1.576s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_nav) by extension 'ignore_ament_install'
+[1.576s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_nav) by extensions ['colcon_pkg']
+[1.576s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_nav) by extension 'colcon_pkg'
+[1.577s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_nav) by extensions ['colcon_meta']
+[1.577s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_nav) by extension 'colcon_meta'
+[1.577s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_nav) by extensions ['ros']
+[1.577s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_nav) by extension 'ros'
+[1.579s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_nav' with type 'ros.ament_cmake' and name 'ugv_nav'
+[1.580s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_slam) by extensions ['ignore', 'ignore_ament_install']
+[1.580s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_slam) by extension 'ignore'
+[1.580s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_slam) by extension 'ignore_ament_install'
+[1.580s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_slam) by extensions ['colcon_pkg']
+[1.580s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_slam) by extension 'colcon_pkg'
+[1.581s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_slam) by extensions ['colcon_meta']
+[1.581s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_slam) by extension 'colcon_meta'
+[1.581s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_slam) by extensions ['ros']
+[1.581s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_slam) by extension 'ros'
+[1.585s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_slam' with type 'ros.ament_cmake' and name 'ugv_slam'
+[1.585s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_tools) by extensions ['ignore', 'ignore_ament_install']
+[1.586s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_tools) by extension 'ignore'
+[1.586s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_tools) by extension 'ignore_ament_install'
+[1.586s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_tools) by extensions ['colcon_pkg']
+[1.586s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_tools) by extension 'colcon_pkg'
+[1.586s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_tools) by extensions ['colcon_meta']
+[1.587s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_tools) by extension 'colcon_meta'
+[1.587s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_tools) by extensions ['ros']
+[1.587s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_tools) by extension 'ros'
+[1.590s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_tools' with type 'ros.ament_python' and name 'ugv_tools'
+[1.590s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_vision) by extensions ['ignore', 'ignore_ament_install']
+[1.590s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_vision) by extension 'ignore'
+[1.591s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_vision) by extension 'ignore_ament_install'
+[1.591s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_vision) by extensions ['colcon_pkg']
+[1.591s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_vision) by extension 'colcon_pkg'
+[1.591s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_vision) by extensions ['colcon_meta']
+[1.591s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_vision) by extension 'colcon_meta'
+[1.592s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_vision) by extensions ['ros']
+[1.592s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_vision) by extension 'ros'
+[1.594s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_vision' with type 'ros.ament_python' and name 'ugv_vision'
+[1.594s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_web_app) by extensions ['ignore', 'ignore_ament_install']
+[1.595s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_web_app) by extension 'ignore'
+[1.595s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_web_app) by extension 'ignore_ament_install'
+[1.595s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_web_app) by extensions ['colcon_pkg']
+[1.595s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_web_app) by extension 'colcon_pkg'
+[1.596s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_web_app) by extensions ['colcon_meta']
+[1.596s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_web_app) by extension 'colcon_meta'
+[1.596s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_web_app) by extensions ['ros']
+[1.596s] Level 1:colcon.colcon_core.package_identification:_identify(src/ugv_main/ugv_web_app) by extension 'ros'
+[1.598s] DEBUG:colcon.colcon_core.package_identification:Package 'src/ugv_main/ugv_web_app' with type 'ros.ament_python' and name 'ugv_web_app'
+[1.599s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[1.599s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[1.599s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[1.599s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[1.599s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[1.722s] Level 5:colcon.colcon_core.verb:set package 'apriltag' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.723s] Level 5:colcon.colcon_core.verb:set package 'apriltag' build argument 'cmake_target' from command line to 'None'
+[1.723s] Level 5:colcon.colcon_core.verb:set package 'apriltag' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.723s] Level 5:colcon.colcon_core.verb:set package 'apriltag' build argument 'cmake_clean_cache' from command line to 'False'
+[1.723s] Level 5:colcon.colcon_core.verb:set package 'apriltag' build argument 'cmake_clean_first' from command line to 'False'
+[1.723s] Level 5:colcon.colcon_core.verb:set package 'apriltag' build argument 'cmake_force_configure' from command line to 'False'
+[1.723s] Level 5:colcon.colcon_core.verb:set package 'apriltag' build argument 'ament_cmake_args' from command line to 'None'
+[1.723s] Level 5:colcon.colcon_core.verb:set package 'apriltag' build argument 'catkin_cmake_args' from command line to 'None'
+[1.723s] Level 5:colcon.colcon_core.verb:set package 'apriltag' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.723s] DEBUG:colcon.colcon_core.verb:Building package 'apriltag' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/apriltag', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/apriltag', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/apriltag_ros/apriltag', 'symlink_install': True, 'test_result_base': None}
+[1.725s] Level 5:colcon.colcon_core.verb:set package 'apriltag_msgs' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.725s] Level 5:colcon.colcon_core.verb:set package 'apriltag_msgs' build argument 'cmake_target' from command line to 'None'
+[1.725s] Level 5:colcon.colcon_core.verb:set package 'apriltag_msgs' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.726s] Level 5:colcon.colcon_core.verb:set package 'apriltag_msgs' build argument 'cmake_clean_cache' from command line to 'False'
+[1.726s] Level 5:colcon.colcon_core.verb:set package 'apriltag_msgs' build argument 'cmake_clean_first' from command line to 'False'
+[1.726s] Level 5:colcon.colcon_core.verb:set package 'apriltag_msgs' build argument 'cmake_force_configure' from command line to 'False'
+[1.726s] Level 5:colcon.colcon_core.verb:set package 'apriltag_msgs' build argument 'ament_cmake_args' from command line to 'None'
+[1.726s] Level 5:colcon.colcon_core.verb:set package 'apriltag_msgs' build argument 'catkin_cmake_args' from command line to 'None'
+[1.726s] Level 5:colcon.colcon_core.verb:set package 'apriltag_msgs' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.726s] DEBUG:colcon.colcon_core.verb:Building package 'apriltag_msgs' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/apriltag_msgs', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/apriltag_msgs', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/apriltag_ros/apriltag_msgs', 'symlink_install': True, 'test_result_base': None}
+[1.728s] Level 5:colcon.colcon_core.verb:set package 'audio_utils_msgs' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.728s] Level 5:colcon.colcon_core.verb:set package 'audio_utils_msgs' build argument 'cmake_target' from command line to 'None'
+[1.728s] Level 5:colcon.colcon_core.verb:set package 'audio_utils_msgs' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.728s] Level 5:colcon.colcon_core.verb:set package 'audio_utils_msgs' build argument 'cmake_clean_cache' from command line to 'False'
+[1.728s] Level 5:colcon.colcon_core.verb:set package 'audio_utils_msgs' build argument 'cmake_clean_first' from command line to 'False'
+[1.728s] Level 5:colcon.colcon_core.verb:set package 'audio_utils_msgs' build argument 'cmake_force_configure' from command line to 'False'
+[1.728s] Level 5:colcon.colcon_core.verb:set package 'audio_utils_msgs' build argument 'ament_cmake_args' from command line to 'None'
+[1.729s] Level 5:colcon.colcon_core.verb:set package 'audio_utils_msgs' build argument 'catkin_cmake_args' from command line to 'None'
+[1.729s] Level 5:colcon.colcon_core.verb:set package 'audio_utils_msgs' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.729s] DEBUG:colcon.colcon_core.verb:Building package 'audio_utils_msgs' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/audio_utils_msgs', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/audio_utils_msgs', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/audio_utils/audio_utils_msgs', 'symlink_install': True, 'test_result_base': None}
+[1.730s] Level 5:colcon.colcon_core.verb:set package 'cartographer' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.731s] Level 5:colcon.colcon_core.verb:set package 'cartographer' build argument 'cmake_target' from command line to 'None'
+[1.731s] Level 5:colcon.colcon_core.verb:set package 'cartographer' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.731s] Level 5:colcon.colcon_core.verb:set package 'cartographer' build argument 'cmake_clean_cache' from command line to 'False'
+[1.731s] Level 5:colcon.colcon_core.verb:set package 'cartographer' build argument 'cmake_clean_first' from command line to 'False'
+[1.731s] Level 5:colcon.colcon_core.verb:set package 'cartographer' build argument 'cmake_force_configure' from command line to 'False'
+[1.731s] Level 5:colcon.colcon_core.verb:set package 'cartographer' build argument 'ament_cmake_args' from command line to 'None'
+[1.731s] Level 5:colcon.colcon_core.verb:set package 'cartographer' build argument 'catkin_cmake_args' from command line to 'None'
+[1.731s] Level 5:colcon.colcon_core.verb:set package 'cartographer' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.731s] DEBUG:colcon.colcon_core.verb:Building package 'cartographer' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/cartographer', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/cartographer', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/cartographer', 'symlink_install': True, 'test_result_base': None}
+[1.733s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter_msgs' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.733s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter_msgs' build argument 'cmake_target' from command line to 'None'
+[1.733s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter_msgs' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.733s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter_msgs' build argument 'cmake_clean_cache' from command line to 'False'
+[1.734s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter_msgs' build argument 'cmake_clean_first' from command line to 'False'
+[1.734s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter_msgs' build argument 'cmake_force_configure' from command line to 'False'
+[1.734s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter_msgs' build argument 'ament_cmake_args' from command line to 'None'
+[1.734s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter_msgs' build argument 'catkin_cmake_args' from command line to 'None'
+[1.734s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter_msgs' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.734s] DEBUG:colcon.colcon_core.verb:Building package 'costmap_converter_msgs' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/costmap_converter_msgs', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/costmap_converter_msgs', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/costmap_converter/costmap_converter_msgs', 'symlink_install': True, 'test_result_base': None}
+[1.735s] Level 5:colcon.colcon_core.verb:set package 'cv_camera' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.736s] Level 5:colcon.colcon_core.verb:set package 'cv_camera' build argument 'cmake_target' from command line to 'None'
+[1.736s] Level 5:colcon.colcon_core.verb:set package 'cv_camera' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.736s] Level 5:colcon.colcon_core.verb:set package 'cv_camera' build argument 'cmake_clean_cache' from command line to 'False'
+[1.736s] Level 5:colcon.colcon_core.verb:set package 'cv_camera' build argument 'cmake_clean_first' from command line to 'False'
+[1.736s] Level 5:colcon.colcon_core.verb:set package 'cv_camera' build argument 'cmake_force_configure' from command line to 'False'
+[1.736s] Level 5:colcon.colcon_core.verb:set package 'cv_camera' build argument 'ament_cmake_args' from command line to 'None'
+[1.736s] Level 5:colcon.colcon_core.verb:set package 'cv_camera' build argument 'catkin_cmake_args' from command line to 'None'
+[1.736s] Level 5:colcon.colcon_core.verb:set package 'cv_camera' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.737s] DEBUG:colcon.colcon_core.verb:Building package 'cv_camera' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/cv_camera', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/cv_camera', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/cv_camera', 'symlink_install': True, 'test_result_base': None}
+[1.738s] Level 5:colcon.colcon_core.verb:set package 'emcl2' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.738s] Level 5:colcon.colcon_core.verb:set package 'emcl2' build argument 'cmake_target' from command line to 'None'
+[1.738s] Level 5:colcon.colcon_core.verb:set package 'emcl2' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.738s] Level 5:colcon.colcon_core.verb:set package 'emcl2' build argument 'cmake_clean_cache' from command line to 'False'
+[1.739s] Level 5:colcon.colcon_core.verb:set package 'emcl2' build argument 'cmake_clean_first' from command line to 'False'
+[1.739s] Level 5:colcon.colcon_core.verb:set package 'emcl2' build argument 'cmake_force_configure' from command line to 'False'
+[1.739s] Level 5:colcon.colcon_core.verb:set package 'emcl2' build argument 'ament_cmake_args' from command line to 'None'
+[1.739s] Level 5:colcon.colcon_core.verb:set package 'emcl2' build argument 'catkin_cmake_args' from command line to 'None'
+[1.739s] Level 5:colcon.colcon_core.verb:set package 'emcl2' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.739s] DEBUG:colcon.colcon_core.verb:Building package 'emcl2' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/emcl2', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/emcl2', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/emcl2_ros2', 'symlink_install': True, 'test_result_base': None}
+[1.740s] Level 5:colcon.colcon_core.verb:set package 'explore_lite' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.741s] Level 5:colcon.colcon_core.verb:set package 'explore_lite' build argument 'cmake_target' from command line to 'None'
+[1.741s] Level 5:colcon.colcon_core.verb:set package 'explore_lite' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.741s] Level 5:colcon.colcon_core.verb:set package 'explore_lite' build argument 'cmake_clean_cache' from command line to 'False'
+[1.741s] Level 5:colcon.colcon_core.verb:set package 'explore_lite' build argument 'cmake_clean_first' from command line to 'False'
+[1.741s] Level 5:colcon.colcon_core.verb:set package 'explore_lite' build argument 'cmake_force_configure' from command line to 'False'
+[1.741s] Level 5:colcon.colcon_core.verb:set package 'explore_lite' build argument 'ament_cmake_args' from command line to 'None'
+[1.741s] Level 5:colcon.colcon_core.verb:set package 'explore_lite' build argument 'catkin_cmake_args' from command line to 'None'
+[1.741s] Level 5:colcon.colcon_core.verb:set package 'explore_lite' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.741s] DEBUG:colcon.colcon_core.verb:Building package 'explore_lite' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/explore_lite', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/explore_lite', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/explore_lite', 'symlink_install': True, 'test_result_base': None}
+[1.743s] Level 5:colcon.colcon_core.verb:set package 'ldlidar' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.743s] Level 5:colcon.colcon_core.verb:set package 'ldlidar' build argument 'cmake_target' from command line to 'None'
+[1.743s] Level 5:colcon.colcon_core.verb:set package 'ldlidar' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.743s] Level 5:colcon.colcon_core.verb:set package 'ldlidar' build argument 'cmake_clean_cache' from command line to 'False'
+[1.743s] Level 5:colcon.colcon_core.verb:set package 'ldlidar' build argument 'cmake_clean_first' from command line to 'False'
+[1.743s] Level 5:colcon.colcon_core.verb:set package 'ldlidar' build argument 'cmake_force_configure' from command line to 'False'
+[1.743s] Level 5:colcon.colcon_core.verb:set package 'ldlidar' build argument 'ament_cmake_args' from command line to 'None'
+[1.744s] Level 5:colcon.colcon_core.verb:set package 'ldlidar' build argument 'catkin_cmake_args' from command line to 'None'
+[1.744s] Level 5:colcon.colcon_core.verb:set package 'ldlidar' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.744s] DEBUG:colcon.colcon_core.verb:Building package 'ldlidar' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ldlidar', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ldlidar', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/ldlidar', 'symlink_install': True, 'test_result_base': None}
+[1.745s] Level 5:colcon.colcon_core.verb:set package 'odas_ros_msgs' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.745s] Level 5:colcon.colcon_core.verb:set package 'odas_ros_msgs' build argument 'cmake_target' from command line to 'None'
+[1.745s] Level 5:colcon.colcon_core.verb:set package 'odas_ros_msgs' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.746s] Level 5:colcon.colcon_core.verb:set package 'odas_ros_msgs' build argument 'cmake_clean_cache' from command line to 'False'
+[1.746s] Level 5:colcon.colcon_core.verb:set package 'odas_ros_msgs' build argument 'cmake_clean_first' from command line to 'False'
+[1.746s] Level 5:colcon.colcon_core.verb:set package 'odas_ros_msgs' build argument 'cmake_force_configure' from command line to 'False'
+[1.746s] Level 5:colcon.colcon_core.verb:set package 'odas_ros_msgs' build argument 'ament_cmake_args' from command line to 'None'
+[1.746s] Level 5:colcon.colcon_core.verb:set package 'odas_ros_msgs' build argument 'catkin_cmake_args' from command line to 'None'
+[1.746s] Level 5:colcon.colcon_core.verb:set package 'odas_ros_msgs' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.746s] DEBUG:colcon.colcon_core.verb:Building package 'odas_ros_msgs' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/odas_ros_msgs', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/odas_ros_msgs', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/odas_ros/odas_ros_msgs', 'symlink_install': True, 'test_result_base': None}
+[1.747s] Level 5:colcon.colcon_core.verb:set package 'openslam_gmapping' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.748s] Level 5:colcon.colcon_core.verb:set package 'openslam_gmapping' build argument 'cmake_target' from command line to 'None'
+[1.748s] Level 5:colcon.colcon_core.verb:set package 'openslam_gmapping' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.748s] Level 5:colcon.colcon_core.verb:set package 'openslam_gmapping' build argument 'cmake_clean_cache' from command line to 'False'
+[1.748s] Level 5:colcon.colcon_core.verb:set package 'openslam_gmapping' build argument 'cmake_clean_first' from command line to 'False'
+[1.748s] Level 5:colcon.colcon_core.verb:set package 'openslam_gmapping' build argument 'cmake_force_configure' from command line to 'False'
+[1.748s] Level 5:colcon.colcon_core.verb:set package 'openslam_gmapping' build argument 'ament_cmake_args' from command line to 'None'
+[1.748s] Level 5:colcon.colcon_core.verb:set package 'openslam_gmapping' build argument 'catkin_cmake_args' from command line to 'None'
+[1.748s] Level 5:colcon.colcon_core.verb:set package 'openslam_gmapping' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.748s] DEBUG:colcon.colcon_core.verb:Building package 'openslam_gmapping' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/openslam_gmapping', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/openslam_gmapping', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/gmapping/openslam_gmapping', 'symlink_install': True, 'test_result_base': None}
+[1.750s] Level 5:colcon.colcon_core.verb:set package 'opentera_protobuf_messages' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.750s] Level 5:colcon.colcon_core.verb:set package 'opentera_protobuf_messages' build argument 'cmake_target' from command line to 'None'
+[1.750s] Level 5:colcon.colcon_core.verb:set package 'opentera_protobuf_messages' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.750s] Level 5:colcon.colcon_core.verb:set package 'opentera_protobuf_messages' build argument 'cmake_clean_cache' from command line to 'False'
+[1.750s] Level 5:colcon.colcon_core.verb:set package 'opentera_protobuf_messages' build argument 'cmake_clean_first' from command line to 'False'
+[1.750s] Level 5:colcon.colcon_core.verb:set package 'opentera_protobuf_messages' build argument 'cmake_force_configure' from command line to 'False'
+[1.750s] Level 5:colcon.colcon_core.verb:set package 'opentera_protobuf_messages' build argument 'ament_cmake_args' from command line to 'None'
+[1.751s] Level 5:colcon.colcon_core.verb:set package 'opentera_protobuf_messages' build argument 'catkin_cmake_args' from command line to 'None'
+[1.751s] Level 5:colcon.colcon_core.verb:set package 'opentera_protobuf_messages' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.751s] DEBUG:colcon.colcon_core.verb:Building package 'opentera_protobuf_messages' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/opentera_protobuf_messages', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/opentera_protobuf_messages', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_protobuf_messages', 'symlink_install': True, 'test_result_base': None}
+[1.752s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.752s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_target' from command line to 'None'
+[1.752s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.753s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_clean_cache' from command line to 'False'
+[1.753s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_clean_first' from command line to 'False'
+[1.753s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'cmake_force_configure' from command line to 'False'
+[1.753s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'ament_cmake_args' from command line to 'None'
+[1.753s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'catkin_cmake_args' from command line to 'None'
+[1.753s] Level 5:colcon.colcon_core.verb:set package 'rf2o_laser_odometry' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.753s] DEBUG:colcon.colcon_core.verb:Building package 'rf2o_laser_odometry' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/rf2o_laser_odometry', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/rf2o_laser_odometry', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/rf2o_laser_odometry', 'symlink_install': True, 'test_result_base': None}
+[1.754s] Level 5:colcon.colcon_core.verb:set package 'robot_pose_publisher' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.755s] Level 5:colcon.colcon_core.verb:set package 'robot_pose_publisher' build argument 'cmake_target' from command line to 'None'
+[1.755s] Level 5:colcon.colcon_core.verb:set package 'robot_pose_publisher' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.755s] Level 5:colcon.colcon_core.verb:set package 'robot_pose_publisher' build argument 'cmake_clean_cache' from command line to 'False'
+[1.755s] Level 5:colcon.colcon_core.verb:set package 'robot_pose_publisher' build argument 'cmake_clean_first' from command line to 'False'
+[1.755s] Level 5:colcon.colcon_core.verb:set package 'robot_pose_publisher' build argument 'cmake_force_configure' from command line to 'False'
+[1.755s] Level 5:colcon.colcon_core.verb:set package 'robot_pose_publisher' build argument 'ament_cmake_args' from command line to 'None'
+[1.755s] Level 5:colcon.colcon_core.verb:set package 'robot_pose_publisher' build argument 'catkin_cmake_args' from command line to 'None'
+[1.755s] Level 5:colcon.colcon_core.verb:set package 'robot_pose_publisher' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.755s] DEBUG:colcon.colcon_core.verb:Building package 'robot_pose_publisher' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/robot_pose_publisher', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/robot_pose_publisher', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/robot_pose_publisher', 'symlink_install': True, 'test_result_base': None}
+[1.757s] Level 5:colcon.colcon_core.verb:set package 'turtlebot3_beam_description' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.757s] Level 5:colcon.colcon_core.verb:set package 'turtlebot3_beam_description' build argument 'cmake_target' from command line to 'None'
+[1.757s] Level 5:colcon.colcon_core.verb:set package 'turtlebot3_beam_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.757s] Level 5:colcon.colcon_core.verb:set package 'turtlebot3_beam_description' build argument 'cmake_clean_cache' from command line to 'False'
+[1.757s] Level 5:colcon.colcon_core.verb:set package 'turtlebot3_beam_description' build argument 'cmake_clean_first' from command line to 'False'
+[1.757s] Level 5:colcon.colcon_core.verb:set package 'turtlebot3_beam_description' build argument 'cmake_force_configure' from command line to 'False'
+[1.757s] Level 5:colcon.colcon_core.verb:set package 'turtlebot3_beam_description' build argument 'ament_cmake_args' from command line to 'None'
+[1.758s] Level 5:colcon.colcon_core.verb:set package 'turtlebot3_beam_description' build argument 'catkin_cmake_args' from command line to 'None'
+[1.758s] Level 5:colcon.colcon_core.verb:set package 'turtlebot3_beam_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.758s] DEBUG:colcon.colcon_core.verb:Building package 'turtlebot3_beam_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/turtlebot3_beam_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/turtlebot3_beam_description', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/turtlebot3_beam_description', 'symlink_install': True, 'test_result_base': None}
+[1.759s] Level 5:colcon.colcon_core.verb:set package 'ugv_base_node' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.759s] Level 5:colcon.colcon_core.verb:set package 'ugv_base_node' build argument 'cmake_target' from command line to 'None'
+[1.759s] Level 5:colcon.colcon_core.verb:set package 'ugv_base_node' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.760s] Level 5:colcon.colcon_core.verb:set package 'ugv_base_node' build argument 'cmake_clean_cache' from command line to 'False'
+[1.760s] Level 5:colcon.colcon_core.verb:set package 'ugv_base_node' build argument 'cmake_clean_first' from command line to 'False'
+[1.760s] Level 5:colcon.colcon_core.verb:set package 'ugv_base_node' build argument 'cmake_force_configure' from command line to 'False'
+[1.760s] Level 5:colcon.colcon_core.verb:set package 'ugv_base_node' build argument 'ament_cmake_args' from command line to 'None'
+[1.760s] Level 5:colcon.colcon_core.verb:set package 'ugv_base_node' build argument 'catkin_cmake_args' from command line to 'None'
+[1.760s] Level 5:colcon.colcon_core.verb:set package 'ugv_base_node' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.760s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_base_node' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_base_node', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_base_node', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_base_node', 'symlink_install': True, 'test_result_base': None}
+[1.761s] Level 5:colcon.colcon_core.verb:set package 'ugv_bringup' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.762s] Level 5:colcon.colcon_core.verb:set package 'ugv_bringup' build argument 'cmake_target' from command line to 'None'
+[1.762s] Level 5:colcon.colcon_core.verb:set package 'ugv_bringup' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.762s] Level 5:colcon.colcon_core.verb:set package 'ugv_bringup' build argument 'cmake_clean_cache' from command line to 'False'
+[1.762s] Level 5:colcon.colcon_core.verb:set package 'ugv_bringup' build argument 'cmake_clean_first' from command line to 'False'
+[1.762s] Level 5:colcon.colcon_core.verb:set package 'ugv_bringup' build argument 'cmake_force_configure' from command line to 'False'
+[1.762s] Level 5:colcon.colcon_core.verb:set package 'ugv_bringup' build argument 'ament_cmake_args' from command line to 'None'
+[1.762s] Level 5:colcon.colcon_core.verb:set package 'ugv_bringup' build argument 'catkin_cmake_args' from command line to 'None'
+[1.762s] Level 5:colcon.colcon_core.verb:set package 'ugv_bringup' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.762s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_bringup' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_bringup', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_bringup', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_bringup', 'symlink_install': True, 'test_result_base': None}
+[1.764s] Level 5:colcon.colcon_core.verb:set package 'ugv_chat_ai' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.764s] Level 5:colcon.colcon_core.verb:set package 'ugv_chat_ai' build argument 'cmake_target' from command line to 'None'
+[1.764s] Level 5:colcon.colcon_core.verb:set package 'ugv_chat_ai' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.764s] Level 5:colcon.colcon_core.verb:set package 'ugv_chat_ai' build argument 'cmake_clean_cache' from command line to 'False'
+[1.764s] Level 5:colcon.colcon_core.verb:set package 'ugv_chat_ai' build argument 'cmake_clean_first' from command line to 'False'
+[1.764s] Level 5:colcon.colcon_core.verb:set package 'ugv_chat_ai' build argument 'cmake_force_configure' from command line to 'False'
+[1.764s] Level 5:colcon.colcon_core.verb:set package 'ugv_chat_ai' build argument 'ament_cmake_args' from command line to 'None'
+[1.765s] Level 5:colcon.colcon_core.verb:set package 'ugv_chat_ai' build argument 'catkin_cmake_args' from command line to 'None'
+[1.765s] Level 5:colcon.colcon_core.verb:set package 'ugv_chat_ai' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.765s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_chat_ai' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_chat_ai', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_chat_ai', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_chat_ai', 'symlink_install': True, 'test_result_base': None}
+[1.766s] Level 5:colcon.colcon_core.verb:set package 'ugv_description' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.766s] Level 5:colcon.colcon_core.verb:set package 'ugv_description' build argument 'cmake_target' from command line to 'None'
+[1.766s] Level 5:colcon.colcon_core.verb:set package 'ugv_description' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.766s] Level 5:colcon.colcon_core.verb:set package 'ugv_description' build argument 'cmake_clean_cache' from command line to 'False'
+[1.767s] Level 5:colcon.colcon_core.verb:set package 'ugv_description' build argument 'cmake_clean_first' from command line to 'False'
+[1.767s] Level 5:colcon.colcon_core.verb:set package 'ugv_description' build argument 'cmake_force_configure' from command line to 'False'
+[1.767s] Level 5:colcon.colcon_core.verb:set package 'ugv_description' build argument 'ament_cmake_args' from command line to 'None'
+[1.767s] Level 5:colcon.colcon_core.verb:set package 'ugv_description' build argument 'catkin_cmake_args' from command line to 'None'
+[1.767s] Level 5:colcon.colcon_core.verb:set package 'ugv_description' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.767s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_description' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_description', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_description', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_description', 'symlink_install': True, 'test_result_base': None}
+[1.768s] Level 5:colcon.colcon_core.verb:set package 'ugv_gazebo' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.769s] Level 5:colcon.colcon_core.verb:set package 'ugv_gazebo' build argument 'cmake_target' from command line to 'None'
+[1.769s] Level 5:colcon.colcon_core.verb:set package 'ugv_gazebo' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.769s] Level 5:colcon.colcon_core.verb:set package 'ugv_gazebo' build argument 'cmake_clean_cache' from command line to 'False'
+[1.769s] Level 5:colcon.colcon_core.verb:set package 'ugv_gazebo' build argument 'cmake_clean_first' from command line to 'False'
+[1.769s] Level 5:colcon.colcon_core.verb:set package 'ugv_gazebo' build argument 'cmake_force_configure' from command line to 'False'
+[1.769s] Level 5:colcon.colcon_core.verb:set package 'ugv_gazebo' build argument 'ament_cmake_args' from command line to 'None'
+[1.769s] Level 5:colcon.colcon_core.verb:set package 'ugv_gazebo' build argument 'catkin_cmake_args' from command line to 'None'
+[1.769s] Level 5:colcon.colcon_core.verb:set package 'ugv_gazebo' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.769s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_gazebo' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_gazebo', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_gazebo', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_gazebo', 'symlink_install': True, 'test_result_base': None}
+[1.771s] Level 5:colcon.colcon_core.verb:set package 'ugv_interface' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.771s] Level 5:colcon.colcon_core.verb:set package 'ugv_interface' build argument 'cmake_target' from command line to 'None'
+[1.771s] Level 5:colcon.colcon_core.verb:set package 'ugv_interface' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.771s] Level 5:colcon.colcon_core.verb:set package 'ugv_interface' build argument 'cmake_clean_cache' from command line to 'False'
+[1.771s] Level 5:colcon.colcon_core.verb:set package 'ugv_interface' build argument 'cmake_clean_first' from command line to 'False'
+[1.771s] Level 5:colcon.colcon_core.verb:set package 'ugv_interface' build argument 'cmake_force_configure' from command line to 'False'
+[1.771s] Level 5:colcon.colcon_core.verb:set package 'ugv_interface' build argument 'ament_cmake_args' from command line to 'None'
+[1.771s] Level 5:colcon.colcon_core.verb:set package 'ugv_interface' build argument 'catkin_cmake_args' from command line to 'None'
+[1.772s] Level 5:colcon.colcon_core.verb:set package 'ugv_interface' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.772s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_interface' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_interface', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_interface', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_interface', 'symlink_install': True, 'test_result_base': None}
+[1.773s] Level 5:colcon.colcon_core.verb:set package 'ugv_nav' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.773s] Level 5:colcon.colcon_core.verb:set package 'ugv_nav' build argument 'cmake_target' from command line to 'None'
+[1.773s] Level 5:colcon.colcon_core.verb:set package 'ugv_nav' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.774s] Level 5:colcon.colcon_core.verb:set package 'ugv_nav' build argument 'cmake_clean_cache' from command line to 'False'
+[1.774s] Level 5:colcon.colcon_core.verb:set package 'ugv_nav' build argument 'cmake_clean_first' from command line to 'False'
+[1.774s] Level 5:colcon.colcon_core.verb:set package 'ugv_nav' build argument 'cmake_force_configure' from command line to 'False'
+[1.774s] Level 5:colcon.colcon_core.verb:set package 'ugv_nav' build argument 'ament_cmake_args' from command line to 'None'
+[1.774s] Level 5:colcon.colcon_core.verb:set package 'ugv_nav' build argument 'catkin_cmake_args' from command line to 'None'
+[1.774s] Level 5:colcon.colcon_core.verb:set package 'ugv_nav' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.774s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_nav' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_nav', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_nav', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_nav', 'symlink_install': True, 'test_result_base': None}
+[1.775s] Level 5:colcon.colcon_core.verb:set package 'ugv_slam' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.776s] Level 5:colcon.colcon_core.verb:set package 'ugv_slam' build argument 'cmake_target' from command line to 'None'
+[1.776s] Level 5:colcon.colcon_core.verb:set package 'ugv_slam' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.776s] Level 5:colcon.colcon_core.verb:set package 'ugv_slam' build argument 'cmake_clean_cache' from command line to 'False'
+[1.776s] Level 5:colcon.colcon_core.verb:set package 'ugv_slam' build argument 'cmake_clean_first' from command line to 'False'
+[1.776s] Level 5:colcon.colcon_core.verb:set package 'ugv_slam' build argument 'cmake_force_configure' from command line to 'False'
+[1.776s] Level 5:colcon.colcon_core.verb:set package 'ugv_slam' build argument 'ament_cmake_args' from command line to 'None'
+[1.776s] Level 5:colcon.colcon_core.verb:set package 'ugv_slam' build argument 'catkin_cmake_args' from command line to 'None'
+[1.776s] Level 5:colcon.colcon_core.verb:set package 'ugv_slam' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.776s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_slam' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_slam', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_slam', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_slam', 'symlink_install': True, 'test_result_base': None}
+[1.778s] Level 5:colcon.colcon_core.verb:set package 'ugv_tools' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.778s] Level 5:colcon.colcon_core.verb:set package 'ugv_tools' build argument 'cmake_target' from command line to 'None'
+[1.778s] Level 5:colcon.colcon_core.verb:set package 'ugv_tools' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.778s] Level 5:colcon.colcon_core.verb:set package 'ugv_tools' build argument 'cmake_clean_cache' from command line to 'False'
+[1.778s] Level 5:colcon.colcon_core.verb:set package 'ugv_tools' build argument 'cmake_clean_first' from command line to 'False'
+[1.778s] Level 5:colcon.colcon_core.verb:set package 'ugv_tools' build argument 'cmake_force_configure' from command line to 'False'
+[1.778s] Level 5:colcon.colcon_core.verb:set package 'ugv_tools' build argument 'ament_cmake_args' from command line to 'None'
+[1.779s] Level 5:colcon.colcon_core.verb:set package 'ugv_tools' build argument 'catkin_cmake_args' from command line to 'None'
+[1.779s] Level 5:colcon.colcon_core.verb:set package 'ugv_tools' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.779s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_tools' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_tools', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_tools', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_tools', 'symlink_install': True, 'test_result_base': None}
+[1.780s] Level 5:colcon.colcon_core.verb:set package 'ugv_vision' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.780s] Level 5:colcon.colcon_core.verb:set package 'ugv_vision' build argument 'cmake_target' from command line to 'None'
+[1.781s] Level 5:colcon.colcon_core.verb:set package 'ugv_vision' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.781s] Level 5:colcon.colcon_core.verb:set package 'ugv_vision' build argument 'cmake_clean_cache' from command line to 'False'
+[1.781s] Level 5:colcon.colcon_core.verb:set package 'ugv_vision' build argument 'cmake_clean_first' from command line to 'False'
+[1.781s] Level 5:colcon.colcon_core.verb:set package 'ugv_vision' build argument 'cmake_force_configure' from command line to 'False'
+[1.781s] Level 5:colcon.colcon_core.verb:set package 'ugv_vision' build argument 'ament_cmake_args' from command line to 'None'
+[1.781s] Level 5:colcon.colcon_core.verb:set package 'ugv_vision' build argument 'catkin_cmake_args' from command line to 'None'
+[1.781s] Level 5:colcon.colcon_core.verb:set package 'ugv_vision' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.781s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_vision' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_vision', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_vision', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_vision', 'symlink_install': True, 'test_result_base': None}
+[1.783s] Level 5:colcon.colcon_core.verb:set package 'ugv_web_app' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.783s] Level 5:colcon.colcon_core.verb:set package 'ugv_web_app' build argument 'cmake_target' from command line to 'None'
+[1.783s] Level 5:colcon.colcon_core.verb:set package 'ugv_web_app' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.783s] Level 5:colcon.colcon_core.verb:set package 'ugv_web_app' build argument 'cmake_clean_cache' from command line to 'False'
+[1.783s] Level 5:colcon.colcon_core.verb:set package 'ugv_web_app' build argument 'cmake_clean_first' from command line to 'False'
+[1.783s] Level 5:colcon.colcon_core.verb:set package 'ugv_web_app' build argument 'cmake_force_configure' from command line to 'False'
+[1.783s] Level 5:colcon.colcon_core.verb:set package 'ugv_web_app' build argument 'ament_cmake_args' from command line to 'None'
+[1.783s] Level 5:colcon.colcon_core.verb:set package 'ugv_web_app' build argument 'catkin_cmake_args' from command line to 'None'
+[1.783s] Level 5:colcon.colcon_core.verb:set package 'ugv_web_app' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.783s] DEBUG:colcon.colcon_core.verb:Building package 'ugv_web_app' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/ugv_web_app', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/ugv_web_app', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_main/ugv_web_app', 'symlink_install': True, 'test_result_base': None}
+[1.785s] Level 5:colcon.colcon_core.verb:set package 'vizanti_cpp' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.785s] Level 5:colcon.colcon_core.verb:set package 'vizanti_cpp' build argument 'cmake_target' from command line to 'None'
+[1.785s] Level 5:colcon.colcon_core.verb:set package 'vizanti_cpp' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.785s] Level 5:colcon.colcon_core.verb:set package 'vizanti_cpp' build argument 'cmake_clean_cache' from command line to 'False'
+[1.785s] Level 5:colcon.colcon_core.verb:set package 'vizanti_cpp' build argument 'cmake_clean_first' from command line to 'False'
+[1.785s] Level 5:colcon.colcon_core.verb:set package 'vizanti_cpp' build argument 'cmake_force_configure' from command line to 'False'
+[1.785s] Level 5:colcon.colcon_core.verb:set package 'vizanti_cpp' build argument 'ament_cmake_args' from command line to 'None'
+[1.786s] Level 5:colcon.colcon_core.verb:set package 'vizanti_cpp' build argument 'catkin_cmake_args' from command line to 'None'
+[1.786s] Level 5:colcon.colcon_core.verb:set package 'vizanti_cpp' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.786s] DEBUG:colcon.colcon_core.verb:Building package 'vizanti_cpp' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/vizanti_cpp', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/vizanti_cpp', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/vizanti/vizanti_cpp', 'symlink_install': True, 'test_result_base': None}
+[1.787s] Level 5:colcon.colcon_core.verb:set package 'vizanti_msgs' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.787s] Level 5:colcon.colcon_core.verb:set package 'vizanti_msgs' build argument 'cmake_target' from command line to 'None'
+[1.787s] Level 5:colcon.colcon_core.verb:set package 'vizanti_msgs' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.788s] Level 5:colcon.colcon_core.verb:set package 'vizanti_msgs' build argument 'cmake_clean_cache' from command line to 'False'
+[1.788s] Level 5:colcon.colcon_core.verb:set package 'vizanti_msgs' build argument 'cmake_clean_first' from command line to 'False'
+[1.788s] Level 5:colcon.colcon_core.verb:set package 'vizanti_msgs' build argument 'cmake_force_configure' from command line to 'False'
+[1.788s] Level 5:colcon.colcon_core.verb:set package 'vizanti_msgs' build argument 'ament_cmake_args' from command line to 'None'
+[1.788s] Level 5:colcon.colcon_core.verb:set package 'vizanti_msgs' build argument 'catkin_cmake_args' from command line to 'None'
+[1.788s] Level 5:colcon.colcon_core.verb:set package 'vizanti_msgs' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.788s] DEBUG:colcon.colcon_core.verb:Building package 'vizanti_msgs' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/vizanti_msgs', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/vizanti_msgs', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/vizanti/vizanti_msgs', 'symlink_install': True, 'test_result_base': None}
+[1.790s] Level 5:colcon.colcon_core.verb:set package 'apriltag_ros' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.790s] Level 5:colcon.colcon_core.verb:set package 'apriltag_ros' build argument 'cmake_target' from command line to 'None'
+[1.790s] Level 5:colcon.colcon_core.verb:set package 'apriltag_ros' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.790s] Level 5:colcon.colcon_core.verb:set package 'apriltag_ros' build argument 'cmake_clean_cache' from command line to 'False'
+[1.790s] Level 5:colcon.colcon_core.verb:set package 'apriltag_ros' build argument 'cmake_clean_first' from command line to 'False'
+[1.790s] Level 5:colcon.colcon_core.verb:set package 'apriltag_ros' build argument 'cmake_force_configure' from command line to 'False'
+[1.790s] Level 5:colcon.colcon_core.verb:set package 'apriltag_ros' build argument 'ament_cmake_args' from command line to 'None'
+[1.790s] Level 5:colcon.colcon_core.verb:set package 'apriltag_ros' build argument 'catkin_cmake_args' from command line to 'None'
+[1.790s] Level 5:colcon.colcon_core.verb:set package 'apriltag_ros' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.791s] DEBUG:colcon.colcon_core.verb:Building package 'apriltag_ros' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/apriltag_ros', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/apriltag_ros', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/apriltag_ros/apriltag_ros', 'symlink_install': True, 'test_result_base': None}
+[1.792s] Level 5:colcon.colcon_core.verb:set package 'audio_utils' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.792s] Level 5:colcon.colcon_core.verb:set package 'audio_utils' build argument 'cmake_target' from command line to 'None'
+[1.792s] Level 5:colcon.colcon_core.verb:set package 'audio_utils' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.792s] Level 5:colcon.colcon_core.verb:set package 'audio_utils' build argument 'cmake_clean_cache' from command line to 'False'
+[1.792s] Level 5:colcon.colcon_core.verb:set package 'audio_utils' build argument 'cmake_clean_first' from command line to 'False'
+[1.793s] Level 5:colcon.colcon_core.verb:set package 'audio_utils' build argument 'cmake_force_configure' from command line to 'False'
+[1.793s] Level 5:colcon.colcon_core.verb:set package 'audio_utils' build argument 'ament_cmake_args' from command line to 'None'
+[1.793s] Level 5:colcon.colcon_core.verb:set package 'audio_utils' build argument 'catkin_cmake_args' from command line to 'None'
+[1.793s] Level 5:colcon.colcon_core.verb:set package 'audio_utils' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.793s] DEBUG:colcon.colcon_core.verb:Building package 'audio_utils' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/audio_utils', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/audio_utils', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/audio_utils/audio_utils', 'symlink_install': True, 'test_result_base': None}
+[1.794s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.794s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter' build argument 'cmake_target' from command line to 'None'
+[1.795s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.795s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter' build argument 'cmake_clean_cache' from command line to 'False'
+[1.795s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter' build argument 'cmake_clean_first' from command line to 'False'
+[1.795s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter' build argument 'cmake_force_configure' from command line to 'False'
+[1.795s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter' build argument 'ament_cmake_args' from command line to 'None'
+[1.795s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter' build argument 'catkin_cmake_args' from command line to 'None'
+[1.795s] Level 5:colcon.colcon_core.verb:set package 'costmap_converter' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.795s] DEBUG:colcon.colcon_core.verb:Building package 'costmap_converter' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/costmap_converter', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/costmap_converter', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/costmap_converter/costmap_converter', 'symlink_install': True, 'test_result_base': None}
+[1.797s] Level 5:colcon.colcon_core.verb:set package 'odas_ros' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.797s] Level 5:colcon.colcon_core.verb:set package 'odas_ros' build argument 'cmake_target' from command line to 'None'
+[1.797s] Level 5:colcon.colcon_core.verb:set package 'odas_ros' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.797s] Level 5:colcon.colcon_core.verb:set package 'odas_ros' build argument 'cmake_clean_cache' from command line to 'False'
+[1.797s] Level 5:colcon.colcon_core.verb:set package 'odas_ros' build argument 'cmake_clean_first' from command line to 'False'
+[1.797s] Level 5:colcon.colcon_core.verb:set package 'odas_ros' build argument 'cmake_force_configure' from command line to 'False'
+[1.797s] Level 5:colcon.colcon_core.verb:set package 'odas_ros' build argument 'ament_cmake_args' from command line to 'None'
+[1.798s] Level 5:colcon.colcon_core.verb:set package 'odas_ros' build argument 'catkin_cmake_args' from command line to 'None'
+[1.798s] Level 5:colcon.colcon_core.verb:set package 'odas_ros' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.798s] DEBUG:colcon.colcon_core.verb:Building package 'odas_ros' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/odas_ros', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/odas_ros', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/odas_ros/odas_ros', 'symlink_install': True, 'test_result_base': None}
+[1.799s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros_msgs' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.799s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros_msgs' build argument 'cmake_target' from command line to 'None'
+[1.799s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros_msgs' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.800s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros_msgs' build argument 'cmake_clean_cache' from command line to 'False'
+[1.800s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros_msgs' build argument 'cmake_clean_first' from command line to 'False'
+[1.800s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros_msgs' build argument 'cmake_force_configure' from command line to 'False'
+[1.800s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros_msgs' build argument 'ament_cmake_args' from command line to 'None'
+[1.800s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros_msgs' build argument 'catkin_cmake_args' from command line to 'None'
+[1.800s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros_msgs' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.800s] DEBUG:colcon.colcon_core.verb:Building package 'opentera_webrtc_ros_msgs' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/opentera_webrtc_ros_msgs', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros_msgs', 'symlink_install': True, 'test_result_base': None}
+[1.801s] Level 5:colcon.colcon_core.verb:set package 'slam_gmapping' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.802s] Level 5:colcon.colcon_core.verb:set package 'slam_gmapping' build argument 'cmake_target' from command line to 'None'
+[1.802s] Level 5:colcon.colcon_core.verb:set package 'slam_gmapping' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.802s] Level 5:colcon.colcon_core.verb:set package 'slam_gmapping' build argument 'cmake_clean_cache' from command line to 'False'
+[1.802s] Level 5:colcon.colcon_core.verb:set package 'slam_gmapping' build argument 'cmake_clean_first' from command line to 'False'
+[1.802s] Level 5:colcon.colcon_core.verb:set package 'slam_gmapping' build argument 'cmake_force_configure' from command line to 'False'
+[1.802s] Level 5:colcon.colcon_core.verb:set package 'slam_gmapping' build argument 'ament_cmake_args' from command line to 'None'
+[1.802s] Level 5:colcon.colcon_core.verb:set package 'slam_gmapping' build argument 'catkin_cmake_args' from command line to 'None'
+[1.802s] Level 5:colcon.colcon_core.verb:set package 'slam_gmapping' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.802s] DEBUG:colcon.colcon_core.verb:Building package 'slam_gmapping' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/slam_gmapping', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/slam_gmapping', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/gmapping/slam_gmapping', 'symlink_install': True, 'test_result_base': None}
+[1.804s] Level 5:colcon.colcon_core.verb:set package 'teb_msgs' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.804s] Level 5:colcon.colcon_core.verb:set package 'teb_msgs' build argument 'cmake_target' from command line to 'None'
+[1.804s] Level 5:colcon.colcon_core.verb:set package 'teb_msgs' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.804s] Level 5:colcon.colcon_core.verb:set package 'teb_msgs' build argument 'cmake_clean_cache' from command line to 'False'
+[1.804s] Level 5:colcon.colcon_core.verb:set package 'teb_msgs' build argument 'cmake_clean_first' from command line to 'False'
+[1.804s] Level 5:colcon.colcon_core.verb:set package 'teb_msgs' build argument 'cmake_force_configure' from command line to 'False'
+[1.805s] Level 5:colcon.colcon_core.verb:set package 'teb_msgs' build argument 'ament_cmake_args' from command line to 'None'
+[1.805s] Level 5:colcon.colcon_core.verb:set package 'teb_msgs' build argument 'catkin_cmake_args' from command line to 'None'
+[1.805s] Level 5:colcon.colcon_core.verb:set package 'teb_msgs' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.805s] DEBUG:colcon.colcon_core.verb:Building package 'teb_msgs' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/teb_msgs', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/teb_msgs', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/teb_local_planner/teb_msgs', 'symlink_install': True, 'test_result_base': None}
+[1.806s] Level 5:colcon.colcon_core.verb:set package 'vizanti_demos' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.806s] Level 5:colcon.colcon_core.verb:set package 'vizanti_demos' build argument 'cmake_target' from command line to 'None'
+[1.806s] Level 5:colcon.colcon_core.verb:set package 'vizanti_demos' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.807s] Level 5:colcon.colcon_core.verb:set package 'vizanti_demos' build argument 'cmake_clean_cache' from command line to 'False'
+[1.807s] Level 5:colcon.colcon_core.verb:set package 'vizanti_demos' build argument 'cmake_clean_first' from command line to 'False'
+[1.807s] Level 5:colcon.colcon_core.verb:set package 'vizanti_demos' build argument 'cmake_force_configure' from command line to 'False'
+[1.807s] Level 5:colcon.colcon_core.verb:set package 'vizanti_demos' build argument 'ament_cmake_args' from command line to 'None'
+[1.807s] Level 5:colcon.colcon_core.verb:set package 'vizanti_demos' build argument 'catkin_cmake_args' from command line to 'None'
+[1.807s] Level 5:colcon.colcon_core.verb:set package 'vizanti_demos' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.807s] DEBUG:colcon.colcon_core.verb:Building package 'vizanti_demos' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/vizanti_demos', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/vizanti_demos', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/vizanti/vizanti_demos', 'symlink_install': True, 'test_result_base': None}
+[1.809s] Level 5:colcon.colcon_core.verb:set package 'vizanti_server' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.809s] Level 5:colcon.colcon_core.verb:set package 'vizanti_server' build argument 'cmake_target' from command line to 'None'
+[1.809s] Level 5:colcon.colcon_core.verb:set package 'vizanti_server' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.809s] Level 5:colcon.colcon_core.verb:set package 'vizanti_server' build argument 'cmake_clean_cache' from command line to 'False'
+[1.809s] Level 5:colcon.colcon_core.verb:set package 'vizanti_server' build argument 'cmake_clean_first' from command line to 'False'
+[1.809s] Level 5:colcon.colcon_core.verb:set package 'vizanti_server' build argument 'cmake_force_configure' from command line to 'False'
+[1.809s] Level 5:colcon.colcon_core.verb:set package 'vizanti_server' build argument 'ament_cmake_args' from command line to 'None'
+[1.809s] Level 5:colcon.colcon_core.verb:set package 'vizanti_server' build argument 'catkin_cmake_args' from command line to 'None'
+[1.809s] Level 5:colcon.colcon_core.verb:set package 'vizanti_server' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.810s] DEBUG:colcon.colcon_core.verb:Building package 'vizanti_server' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/vizanti_server', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/vizanti_server', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/vizanti/vizanti_server', 'symlink_install': True, 'test_result_base': None}
+[1.811s] Level 5:colcon.colcon_core.verb:set package 'face_cropping' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.811s] Level 5:colcon.colcon_core.verb:set package 'face_cropping' build argument 'cmake_target' from command line to 'None'
+[1.811s] Level 5:colcon.colcon_core.verb:set package 'face_cropping' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.811s] Level 5:colcon.colcon_core.verb:set package 'face_cropping' build argument 'cmake_clean_cache' from command line to 'False'
+[1.811s] Level 5:colcon.colcon_core.verb:set package 'face_cropping' build argument 'cmake_clean_first' from command line to 'False'
+[1.811s] Level 5:colcon.colcon_core.verb:set package 'face_cropping' build argument 'cmake_force_configure' from command line to 'False'
+[1.812s] Level 5:colcon.colcon_core.verb:set package 'face_cropping' build argument 'ament_cmake_args' from command line to 'None'
+[1.812s] Level 5:colcon.colcon_core.verb:set package 'face_cropping' build argument 'catkin_cmake_args' from command line to 'None'
+[1.812s] Level 5:colcon.colcon_core.verb:set package 'face_cropping' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.812s] DEBUG:colcon.colcon_core.verb:Building package 'face_cropping' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/face_cropping', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/face_cropping', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/face_cropping', 'symlink_install': True, 'test_result_base': None}
+[1.813s] Level 5:colcon.colcon_core.verb:set package 'map_image_generator' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.814s] Level 5:colcon.colcon_core.verb:set package 'map_image_generator' build argument 'cmake_target' from command line to 'None'
+[1.814s] Level 5:colcon.colcon_core.verb:set package 'map_image_generator' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.814s] Level 5:colcon.colcon_core.verb:set package 'map_image_generator' build argument 'cmake_clean_cache' from command line to 'False'
+[1.814s] Level 5:colcon.colcon_core.verb:set package 'map_image_generator' build argument 'cmake_clean_first' from command line to 'False'
+[1.814s] Level 5:colcon.colcon_core.verb:set package 'map_image_generator' build argument 'cmake_force_configure' from command line to 'False'
+[1.814s] Level 5:colcon.colcon_core.verb:set package 'map_image_generator' build argument 'ament_cmake_args' from command line to 'None'
+[1.814s] Level 5:colcon.colcon_core.verb:set package 'map_image_generator' build argument 'catkin_cmake_args' from command line to 'None'
+[1.814s] Level 5:colcon.colcon_core.verb:set package 'map_image_generator' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.814s] DEBUG:colcon.colcon_core.verb:Building package 'map_image_generator' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/map_image_generator', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/map_image_generator', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/map_image_generator', 'symlink_install': True, 'test_result_base': None}
+[1.816s] Level 5:colcon.colcon_core.verb:set package 'opentera_client_ros' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.816s] Level 5:colcon.colcon_core.verb:set package 'opentera_client_ros' build argument 'cmake_target' from command line to 'None'
+[1.816s] Level 5:colcon.colcon_core.verb:set package 'opentera_client_ros' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.816s] Level 5:colcon.colcon_core.verb:set package 'opentera_client_ros' build argument 'cmake_clean_cache' from command line to 'False'
+[1.816s] Level 5:colcon.colcon_core.verb:set package 'opentera_client_ros' build argument 'cmake_clean_first' from command line to 'False'
+[1.816s] Level 5:colcon.colcon_core.verb:set package 'opentera_client_ros' build argument 'cmake_force_configure' from command line to 'False'
+[1.816s] Level 5:colcon.colcon_core.verb:set package 'opentera_client_ros' build argument 'ament_cmake_args' from command line to 'None'
+[1.816s] Level 5:colcon.colcon_core.verb:set package 'opentera_client_ros' build argument 'catkin_cmake_args' from command line to 'None'
+[1.817s] Level 5:colcon.colcon_core.verb:set package 'opentera_client_ros' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.817s] DEBUG:colcon.colcon_core.verb:Building package 'opentera_client_ros' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/opentera_client_ros', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/opentera_client_ros', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_client_ros', 'symlink_install': True, 'test_result_base': None}
+[1.818s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_robot_gui' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.818s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_robot_gui' build argument 'cmake_target' from command line to 'None'
+[1.818s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_robot_gui' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.819s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_robot_gui' build argument 'cmake_clean_cache' from command line to 'False'
+[1.819s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_robot_gui' build argument 'cmake_clean_first' from command line to 'False'
+[1.819s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_robot_gui' build argument 'cmake_force_configure' from command line to 'False'
+[1.819s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_robot_gui' build argument 'ament_cmake_args' from command line to 'None'
+[1.819s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_robot_gui' build argument 'catkin_cmake_args' from command line to 'None'
+[1.819s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_robot_gui' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.819s] DEBUG:colcon.colcon_core.verb:Building package 'opentera_webrtc_robot_gui' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/opentera_webrtc_robot_gui', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/opentera_webrtc_robot_gui', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_robot_gui', 'symlink_install': True, 'test_result_base': None}
+[1.821s] Level 5:colcon.colcon_core.verb:set package 'teb_local_planner' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.821s] Level 5:colcon.colcon_core.verb:set package 'teb_local_planner' build argument 'cmake_target' from command line to 'None'
+[1.821s] Level 5:colcon.colcon_core.verb:set package 'teb_local_planner' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.821s] Level 5:colcon.colcon_core.verb:set package 'teb_local_planner' build argument 'cmake_clean_cache' from command line to 'False'
+[1.821s] Level 5:colcon.colcon_core.verb:set package 'teb_local_planner' build argument 'cmake_clean_first' from command line to 'False'
+[1.821s] Level 5:colcon.colcon_core.verb:set package 'teb_local_planner' build argument 'cmake_force_configure' from command line to 'False'
+[1.821s] Level 5:colcon.colcon_core.verb:set package 'teb_local_planner' build argument 'ament_cmake_args' from command line to 'None'
+[1.821s] Level 5:colcon.colcon_core.verb:set package 'teb_local_planner' build argument 'catkin_cmake_args' from command line to 'None'
+[1.821s] Level 5:colcon.colcon_core.verb:set package 'teb_local_planner' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.822s] DEBUG:colcon.colcon_core.verb:Building package 'teb_local_planner' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/teb_local_planner', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/teb_local_planner', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/teb_local_planner/teb_local_planner', 'symlink_install': True, 'test_result_base': None}
+[1.823s] Level 5:colcon.colcon_core.verb:set package 'vizanti' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.823s] Level 5:colcon.colcon_core.verb:set package 'vizanti' build argument 'cmake_target' from command line to 'None'
+[1.823s] Level 5:colcon.colcon_core.verb:set package 'vizanti' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.823s] Level 5:colcon.colcon_core.verb:set package 'vizanti' build argument 'cmake_clean_cache' from command line to 'False'
+[1.823s] Level 5:colcon.colcon_core.verb:set package 'vizanti' build argument 'cmake_clean_first' from command line to 'False'
+[1.823s] Level 5:colcon.colcon_core.verb:set package 'vizanti' build argument 'cmake_force_configure' from command line to 'False'
+[1.824s] Level 5:colcon.colcon_core.verb:set package 'vizanti' build argument 'ament_cmake_args' from command line to 'None'
+[1.824s] Level 5:colcon.colcon_core.verb:set package 'vizanti' build argument 'catkin_cmake_args' from command line to 'None'
+[1.824s] Level 5:colcon.colcon_core.verb:set package 'vizanti' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.824s] DEBUG:colcon.colcon_core.verb:Building package 'vizanti' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/vizanti', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/vizanti', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/vizanti/vizanti', 'symlink_install': True, 'test_result_base': None}
+[1.825s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.825s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros' build argument 'cmake_target' from command line to 'None'
+[1.826s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.826s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros' build argument 'cmake_clean_cache' from command line to 'False'
+[1.826s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros' build argument 'cmake_clean_first' from command line to 'False'
+[1.826s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros' build argument 'cmake_force_configure' from command line to 'False'
+[1.826s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros' build argument 'ament_cmake_args' from command line to 'None'
+[1.826s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros' build argument 'catkin_cmake_args' from command line to 'None'
+[1.826s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_ros' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.826s] DEBUG:colcon.colcon_core.verb:Building package 'opentera_webrtc_ros' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/opentera_webrtc_ros', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/opentera_webrtc_ros', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_ros', 'symlink_install': True, 'test_result_base': None}
+[1.828s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_demos' build argument 'cmake_args' from command line to '['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli']'
+[1.828s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_demos' build argument 'cmake_target' from command line to 'None'
+[1.828s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_demos' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.828s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_demos' build argument 'cmake_clean_cache' from command line to 'False'
+[1.828s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_demos' build argument 'cmake_clean_first' from command line to 'False'
+[1.828s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_demos' build argument 'cmake_force_configure' from command line to 'False'
+[1.828s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_demos' build argument 'ament_cmake_args' from command line to 'None'
+[1.828s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_demos' build argument 'catkin_cmake_args' from command line to 'None'
+[1.828s] Level 5:colcon.colcon_core.verb:set package 'opentera_webrtc_demos' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.829s] DEBUG:colcon.colcon_core.verb:Building package 'opentera_webrtc_demos' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/ws/ugv_ws/build/opentera_webrtc_demos', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': ['-DPYTHON_EXECUTABLE=/usr/bin/python3', '-DCMAKE_BUILD_TYPE=Debug', '--no-warn-unused-cli'], 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/ws/ugv_ws/install/opentera_webrtc_demos', 'merge_install': False, 'path': '/home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos', 'symlink_install': True, 'test_result_base': None}
+[1.829s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[1.833s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[1.835s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ws/ugv_ws/src/ugv_else/audio_utils/audio_utils_msgs' with build type 'ament_cmake'
+[1.836s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ws/ugv_ws/src/ugv_else/audio_utils/audio_utils_msgs'
+[1.852s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[1.853s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.853s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.973s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ws/ugv_ws/src/ugv_else/odas_ros/odas_ros_msgs' with build type 'ament_cmake'
+[1.973s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ws/ugv_ws/src/ugv_else/odas_ros/odas_ros_msgs'
+[1.975s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.975s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.003s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ws/ugv_ws/src/ugv_else/costmap_converter/costmap_converter_msgs' with build type 'ament_cmake'
+[2.004s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ws/ugv_ws/src/ugv_else/costmap_converter/costmap_converter_msgs'
+[2.005s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.006s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.037s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/ws/ugv_ws/src/ugv_else/vizanti/vizanti_msgs' with build type 'ament_cmake'
+[2.038s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/ws/ugv_ws/src/ugv_else/vizanti/vizanti_msgs'
+[2.039s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.039s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.082s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ws/ugv_ws/build/audio_utils_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/audio_utils/audio_utils_msgs -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/audio_utils_msgs
+[2.098s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ws/ugv_ws/build/odas_ros_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/odas_ros/odas_ros_msgs -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/odas_ros_msgs
+[2.123s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ws/ugv_ws/build/costmap_converter_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/costmap_converter/costmap_converter_msgs -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/costmap_converter_msgs
+[2.148s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ws/ugv_ws/build/vizanti_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/vizanti/vizanti_msgs -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/vizanti_msgs
+[16.445s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ws/ugv_ws/build/audio_utils_msgs' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/audio_utils/audio_utils_msgs -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/audio_utils_msgs
+[16.450s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ws/ugv_ws/build/audio_utils_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/audio_utils_msgs -- -j4 -l4
+[16.548s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ws/ugv_ws/build/odas_ros_msgs' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/odas_ros/odas_ros_msgs -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/odas_ros_msgs
+[16.568s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ws/ugv_ws/build/odas_ros_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/odas_ros_msgs -- -j4 -l4
+[16.635s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ws/ugv_ws/build/costmap_converter_msgs' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/costmap_converter/costmap_converter_msgs -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/costmap_converter_msgs
+[16.649s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ws/ugv_ws/build/costmap_converter_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/costmap_converter_msgs -- -j4 -l4
+[19.549s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/ws/ugv_ws/build/vizanti_msgs' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake /home/ws/ugv_ws/src/ugv_else/vizanti/vizanti_msgs -DPYTHON_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Debug --no-warn-unused-cli -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/vizanti_msgs
+[19.568s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/ws/ugv_ws/build/vizanti_msgs': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/vizanti_msgs -- -j4 -l4

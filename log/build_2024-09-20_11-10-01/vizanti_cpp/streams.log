@@ -1,0 +1,22 @@
+[0.140s] Invoking command in '/home/ws/ugv_ws/build/vizanti_cpp': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/vizanti_cpp -- -j4 -l4
+[0.280s] [100%] Built target tf_consolidator
+[0.295s] Invoked command in '/home/ws/ugv_ws/build/vizanti_cpp' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/vizanti_cpp -- -j4 -l4
+[0.353s] Invoking command in '/home/ws/ugv_ws/build/vizanti_cpp': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/vizanti_cpp
+[0.366s] -- Install configuration: ""
+[0.366s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/lib/vizanti_cpp/tf_consolidator
+[0.367s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/ament_index/resource_index/package_run_dependencies/vizanti_cpp
+[0.367s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/ament_index/resource_index/parent_prefix_path/vizanti_cpp
+[0.368s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/environment/ament_prefix_path.sh
+[0.368s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/environment/ament_prefix_path.dsv
+[0.369s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/environment/path.sh
+[0.369s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/environment/path.dsv
+[0.369s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/local_setup.bash
+[0.370s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/local_setup.sh
+[0.371s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/local_setup.zsh
+[0.371s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/local_setup.dsv
+[0.372s] -- Installing: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/package.dsv
+[0.372s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/ament_index/resource_index/packages/vizanti_cpp
+[0.372s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/cmake/vizanti_cppConfig.cmake
+[0.372s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/cmake/vizanti_cppConfig-version.cmake
+[0.373s] -- Up-to-date: /home/ws/ugv_ws/install/vizanti_cpp/share/vizanti_cpp/package.xml
+[0.375s] Invoked command in '/home/ws/ugv_ws/build/vizanti_cpp' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/vizanti_cpp

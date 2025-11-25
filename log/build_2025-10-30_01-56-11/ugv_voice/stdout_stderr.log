@@ -1,0 +1,27 @@
+running develop
+/usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+running egg_info
+creating ugv_voice.egg-info
+writing ugv_voice.egg-info/PKG-INFO
+writing dependency_links to ugv_voice.egg-info/dependency_links.txt
+writing entry points to ugv_voice.egg-info/entry_points.txt
+writing requirements to ugv_voice.egg-info/requires.txt
+writing top-level names to ugv_voice.egg-info/top_level.txt
+writing manifest file 'ugv_voice.egg-info/SOURCES.txt'
+reading manifest file 'ugv_voice.egg-info/SOURCES.txt'
+writing manifest file 'ugv_voice.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/ws/ugv_ws/install/ugv_voice/lib/python3.10/site-packages/ugv-voice.egg-link (link to .)
+Installing voice_ctrl script to /home/ws/ugv_ws/install/ugv_voice/lib/ugv_voice
+
+Installed /home/ws/ugv_ws/build/ugv_voice
+running symlink_data
+creating /home/ws/ugv_ws/install/ugv_voice/share/ament_index
+creating /home/ws/ugv_ws/install/ugv_voice/share/ament_index/resource_index
+creating /home/ws/ugv_ws/install/ugv_voice/share/ament_index/resource_index/packages
+symbolically linking /home/ws/ugv_ws/build/ugv_voice/resource/ugv_voice -> /home/ws/ugv_ws/install/ugv_voice/share/ament_index/resource_index/packages
+symbolically linking /home/ws/ugv_ws/build/ugv_voice/package.xml -> /home/ws/ugv_ws/install/ugv_voice/share/ugv_voice
+creating /home/ws/ugv_ws/install/ugv_voice/share/ugv_voice/launch
+creating /home/ws/ugv_ws/install/ugv_voice/share/ugv_voice/config
+symbolically linking /home/ws/ugv_ws/build/ugv_voice/config/voice_config.yaml -> /home/ws/ugv_ws/install/ugv_voice/share/ugv_voice/config

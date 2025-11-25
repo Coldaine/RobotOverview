@@ -1,0 +1,16 @@
+[ 33%] [34m[1mGenerating node_modules.stamp[0m
+npm ERR! code ETIMEDOUT
+npm ERR! syscall connect
+npm ERR! errno ETIMEDOUT
+npm ERR! network request to https://gitpkg.vercel.app/introlab/opentera-webrtc/opentera-webrtc-web-client?v1.2.2 failed, reason: connect ETIMEDOUT 208.101.21.43:443
+npm ERR! network This is a problem related to network connectivity.
+npm ERR! network In most cases you are behind a proxy or have bad network settings.
+npm ERR! network 
+npm ERR! network If you are behind a proxy, please make sure that the
+npm ERR! network 'proxy' config is set properly.  See: 'npm help config'
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /root/.npm/_logs/2025-07-31T05_45_57_733Z-debug-0.log
+gmake[2]: *** [CMakeFiles/opentera_werbrtc_teleop_frontend-install.dir/build.make:73: node_modules.stamp] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:139: CMakeFiles/opentera_werbrtc_teleop_frontend-install.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

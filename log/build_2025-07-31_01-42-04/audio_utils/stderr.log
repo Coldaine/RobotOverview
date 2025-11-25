@@ -1,0 +1,43 @@
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: creating ../libopenblas_cortexa72-r0.3.20.a
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+configure: WARNING: *** Couldn't find f77 compiler; using default Fortran wrappers.
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+ar: `u' modifier ignored since `D' is the default (see `U')
+/home/ws/ugv_ws/src/ugv_else/audio_utils/audio_utils/src/MusicBeatDetector/3rdParty/fftw/missing: line 81: makeinfo: command not found
+WARNING: 'makeinfo' is missing on your system.
+         You should only need it if you modified a '.texi' file, or
+         any other file indirectly affecting the aspect of the manual.
+         You might want to install the Texinfo package:
+         <http://www.gnu.org/software/texinfo/>
+         The spurious makeinfo call might also be the consequence of
+         using a buggy 'make' (AIX, DU, IRIX), in which case you might
+         want to install GNU make:
+         <http://www.gnu.org/software/make/>
+make[3]: *** [Makefile:466: fftw3.info] Error 127
+make[2]: *** [Makefile:633: all-recursive] Error 1
+make[1]: *** [Makefile:708: all-recursive] Error 1
+make: *** [Makefile:552: all] Error 2
+[31mCMake Error at /opt/ros/humble/share/ament_cmake_export_libraries/cmake/ament_export_libraries.cmake:106 (message):
+  ament_export_libraries() package 'audio_utils' exports the imported library
+  '/home/ws/ugv_ws/src/ugv_else/audio_utils/audio_utils/src/MusicBeatDetector/3rdParty/fftw/build/lib/libfftw3f.a'
+  which doesn't exist
+Call Stack (most recent call first):
+  CMakeLists.txt:135 (ament_export_libraries)
+
+[0m

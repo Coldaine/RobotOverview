@@ -1,0 +1,296 @@
+[0.000000] (-) TimerEvent: {}
+[0.000335] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.000370] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.000391] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.000409] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.000426] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.000443] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.000460] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.000477] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.000738] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.000758] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.000775] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.000792] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.000809] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.000825] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.000842] (-) JobUnselected: {'identifier': 'ugv_base_node'}
+[0.000859] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.000875] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.000892] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.000909] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.000926] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.000943] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.000960] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.000976] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.000993] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.001010] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.001026] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.001043] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.001060] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.001076] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.001093] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.001113] (teb_local_planner) JobQueued: {'identifier': 'teb_local_planner', 'dependencies': OrderedDict([('costmap_converter_msgs', '/home/ws/ugv_ws/install/costmap_converter_msgs'), ('costmap_converter', '/home/ws/ugv_ws/install/costmap_converter'), ('teb_msgs', '/home/ws/ugv_ws/install/teb_msgs')])}
+[0.001143] (teb_local_planner) JobStarted: {'identifier': 'teb_local_planner'}
+[0.032288] (teb_local_planner) JobProgress: {'identifier': 'teb_local_planner', 'progress': 'cmake'}
+[0.037987] (teb_local_planner) JobProgress: {'identifier': 'teb_local_planner', 'progress': 'build'}
+[0.038851] (teb_local_planner) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/teb_local_planner', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/teb_local_planner', 'env': OrderedDict([('USER', 'root'), ('SSH_CLIENT', '192.168.10.185 53930 23'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/root'), ('SSH_TTY', '/dev/pts/2'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('PWD', '/home/ws/ugv_ws/build/teb_local_planner'), ('SSH_CONNECTION', '192.168.10.185 53930 192.168.10.197 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/teb_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.094841] (teb_local_planner) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.099646] (-) TimerEvent: {}
+[0.199950] (-) TimerEvent: {}
+[0.276606] (teb_local_planner) StdoutLine: {'line': b'-- Found costmap_converter: 0.1.2 (/home/ws/ugv_ws/install/costmap_converter/share/costmap_converter/cmake)\n'}
+[0.300050] (-) TimerEvent: {}
+[0.314046] (teb_local_planner) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.317093] (teb_local_planner) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.324418] (teb_local_planner) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.337222] (teb_local_planner) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.351201] (teb_local_planner) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.400169] (-) TimerEvent: {}
+[0.500629] (-) TimerEvent: {}
+[0.530123] (teb_local_planner) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.532986] (teb_local_planner) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.600736] (-) TimerEvent: {}
+[0.676193] (teb_local_planner) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[0.700826] (-) TimerEvent: {}
+[0.801266] (-) TimerEvent: {}
+[0.901633] (-) TimerEvent: {}
+[0.956774] (teb_local_planner) StdoutLine: {'line': b'-- Ensuring Eigen3 include directory is part of orocos-kdl CMake target\n'}
+[1.001744] (-) TimerEvent: {}
+[1.102184] (-) TimerEvent: {}
+[1.154188] (teb_local_planner) StdoutLine: {'line': b'-- Found dwb_critics: 1.1.16 (/opt/ros/humble/share/dwb_critics/cmake)\n'}
+[1.202301] (-) TimerEvent: {}
+[1.302721] (-) TimerEvent: {}
+[1.376071] (teb_local_planner) StdoutLine: {'line': b'-- Found teb_msgs: 0.0.1 (/home/ws/ugv_ws/install/teb_msgs/share/teb_msgs/cmake)\n'}
+[1.402822] (-) TimerEvent: {}
+[1.410548] (teb_local_planner) StdoutLine: {'line': b'-- Found tf2_eigen: 0.25.7 (/opt/ros/humble/share/tf2_eigen/cmake)\n'}
+[1.415419] (teb_local_planner) StdoutLine: {'line': b'-- System: Linux-6.6.31+rpt-rpi-2712\n'}
+[1.415587] (teb_local_planner) StdoutLine: {'line': b'-- /opt/ros/humble/share/tinyxml2_vendor/cmake/Modules;/opt/ros/humble/share/eigen3_cmake_module/cmake/Modules;/opt/ros/humble/share/fastrtps_cmake_module/cmake/Modules;/home/ws/ugv_ws/src/ugv_else/teb_local_planner/teb_local_planner/cmake_modules\n'}
+[1.418364] (teb_local_planner) StdoutLine: {'line': b'-- Found SuiteSparse\n'}
+[1.418798] (teb_local_planner) StdoutLine: {'line': b'-- Searching for g2o ...\n'}
+[1.418896] (teb_local_planner) StdoutLine: {'line': b'-- Found g2o headers in: /opt/ros/humble/include/g2o\n'}
+[1.418978] (teb_local_planner) StdoutLine: {'line': b'-- Found libg2o: /opt/ros/humble/lib/aarch64-linux-gnu/libg2o_csparse_extension.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_core.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_stuff.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_types_slam2d.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_types_slam3d.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_solver_cholmod.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_solver_pcg.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_solver_csparse.so;/opt/ros/humble/lib/aarch64-linux-gnu/libg2o_incremental.so\n'}
+[1.502961] (-) TimerEvent: {}
+[1.603362] (-) TimerEvent: {}
+[1.703883] (-) TimerEvent: {}
+[1.804464] (-) TimerEvent: {}
+[1.905199] (-) TimerEvent: {}
+[2.005746] (-) TimerEvent: {}
+[2.106324] (-) TimerEvent: {}
+[2.206930] (-) TimerEvent: {}
+[2.307535] (-) TimerEvent: {}
+[2.408197] (-) TimerEvent: {}
+[2.508923] (-) TimerEvent: {}
+[2.609441] (-) TimerEvent: {}
+[2.632146] (teb_local_planner) StdoutLine: {'line': b'-- Found ament_cmake_gtest: 1.3.10 (/opt/ros/humble/share/ament_cmake_gtest/cmake)\n'}
+[2.709539] (-) TimerEvent: {}
+[2.748563] (teb_local_planner) StdoutLine: {'line': b'-- Configuring done\n'}
+[2.809650] (-) TimerEvent: {}
+[2.909965] (-) TimerEvent: {}
+[2.974927] (teb_local_planner) StdoutLine: {'line': b'-- Generating done\n'}
+[3.004701] (teb_local_planner) StdoutLine: {'line': b'-- Build files have been written to: /home/ws/ugv_ws/build/teb_local_planner\n'}
+[3.010058] (-) TimerEvent: {}
+[3.076227] (teb_local_planner) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target teb_local_planner\x1b[0m\n'}
+[3.110179] (-) TimerEvent: {}
+[3.210516] (-) TimerEvent: {}
+[3.229004] (teb_local_planner) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/timed_elastic_band.cpp.o\x1b[0m\n'}
+[3.303642] (teb_local_planner) StdoutLine: {'line': b'[ 30%] \x1b[32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/obstacles.cpp.o\x1b[0m\n'}
+[3.304062] (teb_local_planner) StdoutLine: {'line': b'[ 30%] \x1b[32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/optimal_planner.cpp.o\x1b[0m\n'}
+[3.310860] (-) TimerEvent: {}
+[3.311900] (teb_local_planner) StdoutLine: {'line': b'[ 40%] \x1b[32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/visualization.cpp.o\x1b[0m\n'}
+[3.416874] (-) TimerEvent: {}
+[3.517484] (-) TimerEvent: {}
+[3.618841] (-) TimerEvent: {}
+[3.719434] (-) TimerEvent: {}
+[3.819825] (-) TimerEvent: {}
+[3.920528] (-) TimerEvent: {}
+[4.023571] (-) TimerEvent: {}
+[4.124616] (-) TimerEvent: {}
+[4.227606] (-) TimerEvent: {}
+[4.329115] (-) TimerEvent: {}
+[4.429818] (-) TimerEvent: {}
+[4.540681] (-) TimerEvent: {}
+[4.641450] (-) TimerEvent: {}
+[4.741949] (-) TimerEvent: {}
+[4.842390] (-) TimerEvent: {}
+[4.942838] (-) TimerEvent: {}
+[5.043534] (-) TimerEvent: {}
+[5.144451] (-) TimerEvent: {}
+[5.248124] (-) TimerEvent: {}
+[5.348779] (-) TimerEvent: {}
+[5.449507] (-) TimerEvent: {}
+[5.552777] (-) TimerEvent: {}
+[5.653441] (-) TimerEvent: {}
+[5.754069] (-) TimerEvent: {}
+[5.854747] (-) TimerEvent: {}
+[5.957552] (-) TimerEvent: {}
+[6.063029] (-) TimerEvent: {}
+[6.164857] (-) TimerEvent: {}
+[6.265569] (-) TimerEvent: {}
+[6.366227] (-) TimerEvent: {}
+[6.468795] (-) TimerEvent: {}
+[6.569496] (-) TimerEvent: {}
+[6.670207] (-) TimerEvent: {}
+[6.772780] (-) TimerEvent: {}
+[6.873316] (-) TimerEvent: {}
+[6.974016] (-) TimerEvent: {}
+[7.076726] (-) TimerEvent: {}
+[7.177187] (-) TimerEvent: {}
+[7.277763] (-) TimerEvent: {}
+[7.379119] (-) TimerEvent: {}
+[7.480334] (-) TimerEvent: {}
+[7.581680] (-) TimerEvent: {}
+[7.690178] (-) TimerEvent: {}
+[7.791620] (-) TimerEvent: {}
+[7.892101] (-) TimerEvent: {}
+[7.996761] (-) TimerEvent: {}
+[8.097195] (-) TimerEvent: {}
+[8.197620] (-) TimerEvent: {}
+[8.298073] (-) TimerEvent: {}
+[8.398533] (-) TimerEvent: {}
+[8.499273] (-) TimerEvent: {}
+[8.599966] (-) TimerEvent: {}
+[8.700774] (-) TimerEvent: {}
+[8.801433] (-) TimerEvent: {}
+[8.904379] (-) TimerEvent: {}
+[9.004862] (-) TimerEvent: {}
+[9.105334] (-) TimerEvent: {}
+[9.205797] (-) TimerEvent: {}
+[9.306283] (-) TimerEvent: {}
+[9.340690] (teb_local_planner) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/recovery_behaviors.cpp.o\x1b[0m\n'}
+[9.406402] (-) TimerEvent: {}
+[9.506800] (-) TimerEvent: {}
+[9.607202] (-) TimerEvent: {}
+[9.709676] (-) TimerEvent: {}
+[9.810247] (-) TimerEvent: {}
+[9.910859] (-) TimerEvent: {}
+[10.013889] (-) TimerEvent: {}
+[10.114547] (-) TimerEvent: {}
+[10.215141] (-) TimerEvent: {}
+[10.315793] (-) TimerEvent: {}
+[10.416410] (-) TimerEvent: {}
+[10.520362] (-) TimerEvent: {}
+[10.621010] (-) TimerEvent: {}
+[10.721714] (-) TimerEvent: {}
+[10.822369] (-) TimerEvent: {}
+[10.923062] (-) TimerEvent: {}
+[11.023750] (-) TimerEvent: {}
+[11.128412] (-) TimerEvent: {}
+[11.229306] (-) TimerEvent: {}
+[11.329965] (-) TimerEvent: {}
+[11.430626] (-) TimerEvent: {}
+[11.531277] (-) TimerEvent: {}
+[11.631699] (-) TimerEvent: {}
+[11.736662] (-) TimerEvent: {}
+[11.837267] (-) TimerEvent: {}
+[11.938043] (-) TimerEvent: {}
+[12.038684] (-) TimerEvent: {}
+[12.139322] (-) TimerEvent: {}
+[12.240026] (-) TimerEvent: {}
+[12.340714] (-) TimerEvent: {}
+[12.443091] (-) TimerEvent: {}
+[12.543719] (-) TimerEvent: {}
+[12.644347] (-) TimerEvent: {}
+[12.744973] (-) TimerEvent: {}
+[12.846854] (-) TimerEvent: {}
+[12.947506] (-) TimerEvent: {}
+[13.048180] (-) TimerEvent: {}
+[13.150092] (-) TimerEvent: {}
+[13.256584] (-) TimerEvent: {}
+[13.357238] (-) TimerEvent: {}
+[13.458514] (-) TimerEvent: {}
+[13.560503] (-) TimerEvent: {}
+[13.661146] (-) TimerEvent: {}
+[13.764197] (-) TimerEvent: {}
+[13.864615] (-) TimerEvent: {}
+[13.965208] (-) TimerEvent: {}
+[14.068189] (-) TimerEvent: {}
+[14.168834] (-) TimerEvent: {}
+[14.269765] (-) TimerEvent: {}
+[14.370413] (-) TimerEvent: {}
+[14.471087] (-) TimerEvent: {}
+[14.571809] (-) TimerEvent: {}
+[14.675036] (-) TimerEvent: {}
+[14.775596] (-) TimerEvent: {}
+[14.784310] (teb_local_planner) StdoutLine: {'line': b'[ 60%] \x1b[32mBuilding CXX object CMakeFiles/teb_local_planner.dir/src/teb_config.cpp.o\x1b[0m\n'}
+[14.875711] (-) TimerEvent: {}
+[14.976306] (-) TimerEvent: {}
+[15.076740] (-) TimerEvent: {}
+[15.177150] (-) TimerEvent: {}
+[15.280472] (-) TimerEvent: {}
+[15.381073] (-) TimerEvent: {}
+[15.481493] (-) TimerEvent: {}
+[15.581916] (-) TimerEvent: {}
+[15.682308] (-) TimerEvent: {}
+[15.783366] (-) TimerEvent: {}
+[15.883803] (-) TimerEvent: {}
+[15.984210] (-) TimerEvent: {}
+[16.087112] (-) TimerEvent: {}
+[16.187612] (-) TimerEvent: {}
+[16.292834] (-) TimerEvent: {}
+[16.393291] (-) TimerEvent: {}
+[16.493850] (-) TimerEvent: {}
+[16.594292] (-) TimerEvent: {}
+[16.694957] (-) TimerEvent: {}
+[16.795610] (-) TimerEvent: {}
+[16.896264] (-) TimerEvent: {}
+[16.996710] (-) TimerEvent: {}
+[17.097139] (-) TimerEvent: {}
+[17.200810] (-) TimerEvent: {}
+[17.301308] (-) TimerEvent: {}
+[17.855172] (-) TimerEvent: {}
+[17.955607] (-) TimerEvent: {}
+[18.056086] (-) TimerEvent: {}
+[18.156663] (-) TimerEvent: {}
+[18.257195] (-) TimerEvent: {}
+[18.360797] (-) TimerEvent: {}
+[18.461243] (-) TimerEvent: {}
+[18.561708] (-) TimerEvent: {}
+[18.662171] (-) TimerEvent: {}
+[18.762631] (-) TimerEvent: {}
+[18.863081] (-) TimerEvent: {}
+[18.963555] (-) TimerEvent: {}
+[19.068739] (-) TimerEvent: {}
+[19.169172] (-) TimerEvent: {}
+[19.272579] (-) TimerEvent: {}
+[19.373061] (-) TimerEvent: {}
+[19.473369] (-) TimerEvent: {}
+[19.573811] (-) TimerEvent: {}
+[19.674133] (-) TimerEvent: {}
+[19.774559] (-) TimerEvent: {}
+[19.874821] (-) TimerEvent: {}
+[19.975024] (-) TimerEvent: {}
+[20.075200] (-) TimerEvent: {}
+[20.175380] (-) TimerEvent: {}
+[20.275533] (-) TimerEvent: {}
+[20.375736] (-) TimerEvent: {}
+[20.476020] (-) TimerEvent: {}
+[20.576295] (-) TimerEvent: {}
+[20.676642] (-) TimerEvent: {}
+[20.776959] (-) TimerEvent: {}
+[20.877238] (-) TimerEvent: {}
+[20.977506] (-) TimerEvent: {}
+[21.080553] (-) TimerEvent: {}
+[21.180858] (-) TimerEvent: {}
+[21.281187] (-) TimerEvent: {}
+[21.381527] (-) TimerEvent: {}
+[21.481840] (-) TimerEvent: {}
+[21.582119] (-) TimerEvent: {}
+[21.682346] (-) TimerEvent: {}
+[21.782565] (-) TimerEvent: {}
+[21.882808] (-) TimerEvent: {}
+[21.983029] (-) TimerEvent: {}
+[22.083237] (-) TimerEvent: {}
+[22.183450] (-) TimerEvent: {}
+[22.283691] (-) TimerEvent: {}
+[22.383937] (-) TimerEvent: {}
+[23.627912] (-) TimerEvent: {}
+[23.728212] (-) TimerEvent: {}
+[23.828468] (-) TimerEvent: {}
+[23.928683] (-) TimerEvent: {}
+[24.028910] (-) TimerEvent: {}
+[24.132210] (-) TimerEvent: {}
+[24.232657] (-) TimerEvent: {}
+[24.336617] (-) TimerEvent: {}
+[25.372506] (-) TimerEvent: {}
+[72.244296] (-) TimerEvent: {}
+[116.228934] (-) TimerEvent: {}
+[181.783702] (-) TimerEvent: {}

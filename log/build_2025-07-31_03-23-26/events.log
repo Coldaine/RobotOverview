@@ -1,0 +1,2796 @@
+[0.000000] (-) TimerEvent: {}
+[0.001158] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.001929] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.002009] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.002469] (-) JobUnselected: {'identifier': 'audio_utils'}
+[0.002956] (-) JobUnselected: {'identifier': 'audio_utils_msgs'}
+[0.003111] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.003232] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.003358] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.003426] (-) JobUnselected: {'identifier': 'cv_camera'}
+[0.003540] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.003647] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.003753] (-) JobUnselected: {'identifier': 'face_cropping'}
+[0.003858] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.003970] (-) JobUnselected: {'identifier': 'map_image_generator'}
+[0.004035] (-) JobUnselected: {'identifier': 'odas_ros'}
+[0.004096] (-) JobUnselected: {'identifier': 'odas_ros_msgs'}
+[0.004229] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.004342] (-) JobUnselected: {'identifier': 'opentera_client_ros'}
+[0.004457] (-) JobUnselected: {'identifier': 'opentera_protobuf_messages'}
+[0.004857] (-) JobUnselected: {'identifier': 'opentera_webrtc_demos'}
+[0.004994] (-) JobUnselected: {'identifier': 'opentera_webrtc_robot_gui'}
+[0.005104] (-) JobUnselected: {'identifier': 'opentera_webrtc_ros_msgs'}
+[0.005213] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.005323] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.005390] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.005500] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.005608] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.005723] (-) JobUnselected: {'identifier': 'turtlebot3_beam_description'}
+[0.005837] (-) JobUnselected: {'identifier': 'ugv_base_node'}
+[0.005907] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.005975] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.006037] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.006101] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.006167] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.006233] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.006307] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.006479] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.006571] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.006645] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.006713] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.006782] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.006847] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.006910] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.006977] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.007052] (opentera_webrtc_ros) JobQueued: {'identifier': 'opentera_webrtc_ros', 'dependencies': OrderedDict([('audio_utils_msgs', '/home/ws/ugv_ws/install/audio_utils_msgs'), ('cv_camera', '/home/ws/ugv_ws/install/cv_camera'), ('odas_ros_msgs', '/home/ws/ugv_ws/install/odas_ros_msgs'), ('opentera_webrtc_ros_msgs', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs'), ('map_image_generator', '/home/ws/ugv_ws/install/map_image_generator')])}
+[0.007163] (opentera_webrtc_ros) JobStarted: {'identifier': 'opentera_webrtc_ros'}
+[0.099061] (-) TimerEvent: {}
+[0.110398] (opentera_webrtc_ros) JobProgress: {'identifier': 'opentera_webrtc_ros', 'progress': 'cmake'}
+[0.117861] (opentera_webrtc_ros) JobProgress: {'identifier': 'opentera_webrtc_ros', 'progress': 'build'}
+[0.120388] (opentera_webrtc_ros) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/opentera_webrtc_ros', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/opentera_webrtc_ros', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install:/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/opentera_webrtc_ros'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.199262] (-) TimerEvent: {}
+[0.300575] (-) TimerEvent: {}
+[0.331638] (opentera_webrtc_ros) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target opentera_webrtc_ros_json_data_handler\x1b[0m\n'}
+[0.390552] (opentera_webrtc_ros) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target OpenteraWebrtcNativeGStreamer\x1b[0m\n'}
+[0.399017] (opentera_webrtc_ros) StdoutLine: {'line': b'[  0%] Built target ament_cmake_python_symlink_opentera_webrtc_ros\n'}
+[0.400884] (-) TimerEvent: {}
+[0.402078] (opentera_webrtc_ros) StdoutLine: {'line': b'[  2%] Built target opentera_webrtc_ros_json_data_handler\n'}
+[0.410535] (opentera_webrtc_ros) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target ixwebsocket\x1b[0m\n'}
+[0.493231] (opentera_webrtc_ros) StdoutLine: {'line': b'[  3%] Built target signaling_server-build-requirements-target\n'}
+[0.501072] (-) TimerEvent: {}
+[0.556970] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 33%] Built target ixwebsocket\n'}
+[0.577847] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 33%] Built target native_client-requirements-target\n'}
+[0.604355] (-) TimerEvent: {}
+[0.612610] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 36%] Built target signaling_server-run-requirements-target\n'}
+[0.613602] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 47%] Built target OpenteraWebrtcNativeGStreamer\n'}
+[0.704541] (-) TimerEvent: {}
+[0.782401] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 50%] Built target signaling_server-dist-target\n'}
+[0.793603] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 51%] Built target OpenteraWebrtcNativeGStreamer-so-target\n'}
+[0.804683] (-) TimerEvent: {}
+[0.826841] (opentera_webrtc_ros) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target OpenteraWebrtcNativeClient\x1b[0m\n'}
+[0.904897] (-) TimerEvent: {}
+[1.006169] (-) TimerEvent: {}
+[1.035044] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 71%] Built target OpenteraWebrtcNativeClient\n'}
+[1.106740] (opentera_webrtc_ros) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target opentera_webrtc_ros_data_channel_bridge\x1b[0m\n'}
+[1.107377] (-) TimerEvent: {}
+[1.126034] (opentera_webrtc_ros) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target opentera_webrtc_ros_topic_streamer\x1b[0m\n'}
+[1.208416] (-) TimerEvent: {}
+[1.217059] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 75%] Built target opentera_webrtc_ros_data_channel_bridge\n'}
+[1.238050] (opentera_webrtc_ros) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target _opentera_webrtc_native_client\x1b[0m\n'}
+[1.269725] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 80%] Built target opentera_webrtc_ros_topic_streamer\n'}
+[1.308555] (-) TimerEvent: {}
+[1.393324] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 93%] Built target _opentera_webrtc_native_client\n'}
+[1.408714] (-) TimerEvent: {}
+[1.479665] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 93%] Built target _opentera_webrtc_native_client-so-target\n'}
+[1.508945] (-) TimerEvent: {}
+[1.560425] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 96%] Built target _opentera_webrtc_native_client-stub-target\n'}
+[1.609080] (-) TimerEvent: {}
+[1.637163] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 96%] \x1b[34m\x1b[1mGenerating cmake/pip_utils/dist.stamp\x1b[0m\n'}
+[1.709264] (-) TimerEvent: {}
+[1.810252] (-) TimerEvent: {}
+[1.910947] (-) TimerEvent: {}
+[2.012113] (-) TimerEvent: {}
+[2.040654] (opentera_webrtc_ros) StdoutLine: {'line': b'running egg_info\n'}
+[2.044475] (opentera_webrtc_ros) StdoutLine: {'line': b'writing opentera_webrtc_ros.egg-info/PKG-INFO\n'}
+[2.045404] (opentera_webrtc_ros) StdoutLine: {'line': b'writing dependency_links to opentera_webrtc_ros.egg-info/dependency_links.txt\n'}
+[2.052566] (opentera_webrtc_ros) StdoutLine: {'line': b'writing top-level names to opentera_webrtc_ros.egg-info/top_level.txt\n'}
+[2.066581] (opentera_webrtc_ros) StdoutLine: {'line': b"reading manifest file 'opentera_webrtc_ros.egg-info/SOURCES.txt'\n"}
+[2.074683] (opentera_webrtc_ros) StdoutLine: {'line': b"writing manifest file 'opentera_webrtc_ros.egg-info/SOURCES.txt'\n"}
+[2.112497] (-) TimerEvent: {}
+[2.209363] (opentera_webrtc_ros) StdoutLine: {'line': b'[ 96%] Built target ament_cmake_python_build_opentera_webrtc_ros_egg\n'}
+[2.212612] (-) TimerEvent: {}
+[2.313208] (-) TimerEvent: {}
+[2.414108] (-) TimerEvent: {}
+[2.515043] (-) TimerEvent: {}
+[2.615670] (-) TimerEvent: {}
+[2.716783] (-) TimerEvent: {}
+[2.817424] (-) TimerEvent: {}
+[2.885110] (opentera_webrtc_ros) StderrLine: {'line': b'/usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.\n'}
+[2.885926] (opentera_webrtc_ros) StderrLine: {'line': b'  warnings.warn(\n'}
+[2.917622] (-) TimerEvent: {}
+[3.018777] (-) TimerEvent: {}
+[3.126248] (-) TimerEvent: {}
+[3.226992] (-) TimerEvent: {}
+[3.328233] (-) TimerEvent: {}
+[3.432496] (-) TimerEvent: {}
+[3.533305] (-) TimerEvent: {}
+[3.634258] (-) TimerEvent: {}
+[3.734874] (-) TimerEvent: {}
+[3.835452] (-) TimerEvent: {}
+[3.936312] (-) TimerEvent: {}
+[4.036940] (-) TimerEvent: {}
+[4.137542] (-) TimerEvent: {}
+[4.238135] (-) TimerEvent: {}
+[4.338727] (-) TimerEvent: {}
+[4.439316] (-) TimerEvent: {}
+[4.539900] (-) TimerEvent: {}
+[4.640527] (-) TimerEvent: {}
+[4.741121] (-) TimerEvent: {}
+[4.841705] (-) TimerEvent: {}
+[4.942291] (-) TimerEvent: {}
+[5.042889] (-) TimerEvent: {}
+[5.143469] (-) TimerEvent: {}
+[5.244074] (-) TimerEvent: {}
+[5.344681] (-) TimerEvent: {}
+[5.445269] (-) TimerEvent: {}
+[5.545858] (-) TimerEvent: {}
+[5.646474] (-) TimerEvent: {}
+[5.747065] (-) TimerEvent: {}
+[5.847655] (-) TimerEvent: {}
+[5.948253] (-) TimerEvent: {}
+[6.048851] (-) TimerEvent: {}
+[6.149441] (-) TimerEvent: {}
+[6.250033] (-) TimerEvent: {}
+[6.350650] (-) TimerEvent: {}
+[6.451234] (-) TimerEvent: {}
+[6.551827] (-) TimerEvent: {}
+[6.652464] (-) TimerEvent: {}
+[6.753082] (-) TimerEvent: {}
+[6.853707] (-) TimerEvent: {}
+[6.954340] (-) TimerEvent: {}
+[7.055062] (-) TimerEvent: {}
+[7.155711] (-) TimerEvent: {}
+[7.256676] (-) TimerEvent: {}
+[7.357550] (-) TimerEvent: {}
+[7.458451] (-) TimerEvent: {}
+[7.559065] (-) TimerEvent: {}
+[7.660008] (-) TimerEvent: {}
+[7.760705] (-) TimerEvent: {}
+[7.861612] (-) TimerEvent: {}
+[7.962308] (-) TimerEvent: {}
+[8.063425] (-) TimerEvent: {}
+[11.870154] (-) TimerEvent: {}
+[11.971331] (-) TimerEvent: {}
+[12.072534] (-) TimerEvent: {}
+[12.173671] (-) TimerEvent: {}
+[12.275053] (-) TimerEvent: {}
+[12.376147] (-) TimerEvent: {}
+[12.477244] (-) TimerEvent: {}
+[12.578340] (-) TimerEvent: {}
+[12.679512] (-) TimerEvent: {}
+[12.780684] (-) TimerEvent: {}
+[12.881781] (-) TimerEvent: {}
+[12.983351] (-) TimerEvent: {}
+[13.084286] (-) TimerEvent: {}
+[13.185226] (-) TimerEvent: {}
+[14.123854] (-) TimerEvent: {}
+[14.224966] (-) TimerEvent: {}
+[14.325919] (-) TimerEvent: {}
+[14.427011] (-) TimerEvent: {}
+[14.528061] (-) TimerEvent: {}
+[14.629079] (-) TimerEvent: {}
+[14.730061] (-) TimerEvent: {}
+[14.831052] (-) TimerEvent: {}
+[14.932039] (-) TimerEvent: {}
+[15.033057] (-) TimerEvent: {}
+[15.134029] (-) TimerEvent: {}
+[15.235027] (-) TimerEvent: {}
+[15.335998] (-) TimerEvent: {}
+[15.437158] (-) TimerEvent: {}
+[15.538113] (-) TimerEvent: {}
+[15.639036] (-) TimerEvent: {}
+[15.740233] (-) TimerEvent: {}
+[15.841306] (-) TimerEvent: {}
+[15.942956] (-) TimerEvent: {}
+[16.044033] (-) TimerEvent: {}
+[16.145639] (-) TimerEvent: {}
+[16.247161] (-) TimerEvent: {}
+[16.348660] (-) TimerEvent: {}
+[16.449802] (-) TimerEvent: {}
+[16.551321] (-) TimerEvent: {}
+[16.652993] (-) TimerEvent: {}
+[16.754160] (-) TimerEvent: {}
+[16.855178] (-) TimerEvent: {}
+[16.956915] (-) TimerEvent: {}
+[17.058432] (-) TimerEvent: {}
+[17.159985] (-) TimerEvent: {}
+[17.261121] (-) TimerEvent: {}
+[17.362556] (-) TimerEvent: {}
+[17.464144] (-) TimerEvent: {}
+[17.565705] (-) TimerEvent: {}
+[17.667222] (-) TimerEvent: {}
+[17.768807] (-) TimerEvent: {}
+[17.869851] (-) TimerEvent: {}
+[17.971493] (-) TimerEvent: {}
+[18.073036] (-) TimerEvent: {}
+[18.174626] (-) TimerEvent: {}
+[18.275671] (-) TimerEvent: {}
+[18.376640] (-) TimerEvent: {}
+[18.477643] (-) TimerEvent: {}
+[18.578704] (-) TimerEvent: {}
+[18.679707] (-) TimerEvent: {}
+[18.780894] (-) TimerEvent: {}
+[18.881948] (-) TimerEvent: {}
+[18.982992] (-) TimerEvent: {}
+[19.083958] (-) TimerEvent: {}
+[19.185097] (-) TimerEvent: {}
+[19.928238] (-) TimerEvent: {}
+[20.029417] (-) TimerEvent: {}
+[20.130453] (-) TimerEvent: {}
+[20.231514] (-) TimerEvent: {}
+[20.332697] (-) TimerEvent: {}
+[20.433857] (-) TimerEvent: {}
+[20.534916] (-) TimerEvent: {}
+[20.635974] (-) TimerEvent: {}
+[20.737113] (-) TimerEvent: {}
+[20.838339] (-) TimerEvent: {}
+[20.939510] (-) TimerEvent: {}
+[21.040705] (-) TimerEvent: {}
+[21.141917] (-) TimerEvent: {}
+[21.242941] (-) TimerEvent: {}
+[21.343995] (-) TimerEvent: {}
+[21.445023] (-) TimerEvent: {}
+[21.546170] (-) TimerEvent: {}
+[21.647146] (-) TimerEvent: {}
+[21.748229] (-) TimerEvent: {}
+[21.849242] (-) TimerEvent: {}
+[21.950330] (-) TimerEvent: {}
+[22.051328] (-) TimerEvent: {}
+[22.152343] (-) TimerEvent: {}
+[22.253379] (-) TimerEvent: {}
+[22.354415] (-) TimerEvent: {}
+[22.455341] (-) TimerEvent: {}
+[22.556964] (-) TimerEvent: {}
+[22.658146] (-) TimerEvent: {}
+[22.759324] (-) TimerEvent: {}
+[22.861431] (-) TimerEvent: {}
+[22.963173] (-) TimerEvent: {}
+[23.064338] (-) TimerEvent: {}
+[23.165405] (-) TimerEvent: {}
+[23.266446] (-) TimerEvent: {}
+[23.367590] (-) TimerEvent: {}
+[23.468597] (-) TimerEvent: {}
+[23.569598] (-) TimerEvent: {}
+[23.670588] (-) TimerEvent: {}
+[23.771675] (-) TimerEvent: {}
+[23.872801] (-) TimerEvent: {}
+[23.973865] (-) TimerEvent: {}
+[24.074934] (-) TimerEvent: {}
+[24.176064] (-) TimerEvent: {}
+[24.277256] (-) TimerEvent: {}
+[24.378739] (-) TimerEvent: {}
+[28.790171] (-) TimerEvent: {}
+[28.891715] (-) TimerEvent: {}
+[28.992649] (-) TimerEvent: {}
+[29.093695] (-) TimerEvent: {}
+[29.194657] (-) TimerEvent: {}
+[29.295532] (-) TimerEvent: {}
+[29.396679] (-) TimerEvent: {}
+[29.498819] (-) TimerEvent: {}
+[29.599724] (-) TimerEvent: {}
+[29.702295] (-) TimerEvent: {}
+[29.804040] (-) TimerEvent: {}
+[29.905000] (-) TimerEvent: {}
+[30.006240] (-) TimerEvent: {}
+[30.107140] (-) TimerEvent: {}
+[30.207932] (-) TimerEvent: {}
+[30.308806] (-) TimerEvent: {}
+[30.409680] (-) TimerEvent: {}
+[30.510551] (-) TimerEvent: {}
+[30.611393] (-) TimerEvent: {}
+[30.712335] (-) TimerEvent: {}
+[30.814635] (-) TimerEvent: {}
+[30.915495] (-) TimerEvent: {}
+[31.016633] (-) TimerEvent: {}
+[31.117480] (-) TimerEvent: {}
+[31.218361] (-) TimerEvent: {}
+[31.319452] (-) TimerEvent: {}
+[31.420495] (-) TimerEvent: {}
+[31.521455] (-) TimerEvent: {}
+[31.622393] (-) TimerEvent: {}
+[31.723355] (-) TimerEvent: {}
+[31.824369] (-) TimerEvent: {}
+[31.925293] (-) TimerEvent: {}
+[32.026455] (-) TimerEvent: {}
+[32.127931] (-) TimerEvent: {}
+[32.228916] (-) TimerEvent: {}
+[32.330239] (-) TimerEvent: {}
+[32.431117] (-) TimerEvent: {}
+[32.532155] (-) TimerEvent: {}
+[32.633731] (-) TimerEvent: {}
+[32.734367] (-) TimerEvent: {}
+[32.834962] (-) TimerEvent: {}
+[32.936259] (-) TimerEvent: {}
+[33.037138] (-) TimerEvent: {}
+[33.137836] (-) TimerEvent: {}
+[33.238806] (-) TimerEvent: {}
+[33.339414] (-) TimerEvent: {}
+[33.440313] (-) TimerEvent: {}
+[33.540924] (-) TimerEvent: {}
+[33.641853] (-) TimerEvent: {}
+[33.742475] (-) TimerEvent: {}
+[33.843361] (-) TimerEvent: {}
+[33.943983] (-) TimerEvent: {}
+[34.044889] (-) TimerEvent: {}
+[34.145474] (-) TimerEvent: {}
+[34.246364] (-) TimerEvent: {}
+[34.346986] (-) TimerEvent: {}
+[34.447591] (-) TimerEvent: {}
+[34.548282] (-) TimerEvent: {}
+[34.648912] (-) TimerEvent: {}
+[34.749529] (-) TimerEvent: {}
+[34.850129] (-) TimerEvent: {}
+[34.950726] (-) TimerEvent: {}
+[35.051333] (-) TimerEvent: {}
+[35.151915] (-) TimerEvent: {}
+[35.252530] (-) TimerEvent: {}
+[35.353124] (-) TimerEvent: {}
+[35.453733] (-) TimerEvent: {}
+[35.554350] (-) TimerEvent: {}
+[35.654941] (-) TimerEvent: {}
+[35.755534] (-) TimerEvent: {}
+[35.856132] (-) TimerEvent: {}
+[35.956790] (-) TimerEvent: {}
+[36.057409] (-) TimerEvent: {}
+[36.157985] (-) TimerEvent: {}
+[36.258587] (-) TimerEvent: {}
+[36.359183] (-) TimerEvent: {}
+[36.459772] (-) TimerEvent: {}
+[36.560401] (-) TimerEvent: {}
+[36.660991] (-) TimerEvent: {}
+[36.761581] (-) TimerEvent: {}
+[36.862174] (-) TimerEvent: {}
+[36.962766] (-) TimerEvent: {}
+[37.063363] (-) TimerEvent: {}
+[37.163946] (-) TimerEvent: {}
+[37.264582] (-) TimerEvent: {}
+[37.365184] (-) TimerEvent: {}
+[37.465780] (-) TimerEvent: {}
+[37.566378] (-) TimerEvent: {}
+[37.667066] (-) TimerEvent: {}
+[37.768064] (-) TimerEvent: {}
+[37.869125] (-) TimerEvent: {}
+[37.970156] (-) TimerEvent: {}
+[38.071178] (-) TimerEvent: {}
+[38.172249] (-) TimerEvent: {}
+[38.273228] (-) TimerEvent: {}
+[38.374350] (-) TimerEvent: {}
+[38.475459] (-) TimerEvent: {}
+[38.576488] (-) TimerEvent: {}
+[38.677476] (-) TimerEvent: {}
+[38.778469] (-) TimerEvent: {}
+[38.879497] (-) TimerEvent: {}
+[38.980566] (-) TimerEvent: {}
+[39.081589] (-) TimerEvent: {}
+[39.183040] (-) TimerEvent: {}
+[39.284113] (-) TimerEvent: {}
+[39.385234] (-) TimerEvent: {}
+[39.486338] (-) TimerEvent: {}
+[39.587990] (-) TimerEvent: {}
+[43.325213] (-) TimerEvent: {}
+[43.426068] (-) TimerEvent: {}
+[43.527072] (-) TimerEvent: {}
+[43.628267] (-) TimerEvent: {}
+[43.729281] (-) TimerEvent: {}
+[43.830400] (-) TimerEvent: {}
+[43.931486] (-) TimerEvent: {}
+[44.032554] (-) TimerEvent: {}
+[44.133598] (-) TimerEvent: {}
+[44.235763] (-) TimerEvent: {}
+[44.337012] (-) TimerEvent: {}
+[44.437927] (-) TimerEvent: {}
+[44.539337] (-) TimerEvent: {}
+[44.640464] (-) TimerEvent: {}
+[46.492264] (-) TimerEvent: {}
+[46.593222] (-) TimerEvent: {}
+[46.694434] (-) TimerEvent: {}
+[46.795980] (-) TimerEvent: {}
+[46.897100] (-) TimerEvent: {}
+[46.998160] (-) TimerEvent: {}
+[47.099209] (-) TimerEvent: {}
+[47.200256] (-) TimerEvent: {}
+[47.301142] (-) TimerEvent: {}
+[47.402002] (-) TimerEvent: {}
+[47.502991] (-) TimerEvent: {}
+[47.603973] (-) TimerEvent: {}
+[47.705008] (-) TimerEvent: {}
+[47.806019] (-) TimerEvent: {}
+[47.907161] (-) TimerEvent: {}
+[48.008090] (-) TimerEvent: {}
+[48.109189] (-) TimerEvent: {}
+[48.210194] (-) TimerEvent: {}
+[48.311177] (-) TimerEvent: {}
+[48.412150] (-) TimerEvent: {}
+[48.513206] (-) TimerEvent: {}
+[48.614215] (-) TimerEvent: {}
+[48.715215] (-) TimerEvent: {}
+[48.816254] (-) TimerEvent: {}
+[48.917248] (-) TimerEvent: {}
+[49.018245] (-) TimerEvent: {}
+[49.119231] (-) TimerEvent: {}
+[49.220284] (-) TimerEvent: {}
+[49.321296] (-) TimerEvent: {}
+[49.422314] (-) TimerEvent: {}
+[49.523321] (-) TimerEvent: {}
+[49.624386] (-) TimerEvent: {}
+[51.809908] (-) TimerEvent: {}
+[51.910820] (-) TimerEvent: {}
+[52.011795] (-) TimerEvent: {}
+[52.112976] (-) TimerEvent: {}
+[52.213814] (-) TimerEvent: {}
+[52.314816] (-) TimerEvent: {}
+[52.415810] (-) TimerEvent: {}
+[52.516856] (-) TimerEvent: {}
+[52.617874] (-) TimerEvent: {}
+[52.719514] (-) TimerEvent: {}
+[52.820396] (-) TimerEvent: {}
+[52.921199] (-) TimerEvent: {}
+[53.021916] (-) TimerEvent: {}
+[53.123137] (-) TimerEvent: {}
+[53.224343] (-) TimerEvent: {}
+[53.325312] (-) TimerEvent: {}
+[53.426206] (-) TimerEvent: {}
+[53.526798] (-) TimerEvent: {}
+[53.627664] (-) TimerEvent: {}
+[53.728297] (-) TimerEvent: {}
+[53.829170] (-) TimerEvent: {}
+[53.930061] (-) TimerEvent: {}
+[54.030683] (-) TimerEvent: {}
+[54.131326] (-) TimerEvent: {}
+[54.232265] (-) TimerEvent: {}
+[54.332870] (-) TimerEvent: {}
+[54.433512] (-) TimerEvent: {}
+[54.534484] (-) TimerEvent: {}
+[54.640326] (-) TimerEvent: {}
+[54.741049] (-) TimerEvent: {}
+[54.842157] (-) TimerEvent: {}
+[54.943562] (-) TimerEvent: {}
+[55.045015] (-) TimerEvent: {}
+[55.146703] (-) TimerEvent: {}
+[55.247541] (-) TimerEvent: {}
+[55.348536] (-) TimerEvent: {}
+[55.449205] (-) TimerEvent: {}
+[55.550172] (-) TimerEvent: {}
+[55.650827] (-) TimerEvent: {}
+[55.751806] (-) TimerEvent: {}
+[55.852486] (-) TimerEvent: {}
+[55.953434] (-) TimerEvent: {}
+[56.054102] (-) TimerEvent: {}
+[56.154749] (-) TimerEvent: {}
+[56.255384] (-) TimerEvent: {}
+[56.356340] (-) TimerEvent: {}
+[56.457023] (-) TimerEvent: {}
+[56.558136] (-) TimerEvent: {}
+[56.658812] (-) TimerEvent: {}
+[56.759450] (-) TimerEvent: {}
+[56.860433] (-) TimerEvent: {}
+[56.961071] (-) TimerEvent: {}
+[57.062005] (-) TimerEvent: {}
+[57.162678] (-) TimerEvent: {}
+[57.263655] (-) TimerEvent: {}
+[57.364324] (-) TimerEvent: {}
+[57.465309] (-) TimerEvent: {}
+[57.565972] (-) TimerEvent: {}
+[57.666627] (-) TimerEvent: {}
+[57.767595] (-) TimerEvent: {}
+[57.868292] (-) TimerEvent: {}
+[57.969256] (-) TimerEvent: {}
+[58.069925] (-) TimerEvent: {}
+[58.170885] (-) TimerEvent: {}
+[58.271558] (-) TimerEvent: {}
+[58.372548] (-) TimerEvent: {}
+[58.473173] (-) TimerEvent: {}
+[58.574137] (-) TimerEvent: {}
+[58.674813] (-) TimerEvent: {}
+[58.775805] (-) TimerEvent: {}
+[58.876515] (-) TimerEvent: {}
+[58.977500] (-) TimerEvent: {}
+[59.078187] (-) TimerEvent: {}
+[59.178819] (-) TimerEvent: {}
+[59.279461] (-) TimerEvent: {}
+[59.380464] (-) TimerEvent: {}
+[59.481132] (-) TimerEvent: {}
+[59.582112] (-) TimerEvent: {}
+[59.682778] (-) TimerEvent: {}
+[59.783832] (-) TimerEvent: {}
+[59.884533] (-) TimerEvent: {}
+[59.985181] (-) TimerEvent: {}
+[60.086165] (-) TimerEvent: {}
+[60.187956] (-) TimerEvent: {}
+[60.288638] (-) TimerEvent: {}
+[60.389586] (-) TimerEvent: {}
+[60.490263] (-) TimerEvent: {}
+[60.591237] (-) TimerEvent: {}
+[60.691907] (-) TimerEvent: {}
+[60.792913] (-) TimerEvent: {}
+[60.893589] (-) TimerEvent: {}
+[60.994588] (-) TimerEvent: {}
+[61.095288] (-) TimerEvent: {}
+[61.197282] (-) TimerEvent: {}
+[61.298471] (-) TimerEvent: {}
+[61.399373] (-) TimerEvent: {}
+[61.499991] (-) TimerEvent: {}
+[61.601200] (-) TimerEvent: {}
+[61.702097] (-) TimerEvent: {}
+[61.803291] (-) TimerEvent: {}
+[61.904234] (-) TimerEvent: {}
+[62.005560] (-) TimerEvent: {}
+[62.106208] (-) TimerEvent: {}
+[62.207988] (-) TimerEvent: {}
+[62.308955] (-) TimerEvent: {}
+[62.410283] (-) TimerEvent: {}
+[62.511312] (-) TimerEvent: {}
+[62.612648] (-) TimerEvent: {}
+[62.713313] (-) TimerEvent: {}
+[62.814920] (-) TimerEvent: {}
+[62.915950] (-) TimerEvent: {}
+[63.017377] (-) TimerEvent: {}
+[63.119075] (-) TimerEvent: {}
+[63.220251] (-) TimerEvent: {}
+[63.321688] (-) TimerEvent: {}
+[63.423075] (-) TimerEvent: {}
+[63.524090] (-) TimerEvent: {}
+[63.624844] (-) TimerEvent: {}
+[63.726149] (-) TimerEvent: {}
+[63.827429] (-) TimerEvent: {}
+[63.928571] (-) TimerEvent: {}
+[64.030331] (-) TimerEvent: {}
+[64.131875] (-) TimerEvent: {}
+[64.233296] (-) TimerEvent: {}
+[64.334365] (-) TimerEvent: {}
+[64.435882] (-) TimerEvent: {}
+[64.537402] (-) TimerEvent: {}
+[64.638783] (-) TimerEvent: {}
+[64.740152] (-) TimerEvent: {}
+[64.840877] (-) TimerEvent: {}
+[64.942219] (-) TimerEvent: {}
+[65.043291] (-) TimerEvent: {}
+[65.144670] (-) TimerEvent: {}
+[65.246007] (-) TimerEvent: {}
+[65.346990] (-) TimerEvent: {}
+[65.448326] (-) TimerEvent: {}
+[65.549315] (-) TimerEvent: {}
+[65.650655] (-) TimerEvent: {}
+[65.751720] (-) TimerEvent: {}
+[65.853089] (-) TimerEvent: {}
+[65.954042] (-) TimerEvent: {}
+[66.055363] (-) TimerEvent: {}
+[66.156423] (-) TimerEvent: {}
+[66.257808] (-) TimerEvent: {}
+[66.358773] (-) TimerEvent: {}
+[66.460220] (-) TimerEvent: {}
+[66.560876] (-) TimerEvent: {}
+[66.662260] (-) TimerEvent: {}
+[66.763509] (-) TimerEvent: {}
+[66.864867] (-) TimerEvent: {}
+[66.965796] (-) TimerEvent: {}
+[67.067041] (-) TimerEvent: {}
+[67.167661] (-) TimerEvent: {}
+[67.268938] (-) TimerEvent: {}
+[67.370392] (-) TimerEvent: {}
+[67.471281] (-) TimerEvent: {}
+[67.572582] (-) TimerEvent: {}
+[67.673209] (-) TimerEvent: {}
+[67.774504] (-) TimerEvent: {}
+[67.875441] (-) TimerEvent: {}
+[67.976941] (-) TimerEvent: {}
+[68.077847] (-) TimerEvent: {}
+[68.179076] (-) TimerEvent: {}
+[68.279996] (-) TimerEvent: {}
+[68.381235] (-) TimerEvent: {}
+[68.482479] (-) TimerEvent: {}
+[68.583094] (-) TimerEvent: {}
+[68.684335] (-) TimerEvent: {}
+[68.785281] (-) TimerEvent: {}
+[68.886514] (-) TimerEvent: {}
+[68.987448] (-) TimerEvent: {}
+[69.088697] (-) TimerEvent: {}
+[69.189318] (-) TimerEvent: {}
+[69.290544] (-) TimerEvent: {}
+[69.391469] (-) TimerEvent: {}
+[69.492752] (-) TimerEvent: {}
+[69.593676] (-) TimerEvent: {}
+[69.694895] (-) TimerEvent: {}
+[69.795834] (-) TimerEvent: {}
+[69.896492] (-) TimerEvent: {}
+[69.997733] (-) TimerEvent: {}
+[70.098682] (-) TimerEvent: {}
+[70.199925] (-) TimerEvent: {}
+[70.300900] (-) TimerEvent: {}
+[70.402087] (-) TimerEvent: {}
+[70.503052] (-) TimerEvent: {}
+[70.604244] (-) TimerEvent: {}
+[70.704860] (-) TimerEvent: {}
+[70.806014] (-) TimerEvent: {}
+[70.906940] (-) TimerEvent: {}
+[71.008127] (-) TimerEvent: {}
+[71.109090] (-) TimerEvent: {}
+[71.210273] (-) TimerEvent: {}
+[71.311221] (-) TimerEvent: {}
+[71.412452] (-) TimerEvent: {}
+[71.513371] (-) TimerEvent: {}
+[71.613989] (-) TimerEvent: {}
+[71.715162] (-) TimerEvent: {}
+[71.816093] (-) TimerEvent: {}
+[71.917286] (-) TimerEvent: {}
+[72.018214] (-) TimerEvent: {}
+[72.119377] (-) TimerEvent: {}
+[72.219997] (-) TimerEvent: {}
+[72.321205] (-) TimerEvent: {}
+[72.422130] (-) TimerEvent: {}
+[72.523307] (-) TimerEvent: {}
+[72.624309] (-) TimerEvent: {}
+[72.725480] (-) TimerEvent: {}
+[72.826122] (-) TimerEvent: {}
+[72.927288] (-) TimerEvent: {}
+[73.028273] (-) TimerEvent: {}
+[73.129445] (-) TimerEvent: {}
+[73.230363] (-) TimerEvent: {}
+[73.331560] (-) TimerEvent: {}
+[73.432536] (-) TimerEvent: {}
+[73.533194] (-) TimerEvent: {}
+[73.634359] (-) TimerEvent: {}
+[73.735286] (-) TimerEvent: {}
+[73.836507] (-) TimerEvent: {}
+[73.937453] (-) TimerEvent: {}
+[74.038615] (-) TimerEvent: {}
+[74.139519] (-) TimerEvent: {}
+[74.240141] (-) TimerEvent: {}
+[74.341359] (-) TimerEvent: {}
+[74.442491] (-) TimerEvent: {}
+[74.544745] (-) TimerEvent: {}
+[74.645603] (-) TimerEvent: {}
+[74.746740] (-) TimerEvent: {}
+[74.847648] (-) TimerEvent: {}
+[74.948812] (-) TimerEvent: {}
+[75.049689] (-) TimerEvent: {}
+[75.150838] (-) TimerEvent: {}
+[75.251726] (-) TimerEvent: {}
+[75.352950] (-) TimerEvent: {}
+[75.453862] (-) TimerEvent: {}
+[75.554994] (-) TimerEvent: {}
+[75.655907] (-) TimerEvent: {}
+[75.757084] (-) TimerEvent: {}
+[75.857997] (-) TimerEvent: {}
+[75.958618] (-) TimerEvent: {}
+[76.059736] (-) TimerEvent: {}
+[76.160642] (-) TimerEvent: {}
+[76.261755] (-) TimerEvent: {}
+[76.362789] (-) TimerEvent: {}
+[76.463897] (-) TimerEvent: {}
+[76.566040] (-) TimerEvent: {}
+[76.667600] (-) TimerEvent: {}
+[76.768987] (-) TimerEvent: {}
+[76.870091] (-) TimerEvent: {}
+[76.971285] (-) TimerEvent: {}
+[77.072243] (-) TimerEvent: {}
+[77.173232] (-) TimerEvent: {}
+[77.274191] (-) TimerEvent: {}
+[77.375176] (-) TimerEvent: {}
+[77.475788] (-) TimerEvent: {}
+[77.576443] (-) TimerEvent: {}
+[77.677096] (-) TimerEvent: {}
+[77.777719] (-) TimerEvent: {}
+[77.878327] (-) TimerEvent: {}
+[77.978937] (-) TimerEvent: {}
+[78.079554] (-) TimerEvent: {}
+[78.180164] (-) TimerEvent: {}
+[78.280800] (-) TimerEvent: {}
+[78.381748] (-) TimerEvent: {}
+[78.482368] (-) TimerEvent: {}
+[78.582992] (-) TimerEvent: {}
+[78.683603] (-) TimerEvent: {}
+[78.784240] (-) TimerEvent: {}
+[78.884869] (-) TimerEvent: {}
+[78.985501] (-) TimerEvent: {}
+[79.086123] (-) TimerEvent: {}
+[79.186742] (-) TimerEvent: {}
+[79.287363] (-) TimerEvent: {}
+[79.388348] (-) TimerEvent: {}
+[79.488966] (-) TimerEvent: {}
+[79.589968] (-) TimerEvent: {}
+[79.691228] (-) TimerEvent: {}
+[79.792222] (-) TimerEvent: {}
+[79.892848] (-) TimerEvent: {}
+[79.993462] (-) TimerEvent: {}
+[80.094072] (-) TimerEvent: {}
+[80.194691] (-) TimerEvent: {}
+[80.295309] (-) TimerEvent: {}
+[80.395930] (-) TimerEvent: {}
+[80.496591] (-) TimerEvent: {}
+[80.597200] (-) TimerEvent: {}
+[80.697838] (-) TimerEvent: {}
+[80.798448] (-) TimerEvent: {}
+[80.899067] (-) TimerEvent: {}
+[80.999675] (-) TimerEvent: {}
+[81.100312] (-) TimerEvent: {}
+[81.201285] (-) TimerEvent: {}
+[81.302070] (-) TimerEvent: {}
+[81.402757] (-) TimerEvent: {}
+[81.503944] (-) TimerEvent: {}
+[81.604590] (-) TimerEvent: {}
+[81.705745] (-) TimerEvent: {}
+[81.806656] (-) TimerEvent: {}
+[81.908010] (-) TimerEvent: {}
+[82.009031] (-) TimerEvent: {}
+[82.110208] (-) TimerEvent: {}
+[82.211124] (-) TimerEvent: {}
+[82.312327] (-) TimerEvent: {}
+[82.413253] (-) TimerEvent: {}
+[82.513875] (-) TimerEvent: {}
+[82.615045] (-) TimerEvent: {}
+[82.715992] (-) TimerEvent: {}
+[82.816656] (-) TimerEvent: {}
+[83.358983] (-) TimerEvent: {}
+[83.459621] (-) TimerEvent: {}
+[83.560813] (-) TimerEvent: {}
+[83.661738] (-) TimerEvent: {}
+[83.762348] (-) TimerEvent: {}
+[83.863567] (-) TimerEvent: {}
+[83.964543] (-) TimerEvent: {}
+[84.065750] (-) TimerEvent: {}
+[84.166593] (-) TimerEvent: {}
+[84.267772] (-) TimerEvent: {}
+[84.368748] (-) TimerEvent: {}
+[84.469965] (-) TimerEvent: {}
+[84.570591] (-) TimerEvent: {}
+[84.671764] (-) TimerEvent: {}
+[84.772727] (-) TimerEvent: {}
+[84.873885] (-) TimerEvent: {}
+[84.974806] (-) TimerEvent: {}
+[85.075956] (-) TimerEvent: {}
+[85.176599] (-) TimerEvent: {}
+[85.277788] (-) TimerEvent: {}
+[85.378720] (-) TimerEvent: {}
+[85.479881] (-) TimerEvent: {}
+[85.580908] (-) TimerEvent: {}
+[85.682080] (-) TimerEvent: {}
+[85.783018] (-) TimerEvent: {}
+[85.883654] (-) TimerEvent: {}
+[85.984887] (-) TimerEvent: {}
+[86.085825] (-) TimerEvent: {}
+[86.187008] (-) TimerEvent: {}
+[86.287941] (-) TimerEvent: {}
+[86.389166] (-) TimerEvent: {}
+[86.490081] (-) TimerEvent: {}
+[86.591297] (-) TimerEvent: {}
+[86.691920] (-) TimerEvent: {}
+[86.793150] (-) TimerEvent: {}
+[86.894080] (-) TimerEvent: {}
+[86.995283] (-) TimerEvent: {}
+[87.096254] (-) TimerEvent: {}
+[87.196885] (-) TimerEvent: {}
+[87.298050] (-) TimerEvent: {}
+[87.399018] (-) TimerEvent: {}
+[87.500245] (-) TimerEvent: {}
+[87.601179] (-) TimerEvent: {}
+[87.702356] (-) TimerEvent: {}
+[87.803277] (-) TimerEvent: {}
+[87.904492] (-) TimerEvent: {}
+[88.005099] (-) TimerEvent: {}
+[88.106284] (-) TimerEvent: {}
+[88.207200] (-) TimerEvent: {}
+[88.308412] (-) TimerEvent: {}
+[88.430325] (-) TimerEvent: {}
+[88.531486] (-) TimerEvent: {}
+[88.632442] (-) TimerEvent: {}
+[88.733636] (-) TimerEvent: {}
+[88.834593] (-) TimerEvent: {}
+[88.935801] (-) TimerEvent: {}
+[89.036499] (-) TimerEvent: {}
+[89.137371] (-) TimerEvent: {}
+[89.237993] (-) TimerEvent: {}
+[89.338619] (-) TimerEvent: {}
+[89.439238] (-) TimerEvent: {}
+[89.540138] (-) TimerEvent: {}
+[89.640782] (-) TimerEvent: {}
+[89.741419] (-) TimerEvent: {}
+[89.842054] (-) TimerEvent: {}
+[89.942663] (-) TimerEvent: {}
+[90.043289] (-) TimerEvent: {}
+[90.143926] (-) TimerEvent: {}
+[90.244581] (-) TimerEvent: {}
+[90.345219] (-) TimerEvent: {}
+[90.445854] (-) TimerEvent: {}
+[90.546515] (-) TimerEvent: {}
+[90.647512] (-) TimerEvent: {}
+[90.748527] (-) TimerEvent: {}
+[90.849159] (-) TimerEvent: {}
+[90.950471] (-) TimerEvent: {}
+[91.052425] (-) TimerEvent: {}
+[91.154845] (-) TimerEvent: {}
+[91.255843] (-) TimerEvent: {}
+[91.356599] (-) TimerEvent: {}
+[91.457241] (-) TimerEvent: {}
+[91.558355] (-) TimerEvent: {}
+[91.659101] (-) TimerEvent: {}
+[91.760287] (-) TimerEvent: {}
+[91.861008] (-) TimerEvent: {}
+[91.962059] (-) TimerEvent: {}
+[92.062824] (-) TimerEvent: {}
+[92.163929] (-) TimerEvent: {}
+[92.264707] (-) TimerEvent: {}
+[92.365382] (-) TimerEvent: {}
+[92.466512] (-) TimerEvent: {}
+[92.567588] (-) TimerEvent: {}
+[92.668350] (-) TimerEvent: {}
+[92.769005] (-) TimerEvent: {}
+[92.870110] (-) TimerEvent: {}
+[92.970790] (-) TimerEvent: {}
+[93.071474] (-) TimerEvent: {}
+[93.172165] (-) TimerEvent: {}
+[93.273329] (-) TimerEvent: {}
+[93.374016] (-) TimerEvent: {}
+[93.474995] (-) TimerEvent: {}
+[93.575986] (-) TimerEvent: {}
+[93.676947] (-) TimerEvent: {}
+[93.777637] (-) TimerEvent: {}
+[93.878238] (-) TimerEvent: {}
+[93.979203] (-) TimerEvent: {}
+[94.079809] (-) TimerEvent: {}
+[94.180791] (-) TimerEvent: {}
+[94.281567] (-) TimerEvent: {}
+[94.382589] (-) TimerEvent: {}
+[94.483218] (-) TimerEvent: {}
+[94.583825] (-) TimerEvent: {}
+[94.684781] (-) TimerEvent: {}
+[94.785461] (-) TimerEvent: {}
+[94.886432] (-) TimerEvent: {}
+[94.987089] (-) TimerEvent: {}
+[95.088064] (-) TimerEvent: {}
+[95.188694] (-) TimerEvent: {}
+[95.289614] (-) TimerEvent: {}
+[95.390235] (-) TimerEvent: {}
+[95.491161] (-) TimerEvent: {}
+[95.592443] (-) TimerEvent: {}
+[95.694727] (-) TimerEvent: {}
+[95.795606] (-) TimerEvent: {}
+[95.896484] (-) TimerEvent: {}
+[95.997360] (-) TimerEvent: {}
+[96.098217] (-) TimerEvent: {}
+[96.199130] (-) TimerEvent: {}
+[96.300018] (-) TimerEvent: {}
+[96.400707] (-) TimerEvent: {}
+[96.501366] (-) TimerEvent: {}
+[96.602256] (-) TimerEvent: {}
+[96.702879] (-) TimerEvent: {}
+[96.803733] (-) TimerEvent: {}
+[96.904383] (-) TimerEvent: {}
+[97.005018] (-) TimerEvent: {}
+[97.105661] (-) TimerEvent: {}
+[97.206287] (-) TimerEvent: {}
+[97.306934] (-) TimerEvent: {}
+[97.407550] (-) TimerEvent: {}
+[97.508210] (-) TimerEvent: {}
+[97.608855] (-) TimerEvent: {}
+[97.709499] (-) TimerEvent: {}
+[97.810172] (-) TimerEvent: {}
+[97.911043] (-) TimerEvent: {}
+[98.012714] (-) TimerEvent: {}
+[98.113830] (-) TimerEvent: {}
+[98.215215] (-) TimerEvent: {}
+[98.316367] (-) TimerEvent: {}
+[98.417956] (-) TimerEvent: {}
+[98.519031] (-) TimerEvent: {}
+[98.620670] (-) TimerEvent: {}
+[99.146516] (-) TimerEvent: {}
+[99.247731] (-) TimerEvent: {}
+[99.349740] (-) TimerEvent: {}
+[99.450911] (-) TimerEvent: {}
+[99.551841] (-) TimerEvent: {}
+[99.652542] (-) TimerEvent: {}
+[99.753715] (-) TimerEvent: {}
+[99.854603] (-) TimerEvent: {}
+[99.955777] (-) TimerEvent: {}
+[100.056654] (-) TimerEvent: {}
+[100.157836] (-) TimerEvent: {}
+[100.258705] (-) TimerEvent: {}
+[100.359935] (-) TimerEvent: {}
+[100.460559] (-) TimerEvent: {}
+[100.561725] (-) TimerEvent: {}
+[100.662614] (-) TimerEvent: {}
+[100.763203] (-) TimerEvent: {}
+[100.864414] (-) TimerEvent: {}
+[100.965569] (-) TimerEvent: {}
+[101.066805] (-) TimerEvent: {}
+[101.167621] (-) TimerEvent: {}
+[101.268830] (-) TimerEvent: {}
+[101.369422] (-) TimerEvent: {}
+[101.470055] (-) TimerEvent: {}
+[101.571189] (-) TimerEvent: {}
+[101.672037] (-) TimerEvent: {}
+[101.773322] (-) TimerEvent: {}
+[101.874460] (-) TimerEvent: {}
+[101.975455] (-) TimerEvent: {}
+[102.076644] (-) TimerEvent: {}
+[102.177527] (-) TimerEvent: {}
+[102.278708] (-) TimerEvent: {}
+[102.380035] (-) TimerEvent: {}
+[102.480651] (-) TimerEvent: {}
+[102.581838] (-) TimerEvent: {}
+[102.682667] (-) TimerEvent: {}
+[102.783801] (-) TimerEvent: {}
+[102.884669] (-) TimerEvent: {}
+[102.985279] (-) TimerEvent: {}
+[103.086422] (-) TimerEvent: {}
+[103.187257] (-) TimerEvent: {}
+[103.288506] (-) TimerEvent: {}
+[103.389396] (-) TimerEvent: {}
+[103.490537] (-) TimerEvent: {}
+[103.591390] (-) TimerEvent: {}
+[103.692594] (-) TimerEvent: {}
+[103.793443] (-) TimerEvent: {}
+[103.894041] (-) TimerEvent: {}
+[103.995229] (-) TimerEvent: {}
+[104.096440] (-) TimerEvent: {}
+[104.197036] (-) TimerEvent: {}
+[104.298494] (-) TimerEvent: {}
+[104.399093] (-) TimerEvent: {}
+[104.500471] (-) TimerEvent: {}
+[104.601075] (-) TimerEvent: {}
+[104.701664] (-) TimerEvent: {}
+[104.802875] (-) TimerEvent: {}
+[104.903453] (-) TimerEvent: {}
+[105.004676] (-) TimerEvent: {}
+[105.106242] (-) TimerEvent: {}
+[105.207338] (-) TimerEvent: {}
+[105.308516] (-) TimerEvent: {}
+[105.409356] (-) TimerEvent: {}
+[105.510538] (-) TimerEvent: {}
+[105.611136] (-) TimerEvent: {}
+[105.712516] (-) TimerEvent: {}
+[105.813723] (-) TimerEvent: {}
+[105.915001] (-) TimerEvent: {}
+[106.016082] (-) TimerEvent: {}
+[106.116691] (-) TimerEvent: {}
+[106.218056] (-) TimerEvent: {}
+[106.318953] (-) TimerEvent: {}
+[106.420512] (-) TimerEvent: {}
+[106.521341] (-) TimerEvent: {}
+[106.622498] (-) TimerEvent: {}
+[106.723086] (-) TimerEvent: {}
+[106.824254] (-) TimerEvent: {}
+[106.925099] (-) TimerEvent: {}
+[107.026210] (-) TimerEvent: {}
+[107.127558] (-) TimerEvent: {}
+[107.228723] (-) TimerEvent: {}
+[107.329580] (-) TimerEvent: {}
+[107.430722] (-) TimerEvent: {}
+[107.531313] (-) TimerEvent: {}
+[107.632436] (-) TimerEvent: {}
+[107.733302] (-) TimerEvent: {}
+[107.834418] (-) TimerEvent: {}
+[107.935552] (-) TimerEvent: {}
+[108.036452] (-) TimerEvent: {}
+[108.137037] (-) TimerEvent: {}
+[108.238202] (-) TimerEvent: {}
+[108.339888] (-) TimerEvent: {}
+[108.441066] (-) TimerEvent: {}
+[108.541898] (-) TimerEvent: {}
+[108.643052] (-) TimerEvent: {}
+[108.743919] (-) TimerEvent: {}
+[108.845075] (-) TimerEvent: {}
+[108.945911] (-) TimerEvent: {}
+[109.046498] (-) TimerEvent: {}
+[109.147649] (-) TimerEvent: {}
+[109.248528] (-) TimerEvent: {}
+[109.349671] (-) TimerEvent: {}
+[109.450820] (-) TimerEvent: {}
+[109.551956] (-) TimerEvent: {}
+[109.652849] (-) TimerEvent: {}
+[109.754007] (-) TimerEvent: {}
+[109.854586] (-) TimerEvent: {}
+[109.955699] (-) TimerEvent: {}
+[110.056537] (-) TimerEvent: {}
+[110.157670] (-) TimerEvent: {}
+[110.258533] (-) TimerEvent: {}
+[110.359696] (-) TimerEvent: {}
+[110.461069] (-) TimerEvent: {}
+[110.562233] (-) TimerEvent: {}
+[110.662811] (-) TimerEvent: {}
+[110.763965] (-) TimerEvent: {}
+[110.864845] (-) TimerEvent: {}
+[110.966032] (-) TimerEvent: {}
+[111.066881] (-) TimerEvent: {}
+[111.168024] (-) TimerEvent: {}
+[111.268621] (-) TimerEvent: {}
+[111.369792] (-) TimerEvent: {}
+[111.470674] (-) TimerEvent: {}
+[111.571237] (-) TimerEvent: {}
+[111.672412] (-) TimerEvent: {}
+[111.772988] (-) TimerEvent: {}
+[111.874134] (-) TimerEvent: {}
+[111.975041] (-) TimerEvent: {}
+[112.076613] (-) TimerEvent: {}
+[112.177189] (-) TimerEvent: {}
+[112.278353] (-) TimerEvent: {}
+[112.379231] (-) TimerEvent: {}
+[112.480409] (-) TimerEvent: {}
+[112.581222] (-) TimerEvent: {}
+[112.682072] (-) TimerEvent: {}
+[112.783070] (-) TimerEvent: {}
+[112.884346] (-) TimerEvent: {}
+[112.985344] (-) TimerEvent: {}
+[113.086342] (-) TimerEvent: {}
+[113.187616] (-) TimerEvent: {}
+[113.288609] (-) TimerEvent: {}
+[113.389547] (-) TimerEvent: {}
+[113.490146] (-) TimerEvent: {}
+[113.591421] (-) TimerEvent: {}
+[113.692309] (-) TimerEvent: {}
+[113.792924] (-) TimerEvent: {}
+[113.893515] (-) TimerEvent: {}
+[113.994142] (-) TimerEvent: {}
+[114.095401] (-) TimerEvent: {}
+[114.196319] (-) TimerEvent: {}
+[114.297636] (-) TimerEvent: {}
+[114.398564] (-) TimerEvent: {}
+[114.499231] (-) TimerEvent: {}
+[114.600565] (-) TimerEvent: {}
+[114.701889] (-) TimerEvent: {}
+[114.802832] (-) TimerEvent: {}
+[114.903456] (-) TimerEvent: {}
+[115.004799] (-) TimerEvent: {}
+[115.105977] (-) TimerEvent: {}
+[115.207707] (-) TimerEvent: {}
+[115.308926] (-) TimerEvent: {}
+[115.409540] (-) TimerEvent: {}
+[115.510133] (-) TimerEvent: {}
+[115.611328] (-) TimerEvent: {}
+[115.711940] (-) TimerEvent: {}
+[115.813269] (-) TimerEvent: {}
+[115.914274] (-) TimerEvent: {}
+[116.015634] (-) TimerEvent: {}
+[116.116603] (-) TimerEvent: {}
+[116.217872] (-) TimerEvent: {}
+[116.318825] (-) TimerEvent: {}
+[116.420313] (-) TimerEvent: {}
+[116.521248] (-) TimerEvent: {}
+[116.622428] (-) TimerEvent: {}
+[116.723427] (-) TimerEvent: {}
+[116.824267] (-) TimerEvent: {}
+[116.926623] (-) TimerEvent: {}
+[117.028669] (-) TimerEvent: {}
+[117.130844] (-) TimerEvent: {}
+[117.232287] (-) TimerEvent: {}
+[117.333576] (-) TimerEvent: {}
+[117.434867] (-) TimerEvent: {}
+[117.536198] (-) TimerEvent: {}
+[117.636821] (-) TimerEvent: {}
+[117.738053] (-) TimerEvent: {}
+[117.839316] (-) TimerEvent: {}
+[117.940295] (-) TimerEvent: {}
+[118.041617] (-) TimerEvent: {}
+[118.142215] (-) TimerEvent: {}
+[118.243461] (-) TimerEvent: {}
+[118.344396] (-) TimerEvent: {}
+[118.445582] (-) TimerEvent: {}
+[118.547261] (-) TimerEvent: {}
+[118.648124] (-) TimerEvent: {}
+[118.748763] (-) TimerEvent: {}
+[118.849377] (-) TimerEvent: {}
+[118.950600] (-) TimerEvent: {}
+[119.051508] (-) TimerEvent: {}
+[119.152724] (-) TimerEvent: {}
+[119.253697] (-) TimerEvent: {}
+[119.355035] (-) TimerEvent: {}
+[119.456800] (-) TimerEvent: {}
+[119.558195] (-) TimerEvent: {}
+[119.659140] (-) TimerEvent: {}
+[119.760438] (-) TimerEvent: {}
+[119.861457] (-) TimerEvent: {}
+[119.962726] (-) TimerEvent: {}
+[120.063665] (-) TimerEvent: {}
+[120.164940] (-) TimerEvent: {}
+[120.265910] (-) TimerEvent: {}
+[120.367938] (-) TimerEvent: {}
+[120.470535] (-) TimerEvent: {}
+[120.571841] (-) TimerEvent: {}
+[120.673278] (-) TimerEvent: {}
+[120.774291] (-) TimerEvent: {}
+[120.875221] (-) TimerEvent: {}
+[120.976725] (-) TimerEvent: {}
+[121.077652] (-) TimerEvent: {}
+[121.178881] (-) TimerEvent: {}
+[121.280097] (-) TimerEvent: {}
+[121.380807] (-) TimerEvent: {}
+[121.482544] (-) TimerEvent: {}
+[121.583914] (-) TimerEvent: {}
+[121.684692] (-) TimerEvent: {}
+[121.786061] (-) TimerEvent: {}
+[121.887733] (-) TimerEvent: {}
+[121.988785] (-) TimerEvent: {}
+[122.090102] (-) TimerEvent: {}
+[122.191167] (-) TimerEvent: {}
+[122.292757] (-) TimerEvent: {}
+[122.394736] (-) TimerEvent: {}
+[122.495373] (-) TimerEvent: {}
+[122.597233] (-) TimerEvent: {}
+[122.698389] (-) TimerEvent: {}
+[122.799554] (-) TimerEvent: {}
+[122.900424] (-) TimerEvent: {}
+[123.001577] (-) TimerEvent: {}
+[123.102148] (-) TimerEvent: {}
+[123.203322] (-) TimerEvent: {}
+[123.303894] (-) TimerEvent: {}
+[123.405082] (-) TimerEvent: {}
+[123.505916] (-) TimerEvent: {}
+[123.607063] (-) TimerEvent: {}
+[123.708229] (-) TimerEvent: {}
+[123.808798] (-) TimerEvent: {}
+[123.909928] (-) TimerEvent: {}
+[124.011050] (-) TimerEvent: {}
+[124.112168] (-) TimerEvent: {}
+[124.212961] (-) TimerEvent: {}
+[124.314142] (-) TimerEvent: {}
+[124.415062] (-) TimerEvent: {}
+[124.516624] (-) TimerEvent: {}
+[124.617902] (-) TimerEvent: {}
+[124.719054] (-) TimerEvent: {}
+[124.819891] (-) TimerEvent: {}
+[124.920515] (-) TimerEvent: {}
+[125.021805] (-) TimerEvent: {}
+[125.122742] (-) TimerEvent: {}
+[125.224020] (-) TimerEvent: {}
+[125.324657] (-) TimerEvent: {}
+[125.425795] (-) TimerEvent: {}
+[125.526938] (-) TimerEvent: {}
+[125.627772] (-) TimerEvent: {}
+[125.729458] (-) TimerEvent: {}
+[125.830059] (-) TimerEvent: {}
+[125.931190] (-) TimerEvent: {}
+[126.032408] (-) TimerEvent: {}
+[126.133552] (-) TimerEvent: {}
+[126.234701] (-) TimerEvent: {}
+[126.335844] (-) TimerEvent: {}
+[126.437015] (-) TimerEvent: {}
+[126.538161] (-) TimerEvent: {}
+[126.639328] (-) TimerEvent: {}
+[126.740167] (-) TimerEvent: {}
+[126.840787] (-) TimerEvent: {}
+[126.941391] (-) TimerEvent: {}
+[127.041969] (-) TimerEvent: {}
+[127.143240] (-) TimerEvent: {}
+[127.244801] (-) TimerEvent: {}
+[127.345971] (-) TimerEvent: {}
+[127.447097] (-) TimerEvent: {}
+[127.547945] (-) TimerEvent: {}
+[127.649088] (-) TimerEvent: {}
+[127.750202] (-) TimerEvent: {}
+[127.851073] (-) TimerEvent: {}
+[127.952157] (-) TimerEvent: {}
+[128.053235] (-) TimerEvent: {}
+[128.154433] (-) TimerEvent: {}
+[128.255517] (-) TimerEvent: {}
+[128.357035] (-) TimerEvent: {}
+[128.458180] (-) TimerEvent: {}
+[128.561056] (-) TimerEvent: {}
+[128.662392] (-) TimerEvent: {}
+[128.763709] (-) TimerEvent: {}
+[128.864314] (-) TimerEvent: {}
+[128.964889] (-) TimerEvent: {}
+[129.065452] (-) TimerEvent: {}
+[129.166575] (-) TimerEvent: {}
+[129.267735] (-) TimerEvent: {}
+[129.368301] (-) TimerEvent: {}
+[129.469439] (-) TimerEvent: {}
+[129.570696] (-) TimerEvent: {}
+[129.671885] (-) TimerEvent: {}
+[129.773113] (-) TimerEvent: {}
+[129.873959] (-) TimerEvent: {}
+[129.975122] (-) TimerEvent: {}
+[130.075945] (-) TimerEvent: {}
+[130.176534] (-) TimerEvent: {}
+[130.277698] (-) TimerEvent: {}
+[130.378566] (-) TimerEvent: {}
+[130.479675] (-) TimerEvent: {}
+[130.580866] (-) TimerEvent: {}
+[130.681994] (-) TimerEvent: {}
+[130.782906] (-) TimerEvent: {}
+[130.884047] (-) TimerEvent: {}
+[130.984720] (-) TimerEvent: {}
+[131.085842] (-) TimerEvent: {}
+[131.186676] (-) TimerEvent: {}
+[131.287835] (-) TimerEvent: {}
+[131.388545] (-) TimerEvent: {}
+[131.489099] (-) TimerEvent: {}
+[131.589865] (-) TimerEvent: {}
+[131.690981] (-) TimerEvent: {}
+[131.792644] (-) TimerEvent: {}
+[131.893378] (-) TimerEvent: {}
+[131.994531] (-) TimerEvent: {}
+[132.095692] (-) TimerEvent: {}
+[132.196308] (-) TimerEvent: {}
+[132.296895] (-) TimerEvent: {}
+[132.398065] (-) TimerEvent: {}
+[132.498630] (-) TimerEvent: {}
+[132.599210] (-) TimerEvent: {}
+[132.700306] (-) TimerEvent: {}
+[132.801134] (-) TimerEvent: {}
+[132.902335] (-) TimerEvent: {}
+[133.219610] (-) TimerEvent: {}
+[133.320826] (-) TimerEvent: {}
+[133.421403] (-) TimerEvent: {}
+[133.522563] (-) TimerEvent: {}
+[133.623378] (-) TimerEvent: {}
+[133.724554] (-) TimerEvent: {}
+[133.825353] (-) TimerEvent: {}
+[133.926498] (-) TimerEvent: {}
+[134.027347] (-) TimerEvent: {}
+[134.127925] (-) TimerEvent: {}
+[134.229138] (-) TimerEvent: {}
+[134.329985] (-) TimerEvent: {}
+[134.431167] (-) TimerEvent: {}
+[134.532316] (-) TimerEvent: {}
+[134.633206] (-) TimerEvent: {}
+[134.734356] (-) TimerEvent: {}
+[134.835535] (-) TimerEvent: {}
+[134.936321] (-) TimerEvent: {}
+[135.037475] (-) TimerEvent: {}
+[135.138308] (-) TimerEvent: {}
+[135.239417] (-) TimerEvent: {}
+[135.339980] (-) TimerEvent: {}
+[135.441147] (-) TimerEvent: {}
+[135.541737] (-) TimerEvent: {}
+[135.642888] (-) TimerEvent: {}
+[135.743744] (-) TimerEvent: {}
+[135.844935] (-) TimerEvent: {}
+[135.946046] (-) TimerEvent: {}
+[136.047211] (-) TimerEvent: {}
+[136.148055] (-) TimerEvent: {}
+[136.248664] (-) TimerEvent: {}
+[136.349826] (-) TimerEvent: {}
+[136.450405] (-) TimerEvent: {}
+[136.551564] (-) TimerEvent: {}
+[136.652434] (-) TimerEvent: {}
+[136.753540] (-) TimerEvent: {}
+[136.854429] (-) TimerEvent: {}
+[136.955608] (-) TimerEvent: {}
+[137.056249] (-) TimerEvent: {}
+[137.157050] (-) TimerEvent: {}
+[137.258236] (-) TimerEvent: {}
+[137.358817] (-) TimerEvent: {}
+[137.459940] (-) TimerEvent: {}
+[137.560550] (-) TimerEvent: {}
+[137.662299] (-) TimerEvent: {}
+[137.763181] (-) TimerEvent: {}
+[137.864476] (-) TimerEvent: {}
+[137.965344] (-) TimerEvent: {}
+[138.065927] (-) TimerEvent: {}
+[138.167164] (-) TimerEvent: {}
+[138.268018] (-) TimerEvent: {}
+[138.369218] (-) TimerEvent: {}
+[138.469795] (-) TimerEvent: {}
+[138.571638] (-) TimerEvent: {}
+[138.672842] (-) TimerEvent: {}
+[138.773699] (-) TimerEvent: {}
+[138.874841] (-) TimerEvent: {}
+[138.975418] (-) TimerEvent: {}
+[139.076593] (-) TimerEvent: {}
+[139.177592] (-) TimerEvent: {}
+[139.278872] (-) TimerEvent: {}
+[139.379461] (-) TimerEvent: {}
+[139.480615] (-) TimerEvent: {}
+[139.581759] (-) TimerEvent: {}
+[139.682840] (-) TimerEvent: {}
+[139.784009] (-) TimerEvent: {}
+[139.884879] (-) TimerEvent: {}
+[139.986007] (-) TimerEvent: {}
+[140.086871] (-) TimerEvent: {}
+[140.188058] (-) TimerEvent: {}
+[140.288950] (-) TimerEvent: {}
+[140.390163] (-) TimerEvent: {}
+[140.491027] (-) TimerEvent: {}
+[140.592250] (-) TimerEvent: {}
+[140.692822] (-) TimerEvent: {}
+[140.794021] (-) TimerEvent: {}
+[140.894869] (-) TimerEvent: {}
+[140.996089] (-) TimerEvent: {}
+[141.096930] (-) TimerEvent: {}
+[141.198399] (-) TimerEvent: {}
+[141.299604] (-) TimerEvent: {}
+[141.400191] (-) TimerEvent: {}
+[141.501339] (-) TimerEvent: {}
+[141.602517] (-) TimerEvent: {}
+[141.703359] (-) TimerEvent: {}
+[141.804555] (-) TimerEvent: {}
+[141.905762] (-) TimerEvent: {}
+[142.006338] (-) TimerEvent: {}
+[142.107498] (-) TimerEvent: {}
+[142.208933] (-) TimerEvent: {}
+[142.310110] (-) TimerEvent: {}
+[142.411037] (-) TimerEvent: {}
+[142.511610] (-) TimerEvent: {}
+[142.612935] (-) TimerEvent: {}
+[142.713831] (-) TimerEvent: {}
+[142.814949] (-) TimerEvent: {}
+[142.916096] (-) TimerEvent: {}
+[143.016701] (-) TimerEvent: {}
+[143.117948] (-) TimerEvent: {}
+[143.219048] (-) TimerEvent: {}
+[143.320242] (-) TimerEvent: {}
+[143.421085] (-) TimerEvent: {}
+[143.522293] (-) TimerEvent: {}
+[143.623809] (-) TimerEvent: {}
+[143.725182] (-) TimerEvent: {}
+[143.827512] (-) TimerEvent: {}
+[143.928672] (-) TimerEvent: {}
+[144.029813] (-) TimerEvent: {}
+[144.130905] (-) TimerEvent: {}
+[144.232092] (-) TimerEvent: {}
+[144.332974] (-) TimerEvent: {}
+[144.433551] (-) TimerEvent: {}
+[144.534729] (-) TimerEvent: {}
+[144.635594] (-) TimerEvent: {}
+[144.736973] (-) TimerEvent: {}
+[144.838169] (-) TimerEvent: {}
+[144.939056] (-) TimerEvent: {}
+[145.040232] (-) TimerEvent: {}
+[145.141754] (-) TimerEvent: {}
+[145.244799] (-) TimerEvent: {}
+[145.346185] (-) TimerEvent: {}
+[145.447396] (-) TimerEvent: {}
+[145.548275] (-) TimerEvent: {}
+[145.649419] (-) TimerEvent: {}
+[145.749999] (-) TimerEvent: {}
+[145.851446] (-) TimerEvent: {}
+[145.952295] (-) TimerEvent: {}
+[146.053422] (-) TimerEvent: {}
+[146.154271] (-) TimerEvent: {}
+[146.256098] (-) TimerEvent: {}
+[146.357003] (-) TimerEvent: {}
+[146.458156] (-) TimerEvent: {}
+[146.558736] (-) TimerEvent: {}
+[146.659928] (-) TimerEvent: {}
+[146.761326] (-) TimerEvent: {}
+[146.862541] (-) TimerEvent: {}
+[146.963436] (-) TimerEvent: {}
+[147.064573] (-) TimerEvent: {}
+[147.165153] (-) TimerEvent: {}
+[147.266565] (-) TimerEvent: {}
+[147.367455] (-) TimerEvent: {}
+[147.468704] (-) TimerEvent: {}
+[147.569302] (-) TimerEvent: {}
+[147.670433] (-) TimerEvent: {}
+[147.771514] (-) TimerEvent: {}
+[147.872739] (-) TimerEvent: {}
+[147.973878] (-) TimerEvent: {}
+[148.074900] (-) TimerEvent: {}
+[148.176446] (-) TimerEvent: {}
+[148.277523] (-) TimerEvent: {}
+[148.378731] (-) TimerEvent: {}
+[148.479593] (-) TimerEvent: {}
+[148.580849] (-) TimerEvent: {}
+[148.681697] (-) TimerEvent: {}
+[148.783285] (-) TimerEvent: {}
+[148.884204] (-) TimerEvent: {}
+[148.985389] (-) TimerEvent: {}
+[149.086274] (-) TimerEvent: {}
+[149.187428] (-) TimerEvent: {}
+[149.288520] (-) TimerEvent: {}
+[149.389718] (-) TimerEvent: {}
+[149.490580] (-) TimerEvent: {}
+[149.591144] (-) TimerEvent: {}
+[149.692438] (-) TimerEvent: {}
+[149.793858] (-) TimerEvent: {}
+[149.895213] (-) TimerEvent: {}
+[149.996468] (-) TimerEvent: {}
+[150.097629] (-) TimerEvent: {}
+[150.198779] (-) TimerEvent: {}
+[150.299344] (-) TimerEvent: {}
+[150.400598] (-) TimerEvent: {}
+[150.501451] (-) TimerEvent: {}
+[150.602550] (-) TimerEvent: {}
+[150.703402] (-) TimerEvent: {}
+[150.805128] (-) TimerEvent: {}
+[150.906149] (-) TimerEvent: {}
+[151.007299] (-) TimerEvent: {}
+[151.108576] (-) TimerEvent: {}
+[151.209154] (-) TimerEvent: {}
+[151.310349] (-) TimerEvent: {}
+[151.411204] (-) TimerEvent: {}
+[151.511776] (-) TimerEvent: {}
+[151.612968] (-) TimerEvent: {}
+[151.713823] (-) TimerEvent: {}
+[151.815201] (-) TimerEvent: {}
+[151.916214] (-) TimerEvent: {}
+[152.016796] (-) TimerEvent: {}
+[152.117937] (-) TimerEvent: {}
+[152.218556] (-) TimerEvent: {}
+[152.319946] (-) TimerEvent: {}
+[152.420831] (-) TimerEvent: {}
+[152.521956] (-) TimerEvent: {}
+[152.623196] (-) TimerEvent: {}
+[152.723773] (-) TimerEvent: {}
+[152.824962] (-) TimerEvent: {}
+[152.926786] (-) TimerEvent: {}
+[153.027965] (-) TimerEvent: {}
+[153.128578] (-) TimerEvent: {}
+[153.229779] (-) TimerEvent: {}
+[153.330871] (-) TimerEvent: {}
+[153.432031] (-) TimerEvent: {}
+[153.533176] (-) TimerEvent: {}
+[153.634028] (-) TimerEvent: {}
+[153.735182] (-) TimerEvent: {}
+[153.835764] (-) TimerEvent: {}
+[153.936985] (-) TimerEvent: {}
+[154.037829] (-) TimerEvent: {}
+[154.138953] (-) TimerEvent: {}
+[154.240124] (-) TimerEvent: {}
+[154.341507] (-) TimerEvent: {}
+[154.442701] (-) TimerEvent: {}
+[154.543298] (-) TimerEvent: {}
+[154.644441] (-) TimerEvent: {}
+[154.745553] (-) TimerEvent: {}
+[154.846936] (-) TimerEvent: {}
+[154.948111] (-) TimerEvent: {}
+[155.048984] (-) TimerEvent: {}
+[155.150148] (-) TimerEvent: {}
+[155.251003] (-) TimerEvent: {}
+[155.352224] (-) TimerEvent: {}
+[155.453440] (-) TimerEvent: {}
+[155.554930] (-) TimerEvent: {}
+[155.656051] (-) TimerEvent: {}
+[155.756950] (-) TimerEvent: {}
+[155.858102] (-) TimerEvent: {}
+[155.959267] (-) TimerEvent: {}
+[156.060110] (-) TimerEvent: {}
+[156.160703] (-) TimerEvent: {}
+[156.261865] (-) TimerEvent: {}
+[156.362702] (-) TimerEvent: {}
+[156.463266] (-) TimerEvent: {}
+[156.564361] (-) TimerEvent: {}
+[156.665547] (-) TimerEvent: {}
+[156.766355] (-) TimerEvent: {}
+[156.866923] (-) TimerEvent: {}
+[156.968092] (-) TimerEvent: {}
+[157.068939] (-) TimerEvent: {}
+[157.170065] (-) TimerEvent: {}
+[157.270645] (-) TimerEvent: {}
+[157.371810] (-) TimerEvent: {}
+[157.472674] (-) TimerEvent: {}
+[157.573862] (-) TimerEvent: {}
+[157.674704] (-) TimerEvent: {}
+[157.775273] (-) TimerEvent: {}
+[157.877058] (-) TimerEvent: {}
+[157.978031] (-) TimerEvent: {}
+[158.079025] (-) TimerEvent: {}
+[158.179596] (-) TimerEvent: {}
+[158.280715] (-) TimerEvent: {}
+[158.382076] (-) TimerEvent: {}
+[158.482639] (-) TimerEvent: {}
+[158.583758] (-) TimerEvent: {}
+[158.684599] (-) TimerEvent: {}
+[158.785762] (-) TimerEvent: {}
+[158.886931] (-) TimerEvent: {}
+[158.987783] (-) TimerEvent: {}
+[159.088977] (-) TimerEvent: {}
+[159.189993] (-) TimerEvent: {}
+[159.291043] (-) TimerEvent: {}
+[159.392221] (-) TimerEvent: {}
+[159.492799] (-) TimerEvent: {}
+[159.593950] (-) TimerEvent: {}
+[159.694773] (-) TimerEvent: {}
+[159.795909] (-) TimerEvent: {}
+[159.896507] (-) TimerEvent: {}
+[159.997629] (-) TimerEvent: {}
+[160.098466] (-) TimerEvent: {}
+[160.199630] (-) TimerEvent: {}
+[160.300544] (-) TimerEvent: {}
+[160.401124] (-) TimerEvent: {}
+[160.502252] (-) TimerEvent: {}
+[160.602868] (-) TimerEvent: {}
+[160.704010] (-) TimerEvent: {}
+[160.804917] (-) TimerEvent: {}
+[160.906072] (-) TimerEvent: {}
+[161.006907] (-) TimerEvent: {}
+[161.108062] (-) TimerEvent: {}
+[161.209246] (-) TimerEvent: {}
+[161.310071] (-) TimerEvent: {}
+[161.411252] (-) TimerEvent: {}
+[161.512108] (-) TimerEvent: {}
+[161.612919] (-) TimerEvent: {}
+[161.714070] (-) TimerEvent: {}
+[161.814926] (-) TimerEvent: {}
+[161.916080] (-) TimerEvent: {}
+[162.016683] (-) TimerEvent: {}
+[162.117846] (-) TimerEvent: {}
+[162.218688] (-) TimerEvent: {}
+[162.319845] (-) TimerEvent: {}
+[162.420720] (-) TimerEvent: {}
+[162.521878] (-) TimerEvent: {}
+[162.622741] (-) TimerEvent: {}
+[162.723307] (-) TimerEvent: {}
+[162.824546] (-) TimerEvent: {}
+[162.925390] (-) TimerEvent: {}
+[163.026523] (-) TimerEvent: {}
+[163.127125] (-) TimerEvent: {}
+[163.227956] (-) TimerEvent: {}
+[163.329150] (-) TimerEvent: {}
+[163.429731] (-) TimerEvent: {}
+[163.530908] (-) TimerEvent: {}
+[163.632213] (-) TimerEvent: {}
+[163.733060] (-) TimerEvent: {}
+[163.833623] (-) TimerEvent: {}
+[163.934773] (-) TimerEvent: {}
+[164.035612] (-) TimerEvent: {}
+[164.136827] (-) TimerEvent: {}
+[164.237649] (-) TimerEvent: {}
+[164.338810] (-) TimerEvent: {}
+[164.439379] (-) TimerEvent: {}
+[164.540546] (-) TimerEvent: {}
+[164.641689] (-) TimerEvent: {}
+[164.742905] (-) TimerEvent: {}
+[164.843545] (-) TimerEvent: {}
+[164.944123] (-) TimerEvent: {}
+[165.045366] (-) TimerEvent: {}
+[165.147084] (-) TimerEvent: {}
+[165.247683] (-) TimerEvent: {}
+[165.348275] (-) TimerEvent: {}
+[165.449432] (-) TimerEvent: {}
+[165.550005] (-) TimerEvent: {}
+[165.651218] (-) TimerEvent: {}
+[165.752326] (-) TimerEvent: {}
+[165.853158] (-) TimerEvent: {}
+[165.954312] (-) TimerEvent: {}
+[166.055158] (-) TimerEvent: {}
+[166.156528] (-) TimerEvent: {}
+[166.257704] (-) TimerEvent: {}
+[166.358838] (-) TimerEvent: {}
+[166.460245] (-) TimerEvent: {}
+[166.561861] (-) TimerEvent: {}
+[166.662442] (-) TimerEvent: {}
+[166.763575] (-) TimerEvent: {}
+[166.864731] (-) TimerEvent: {}
+[166.965875] (-) TimerEvent: {}
+[167.066485] (-) TimerEvent: {}
+[167.167675] (-) TimerEvent: {}
+[167.269577] (-) TimerEvent: {}
+[167.374848] (-) TimerEvent: {}
+[167.476785] (-) TimerEvent: {}
+[167.580624] (-) TimerEvent: {}
+[167.681901] (-) TimerEvent: {}
+[167.782877] (-) TimerEvent: {}
+[167.887985] (-) TimerEvent: {}
+[167.989055] (-) TimerEvent: {}
+[168.090103] (-) TimerEvent: {}
+[168.191152] (-) TimerEvent: {}
+[168.291798] (-) TimerEvent: {}
+[168.392872] (-) TimerEvent: {}
+[168.493843] (-) TimerEvent: {}
+[168.594811] (-) TimerEvent: {}
+[168.696360] (-) TimerEvent: {}
+[168.797086] (-) TimerEvent: {}
+[168.898157] (-) TimerEvent: {}
+[168.999203] (-) TimerEvent: {}
+[169.100312] (-) TimerEvent: {}
+[169.201338] (-) TimerEvent: {}
+[169.302310] (-) TimerEvent: {}
+[169.403278] (-) TimerEvent: {}
+[169.504286] (-) TimerEvent: {}
+[169.604902] (-) TimerEvent: {}
+[169.706012] (-) TimerEvent: {}
+[169.807089] (-) TimerEvent: {}
+[169.908118] (-) TimerEvent: {}
+[170.008729] (-) TimerEvent: {}
+[170.109293] (-) TimerEvent: {}
+[170.210486] (-) TimerEvent: {}
+[170.311416] (-) TimerEvent: {}
+[170.411985] (-) TimerEvent: {}
+[170.512595] (-) TimerEvent: {}
+[170.613161] (-) TimerEvent: {}
+[170.713721] (-) TimerEvent: {}
+[170.814288] (-) TimerEvent: {}
+[170.914851] (-) TimerEvent: {}
+[171.015423] (-) TimerEvent: {}
+[171.115996] (-) TimerEvent: {}
+[171.217226] (-) TimerEvent: {}
+[171.318128] (-) TimerEvent: {}
+[171.418695] (-) TimerEvent: {}
+[171.519278] (-) TimerEvent: {}
+[171.619854] (-) TimerEvent: {}
+[171.720459] (-) TimerEvent: {}
+[171.822121] (-) TimerEvent: {}
+[171.922696] (-) TimerEvent: {}
+[172.023263] (-) TimerEvent: {}
+[172.124560] (-) TimerEvent: {}
+[172.225214] (-) TimerEvent: {}
+[172.326257] (-) TimerEvent: {}
+[172.427375] (-) TimerEvent: {}
+[172.528256] (-) TimerEvent: {}
+[172.629547] (-) TimerEvent: {}
+[172.730897] (-) TimerEvent: {}
+[172.832383] (-) TimerEvent: {}
+[172.933567] (-) TimerEvent: {}
+[173.034395] (-) TimerEvent: {}
+[173.135567] (-) TimerEvent: {}
+[173.237132] (-) TimerEvent: {}
+[173.338269] (-) TimerEvent: {}
+[173.439097] (-) TimerEvent: {}
+[173.539666] (-) TimerEvent: {}
+[173.640825] (-) TimerEvent: {}
+[173.741889] (-) TimerEvent: {}
+[173.843032] (-) TimerEvent: {}
+[173.943883] (-) TimerEvent: {}
+[174.044508] (-) TimerEvent: {}
+[174.146236] (-) TimerEvent: {}
+[174.247114] (-) TimerEvent: {}
+[174.348281] (-) TimerEvent: {}
+[174.449139] (-) TimerEvent: {}
+[174.549705] (-) TimerEvent: {}
+[174.651011] (-) TimerEvent: {}
+[174.751787] (-) TimerEvent: {}
+[174.852368] (-) TimerEvent: {}
+[174.953479] (-) TimerEvent: {}
+[175.055048] (-) TimerEvent: {}
+[175.155608] (-) TimerEvent: {}
+[175.256744] (-) TimerEvent: {}
+[175.357580] (-) TimerEvent: {}
+[175.458724] (-) TimerEvent: {}
+[175.559303] (-) TimerEvent: {}
+[175.660406] (-) TimerEvent: {}
+[175.761249] (-) TimerEvent: {}
+[175.862331] (-) TimerEvent: {}
+[175.963208] (-) TimerEvent: {}
+[176.063778] (-) TimerEvent: {}
+[176.165148] (-) TimerEvent: {}
+[176.266007] (-) TimerEvent: {}
+[176.367131] (-) TimerEvent: {}
+[176.467967] (-) TimerEvent: {}
+[176.569092] (-) TimerEvent: {}
+[176.669940] (-) TimerEvent: {}
+[176.770519] (-) TimerEvent: {}
+[176.871665] (-) TimerEvent: {}
+[176.972601] (-) TimerEvent: {}
+[177.073719] (-) TimerEvent: {}
+[177.174533] (-) TimerEvent: {}
+[177.275099] (-) TimerEvent: {}
+[177.376224] (-) TimerEvent: {}
+[177.477066] (-) TimerEvent: {}
+[177.578174] (-) TimerEvent: {}
+[177.679019] (-) TimerEvent: {}
+[177.780129] (-) TimerEvent: {}
+[177.880997] (-) TimerEvent: {}
+[177.982237] (-) TimerEvent: {}
+[178.083326] (-) TimerEvent: {}
+[178.184200] (-) TimerEvent: {}
+[178.285308] (-) TimerEvent: {}
+[178.386163] (-) TimerEvent: {}
+[178.487254] (-) TimerEvent: {}
+[178.587820] (-) TimerEvent: {}
+[178.688959] (-) TimerEvent: {}
+[178.789526] (-) TimerEvent: {}
+[178.890667] (-) TimerEvent: {}
+[178.991509] (-) TimerEvent: {}
+[179.092690] (-) TimerEvent: {}
+[179.193521] (-) TimerEvent: {}
+[179.294606] (-) TimerEvent: {}
+[179.396259] (-) TimerEvent: {}
+[179.497410] (-) TimerEvent: {}
+[179.598255] (-) TimerEvent: {}
+[179.699345] (-) TimerEvent: {}
+[179.799913] (-) TimerEvent: {}
+[179.901083] (-) TimerEvent: {}
+[180.001725] (-) TimerEvent: {}
+[180.102648] (-) TimerEvent: {}
+[180.203288] (-) TimerEvent: {}
+[180.303924] (-) TimerEvent: {}
+[180.404848] (-) TimerEvent: {}
+[180.505522] (-) TimerEvent: {}
+[180.606442] (-) TimerEvent: {}
+[180.707089] (-) TimerEvent: {}
+[180.808004] (-) TimerEvent: {}
+[180.908601] (-) TimerEvent: {}
+[181.009207] (-) TimerEvent: {}
+[181.109922] (-) TimerEvent: {}
+[181.210583] (-) TimerEvent: {}
+[181.311176] (-) TimerEvent: {}
+[181.411849] (-) TimerEvent: {}
+[181.512533] (-) TimerEvent: {}
+[181.613184] (-) TimerEvent: {}
+[181.713787] (-) TimerEvent: {}
+[181.814455] (-) TimerEvent: {}
+[181.915124] (-) TimerEvent: {}
+[182.015776] (-) TimerEvent: {}
+[182.116738] (-) TimerEvent: {}
+[182.217380] (-) TimerEvent: {}
+[182.318421] (-) TimerEvent: {}
+[182.419103] (-) TimerEvent: {}
+[182.520115] (-) TimerEvent: {}
+[182.620865] (-) TimerEvent: {}
+[182.721916] (-) TimerEvent: {}
+[182.822619] (-) TimerEvent: {}
+[182.923692] (-) TimerEvent: {}
+[183.024542] (-) TimerEvent: {}
+[183.125282] (-) TimerEvent: {}
+[183.226327] (-) TimerEvent: {}
+[183.327150] (-) TimerEvent: {}
+[183.428167] (-) TimerEvent: {}
+[183.528855] (-) TimerEvent: {}
+[183.629838] (-) TimerEvent: {}
+[183.730862] (-) TimerEvent: {}
+[183.831596] (-) TimerEvent: {}
+[183.932697] (-) TimerEvent: {}
+[184.033421] (-) TimerEvent: {}
+[184.134464] (-) TimerEvent: {}
+[184.235278] (-) TimerEvent: {}
+[184.336336] (-) TimerEvent: {}
+[184.437042] (-) TimerEvent: {}
+[184.538067] (-) TimerEvent: {}
+[184.639246] (-) TimerEvent: {}
+[184.739895] (-) TimerEvent: {}
+[184.840925] (-) TimerEvent: {}
+[184.941641] (-) TimerEvent: {}
+[185.042584] (-) TimerEvent: {}
+[185.143243] (-) TimerEvent: {}
+[185.244223] (-) TimerEvent: {}
+[185.344867] (-) TimerEvent: {}
+[185.445793] (-) TimerEvent: {}
+[185.546448] (-) TimerEvent: {}
+[185.647365] (-) TimerEvent: {}
+[185.748004] (-) TimerEvent: {}
+[185.848975] (-) TimerEvent: {}
+[185.949619] (-) TimerEvent: {}
+[186.050714] (-) TimerEvent: {}
+[186.151299] (-) TimerEvent: {}
+[186.251889] (-) TimerEvent: {}
+[186.352896] (-) TimerEvent: {}
+[186.453854] (-) TimerEvent: {}
+[186.554743] (-) TimerEvent: {}
+[186.655370] (-) TimerEvent: {}
+[186.756308] (-) TimerEvent: {}
+[186.856943] (-) TimerEvent: {}
+[186.957882] (-) TimerEvent: {}
+[187.058493] (-) TimerEvent: {}
+[187.159399] (-) TimerEvent: {}
+[187.260010] (-) TimerEvent: {}
+[187.361002] (-) TimerEvent: {}
+[187.461940] (-) TimerEvent: {}
+[187.562876] (-) TimerEvent: {}
+[187.663481] (-) TimerEvent: {}
+[187.764446] (-) TimerEvent: {}
+[187.865118] (-) TimerEvent: {}
+[187.966082] (-) TimerEvent: {}
+[188.066687] (-) TimerEvent: {}
+[188.167623] (-) TimerEvent: {}
+[188.268304] (-) TimerEvent: {}
+[188.368927] (-) TimerEvent: {}
+[188.469961] (-) TimerEvent: {}
+[188.570587] (-) TimerEvent: {}
+[188.671515] (-) TimerEvent: {}
+[188.772130] (-) TimerEvent: {}
+[188.873120] (-) TimerEvent: {}
+[188.974083] (-) TimerEvent: {}
+[189.074668] (-) TimerEvent: {}
+[189.175252] (-) TimerEvent: {}
+[189.276194] (-) TimerEvent: {}
+[189.377243] (-) TimerEvent: {}
+[189.478305] (-) TimerEvent: {}
+[189.579245] (-) TimerEvent: {}
+[189.679865] (-) TimerEvent: {}
+[189.780995] (-) TimerEvent: {}
+[189.881590] (-) TimerEvent: {}
+[189.982568] (-) TimerEvent: {}
+[190.083184] (-) TimerEvent: {}
+[190.184083] (-) TimerEvent: {}
+[190.285103] (-) TimerEvent: {}
+[190.386032] (-) TimerEvent: {}
+[190.487284] (-) TimerEvent: {}
+[190.588236] (-) TimerEvent: {}
+[190.688854] (-) TimerEvent: {}
+[190.789757] (-) TimerEvent: {}
+[190.890699] (-) TimerEvent: {}
+[190.991315] (-) TimerEvent: {}
+[191.092301] (-) TimerEvent: {}
+[191.193202] (-) TimerEvent: {}
+[191.293827] (-) TimerEvent: {}
+[191.394723] (-) TimerEvent: {}
+[191.495322] (-) TimerEvent: {}
+[191.596254] (-) TimerEvent: {}
+[191.696841] (-) TimerEvent: {}
+[191.797794] (-) TimerEvent: {}
+[191.898706] (-) TimerEvent: {}
+[191.999687] (-) TimerEvent: {}
+[192.100639] (-) TimerEvent: {}
+[192.201540] (-) TimerEvent: {}
+[192.302474] (-) TimerEvent: {}
+[192.403357] (-) TimerEvent: {}
+[192.504323] (-) TimerEvent: {}
+[192.605020] (-) TimerEvent: {}
+[192.706169] (-) TimerEvent: {}
+[192.806751] (-) TimerEvent: {}
+[192.907702] (-) TimerEvent: {}
+[193.008652] (-) TimerEvent: {}
+[193.109589] (-) TimerEvent: {}
+[193.210209] (-) TimerEvent: {}
+[193.311163] (-) TimerEvent: {}
+[193.411893] (-) TimerEvent: {}
+[193.512614] (-) TimerEvent: {}
+[193.613554] (-) TimerEvent: {}
+[193.714171] (-) TimerEvent: {}
+[193.815109] (-) TimerEvent: {}
+[193.916032] (-) TimerEvent: {}
+[194.018265] (-) TimerEvent: {}
+[194.118863] (-) TimerEvent: {}
+[194.219459] (-) TimerEvent: {}
+[194.320074] (-) TimerEvent: {}
+[194.420716] (-) TimerEvent: {}
+[194.521341] (-) TimerEvent: {}
+[194.621927] (-) TimerEvent: {}
+[194.722525] (-) TimerEvent: {}
+[194.823095] (-) TimerEvent: {}
+[194.923685] (-) TimerEvent: {}
+[195.024312] (-) TimerEvent: {}
+[195.125001] (-) TimerEvent: {}
+[195.225639] (-) TimerEvent: {}
+[195.326262] (-) TimerEvent: {}
+[195.426834] (-) TimerEvent: {}
+[195.527422] (-) TimerEvent: {}
+[195.628007] (-) TimerEvent: {}
+[195.728622] (-) TimerEvent: {}
+[195.829205] (-) TimerEvent: {}
+[195.929802] (-) TimerEvent: {}
+[196.030413] (-) TimerEvent: {}
+[196.131022] (-) TimerEvent: {}
+[196.231626] (-) TimerEvent: {}
+[196.332250] (-) TimerEvent: {}
+[196.432845] (-) TimerEvent: {}
+[196.533424] (-) TimerEvent: {}
+[196.634061] (-) TimerEvent: {}
+[196.734645] (-) TimerEvent: {}
+[196.835218] (-) TimerEvent: {}
+[196.935808] (-) TimerEvent: {}
+[197.036439] (-) TimerEvent: {}
+[197.137021] (-) TimerEvent: {}
+[197.237621] (-) TimerEvent: {}
+[197.338254] (-) TimerEvent: {}
+[197.438822] (-) TimerEvent: {}
+[197.539417] (-) TimerEvent: {}
+[197.640000] (-) TimerEvent: {}
+[197.740607] (-) TimerEvent: {}
+[197.841215] (-) TimerEvent: {}
+[197.941812] (-) TimerEvent: {}
+[198.042447] (-) TimerEvent: {}
+[198.143473] (-) TimerEvent: {}
+[198.244061] (-) TimerEvent: {}
+[198.344692] (-) TimerEvent: {}
+[198.445308] (-) TimerEvent: {}
+[198.545962] (-) TimerEvent: {}
+[198.646831] (-) TimerEvent: {}
+[198.747437] (-) TimerEvent: {}
+[198.848035] (-) TimerEvent: {}
+[198.948708] (-) TimerEvent: {}
+[199.049347] (-) TimerEvent: {}
+[199.149941] (-) TimerEvent: {}
+[199.250518] (-) TimerEvent: {}
+[199.351142] (-) TimerEvent: {}
+[199.451734] (-) TimerEvent: {}
+[199.552327] (-) TimerEvent: {}
+[199.652921] (-) TimerEvent: {}
+[199.753483] (-) TimerEvent: {}
+[199.854062] (-) TimerEvent: {}
+[199.954645] (-) TimerEvent: {}
+[200.055802] (-) TimerEvent: {}
+[200.156460] (-) TimerEvent: {}
+[200.257046] (-) TimerEvent: {}
+[200.357638] (-) TimerEvent: {}
+[200.458225] (-) TimerEvent: {}
+[200.558861] (-) TimerEvent: {}
+[200.659802] (-) TimerEvent: {}
+[200.760414] (-) TimerEvent: {}
+[200.861008] (-) TimerEvent: {}
+[200.961609] (-) TimerEvent: {}
+[201.062361] (-) TimerEvent: {}
+[201.163014] (-) TimerEvent: {}
+[201.263613] (-) TimerEvent: {}
+[201.364228] (-) TimerEvent: {}
+[201.464815] (-) TimerEvent: {}
+[201.565414] (-) TimerEvent: {}
+[201.666013] (-) TimerEvent: {}
+[201.766593] (-) TimerEvent: {}
+[201.867179] (-) TimerEvent: {}
+[201.967761] (-) TimerEvent: {}
+[202.068449] (-) TimerEvent: {}
+[202.169270] (-) TimerEvent: {}
+[202.269874] (-) TimerEvent: {}
+[202.370787] (-) TimerEvent: {}
+[202.471425] (-) TimerEvent: {}
+[202.572431] (-) TimerEvent: {}
+[202.673079] (-) TimerEvent: {}
+[202.773991] (-) TimerEvent: {}
+[202.874691] (-) TimerEvent: {}
+[202.975695] (-) TimerEvent: {}
+[203.076311] (-) TimerEvent: {}
+[203.176921] (-) TimerEvent: {}
+[203.277568] (-) TimerEvent: {}
+[203.378210] (-) TimerEvent: {}
+[203.478847] (-) TimerEvent: {}
+[203.579500] (-) TimerEvent: {}
+[203.680141] (-) TimerEvent: {}
+[203.780790] (-) TimerEvent: {}
+[203.881763] (-) TimerEvent: {}
+[203.982403] (-) TimerEvent: {}
+[204.083357] (-) TimerEvent: {}
+[204.183970] (-) TimerEvent: {}
+[204.284666] (-) TimerEvent: {}
+[204.385256] (-) TimerEvent: {}
+[204.485908] (-) TimerEvent: {}
+[204.586561] (-) TimerEvent: {}
+[204.687227] (-) TimerEvent: {}
+[204.787844] (-) TimerEvent: {}
+[204.888499] (-) TimerEvent: {}
+[204.989142] (-) TimerEvent: {}
+[205.089775] (-) TimerEvent: {}
+[205.190401] (-) TimerEvent: {}
+[205.291044] (-) TimerEvent: {}
+[205.391618] (-) TimerEvent: {}
+[205.492267] (-) TimerEvent: {}
+[205.592878] (-) TimerEvent: {}
+[205.693471] (-) TimerEvent: {}
+[205.794056] (-) TimerEvent: {}
+[205.894630] (-) TimerEvent: {}
+[205.995237] (-) TimerEvent: {}
+[206.095839] (-) TimerEvent: {}
+[206.196477] (-) TimerEvent: {}
+[206.297096] (-) TimerEvent: {}
+[206.397684] (-) TimerEvent: {}
+[206.498300] (-) TimerEvent: {}
+[206.598909] (-) TimerEvent: {}
+[206.699512] (-) TimerEvent: {}
+[206.800089] (-) TimerEvent: {}
+[206.900708] (-) TimerEvent: {}
+[207.001299] (-) TimerEvent: {}
+[207.101882] (-) TimerEvent: {}
+[207.202478] (-) TimerEvent: {}
+[207.303081] (-) TimerEvent: {}
+[207.403693] (-) TimerEvent: {}
+[207.504325] (-) TimerEvent: {}
+[207.604948] (-) TimerEvent: {}
+[207.705526] (-) TimerEvent: {}
+[207.806101] (-) TimerEvent: {}
+[207.906703] (-) TimerEvent: {}
+[208.007307] (-) TimerEvent: {}
+[208.107888] (-) TimerEvent: {}
+[208.208538] (-) TimerEvent: {}
+[208.309102] (-) TimerEvent: {}
+[208.409699] (-) TimerEvent: {}
+[208.510305] (-) TimerEvent: {}
+[208.610889] (-) TimerEvent: {}
+[208.711484] (-) TimerEvent: {}
+[208.812053] (-) TimerEvent: {}
+[208.912674] (-) TimerEvent: {}
+[209.013290] (-) TimerEvent: {}
+[209.113882] (-) TimerEvent: {}
+[209.214485] (-) TimerEvent: {}
+[209.315067] (-) TimerEvent: {}
+[209.415670] (-) TimerEvent: {}
+[209.516277] (-) TimerEvent: {}
+[209.616884] (-) TimerEvent: {}
+[209.717456] (-) TimerEvent: {}
+[209.818028] (-) TimerEvent: {}
+[209.918609] (-) TimerEvent: {}
+[210.019221] (-) TimerEvent: {}
+[210.119809] (-) TimerEvent: {}
+[210.220400] (-) TimerEvent: {}
+[210.321039] (-) TimerEvent: {}
+[210.421612] (-) TimerEvent: {}
+[210.522217] (-) TimerEvent: {}
+[210.622820] (-) TimerEvent: {}
+[210.723400] (-) TimerEvent: {}
+[210.823994] (-) TimerEvent: {}
+[210.924612] (-) TimerEvent: {}
+[211.025202] (-) TimerEvent: {}
+[211.125800] (-) TimerEvent: {}
+[211.226384] (-) TimerEvent: {}
+[211.327004] (-) TimerEvent: {}
+[211.427913] (-) TimerEvent: {}
+[211.528588] (-) TimerEvent: {}
+[211.629505] (-) TimerEvent: {}
+[211.730162] (-) TimerEvent: {}
+[211.831057] (-) TimerEvent: {}
+[211.931691] (-) TimerEvent: {}
+[212.032355] (-) TimerEvent: {}
+[212.133284] (-) TimerEvent: {}
+[212.233914] (-) TimerEvent: {}
+[212.334917] (-) TimerEvent: {}
+[212.435566] (-) TimerEvent: {}
+[212.536556] (-) TimerEvent: {}
+[212.637200] (-) TimerEvent: {}
+[212.738095] (-) TimerEvent: {}
+[212.838751] (-) TimerEvent: {}
+[212.939658] (-) TimerEvent: {}
+[213.040320] (-) TimerEvent: {}
+[213.141249] (-) TimerEvent: {}
+[213.241866] (-) TimerEvent: {}
+[213.342776] (-) TimerEvent: {}
+[213.443398] (-) TimerEvent: {}
+[213.544336] (-) TimerEvent: {}
+[213.644982] (-) TimerEvent: {}
+[213.745856] (-) TimerEvent: {}
+[213.846465] (-) TimerEvent: {}
+[213.947350] (-) TimerEvent: {}
+[214.047994] (-) TimerEvent: {}
+[214.148633] (-) TimerEvent: {}
+[214.249539] (-) TimerEvent: {}
+[214.350455] (-) TimerEvent: {}
+[214.451388] (-) TimerEvent: {}
+[214.552030] (-) TimerEvent: {}
+[214.652985] (-) TimerEvent: {}
+[214.753621] (-) TimerEvent: {}
+[214.854527] (-) TimerEvent: {}
+[214.955143] (-) TimerEvent: {}
+[215.056066] (-) TimerEvent: {}
+[215.156698] (-) TimerEvent: {}
+[215.257328] (-) TimerEvent: {}
+[215.357917] (-) TimerEvent: {}
+[215.458855] (-) TimerEvent: {}
+[215.559517] (-) TimerEvent: {}
+[215.660114] (-) TimerEvent: {}
+[215.761067] (-) TimerEvent: {}
+[215.862006] (-) TimerEvent: {}
+[215.962628] (-) TimerEvent: {}
+[216.063548] (-) TimerEvent: {}
+[216.164511] (-) TimerEvent: {}
+[216.265127] (-) TimerEvent: {}
+[216.366021] (-) TimerEvent: {}
+[216.466636] (-) TimerEvent: {}
+[216.567542] (-) TimerEvent: {}
+[216.668162] (-) TimerEvent: {}
+[216.768831] (-) TimerEvent: {}
+[216.869710] (-) TimerEvent: {}
+[216.970334] (-) TimerEvent: {}
+[217.071234] (-) TimerEvent: {}
+[217.171843] (-) TimerEvent: {}
+[217.272482] (-) TimerEvent: {}
+[217.373422] (-) TimerEvent: {}
+[217.474338] (-) TimerEvent: {}
+[217.574959] (-) TimerEvent: {}
+[217.675804] (-) TimerEvent: {}
+[217.776419] (-) TimerEvent: {}
+[217.877293] (-) TimerEvent: {}
+[217.977911] (-) TimerEvent: {}
+[218.078785] (-) TimerEvent: {}
+[218.179376] (-) TimerEvent: {}
+[218.280312] (-) TimerEvent: {}
+[218.381184] (-) TimerEvent: {}
+[218.481795] (-) TimerEvent: {}
+[218.582668] (-) TimerEvent: {}
+[218.683282] (-) TimerEvent: {}
+[218.784221] (-) TimerEvent: {}
+[218.884813] (-) TimerEvent: {}
+[218.985743] (-) TimerEvent: {}
+[219.086343] (-) TimerEvent: {}
+[219.187204] (-) TimerEvent: {}
+[219.287977] (-) TimerEvent: {}
+[219.389148] (-) TimerEvent: {}
+[219.489794] (-) TimerEvent: {}
+[219.590431] (-) TimerEvent: {}
+[219.691074] (-) TimerEvent: {}
+[219.791708] (-) TimerEvent: {}
+[219.892371] (-) TimerEvent: {}
+[219.993004] (-) TimerEvent: {}
+[220.093638] (-) TimerEvent: {}
+[220.194296] (-) TimerEvent: {}
+[220.294950] (-) TimerEvent: {}
+[220.395654] (-) TimerEvent: {}
+[220.496582] (-) TimerEvent: {}
+[220.597509] (-) TimerEvent: {}
+[220.698131] (-) TimerEvent: {}
+[220.799087] (-) TimerEvent: {}
+[220.900007] (-) TimerEvent: {}
+[221.000648] (-) TimerEvent: {}
+[221.101245] (-) TimerEvent: {}
+[221.202168] (-) TimerEvent: {}
+[221.302797] (-) TimerEvent: {}
+[221.403717] (-) TimerEvent: {}
+[221.504699] (-) TimerEvent: {}
+[221.605643] (-) TimerEvent: {}
+[221.706563] (-) TimerEvent: {}
+[221.807181] (-) TimerEvent: {}
+[221.908084] (-) TimerEvent: {}
+[222.009016] (-) TimerEvent: {}
+[222.109921] (-) TimerEvent: {}
+[222.210542] (-) TimerEvent: {}
+[222.311486] (-) TimerEvent: {}
+[222.412130] (-) TimerEvent: {}
+[222.512746] (-) TimerEvent: {}
+[222.613635] (-) TimerEvent: {}
+[222.714562] (-) TimerEvent: {}
+[222.815474] (-) TimerEvent: {}
+[222.916085] (-) TimerEvent: {}
+[223.017148] (-) TimerEvent: {}
+[223.117764] (-) TimerEvent: {}
+[223.218685] (-) TimerEvent: {}
+[223.319604] (-) TimerEvent: {}
+[223.420230] (-) TimerEvent: {}
+[223.521150] (-) TimerEvent: {}
+[223.622052] (-) TimerEvent: {}
+[223.722682] (-) TimerEvent: {}
+[223.823562] (-) TimerEvent: {}
+[223.924238] (-) TimerEvent: {}
+[224.025165] (-) TimerEvent: {}
+[224.125780] (-) TimerEvent: {}
+[224.226715] (-) TimerEvent: {}
+[224.327355] (-) TimerEvent: {}
+[224.428326] (-) TimerEvent: {}
+[224.529387] (-) TimerEvent: {}
+[224.630008] (-) TimerEvent: {}
+[224.730950] (-) TimerEvent: {}
+[224.831584] (-) TimerEvent: {}
+[224.932635] (-) TimerEvent: {}
+[225.034391] (-) TimerEvent: {}
+[225.135323] (-) TimerEvent: {}
+[225.236234] (-) TimerEvent: {}
+[225.336798] (-) TimerEvent: {}
+[225.437713] (-) TimerEvent: {}
+[225.538330] (-) TimerEvent: {}
+[225.639023] (-) TimerEvent: {}
+[225.739647] (-) TimerEvent: {}
+[225.840296] (-) TimerEvent: {}
+[225.940918] (-) TimerEvent: {}
+[226.041582] (-) TimerEvent: {}
+[226.142235] (-) TimerEvent: {}
+[226.242832] (-) TimerEvent: {}
+[226.343424] (-) TimerEvent: {}
+[226.444017] (-) TimerEvent: {}
+[226.544651] (-) TimerEvent: {}
+[226.645630] (-) TimerEvent: {}
+[226.746248] (-) TimerEvent: {}
+[226.847185] (-) TimerEvent: {}
+[226.947773] (-) TimerEvent: {}
+[227.048734] (-) TimerEvent: {}
+[227.149667] (-) TimerEvent: {}
+[227.250293] (-) TimerEvent: {}
+[227.350894] (-) TimerEvent: {}
+[227.451851] (-) TimerEvent: {}
+[227.552849] (-) TimerEvent: {}
+[227.653780] (-) TimerEvent: {}
+[227.754454] (-) TimerEvent: {}
+[227.855397] (-) TimerEvent: {}
+[227.956333] (-) TimerEvent: {}
+[228.056963] (-) TimerEvent: {}
+[228.157872] (-) TimerEvent: {}
+[228.258492] (-) TimerEvent: {}
+[228.359379] (-) TimerEvent: {}
+[228.459974] (-) TimerEvent: {}
+[228.561020] (-) TimerEvent: {}
+[228.661847] (-) TimerEvent: {}
+[228.764031] (-) TimerEvent: {}
+[228.861202] (opentera_webrtc_ros) StdoutLine: {'line': b'[100%] Built target native_client-dist-target\n'}
+[228.864335] (-) TimerEvent: {}
+[228.908052] (opentera_webrtc_ros) CommandEnded: {'returncode': 0}
+[228.965092] (-) TimerEvent: {}
+[229.066475] (-) TimerEvent: {}
+[229.168799] (opentera_webrtc_ros) JobProgress: {'identifier': 'opentera_webrtc_ros', 'progress': 'install'}
+[229.170568] (-) TimerEvent: {}
+[229.211988] (opentera_webrtc_ros) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ws/ugv_ws/build/opentera_webrtc_ros'], 'cwd': '/home/ws/ugv_ws/build/opentera_webrtc_ros', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_ws/install:/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/opentera_webrtc_ros'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/opentera_protobuf_messages/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/odas_ros_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/audio_utils_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[229.245515] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Install configuration: "Debug"\n'}
+[229.247482] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[229.249475] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/cmake/ixwebsocket/ixwebsocket-config.cmake\n'}
+[229.270737] (-) TimerEvent: {}
+[229.280067] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/pkgconfig/ixwebsocket.pc\n'}
+[229.308920] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/bin/libOpenteraWebrtcNativeGStreamer.so\n'}
+[229.338457] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libOpenteraWebrtcNativeClient.a\n'}
+[229.367806] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Up-to-date symlink: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libOpenteraWebrtcNativeClient.a\n'}
+[229.369389] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libOpenteraWebrtcNativeGStreamer.so\n'}
+[229.370866] (-) TimerEvent: {}
+[229.397551] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libwebrtc.a\n'}
+[229.429654] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libboringssl.a\n'}
+[229.459002] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/opentera_webrtc_ros/topic_streamer\n'}
+[229.471052] (-) TimerEvent: {}
+[229.489432] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/opentera_webrtc_ros/data_channel_bridge\n'}
+[229.520317] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/opentera_webrtc_ros/json_data_handler\n'}
+[229.550992] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/opentera_webrtc_ros/lib/json.hpp\n'}
+[229.571221] (-) TimerEvent: {}
+[229.580955] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/launch/opentera_data_test.launch.xml\n'}
+[229.610620] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/launch/ros_data_channel_client.launch.xml\n'}
+[229.639419] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/launch/ros_json_data_handler.launch.xml\n'}
+[229.668659] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/launch/ros_stream_client.launch.xml\n'}
+[229.671371] (-) TimerEvent: {}
+[229.698761] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/opentera_webrtc_ros/goal_manager.py\n'}
+[229.735736] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/opentera_webrtc_ros/labels_manager.py\n'}
+[229.766922] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/library_path.sh\n'}
+[229.771543] (-) TimerEvent: {}
+[229.798370] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/library_path.dsv\n'}
+[229.827466] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/pythonpath.sh\n'}
+[229.858015] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/pythonpath.dsv\n'}
+[229.872405] (-) TimerEvent: {}
+[229.887532] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros-0.1.0-py3.10.egg-info/PKG-INFO\n'}
+[229.917722] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros-0.1.0-py3.10.egg-info/SOURCES.txt\n'}
+[229.945748] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros-0.1.0-py3.10.egg-info/dependency_links.txt\n'}
+[229.972571] (-) TimerEvent: {}
+[229.975134] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros-0.1.0-py3.10.egg-info/top_level.txt\n'}
+[230.004363] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/__init__.py\n'}
+[230.033931] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libmapimageconverter.py\n'}
+[230.063062] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libnavigation.py\n'}
+[230.072741] (-) TimerEvent: {}
+[230.092382] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libyamldatabase.py\n'}
+[230.123367] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/ament_index/resource_index/package_run_dependencies/opentera_webrtc_ros\n'}
+[230.151237] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/ament_index/resource_index/parent_prefix_path/opentera_webrtc_ros\n'}
+[230.172947] (-) TimerEvent: {}
+[230.180867] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/ament_prefix_path.sh\n'}
+[230.210286] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/ament_prefix_path.dsv\n'}
+[230.239815] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/path.sh\n'}
+[230.268904] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/path.dsv\n'}
+[230.273109] (-) TimerEvent: {}
+[230.298370] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/local_setup.bash\n'}
+[230.328750] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/local_setup.sh\n'}
+[230.357224] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/local_setup.zsh\n'}
+[230.373273] (-) TimerEvent: {}
+[230.388584] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/local_setup.dsv\n'}
+[230.417824] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/package.dsv\n'}
+[230.448163] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/ament_index/resource_index/packages/opentera_webrtc_ros\n'}
+[230.473452] (-) TimerEvent: {}
+[230.477575] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[230.507034] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[230.538315] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/cmake/opentera_webrtc_rosConfig.cmake\n'}
+[230.567832] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/cmake/opentera_webrtc_rosConfig-version.cmake\n'}
+[230.573620] (-) TimerEvent: {}
+[230.598175] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/package.xml\n'}
+[230.673757] (-) TimerEvent: {}
+[230.774670] (-) TimerEvent: {}
+[230.822428] (opentera_webrtc_ros) StdoutLine: {'line': b"Listing '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros'...\n"}
+[230.823089] (opentera_webrtc_ros) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/__init__.py'...\n"}
+[230.823334] (opentera_webrtc_ros) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libmapimageconverter.py'...\n"}
+[230.823550] (opentera_webrtc_ros) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libnavigation.py'...\n"}
+[230.823769] (opentera_webrtc_ros) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libyamldatabase.py'...\n"}
+[230.852566] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libixwebsocket.a\n'}
+[230.874827] (-) TimerEvent: {}
+[230.975666] (-) TimerEvent: {}
+[231.076288] (-) TimerEvent: {}
+[231.176895] (-) TimerEvent: {}
+[231.204997] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXBase64.h\n'}
+[231.205584] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXBench.h\n'}
+[231.206718] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXCancellationRequest.h\n'}
+[231.207285] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXConnectionState.h\n'}
+[231.208396] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXDNSLookup.h\n'}
+[231.209537] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXExponentialBackoff.h\n'}
+[231.210577] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXGetFreePort.h\n'}
+[231.211549] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXGzipCodec.h\n'}
+[231.212668] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXHttp.h\n'}
+[231.213712] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXHttpClient.h\n'}
+[231.214689] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXHttpServer.h\n'}
+[231.215414] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXNetSystem.h\n'}
+[231.216639] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXProgressCallback.h\n'}
+[231.217300] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSelectInterrupt.h\n'}
+[231.218076] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSelectInterruptFactory.h\n'}
+[231.218870] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSelectInterruptPipe.h\n'}
+[231.219577] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSelectInterruptEvent.h\n'}
+[231.220353] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSetThreadName.h\n'}
+[231.221370] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocket.h\n'}
+[231.222064] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocketConnect.h\n'}
+[231.222727] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocketFactory.h\n'}
+[231.223399] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocketServer.h\n'}
+[231.224249] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocketTLSOptions.h\n'}
+[231.224773] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXStrCaseCompare.h\n'}
+[231.225719] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUdpSocket.h\n'}
+[231.226415] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUniquePtr.h\n'}
+[231.227090] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUrlParser.h\n'}
+[231.227756] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUuid.h\n'}
+[231.228354] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUtf8Validator.h\n'}
+[231.229385] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUserAgent.h\n'}
+[231.229878] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocket.h\n'}
+[231.231008] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketCloseConstants.h\n'}
+[231.231654] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketCloseInfo.h\n'}
+[231.232358] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketErrorInfo.h\n'}
+[231.232890] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketHandshake.h\n'}
+[231.233841] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketHandshakeKeyGen.h\n'}
+[231.234630] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketHttpHeaders.h\n'}
+[231.235400] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketInitResult.h\n'}
+[231.236142] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketMessage.h\n'}
+[231.236719] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketMessageType.h\n'}
+[231.237585] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketOpenInfo.h\n'}
+[231.238316] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketPerMessageDeflate.h\n'}
+[231.238833] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketPerMessageDeflateCodec.h\n'}
+[231.239682] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketPerMessageDeflateOptions.h\n'}
+[231.240366] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketProxyServer.h\n'}
+[231.241247] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketSendData.h\n'}
+[231.241935] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketSendInfo.h\n'}
+[231.242614] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketServer.h\n'}
+[231.243329] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketTransport.h\n'}
+[231.244369] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketVersion.h\n'}
+[231.244908] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocketOpenSSL.h\n'}
+[231.246073] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/cmake/ixwebsocket/ixwebsocket-targets.cmake\n'}
+[231.246936] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/cmake/ixwebsocket/ixwebsocket-targets-debug.cmake\n'}
+[231.248437] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include\n'}
+[231.248828] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann\n'}
+[231.249096] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/ordered_map.hpp\n'}
+[231.249492] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/adl_serializer.hpp\n'}
+[231.250264] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/json_fwd.hpp\n'}
+[231.250959] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/byte_container_with_subtype.hpp\n'}
+[231.252144] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail\n'}
+[231.252594] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators\n'}
+[231.252996] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/primitive_iterator.hpp\n'}
+[231.253301] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/internal_iterator.hpp\n'}
+[231.253682] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/iter_impl.hpp\n'}
+[231.255205] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/json_reverse_iterator.hpp\n'}
+[231.256833] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/iteration_proxy.hpp\n'}
+[231.257554] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/iterator_traits.hpp\n'}
+[231.258659] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/value_t.hpp\n'}
+[231.259412] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/json_pointer.hpp\n'}
+[231.261777] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/hash.hpp\n'}
+[231.262245] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/string_concat.hpp\n'}
+[231.263374] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/json_ref.hpp\n'}
+[231.263812] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/abi_macros.hpp\n'}
+[231.264923] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/json_custom_base_class.hpp\n'}
+[231.265629] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/string_escape.hpp\n'}
+[231.266095] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/macro_unscope.hpp\n'}
+[231.267208] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/output\n'}
+[231.267566] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/output/output_adapters.hpp\n'}
+[231.268066] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/output/binary_writer.hpp\n'}
+[231.271248] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/output/serializer.hpp\n'}
+[231.273778] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/conversions\n'}
+[231.274216] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/conversions/to_json.hpp\n'}
+[231.275351] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/conversions/from_json.hpp\n'}
+[231.276496] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/conversions/to_chars.hpp\n'}
+[231.276879] (-) TimerEvent: {}
+[231.279034] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/macro_scope.hpp\n'}
+[231.281088] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta\n'}
+[231.281813] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/std_fs.hpp\n'}
+[231.282265] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/detected.hpp\n'}
+[231.283313] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/identity_tag.hpp\n'}
+[231.283755] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/cpp_future.hpp\n'}
+[231.285081] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/void_t.hpp\n'}
+[231.285835] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/call_std\n'}
+[231.286242] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/call_std/end.hpp\n'}
+[231.286776] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/call_std/begin.hpp\n'}
+[231.287615] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/type_traits.hpp\n'}
+[231.289725] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/is_sax.hpp\n'}
+[231.290575] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/exceptions.hpp\n'}
+[231.291431] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input\n'}
+[231.292155] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/position_t.hpp\n'}
+[231.292721] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/json_sax.hpp\n'}
+[231.294552] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/input_adapters.hpp\n'}
+[231.295732] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/parser.hpp\n'}
+[231.297453] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/lexer.hpp\n'}
+[231.299676] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/binary_reader.hpp\n'}
+[231.303786] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/thirdparty\n'}
+[231.304341] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/thirdparty/hedley\n'}
+[231.304664] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/thirdparty/hedley/hedley.hpp\n'}
+[231.307936] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/thirdparty/hedley/hedley_undef.hpp\n'}
+[231.308608] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/json.hpp\n'}
+[231.316395] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/opentera_webrtc_ros/include\n'}
+[231.316852] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient\n'}
+[231.317268] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Codecs\n'}
+[231.317557] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Codecs/VideoCodecFactories.h\n'}
+[231.318643] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sinks\n'}
+[231.319006] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sinks/AudioSink.h\n'}
+[231.319429] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sinks/EncodedVideoSink.h\n'}
+[231.319838] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sinks/VideoSink.h\n'}
+[231.321031] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Handlers\n'}
+[231.321437] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Handlers/PeerConnectionHandler.h\n'}
+[231.321979] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Handlers/DataChannelPeerConnectionHandler.h\n'}
+[231.323042] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Handlers/StreamPeerConnectionHandler.h\n'}
+[231.323834] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils\n'}
+[231.324284] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/thread.h\n'}
+[231.324869] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/FunctionTask.h\n'}
+[231.325742] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/IceServer.h\n'}
+[231.326679] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/Client.h\n'}
+[231.327336] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/ClassMacro.h\n'}
+[231.328117] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/Http.h\n'}
+[231.328907] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/DataChannelClient.h\n'}
+[231.329802] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations\n'}
+[231.330223] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/VideoSourceConfiguration.h\n'}
+[231.330921] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/SignalingServerConfiguration.h\n'}
+[231.332504] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/AudioSourceConfiguration.h\n'}
+[231.333556] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/DataChannelConfiguration.h\n'}
+[231.334547] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/WebrtcConfiguration.h\n'}
+[231.336239] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/VideoStreamConfiguration.h\n'}
+[231.336707] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sources\n'}
+[231.337157] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sources/AudioSource.h\n'}
+[231.337448] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sources/VideoSource.h\n'}
+[231.337785] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/StreamClient.h\n'}
+[231.338967] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Signaling\n'}
+[231.339315] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Signaling/SignalingClient.h\n'}
+[231.339736] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Signaling/WebSocketSignalingClient.h\n'}
+[231.340644] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/version.h\n'}
+[231.341159] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/OpenteraAudioDeviceModule.h\n'}
+[231.342356] (opentera_webrtc_ros) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/WebrtcClient.h\n'}
+[231.377097] (-) TimerEvent: {}
+[231.478038] (-) TimerEvent: {}
+[231.578733] (-) TimerEvent: {}
+[231.679320] (-) TimerEvent: {}
+[231.779924] (-) TimerEvent: {}
+[231.880585] (-) TimerEvent: {}
+[231.981195] (-) TimerEvent: {}
+[232.081812] (-) TimerEvent: {}
+[232.182361] (-) TimerEvent: {}
+[232.282961] (-) TimerEvent: {}
+[232.383570] (-) TimerEvent: {}
+[232.484241] (-) TimerEvent: {}
+[232.584949] (-) TimerEvent: {}
+[232.685592] (-) TimerEvent: {}
+[232.786199] (-) TimerEvent: {}
+[232.900641] (-) TimerEvent: {}
+[233.001273] (-) TimerEvent: {}
+[233.102147] (-) TimerEvent: {}
+[233.202742] (-) TimerEvent: {}
+[233.303430] (-) TimerEvent: {}
+[233.404340] (-) TimerEvent: {}
+[233.504941] (-) TimerEvent: {}
+[233.605515] (-) TimerEvent: {}
+[233.706083] (-) TimerEvent: {}
+[233.806698] (-) TimerEvent: {}
+[233.907288] (-) TimerEvent: {}
+[233.916835] (opentera_webrtc_ros) StdoutLine: {'line': b'Looking in links: /home/ws/ugv_ws/build/opentera_webrtc_ros/SYSTEM/opentera-webrtc-native-client/OpenteraWebrtcNativeClient/python/package/opentera_webrtc_native_client/dist\n'}
+[234.007434] (-) TimerEvent: {}
+[234.040416] (opentera_webrtc_ros) StdoutLine: {'line': b'Processing ./dist/opentera_webrtc_native_client-1.2.6-cp310-cp310-linux_aarch64.whl\n'}
+[234.054014] (opentera_webrtc_ros) StdoutLine: {'line': b'Installing collected packages: opentera_webrtc.native_client\n'}
+[234.107629] (-) TimerEvent: {}
+[234.208344] (-) TimerEvent: {}
+[234.309010] (-) TimerEvent: {}
+[234.409759] (-) TimerEvent: {}
+[234.510438] (-) TimerEvent: {}
+[234.611083] (-) TimerEvent: {}
+[234.711682] (-) TimerEvent: {}
+[234.812352] (-) TimerEvent: {}
+[234.913027] (-) TimerEvent: {}
+[235.013678] (-) TimerEvent: {}
+[235.114375] (-) TimerEvent: {}
+[235.215074] (-) TimerEvent: {}
+[235.315736] (-) TimerEvent: {}
+[235.416467] (-) TimerEvent: {}
+[235.517158] (-) TimerEvent: {}
+[235.617827] (-) TimerEvent: {}
+[235.719130] (-) TimerEvent: {}
+[235.819874] (-) TimerEvent: {}
+[235.920581] (-) TimerEvent: {}
+[236.021594] (-) TimerEvent: {}
+[236.122307] (-) TimerEvent: {}
+[236.223357] (-) TimerEvent: {}
+[236.324099] (-) TimerEvent: {}
+[236.425153] (-) TimerEvent: {}
+[236.525869] (-) TimerEvent: {}
+[236.626553] (-) TimerEvent: {}
+[236.727472] (-) TimerEvent: {}
+[236.828154] (-) TimerEvent: {}
+[236.929180] (-) TimerEvent: {}
+[237.029893] (-) TimerEvent: {}
+[237.130834] (-) TimerEvent: {}
+[237.231467] (-) TimerEvent: {}
+[237.332135] (-) TimerEvent: {}
+[237.432749] (-) TimerEvent: {}
+[237.533422] (-) TimerEvent: {}
+[237.634100] (-) TimerEvent: {}
+[237.734761] (-) TimerEvent: {}
+[237.835363] (-) TimerEvent: {}
+[238.002518] (-) TimerEvent: {}
+[238.103150] (-) TimerEvent: {}
+[238.203766] (-) TimerEvent: {}
+[238.304426] (-) TimerEvent: {}
+[238.405107] (-) TimerEvent: {}
+[238.505706] (-) TimerEvent: {}
+[238.606295] (-) TimerEvent: {}
+[238.707015] (-) TimerEvent: {}
+[238.807658] (-) TimerEvent: {}
+[238.908300] (-) TimerEvent: {}
+[239.008964] (-) TimerEvent: {}
+[239.109567] (-) TimerEvent: {}
+[239.210172] (-) TimerEvent: {}
+[239.310848] (-) TimerEvent: {}
+[239.411463] (-) TimerEvent: {}
+[239.512070] (-) TimerEvent: {}
+[239.612725] (-) TimerEvent: {}
+[239.713355] (-) TimerEvent: {}
+[239.814004] (-) TimerEvent: {}
+[239.914645] (-) TimerEvent: {}
+[240.015283] (-) TimerEvent: {}
+[240.115901] (-) TimerEvent: {}
+[240.216537] (-) TimerEvent: {}
+[240.317243] (-) TimerEvent: {}
+[240.417918] (-) TimerEvent: {}
+[240.518581] (-) TimerEvent: {}
+[240.619293] (-) TimerEvent: {}
+[240.719948] (-) TimerEvent: {}
+[240.820661] (-) TimerEvent: {}
+[240.921275] (-) TimerEvent: {}
+[241.021886] (-) TimerEvent: {}
+[241.122511] (-) TimerEvent: {}
+[241.223128] (-) TimerEvent: {}
+[241.323722] (-) TimerEvent: {}
+[241.424348] (-) TimerEvent: {}
+[241.524983] (-) TimerEvent: {}
+[241.625587] (-) TimerEvent: {}
+[241.726196] (-) TimerEvent: {}
+[241.826803] (-) TimerEvent: {}
+[241.927406] (-) TimerEvent: {}
+[242.028005] (-) TimerEvent: {}
+[242.128658] (-) TimerEvent: {}
+[242.229295] (-) TimerEvent: {}
+[242.329918] (-) TimerEvent: {}
+[242.430507] (-) TimerEvent: {}
+[242.531129] (-) TimerEvent: {}
+[242.631741] (-) TimerEvent: {}
+[242.732358] (-) TimerEvent: {}
+[242.832955] (-) TimerEvent: {}
+[242.933593] (-) TimerEvent: {}
+[245.497875] (-) TimerEvent: {}
+[245.598628] (-) TimerEvent: {}
+[245.699466] (-) TimerEvent: {}
+[245.800114] (-) TimerEvent: {}
+[245.900788] (-) TimerEvent: {}
+[246.001668] (-) TimerEvent: {}
+[246.102284] (-) TimerEvent: {}
+[246.203164] (-) TimerEvent: {}
+[246.303795] (-) TimerEvent: {}
+[246.404459] (-) TimerEvent: {}
+[246.505152] (-) TimerEvent: {}
+[246.605781] (-) TimerEvent: {}
+[246.706417] (-) TimerEvent: {}
+[246.807039] (-) TimerEvent: {}
+[246.907678] (-) TimerEvent: {}
+[247.008284] (-) TimerEvent: {}
+[247.108872] (-) TimerEvent: {}
+[247.209598] (-) TimerEvent: {}
+[247.310227] (-) TimerEvent: {}
+[247.410859] (-) TimerEvent: {}
+[247.511480] (-) TimerEvent: {}
+[247.612072] (-) TimerEvent: {}
+[247.712695] (-) TimerEvent: {}
+[247.813297] (-) TimerEvent: {}
+[247.914041] (-) TimerEvent: {}
+[248.015388] (-) TimerEvent: {}
+[250.607310] (-) TimerEvent: {}
+[250.707993] (-) TimerEvent: {}
+[250.808973] (-) TimerEvent: {}
+[250.910630] (-) TimerEvent: {}
+[251.011588] (-) TimerEvent: {}
+[251.112627] (-) TimerEvent: {}
+[251.213249] (-) TimerEvent: {}
+[251.313853] (-) TimerEvent: {}
+[251.414434] (-) TimerEvent: {}
+[251.515016] (-) TimerEvent: {}
+[251.615594] (-) TimerEvent: {}
+[251.716200] (-) TimerEvent: {}
+[251.816808] (-) TimerEvent: {}
+[251.917394] (-) TimerEvent: {}
+[252.018012] (-) TimerEvent: {}
+[252.118607] (-) TimerEvent: {}
+[252.219175] (-) TimerEvent: {}
+[252.319758] (-) TimerEvent: {}
+[252.420347] (-) TimerEvent: {}
+[252.520933] (-) TimerEvent: {}
+[252.621523] (-) TimerEvent: {}
+[252.722120] (-) TimerEvent: {}
+[252.822755] (-) TimerEvent: {}
+[252.923371] (-) TimerEvent: {}
+[253.024026] (-) TimerEvent: {}
+[253.124739] (-) TimerEvent: {}
+[253.225350] (-) TimerEvent: {}
+[253.325968] (-) TimerEvent: {}
+[253.426573] (-) TimerEvent: {}
+[253.527148] (-) TimerEvent: {}
+[253.627733] (-) TimerEvent: {}
+[253.728341] (-) TimerEvent: {}
+[253.829028] (-) TimerEvent: {}
+[253.929613] (-) TimerEvent: {}
+[254.030506] (-) TimerEvent: {}
+[254.131089] (-) TimerEvent: {}
+[254.231696] (-) TimerEvent: {}
+[254.332611] (-) TimerEvent: {}
+[254.433213] (-) TimerEvent: {}
+[254.533820] (-) TimerEvent: {}
+[254.634698] (-) TimerEvent: {}
+[254.735299] (-) TimerEvent: {}
+[254.835887] (-) TimerEvent: {}
+[254.936501] (-) TimerEvent: {}
+[255.037369] (-) TimerEvent: {}
+[255.137998] (-) TimerEvent: {}
+[255.238837] (-) TimerEvent: {}
+[255.339427] (-) TimerEvent: {}
+[255.440304] (-) TimerEvent: {}
+[255.540926] (-) TimerEvent: {}
+[255.641549] (-) TimerEvent: {}
+[255.742383] (-) TimerEvent: {}
+[255.843086] (-) TimerEvent: {}
+[255.944090] (-) TimerEvent: {}
+[256.045121] (-) TimerEvent: {}
+[256.146142] (-) TimerEvent: {}
+[256.247191] (-) TimerEvent: {}
+[256.348357] (-) TimerEvent: {}
+[256.449446] (-) TimerEvent: {}
+[256.550472] (-) TimerEvent: {}
+[256.651653] (-) TimerEvent: {}
+[256.752813] (-) TimerEvent: {}
+[256.853776] (-) TimerEvent: {}
+[256.954721] (-) TimerEvent: {}
+[257.055723] (-) TimerEvent: {}
+[257.156916] (-) TimerEvent: {}
+[257.258024] (-) TimerEvent: {}
+[257.359100] (-) TimerEvent: {}
+[257.460132] (-) TimerEvent: {}
+[257.561248] (-) TimerEvent: {}
+[257.662258] (-) TimerEvent: {}
+[257.763507] (-) TimerEvent: {}
+[257.864484] (-) TimerEvent: {}
+[259.896138] (-) TimerEvent: {}
+[260.166371] (opentera_webrtc_ros) StdoutLine: {'line': b'Successfully installed opentera_webrtc.native_client-1.2.6\n'}
+[260.167184] (-) TimerEvent: {}
+[260.168420] (opentera_webrtc_ros) StderrLine: {'line': b"WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n"}
+[260.267457] (-) TimerEvent: {}
+[260.368648] (-) TimerEvent: {}
+[260.469640] (-) TimerEvent: {}
+[260.570230] (-) TimerEvent: {}
+[260.670807] (-) TimerEvent: {}
+[260.771391] (-) TimerEvent: {}
+[260.871971] (-) TimerEvent: {}
+[260.972622] (-) TimerEvent: {}
+[261.073195] (-) TimerEvent: {}
+[261.173772] (-) TimerEvent: {}
+[261.274350] (-) TimerEvent: {}
+[261.374935] (-) TimerEvent: {}
+[261.475506] (-) TimerEvent: {}
+[261.576093] (-) TimerEvent: {}
+[261.676687] (-) TimerEvent: {}
+[261.777274] (-) TimerEvent: {}
+[261.877885] (-) TimerEvent: {}
+[261.978541] (-) TimerEvent: {}
+[262.079120] (-) TimerEvent: {}
+[262.179695] (-) TimerEvent: {}
+[262.280284] (-) TimerEvent: {}
+[262.380864] (-) TimerEvent: {}
+[262.481438] (-) TimerEvent: {}
+[262.582020] (-) TimerEvent: {}
+[262.682596] (-) TimerEvent: {}
+[262.783183] (-) TimerEvent: {}
+[262.883785] (-) TimerEvent: {}
+[262.984480] (-) TimerEvent: {}
+[263.085097] (-) TimerEvent: {}
+[263.185720] (-) TimerEvent: {}
+[263.286338] (-) TimerEvent: {}
+[263.386953] (-) TimerEvent: {}
+[263.487537] (-) TimerEvent: {}
+[263.588130] (-) TimerEvent: {}
+[263.688735] (-) TimerEvent: {}
+[263.789314] (-) TimerEvent: {}
+[263.889915] (-) TimerEvent: {}
+[263.990576] (-) TimerEvent: {}
+[264.091196] (-) TimerEvent: {}
+[264.191834] (-) TimerEvent: {}
+[264.292478] (-) TimerEvent: {}
+[264.393095] (-) TimerEvent: {}
+[264.493715] (-) TimerEvent: {}
+[264.594321] (-) TimerEvent: {}
+[264.694919] (-) TimerEvent: {}
+[264.795500] (-) TimerEvent: {}
+[264.896082] (-) TimerEvent: {}
+[264.996750] (-) TimerEvent: {}
+[265.097316] (-) TimerEvent: {}
+[265.198381] (-) TimerEvent: {}
+[265.299297] (-) TimerEvent: {}
+[265.401085] (-) TimerEvent: {}
+[265.501987] (-) TimerEvent: {}
+[265.603156] (-) TimerEvent: {}
+[265.704028] (-) TimerEvent: {}
+[265.804678] (-) TimerEvent: {}
+[265.905857] (-) TimerEvent: {}
+[266.006737] (-) TimerEvent: {}
+[266.107868] (-) TimerEvent: {}
+[266.208807] (-) TimerEvent: {}
+[266.309995] (-) TimerEvent: {}
+[266.410941] (-) TimerEvent: {}
+[266.512111] (-) TimerEvent: {}
+[266.612984] (-) TimerEvent: {}
+[266.714167] (-) TimerEvent: {}
+[266.807015] (opentera_webrtc_ros) StdoutLine: {'line': b'Looking in links: /home/ws/ugv_ws/build/opentera_webrtc_ros/SYSTEM/signaling-server/opentera_webrtc_signaling_server/dist\n'}
+[266.815930] (-) TimerEvent: {}
+[266.917553] (-) TimerEvent: {}
+[266.931511] (opentera_webrtc_ros) StdoutLine: {'line': b'Processing ./dist/opentera_webrtc_signaling_server-1.2.6-py3-none-any.whl\n'}
+[267.017729] (-) TimerEvent: {}
+[267.118622] (-) TimerEvent: {}
+[267.219534] (-) TimerEvent: {}
+[267.320619] (-) TimerEvent: {}
+[267.323275] (opentera_webrtc_ros) StdoutLine: {'line': b'Installing collected packages: opentera_webrtc.signaling_server\n'}
+[267.420791] (-) TimerEvent: {}
+[267.521833] (-) TimerEvent: {}
+[267.622643] (-) TimerEvent: {}
+[267.723708] (-) TimerEvent: {}
+[267.824639] (-) TimerEvent: {}
+[267.990573] (-) TimerEvent: {}
+[268.091206] (-) TimerEvent: {}
+[268.191827] (-) TimerEvent: {}
+[268.292477] (-) TimerEvent: {}
+[268.529807] (-) TimerEvent: {}
+[268.630411] (-) TimerEvent: {}
+[268.690512] (opentera_webrtc_ros) StdoutLine: {'line': b'Successfully installed opentera_webrtc.signaling_server-1.2.6\n'}
+[268.691411] (opentera_webrtc_ros) StderrLine: {'line': b"WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n"}
+[268.730628] (-) TimerEvent: {}
+[268.831557] (-) TimerEvent: {}
+[268.932427] (-) TimerEvent: {}
+[268.972334] (opentera_webrtc_ros) CommandEnded: {'returncode': 0}
+[269.032572] (-) TimerEvent: {}
+[269.133175] (-) TimerEvent: {}
+[269.233800] (-) TimerEvent: {}
+[269.334366] (-) TimerEvent: {}
+[269.434949] (-) TimerEvent: {}
+[269.535552] (-) TimerEvent: {}
+[269.636142] (-) TimerEvent: {}
+[269.736760] (-) TimerEvent: {}
+[269.837346] (-) TimerEvent: {}
+[269.937955] (-) TimerEvent: {}
+[270.038539] (-) TimerEvent: {}
+[270.139126] (-) TimerEvent: {}
+[270.239698] (-) TimerEvent: {}
+[270.340304] (-) TimerEvent: {}
+[270.440927] (-) TimerEvent: {}
+[270.541775] (-) TimerEvent: {}
+[270.642850] (-) TimerEvent: {}
+[270.743840] (-) TimerEvent: {}
+[270.844859] (-) TimerEvent: {}
+[270.945859] (-) TimerEvent: {}
+[271.046862] (-) TimerEvent: {}
+[271.147838] (-) TimerEvent: {}
+[271.249098] (-) TimerEvent: {}
+[271.350081] (-) TimerEvent: {}
+[271.451065] (-) TimerEvent: {}
+[271.552068] (-) TimerEvent: {}
+[271.653098] (-) TimerEvent: {}
+[271.754089] (-) TimerEvent: {}
+[271.855076] (-) TimerEvent: {}
+[271.956035] (-) TimerEvent: {}
+[272.057054] (-) TimerEvent: {}
+[272.158028] (-) TimerEvent: {}
+[272.258937] (-) TimerEvent: {}
+[272.359919] (-) TimerEvent: {}
+[272.460934] (-) TimerEvent: {}
+[272.561986] (-) TimerEvent: {}
+[272.662982] (-) TimerEvent: {}
+[272.764052] (-) TimerEvent: {}
+[272.865068] (-) TimerEvent: {}
+[272.966044] (-) TimerEvent: {}
+[273.067017] (-) TimerEvent: {}
+[273.167999] (-) TimerEvent: {}
+[273.268956] (-) TimerEvent: {}
+[273.369946] (-) TimerEvent: {}
+[273.471492] (-) TimerEvent: {}
+[276.909430] (-) TimerEvent: {}
+[277.154332] (-) TimerEvent: {}
+[277.255211] (-) TimerEvent: {}
+[277.356257] (-) TimerEvent: {}
+[277.457329] (-) TimerEvent: {}
+[277.558502] (-) TimerEvent: {}
+[277.660027] (-) TimerEvent: {}
+[277.761254] (-) TimerEvent: {}
+[277.862363] (-) TimerEvent: {}
+[277.963844] (-) TimerEvent: {}
+[278.064990] (-) TimerEvent: {}
+[278.166134] (-) TimerEvent: {}
+[278.267500] (-) TimerEvent: {}
+[278.368556] (-) TimerEvent: {}
+[278.469735] (-) TimerEvent: {}
+[278.570925] (-) TimerEvent: {}
+[278.671959] (-) TimerEvent: {}
+[278.773080] (-) TimerEvent: {}
+[278.874114] (-) TimerEvent: {}
+[278.975282] (-) TimerEvent: {}
+[279.076455] (-) TimerEvent: {}
+[279.177360] (-) TimerEvent: {}
+[279.278384] (-) TimerEvent: {}
+[279.379407] (-) TimerEvent: {}
+[279.480424] (-) TimerEvent: {}
+[279.581370] (-) TimerEvent: {}
+[279.682560] (-) TimerEvent: {}
+[279.783568] (-) TimerEvent: {}
+[279.884145] (-) TimerEvent: {}
+[279.984765] (-) TimerEvent: {}
+[280.085323] (-) TimerEvent: {}
+[280.185872] (-) TimerEvent: {}
+[280.286431] (-) TimerEvent: {}
+[280.387002] (-) TimerEvent: {}
+[280.487534] (-) TimerEvent: {}
+[280.588769] (-) TimerEvent: {}
+[280.690497] (-) TimerEvent: {}
+[280.791069] (-) TimerEvent: {}
+[280.860748] (opentera_webrtc_ros) JobEnded: {'identifier': 'opentera_webrtc_ros', 'rc': 0}
+[280.864317] (-) EventReactorShutdown: {}

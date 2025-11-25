@@ -1,0 +1,27 @@
+[0.068s] Invoking command in '/home/ws/ugv_ws/build/ugv_base_node': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_base_node -- -j4 -l4
+[0.639s] [ 50%] Built target base_node_ekf
+[0.640s] [ 75%] [32mBuilding CXX object CMakeFiles/base_node.dir/src/base_node.cpp.o[0m
+[43.056s] [100%] [32m[1mLinking CXX executable base_node[0m
+[45.871s] [100%] Built target base_node
+[45.910s] Invoked command in '/home/ws/ugv_ws/build/ugv_base_node' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_base_node -- -j4 -l4
+[46.018s] Invoking command in '/home/ws/ugv_ws/build/ugv_base_node': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/ugv_base_node
+[46.047s] -- Install configuration: ""
+[46.050s] -- Installing: /home/ws/ugv_ws/install/ugv_base_node/lib/ugv_base_node/base_node
+[46.070s] -- Set runtime path of "/home/ws/ugv_ws/install/ugv_base_node/lib/ugv_base_node/base_node" to ""
+[46.072s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/lib/ugv_base_node/base_node_ekf
+[46.073s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ament_index/resource_index/package_run_dependencies/ugv_base_node
+[46.073s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ament_index/resource_index/parent_prefix_path/ugv_base_node
+[46.074s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/environment/ament_prefix_path.sh
+[46.074s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/environment/ament_prefix_path.dsv
+[46.075s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/environment/path.sh
+[46.075s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/environment/path.dsv
+[46.075s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/local_setup.bash
+[46.076s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/local_setup.sh
+[46.076s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/local_setup.zsh
+[46.077s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/local_setup.dsv
+[46.077s] -- Installing: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/package.dsv
+[46.077s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ament_index/resource_index/packages/ugv_base_node
+[46.077s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/cmake/ugv_base_nodeConfig.cmake
+[46.078s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/cmake/ugv_base_nodeConfig-version.cmake
+[46.078s] -- Up-to-date: /home/ws/ugv_ws/install/ugv_base_node/share/ugv_base_node/package.xml
+[46.090s] Invoked command in '/home/ws/ugv_ws/build/ugv_base_node' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/ugv_base_node

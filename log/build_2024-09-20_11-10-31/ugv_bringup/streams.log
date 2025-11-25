@@ -1,0 +1,20 @@
+[1.946s] Invoking command in '/home/ws/ugv_ws/build/ugv_bringup': PYTHONPATH=/home/ws/ugv_ws/build/ugv_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_bringup/build --no-deps symlink_data
+[2.345s] running develop
+[2.345s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[2.345s]   warnings.warn(
+[2.614s] running egg_info
+[2.615s] writing ugv_bringup.egg-info/PKG-INFO
+[2.615s] writing dependency_links to ugv_bringup.egg-info/dependency_links.txt
+[2.622s] writing entry points to ugv_bringup.egg-info/entry_points.txt
+[2.625s] writing requirements to ugv_bringup.egg-info/requires.txt
+[2.629s] writing top-level names to ugv_bringup.egg-info/top_level.txt
+[2.636s] reading manifest file 'ugv_bringup.egg-info/SOURCES.txt'
+[2.640s] writing manifest file 'ugv_bringup.egg-info/SOURCES.txt'
+[2.641s] running build_ext
+[2.642s] Creating /home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages/ugv-bringup.egg-link (link to .)
+[2.643s] Installing ugv_bringup script to /home/ws/ugv_ws/install/ugv_bringup/lib/ugv_bringup
+[2.644s] Installing ugv_driver script to /home/ws/ugv_ws/install/ugv_bringup/lib/ugv_bringup
+[2.645s] 
+[2.645s] Installed /home/ws/ugv_ws/build/ugv_bringup
+[2.645s] running symlink_data
+[2.754s] Invoked command in '/home/ws/ugv_ws/build/ugv_bringup' returned '0': PYTHONPATH=/home/ws/ugv_ws/build/ugv_bringup/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/ws/ugv_ws/build/ugv_bringup/build --no-deps symlink_data

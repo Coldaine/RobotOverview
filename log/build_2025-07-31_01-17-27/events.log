@@ -1,0 +1,2241 @@
+[0.000000] (-) TimerEvent: {}
+[0.000903] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.001173] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.001868] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.001942] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.002454] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.002971] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.003129] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.003249] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.003362] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.003472] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.003578] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.003682] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.003756] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.003944] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.004057] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.004164] (-) JobUnselected: {'identifier': 'ugv_base_node'}
+[0.004269] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.004374] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.004477] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.004586] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.004691] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.004897] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.005015] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.005123] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.005229] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.005336] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.005444] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.005551] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.005660] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.005766] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.005829] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.005933] (-) JobUnselected: {'identifier': 'webrtc_ros'}
+[0.006038] (-) JobUnselected: {'identifier': 'webrtc_ros_msgs'}
+[0.006136] (webrtc) JobQueued: {'identifier': 'webrtc', 'dependencies': OrderedDict()}
+[0.006285] (webrtc) JobStarted: {'identifier': 'webrtc'}
+[0.053396] (webrtc) JobProgress: {'identifier': 'webrtc', 'progress': 'cmake'}
+[0.055137] (webrtc) Command: {'cmd': ['/usr/bin/cmake', '/home/ws/ugv_ws/src/ugv_else/webrtc_ros/webrtc', '-DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/webrtc'], 'cwd': '/home/ws/ugv_ws/build/webrtc', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install:/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/webrtc'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.099115] (-) TimerEvent: {}
+[0.103714] (webrtc) StdoutLine: {'line': b'-- *********************************************************\n'}
+[0.104364] (webrtc) StdoutLine: {'line': b'-- *                                                       *\n'}
+[0.104728] (webrtc) StdoutLine: {'line': b'-- *  On the first run, a lot of stuff will be downloaded  *\n'}
+[0.105031] (webrtc) StdoutLine: {'line': b'-- *  This may take a while...                             *\n'}
+[0.105337] (webrtc) StdoutLine: {'line': b'-- *                                                       *\n'}
+[0.105687] (webrtc) StdoutLine: {'line': b'-- *********************************************************\n'}
+[0.106009] (webrtc) StdoutLine: {'line': b'-- Fetching depot_tools from Chromium\n'}
+[0.116905] (webrtc) StderrLine: {'line': b"Cloning into 'depot_tools'...\n"}
+[0.199282] (-) TimerEvent: {}
+[0.300446] (-) TimerEvent: {}
+[0.401318] (-) TimerEvent: {}
+[0.501910] (-) TimerEvent: {}
+[0.602515] (-) TimerEvent: {}
+[0.703084] (-) TimerEvent: {}
+[0.803665] (-) TimerEvent: {}
+[0.904250] (-) TimerEvent: {}
+[1.004829] (-) TimerEvent: {}
+[1.105423] (-) TimerEvent: {}
+[1.206327] (-) TimerEvent: {}
+[1.306976] (-) TimerEvent: {}
+[1.407871] (-) TimerEvent: {}
+[1.508487] (-) TimerEvent: {}
+[1.609201] (-) TimerEvent: {}
+[1.709974] (-) TimerEvent: {}
+[1.810760] (-) TimerEvent: {}
+[1.911481] (-) TimerEvent: {}
+[2.012800] (-) TimerEvent: {}
+[2.113776] (-) TimerEvent: {}
+[2.214461] (-) TimerEvent: {}
+[2.315423] (-) TimerEvent: {}
+[2.416361] (-) TimerEvent: {}
+[2.517304] (-) TimerEvent: {}
+[2.618328] (-) TimerEvent: {}
+[2.719452] (-) TimerEvent: {}
+[2.820106] (-) TimerEvent: {}
+[2.921254] (-) TimerEvent: {}
+[3.023375] (-) TimerEvent: {}
+[3.124533] (-) TimerEvent: {}
+[3.226272] (-) TimerEvent: {}
+[3.327408] (-) TimerEvent: {}
+[3.428310] (-) TimerEvent: {}
+[3.529060] (-) TimerEvent: {}
+[3.631202] (-) TimerEvent: {}
+[3.732330] (-) TimerEvent: {}
+[3.833008] (-) TimerEvent: {}
+[3.934552] (-) TimerEvent: {}
+[4.035946] (-) TimerEvent: {}
+[4.137391] (-) TimerEvent: {}
+[4.238900] (-) TimerEvent: {}
+[4.340217] (-) TimerEvent: {}
+[4.441061] (-) TimerEvent: {}
+[4.542296] (-) TimerEvent: {}
+[4.643750] (-) TimerEvent: {}
+[4.744698] (-) TimerEvent: {}
+[4.845679] (-) TimerEvent: {}
+[4.946344] (-) TimerEvent: {}
+[5.047377] (-) TimerEvent: {}
+[5.148261] (-) TimerEvent: {}
+[5.249076] (-) TimerEvent: {}
+[5.350054] (-) TimerEvent: {}
+[5.450710] (-) TimerEvent: {}
+[5.551895] (-) TimerEvent: {}
+[5.652616] (-) TimerEvent: {}
+[5.753837] (-) TimerEvent: {}
+[5.854632] (-) TimerEvent: {}
+[5.955856] (-) TimerEvent: {}
+[6.057168] (-) TimerEvent: {}
+[6.158071] (-) TimerEvent: {}
+[6.258835] (-) TimerEvent: {}
+[6.359594] (-) TimerEvent: {}
+[6.460817] (-) TimerEvent: {}
+[6.561946] (-) TimerEvent: {}
+[6.662682] (-) TimerEvent: {}
+[6.763428] (-) TimerEvent: {}
+[6.864190] (-) TimerEvent: {}
+[6.964987] (-) TimerEvent: {}
+[7.065892] (-) TimerEvent: {}
+[7.167045] (-) TimerEvent: {}
+[7.268082] (-) TimerEvent: {}
+[7.368752] (-) TimerEvent: {}
+[7.469521] (-) TimerEvent: {}
+[7.570250] (-) TimerEvent: {}
+[7.671473] (-) TimerEvent: {}
+[7.773827] (-) TimerEvent: {}
+[7.875387] (-) TimerEvent: {}
+[7.976692] (-) TimerEvent: {}
+[8.078849] (-) TimerEvent: {}
+[8.180749] (-) TimerEvent: {}
+[8.282370] (-) TimerEvent: {}
+[8.384171] (-) TimerEvent: {}
+[8.486388] (-) TimerEvent: {}
+[8.587766] (-) TimerEvent: {}
+[8.688582] (-) TimerEvent: {}
+[8.789613] (-) TimerEvent: {}
+[8.890405] (-) TimerEvent: {}
+[8.991427] (-) TimerEvent: {}
+[9.092216] (-) TimerEvent: {}
+[9.193988] (-) TimerEvent: {}
+[9.294818] (-) TimerEvent: {}
+[9.396057] (-) TimerEvent: {}
+[9.497117] (-) TimerEvent: {}
+[9.598278] (-) TimerEvent: {}
+[9.699636] (-) TimerEvent: {}
+[9.800601] (-) TimerEvent: {}
+[9.902028] (-) TimerEvent: {}
+[10.002772] (-) TimerEvent: {}
+[10.104081] (-) TimerEvent: {}
+[10.205658] (-) TimerEvent: {}
+[10.306662] (-) TimerEvent: {}
+[10.408053] (-) TimerEvent: {}
+[10.509461] (-) TimerEvent: {}
+[10.610583] (-) TimerEvent: {}
+[10.711902] (-) TimerEvent: {}
+[10.813007] (-) TimerEvent: {}
+[10.913719] (-) TimerEvent: {}
+[11.015151] (-) TimerEvent: {}
+[11.116613] (-) TimerEvent: {}
+[11.217742] (-) TimerEvent: {}
+[11.318670] (-) TimerEvent: {}
+[11.419561] (-) TimerEvent: {}
+[11.520443] (-) TimerEvent: {}
+[11.621323] (-) TimerEvent: {}
+[11.722249] (-) TimerEvent: {}
+[11.823115] (-) TimerEvent: {}
+[11.923977] (-) TimerEvent: {}
+[12.024839] (-) TimerEvent: {}
+[12.125423] (-) TimerEvent: {}
+[12.226011] (-) TimerEvent: {}
+[12.326672] (-) TimerEvent: {}
+[12.427356] (-) TimerEvent: {}
+[12.527979] (-) TimerEvent: {}
+[12.628606] (-) TimerEvent: {}
+[12.729217] (-) TimerEvent: {}
+[12.829813] (-) TimerEvent: {}
+[12.930471] (-) TimerEvent: {}
+[13.031099] (-) TimerEvent: {}
+[13.131709] (-) TimerEvent: {}
+[13.232370] (-) TimerEvent: {}
+[13.332982] (-) TimerEvent: {}
+[13.433617] (-) TimerEvent: {}
+[13.534281] (-) TimerEvent: {}
+[13.634905] (-) TimerEvent: {}
+[13.735528] (-) TimerEvent: {}
+[13.836122] (-) TimerEvent: {}
+[13.936718] (-) TimerEvent: {}
+[14.037311] (-) TimerEvent: {}
+[14.137906] (-) TimerEvent: {}
+[14.238505] (-) TimerEvent: {}
+[14.339098] (-) TimerEvent: {}
+[14.439698] (-) TimerEvent: {}
+[14.540292] (-) TimerEvent: {}
+[14.640885] (-) TimerEvent: {}
+[14.741474] (-) TimerEvent: {}
+[14.842062] (-) TimerEvent: {}
+[14.942677] (-) TimerEvent: {}
+[15.043311] (-) TimerEvent: {}
+[15.143898] (-) TimerEvent: {}
+[15.244477] (-) TimerEvent: {}
+[15.345076] (-) TimerEvent: {}
+[15.445690] (-) TimerEvent: {}
+[15.546324] (-) TimerEvent: {}
+[15.646902] (-) TimerEvent: {}
+[15.747494] (-) TimerEvent: {}
+[15.848086] (-) TimerEvent: {}
+[15.948678] (-) TimerEvent: {}
+[16.049301] (-) TimerEvent: {}
+[16.149889] (-) TimerEvent: {}
+[16.250550] (-) TimerEvent: {}
+[16.351186] (-) TimerEvent: {}
+[16.451871] (-) TimerEvent: {}
+[17.890663] (-) TimerEvent: {}
+[17.991396] (-) TimerEvent: {}
+[17.992675] (webrtc) StdoutLine: {'line': b'-- Fetching WebRTC source code\n'}
+[18.091565] (-) TimerEvent: {}
+[18.192690] (-) TimerEvent: {}
+[18.293710] (-) TimerEvent: {}
+[18.394644] (-) TimerEvent: {}
+[18.495448] (-) TimerEvent: {}
+[18.596472] (-) TimerEvent: {}
+[18.698323] (-) TimerEvent: {}
+[18.799704] (-) TimerEvent: {}
+[18.900755] (-) TimerEvent: {}
+[19.002146] (-) TimerEvent: {}
+[19.102907] (-) TimerEvent: {}
+[19.203752] (-) TimerEvent: {}
+[19.304409] (-) TimerEvent: {}
+[19.405043] (-) TimerEvent: {}
+[19.505665] (-) TimerEvent: {}
+[19.606298] (-) TimerEvent: {}
+[19.706938] (-) TimerEvent: {}
+[19.807541] (-) TimerEvent: {}
+[19.908134] (-) TimerEvent: {}
+[20.008698] (-) TimerEvent: {}
+[20.109264] (-) TimerEvent: {}
+[20.209842] (-) TimerEvent: {}
+[20.310490] (-) TimerEvent: {}
+[20.411114] (-) TimerEvent: {}
+[20.512024] (-) TimerEvent: {}
+[20.612671] (-) TimerEvent: {}
+[20.713348] (-) TimerEvent: {}
+[20.814051] (-) TimerEvent: {}
+[20.914776] (-) TimerEvent: {}
+[21.016162] (-) TimerEvent: {}
+[21.116824] (-) TimerEvent: {}
+[21.217522] (-) TimerEvent: {}
+[21.318234] (-) TimerEvent: {}
+[21.418955] (-) TimerEvent: {}
+[21.519630] (-) TimerEvent: {}
+[21.620318] (-) TimerEvent: {}
+[21.720939] (-) TimerEvent: {}
+[21.821548] (-) TimerEvent: {}
+[21.922168] (-) TimerEvent: {}
+[22.022802] (-) TimerEvent: {}
+[22.123381] (-) TimerEvent: {}
+[22.223959] (-) TimerEvent: {}
+[22.324547] (-) TimerEvent: {}
+[22.425119] (-) TimerEvent: {}
+[22.525693] (-) TimerEvent: {}
+[22.626546] (-) TimerEvent: {}
+[22.727189] (-) TimerEvent: {}
+[22.828014] (-) TimerEvent: {}
+[22.928595] (-) TimerEvent: {}
+[23.029422] (-) TimerEvent: {}
+[23.503132] (-) TimerEvent: {}
+[23.603727] (-) TimerEvent: {}
+[23.704304] (-) TimerEvent: {}
+[23.804877] (-) TimerEvent: {}
+[23.905463] (-) TimerEvent: {}
+[24.006137] (-) TimerEvent: {}
+[24.107549] (-) TimerEvent: {}
+[24.208203] (-) TimerEvent: {}
+[24.308907] (-) TimerEvent: {}
+[24.409496] (-) TimerEvent: {}
+[24.510067] (-) TimerEvent: {}
+[24.610771] (-) TimerEvent: {}
+[24.711358] (-) TimerEvent: {}
+[24.811915] (-) TimerEvent: {}
+[24.912479] (-) TimerEvent: {}
+[25.013026] (-) TimerEvent: {}
+[25.114353] (-) TimerEvent: {}
+[25.214990] (-) TimerEvent: {}
+[25.315852] (-) TimerEvent: {}
+[25.416522] (-) TimerEvent: {}
+[25.517281] (-) TimerEvent: {}
+[25.618188] (-) TimerEvent: {}
+[25.718833] (-) TimerEvent: {}
+[25.819663] (-) TimerEvent: {}
+[25.920311] (-) TimerEvent: {}
+[26.021281] (-) TimerEvent: {}
+[26.121897] (-) TimerEvent: {}
+[26.222783] (-) TimerEvent: {}
+[26.323399] (-) TimerEvent: {}
+[26.424020] (-) TimerEvent: {}
+[26.524638] (-) TimerEvent: {}
+[26.625264] (-) TimerEvent: {}
+[26.725878] (-) TimerEvent: {}
+[26.826490] (-) TimerEvent: {}
+[26.927073] (-) TimerEvent: {}
+[27.027647] (-) TimerEvent: {}
+[27.128325] (-) TimerEvent: {}
+[27.228906] (-) TimerEvent: {}
+[27.329487] (-) TimerEvent: {}
+[27.430115] (-) TimerEvent: {}
+[27.530796] (-) TimerEvent: {}
+[27.631634] (-) TimerEvent: {}
+[27.732687] (-) TimerEvent: {}
+[27.833409] (-) TimerEvent: {}
+[27.934098] (-) TimerEvent: {}
+[28.035111] (-) TimerEvent: {}
+[28.135912] (-) TimerEvent: {}
+[28.236761] (-) TimerEvent: {}
+[28.337528] (-) TimerEvent: {}
+[28.438242] (-) TimerEvent: {}
+[28.539321] (-) TimerEvent: {}
+[28.639914] (-) TimerEvent: {}
+[28.740483] (-) TimerEvent: {}
+[28.841343] (-) TimerEvent: {}
+[28.942577] (-) TimerEvent: {}
+[29.044001] (-) TimerEvent: {}
+[29.145569] (-) TimerEvent: {}
+[29.246259] (-) TimerEvent: {}
+[29.347593] (-) TimerEvent: {}
+[29.448774] (-) TimerEvent: {}
+[29.549673] (-) TimerEvent: {}
+[29.650465] (-) TimerEvent: {}
+[29.751273] (-) TimerEvent: {}
+[29.852191] (-) TimerEvent: {}
+[29.953109] (-) TimerEvent: {}
+[30.053756] (-) TimerEvent: {}
+[30.154345] (-) TimerEvent: {}
+[30.254961] (-) TimerEvent: {}
+[30.355582] (-) TimerEvent: {}
+[30.456497] (-) TimerEvent: {}
+[30.557142] (-) TimerEvent: {}
+[30.657870] (-) TimerEvent: {}
+[30.758683] (-) TimerEvent: {}
+[30.859372] (-) TimerEvent: {}
+[30.959988] (-) TimerEvent: {}
+[31.060606] (-) TimerEvent: {}
+[31.161225] (-) TimerEvent: {}
+[31.261841] (-) TimerEvent: {}
+[31.362481] (-) TimerEvent: {}
+[31.463595] (-) TimerEvent: {}
+[31.564559] (-) TimerEvent: {}
+[31.665679] (-) TimerEvent: {}
+[31.766541] (-) TimerEvent: {}
+[31.867193] (-) TimerEvent: {}
+[31.968112] (-) TimerEvent: {}
+[32.069094] (-) TimerEvent: {}
+[32.170095] (-) TimerEvent: {}
+[32.270962] (-) TimerEvent: {}
+[32.371637] (-) TimerEvent: {}
+[32.472594] (-) TimerEvent: {}
+[32.573515] (-) TimerEvent: {}
+[32.675036] (-) TimerEvent: {}
+[32.775975] (-) TimerEvent: {}
+[32.876661] (-) TimerEvent: {}
+[32.977690] (-) TimerEvent: {}
+[33.078761] (-) TimerEvent: {}
+[33.179410] (-) TimerEvent: {}
+[33.280512] (-) TimerEvent: {}
+[33.381547] (-) TimerEvent: {}
+[33.482189] (-) TimerEvent: {}
+[33.582891] (-) TimerEvent: {}
+[33.683485] (-) TimerEvent: {}
+[33.784078] (-) TimerEvent: {}
+[33.884709] (-) TimerEvent: {}
+[33.985330] (-) TimerEvent: {}
+[34.085983] (-) TimerEvent: {}
+[34.187111] (-) TimerEvent: {}
+[34.288457] (-) TimerEvent: {}
+[34.389629] (-) TimerEvent: {}
+[34.490527] (-) TimerEvent: {}
+[34.591380] (-) TimerEvent: {}
+[34.692238] (-) TimerEvent: {}
+[34.793095] (-) TimerEvent: {}
+[34.894078] (-) TimerEvent: {}
+[34.994804] (-) TimerEvent: {}
+[35.098371] (-) TimerEvent: {}
+[35.199125] (-) TimerEvent: {}
+[35.299809] (-) TimerEvent: {}
+[35.401013] (-) TimerEvent: {}
+[35.506396] (-) TimerEvent: {}
+[35.607129] (-) TimerEvent: {}
+[35.708250] (-) TimerEvent: {}
+[35.809325] (-) TimerEvent: {}
+[35.914546] (-) TimerEvent: {}
+[36.015277] (-) TimerEvent: {}
+[36.116238] (-) TimerEvent: {}
+[36.217241] (-) TimerEvent: {}
+[36.322679] (-) TimerEvent: {}
+[36.423789] (-) TimerEvent: {}
+[36.530414] (-) TimerEvent: {}
+[36.631157] (-) TimerEvent: {}
+[36.732368] (-) TimerEvent: {}
+[36.833597] (-) TimerEvent: {}
+[36.934715] (-) TimerEvent: {}
+[37.035906] (-) TimerEvent: {}
+[37.138147] (-) TimerEvent: {}
+[37.239421] (-) TimerEvent: {}
+[37.345446] (-) TimerEvent: {}
+[37.446299] (-) TimerEvent: {}
+[37.547142] (-) TimerEvent: {}
+[37.648608] (-) TimerEvent: {}
+[37.749376] (-) TimerEvent: {}
+[37.850093] (-) TimerEvent: {}
+[37.950739] (-) TimerEvent: {}
+[38.051329] (-) TimerEvent: {}
+[38.151919] (-) TimerEvent: {}
+[38.252490] (-) TimerEvent: {}
+[38.353113] (-) TimerEvent: {}
+[38.453806] (-) TimerEvent: {}
+[40.688054] (-) TimerEvent: {}
+[40.789504] (-) TimerEvent: {}
+[40.890169] (-) TimerEvent: {}
+[40.991075] (-) TimerEvent: {}
+[41.091866] (-) TimerEvent: {}
+[41.193063] (-) TimerEvent: {}
+[41.293787] (-) TimerEvent: {}
+[41.394455] (-) TimerEvent: {}
+[41.495350] (-) TimerEvent: {}
+[41.596007] (-) TimerEvent: {}
+[41.696635] (-) TimerEvent: {}
+[41.797209] (-) TimerEvent: {}
+[41.897806] (-) TimerEvent: {}
+[41.998403] (-) TimerEvent: {}
+[42.099087] (-) TimerEvent: {}
+[42.200192] (-) TimerEvent: {}
+[42.300864] (-) TimerEvent: {}
+[42.401838] (-) TimerEvent: {}
+[42.502570] (-) TimerEvent: {}
+[42.603307] (-) TimerEvent: {}
+[42.704048] (-) TimerEvent: {}
+[42.805199] (-) TimerEvent: {}
+[42.906346] (-) TimerEvent: {}
+[43.006951] (-) TimerEvent: {}
+[43.107628] (-) TimerEvent: {}
+[43.208566] (-) TimerEvent: {}
+[43.309362] (-) TimerEvent: {}
+[43.410272] (-) TimerEvent: {}
+[43.511043] (-) TimerEvent: {}
+[43.612370] (-) TimerEvent: {}
+[43.713085] (-) TimerEvent: {}
+[43.813953] (-) TimerEvent: {}
+[43.914695] (-) TimerEvent: {}
+[44.015512] (-) TimerEvent: {}
+[44.116663] (-) TimerEvent: {}
+[44.217755] (-) TimerEvent: {}
+[44.318460] (-) TimerEvent: {}
+[44.419293] (-) TimerEvent: {}
+[44.520036] (-) TimerEvent: {}
+[44.620714] (-) TimerEvent: {}
+[44.721289] (-) TimerEvent: {}
+[44.821861] (-) TimerEvent: {}
+[44.922476] (-) TimerEvent: {}
+[45.023067] (-) TimerEvent: {}
+[45.123701] (-) TimerEvent: {}
+[45.225214] (-) TimerEvent: {}
+[45.326094] (-) TimerEvent: {}
+[45.427186] (-) TimerEvent: {}
+[45.528335] (-) TimerEvent: {}
+[47.429271] (-) TimerEvent: {}
+[47.529940] (-) TimerEvent: {}
+[47.630875] (-) TimerEvent: {}
+[47.731541] (-) TimerEvent: {}
+[47.832165] (-) TimerEvent: {}
+[47.932792] (-) TimerEvent: {}
+[48.033451] (-) TimerEvent: {}
+[48.134114] (-) TimerEvent: {}
+[48.234853] (-) TimerEvent: {}
+[48.335860] (-) TimerEvent: {}
+[48.436540] (-) TimerEvent: {}
+[48.537468] (-) TimerEvent: {}
+[48.638199] (-) TimerEvent: {}
+[48.738949] (-) TimerEvent: {}
+[48.839567] (-) TimerEvent: {}
+[48.940252] (-) TimerEvent: {}
+[49.040898] (-) TimerEvent: {}
+[49.141616] (-) TimerEvent: {}
+[49.242578] (-) TimerEvent: {}
+[49.343366] (-) TimerEvent: {}
+[49.444335] (-) TimerEvent: {}
+[49.544941] (-) TimerEvent: {}
+[49.645684] (-) TimerEvent: {}
+[49.746378] (-) TimerEvent: {}
+[49.847343] (-) TimerEvent: {}
+[49.948131] (-) TimerEvent: {}
+[50.048816] (-) TimerEvent: {}
+[50.149718] (-) TimerEvent: {}
+[50.250360] (-) TimerEvent: {}
+[50.351777] (-) TimerEvent: {}
+[50.452502] (-) TimerEvent: {}
+[50.553184] (-) TimerEvent: {}
+[50.653845] (-) TimerEvent: {}
+[50.754508] (-) TimerEvent: {}
+[50.855121] (-) TimerEvent: {}
+[50.955740] (-) TimerEvent: {}
+[51.056365] (-) TimerEvent: {}
+[51.156970] (-) TimerEvent: {}
+[51.257583] (-) TimerEvent: {}
+[51.358226] (-) TimerEvent: {}
+[51.458855] (-) TimerEvent: {}
+[51.559477] (-) TimerEvent: {}
+[51.660097] (-) TimerEvent: {}
+[51.760732] (-) TimerEvent: {}
+[51.861347] (-) TimerEvent: {}
+[51.961952] (-) TimerEvent: {}
+[52.062577] (-) TimerEvent: {}
+[52.163166] (-) TimerEvent: {}
+[52.263742] (-) TimerEvent: {}
+[52.364352] (-) TimerEvent: {}
+[52.464967] (-) TimerEvent: {}
+[52.933825] (-) TimerEvent: {}
+[53.034813] (-) TimerEvent: {}
+[53.136462] (-) TimerEvent: {}
+[53.237110] (-) TimerEvent: {}
+[53.337778] (-) TimerEvent: {}
+[53.438360] (-) TimerEvent: {}
+[53.538936] (-) TimerEvent: {}
+[53.639518] (-) TimerEvent: {}
+[53.740163] (-) TimerEvent: {}
+[53.842389] (-) TimerEvent: {}
+[53.943017] (-) TimerEvent: {}
+[54.044231] (-) TimerEvent: {}
+[54.145077] (-) TimerEvent: {}
+[54.246267] (-) TimerEvent: {}
+[54.346843] (-) TimerEvent: {}
+[54.449718] (-) TimerEvent: {}
+[54.550655] (-) TimerEvent: {}
+[54.651542] (-) TimerEvent: {}
+[54.752485] (-) TimerEvent: {}
+[54.853109] (-) TimerEvent: {}
+[54.954534] (-) TimerEvent: {}
+[55.055134] (-) TimerEvent: {}
+[55.155708] (-) TimerEvent: {}
+[55.258343] (-) TimerEvent: {}
+[55.358982] (-) TimerEvent: {}
+[55.459618] (-) TimerEvent: {}
+[55.560235] (-) TimerEvent: {}
+[55.660870] (-) TimerEvent: {}
+[55.761528] (-) TimerEvent: {}
+[55.862264] (-) TimerEvent: {}
+[55.962879] (-) TimerEvent: {}
+[56.063455] (-) TimerEvent: {}
+[56.164037] (-) TimerEvent: {}
+[56.264626] (-) TimerEvent: {}
+[56.365213] (-) TimerEvent: {}
+[56.465804] (-) TimerEvent: {}
+[56.566422] (-) TimerEvent: {}
+[56.668024] (-) TimerEvent: {}
+[56.768683] (-) TimerEvent: {}
+[56.869321] (-) TimerEvent: {}
+[56.969946] (-) TimerEvent: {}
+[57.070570] (-) TimerEvent: {}
+[57.171177] (-) TimerEvent: {}
+[57.271750] (-) TimerEvent: {}
+[57.372332] (-) TimerEvent: {}
+[57.473150] (-) TimerEvent: {}
+[57.573796] (-) TimerEvent: {}
+[57.674403] (-) TimerEvent: {}
+[57.778351] (-) TimerEvent: {}
+[57.879210] (-) TimerEvent: {}
+[58.210362] (-) TimerEvent: {}
+[58.311513] (-) TimerEvent: {}
+[58.412677] (-) TimerEvent: {}
+[58.514555] (-) TimerEvent: {}
+[58.615143] (-) TimerEvent: {}
+[58.715736] (-) TimerEvent: {}
+[58.816305] (-) TimerEvent: {}
+[58.916885] (-) TimerEvent: {}
+[59.017472] (-) TimerEvent: {}
+[59.118053] (-) TimerEvent: {}
+[59.218671] (-) TimerEvent: {}
+[59.319266] (-) TimerEvent: {}
+[59.420129] (-) TimerEvent: {}
+[59.520699] (-) TimerEvent: {}
+[59.621805] (-) TimerEvent: {}
+[59.722699] (-) TimerEvent: {}
+[59.823290] (-) TimerEvent: {}
+[59.924406] (-) TimerEvent: {}
+[60.025267] (-) TimerEvent: {}
+[60.125836] (-) TimerEvent: {}
+[60.226708] (-) TimerEvent: {}
+[60.327312] (-) TimerEvent: {}
+[60.428431] (-) TimerEvent: {}
+[60.529299] (-) TimerEvent: {}
+[60.630447] (-) TimerEvent: {}
+[60.731301] (-) TimerEvent: {}
+[60.834344] (-) TimerEvent: {}
+[60.935207] (-) TimerEvent: {}
+[61.036410] (-) TimerEvent: {}
+[61.137490] (-) TimerEvent: {}
+[61.238634] (-) TimerEvent: {}
+[61.339228] (-) TimerEvent: {}
+[61.440332] (-) TimerEvent: {}
+[61.541192] (-) TimerEvent: {}
+[61.642322] (-) TimerEvent: {}
+[61.743169] (-) TimerEvent: {}
+[61.845315] (-) TimerEvent: {}
+[61.946337] (-) TimerEvent: {}
+[62.046974] (-) TimerEvent: {}
+[62.147574] (-) TimerEvent: {}
+[62.249262] (-) TimerEvent: {}
+[62.349902] (-) TimerEvent: {}
+[62.450854] (-) TimerEvent: {}
+[62.551648] (-) TimerEvent: {}
+[62.652569] (-) TimerEvent: {}
+[62.753377] (-) TimerEvent: {}
+[62.854046] (-) TimerEvent: {}
+[63.002805] (-) TimerEvent: {}
+[63.103507] (-) TimerEvent: {}
+[63.204517] (-) TimerEvent: {}
+[63.306086] (-) TimerEvent: {}
+[63.407444] (-) TimerEvent: {}
+[63.508300] (-) TimerEvent: {}
+[63.609182] (-) TimerEvent: {}
+[63.710270] (-) TimerEvent: {}
+[63.813985] (-) TimerEvent: {}
+[63.914850] (-) TimerEvent: {}
+[64.015448] (-) TimerEvent: {}
+[64.116303] (-) TimerEvent: {}
+[64.216898] (-) TimerEvent: {}
+[64.317814] (-) TimerEvent: {}
+[64.418747] (-) TimerEvent: {}
+[64.519623] (-) TimerEvent: {}
+[64.620546] (-) TimerEvent: {}
+[64.721696] (-) TimerEvent: {}
+[64.823003] (-) TimerEvent: {}
+[64.923980] (-) TimerEvent: {}
+[65.025412] (-) TimerEvent: {}
+[65.126886] (-) TimerEvent: {}
+[65.228825] (-) TimerEvent: {}
+[65.330562] (-) TimerEvent: {}
+[65.432178] (-) TimerEvent: {}
+[65.533998] (-) TimerEvent: {}
+[65.635046] (-) TimerEvent: {}
+[65.736121] (-) TimerEvent: {}
+[65.837189] (-) TimerEvent: {}
+[65.938308] (-) TimerEvent: {}
+[66.039262] (-) TimerEvent: {}
+[66.140300] (-) TimerEvent: {}
+[66.242314] (-) TimerEvent: {}
+[66.343267] (-) TimerEvent: {}
+[66.444139] (-) TimerEvent: {}
+[66.544758] (-) TimerEvent: {}
+[66.646456] (-) TimerEvent: {}
+[66.748086] (-) TimerEvent: {}
+[66.848727] (-) TimerEvent: {}
+[66.949381] (-) TimerEvent: {}
+[67.050043] (-) TimerEvent: {}
+[67.150708] (-) TimerEvent: {}
+[67.251347] (-) TimerEvent: {}
+[67.352301] (-) TimerEvent: {}
+[67.452926] (-) TimerEvent: {}
+[67.553790] (-) TimerEvent: {}
+[67.654431] (-) TimerEvent: {}
+[67.755027] (-) TimerEvent: {}
+[67.855623] (-) TimerEvent: {}
+[68.204476] (-) TimerEvent: {}
+[68.305050] (-) TimerEvent: {}
+[68.405644] (-) TimerEvent: {}
+[68.506257] (-) TimerEvent: {}
+[68.606841] (-) TimerEvent: {}
+[68.707429] (-) TimerEvent: {}
+[68.808016] (-) TimerEvent: {}
+[68.908607] (-) TimerEvent: {}
+[69.009205] (-) TimerEvent: {}
+[69.109792] (-) TimerEvent: {}
+[69.210429] (-) TimerEvent: {}
+[69.311025] (-) TimerEvent: {}
+[69.411614] (-) TimerEvent: {}
+[69.512204] (-) TimerEvent: {}
+[69.612791] (-) TimerEvent: {}
+[69.713404] (-) TimerEvent: {}
+[69.813985] (-) TimerEvent: {}
+[69.914605] (-) TimerEvent: {}
+[70.015203] (-) TimerEvent: {}
+[70.116121] (-) TimerEvent: {}
+[70.216739] (-) TimerEvent: {}
+[70.317639] (-) TimerEvent: {}
+[70.418302] (-) TimerEvent: {}
+[70.519213] (-) TimerEvent: {}
+[70.619795] (-) TimerEvent: {}
+[70.720706] (-) TimerEvent: {}
+[70.821614] (-) TimerEvent: {}
+[70.922258] (-) TimerEvent: {}
+[71.022889] (-) TimerEvent: {}
+[71.124242] (-) TimerEvent: {}
+[71.224867] (-) TimerEvent: {}
+[71.325457] (-) TimerEvent: {}
+[71.426125] (-) TimerEvent: {}
+[71.527151] (-) TimerEvent: {}
+[71.628214] (-) TimerEvent: {}
+[71.729261] (-) TimerEvent: {}
+[71.830365] (-) TimerEvent: {}
+[71.931432] (-) TimerEvent: {}
+[72.032508] (-) TimerEvent: {}
+[72.133573] (-) TimerEvent: {}
+[72.234681] (-) TimerEvent: {}
+[72.335762] (-) TimerEvent: {}
+[72.436846] (-) TimerEvent: {}
+[72.537929] (-) TimerEvent: {}
+[72.639240] (-) TimerEvent: {}
+[72.740361] (-) TimerEvent: {}
+[72.841438] (-) TimerEvent: {}
+[72.942533] (-) TimerEvent: {}
+[73.043632] (-) TimerEvent: {}
+[73.144873] (-) TimerEvent: {}
+[73.246031] (-) TimerEvent: {}
+[74.025609] (-) TimerEvent: {}
+[74.126447] (-) TimerEvent: {}
+[74.227440] (-) TimerEvent: {}
+[74.328520] (-) TimerEvent: {}
+[74.429366] (-) TimerEvent: {}
+[74.530433] (-) TimerEvent: {}
+[74.631175] (-) TimerEvent: {}
+[74.732210] (-) TimerEvent: {}
+[74.832987] (-) TimerEvent: {}
+[74.934160] (-) TimerEvent: {}
+[75.034951] (-) TimerEvent: {}
+[75.136022] (-) TimerEvent: {}
+[75.236866] (-) TimerEvent: {}
+[75.338012] (-) TimerEvent: {}
+[75.438834] (-) TimerEvent: {}
+[75.540105] (-) TimerEvent: {}
+[75.641007] (-) TimerEvent: {}
+[75.742278] (-) TimerEvent: {}
+[75.843121] (-) TimerEvent: {}
+[75.944557] (-) TimerEvent: {}
+[76.045726] (-) TimerEvent: {}
+[76.146837] (-) TimerEvent: {}
+[76.247917] (-) TimerEvent: {}
+[76.348615] (-) TimerEvent: {}
+[76.449566] (-) TimerEvent: {}
+[76.550342] (-) TimerEvent: {}
+[76.651246] (-) TimerEvent: {}
+[76.751957] (-) TimerEvent: {}
+[76.853049] (-) TimerEvent: {}
+[76.953952] (-) TimerEvent: {}
+[77.055400] (-) TimerEvent: {}
+[77.156174] (-) TimerEvent: {}
+[77.257087] (-) TimerEvent: {}
+[77.358049] (-) TimerEvent: {}
+[77.458722] (-) TimerEvent: {}
+[77.559707] (-) TimerEvent: {}
+[77.660489] (-) TimerEvent: {}
+[77.761192] (-) TimerEvent: {}
+[77.862141] (-) TimerEvent: {}
+[77.962931] (-) TimerEvent: {}
+[78.063980] (-) TimerEvent: {}
+[78.164947] (-) TimerEvent: {}
+[79.473909] (-) TimerEvent: {}
+[79.575237] (-) TimerEvent: {}
+[79.676385] (-) TimerEvent: {}
+[79.777799] (-) TimerEvent: {}
+[79.878886] (-) TimerEvent: {}
+[79.980472] (-) TimerEvent: {}
+[80.081552] (-) TimerEvent: {}
+[80.182667] (-) TimerEvent: {}
+[80.283639] (-) TimerEvent: {}
+[80.384749] (-) TimerEvent: {}
+[80.486058] (-) TimerEvent: {}
+[80.590365] (-) TimerEvent: {}
+[80.691027] (-) TimerEvent: {}
+[80.791617] (-) TimerEvent: {}
+[80.892290] (-) TimerEvent: {}
+[80.993252] (-) TimerEvent: {}
+[81.094068] (-) TimerEvent: {}
+[81.194928] (-) TimerEvent: {}
+[81.296120] (-) TimerEvent: {}
+[81.396882] (-) TimerEvent: {}
+[81.497901] (-) TimerEvent: {}
+[81.598667] (-) TimerEvent: {}
+[81.700583] (-) TimerEvent: {}
+[81.806790] (-) TimerEvent: {}
+[81.910447] (-) TimerEvent: {}
+[82.011583] (-) TimerEvent: {}
+[82.112463] (-) TimerEvent: {}
+[82.213655] (-) TimerEvent: {}
+[82.318753] (-) TimerEvent: {}
+[82.419643] (-) TimerEvent: {}
+[82.520522] (-) TimerEvent: {}
+[82.621386] (-) TimerEvent: {}
+[82.725770] (-) TimerEvent: {}
+[82.827049] (-) TimerEvent: {}
+[82.928077] (-) TimerEvent: {}
+[83.030808] (-) TimerEvent: {}
+[83.134716] (-) TimerEvent: {}
+[83.237037] (-) TimerEvent: {}
+[83.338063] (-) TimerEvent: {}
+[83.440329] (-) TimerEvent: {}
+[83.542147] (-) TimerEvent: {}
+[83.643122] (-) TimerEvent: {}
+[83.743980] (-) TimerEvent: {}
+[83.844849] (-) TimerEvent: {}
+[83.945502] (-) TimerEvent: {}
+[84.046395] (-) TimerEvent: {}
+[84.147371] (-) TimerEvent: {}
+[84.252710] (-) TimerEvent: {}
+[84.354020] (-) TimerEvent: {}
+[84.455635] (-) TimerEvent: {}
+[84.557242] (-) TimerEvent: {}
+[84.662685] (-) TimerEvent: {}
+[84.763585] (-) TimerEvent: {}
+[84.864310] (-) TimerEvent: {}
+[84.965861] (-) TimerEvent: {}
+[85.067247] (-) TimerEvent: {}
+[85.168138] (-) TimerEvent: {}
+[85.268791] (-) TimerEvent: {}
+[85.369433] (-) TimerEvent: {}
+[85.470085] (-) TimerEvent: {}
+[85.570760] (-) TimerEvent: {}
+[85.671350] (-) TimerEvent: {}
+[85.771977] (-) TimerEvent: {}
+[85.872678] (-) TimerEvent: {}
+[85.973548] (-) TimerEvent: {}
+[86.074188] (-) TimerEvent: {}
+[86.175084] (-) TimerEvent: {}
+[86.275714] (-) TimerEvent: {}
+[86.376356] (-) TimerEvent: {}
+[86.477014] (-) TimerEvent: {}
+[86.577662] (-) TimerEvent: {}
+[86.678301] (-) TimerEvent: {}
+[86.778889] (-) TimerEvent: {}
+[86.879508] (-) TimerEvent: {}
+[86.980124] (-) TimerEvent: {}
+[87.080710] (-) TimerEvent: {}
+[87.181304] (-) TimerEvent: {}
+[87.281896] (-) TimerEvent: {}
+[87.382496] (-) TimerEvent: {}
+[87.483078] (-) TimerEvent: {}
+[87.583670] (-) TimerEvent: {}
+[87.684371] (-) TimerEvent: {}
+[87.786364] (-) TimerEvent: {}
+[87.886993] (-) TimerEvent: {}
+[87.987858] (-) TimerEvent: {}
+[88.088506] (-) TimerEvent: {}
+[88.189358] (-) TimerEvent: {}
+[88.290019] (-) TimerEvent: {}
+[88.390666] (-) TimerEvent: {}
+[88.491278] (-) TimerEvent: {}
+[88.591900] (-) TimerEvent: {}
+[88.692501] (-) TimerEvent: {}
+[88.793103] (-) TimerEvent: {}
+[88.893729] (-) TimerEvent: {}
+[88.994343] (-) TimerEvent: {}
+[89.094940] (-) TimerEvent: {}
+[89.195536] (-) TimerEvent: {}
+[89.296161] (-) TimerEvent: {}
+[89.396774] (-) TimerEvent: {}
+[89.497391] (-) TimerEvent: {}
+[89.597988] (-) TimerEvent: {}
+[89.698605] (-) TimerEvent: {}
+[89.799228] (-) TimerEvent: {}
+[89.899835] (-) TimerEvent: {}
+[90.000706] (-) TimerEvent: {}
+[90.101339] (-) TimerEvent: {}
+[90.201948] (-) TimerEvent: {}
+[90.302676] (-) TimerEvent: {}
+[90.403726] (-) TimerEvent: {}
+[90.504708] (-) TimerEvent: {}
+[90.605602] (-) TimerEvent: {}
+[90.706555] (-) TimerEvent: {}
+[91.468463] (-) TimerEvent: {}
+[91.569519] (-) TimerEvent: {}
+[91.671221] (-) TimerEvent: {}
+[91.772528] (-) TimerEvent: {}
+[91.873169] (-) TimerEvent: {}
+[91.973814] (-) TimerEvent: {}
+[92.075982] (-) TimerEvent: {}
+[92.176699] (-) TimerEvent: {}
+[92.277407] (-) TimerEvent: {}
+[92.378102] (-) TimerEvent: {}
+[92.478835] (-) TimerEvent: {}
+[92.579475] (-) TimerEvent: {}
+[92.680096] (-) TimerEvent: {}
+[92.780745] (-) TimerEvent: {}
+[92.881413] (-) TimerEvent: {}
+[92.982087] (-) TimerEvent: {}
+[93.082821] (-) TimerEvent: {}
+[93.183449] (-) TimerEvent: {}
+[93.284112] (-) TimerEvent: {}
+[93.385014] (-) TimerEvent: {}
+[93.485624] (-) TimerEvent: {}
+[93.586504] (-) TimerEvent: {}
+[93.687119] (-) TimerEvent: {}
+[93.787961] (-) TimerEvent: {}
+[93.888589] (-) TimerEvent: {}
+[93.989468] (-) TimerEvent: {}
+[94.090119] (-) TimerEvent: {}
+[94.191009] (-) TimerEvent: {}
+[94.291629] (-) TimerEvent: {}
+[94.392286] (-) TimerEvent: {}
+[94.492928] (-) TimerEvent: {}
+[94.593561] (-) TimerEvent: {}
+[94.694197] (-) TimerEvent: {}
+[94.794848] (-) TimerEvent: {}
+[94.895482] (-) TimerEvent: {}
+[94.996119] (-) TimerEvent: {}
+[95.096759] (-) TimerEvent: {}
+[95.197406] (-) TimerEvent: {}
+[95.298044] (-) TimerEvent: {}
+[95.398751] (-) TimerEvent: {}
+[95.499404] (-) TimerEvent: {}
+[95.600036] (-) TimerEvent: {}
+[95.700664] (-) TimerEvent: {}
+[96.011104] (-) TimerEvent: {}
+[96.111693] (-) TimerEvent: {}
+[96.212293] (-) TimerEvent: {}
+[96.312883] (-) TimerEvent: {}
+[96.413568] (-) TimerEvent: {}
+[96.514733] (-) TimerEvent: {}
+[96.615891] (-) TimerEvent: {}
+[96.716895] (-) TimerEvent: {}
+[96.817888] (-) TimerEvent: {}
+[96.918875] (-) TimerEvent: {}
+[97.019917] (-) TimerEvent: {}
+[97.120968] (-) TimerEvent: {}
+[97.221991] (-) TimerEvent: {}
+[97.323037] (-) TimerEvent: {}
+[97.424107] (-) TimerEvent: {}
+[97.525117] (-) TimerEvent: {}
+[97.626306] (-) TimerEvent: {}
+[97.727460] (-) TimerEvent: {}
+[97.828480] (-) TimerEvent: {}
+[97.929512] (-) TimerEvent: {}
+[98.030604] (-) TimerEvent: {}
+[98.131620] (-) TimerEvent: {}
+[98.232667] (-) TimerEvent: {}
+[98.333699] (-) TimerEvent: {}
+[98.434779] (-) TimerEvent: {}
+[98.535836] (-) TimerEvent: {}
+[98.637103] (-) TimerEvent: {}
+[98.738492] (-) TimerEvent: {}
+[98.842374] (-) TimerEvent: {}
+[98.943001] (-) TimerEvent: {}
+[99.043631] (-) TimerEvent: {}
+[99.144241] (-) TimerEvent: {}
+[99.244871] (-) TimerEvent: {}
+[99.345464] (-) TimerEvent: {}
+[99.446099] (-) TimerEvent: {}
+[99.546821] (-) TimerEvent: {}
+[99.647472] (-) TimerEvent: {}
+[99.748189] (-) TimerEvent: {}
+[99.848897] (-) TimerEvent: {}
+[99.949596] (-) TimerEvent: {}
+[100.050330] (-) TimerEvent: {}
+[100.151010] (-) TimerEvent: {}
+[100.252303] (-) TimerEvent: {}
+[100.353381] (-) TimerEvent: {}
+[100.454666] (-) TimerEvent: {}
+[100.555825] (-) TimerEvent: {}
+[100.656841] (-) TimerEvent: {}
+[100.757515] (-) TimerEvent: {}
+[100.858805] (-) TimerEvent: {}
+[100.959657] (-) TimerEvent: {}
+[101.060528] (-) TimerEvent: {}
+[101.161382] (-) TimerEvent: {}
+[101.261985] (-) TimerEvent: {}
+[101.362869] (-) TimerEvent: {}
+[101.463521] (-) TimerEvent: {}
+[101.564166] (-) TimerEvent: {}
+[101.664810] (-) TimerEvent: {}
+[101.765429] (-) TimerEvent: {}
+[101.866050] (-) TimerEvent: {}
+[101.966696] (-) TimerEvent: {}
+[102.067285] (-) TimerEvent: {}
+[102.167889] (-) TimerEvent: {}
+[102.268507] (-) TimerEvent: {}
+[102.369118] (-) TimerEvent: {}
+[102.469728] (-) TimerEvent: {}
+[102.570347] (-) TimerEvent: {}
+[102.670948] (-) TimerEvent: {}
+[102.771541] (-) TimerEvent: {}
+[102.872137] (-) TimerEvent: {}
+[102.972737] (-) TimerEvent: {}
+[103.073339] (-) TimerEvent: {}
+[103.173941] (-) TimerEvent: {}
+[103.274569] (-) TimerEvent: {}
+[103.375169] (-) TimerEvent: {}
+[103.475777] (-) TimerEvent: {}
+[103.576370] (-) TimerEvent: {}
+[103.676969] (-) TimerEvent: {}
+[103.777565] (-) TimerEvent: {}
+[103.878259] (-) TimerEvent: {}
+[103.979145] (-) TimerEvent: {}
+[104.080273] (-) TimerEvent: {}
+[104.181328] (-) TimerEvent: {}
+[104.282520] (-) TimerEvent: {}
+[104.383723] (-) TimerEvent: {}
+[104.484749] (-) TimerEvent: {}
+[104.585885] (-) TimerEvent: {}
+[104.686659] (-) TimerEvent: {}
+[104.787303] (-) TimerEvent: {}
+[104.888282] (-) TimerEvent: {}
+[104.990203] (-) TimerEvent: {}
+[105.090922] (-) TimerEvent: {}
+[105.191909] (-) TimerEvent: {}
+[105.292588] (-) TimerEvent: {}
+[105.393529] (-) TimerEvent: {}
+[105.494364] (-) TimerEvent: {}
+[105.595082] (-) TimerEvent: {}
+[105.696239] (-) TimerEvent: {}
+[105.796941] (-) TimerEvent: {}
+[105.897873] (-) TimerEvent: {}
+[105.998568] (-) TimerEvent: {}
+[106.318793] (-) TimerEvent: {}
+[106.419587] (-) TimerEvent: {}
+[106.520614] (-) TimerEvent: {}
+[106.621330] (-) TimerEvent: {}
+[106.722495] (-) TimerEvent: {}
+[106.823363] (-) TimerEvent: {}
+[106.924396] (-) TimerEvent: {}
+[107.025105] (-) TimerEvent: {}
+[107.126094] (-) TimerEvent: {}
+[107.226885] (-) TimerEvent: {}
+[107.327874] (-) TimerEvent: {}
+[107.428583] (-) TimerEvent: {}
+[107.530035] (-) TimerEvent: {}
+[107.630806] (-) TimerEvent: {}
+[107.731504] (-) TimerEvent: {}
+[107.832220] (-) TimerEvent: {}
+[107.932941] (-) TimerEvent: {}
+[108.033651] (-) TimerEvent: {}
+[108.134406] (-) TimerEvent: {}
+[108.235143] (-) TimerEvent: {}
+[108.335830] (-) TimerEvent: {}
+[108.436561] (-) TimerEvent: {}
+[108.537479] (-) TimerEvent: {}
+[108.638644] (-) TimerEvent: {}
+[108.739411] (-) TimerEvent: {}
+[108.840549] (-) TimerEvent: {}
+[108.941462] (-) TimerEvent: {}
+[109.042493] (-) TimerEvent: {}
+[109.143232] (-) TimerEvent: {}
+[109.244233] (-) TimerEvent: {}
+[109.344905] (-) TimerEvent: {}
+[109.445906] (-) TimerEvent: {}
+[109.546565] (-) TimerEvent: {}
+[109.647524] (-) TimerEvent: {}
+[109.748325] (-) TimerEvent: {}
+[109.849301] (-) TimerEvent: {}
+[109.950160] (-) TimerEvent: {}
+[110.050863] (-) TimerEvent: {}
+[110.151895] (-) TimerEvent: {}
+[110.252638] (-) TimerEvent: {}
+[110.353576] (-) TimerEvent: {}
+[110.454310] (-) TimerEvent: {}
+[110.555214] (-) TimerEvent: {}
+[110.656093] (-) TimerEvent: {}
+[110.756713] (-) TimerEvent: {}
+[110.857569] (-) TimerEvent: {}
+[110.958180] (-) TimerEvent: {}
+[111.059029] (-) TimerEvent: {}
+[111.159928] (-) TimerEvent: {}
+[111.260740] (-) TimerEvent: {}
+[111.361334] (-) TimerEvent: {}
+[111.462141] (-) TimerEvent: {}
+[111.562808] (-) TimerEvent: {}
+[111.663633] (-) TimerEvent: {}
+[111.764231] (-) TimerEvent: {}
+[111.865072] (-) TimerEvent: {}
+[111.965666] (-) TimerEvent: {}
+[112.066506] (-) TimerEvent: {}
+[112.167109] (-) TimerEvent: {}
+[112.267854] (-) TimerEvent: {}
+[112.368425] (-) TimerEvent: {}
+[112.469248] (-) TimerEvent: {}
+[112.569846] (-) TimerEvent: {}
+[112.670477] (-) TimerEvent: {}
+[112.771052] (-) TimerEvent: {}
+[112.871604] (-) TimerEvent: {}
+[112.972151] (-) TimerEvent: {}
+[113.072695] (-) TimerEvent: {}
+[113.173248] (-) TimerEvent: {}
+[113.273797] (-) TimerEvent: {}
+[113.374359] (-) TimerEvent: {}
+[113.474903] (-) TimerEvent: {}
+[113.575477] (-) TimerEvent: {}
+[113.676046] (-) TimerEvent: {}
+[113.776602] (-) TimerEvent: {}
+[113.877149] (-) TimerEvent: {}
+[113.977691] (-) TimerEvent: {}
+[114.078255] (-) TimerEvent: {}
+[114.178862] (-) TimerEvent: {}
+[114.279702] (-) TimerEvent: {}
+[114.380727] (-) TimerEvent: {}
+[114.481732] (-) TimerEvent: {}
+[114.582836] (-) TimerEvent: {}
+[114.683749] (-) TimerEvent: {}
+[114.784711] (-) TimerEvent: {}
+[114.885605] (-) TimerEvent: {}
+[114.987201] (-) TimerEvent: {}
+[115.088278] (-) TimerEvent: {}
+[115.189340] (-) TimerEvent: {}
+[115.290390] (-) TimerEvent: {}
+[115.391410] (-) TimerEvent: {}
+[115.492398] (-) TimerEvent: {}
+[115.593386] (-) TimerEvent: {}
+[115.694390] (-) TimerEvent: {}
+[115.795391] (-) TimerEvent: {}
+[115.896381] (-) TimerEvent: {}
+[115.997374] (-) TimerEvent: {}
+[116.098396] (-) TimerEvent: {}
+[116.199390] (-) TimerEvent: {}
+[116.300369] (-) TimerEvent: {}
+[116.401353] (-) TimerEvent: {}
+[116.502302] (-) TimerEvent: {}
+[116.606449] (-) TimerEvent: {}
+[116.707496] (-) TimerEvent: {}
+[116.808478] (-) TimerEvent: {}
+[116.909570] (-) TimerEvent: {}
+[117.010647] (-) TimerEvent: {}
+[117.111632] (-) TimerEvent: {}
+[117.212612] (-) TimerEvent: {}
+[117.313649] (-) TimerEvent: {}
+[117.414752] (-) TimerEvent: {}
+[117.515797] (-) TimerEvent: {}
+[117.616815] (-) TimerEvent: {}
+[117.717794] (-) TimerEvent: {}
+[120.851256] (-) TimerEvent: {}
+[120.951918] (-) TimerEvent: {}
+[121.052886] (-) TimerEvent: {}
+[121.153560] (-) TimerEvent: {}
+[121.254624] (-) TimerEvent: {}
+[121.355316] (-) TimerEvent: {}
+[121.455932] (-) TimerEvent: {}
+[121.556938] (-) TimerEvent: {}
+[121.657643] (-) TimerEvent: {}
+[121.758697] (-) TimerEvent: {}
+[121.859712] (-) TimerEvent: {}
+[121.960417] (-) TimerEvent: {}
+[122.061530] (-) TimerEvent: {}
+[122.162368] (-) TimerEvent: {}
+[122.263352] (-) TimerEvent: {}
+[122.363967] (-) TimerEvent: {}
+[122.464876] (-) TimerEvent: {}
+[122.565604] (-) TimerEvent: {}
+[122.666639] (-) TimerEvent: {}
+[122.767363] (-) TimerEvent: {}
+[122.868379] (-) TimerEvent: {}
+[122.969250] (-) TimerEvent: {}
+[123.069861] (-) TimerEvent: {}
+[123.511700] (-) TimerEvent: {}
+[123.663577] (-) TimerEvent: {}
+[123.764460] (-) TimerEvent: {}
+[123.865692] (-) TimerEvent: {}
+[123.966356] (-) TimerEvent: {}
+[124.066973] (-) TimerEvent: {}
+[124.167942] (-) TimerEvent: {}
+[124.268582] (-) TimerEvent: {}
+[124.369509] (-) TimerEvent: {}
+[124.470322] (-) TimerEvent: {}
+[124.571365] (-) TimerEvent: {}
+[124.676142] (-) TimerEvent: {}
+[124.777025] (-) TimerEvent: {}
+[124.884733] (-) TimerEvent: {}
+[124.985395] (-) TimerEvent: {}
+[125.086463] (-) TimerEvent: {}
+[125.187113] (-) TimerEvent: {}
+[125.288190] (-) TimerEvent: {}
+[125.388931] (-) TimerEvent: {}
+[125.489942] (-) TimerEvent: {}
+[125.590654] (-) TimerEvent: {}
+[125.691623] (-) TimerEvent: {}
+[125.792327] (-) TimerEvent: {}
+[125.893050] (-) TimerEvent: {}
+[125.993775] (-) TimerEvent: {}
+[126.094526] (-) TimerEvent: {}
+[126.195185] (-) TimerEvent: {}
+[126.328684] (-) TimerEvent: {}
+[126.447406] (-) TimerEvent: {}
+[126.548584] (-) TimerEvent: {}
+[126.649610] (-) TimerEvent: {}
+[126.750702] (-) TimerEvent: {}
+[127.021863] (-) TimerEvent: {}
+[127.122510] (-) TimerEvent: {}
+[127.223350] (-) TimerEvent: {}
+[127.323962] (-) TimerEvent: {}
+[127.424797] (-) TimerEvent: {}
+[127.750069] (-) TimerEvent: {}
+[127.850906] (-) TimerEvent: {}
+[127.951930] (-) TimerEvent: {}
+[128.052479] (-) TimerEvent: {}
+[128.153290] (-) TimerEvent: {}
+[128.325860] (-) TimerEvent: {}
+[128.426513] (-) TimerEvent: {}
+[128.527537] (-) TimerEvent: {}
+[128.628258] (-) TimerEvent: {}
+[128.729306] (-) TimerEvent: {}
+[128.830315] (-) TimerEvent: {}
+[128.931070] (-) TimerEvent: {}
+[129.031743] (-) TimerEvent: {}
+[129.134066] (-) TimerEvent: {}
+[129.234874] (-) TimerEvent: {}
+[129.336614] (-) TimerEvent: {}
+[129.437458] (-) TimerEvent: {}
+[129.539985] (-) TimerEvent: {}
+[129.641174] (-) TimerEvent: {}
+[129.742596] (-) TimerEvent: {}
+[129.845874] (-) TimerEvent: {}
+[129.948684] (-) TimerEvent: {}
+[130.055245] (-) TimerEvent: {}
+[130.158439] (-) TimerEvent: {}
+[130.259509] (-) TimerEvent: {}
+[130.366693] (-) TimerEvent: {}
+[130.468393] (-) TimerEvent: {}
+[130.570965] (-) TimerEvent: {}
+[130.672944] (-) TimerEvent: {}
+[130.774294] (-) TimerEvent: {}
+[130.880097] (-) TimerEvent: {}
+[130.981083] (-) TimerEvent: {}
+[131.082897] (-) TimerEvent: {}
+[131.183621] (-) TimerEvent: {}
+[131.284327] (-) TimerEvent: {}
+[131.385037] (-) TimerEvent: {}
+[131.485776] (-) TimerEvent: {}
+[131.586461] (-) TimerEvent: {}
+[131.687037] (-) TimerEvent: {}
+[131.787652] (-) TimerEvent: {}
+[131.888230] (-) TimerEvent: {}
+[131.988819] (-) TimerEvent: {}
+[132.089405] (-) TimerEvent: {}
+[132.189990] (-) TimerEvent: {}
+[132.290599] (-) TimerEvent: {}
+[132.391248] (-) TimerEvent: {}
+[132.491921] (-) TimerEvent: {}
+[132.592649] (-) TimerEvent: {}
+[132.694397] (-) TimerEvent: {}
+[132.795168] (-) TimerEvent: {}
+[132.895868] (-) TimerEvent: {}
+[132.996515] (-) TimerEvent: {}
+[133.097109] (-) TimerEvent: {}
+[133.198366] (-) TimerEvent: {}
+[133.300435] (-) TimerEvent: {}
+[133.401061] (-) TimerEvent: {}
+[133.502005] (-) TimerEvent: {}
+[133.602713] (-) TimerEvent: {}
+[133.703993] (-) TimerEvent: {}
+[133.805002] (-) TimerEvent: {}
+[133.907250] (-) TimerEvent: {}
+[134.008534] (-) TimerEvent: {}
+[134.109552] (-) TimerEvent: {}
+[134.210427] (-) TimerEvent: {}
+[134.311305] (-) TimerEvent: {}
+[134.412179] (-) TimerEvent: {}
+[134.513044] (-) TimerEvent: {}
+[134.613895] (-) TimerEvent: {}
+[134.714517] (-) TimerEvent: {}
+[134.815128] (-) TimerEvent: {}
+[134.915742] (-) TimerEvent: {}
+[135.016596] (-) TimerEvent: {}
+[135.117212] (-) TimerEvent: {}
+[135.218048] (-) TimerEvent: {}
+[135.318692] (-) TimerEvent: {}
+[135.419544] (-) TimerEvent: {}
+[135.520175] (-) TimerEvent: {}
+[135.621029] (-) TimerEvent: {}
+[135.721611] (-) TimerEvent: {}
+[135.822491] (-) TimerEvent: {}
+[135.923094] (-) TimerEvent: {}
+[136.023774] (-) TimerEvent: {}
+[136.124731] (-) TimerEvent: {}
+[136.225721] (-) TimerEvent: {}
+[136.326616] (-) TimerEvent: {}
+[136.427546] (-) TimerEvent: {}
+[136.528412] (-) TimerEvent: {}
+[136.629414] (-) TimerEvent: {}
+[136.730414] (-) TimerEvent: {}
+[136.831392] (-) TimerEvent: {}
+[136.932347] (-) TimerEvent: {}
+[137.033398] (-) TimerEvent: {}
+[137.134308] (-) TimerEvent: {}
+[137.235220] (-) TimerEvent: {}
+[137.336148] (-) TimerEvent: {}
+[137.437080] (-) TimerEvent: {}
+[137.538059] (-) TimerEvent: {}
+[137.639045] (-) TimerEvent: {}
+[137.740028] (-) TimerEvent: {}
+[137.840953] (-) TimerEvent: {}
+[137.942289] (-) TimerEvent: {}
+[138.043859] (-) TimerEvent: {}
+[138.145492] (-) TimerEvent: {}
+[138.247201] (-) TimerEvent: {}
+[138.348621] (-) TimerEvent: {}
+[138.449681] (-) TimerEvent: {}
+[138.550860] (-) TimerEvent: {}
+[138.652410] (-) TimerEvent: {}
+[138.753455] (-) TimerEvent: {}
+[138.854930] (-) TimerEvent: {}
+[138.955974] (-) TimerEvent: {}
+[139.057696] (-) TimerEvent: {}
+[139.158744] (-) TimerEvent: {}
+[139.260204] (-) TimerEvent: {}
+[139.361170] (-) TimerEvent: {}
+[139.462149] (-) TimerEvent: {}
+[139.563160] (-) TimerEvent: {}
+[139.664149] (-) TimerEvent: {}
+[139.765128] (-) TimerEvent: {}
+[139.865799] (-) TimerEvent: {}
+[139.966457] (-) TimerEvent: {}
+[140.067084] (-) TimerEvent: {}
+[140.167679] (-) TimerEvent: {}
+[140.268510] (-) TimerEvent: {}
+[140.369120] (-) TimerEvent: {}
+[140.469958] (-) TimerEvent: {}
+[140.505170] (webrtc) StderrLine: {'line': b'WARNING: Your metrics.cfg file was invalid or nonexistent. A new one will be created.\n'}
+[140.570114] (-) TimerEvent: {}
+[140.670975] (-) TimerEvent: {}
+[140.771624] (-) TimerEvent: {}
+[140.872486] (-) TimerEvent: {}
+[140.973102] (-) TimerEvent: {}
+[141.073696] (-) TimerEvent: {}
+[141.174335] (-) TimerEvent: {}
+[141.274964] (-) TimerEvent: {}
+[141.375587] (-) TimerEvent: {}
+[141.476169] (-) TimerEvent: {}
+[141.576751] (-) TimerEvent: {}
+[141.677330] (-) TimerEvent: {}
+[141.777908] (-) TimerEvent: {}
+[141.878519] (-) TimerEvent: {}
+[141.979101] (-) TimerEvent: {}
+[142.079687] (-) TimerEvent: {}
+[142.180295] (-) TimerEvent: {}
+[142.280869] (-) TimerEvent: {}
+[142.381452] (-) TimerEvent: {}
+[142.482031] (-) TimerEvent: {}
+[142.582635] (-) TimerEvent: {}
+[142.683216] (-) TimerEvent: {}
+[142.783792] (-) TimerEvent: {}
+[142.884370] (-) TimerEvent: {}
+[142.984962] (-) TimerEvent: {}
+[143.085563] (-) TimerEvent: {}
+[143.186200] (-) TimerEvent: {}
+[143.272214] (webrtc) StdoutLine: {'line': b'Running depot tools as root is sad.\n'}
+[143.286425] (-) TimerEvent: {}
+[143.387600] (-) TimerEvent: {}
+[143.488199] (-) TimerEvent: {}
+[143.589393] (-) TimerEvent: {}
+[143.690258] (-) TimerEvent: {}
+[143.797376] (-) TimerEvent: {}
+[143.898031] (-) TimerEvent: {}
+[143.998866] (-) TimerEvent: {}
+[144.099537] (-) TimerEvent: {}
+[144.200244] (-) TimerEvent: {}
+[144.301006] (-) TimerEvent: {}
+[144.401769] (-) TimerEvent: {}
+[144.502486] (-) TimerEvent: {}
+[145.968970] (-) TimerEvent: {}
+[146.069770] (-) TimerEvent: {}
+[146.106812] (webrtc) StdoutLine: {'line': b'Running depot tools as root is sad.\n'}
+[146.170370] (-) TimerEvent: {}
+[146.271019] (-) TimerEvent: {}
+[146.371898] (-) TimerEvent: {}
+[146.472528] (-) TimerEvent: {}
+[146.573164] (-) TimerEvent: {}
+[146.673835] (-) TimerEvent: {}
+[146.774698] (-) TimerEvent: {}
+[146.875974] (-) TimerEvent: {}
+[146.976902] (-) TimerEvent: {}
+[147.078192] (-) TimerEvent: {}
+[147.178931] (-) TimerEvent: {}
+[147.279657] (-) TimerEvent: {}
+[147.380347] (-) TimerEvent: {}
+[147.481001] (-) TimerEvent: {}
+[147.582400] (-) TimerEvent: {}
+[147.683050] (-) TimerEvent: {}
+[147.784040] (-) TimerEvent: {}
+[147.884654] (-) TimerEvent: {}
+[147.985539] (-) TimerEvent: {}
+[148.086158] (-) TimerEvent: {}
+[148.186882] (-) TimerEvent: {}
+[148.287490] (-) TimerEvent: {}
+[148.388111] (-) TimerEvent: {}
+[148.488734] (-) TimerEvent: {}
+[148.589346] (-) TimerEvent: {}
+[148.689966] (-) TimerEvent: {}
+[148.790604] (-) TimerEvent: {}
+[148.891226] (-) TimerEvent: {}
+[148.991842] (-) TimerEvent: {}
+[149.092474] (-) TimerEvent: {}
+[149.193206] (-) TimerEvent: {}
+[149.293842] (-) TimerEvent: {}
+[149.394512] (-) TimerEvent: {}
+[149.495188] (-) TimerEvent: {}
+[149.596641] (-) TimerEvent: {}
+[149.698165] (-) TimerEvent: {}
+[149.799162] (-) TimerEvent: {}
+[149.900764] (-) TimerEvent: {}
+[150.001539] (-) TimerEvent: {}
+[150.102351] (-) TimerEvent: {}
+[150.203767] (-) TimerEvent: {}
+[150.304518] (-) TimerEvent: {}
+[150.405180] (-) TimerEvent: {}
+[150.505855] (-) TimerEvent: {}
+[150.531808] (webrtc) StdoutLine: {'line': b'\n'}
+[150.532336] (webrtc) StdoutLine: {'line': b"________ running 'git -c core.deltaBaseCacheLimit=2g clone --no-checkout --progress https://webrtc.googlesource.com/src.git /home/ws/ugv_ws/src/ugv_else/webrtc_ros/webrtc/build/webrtc/_gclient_src_dov2mm7t' in '/home/ws/ugv_ws/src/ugv_else/webrtc_ros/webrtc/build/webrtc'\n"}
+[150.532723] (webrtc) StdoutLine: {'line': b"Cloning into '/home/ws/ugv_ws/src/ugv_else/webrtc_ros/webrtc/build/webrtc/_gclient_src_dov2mm7t'...\n"}
+[150.606426] (-) TimerEvent: {}
+[150.707463] (-) TimerEvent: {}
+[150.808080] (-) TimerEvent: {}
+[150.908947] (-) TimerEvent: {}
+[151.009562] (-) TimerEvent: {}
+[151.110548] (-) TimerEvent: {}
+[151.211476] (-) TimerEvent: {}
+[151.312429] (-) TimerEvent: {}
+[151.413478] (-) TimerEvent: {}
+[151.514562] (-) TimerEvent: {}
+[151.615752] (-) TimerEvent: {}
+[151.716819] (-) TimerEvent: {}
+[151.723318] (webrtc) StdoutLine: {'line': b'remote: Sending approximately 430.20 MiB ...Counting objects: 1           \n'}
+[151.726849] (webrtc) StdoutLine: {'line': b'remote: Finding sources:   1% (1/69)           \n'}
+[151.730771] (webrtc) StdoutLine: {'line': b'remote: Finding sources:   3% (2/69)           \n'}
+[151.732778] (webrtc) StdoutLine: {'line': b'remote: Finding sources:   4% (3/69)           \n'}
+[151.734460] (webrtc) StdoutLine: {'line': b'remote: Finding sources:   6% (4/69)           \n'}
+[151.735745] (webrtc) StdoutLine: {'line': b'remote: Finding sources:   7% (5/69)           \n'}
+[151.736664] (webrtc) StdoutLine: {'line': b'remote: Finding sources:   9% (6/69)           \n'}
+[151.737536] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  10% (7/69)           \n'}
+[151.738477] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  12% (8/69)           \n'}
+[151.739381] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  13% (9/69)           \n'}
+[151.740247] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  14% (10/69)           \n'}
+[151.741095] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  16% (11/69)           \n'}
+[151.741956] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  17% (12/69)           \n'}
+[151.743090] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  19% (13/69)           \n'}
+[151.744734] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  20% (14/69)           \n'}
+[151.745560] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  22% (15/69)           \n'}
+[151.746201] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  23% (16/69)           \n'}
+[151.747097] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  25% (17/69)           \n'}
+[151.748481] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  26% (18/69)           \n'}
+[151.749385] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  28% (19/69)           \n'}
+[151.750464] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  29% (20/69)           \n'}
+[151.751543] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  30% (21/69)           \n'}
+[151.752460] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  32% (22/69)           \n'}
+[151.753341] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  33% (23/69)           \n'}
+[151.754201] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  35% (24/69)           \n'}
+[151.755182] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  36% (25/69)           \n'}
+[151.755972] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  38% (26/69)           \n'}
+[151.756721] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  39% (27/69)           \n'}
+[151.757874] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  41% (28/69)           \n'}
+[151.758704] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  42% (29/69)           \n'}
+[151.759478] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  43% (30/69)           \n'}
+[151.760082] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  45% (31/69)           \n'}
+[151.760628] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  46% (32/69)           \n'}
+[151.761174] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  48% (33/69)           \n'}
+[151.761721] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  49% (34/69)           \n'}
+[151.762304] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  51% (35/69)           \n'}
+[151.762887] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  52% (36/69)           \n'}
+[151.763433] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  54% (37/69)           \n'}
+[151.763978] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  55% (38/69)           \n'}
+[151.764570] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  57% (39/69)           \n'}
+[151.765271] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  58% (40/69)           \n'}
+[151.765847] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  59% (41/69)           \n'}
+[151.766453] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  61% (42/69)           \n'}
+[151.767014] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  62% (43/69)           \n'}
+[151.767546] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  64% (44/69)           \n'}
+[151.768098] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  65% (45/69)           \n'}
+[151.768713] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  67% (46/69)           \n'}
+[151.769332] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  68% (47/69)           \n'}
+[151.769867] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  70% (48/69)           \n'}
+[151.770491] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  71% (49/69)           \n'}
+[151.771095] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  72% (50/69)           \n'}
+[151.771454] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  74% (51/69)           \n'}
+[151.771795] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  75% (52/69)           \n'}
+[151.772131] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  77% (53/69)           \n'}
+[151.772471] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  78% (54/69)           \n'}
+[151.772806] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  80% (55/69)           \n'}
+[151.773142] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  81% (56/69)           \n'}
+[151.773486] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  83% (57/69)           \n'}
+[151.773882] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  84% (58/69)           \n'}
+[151.774266] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  86% (59/69)           \n'}
+[151.774636] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  87% (60/69)           \n'}
+[151.774977] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  88% (61/69)           \n'}
+[151.775316] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  90% (62/69)           \n'}
+[151.775695] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  91% (63/69)           \n'}
+[151.776026] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  93% (64/69)           \n'}
+[151.776356] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  94% (65/69)           \n'}
+[151.776708] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  96% (66/69)           \n'}
+[151.777031] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  97% (67/69)           \n'}
+[151.777351] (webrtc) StdoutLine: {'line': b'remote: Finding sources:  99% (68/69)           \n'}
+[151.777673] (webrtc) StdoutLine: {'line': b'remote: Finding sources: 100% (69/69)           \n'}
+[151.777993] (webrtc) StdoutLine: {'line': b'remote: Finding sources: 100% (69/69)        \n'}
+[151.816977] (-) TimerEvent: {}
+[151.917750] (-) TimerEvent: {}
+[152.019359] (-) TimerEvent: {}
+[152.120200] (-) TimerEvent: {}
+[152.221255] (-) TimerEvent: {}
+[152.315228] (webrtc) StdoutLine: {'line': b'Receiving objects:   0% (1/489035)\n'}
+[152.321421] (-) TimerEvent: {}
+[152.422507] (-) TimerEvent: {}
+[152.523471] (-) TimerEvent: {}
+[152.550684] (webrtc) StdoutLine: {'line': b'Receiving objects:   1% (4891/489035)\n'}
+[152.623748] (-) TimerEvent: {}
+[152.724431] (-) TimerEvent: {}
+[152.732546] (webrtc) StdoutLine: {'line': b'Receiving objects:   2% (9781/489035), 3.51 MiB | 7.00 MiB/s\n'}
+[152.752126] (webrtc) StdoutLine: {'line': b'Receiving objects:   2% (14190/489035), 3.51 MiB | 7.00 MiB/s\n'}
+[152.824839] (-) TimerEvent: {}
+[152.925575] (-) TimerEvent: {}
+[152.948652] (webrtc) StdoutLine: {'line': b'Receiving objects:   3% (14672/489035), 3.51 MiB | 7.00 MiB/s\n'}
+[153.025761] (-) TimerEvent: {}
+[153.126574] (-) TimerEvent: {}
+[153.135762] (webrtc) StdoutLine: {'line': b'Receiving objects:   4% (19562/489035), 9.82 MiB | 9.82 MiB/s\n'}
+[153.226744] (-) TimerEvent: {}
+[153.315289] (webrtc) StdoutLine: {'line': b'Receiving objects:   5% (24452/489035), 9.82 MiB | 9.82 MiB/s\n'}
+[153.326910] (-) TimerEvent: {}
+[153.427672] (-) TimerEvent: {}
+[153.483732] (webrtc) StdoutLine: {'line': b'Receiving objects:   6% (29343/489035), 9.82 MiB | 9.82 MiB/s\n'}
+[153.527882] (-) TimerEvent: {}
+[153.629463] (-) TimerEvent: {}
+[153.638356] (webrtc) StdoutLine: {'line': b'Receiving objects:   7% (34233/489035), 16.13 MiB | 10.75 MiB/s\n'}
+[153.729646] (-) TimerEvent: {}
+[153.732223] (webrtc) StdoutLine: {'line': b'Receiving objects:   8% (39123/489035), 16.13 MiB | 10.75 MiB/s\n'}
+[153.784127] (webrtc) StdoutLine: {'line': b'Receiving objects:   8% (42205/489035), 16.13 MiB | 10.75 MiB/s\n'}
+[153.829846] (-) TimerEvent: {}
+[153.916738] (webrtc) StdoutLine: {'line': b'Receiving objects:   9% (44014/489035), 16.13 MiB | 10.75 MiB/s\n'}
+[153.930258] (-) TimerEvent: {}
+[154.031355] (-) TimerEvent: {}
+[154.043659] (webrtc) StdoutLine: {'line': b'Receiving objects:  10% (48904/489035), 22.42 MiB | 11.21 MiB/s\n'}
+[154.131879] (-) TimerEvent: {}
+[154.231236] (webrtc) StdoutLine: {'line': b'Receiving objects:  11% (53794/489035), 22.42 MiB | 11.21 MiB/s\n'}
+[154.233421] (-) TimerEvent: {}
+[154.334052] (-) TimerEvent: {}
+[154.434797] (-) TimerEvent: {}
+[154.444541] (webrtc) StdoutLine: {'line': b'Receiving objects:  12% (58685/489035), 22.42 MiB | 11.21 MiB/s\n'}
+[154.535035] (-) TimerEvent: {}
+[154.635674] (-) TimerEvent: {}
+[154.731890] (webrtc) StdoutLine: {'line': b'Receiving objects:  13% (63575/489035), 29.55 MiB | 11.82 MiB/s\n'}
+[154.736177] (-) TimerEvent: {}
+[154.737109] (webrtc) StdoutLine: {'line': b'Receiving objects:  14% (68465/489035), 29.55 MiB | 11.82 MiB/s\n'}
+[154.836379] (-) TimerEvent: {}
+[154.937130] (-) TimerEvent: {}
+[154.990717] (webrtc) StdoutLine: {'line': b'Receiving objects:  14% (68475/489035), 29.55 MiB | 11.82 MiB/s\n'}
+[155.037274] (-) TimerEvent: {}
+[155.138092] (-) TimerEvent: {}
+[155.230570] (webrtc) StdoutLine: {'line': b'Receiving objects:  15% (73356/489035), 35.70 MiB | 11.90 MiB/s\n'}
+[155.238478] (-) TimerEvent: {}
+[155.341014] (-) TimerEvent: {}
+[155.442103] (-) TimerEvent: {}
+[155.449412] (webrtc) StdoutLine: {'line': b'Receiving objects:  16% (78246/489035), 35.70 MiB | 11.90 MiB/s\n'}
+[155.542326] (-) TimerEvent: {}
+[155.643065] (-) TimerEvent: {}
+[155.667081] (webrtc) StdoutLine: {'line': b'Receiving objects:  17% (83136/489035), 41.68 MiB | 11.90 MiB/s\n'}
+[155.732244] (webrtc) StdoutLine: {'line': b'Receiving objects:  18% (88027/489035), 41.68 MiB | 11.90 MiB/s\n'}
+[155.743234] (-) TimerEvent: {}
+[155.844212] (-) TimerEvent: {}
+[155.868495] (webrtc) StdoutLine: {'line': b'Receiving objects:  18% (89558/489035), 41.68 MiB | 11.90 MiB/s\n'}
+[155.944364] (-) TimerEvent: {}
+[156.045390] (-) TimerEvent: {}
+[156.106005] (webrtc) StdoutLine: {'line': b'Receiving objects:  19% (92917/489035), 41.68 MiB | 11.90 MiB/s\n'}
+[156.145571] (-) TimerEvent: {}
+[156.246621] (-) TimerEvent: {}
+[156.307760] (webrtc) StdoutLine: {'line': b'Receiving objects:  20% (97807/489035), 47.93 MiB | 11.98 MiB/s\n'}
+[156.346791] (-) TimerEvent: {}
+[156.447525] (-) TimerEvent: {}
+[156.514915] (webrtc) StdoutLine: {'line': b'Receiving objects:  21% (102698/489035), 47.93 MiB | 11.98 MiB/s\n'}
+[156.547699] (-) TimerEvent: {}
+[156.648982] (-) TimerEvent: {}
+[156.692089] (webrtc) StdoutLine: {'line': b'Receiving objects:  22% (107588/489035), 54.14 MiB | 12.03 MiB/s\n'}
+[156.732220] (webrtc) StdoutLine: {'line': b'Receiving objects:  23% (112479/489035), 54.14 MiB | 12.03 MiB/s\n'}
+[156.749153] (-) TimerEvent: {}
+[156.850074] (-) TimerEvent: {}
+[156.854855] (webrtc) StdoutLine: {'line': b'Receiving objects:  23% (113841/489035), 54.14 MiB | 12.03 MiB/s\n'}
+[156.950295] (-) TimerEvent: {}
+[157.004978] (webrtc) StdoutLine: {'line': b'Receiving objects:  24% (117369/489035), 54.14 MiB | 12.03 MiB/s\n'}
+[157.050465] (-) TimerEvent: {}
+[157.151280] (-) TimerEvent: {}
+[157.190836] (webrtc) StdoutLine: {'line': b'Receiving objects:  25% (122259/489035), 60.29 MiB | 12.62 MiB/s\n'}
+[157.251455] (-) TimerEvent: {}
+[157.352875] (-) TimerEvent: {}
+[157.401097] (webrtc) StdoutLine: {'line': b'Receiving objects:  26% (127150/489035), 60.29 MiB | 12.62 MiB/s\n'}
+[157.453043] (-) TimerEvent: {}
+[157.553987] (-) TimerEvent: {}
+[157.564855] (webrtc) StdoutLine: {'line': b'Receiving objects:  27% (132040/489035), 66.22 MiB | 12.53 MiB/s\n'}
+[157.654186] (-) TimerEvent: {}
+[157.714359] (webrtc) StdoutLine: {'line': b'Receiving objects:  28% (136930/489035), 66.22 MiB | 12.53 MiB/s\n'}
+[157.734272] (webrtc) StdoutLine: {'line': b'Receiving objects:  29% (141821/489035), 66.22 MiB | 12.53 MiB/s\n'}
+[157.754400] (-) TimerEvent: {}
+[157.855201] (-) TimerEvent: {}
+[157.858195] (webrtc) StdoutLine: {'line': b'Receiving objects:  29% (142564/489035), 66.22 MiB | 12.53 MiB/s\n'}
+[157.955386] (-) TimerEvent: {}
+[157.972590] (webrtc) StdoutLine: {'line': b'Receiving objects:  30% (146711/489035), 66.22 MiB | 12.53 MiB/s\n'}
+[158.031055] (webrtc) StdoutLine: {'line': b'Receiving objects:  31% (151601/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.055561] (-) TimerEvent: {}
+[158.067315] (webrtc) StdoutLine: {'line': b'Receiving objects:  32% (156492/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.089810] (webrtc) StdoutLine: {'line': b'Receiving objects:  33% (161382/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.119808] (webrtc) StdoutLine: {'line': b'Receiving objects:  34% (166272/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.151457] (webrtc) StdoutLine: {'line': b'Receiving objects:  35% (171163/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.155723] (-) TimerEvent: {}
+[158.181285] (webrtc) StdoutLine: {'line': b'Receiving objects:  36% (176053/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.206831] (webrtc) StdoutLine: {'line': b'Receiving objects:  37% (180943/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.240657] (webrtc) StdoutLine: {'line': b'Receiving objects:  38% (185834/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.255899] (-) TimerEvent: {}
+[158.271913] (webrtc) StdoutLine: {'line': b'Receiving objects:  39% (190724/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.303760] (webrtc) StdoutLine: {'line': b'Receiving objects:  40% (195614/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.331743] (webrtc) StdoutLine: {'line': b'Receiving objects:  41% (200505/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.356097] (-) TimerEvent: {}
+[158.357417] (webrtc) StdoutLine: {'line': b'Receiving objects:  42% (205395/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.391840] (webrtc) StdoutLine: {'line': b'Receiving objects:  43% (210286/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.444709] (webrtc) StdoutLine: {'line': b'Receiving objects:  44% (215176/489035), 72.61 MiB | 12.55 MiB/s\n'}
+[158.456344] (-) TimerEvent: {}
+[158.495123] (webrtc) StdoutLine: {'line': b'Receiving objects:  45% (220066/489035), 78.67 MiB | 12.50 MiB/s\n'}
+[158.514484] (webrtc) StdoutLine: {'line': b'Receiving objects:  46% (224957/489035), 78.67 MiB | 12.50 MiB/s\n'}
+[158.532792] (webrtc) StdoutLine: {'line': b'Receiving objects:  47% (229847/489035), 78.67 MiB | 12.50 MiB/s\n'}
+[158.556509] (-) TimerEvent: {}
+[158.564959] (webrtc) StdoutLine: {'line': b'Receiving objects:  48% (234737/489035), 78.67 MiB | 12.50 MiB/s\n'}
+[158.588588] (webrtc) StdoutLine: {'line': b'Receiving objects:  49% (239628/489035), 78.67 MiB | 12.50 MiB/s\n'}
+[158.616402] (webrtc) StdoutLine: {'line': b'Receiving objects:  50% (244518/489035), 78.67 MiB | 12.50 MiB/s\n'}
+[158.648853] (webrtc) StdoutLine: {'line': b'Receiving objects:  51% (249408/489035), 78.67 MiB | 12.50 MiB/s\n'}
+[158.656665] (-) TimerEvent: {}
+[158.724203] (webrtc) StdoutLine: {'line': b'Receiving objects:  52% (254299/489035), 78.67 MiB | 12.50 MiB/s\n'}
+[158.732181] (webrtc) StdoutLine: {'line': b'Receiving objects:  53% (259189/489035), 78.67 MiB | 12.50 MiB/s\n'}
+[158.756839] (-) TimerEvent: {}
+[158.857524] (-) TimerEvent: {}
+[158.958311] (-) TimerEvent: {}
+[159.059499] (-) TimerEvent: {}
+[159.160228] (-) TimerEvent: {}
+[159.260907] (-) TimerEvent: {}
+[159.361603] (-) TimerEvent: {}
+[159.462334] (-) TimerEvent: {}
+[159.563013] (-) TimerEvent: {}
+[159.663792] (-) TimerEvent: {}
+[159.736008] (webrtc) StdoutLine: {'line': b'Receiving objects:  53% (259291/489035), 78.67 MiB | 12.50 MiB/s\n'}
+[159.763965] (-) TimerEvent: {}
+[159.864720] (-) TimerEvent: {}
+[159.965457] (-) TimerEvent: {}
+[160.066195] (-) TimerEvent: {}
+[160.166932] (-) TimerEvent: {}
+[160.268589] (-) TimerEvent: {}
+[160.369398] (-) TimerEvent: {}
+[160.470254] (-) TimerEvent: {}
+[160.570978] (-) TimerEvent: {}
+[160.580596] (webrtc) StdoutLine: {'line': b'Receiving objects:  53% (260449/489035), 90.83 MiB | 12.25 MiB/s\n'}
+[160.671170] (-) TimerEvent: {}
+[160.732752] (webrtc) StdoutLine: {'line': b'Receiving objects:  54% (264079/489035), 103.48 MiB | 12.33 MiB/s\n'}
+[160.771337] (-) TimerEvent: {}
+[160.872088] (-) TimerEvent: {}
+[160.972738] (-) TimerEvent: {}
+[161.073443] (-) TimerEvent: {}
+[161.174161] (-) TimerEvent: {}
+[161.275176] (-) TimerEvent: {}
+[161.375942] (-) TimerEvent: {}
+[161.476626] (-) TimerEvent: {}
+[161.577420] (-) TimerEvent: {}
+[161.604796] (webrtc) StdoutLine: {'line': b'Receiving objects:  54% (265242/489035), 103.48 MiB | 12.33 MiB/s\n'}
+[161.677614] (-) TimerEvent: {}
+[161.732414] (webrtc) StdoutLine: {'line': b'Receiving objects:  55% (268970/489035), 115.34 MiB | 12.22 MiB/s\n'}
+[161.778256] (-) TimerEvent: {}
+[161.878993] (-) TimerEvent: {}
+[161.979701] (-) TimerEvent: {}
+[162.080491] (-) TimerEvent: {}
+[162.181257] (-) TimerEvent: {}
+[162.194333] (webrtc) StdoutLine: {'line': b'Receiving objects:  55% (269922/489035), 115.34 MiB | 12.22 MiB/s\n'}
+[162.281417] (-) TimerEvent: {}
+[162.382371] (-) TimerEvent: {}
+[162.483996] (-) TimerEvent: {}
+[162.585434] (-) TimerEvent: {}
+[162.645272] (webrtc) StdoutLine: {'line': b'Receiving objects:  56% (273860/489035), 121.34 MiB | 12.23 MiB/s\n'}
+[162.685614] (-) TimerEvent: {}
+[162.732286] (webrtc) StdoutLine: {'line': b'Receiving objects:  57% (278750/489035), 127.44 MiB | 12.17 MiB/s\n'}
+[162.785789] (-) TimerEvent: {}
+[162.886520] (-) TimerEvent: {}
+[162.988095] (-) TimerEvent: {}
+[163.088820] (-) TimerEvent: {}
+[163.191918] (-) TimerEvent: {}
+[163.218446] (webrtc) StdoutLine: {'line': b'Receiving objects:  57% (279846/489035), 127.44 MiB | 12.17 MiB/s\n'}
+[163.292106] (-) TimerEvent: {}
+[163.393099] (-) TimerEvent: {}
+[163.495861] (-) TimerEvent: {}
+[163.596817] (-) TimerEvent: {}
+[163.699616] (-) TimerEvent: {}
+[163.737495] (webrtc) StdoutLine: {'line': b'Receiving objects:  58% (283641/489035), 133.54 MiB | 12.18 MiB/s\n'}
+[163.801075] (-) TimerEvent: {}
+[163.901786] (-) TimerEvent: {}
+[163.912578] (webrtc) StdoutLine: {'line': b'Receiving objects:  58% (286990/489035), 139.93 MiB | 12.31 MiB/s\n'}
+[164.001974] (-) TimerEvent: {}
+[164.102742] (-) TimerEvent: {}
+[164.206440] (-) TimerEvent: {}
+[164.307357] (-) TimerEvent: {}
+[164.395040] (webrtc) StdoutLine: {'line': b'Receiving objects:  59% (288531/489035), 146.43 MiB | 12.34 MiB/s\n'}
+[164.407528] (-) TimerEvent: {}
+[164.508321] (-) TimerEvent: {}
+[164.609249] (-) TimerEvent: {}
+[164.709989] (-) TimerEvent: {}
+[164.734997] (webrtc) StdoutLine: {'line': b'Receiving objects:  60% (293421/489035), 146.43 MiB | 12.34 MiB/s\n'}
+[164.810176] (-) TimerEvent: {}
+[164.910945] (-) TimerEvent: {}
+[165.011957] (-) TimerEvent: {}
+[165.079277] (webrtc) StdoutLine: {'line': b'Receiving objects:  60% (296010/489035), 153.01 MiB | 12.35 MiB/s\n'}
+[165.112133] (-) TimerEvent: {}
+[165.213230] (-) TimerEvent: {}
+[165.313987] (-) TimerEvent: {}
+[165.415109] (-) TimerEvent: {}
+[165.516121] (-) TimerEvent: {}
+[165.616981] (-) TimerEvent: {}
+[165.717991] (-) TimerEvent: {}
+[165.732643] (webrtc) StdoutLine: {'line': b'Receiving objects:  61% (298312/489035), 158.95 MiB | 12.32 MiB/s\n'}
+[165.818187] (-) TimerEvent: {}
+[165.919241] (-) TimerEvent: {}
+[165.931807] (webrtc) StdoutLine: {'line': b'Receiving objects:  61% (302200/489035), 165.30 MiB | 12.42 MiB/s\n'}
+[166.019445] (-) TimerEvent: {}
+[166.120563] (-) TimerEvent: {}
+[166.221354] (-) TimerEvent: {}
+[166.322374] (-) TimerEvent: {}
+[166.423114] (-) TimerEvent: {}
+[166.524156] (-) TimerEvent: {}
+[166.624906] (-) TimerEvent: {}
+[166.725609] (-) TimerEvent: {}
+[166.732536] (webrtc) StdoutLine: {'line': b'Receiving objects:  62% (303202/489035), 171.69 MiB | 12.52 MiB/s\n'}
+[166.822393] (webrtc) StdoutLine: {'line': b'Receiving objects:  62% (307557/489035), 177.58 MiB | 12.50 MiB/s\n'}
+[166.825769] (-) TimerEvent: {}
+[166.926564] (-) TimerEvent: {}
+[167.027537] (-) TimerEvent: {}
+[167.128257] (-) TimerEvent: {}
+[167.229392] (-) TimerEvent: {}
+[167.330100] (-) TimerEvent: {}
+[167.431187] (-) TimerEvent: {}
+[167.532008] (-) TimerEvent: {}
+[167.541437] (webrtc) StdoutLine: {'line': b'Receiving objects:  63% (308093/489035), 177.58 MiB | 12.50 MiB/s\n'}
+[167.632188] (-) TimerEvent: {}
+[167.732892] (-) TimerEvent: {}
+[167.733728] (webrtc) StdoutLine: {'line': b'Receiving objects:  64% (312983/489035), 189.83 MiB | 12.51 MiB/s\n'}
+[167.833065] (-) TimerEvent: {}
+[167.934016] (-) TimerEvent: {}
+[168.035079] (-) TimerEvent: {}
+[168.135831] (-) TimerEvent: {}
+[168.236889] (-) TimerEvent: {}
+[168.260800] (webrtc) StdoutLine: {'line': b'Receiving objects:  64% (314218/489035), 189.83 MiB | 12.51 MiB/s\n'}
+[168.337069] (-) TimerEvent: {}
+[168.438198] (-) TimerEvent: {}
+[168.539305] (-) TimerEvent: {}
+[168.640578] (-) TimerEvent: {}
+[168.734060] (webrtc) StdoutLine: {'line': b'Receiving objects:  65% (317873/489035), 195.92 MiB | 12.44 MiB/s\n'}
+[168.740747] (-) TimerEvent: {}
+[168.841638] (-) TimerEvent: {}
+[168.942658] (-) TimerEvent: {}
+[169.006275] (webrtc) StdoutLine: {'line': b'Receiving objects:  65% (320649/489035), 201.66 MiB | 12.27 MiB/s\n'}
+[169.042821] (-) TimerEvent: {}
+[169.143597] (-) TimerEvent: {}
+[169.244583] (-) TimerEvent: {}
+[169.345525] (-) TimerEvent: {}
+[169.446506] (-) TimerEvent: {}
+[169.547253] (-) TimerEvent: {}
+[169.648238] (-) TimerEvent: {}
+[169.748859] (-) TimerEvent: {}
+[170.510309] (webrtc) StdoutLine: {'line': b'Receiving objects:  66% (322764/489035), 207.96 MiB | 12.21 MiB/s\n'}
+[170.510800] (-) TimerEvent: {}
+[170.613227] (-) TimerEvent: {}
+[170.691501] (webrtc) StdoutLine: {'line': b'Receiving objects:  66% (326700/489035), 217.21 MiB | 10.17 MiB/s\n'}
+[170.713418] (-) TimerEvent: {}
+[170.733771] (webrtc) StdoutLine: {'line': b'Receiving objects:  67% (327654/489035), 217.21 MiB | 10.17 MiB/s\n'}
+[170.813612] (-) TimerEvent: {}
+[170.915746] (-) TimerEvent: {}
+[171.019801] (-) TimerEvent: {}
+[171.120933] (-) TimerEvent: {}
+[171.221939] (-) TimerEvent: {}
+[171.323994] (-) TimerEvent: {}
+[171.424778] (-) TimerEvent: {}
+[171.501207] (webrtc) StdoutLine: {'line': b'Receiving objects:  67% (328044/489035), 217.21 MiB | 10.17 MiB/s\n'}
+[171.524947] (-) TimerEvent: {}
+[171.625704] (-) TimerEvent: {}
+[171.727691] (-) TimerEvent: {}
+[171.732442] (webrtc) StdoutLine: {'line': b'Receiving objects:  68% (332544/489035), 223.37 MiB | 10.13 MiB/s\n'}
+[171.828131] (-) TimerEvent: {}
+[171.928836] (-) TimerEvent: {}
+[172.030615] (-) TimerEvent: {}
+[172.131534] (-) TimerEvent: {}
+[172.232234] (-) TimerEvent: {}
+[172.325561] (webrtc) StdoutLine: {'line': b'Receiving objects:  68% (333993/489035), 229.62 MiB | 10.20 MiB/s\n'}
+[172.332402] (-) TimerEvent: {}
+[172.433144] (-) TimerEvent: {}
+[172.534283] (-) TimerEvent: {}
+[172.635771] (-) TimerEvent: {}
+[172.733332] (webrtc) StdoutLine: {'line': b'Receiving objects:  69% (337435/489035), 235.48 MiB | 10.17 MiB/s\n'}
+[172.871350] (-) TimerEvent: {}
+[172.972030] (-) TimerEvent: {}
+[173.074857] (-) TimerEvent: {}
+[173.176176] (-) TimerEvent: {}
+[173.278006] (-) TimerEvent: {}
+[173.339700] (webrtc) StdoutLine: {'line': b'Receiving objects:  69% (339648/489035), 241.20 MiB | 10.07 MiB/s\n'}
+[173.378200] (-) TimerEvent: {}
+[173.478976] (-) TimerEvent: {}
+[173.579713] (-) TimerEvent: {}
+[173.680426] (-) TimerEvent: {}
+[173.734830] (webrtc) StdoutLine: {'line': b'Receiving objects:  70% (342325/489035), 246.06 MiB | 9.83 MiB/s \n'}
+[173.780658] (-) TimerEvent: {}
+[173.881709] (-) TimerEvent: {}
+[173.982528] (-) TimerEvent: {}
+[174.011309] (webrtc) StdoutLine: {'line': b'Receiving objects:  70% (344875/489035), 250.94 MiB | 9.66 MiB/s\n'}
+[174.082699] (-) TimerEvent: {}
+[174.183400] (-) TimerEvent: {}
+[174.284371] (-) TimerEvent: {}
+[174.385089] (-) TimerEvent: {}
+[174.485773] (-) TimerEvent: {}
+[174.587144] (-) TimerEvent: {}
+[174.688332] (-) TimerEvent: {}
+[174.732882] (webrtc) StdoutLine: {'line': b'Receiving objects:  71% (347215/489035), 257.17 MiB | 9.64 MiB/s\n'}
+[174.735444] (webrtc) StdoutLine: {'line': b'Receiving objects:  71% (352069/489035), 262.96 MiB | 9.68 MiB/s\n'}
+[174.788530] (-) TimerEvent: {}
+[174.889777] (-) TimerEvent: {}
+[174.990864] (-) TimerEvent: {}
+[175.092031] (-) TimerEvent: {}
+[175.193031] (-) TimerEvent: {}
+[175.294202] (-) TimerEvent: {}
+[175.395147] (-) TimerEvent: {}
+[175.495760] (-) TimerEvent: {}
+[175.497111] (webrtc) StdoutLine: {'line': b'Receiving objects:  72% (352106/489035), 262.96 MiB | 9.68 MiB/s\n'}
+[175.595952] (-) TimerEvent: {}
+[175.696692] (-) TimerEvent: {}
+[175.732491] (webrtc) StdoutLine: {'line': b'Receiving objects:  73% (356996/489035), 268.84 MiB | 11.47 MiB/s\n'}
+[175.796874] (-) TimerEvent: {}
+[175.897630] (-) TimerEvent: {}
+[175.998350] (-) TimerEvent: {}
+[176.099026] (-) TimerEvent: {}
+[176.119750] (webrtc) StdoutLine: {'line': b'Receiving objects:  73% (359278/489035), 274.42 MiB | 11.34 MiB/s\n'}
+[176.199287] (-) TimerEvent: {}
+[176.300050] (-) TimerEvent: {}
+[176.400755] (-) TimerEvent: {}
+[176.501466] (-) TimerEvent: {}
+[176.602157] (-) TimerEvent: {}
+[176.703169] (-) TimerEvent: {}
+[176.732705] (webrtc) StdoutLine: {'line': b'Receiving objects:  74% (361886/489035), 280.66 MiB | 11.34 MiB/s\n'}
+[176.736389] (webrtc) StdoutLine: {'line': b'Receiving objects:  74% (366739/489035), 286.66 MiB | 11.37 MiB/s\n'}
+[176.803333] (-) TimerEvent: {}
+[176.904213] (-) TimerEvent: {}
+[177.005200] (-) TimerEvent: {}
+[177.105850] (-) TimerEvent: {}
+[177.206562] (-) TimerEvent: {}
+[177.307284] (-) TimerEvent: {}
+[177.365748] (webrtc) StdoutLine: {'line': b'Receiving objects:  75% (366777/489035), 286.66 MiB | 11.37 MiB/s\n'}
+[177.407491] (-) TimerEvent: {}
+[177.508191] (-) TimerEvent: {}
+[177.724236] (-) TimerEvent: {}
+[177.733582] (webrtc) StdoutLine: {'line': b'Receiving objects:  76% (371667/489035), 292.46 MiB | 11.39 MiB/s\n'}
+[177.824406] (-) TimerEvent: {}
+[177.925273] (-) TimerEvent: {}
+[178.025887] (-) TimerEvent: {}
+[178.127466] (-) TimerEvent: {}
+[178.228652] (-) TimerEvent: {}
+[178.330252] (-) TimerEvent: {}
+[178.431129] (-) TimerEvent: {}
+[178.532126] (-) TimerEvent: {}
+[178.633066] (-) TimerEvent: {}
+[178.733779] (-) TimerEvent: {}
+[178.835486] (-) TimerEvent: {}
+[178.936266] (-) TimerEvent: {}
+[179.037084] (-) TimerEvent: {}
+[179.137780] (-) TimerEvent: {}
+[179.159945] (webrtc) StdoutLine: {'line': b'Receiving objects:  76% (373441/489035), 297.64 MiB | 11.18 MiB/s\n'}
+[179.237966] (-) TimerEvent: {}
+[179.338748] (-) TimerEvent: {}
+[179.439456] (-) TimerEvent: {}
+[179.540207] (-) TimerEvent: {}
+[179.641522] (-) TimerEvent: {}
+[179.732895] (webrtc) StdoutLine: {'line': b'Receiving objects:  76% (374314/489035), 315.53 MiB | 11.31 MiB/s\n'}
+[179.741740] (-) TimerEvent: {}
+[179.792762] (webrtc) StdoutLine: {'line': b'Receiving objects:  76% (376372/489035), 321.45 MiB | 11.32 MiB/s\n'}
+[179.841914] (-) TimerEvent: {}
+[179.942779] (-) TimerEvent: {}
+[180.043593] (-) TimerEvent: {}
+[180.144254] (-) TimerEvent: {}
+[180.245106] (-) TimerEvent: {}
+[180.346285] (-) TimerEvent: {}
+[180.446964] (-) TimerEvent: {}
+[180.548104] (-) TimerEvent: {}
+[180.649170] (-) TimerEvent: {}
+[180.749895] (-) TimerEvent: {}
+[180.850736] (-) TimerEvent: {}
+[180.951592] (-) TimerEvent: {}
+[181.052465] (-) TimerEvent: {}
+[181.153586] (-) TimerEvent: {}
+[181.161076] (webrtc) StdoutLine: {'line': b'Receiving objects:  77% (376557/489035), 321.45 MiB | 11.32 MiB/s\n'}
+[181.202729] (webrtc) StdoutLine: {'line': b'Receiving objects:  77% (381380/489035), 339.04 MiB | 11.27 MiB/s\n'}
+[181.253739] (-) TimerEvent: {}
+[181.354432] (-) TimerEvent: {}
+[181.455151] (-) TimerEvent: {}
+[181.557184] (-) TimerEvent: {}
+[181.658472] (-) TimerEvent: {}
+[181.732517] (webrtc) StdoutLine: {'line': b'Receiving objects:  78% (381448/489035), 339.04 MiB | 11.27 MiB/s\n'}
+[181.758658] (-) TimerEvent: {}
+[181.859377] (-) TimerEvent: {}
+[181.900406] (webrtc) StdoutLine: {'line': b'Receiving objects:  78% (384940/489035), 344.32 MiB | 11.16 MiB/s\n'}
+[181.959567] (-) TimerEvent: {}
+[182.060338] (-) TimerEvent: {}
+[182.161311] (-) TimerEvent: {}
+[182.262035] (-) TimerEvent: {}
+[182.363041] (-) TimerEvent: {}
+[182.463728] (-) TimerEvent: {}
+[182.501454] (webrtc) StdoutLine: {'line': b'Receiving objects:  79% (386338/489035), 344.32 MiB | 11.16 MiB/s\n'}
+[182.563903] (-) TimerEvent: {}
+[182.664922] (-) TimerEvent: {}
+[182.733933] (webrtc) StdoutLine: {'line': b'Receiving objects:  80% (391228/489035), 350.82 MiB | 11.72 MiB/s\n'}
+[182.765090] (-) TimerEvent: {}
+[182.865840] (-) TimerEvent: {}
+[182.966957] (-) TimerEvent: {}
+[183.024848] (webrtc) StdoutLine: {'line': b'Receiving objects:  80% (393363/489035), 356.63 MiB | 11.58 MiB/s\n'}
+[183.067883] (-) TimerEvent: {}
+[183.169760] (-) TimerEvent: {}
+[183.231771] (webrtc) StdoutLine: {'line': b'Receiving objects:  81% (396119/489035), 356.63 MiB | 11.58 MiB/s\n'}
+[183.269966] (-) TimerEvent: {}
+[183.370836] (-) TimerEvent: {}
+[183.465318] (webrtc) StdoutLine: {'line': b'Receiving objects:  82% (401009/489035), 363.08 MiB | 11.57 MiB/s\n'}
+[183.471047] (-) TimerEvent: {}
+[183.505797] (webrtc) StdoutLine: {'line': b'Receiving objects:  83% (405900/489035), 363.08 MiB | 11.57 MiB/s\n'}
+[183.571214] (-) TimerEvent: {}
+[183.575930] (webrtc) StdoutLine: {'line': b'Receiving objects:  84% (410790/489035), 363.08 MiB | 11.57 MiB/s\n'}
+[183.671464] (-) TimerEvent: {}
+[183.679187] (webrtc) StdoutLine: {'line': b'Receiving objects:  85% (415680/489035), 363.08 MiB | 11.57 MiB/s\n'}
+[183.771643] (-) TimerEvent: {}
+[183.872378] (-) TimerEvent: {}
+[183.925200] (webrtc) StdoutLine: {'line': b'Receiving objects:  86% (420571/489035), 368.92 MiB | 11.86 MiB/s\n'}
+[183.972556] (-) TimerEvent: {}
+[184.019087] (webrtc) StdoutLine: {'line': b'Receiving objects:  86% (422118/489035), 368.92 MiB | 11.86 MiB/s\n'}
+[184.072736] (-) TimerEvent: {}
+[184.080301] (webrtc) StdoutLine: {'line': b'Receiving objects:  87% (425461/489035), 368.92 MiB | 11.86 MiB/s\n'}
+[184.172928] (-) TimerEvent: {}
+[184.189844] (webrtc) StdoutLine: {'line': b'Receiving objects:  88% (430351/489035), 368.92 MiB | 11.86 MiB/s\n'}
+[184.263830] (webrtc) StdoutLine: {'line': b'Receiving objects:  89% (435242/489035), 375.01 MiB | 11.89 MiB/s\n'}
+[184.273102] (-) TimerEvent: {}
+[184.373813] (-) TimerEvent: {}
+[184.474908] (-) TimerEvent: {}
+[184.575867] (-) TimerEvent: {}
+[184.676485] (-) TimerEvent: {}
+[184.737422] (webrtc) StdoutLine: {'line': b'Receiving objects:  90% (440132/489035), 375.01 MiB | 11.89 MiB/s\n'}
+[184.776657] (-) TimerEvent: {}
+[184.877519] (-) TimerEvent: {}
+[184.944171] (webrtc) StdoutLine: {'line': b'Receiving objects:  90% (440988/489035), 381.07 MiB | 11.92 MiB/s\n'}
+[184.977696] (-) TimerEvent: {}
+[185.008934] (webrtc) StdoutLine: {'line': b'Receiving objects:  91% (445022/489035), 381.07 MiB | 11.92 MiB/s\n'}
+[185.077879] (-) TimerEvent: {}
+[185.122746] (webrtc) StdoutLine: {'line': b'Receiving objects:  92% (449913/489035), 381.07 MiB | 11.92 MiB/s\n'}
+[185.178143] (-) TimerEvent: {}
+[185.180801] (webrtc) StdoutLine: {'line': b'Receiving objects:  93% (454803/489035), 381.07 MiB | 11.92 MiB/s\n'}
+[185.242917] (webrtc) StdoutLine: {'line': b'Receiving objects:  94% (459693/489035), 387.30 MiB | 12.04 MiB/s\n'}
+[185.278673] (-) TimerEvent: {}
+[185.367969] (webrtc) StdoutLine: {'line': b'Receiving objects:  95% (464584/489035), 387.30 MiB | 12.04 MiB/s\n'}
+[185.378840] (-) TimerEvent: {}
+[185.430308] (webrtc) StdoutLine: {'line': b'Receiving objects:  96% (469474/489035), 387.30 MiB | 12.04 MiB/s\n'}
+[185.479010] (-) TimerEvent: {}
+[185.512101] (webrtc) StdoutLine: {'line': b'Receiving objects:  97% (474364/489035), 387.30 MiB | 12.04 MiB/s\n'}
+[185.579184] (-) TimerEvent: {}
+[185.679869] (-) TimerEvent: {}
+[185.763751] (webrtc) StdoutLine: {'line': b'Receiving objects:  98% (479255/489035), 387.30 MiB | 12.04 MiB/s\n'}
+[185.780036] (-) TimerEvent: {}
+[185.880999] (-) TimerEvent: {}
+[185.981715] (-) TimerEvent: {}
+[186.082394] (-) TimerEvent: {}
+[186.183172] (-) TimerEvent: {}
+[186.284599] (-) TimerEvent: {}
+[186.385477] (-) TimerEvent: {}
+[186.486188] (-) TimerEvent: {}
+[186.586975] (-) TimerEvent: {}
+[186.687709] (-) TimerEvent: {}
+[186.788789] (-) TimerEvent: {}
+[186.889411] (-) TimerEvent: {}
+[186.947890] (webrtc) StdoutLine: {'line': b'Receiving objects:  98% (481293/489035), 393.69 MiB | 12.14 MiB/s\n'}
+[186.989588] (-) TimerEvent: {}
+[187.090379] (-) TimerEvent: {}
+[187.191319] (-) TimerEvent: {}
+[187.291987] (-) TimerEvent: {}
+[187.392809] (-) TimerEvent: {}
+[187.494003] (-) TimerEvent: {}
+[187.595123] (-) TimerEvent: {}
+[187.696595] (-) TimerEvent: {}
+[187.797741] (-) TimerEvent: {}
+[190.570525] (webrtc) StdoutLine: {'line': b'Receiving objects:  98% (481319/489035), 404.95 MiB | 12.02 MiB/s\n'}
+[191.742106] (-) TimerEvent: {}
+[191.744987] (webrtc) StdoutLine: {'line': b'Receiving objects:  98% (481319/489035), 410.31 MiB | 6.80 MiB/s \n'}
+[191.842413] (-) TimerEvent: {}
+[191.943335] (-) TimerEvent: {}
+[192.044002] (-) TimerEvent: {}
+[192.144705] (-) TimerEvent: {}
+[192.245596] (-) TimerEvent: {}
+[192.346249] (-) TimerEvent: {}
+[192.447458] (-) TimerEvent: {}
+[192.548393] (-) TimerEvent: {}
+[192.649594] (-) TimerEvent: {}
+[192.730573] (webrtc) StdoutLine: {'line': b'Receiving objects:  98% (481319/489035), 410.33 MiB | 5.51 MiB/s\n'}
+[192.732245] (webrtc) StdoutLine: {'line': b'Receiving objects:  99% (484145/489035), 414.70 MiB | 5.34 MiB/s\n'}
+[192.749765] (-) TimerEvent: {}
+[192.850655] (-) TimerEvent: {}
+[192.952138] (-) TimerEvent: {}
+[193.052868] (-) TimerEvent: {}
+[193.153664] (-) TimerEvent: {}
+[193.254323] (-) TimerEvent: {}
+[193.354957] (-) TimerEvent: {}
+[193.455681] (-) TimerEvent: {}
+[193.556431] (-) TimerEvent: {}
+[193.657074] (-) TimerEvent: {}
+[193.757685] (-) TimerEvent: {}
+[193.763576] (webrtc) StdoutLine: {'line': b'Receiving objects:  99% (484257/489035), 414.70 MiB | 5.34 MiB/s\n'}
+[193.858014] (-) TimerEvent: {}
+[193.958719] (-) TimerEvent: {}
+[194.059432] (-) TimerEvent: {}
+[194.160815] (-) TimerEvent: {}
+[194.261500] (-) TimerEvent: {}
+[194.362143] (-) TimerEvent: {}
+[194.462821] (-) TimerEvent: {}
+[194.551167] (webrtc) StdoutLine: {'line': b'Receiving objects:  99% (488950/489035), 422.06 MiB | 4.77 MiB/s\n'}
+[194.552265] (webrtc) StdoutLine: {'line': b'remote: Total 489035 (delta 353999), reused 488992 (delta 353999)        \n'}
+[194.556025] (webrtc) StdoutLine: {'line': b'Receiving objects: 100% (489035/489035), 428.70 MiB | 4.07 MiB/s\n'}
+[194.557937] (webrtc) StdoutLine: {'line': b'Receiving objects: 100% (489035/489035), 430.02 MiB | 10.04 MiB/s, done.\n'}
+[194.563117] (-) TimerEvent: {}
+[194.666401] (-) TimerEvent: {}
+[194.767583] (-) TimerEvent: {}
+[194.771787] (webrtc) StdoutLine: {'line': b'Resolving deltas:   0% (0/353999)\n'}
+[194.859663] (webrtc) StdoutLine: {'line': b'Resolving deltas:   1% (3540/353999)\n'}
+[194.868128] (-) TimerEvent: {}
+[194.924864] (webrtc) StdoutLine: {'line': b'Resolving deltas:   2% (7080/353999)\n'}
+[194.969018] (-) TimerEvent: {}
+[195.006807] (webrtc) StdoutLine: {'line': b'Resolving deltas:   3% (10620/353999)\n'}
+[195.069533] (-) TimerEvent: {}
+[195.102600] (webrtc) StdoutLine: {'line': b'Resolving deltas:   4% (14160/353999)\n'}
+[195.169701] (-) TimerEvent: {}
+[195.181866] (webrtc) StdoutLine: {'line': b'Resolving deltas:   5% (17700/353999)\n'}
+[195.243619] (webrtc) StdoutLine: {'line': b'Resolving deltas:   6% (21240/353999)\n'}
+[195.269993] (-) TimerEvent: {}
+[195.312324] (webrtc) StdoutLine: {'line': b'Resolving deltas:   7% (24780/353999)\n'}
+[195.370166] (-) TimerEvent: {}
+[195.375657] (webrtc) StdoutLine: {'line': b'Resolving deltas:   8% (28320/353999)\n'}
+[195.450606] (webrtc) StdoutLine: {'line': b'Resolving deltas:   9% (31860/353999)\n'}
+[195.470387] (-) TimerEvent: {}
+[195.519555] (webrtc) StdoutLine: {'line': b'Resolving deltas:  10% (35400/353999)\n'}
+[195.570550] (-) TimerEvent: {}
+[195.604630] (webrtc) StdoutLine: {'line': b'Resolving deltas:  11% (38940/353999)\n'}
+[195.774767] (-) TimerEvent: {}
+[195.775158] (webrtc) StdoutLine: {'line': b'Resolving deltas:  12% (42480/353999)\n'}
+[195.775543] (webrtc) StdoutLine: {'line': b'Resolving deltas:  13% (46020/353999)\n'}
+[195.775871] (webrtc) StdoutLine: {'line': b'Resolving deltas:  13% (47319/353999)\n'}
+[195.790357] (webrtc) StdoutLine: {'line': b'Resolving deltas:  14% (49560/353999)\n'}
+[195.857203] (webrtc) StdoutLine: {'line': b'Resolving deltas:  15% (53100/353999)\n'}
+[195.874948] (-) TimerEvent: {}
+[195.924941] (webrtc) StdoutLine: {'line': b'Resolving deltas:  16% (56640/353999)\n'}
+[195.975109] (-) TimerEvent: {}
+[195.993362] (webrtc) StdoutLine: {'line': b'Resolving deltas:  17% (60180/353999)\n'}
+[196.049450] (webrtc) StdoutLine: {'line': b'Resolving deltas:  18% (63720/353999)\n'}
+[196.075326] (-) TimerEvent: {}
+[196.107176] (webrtc) StdoutLine: {'line': b'Resolving deltas:  19% (67260/353999)\n'}
+[196.154931] (webrtc) StdoutLine: {'line': b'Resolving deltas:  20% (70800/353999)\n'}
+[196.175507] (-) TimerEvent: {}
+[196.196173] (webrtc) StdoutLine: {'line': b'Resolving deltas:  21% (74340/353999)\n'}
+[196.238903] (webrtc) StdoutLine: {'line': b'Resolving deltas:  22% (77880/353999)\n'}
+[196.275682] (-) TimerEvent: {}
+[196.285904] (webrtc) StdoutLine: {'line': b'Resolving deltas:  23% (81420/353999)\n'}
+[196.372784] (webrtc) StdoutLine: {'line': b'Resolving deltas:  24% (84960/353999)\n'}
+[196.375820] (-) TimerEvent: {}
+[196.407656] (webrtc) StdoutLine: {'line': b'Resolving deltas:  25% (88500/353999)\n'}
+[196.445601] (webrtc) StdoutLine: {'line': b'Resolving deltas:  26% (92040/353999)\n'}
+[196.475989] (-) TimerEvent: {}
+[196.493449] (webrtc) StdoutLine: {'line': b'Resolving deltas:  27% (95580/353999)\n'}
+[196.528425] (webrtc) StdoutLine: {'line': b'Resolving deltas:  28% (99120/353999)\n'}
+[196.568053] (webrtc) StdoutLine: {'line': b'Resolving deltas:  29% (102660/353999)\n'}
+[196.576139] (-) TimerEvent: {}
+[196.606569] (webrtc) StdoutLine: {'line': b'Resolving deltas:  30% (106200/353999)\n'}
+[196.647107] (webrtc) StdoutLine: {'line': b'Resolving deltas:  31% (109740/353999)\n'}
+[196.676304] (-) TimerEvent: {}
+[196.684928] (webrtc) StdoutLine: {'line': b'Resolving deltas:  32% (113280/353999)\n'}
+[196.690547] (webrtc) StdoutLine: {'line': b'Resolving deltas:  32% (116291/353999)\n'}
+[196.730830] (webrtc) StdoutLine: {'line': b'Resolving deltas:  33% (116820/353999)\n'}
+[196.776461] (-) TimerEvent: {}
+[196.789235] (webrtc) StdoutLine: {'line': b'Resolving deltas:  34% (120360/353999)\n'}
+[196.830315] (webrtc) StdoutLine: {'line': b'Resolving deltas:  35% (123900/353999)\n'}
+[196.865556] (webrtc) StdoutLine: {'line': b'Resolving deltas:  36% (127440/353999)\n'}
+[196.876624] (-) TimerEvent: {}
+[196.904325] (webrtc) StdoutLine: {'line': b'Resolving deltas:  37% (130980/353999)\n'}
+[196.946643] (webrtc) StdoutLine: {'line': b'Resolving deltas:  38% (134520/353999)\n'}
+[196.976797] (-) TimerEvent: {}
+[196.984216] (webrtc) StdoutLine: {'line': b'Resolving deltas:  39% (138060/353999)\n'}
+[197.018918] (webrtc) StdoutLine: {'line': b'Resolving deltas:  40% (141600/353999)\n'}
+[197.051225] (webrtc) StdoutLine: {'line': b'Resolving deltas:  41% (145140/353999)\n'}
+[197.076977] (-) TimerEvent: {}
+[197.086518] (webrtc) StdoutLine: {'line': b'Resolving deltas:  42% (148680/353999)\n'}
+[197.117175] (webrtc) StdoutLine: {'line': b'Resolving deltas:  43% (152220/353999)\n'}
+[197.142521] (webrtc) StdoutLine: {'line': b'Resolving deltas:  44% (155760/353999)\n'}
+[197.171462] (webrtc) StdoutLine: {'line': b'Resolving deltas:  45% (159300/353999)\n'}
+[197.177114] (-) TimerEvent: {}
+[197.213130] (webrtc) StdoutLine: {'line': b'Resolving deltas:  46% (162840/353999)\n'}
+[197.277305] (-) TimerEvent: {}
+[197.354811] (webrtc) StdoutLine: {'line': b'Resolving deltas:  47% (166380/353999)\n'}
+[197.377475] (-) TimerEvent: {}
+[197.479001] (-) TimerEvent: {}
+[197.524340] (webrtc) StdoutLine: {'line': b'Resolving deltas:  48% (169920/353999)\n'}
+[197.579160] (-) TimerEvent: {}
+[197.680409] (-) TimerEvent: {}
+[197.684906] (webrtc) StdoutLine: {'line': b'Resolving deltas:  49% (173460/353999)\n'}
+[197.780587] (-) TimerEvent: {}
+[197.784335] (webrtc) StdoutLine: {'line': b'Resolving deltas:  49% (175628/353999)\n'}
+[197.880776] (-) TimerEvent: {}
+[197.982311] (-) TimerEvent: {}
+[198.083747] (-) TimerEvent: {}
+[198.085508] (webrtc) StdoutLine: {'line': b'Resolving deltas:  50% (177000/353999)\n'}
+[198.183910] (-) TimerEvent: {}
+[198.245345] (webrtc) StdoutLine: {'line': b'Resolving deltas:  51% (180540/353999)\n'}
+[198.284083] (-) TimerEvent: {}
+[198.384753] (-) TimerEvent: {}
+[198.403894] (webrtc) StdoutLine: {'line': b'Resolving deltas:  52% (184080/353999)\n'}
+[198.484941] (-) TimerEvent: {}
+[198.585911] (-) TimerEvent: {}
+[198.620616] (webrtc) StdoutLine: {'line': b'Resolving deltas:  53% (187620/353999)\n'}
+[198.684901] (webrtc) StdoutLine: {'line': b'Resolving deltas:  54% (191160/353999)\n'}
+[198.686400] (-) TimerEvent: {}
+[198.787525] (-) TimerEvent: {}
+[198.888212] (-) TimerEvent: {}
+[198.989742] (-) TimerEvent: {}
+[199.091140] (-) TimerEvent: {}
+[199.192464] (-) TimerEvent: {}
+[199.205115] (webrtc) StdoutLine: {'line': b'Resolving deltas:  54% (191625/353999)\n'}
+[199.292646] (-) TimerEvent: {}
+[199.393709] (webrtc) StdoutLine: {'line': b'Resolving deltas:  55% (194700/353999)\n'}
+[199.395184] (-) TimerEvent: {}
+[199.479647] (webrtc) StdoutLine: {'line': b'Resolving deltas:  56% (198240/353999)\n'}
+[199.495351] (-) TimerEvent: {}
+[199.596216] (-) TimerEvent: {}
+[199.687079] (webrtc) StdoutLine: {'line': b'Resolving deltas:  57% (201780/353999)\n'}
+[199.696383] (-) TimerEvent: {}
+[199.730069] (webrtc) StdoutLine: {'line': b'Resolving deltas:  57% (204957/353999)\n'}
+[199.796589] (-) TimerEvent: {}
+[199.897957] (-) TimerEvent: {}
+[199.999618] (-) TimerEvent: {}
+[200.101016] (-) TimerEvent: {}
+[200.202572] (-) TimerEvent: {}
+[200.303254] (-) TimerEvent: {}
+[200.404823] (-) TimerEvent: {}
+[200.427521] (webrtc) StdoutLine: {'line': b'Resolving deltas:  58% (205320/353999)\n'}
+[200.505015] (-) TimerEvent: {}
+[200.606451] (-) TimerEvent: {}
+[200.638982] (webrtc) StdoutLine: {'line': b'Resolving deltas:  59% (208860/353999)\n'}
+[200.687009] (webrtc) StdoutLine: {'line': b'Resolving deltas:  60% (212400/353999)\n'}
+[200.706638] (-) TimerEvent: {}
+[200.807936] (-) TimerEvent: {}
+[200.856281] (webrtc) StdoutLine: {'line': b'Resolving deltas:  60% (213114/353999)\n'}
+[200.908123] (-) TimerEvent: {}
+[201.010045] (-) TimerEvent: {}
+[201.111651] (-) TimerEvent: {}
+[201.212511] (-) TimerEvent: {}
+[201.313931] (-) TimerEvent: {}
+[201.327193] (webrtc) StdoutLine: {'line': b'Resolving deltas:  61% (215940/353999)\n'}
+[201.414138] (-) TimerEvent: {}
+[201.515601] (-) TimerEvent: {}
+[201.578021] (webrtc) StdoutLine: {'line': b'Resolving deltas:  62% (219480/353999)\n'}
+[201.615781] (-) TimerEvent: {}
+[201.687260] (webrtc) StdoutLine: {'line': b'Resolving deltas:  63% (223020/353999)\n'}
+[201.715959] (-) TimerEvent: {}
+[201.816951] (-) TimerEvent: {}
+[201.872846] (webrtc) StdoutLine: {'line': b'Resolving deltas:  63% (224681/353999)\n'}
+[201.917561] (-) TimerEvent: {}
+[202.019849] (-) TimerEvent: {}
+[202.121190] (-) TimerEvent: {}
+[202.213534] (webrtc) StdoutLine: {'line': b'Resolving deltas:  64% (226560/353999)\n'}
+[202.221360] (-) TimerEvent: {}
+[202.323005] (-) TimerEvent: {}
+[202.424020] (-) TimerEvent: {}
+[202.525211] (-) TimerEvent: {}
+[202.598984] (webrtc) StdoutLine: {'line': b'Resolving deltas:  65% (230100/353999)\n'}
+[202.625398] (-) TimerEvent: {}
+[202.685727] (webrtc) StdoutLine: {'line': b'Resolving deltas:  66% (233640/353999)\n'}
+[202.726016] (-) TimerEvent: {}
+[202.828559] (-) TimerEvent: {}
+[202.930302] (-) TimerEvent: {}
+[202.999832] (webrtc) StdoutLine: {'line': b'Resolving deltas:  66% (234488/353999)\n'}
+[203.030479] (-) TimerEvent: {}
+[203.131992] (-) TimerEvent: {}
+[203.232635] (-) TimerEvent: {}
+[203.333946] (-) TimerEvent: {}
+[203.355739] (webrtc) StdoutLine: {'line': b'Resolving deltas:  67% (237180/353999)\n'}
+[203.434136] (-) TimerEvent: {}
+[203.535508] (-) TimerEvent: {}
+[203.636473] (-) TimerEvent: {}
+[203.685664] (webrtc) StdoutLine: {'line': b'Resolving deltas:  68% (240720/353999)\n'}
+[203.736653] (-) TimerEvent: {}
+[203.789439] (webrtc) StdoutLine: {'line': b'Resolving deltas:  68% (242941/353999)\n'}
+[203.836852] (-) TimerEvent: {}
+[203.938169] (-) TimerEvent: {}
+[204.039215] (-) TimerEvent: {}
+[204.132223] (webrtc) StdoutLine: {'line': b'Resolving deltas:  69% (244260/353999)\n'}
+[204.139386] (-) TimerEvent: {}
+[204.240976] (-) TimerEvent: {}
+[204.341642] (-) TimerEvent: {}
+[204.443236] (-) TimerEvent: {}
+[204.536106] (webrtc) StdoutLine: {'line': b'Resolving deltas:  70% (247800/353999)\n'}
+[204.543391] (-) TimerEvent: {}
+[204.644699] (-) TimerEvent: {}
+[204.684987] (webrtc) StdoutLine: {'line': b'Resolving deltas:  71% (251340/353999)\n'}
+[204.744894] (-) TimerEvent: {}
+[204.845665] (-) TimerEvent: {}
+[204.851749] (webrtc) StdoutLine: {'line': b'Resolving deltas:  71% (253667/353999)\n'}
+[204.945834] (-) TimerEvent: {}
+[205.046842] (-) TimerEvent: {}
+[205.120668] (webrtc) StdoutLine: {'line': b'Resolving deltas:  72% (254880/353999)\n'}
+[205.147022] (-) TimerEvent: {}
+[205.248045] (-) TimerEvent: {}
+[205.348728] (-) TimerEvent: {}
+[205.428133] (webrtc) StdoutLine: {'line': b'Resolving deltas:  73% (258420/353999)\n'}
+[205.448920] (-) TimerEvent: {}
+[205.550201] (-) TimerEvent: {}
+[205.651207] (-) TimerEvent: {}
+[205.684881] (webrtc) StdoutLine: {'line': b'Resolving deltas:  74% (261960/353999)\n'}
+[205.751391] (-) TimerEvent: {}
+[205.760851] (webrtc) StdoutLine: {'line': b'Resolving deltas:  74% (264512/353999)\n'}
+[205.851595] (-) TimerEvent: {}
+[205.952633] (-) TimerEvent: {}
+[206.047037] (webrtc) StdoutLine: {'line': b'Resolving deltas:  75% (265500/353999)\n'}
+[206.053550] (-) TimerEvent: {}
+[206.155069] (-) TimerEvent: {}
+[206.256345] (-) TimerEvent: {}
+[206.357684] (-) TimerEvent: {}
+[206.434924] (webrtc) StdoutLine: {'line': b'Resolving deltas:  76% (269040/353999)\n'}
+[206.457869] (-) TimerEvent: {}
+[206.558608] (-) TimerEvent: {}
+[206.651030] (webrtc) StdoutLine: {'line': b'Resolving deltas:  77% (272580/353999)\n'}
+[206.658786] (-) TimerEvent: {}
+[206.686346] (webrtc) StdoutLine: {'line': b'Resolving deltas:  78% (276120/353999)\n'}
+[206.758982] (-) TimerEvent: {}
+[206.844671] (webrtc) StdoutLine: {'line': b'Resolving deltas:  78% (276650/353999)\n'}
+[206.859170] (-) TimerEvent: {}
+[206.960214] (-) TimerEvent: {}
+[207.060862] (-) TimerEvent: {}
+[207.074906] (webrtc) StdoutLine: {'line': b'Resolving deltas:  79% (279660/353999)\n'}
+[207.161035] (-) TimerEvent: {}
+[207.262068] (-) TimerEvent: {}
+[207.268605] (webrtc) StdoutLine: {'line': b'Resolving deltas:  80% (283200/353999)\n'}
+[207.362335] (-) TimerEvent: {}
+[207.434882] (webrtc) StdoutLine: {'line': b'Resolving deltas:  81% (286740/353999)\n'}
+[207.462511] (-) TimerEvent: {}
+[207.563902] (-) TimerEvent: {}
+[207.664692] (-) TimerEvent: {}
+[207.685003] (webrtc) StdoutLine: {'line': b'Resolving deltas:  82% (290280/353999)\n'}
+[207.764868] (-) TimerEvent: {}
+[207.822704] (webrtc) StdoutLine: {'line': b'Resolving deltas:  82% (293012/353999)\n'}
+[207.865050] (-) TimerEvent: {}
+[207.966366] (-) TimerEvent: {}
+[208.067006] (-) TimerEvent: {}
+[208.094272] (webrtc) StdoutLine: {'line': b'Resolving deltas:  83% (293820/353999)\n'}
+[208.167196] (-) TimerEvent: {}
+[208.268243] (-) TimerEvent: {}
+[208.287607] (webrtc) StdoutLine: {'line': b'Resolving deltas:  84% (297360/353999)\n'}
+[208.368447] (-) TimerEvent: {}
+[208.469479] (-) TimerEvent: {}
+[208.566923] (webrtc) StdoutLine: {'line': b'Resolving deltas:  85% (300900/353999)\n'}
+[208.569625] (-) TimerEvent: {}
+[208.671248] (-) TimerEvent: {}
+[208.684945] (webrtc) StdoutLine: {'line': b'Resolving deltas:  86% (304440/353999)\n'}
+[208.771519] (-) TimerEvent: {}
+[208.835006] (webrtc) StdoutLine: {'line': b'Resolving deltas:  86% (306015/353999)\n'}

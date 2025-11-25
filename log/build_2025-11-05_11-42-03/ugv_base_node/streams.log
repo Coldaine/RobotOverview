@@ -1,0 +1,20 @@
+[0.018s] Invoking command in '/home/ws/ugv_ws/build/ugv_base_node': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_voice:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_base_node -- -j4 -l4
+[0.071s] [35m[1mConsolidate compiler generated dependencies of target base_node[0m
+[0.090s] [ 50%] [32mBuilding CXX object CMakeFiles/base_node.dir/src/base_node.cpp.o[0m
+[3.027s] [01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:[m[K In member function ‘[01m[Kvoid OdomPublisher::publish_odom()[m[K’:
+[3.027s] [01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:289:19:[m[K [01;31m[Kerror: [m[K‘[01m[Kstruct geometry_msgs::msg::TransformStamped_<std::allocator<void> >[m[K’ has no member named ‘[01m[Kpose[m[K’
+[3.027s]   289 |             trans.[01;31m[Kpose[m[K.pose.orientation.x = 0;
+[3.027s]       |                   [01;31m[K^~~~[m[K
+[3.028s] [01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:290:19:[m[K [01;31m[Kerror: [m[K‘[01m[Kstruct geometry_msgs::msg::TransformStamped_<std::allocator<void> >[m[K’ has no member named ‘[01m[Kpose[m[K’
+[3.028s]   290 |             trans.[01;31m[Kpose[m[K.pose.orientation.y = 0;
+[3.028s]       |                   [01;31m[K^~~~[m[K
+[3.028s] [01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:291:19:[m[K [01;31m[Kerror: [m[K‘[01m[Kstruct geometry_msgs::msg::TransformStamped_<std::allocator<void> >[m[K’ has no member named ‘[01m[Kpose[m[K’
+[3.028s]   291 |             trans.[01;31m[Kpose[m[K.pose.orientation.z = sin(imu_yaw_ * 0.5);
+[3.028s]       |                   [01;31m[K^~~~[m[K
+[3.028s] [01m[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node.cpp:292:19:[m[K [01;31m[Kerror: [m[K‘[01m[Kstruct geometry_msgs::msg::TransformStamped_<std::allocator<void> >[m[K’ has no member named ‘[01m[Kpose[m[K’
+[3.028s]   292 |             trans.[01;31m[Kpose[m[K.pose.orientation.w = cos(imu_yaw_ * 0.5);
+[3.028s]       |                   [01;31m[K^~~~[m[K
+[7.024s] gmake[2]: *** [CMakeFiles/base_node.dir/build.make:76: CMakeFiles/base_node.dir/src/base_node.cpp.o] Error 1
+[7.024s] gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/base_node.dir/all] Error 2
+[7.024s] gmake: *** [Makefile:146: all] Error 2
+[7.025s] Invoked command in '/home/ws/ugv_ws/build/ugv_base_node' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_voice:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_base_node -- -j4 -l4

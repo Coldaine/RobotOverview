@@ -1,0 +1,529 @@
+[0.000000] (-) TimerEvent: {}
+[0.001013] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.001827] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.001906] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.002368] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.002874] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.003031] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.003150] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.003262] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.003372] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.003477] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.003582] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.003688] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.003792] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.003855] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.003959] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.004063] (-) JobUnselected: {'identifier': 'ugv_base_node'}
+[0.004168] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.004308] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.004417] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.004525] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.004630] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.004734] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.004839] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.004945] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.005050] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.005151] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.005254] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.005357] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.005460] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.005563] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.005671] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.005776] (-) JobUnselected: {'identifier': 'webrtc'}
+[0.005880] (-) JobUnselected: {'identifier': 'webrtc_ros'}
+[0.005995] (webrtc_ros_msgs) JobQueued: {'identifier': 'webrtc_ros_msgs', 'dependencies': OrderedDict()}
+[0.006100] (webrtc_ros_msgs) JobStarted: {'identifier': 'webrtc_ros_msgs'}
+[0.061109] (webrtc_ros_msgs) JobProgress: {'identifier': 'webrtc_ros_msgs', 'progress': 'cmake'}
+[0.061777] (webrtc_ros_msgs) Command: {'cmd': ['/usr/bin/cmake', '/home/ws/ugv_ws/src/ugv_else/webrtc_ros/webrtc_msgs', '-DCMAKE_INSTALL_PREFIX=/home/ws/ugv_ws/install/webrtc_ros_msgs'], 'cwd': '/home/ws/ugv_ws/build/webrtc_ros_msgs', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install:/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/webrtc_ros_msgs'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.099104] (-) TimerEvent: {}
+[0.199762] (-) TimerEvent: {}
+[0.300765] (-) TimerEvent: {}
+[0.303420] (webrtc_ros_msgs) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.400635] (-) TimerEvent: {}
+[0.501400] (-) TimerEvent: {}
+[0.502812] (webrtc_ros_msgs) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.528712] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.601612] (-) TimerEvent: {}
+[0.704454] (-) TimerEvent: {}
+[0.751978] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.779474] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.781173] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.782867] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.793350] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.804585] (-) TimerEvent: {}
+[0.905210] (-) TimerEvent: {}
+[1.006243] (-) TimerEvent: {}
+[1.060602] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[1.083027] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[1.083855] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[1.085374] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[1.106376] (-) TimerEvent: {}
+[1.179048] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[1.206532] (-) TimerEvent: {}
+[1.308347] (-) TimerEvent: {}
+[1.408981] (-) TimerEvent: {}
+[1.512332] (-) TimerEvent: {}
+[1.613231] (-) TimerEvent: {}
+[1.713881] (-) TimerEvent: {}
+[1.820321] (-) TimerEvent: {}
+[1.920993] (-) TimerEvent: {}
+[1.927149] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[2.021134] (-) TimerEvent: {}
+[2.122090] (-) TimerEvent: {}
+[2.222878] (-) TimerEvent: {}
+[2.324031] (-) TimerEvent: {}
+[2.424740] (-) TimerEvent: {}
+[2.525457] (-) TimerEvent: {}
+[2.603729] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)\n'}
+[2.625608] (-) TimerEvent: {}
+[2.672422] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[2.725787] (-) TimerEvent: {}
+[2.757148] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[2.825952] (-) TimerEvent: {}
+[2.926587] (-) TimerEvent: {}
+[3.027248] (-) TimerEvent: {}
+[3.127856] (-) TimerEvent: {}
+[3.160460] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[3.228031] (-) TimerEvent: {}
+[3.328716] (-) TimerEvent: {}
+[3.429675] (-) TimerEvent: {}
+[3.430667] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Found builtin_interfaces: 1.2.1 (/opt/ros/humble/share/builtin_interfaces/cmake)\n'}
+[3.529837] (-) TimerEvent: {}
+[3.630860] (-) TimerEvent: {}
+[3.732099] (-) TimerEvent: {}
+[3.833034] (-) TimerEvent: {}
+[3.933929] (-) TimerEvent: {}
+[4.034934] (-) TimerEvent: {}
+[4.135847] (-) TimerEvent: {}
+[4.236801] (-) TimerEvent: {}
+[4.337487] (-) TimerEvent: {}
+[4.438419] (-) TimerEvent: {}
+[4.539398] (-) TimerEvent: {}
+[4.627119] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)\n'}
+[4.639549] (-) TimerEvent: {}
+[4.740451] (-) TimerEvent: {}
+[4.841156] (-) TimerEvent: {}
+[4.942139] (-) TimerEvent: {}
+[5.042873] (-) TimerEvent: {}
+[5.144307] (-) TimerEvent: {}
+[5.245016] (-) TimerEvent: {}
+[5.345749] (-) TimerEvent: {}
+[5.446388] (-) TimerEvent: {}
+[5.476401] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[5.546541] (-) TimerEvent: {}
+[5.647196] (-) TimerEvent: {}
+[5.748298] (-) TimerEvent: {}
+[5.848994] (-) TimerEvent: {}
+[5.950267] (-) TimerEvent: {}
+[6.051288] (-) TimerEvent: {}
+[6.151979] (-) TimerEvent: {}
+[6.253085] (-) TimerEvent: {}
+[6.353852] (-) TimerEvent: {}
+[6.454709] (-) TimerEvent: {}
+[6.490535] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[6.554854] (-) TimerEvent: {}
+[6.593579] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") \n'}
+[6.617955] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)\n'}
+[6.655018] (-) TimerEvent: {}
+[6.755668] (-) TimerEvent: {}
+[6.777064] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Found PythonLibs: /usr/lib/aarch64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") \n'}
+[6.777843] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[6.778719] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10\n'}
+[6.779135] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Using PYTHON_LIBRARIES: /usr/lib/aarch64-linux-gnu/libpython3.10.so\n'}
+[6.855813] (-) TimerEvent: {}
+[6.873456] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Found PythonExtra: .so  \n'}
+[6.955977] (-) TimerEvent: {}
+[7.056662] (-) TimerEvent: {}
+[7.157287] (-) TimerEvent: {}
+[7.158379] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Configuring done\n'}
+[7.248285] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Generating done\n'}
+[7.255464] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Build files have been written to: /home/ws/ugv_ws/build/webrtc_ros_msgs\n'}
+[7.257496] (-) TimerEvent: {}
+[7.271950] (webrtc_ros_msgs) CommandEnded: {'returncode': 0}
+[7.273621] (webrtc_ros_msgs) JobProgress: {'identifier': 'webrtc_ros_msgs', 'progress': 'build'}
+[7.275786] (webrtc_ros_msgs) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/webrtc_ros_msgs', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/webrtc_ros_msgs', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install:/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/webrtc_ros_msgs'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[7.357682] (-) TimerEvent: {}
+[7.403071] (webrtc_ros_msgs) StdoutLine: {'line': b'[  2%] \x1b[34m\x1b[1mGenerating C code for ROS interfaces\x1b[0m\n'}
+[7.444247] (webrtc_ros_msgs) StdoutLine: {'line': b'[  5%] \x1b[34m\x1b[1mGenerating C++ code for ROS interfaces\x1b[0m\n'}
+[7.457930] (-) TimerEvent: {}
+[7.558679] (-) TimerEvent: {}
+[7.659682] (-) TimerEvent: {}
+[7.760396] (-) TimerEvent: {}
+[7.861522] (-) TimerEvent: {}
+[7.962217] (-) TimerEvent: {}
+[8.063251] (-) TimerEvent: {}
+[8.164356] (-) TimerEvent: {}
+[8.265017] (-) TimerEvent: {}
+[8.365632] (-) TimerEvent: {}
+[8.466831] (-) TimerEvent: {}
+[8.567459] (-) TimerEvent: {}
+[8.668720] (-) TimerEvent: {}
+[8.769820] (-) TimerEvent: {}
+[8.871374] (-) TimerEvent: {}
+[8.973173] (-) TimerEvent: {}
+[8.988825] (webrtc_ros_msgs) StdoutLine: {'line': b'[  5%] Built target webrtc_ros_msgs__cpp\n'}
+[9.073573] (-) TimerEvent: {}
+[9.089692] (webrtc_ros_msgs) StdoutLine: {'line': b'[  5%] Built target ament_cmake_python_copy_webrtc_ros_msgs\n'}
+[9.107724] (webrtc_ros_msgs) StdoutLine: {'line': b'[  7%] \x1b[32mBuilding C object CMakeFiles/webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/webrtc_ros_msgs/msg/detail/ice_server__functions.c.o\x1b[0m\n'}
+[9.126828] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 10%] \x1b[32mBuilding C object CMakeFiles/webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/webrtc_ros_msgs/srv/detail/get_ice_servers__functions.c.o\x1b[0m\n'}
+[9.129154] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 12%] \x1b[34m\x1b[1mGenerating C++ introspection for ROS interfaces\x1b[0m\n'}
+[9.173733] (-) TimerEvent: {}
+[9.275133] (-) TimerEvent: {}
+[9.380605] (-) TimerEvent: {}
+[9.428843] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 15%] \x1b[32m\x1b[1mLinking C shared library libwebrtc_ros_msgs__rosidl_generator_c.so\x1b[0m\n'}
+[9.480751] (-) TimerEvent: {}
+[9.570416] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 17%] \x1b[34m\x1b[1mGenerating C++ type support dispatch for ROS interfaces\x1b[0m\n'}
+[9.580944] (-) TimerEvent: {}
+[9.624553] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 17%] Built target webrtc_ros_msgs__rosidl_generator_c\n'}
+[9.667952] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 20%] \x1b[34m\x1b[1mGenerating C++ type support for eProsima Fast-RTPS\x1b[0m\n'}
+[9.681151] (-) TimerEvent: {}
+[9.784593] (-) TimerEvent: {}
+[9.885852] (-) TimerEvent: {}
+[9.988738] (-) TimerEvent: {}
+[10.092626] (-) TimerEvent: {}
+[10.193341] (-) TimerEvent: {}
+[10.296520] (-) TimerEvent: {}
+[10.397163] (-) TimerEvent: {}
+[10.497907] (-) TimerEvent: {}
+[10.600672] (-) TimerEvent: {}
+[10.704645] (-) TimerEvent: {}
+[10.719952] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 23%] \x1b[32mBuilding CXX object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/webrtc_ros_msgs/msg/detail/ice_server__type_support.cpp.o\x1b[0m\n'}
+[10.806165] (-) TimerEvent: {}
+[10.908396] (-) TimerEvent: {}
+[11.009089] (-) TimerEvent: {}
+[11.011520] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 25%] \x1b[32mBuilding CXX object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/webrtc_ros_msgs/msg/ice_server__type_support.cpp.o\x1b[0m\n'}
+[11.110804] (-) TimerEvent: {}
+[11.211711] (-) TimerEvent: {}
+[11.312908] (-) TimerEvent: {}
+[11.355829] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 28%] \x1b[32mBuilding CXX object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/webrtc_ros_msgs/msg/detail/dds_fastrtps/ice_server__type_support.cpp.o\x1b[0m\n'}
+[11.367521] (webrtc_ros_msgs) StdoutLine: {'line': b'running egg_info\n'}
+[11.373773] (webrtc_ros_msgs) StdoutLine: {'line': b'creating webrtc_ros_msgs.egg-info\n'}
+[11.374504] (webrtc_ros_msgs) StdoutLine: {'line': b'writing webrtc_ros_msgs.egg-info/PKG-INFO\n'}
+[11.378184] (webrtc_ros_msgs) StdoutLine: {'line': b'writing dependency_links to webrtc_ros_msgs.egg-info/dependency_links.txt\n'}
+[11.380650] (webrtc_ros_msgs) StdoutLine: {'line': b'writing top-level names to webrtc_ros_msgs.egg-info/top_level.txt\n'}
+[11.382152] (webrtc_ros_msgs) StdoutLine: {'line': b"writing manifest file 'webrtc_ros_msgs.egg-info/SOURCES.txt'\n"}
+[11.392738] (webrtc_ros_msgs) StdoutLine: {'line': b"reading manifest file 'webrtc_ros_msgs.egg-info/SOURCES.txt'\n"}
+[11.395808] (webrtc_ros_msgs) StdoutLine: {'line': b"writing manifest file 'webrtc_ros_msgs.egg-info/SOURCES.txt'\n"}
+[11.416472] (-) TimerEvent: {}
+[11.518128] (-) TimerEvent: {}
+[11.570959] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 28%] Built target ament_cmake_python_build_webrtc_ros_msgs_egg\n'}
+[11.617461] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 30%] \x1b[32mBuilding CXX object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/webrtc_ros_msgs/srv/detail/get_ice_servers__type_support.cpp.o\x1b[0m\n'}
+[11.620928] (-) TimerEvent: {}
+[11.723024] (-) TimerEvent: {}
+[11.824704] (-) TimerEvent: {}
+[11.928778] (-) TimerEvent: {}
+[12.029792] (-) TimerEvent: {}
+[12.130744] (-) TimerEvent: {}
+[12.232895] (-) TimerEvent: {}
+[12.336771] (-) TimerEvent: {}
+[12.437816] (-) TimerEvent: {}
+[12.538764] (-) TimerEvent: {}
+[12.629602] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 33%] \x1b[32mBuilding CXX object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/webrtc_ros_msgs/srv/get_ice_servers__type_support.cpp.o\x1b[0m\n'}
+[12.644469] (-) TimerEvent: {}
+[12.745493] (-) TimerEvent: {}
+[12.846684] (-) TimerEvent: {}
+[12.952420] (-) TimerEvent: {}
+[13.053422] (-) TimerEvent: {}
+[13.154950] (-) TimerEvent: {}
+[13.256453] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 35%] \x1b[32mBuilding CXX object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/webrtc_ros_msgs/srv/detail/dds_fastrtps/get_ice_servers__type_support.cpp.o\x1b[0m\n'}
+[13.257421] (-) TimerEvent: {}
+[13.364791] (-) TimerEvent: {}
+[13.466347] (-) TimerEvent: {}
+[13.568591] (-) TimerEvent: {}
+[13.622494] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 38%] \x1b[34m\x1b[1mGenerating C type support for eProsima Fast-RTPS\x1b[0m\n'}
+[13.668821] (-) TimerEvent: {}
+[13.769673] (-) TimerEvent: {}
+[13.872703] (-) TimerEvent: {}
+[13.927051] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 41%] \x1b[32m\x1b[1mLinking CXX shared library libwebrtc_ros_msgs__rosidl_typesupport_introspection_cpp.so\x1b[0m\n'}
+[13.972960] (-) TimerEvent: {}
+[14.074041] (-) TimerEvent: {}
+[14.082210] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 43%] \x1b[32m\x1b[1mLinking CXX shared library libwebrtc_ros_msgs__rosidl_typesupport_cpp.so\x1b[0m\n'}
+[14.174351] (-) TimerEvent: {}
+[14.275314] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 43%] Built target webrtc_ros_msgs__rosidl_typesupport_introspection_cpp\n'}
+[14.276087] (-) TimerEvent: {}
+[14.280296] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 43%] Built target webrtc_ros_msgs__rosidl_typesupport_cpp\n'}
+[14.323709] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 46%] \x1b[34m\x1b[1mGenerating C introspection for ROS interfaces\x1b[0m\n'}
+[14.326562] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 48%] \x1b[34m\x1b[1mGenerating C type support dispatch for ROS interfaces\x1b[0m\n'}
+[14.380357] (-) TimerEvent: {}
+[14.481161] (-) TimerEvent: {}
+[14.581951] (-) TimerEvent: {}
+[14.683299] (-) TimerEvent: {}
+[14.788708] (-) TimerEvent: {}
+[14.890147] (-) TimerEvent: {}
+[14.991570] (-) TimerEvent: {}
+[15.096659] (-) TimerEvent: {}
+[15.197998] (-) TimerEvent: {}
+[15.299676] (-) TimerEvent: {}
+[15.404928] (-) TimerEvent: {}
+[15.506159] (-) TimerEvent: {}
+[15.583026] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 51%] \x1b[32mBuilding CXX object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/webrtc_ros_msgs/msg/detail/ice_server__type_support_c.cpp.o\x1b[0m\n'}
+[15.606394] (-) TimerEvent: {}
+[15.708960] (-) TimerEvent: {}
+[15.813148] (-) TimerEvent: {}
+[15.840479] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 53%] \x1b[32mBuilding CXX object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/webrtc_ros_msgs/msg/ice_server__type_support.cpp.o\x1b[0m\n'}
+[15.916368] (-) TimerEvent: {}
+[15.928757] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 56%] \x1b[32m\x1b[1mLinking CXX shared library libwebrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.so\x1b[0m\n'}
+[15.991465] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 58%] \x1b[32mBuilding CXX object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/webrtc_ros_msgs/srv/get_ice_servers__type_support.cpp.o\x1b[0m\n'}
+[16.016598] (-) TimerEvent: {}
+[16.096498] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 61%] \x1b[32mBuilding C object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/webrtc_ros_msgs/msg/detail/ice_server__type_support.c.o\x1b[0m\n'}
+[16.116883] (-) TimerEvent: {}
+[16.141359] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 64%] \x1b[32m\x1b[1mLinking CXX shared library libwebrtc_ros_msgs__rosidl_typesupport_c.so\x1b[0m\n'}
+[16.220648] (-) TimerEvent: {}
+[16.264870] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 64%] Built target webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp\n'}
+[16.268486] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 66%] \x1b[32mBuilding C object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/webrtc_ros_msgs/srv/detail/get_ice_servers__type_support.c.o\x1b[0m\n'}
+[16.316876] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 69%] \x1b[32mBuilding CXX object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/webrtc_ros_msgs/srv/detail/get_ice_servers__type_support_c.cpp.o\x1b[0m\n'}
+[16.324550] (-) TimerEvent: {}
+[16.345522] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 69%] Built target webrtc_ros_msgs__rosidl_typesupport_c\n'}
+[16.424751] (-) TimerEvent: {}
+[16.441160] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 71%] \x1b[32m\x1b[1mLinking C shared library libwebrtc_ros_msgs__rosidl_typesupport_introspection_c.so\x1b[0m\n'}
+[16.524952] (-) TimerEvent: {}
+[16.569133] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 71%] Built target webrtc_ros_msgs__rosidl_typesupport_introspection_c\n'}
+[16.625193] (-) TimerEvent: {}
+[16.726128] (-) TimerEvent: {}
+[16.827015] (-) TimerEvent: {}
+[16.927900] (-) TimerEvent: {}
+[17.029033] (-) TimerEvent: {}
+[17.130111] (-) TimerEvent: {}
+[17.231005] (-) TimerEvent: {}
+[17.331808] (-) TimerEvent: {}
+[17.432540] (-) TimerEvent: {}
+[17.533233] (-) TimerEvent: {}
+[17.625387] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 74%] \x1b[32m\x1b[1mLinking CXX shared library libwebrtc_ros_msgs__rosidl_typesupport_fastrtps_c.so\x1b[0m\n'}
+[17.636359] (-) TimerEvent: {}
+[17.737962] (-) TimerEvent: {}
+[17.840052] (-) TimerEvent: {}
+[17.871071] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 74%] Built target webrtc_ros_msgs__rosidl_typesupport_fastrtps_c\n'}
+[17.930735] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 74%] Built target webrtc_ros_msgs\n'}
+[17.940257] (-) TimerEvent: {}
+[17.993145] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 76%] \x1b[34m\x1b[1mGenerating Python code for ROS interfaces\x1b[0m\n'}
+[18.040389] (-) TimerEvent: {}
+[18.141622] (-) TimerEvent: {}
+[18.242533] (-) TimerEvent: {}
+[18.343777] (-) TimerEvent: {}
+[18.444933] (-) TimerEvent: {}
+[18.546676] (-) TimerEvent: {}
+[18.648555] (-) TimerEvent: {}
+[18.749454] (-) TimerEvent: {}
+[18.850951] (-) TimerEvent: {}
+[18.951945] (-) TimerEvent: {}
+[19.052946] (-) TimerEvent: {}
+[19.153934] (-) TimerEvent: {}
+[19.254891] (-) TimerEvent: {}
+[19.355847] (-) TimerEvent: {}
+[19.456924] (-) TimerEvent: {}
+[19.557901] (-) TimerEvent: {}
+[19.658868] (-) TimerEvent: {}
+[19.760568] (-) TimerEvent: {}
+[19.865065] (-) TimerEvent: {}
+[19.881267] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 76%] Built target webrtc_ros_msgs__py\n'}
+[19.945749] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 82%] \x1b[32mBuilding C object CMakeFiles/webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/webrtc_ros_msgs/msg/_ice_server_s.c.o\x1b[0m\n'}
+[19.948408] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 82%] \x1b[32mBuilding C object CMakeFiles/webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/webrtc_ros_msgs/srv/_get_ice_servers_s.c.o\x1b[0m\n'}
+[19.968450] (-) TimerEvent: {}
+[20.072416] (-) TimerEvent: {}
+[20.173570] (-) TimerEvent: {}
+[20.274533] (-) TimerEvent: {}
+[20.375982] (-) TimerEvent: {}
+[20.406314] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 84%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/webrtc_ros_msgs/libwebrtc_ros_msgs__rosidl_generator_py.so\x1b[0m\n'}
+[20.476272] (-) TimerEvent: {}
+[20.549696] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 84%] Built target webrtc_ros_msgs__rosidl_generator_py\n'}
+[20.577654] (-) TimerEvent: {}
+[20.624729] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 87%] \x1b[32mBuilding C object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/webrtc_ros_msgs/_webrtc_ros_msgs_s.ep.rosidl_typesupport_c.c.o\x1b[0m\n'}
+[20.625723] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 92%] \x1b[32mBuilding C object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/webrtc_ros_msgs/_webrtc_ros_msgs_s.ep.rosidl_typesupport_fastrtps_c.c.o\x1b[0m\n'}
+[20.626218] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 92%] \x1b[32mBuilding C object CMakeFiles/webrtc_ros_msgs__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/webrtc_ros_msgs/_webrtc_ros_msgs_s.ep.rosidl_typesupport_introspection_c.c.o\x1b[0m\n'}
+[20.680383] (-) TimerEvent: {}
+[20.781128] (-) TimerEvent: {}
+[20.881972] (-) TimerEvent: {}
+[20.983418] (-) TimerEvent: {}
+[21.008096] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 97%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\x1b[0m\n'}
+[21.011777] (webrtc_ros_msgs) StdoutLine: {'line': b'[ 97%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\x1b[0m\n'}
+[21.018137] (webrtc_ros_msgs) StdoutLine: {'line': b'[100%] \x1b[32m\x1b[1mLinking C shared library rosidl_generator_py/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\x1b[0m\n'}
+[21.084552] (-) TimerEvent: {}
+[21.188509] (-) TimerEvent: {}
+[21.195998] (webrtc_ros_msgs) StdoutLine: {'line': b'[100%] Built target webrtc_ros_msgs__rosidl_typesupport_introspection_c__pyext\n'}
+[21.200515] (webrtc_ros_msgs) StdoutLine: {'line': b'[100%] Built target webrtc_ros_msgs__rosidl_typesupport_fastrtps_c__pyext\n'}
+[21.203801] (webrtc_ros_msgs) StdoutLine: {'line': b'[100%] Built target webrtc_ros_msgs__rosidl_typesupport_c__pyext\n'}
+[21.241678] (webrtc_ros_msgs) CommandEnded: {'returncode': 0}
+[21.288671] (-) TimerEvent: {}
+[21.389307] (-) TimerEvent: {}
+[21.470881] (webrtc_ros_msgs) JobProgress: {'identifier': 'webrtc_ros_msgs', 'progress': 'install'}
+[21.492476] (-) TimerEvent: {}
+[21.498253] (webrtc_ros_msgs) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/ws/ugv_ws/build/webrtc_ros_msgs'], 'cwd': '/home/ws/ugv_ws/build/webrtc_ros_msgs', 'env': OrderedDict([('HTTPS_PROXY', 'http://192.168.9.183:10809/'), ('no_proxy', 'localhost,127.0.0.0/8,::1'), ('USER', 'root'), ('SSH_CLIENT', '192.168.9.183 54790 23'), ('all_proxy', 'socks://192.168.9.183:10809/'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/home/ws'), ('NO_PROXY', 'localhost,127.0.0.0/8,::1'), ('SSH_TTY', '/dev/pts/7'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('https_proxy', 'http://192.168.9.183:10809/'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install:/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ALL_PROXY', 'socks://192.168.9.183:10809/'), ('ROARM_MODEL', 'roarm_m3'), ('http_proxy', 'http://192.168.9.183:10809/'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/webrtc_ros_msgs'), ('SSH_CONNECTION', '192.168.9.183 54790 192.168.9.212 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('HTTP_PROXY', 'http://192.168.9.183:10809/'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[21.527399] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[21.529060] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/ament_index/resource_index/rosidl_interfaces/webrtc_ros_msgs\n'}
+[21.529679] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs\n'}
+[21.530010] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg\n'}
+[21.530306] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/ice_server.h\n'}
+[21.530802] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/rosidl_generator_c__visibility_control.h\n'}
+[21.531152] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail\n'}
+[21.531439] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__functions.h\n'}
+[21.531870] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__type_support.h\n'}
+[21.532480] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__functions.c\n'}
+[21.533204] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__struct.h\n'}
+[21.533719] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv\n'}
+[21.534143] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/get_ice_servers.h\n'}
+[21.534444] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail\n'}
+[21.534862] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__struct.h\n'}
+[21.535160] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__functions.c\n'}
+[21.535562] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__type_support.h\n'}
+[21.535834] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__functions.h\n'}
+[21.536269] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/environment/library_path.sh\n'}
+[21.536594] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/environment/library_path.dsv\n'}
+[21.536839] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_generator_c.so\n'}
+[21.537308] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_generator_c.so" to ""\n'}
+[21.537755] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs\n'}
+[21.538197] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg\n'}
+[21.538720] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail\n'}
+[21.539010] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__rosidl_typesupport_fastrtps_c.h\n'}
+[21.539456] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/rosidl_typesupport_fastrtps_c__visibility_control.h\n'}
+[21.539734] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv\n'}
+[21.539961] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail\n'}
+[21.540304] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__rosidl_typesupport_fastrtps_c.h\n'}
+[21.540619] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_fastrtps_c.so\n'}
+[21.541134] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_fastrtps_c.so" to ""\n'}
+[21.541615] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs\n'}
+[21.542217] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg\n'}
+[21.542644] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/rosidl_typesupport_introspection_c__visibility_control.h\n'}
+[21.542959] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail\n'}
+[21.543401] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__rosidl_typesupport_introspection_c.h\n'}
+[21.543711] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__type_support.c\n'}
+[21.543955] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv\n'}
+[21.544552] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail\n'}
+[21.544872] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__rosidl_typesupport_introspection_c.h\n'}
+[21.545122] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__type_support.c\n'}
+[21.545383] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_introspection_c.so\n'}
+[21.545651] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_introspection_c.so" to ""\n'}
+[21.545910] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_c.so\n'}
+[21.546371] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_c.so" to ""\n'}
+[21.546820] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs\n'}
+[21.547269] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg\n'}
+[21.547722] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/ice_server.hpp\n'}
+[21.548129] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail\n'}
+[21.548654] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__struct.hpp\n'}
+[21.549109] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__traits.hpp\n'}
+[21.549633] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__builder.hpp\n'}
+[21.550059] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv\n'}
+[21.550476] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/get_ice_servers.hpp\n'}
+[21.550749] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail\n'}
+[21.551017] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__struct.hpp\n'}
+[21.551279] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__builder.hpp\n'}
+[21.551655] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__traits.hpp\n'}
+[21.551881] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs\n'}
+[21.552123] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg\n'}
+[21.552408] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail\n'}
+[21.552632] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[21.552841] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/dds_fastrtps\n'}
+[21.553064] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h\n'}
+[21.553295] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv\n'}
+[21.553503] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail\n'}
+[21.553707] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__rosidl_typesupport_fastrtps_cpp.hpp\n'}
+[21.553918] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/dds_fastrtps\n'}
+[21.558063] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.so\n'}
+[21.559574] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.so" to ""\n'}
+[21.559951] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs\n'}
+[21.560433] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg\n'}
+[21.560743] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail\n'}
+[21.561106] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__rosidl_typesupport_introspection_cpp.hpp\n'}
+[21.561472] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/msg/detail/ice_server__type_support.cpp\n'}
+[21.561771] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv\n'}
+[21.562044] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Up-to-date: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail\n'}
+[21.562663] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__rosidl_typesupport_introspection_cpp.hpp\n'}
+[21.563081] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/include/webrtc_ros_msgs/webrtc_ros_msgs/srv/detail/get_ice_servers__type_support.cpp\n'}
+[21.563356] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_introspection_cpp.so\n'}
+[21.564007] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_introspection_cpp.so" to ""\n'}
+[21.564510] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_cpp.so\n'}
+[21.565519] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_typesupport_cpp.so" to ""\n'}
+[21.565963] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/environment/pythonpath.sh\n'}
+[21.566517] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/environment/pythonpath.dsv\n'}
+[21.567613] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs-59.0.4-py3.10.egg-info\n'}
+[21.567984] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs-59.0.4-py3.10.egg-info/PKG-INFO\n'}
+[21.568547] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs-59.0.4-py3.10.egg-info/top_level.txt\n'}
+[21.568969] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs-59.0.4-py3.10.egg-info/dependency_links.txt\n'}
+[21.569779] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs-59.0.4-py3.10.egg-info/SOURCES.txt\n'}
+[21.570149] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs\n'}
+[21.570579] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/libwebrtc_ros_msgs__rosidl_generator_py.so\n'}
+[21.570967] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.571380] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/msg\n'}
+[21.571798] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/msg/_ice_server.py\n'}
+[21.572479] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/msg/_ice_server_s.c\n'}
+[21.572973] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/msg/__init__.py\n'}
+[21.573371] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/_webrtc_ros_msgs_s.ep.rosidl_typesupport_fastrtps_c.c\n'}
+[21.573761] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.574146] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.574543] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/_webrtc_ros_msgs_s.ep.rosidl_typesupport_c.c\n'}
+[21.574918] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/srv\n'}
+[21.575287] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/srv/_get_ice_servers_s.c\n'}
+[21.575667] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/srv/_get_ice_servers.py\n'}
+[21.576019] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/srv/__init__.py\n'}
+[21.576450] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/_webrtc_ros_msgs_s.ep.rosidl_typesupport_introspection_c.c\n'}
+[21.576836] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/__init__.py\n'}
+[21.592594] (-) TimerEvent: {}
+[21.693485] (-) TimerEvent: {}
+[21.753777] (webrtc_ros_msgs) StdoutLine: {'line': b"Listing '/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs'...\n"}
+[21.754910] (webrtc_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/__init__.py'...\n"}
+[21.755700] (webrtc_ros_msgs) StdoutLine: {'line': b"Listing '/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/msg'...\n"}
+[21.756672] (webrtc_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/msg/__init__.py'...\n"}
+[21.757538] (webrtc_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/msg/_ice_server.py'...\n"}
+[21.758273] (webrtc_ros_msgs) StdoutLine: {'line': b"Listing '/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/srv'...\n"}
+[21.759024] (webrtc_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/srv/__init__.py'...\n"}
+[21.759681] (webrtc_ros_msgs) StdoutLine: {'line': b"Compiling '/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/srv/_get_ice_servers.py'...\n"}
+[21.777472] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.780440] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so" to ""\n'}
+[21.781053] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.781373] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so" to ""\n'}
+[21.781627] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so\n'}
+[21.782222] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/local/lib/python3.10/dist-packages/webrtc_ros_msgs/webrtc_ros_msgs_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so" to ""\n'}
+[21.782621] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_generator_py.so\n'}
+[21.783170] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Set runtime path of "/home/ws/ugv_ws/install/webrtc_ros_msgs/lib/libwebrtc_ros_msgs__rosidl_generator_py.so" to ""\n'}
+[21.783713] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/msg/IceServer.idl\n'}
+[21.784569] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/srv/GetIceServers.idl\n'}
+[21.785171] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/msg/IceServer.msg\n'}
+[21.786827] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/srv/GetIceServers.srv\n'}
+[21.787324] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/srv/GetIceServers_Request.msg\n'}
+[21.787640] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/srv/GetIceServers_Response.msg\n'}
+[21.787913] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/ament_index/resource_index/package_run_dependencies/webrtc_ros_msgs\n'}
+[21.788418] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/ament_index/resource_index/parent_prefix_path/webrtc_ros_msgs\n'}
+[21.788810] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/environment/ament_prefix_path.sh\n'}
+[21.789220] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/environment/ament_prefix_path.dsv\n'}
+[21.790549] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/environment/path.sh\n'}
+[21.791033] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/environment/path.dsv\n'}
+[21.791336] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/local_setup.bash\n'}
+[21.791808] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/local_setup.sh\n'}
+[21.792240] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/local_setup.zsh\n'}
+[21.792682] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/local_setup.dsv\n'}
+[21.793613] (-) TimerEvent: {}
+[21.794521] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/package.dsv\n'}
+[21.795090] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/ament_index/resource_index/packages/webrtc_ros_msgs\n'}
+[21.795411] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/export_webrtc_ros_msgs__rosidl_generator_cExport.cmake\n'}
+[21.795885] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/export_webrtc_ros_msgs__rosidl_generator_cExport-noconfig.cmake\n'}
+[21.796432] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/export_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cExport.cmake\n'}
+[21.797234] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/export_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cExport-noconfig.cmake\n'}
+[21.797836] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/webrtc_ros_msgs__rosidl_typesupport_introspection_cExport.cmake\n'}
+[21.798474] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/webrtc_ros_msgs__rosidl_typesupport_introspection_cExport-noconfig.cmake\n'}
+[21.799520] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/webrtc_ros_msgs__rosidl_typesupport_cExport.cmake\n'}
+[21.800305] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/webrtc_ros_msgs__rosidl_typesupport_cExport-noconfig.cmake\n'}
+[21.800886] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/export_webrtc_ros_msgs__rosidl_generator_cppExport.cmake\n'}
+[21.801648] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/export_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cppExport.cmake\n'}
+[21.802984] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/export_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cppExport-noconfig.cmake\n'}
+[21.805226] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/webrtc_ros_msgs__rosidl_typesupport_introspection_cppExport.cmake\n'}
+[21.807513] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/webrtc_ros_msgs__rosidl_typesupport_introspection_cppExport-noconfig.cmake\n'}
+[21.809361] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/webrtc_ros_msgs__rosidl_typesupport_cppExport.cmake\n'}
+[21.810337] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/webrtc_ros_msgs__rosidl_typesupport_cppExport-noconfig.cmake\n'}
+[21.810994] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/export_webrtc_ros_msgs__rosidl_generator_pyExport.cmake\n'}
+[21.811337] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/export_webrtc_ros_msgs__rosidl_generator_pyExport-noconfig.cmake\n'}
+[21.811657] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/rosidl_cmake-extras.cmake\n'}
+[21.811935] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[21.812238] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[21.812778] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[21.813141] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/ament_cmake_export_targets-extras.cmake\n'}
+[21.813430] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake\n'}
+[21.813689] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake\n'}
+[21.813968] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/webrtc_ros_msgsConfig.cmake\n'}
+[21.814234] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/cmake/webrtc_ros_msgsConfig-version.cmake\n'}
+[21.814535] (webrtc_ros_msgs) StdoutLine: {'line': b'-- Installing: /home/ws/ugv_ws/install/webrtc_ros_msgs/share/webrtc_ros_msgs/package.xml\n'}
+[21.817236] (webrtc_ros_msgs) CommandEnded: {'returncode': 0}
+[21.893805] (-) TimerEvent: {}
+[21.995370] (-) TimerEvent: {}
+[22.096073] (-) TimerEvent: {}
+[22.143111] (webrtc_ros_msgs) JobEnded: {'identifier': 'webrtc_ros_msgs', 'rc': 0}
+[22.145152] (-) EventReactorShutdown: {}

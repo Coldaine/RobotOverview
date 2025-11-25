@@ -1,0 +1,877 @@
+[ 33%] [34m[1mGenerating node_modules.stamp[0m
+[ 33%] Built target opentera_werbrtc_teleop_frontend-install
+[ 66%] [34m[1mGenerating dist.stamp[0m
+
+> teleop-vue@0.1.0 build
+> vue-cli-service build
+
+
+-  Building for production...
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./NotFoundView.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./ExpandableMap.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./Slider.scss";
+  │         ^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./UserVideo.scss";
+  │         ^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./DeviceSettings.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./ActionButton.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./Dropdown.scss";
+  │         ^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./Popup.scss";
+  │         ^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./DropdownMenu.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./DefaultTemplate.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./VideoParticipant.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./ParticipantsList.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./ParticipantOptions.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./NavigationBar.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./BatteryIndicator.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./SignalStrengthIndicator.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+1 │ @import "~@/app.scss";
+  │         ^^^^^^^^^^^^^
+  ╵
+    stdin 1:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+3 │ @import "./ActionsMenu.scss";
+  │         ^^^^^^^^^^^^^^^^^^^^
+  ╵
+    stdin 3:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+96 │ @import "./scss/button.scss";
+   │         ^^^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 96:9  @import
+    stdin 1:9          root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+97 │ @import "./scss/grid.scss";
+   │         ^^^^^^^^^^^^^^^^^^
+   ╵
+    src/app.scss 97:9  @import
+    stdin 1:9          root stylesheet
+
+ ERROR  Failed to compile with 6 errors6:02:43 AM
+
+These dependencies were not found:
+
+* @smartweb/vue-flash-message in ./src/main.ts
+* @vue/reactivity in ./src/components/DeviceSettings/useCameras.ts
+* @vue/runtime-core in ./node_modules/cache-loader/dist/cjs.js??ref--1-0!./node_modules/@vue/cli-service/node_modules/vue-loader-v16/dist??ref--1-1!./src/components/DeviceSettings/DeviceSettings.vue?vue&type=script&lang=js
+* tslib in ./src/components/DeviceSettings/useCameras.ts, ./src/store/modules/clientStore.ts and 1 other
+
+To install them, you can run: npm install --save @smartweb/vue-flash-message @vue/reactivity @vue/runtime-core tslib
+ ERROR  Build failed with errors.
+gmake[2]: *** [CMakeFiles/opentera_werbrtc_teleop_frontend-build.dir/build.make:181: dist.stamp] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:165: CMakeFiles/opentera_werbrtc_teleop_frontend-build.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

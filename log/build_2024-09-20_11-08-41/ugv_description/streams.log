@@ -1,0 +1,59 @@
+[0.688s] Invoking command in '/home/ws/ugv_ws/build/ugv_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_description -- -j4 -l4
+[0.756s] Invoked command in '/home/ws/ugv_ws/build/ugv_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/ugv_description -- -j4 -l4
+[0.801s] Invoking command in '/home/ws/ugv_ws/build/ugv_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/ugv_description
+[0.809s] -- Install configuration: ""
+[0.809s] -- Execute custom install script
+[0.810s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/launch/display.launch.py
+[0.812s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/rasp_rover/base_lidar_link.stl
+[0.812s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/rasp_rover/base_link.stl
+[0.812s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/rasp_rover/left_down_wheel_link.stl
+[0.812s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/rasp_rover/left_up_wheel_link.stl
+[0.812s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/rasp_rover/pt_base_link.stl
+[0.812s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/rasp_rover/pt_camera_link.stl
+[0.812s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/rasp_rover/pt_link1.stl
+[0.813s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/rasp_rover/pt_link2.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/rasp_rover/right_down_wheel_link.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/rasp_rover/right_up_wheel_link.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/3d_camera_link.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/base_lidar_link.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/base_link.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/left_down_wheel_link.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/left_up_wheel_link.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/pt_base_link.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/pt_camera_link.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/pt_link1.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/pt_link2.stl
+[0.814s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/right_down_wheel_link.stl
+[0.816s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_beast/right_up_wheel_link.stl
+[0.816s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/3d_camera_link.stl
+[0.817s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/base_lidar_link.stl
+[0.817s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/base_link.stl
+[0.818s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/left_down_wheel_link.stl
+[0.818s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/left_up_wheel_link.stl
+[0.818s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/pt_base_link.stl
+[0.818s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/pt_camera_link.stl
+[0.818s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/pt_link1.stl
+[0.818s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/pt_link2.stl
+[0.818s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/right_down_wheel_link.stl
+[0.819s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/meshes/ugv_rover/right_up_wheel_link.stl
+[0.819s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/urdf/rasp_rover.urdf
+[0.819s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/urdf/ugv_beast.urdf
+[0.819s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/urdf/ugv_rover.urdf
+[0.819s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/rviz/view_description.rviz
+[0.819s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ament_index/resource_index/package_run_dependencies/ugv_description
+[0.819s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ament_index/resource_index/parent_prefix_path/ugv_description
+[0.819s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/environment/ament_prefix_path.sh
+[0.819s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/environment/ament_prefix_path.dsv
+[0.819s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/environment/path.sh
+[0.820s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/environment/path.dsv
+[0.820s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/local_setup.bash
+[0.820s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/local_setup.sh
+[0.820s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/local_setup.zsh
+[0.820s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/local_setup.dsv
+[0.820s] -- Symlinking: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/package.dsv
+[0.833s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ament_index/resource_index/packages/ugv_description
+[0.834s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/cmake/ament_cmake_export_dependencies-extras.cmake
+[0.834s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/cmake/ugv_descriptionConfig.cmake
+[0.835s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/cmake/ugv_descriptionConfig-version.cmake
+[0.836s] -- Up-to-date symlink: /home/ws/ugv_ws/install/ugv_description/share/ugv_description/package.xml
+[0.837s] Invoked command in '/home/ws/ugv_ws/build/ugv_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/ugv_description

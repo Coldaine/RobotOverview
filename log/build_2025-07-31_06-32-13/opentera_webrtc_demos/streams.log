@@ -1,0 +1,205 @@
+[0.103s] Invoking command in '/home/ws/ugv_ws/build/opentera_webrtc_demos': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/face_cropping:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/opentera_webrtc_ros/lib:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --build /home/ws/ugv_ws/build/opentera_webrtc_demos -- -j4 -l4
+[0.273s] [ 33%] [34m[1mGenerating node_modules.stamp[0m
+[107.464s] npm WARN deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+[107.466s] npm WARN deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+[107.466s] npm WARN deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[107.467s] npm WARN deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[107.467s] npm WARN deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+[107.467s] npm WARN deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[107.467s] npm WARN deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[107.468s] npm WARN deprecated glob@8.1.0: Glob versions prior to v9 are no longer supported
+[107.468s] npm WARN deprecated @babel/plugin-proposal-object-rest-spread@7.20.7: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-object-rest-spread instead.
+[107.469s] npm WARN deprecated sinon@7.5.0: 16.1.1
+[107.469s] npm WARN deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+[107.469s] npm ERR! code 1
+[107.470s] npm ERR! path /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client
+[107.470s] npm ERR! command failed
+[107.470s] npm ERR! command sh -c -- npm-run-all clean build
+[107.470s] npm ERR! > opentera-webrtc-web-client@1.0.0 clean
+[107.471s] npm ERR! > rimraf dist lib coverage
+[107.471s] npm ERR! 
+[107.471s] npm ERR! 
+[107.472s] npm ERR! > opentera-webrtc-web-client@1.0.0 build
+[107.472s] npm ERR! > npm-run-all build:*
+[107.472s] npm ERR! 
+[107.473s] npm ERR! 
+[107.473s] npm ERR! > opentera-webrtc-web-client@1.0.0 build:umdmin
+[107.473s] npm ERR! > webpack --mode=production --env output-library-target=umd
+[107.474s] npm ERR! 
+[107.474s] npm ERR! assets by status 74.3 KiB [cached] 1 asset
+[107.474s] npm ERR! orphan modules 141 KiB [orphan] 19 modules
+[107.475s] npm ERR! runtime modules 997 bytes 4 modules
+[107.475s] npm ERR! cacheable modules 166 KiB
+[107.476s] npm ERR!   ./index.js 42 bytes [built] [code generated]
+[107.477s] npm ERR!   ./src/index.js + 19 modules 141 KiB [built] [code generated]
+[107.478s] npm ERR!   ../../../node_modules/webrtc-adapter/node_modules/sdp/sdp.js 24.8 KiB [built] [code generated]
+[107.482s] npm ERR! 
+[107.482s] npm ERR! WARNING in [eslint] 
+[107.483s] npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/Signaling/SignalingClient.js
+[107.483s] npm ERR!    77:11  warning  'ids' is defined but never used        @typescript-eslint/no-unused-vars
+[107.484s] npm ERR!    86:12  warning  'toId' is defined but never used       @typescript-eslint/no-unused-vars
+[107.486s] npm ERR!    86:18  warning  'offer' is defined but never used      @typescript-eslint/no-unused-vars
+[107.486s] npm ERR!    91:22  warning  'toId' is defined but never used       @typescript-eslint/no-unused-vars
+[107.487s] npm ERR!    91:28  warning  'answer' is defined but never used     @typescript-eslint/no-unused-vars
+[107.487s] npm ERR!    96:14  warning  'toId' is defined but never used       @typescript-eslint/no-unused-vars
+[107.487s] npm ERR!   101:20  warning  'toId' is defined but never used       @typescript-eslint/no-unused-vars
+[107.488s] npm ERR!   101:26  warning  'candidate' is defined but never used  @typescript-eslint/no-unused-vars
+[107.489s] npm ERR! 
+[107.489s] npm ERR! ✖ 17 problems (9 errors, 8 warnings)
+[107.490s] npm ERR! 
+[107.490s] npm ERR! ERROR in [eslint] 
+[107.490s] npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/DataChannelClient.js
+[107.491s] npm ERR!    49:40  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.491s] npm ERR!    50:37  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.491s] npm ERR!    51:38  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.492s] npm ERR!    58:9   error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+[107.492s] npm ERR!    61:11  error  'dataChannel' is never reassigned. Use 'const' instead        prefer-const
+[107.493s] npm ERR!    84:45  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.493s] npm ERR!   113:35  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.493s] npm ERR!   114:32  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.493s] npm ERR!   115:33  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.494s] npm ERR!   116:33  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.494s] npm ERR!   131:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+[107.495s] npm ERR!   170:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+[107.495s] npm ERR! 
+[107.496s] npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/Signaling/SignalingClient.js
+[107.497s] npm ERR!   10:45  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+[107.497s] npm ERR!   11:46  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+[107.497s] npm ERR!   12:46  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+[107.498s] npm ERR!   14:39  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+[107.498s] npm ERR!   16:32  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+[107.498s] npm ERR!   17:36  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+[107.499s] npm ERR!   18:42  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+[107.499s] npm ERR!   19:40  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+[107.500s] npm ERR!   21:43  error  Unexpected empty arrow function  @typescript-eslint/no-empty-function
+[107.500s] npm ERR! 
+[107.500s] npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/Signaling/WebSocketSignalingClient.js
+[107.501s] npm ERR!    36:11  error  'data' is never reassigned. Use 'const' instead             prefer-const
+[107.501s] npm ERR!    57:13  error  'eventName' is never reassigned. Use 'const' instead        prefer-const
+[107.501s] npm ERR!    90:3   error  Identifier '_handle_join_room_answer' is not in camel case  @typescript-eslint/camelcase
+[107.502s] npm ERR!   107:29  error  Unexpected empty arrow function                             @typescript-eslint/no-empty-function
+[107.502s] npm ERR!   108:30  error  Unexpected empty arrow function                             @typescript-eslint/no-empty-function
+[107.503s] npm ERR!   109:30  error  Unexpected empty arrow function                             @typescript-eslint/no-empty-function
+[107.503s] npm ERR!   110:32  error  Unexpected empty arrow function                             @typescript-eslint/no-empty-function
+[107.503s] npm ERR!   126:9   error  'data' is never reassigned. Use 'const' instead             prefer-const
+[107.504s] npm ERR!   131:9   error  'data' is never reassigned. Use 'const' instead             prefer-const
+[107.505s] npm ERR!   136:9   error  'data' is never reassigned. Use 'const' instead             prefer-const
+[107.505s] npm ERR!   141:9   error  'data' is never reassigned. Use 'const' instead             prefer-const
+[107.506s] npm ERR! 
+[107.506s] npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/StreamClient.js
+[107.506s] npm ERR!    58:37  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.507s] npm ERR!    71:9   error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+[107.507s] npm ERR!   111:39  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.508s] npm ERR!   124:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+[107.508s] npm ERR!   241:11  error  'senders' is never reassigned. Use 'const' instead            prefer-const
+[107.509s] npm ERR!   252:11  error  'receivers' is never reassigned. Use 'const' instead          prefer-const
+[107.509s] npm ERR! 
+[107.510s] npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/StreamDataChannelClient.js
+[107.510s] npm ERR!    66:40  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.511s] npm ERR!    67:37  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.511s] npm ERR!    68:38  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.511s] npm ERR!    73:37  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.512s] npm ERR!    85:9   error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+[107.512s] npm ERR!    88:11  error  'dataChannel' is never reassigned. Use 'const' instead        prefer-const
+[107.512s] npm ERR!   139:45  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.513s] npm ERR!   140:39  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.513s] npm ERR!   169:35  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.514s] npm ERR!   170:32  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.514s] npm ERR!   171:33  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.515s] npm ERR!   172:33  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.515s] npm ERR!   192:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+[107.516s] npm ERR!   201:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+[107.516s] npm ERR!   321:11  error  'senders' is never reassigned. Use 'const' instead            prefer-const
+[107.517s] npm ERR!   332:11  error  'receivers' is never reassigned. Use 'const' instead          prefer-const
+[107.517s] npm ERR!   356:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+[107.517s] npm ERR! 
+[107.518s] npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/WebrtcClient.js
+[107.518s] npm ERR!    39:22  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.518s] npm ERR!    52:45  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.519s] npm ERR!    53:46  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.519s] npm ERR!    54:46  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.519s] npm ERR!    55:39  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.520s] npm ERR!    58:32  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.520s] npm ERR!    60:35  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.521s] npm ERR!    61:38  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.521s] npm ERR!    62:42  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.521s] npm ERR!   122:11  error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+[107.522s] npm ERR!   128:11  error  'answer' is never reassigned. Use 'const' instead             prefer-const
+[107.522s] npm ERR!   142:11  error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+[107.522s] npm ERR!   169:13  error  'rtcPeerConnection' is never reassigned. Use 'const' instead  prefer-const
+[107.523s] npm ERR!   173:13  error  'offer' is never reassigned. Use 'const' instead              prefer-const
+[107.523s] npm ERR!   228:46  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.523s] npm ERR!   229:55  error  Unexpected empty arrow function                               @typescript-eslint/no-empty-function
+[107.524s] npm ERR!   248:9   error  'newClients' is never reassigned. Use 'const' instead         prefer-const
+[107.524s] npm ERR!   284:14  error  'id' is never reassigned. Use 'const' instead                 prefer-const
+[107.524s] npm ERR! 
+[107.525s] npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/devices.js
+[107.525s] npm ERR!   66:5  error  'devices' is never reassigned. Use 'const' instead  prefer-const
+[107.525s] npm ERR! 
+[107.526s] npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/iceServers.js
+[107.526s] npm ERR!    8:7  error  'response' is never reassigned. Use 'const' instead    prefer-const
+[107.526s] npm ERR!   16:5  error  'iceServers' is never reassigned. Use 'const' instead  prefer-const
+[107.527s] npm ERR! 
+[107.528s] npm ERR! /home/ws/ugv_ws/src/ugv_else/opentera-webrtc-ros/opentera_webrtc_demos/opentera-webrtc-teleop-frontend/teleop-vue/vendor/opentera-webrtc/opentera-webrtc-web-client/src/index.js
+[107.528s] npm ERR!   10:5  error  'openteraWebrtcWebClient' is never reassigned. Use 'const' instead  prefer-const
+[107.528s] npm ERR! 
+[107.529s] npm ERR! ✖ 85 problems (77 errors, 8 warnings)
+[107.529s] npm ERR!   32 errors and 0 warnings potentially fixable with the `--fix` option.
+[107.529s] npm ERR! 
+[107.530s] npm ERR! webpack 5.101.0 compiled with 1 error and 1 warning in 13647 ms
+[107.531s] npm ERR! npm WARN logfile Error: EACCES: permission denied, scandir '/root/.npm/_logs'
+[107.531s] npm ERR! npm WARN logfile  error cleaning log files [Error: EACCES: permission denied, scandir '/root/.npm/_logs'] {
+[107.531s] npm ERR! npm WARN logfile   errno: -13,
+[107.532s] npm ERR! npm WARN logfile   code: 'EACCES',
+[107.532s] npm ERR! npm WARN logfile   syscall: 'scandir',
+[107.532s] npm ERR! npm WARN logfile   path: '/root/.npm/_logs'
+[107.533s] npm ERR! npm WARN logfile }
+[107.534s] npm ERR! npm WARN logfile Error: EACCES: permission denied, scandir '/root/.npm/_logs'
+[107.534s] npm ERR! npm WARN logfile  error cleaning log files [Error: EACCES: permission denied, scandir '/root/.npm/_logs'] {
+[107.536s] npm ERR! npm WARN logfile   errno: -13,
+[107.536s] npm ERR! npm WARN logfile   code: 'EACCES',
+[107.537s] npm ERR! npm WARN logfile   syscall: 'scandir',
+[107.538s] npm ERR! npm WARN logfile   path: '/root/.npm/_logs'
+[107.538s] npm ERR! npm WARN logfile }
+[107.538s] npm ERR! npm ERR! code EACCES
+[107.539s] npm ERR! npm ERR! syscall mkdir
+[107.539s] npm ERR! npm ERR! path /root/.npm/_cacache/tmp
+[107.539s] npm ERR! npm ERR! errno -13
+[107.540s] npm ERR! npm ERR! 
+[107.541s] npm ERR! npm ERR! Your cache folder contains root-owned files, due to a bug in
+[107.541s] npm ERR! npm ERR! previous versions of npm which has since been addressed.
+[107.541s] npm ERR! npm ERR! 
+[107.542s] npm ERR! npm ERR! To permanently fix this problem, please run:
+[107.542s] npm ERR! npm ERR!   sudo chown -R 1000:1000 "/root/.npm"
+[107.542s] npm ERR! 
+[107.543s] npm ERR! npm ERR! Log files were not written due to an error writing to the directory: /root/.npm/_logs
+[107.544s] npm ERR! npm ERR! You can rerun the command with `--loglevel=verbose` to see the logs in your terminal
+[107.544s] npm ERR! npm WARN logfile Error: EACCES: permission denied, scandir '/root/.npm/_logs'
+[107.545s] npm ERR! npm WARN logfile  error cleaning log files [Error: EACCES: permission denied, scandir '/root/.npm/_logs'] {
+[107.545s] npm ERR! npm WARN logfile   errno: -13,
+[107.545s] npm ERR! npm WARN logfile   code: 'EACCES',
+[107.546s] npm ERR! npm WARN logfile   syscall: 'scandir',
+[107.546s] npm ERR! npm WARN logfile   path: '/root/.npm/_logs'
+[107.546s] npm ERR! npm WARN logfile }
+[107.547s] npm ERR! npm ERR! code EACCES
+[107.547s] npm ERR! npm ERR! syscall mkdir
+[107.547s] npm ERR! npm ERR! path /root/.npm/_cacache/tmp
+[107.548s] npm ERR! npm ERR! errno -13
+[107.549s] npm ERR! npm ERR! 
+[107.549s] npm ERR! npm ERR! Your cache folder contains root-owned files, due to a bug in
+[107.550s] npm ERR! npm ERR! previous versions of npm which has since been addressed.
+[107.550s] npm ERR! npm ERR! 
+[107.550s] npm ERR! npm ERR! To permanently fix this problem, please run:
+[107.551s] npm ERR! npm ERR!   sudo chown -R 1000:1000 "/root/.npm"
+[107.551s] npm ERR! 
+[107.551s] npm ERR! npm ERR! Log files were not written due to an error writing to the directory: /root/.npm/_logs
+[107.552s] npm ERR! npm ERR! You can rerun the command with `--loglevel=verbose` to see the logs in your terminal
+[107.553s] npm ERR! ERROR: "build:umdmin" exited with 243.
+[107.554s] npm ERR! ERROR: "build" exited with 243.
+[107.554s] 
+[107.554s] npm ERR! A complete log of this run can be found in:
+[107.555s] npm ERR!     /root/.npm/_logs/2025-07-31T06_32_15_508Z-debug-0.log
+[107.555s] gmake[2]: *** [CMakeFiles/opentera_werbrtc_teleop_frontend-install.dir/build.make:73: node_modules.stamp] Error 1
+[107.555s] gmake[1]: *** [CMakeFiles/Makefile2:139: CMakeFiles/opentera_werbrtc_teleop_frontend-install.dir/all] Error 2
+[107.556s] gmake: *** [Makefile:146: all] Error 2
+[107.557s] Invoked command in '/home/ws/ugv_ws/build/opentera_webrtc_demos' returned '2': CMAKE_PREFIX_PATH=/home/ws/ugv_ws/install/opentera_webrtc_ros:/home/ws/ugv_ws/install/opentera_client_ros:/home/ws/ugv_ws/install/map_image_generator:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs:/home/ws/ugv_ws/install/opentera_protobuf_messages:/home/ws/ugv_ws/install/odas_ros_msgs:/home/ws/ugv_ws/install/cv_camera:/home/ws/ugv_ws/install/audio_utils_msgs:/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/face_cropping:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/odas_ros:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/audio_utils:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble LD_LIBRARY_PATH=/home/ws/ugv_ws/install/opentera_webrtc_ros/lib:/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib:/home/ws/ugv_ws/install/odas_ros_msgs/lib:/home/ws/ugv_ws/install/audio_utils_msgs/lib:/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/odas_ros/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/audio_utils/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib /usr/bin/cmake --build /home/ws/ugv_ws/build/opentera_webrtc_demos -- -j4 -l4

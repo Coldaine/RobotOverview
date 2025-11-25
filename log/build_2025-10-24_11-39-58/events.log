@@ -1,0 +1,261 @@
+[0.000000] (-) TimerEvent: {}
+[0.000314] (-) JobUnselected: {'identifier': 'apriltag'}
+[0.000561] (-) JobUnselected: {'identifier': 'apriltag_msgs'}
+[0.000583] (-) JobUnselected: {'identifier': 'apriltag_ros'}
+[0.000722] (-) JobUnselected: {'identifier': 'cartographer'}
+[0.000741] (-) JobUnselected: {'identifier': 'costmap_converter'}
+[0.000904] (-) JobUnselected: {'identifier': 'costmap_converter_msgs'}
+[0.000923] (-) JobUnselected: {'identifier': 'emcl2'}
+[0.000941] (-) JobUnselected: {'identifier': 'explore_lite'}
+[0.000958] (-) JobUnselected: {'identifier': 'ldlidar'}
+[0.000976] (-) JobUnselected: {'identifier': 'openslam_gmapping'}
+[0.000993] (-) JobUnselected: {'identifier': 'rf2o_laser_odometry'}
+[0.001011] (-) JobUnselected: {'identifier': 'robot_pose_publisher'}
+[0.001029] (-) JobUnselected: {'identifier': 'slam_gmapping'}
+[0.001047] (-) JobUnselected: {'identifier': 'teb_local_planner'}
+[0.001064] (-) JobUnselected: {'identifier': 'teb_msgs'}
+[0.001082] (-) JobUnselected: {'identifier': 'ugv_bringup'}
+[0.001099] (-) JobUnselected: {'identifier': 'ugv_chat_ai'}
+[0.001117] (-) JobUnselected: {'identifier': 'ugv_description'}
+[0.001134] (-) JobUnselected: {'identifier': 'ugv_gazebo'}
+[0.001152] (-) JobUnselected: {'identifier': 'ugv_interface'}
+[0.001170] (-) JobUnselected: {'identifier': 'ugv_nav'}
+[0.001187] (-) JobUnselected: {'identifier': 'ugv_slam'}
+[0.001205] (-) JobUnselected: {'identifier': 'ugv_tools'}
+[0.001222] (-) JobUnselected: {'identifier': 'ugv_vision'}
+[0.001239] (-) JobUnselected: {'identifier': 'ugv_web_app'}
+[0.001257] (-) JobUnselected: {'identifier': 'vizanti'}
+[0.001304] (-) JobUnselected: {'identifier': 'vizanti_cpp'}
+[0.001321] (-) JobUnselected: {'identifier': 'vizanti_demos'}
+[0.001339] (-) JobUnselected: {'identifier': 'vizanti_msgs'}
+[0.001357] (-) JobUnselected: {'identifier': 'vizanti_server'}
+[0.001377] (ugv_base_node) JobQueued: {'identifier': 'ugv_base_node', 'dependencies': OrderedDict()}
+[0.001417] (ugv_base_node) JobStarted: {'identifier': 'ugv_base_node'}
+[0.026408] (ugv_base_node) JobProgress: {'identifier': 'ugv_base_node', 'progress': 'cmake'}
+[0.028996] (ugv_base_node) JobProgress: {'identifier': 'ugv_base_node', 'progress': 'build'}
+[0.029781] (ugv_base_node) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/ws/ugv_ws/build/ugv_base_node', '--', '-j4', '-l4'], 'cwd': '/home/ws/ugv_ws/build/ugv_base_node', 'env': OrderedDict([('USER', 'root'), ('SSH_CLIENT', '192.168.50.172 62464 23'), ('LDLIDAR_MODEL', 'ld19'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/ws/ugv_ws/install/vizanti_msgs/lib:/home/ws/ugv_ws/install/ugv_interface/lib:/home/ws/ugv_ws/install/teb_local_planner/lib:/home/ws/ugv_ws/install/teb_msgs/lib:/home/ws/ugv_ws/install/openslam_gmapping/lib:/home/ws/ugv_ws/install/costmap_converter/lib:/home/ws/ugv_ws/install/costmap_converter_msgs/lib:/home/ws/ugv_ws/install/apriltag_ros/lib:/home/ws/ugv_ws/install/apriltag_msgs/lib:/home/ws/ugv_ws/install/apriltag/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo/lib:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo/lib:/home/ws/roarm_ws/install/moveit_task_constructor_visualization/lib:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities/lib:/home/ws/roarm_ws/install/moveit_task_constructor_core/lib:/home/ws/roarm_ws/install/rviz_marker_tools/lib:/home/ws/roarm_ws/install/moveit_servo/lib:/home/ws/roarm_ws/install/roarm_msgs/lib:/home/ws/roarm_ws/install/roarm_moveit_servo/lib:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins/lib:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/lib:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/aarch64-linux-gnu:/opt/ros/humble/lib'), ('MOTD_SHOWN', 'pam'), ('HOME', '/root'), ('OLDPWD', '/root'), ('SSH_TTY', '/dev/pts/2'), ('ROS_PYTHON_VERSION', '3'), ('LC_CTYPE', 'C.UTF-8'), ('COLCON_PREFIX_PATH', '/home/ws/ugv_roarm_ws/install:/home/ws/roarm_ws/install:/home/ws/ugv_ws/install'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'root'), ('ROARM_MODEL', 'roarm_m2'), ('PULSE_SERVER', 'unix:/run/user/1000/pulse/native'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('PKG_CONFIG_PATH', '/home/ws/ugv_ws/install/apriltag/lib/aarch64-linux-gnu/pkgconfig:/home/ws/ugv_ws/install/apriltag/lib/pkgconfig'), ('TERM', 'xterm'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/ws/ugv_ws/install/costmap_converter/bin:/home/ws/ugv_ws/install/apriltag_ros/bin:/home/ws/ugv_ws/install/apriltag/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', 'localhost:11.0'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('AMENT_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_cmd:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_driver:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('CMAKE_MODULE_PATH', '/home/ws/roarm_ws/install/moveit_task_constructor_core/share/moveit_task_constructor_core/cmake'), ('PWD', '/home/ws/ugv_ws/build/ugv_base_node'), ('SSH_CONNECTION', '192.168.50.172 62464 192.168.50.5 23'), ('PYTHONPATH', '/home/ws/ugv_ws/install/vizanti_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_web_app:/home/ws/ugv_ws/install/ugv_web_app/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_vision:/home/ws/ugv_ws/install/ugv_vision/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_tools:/home/ws/ugv_ws/install/ugv_tools/lib/python3.10/site-packages:/home/ws/ugv_ws/install/ugv_interface/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/build/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_chat_ai/lib/python3.10/site-packages:/home/ws/ugv_ws/build/ugv_bringup:/home/ws/ugv_ws/install/ugv_bringup/lib/python3.10/site-packages:/home/ws/ugv_ws/install/costmap_converter_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag_msgs/local/lib/python3.10/dist-packages:/home/ws/ugv_ws/install/apriltag/lib/python3.10/site-packages:/home/ws/ugv_roarm_ws/build/ugv_roarm_bringup:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_core/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_vision:/home/ws/roarm_ws/install/roarm_vision/lib/python3.10/site-packages:/home/ws/roarm_ws/install/roarm_msgs/local/lib/python3.10/dist-packages:/home/ws/roarm_ws/build/roarm_driver:/home/ws/roarm_ws/install/roarm_driver/lib/python3.10/site-packages:/home/ws/roarm_ws/install/moveit_task_constructor_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/home/ws/ugv_ws/install/vizanti:/home/ws/ugv_ws/install/vizanti_server:/home/ws/ugv_ws/install/vizanti_demos:/home/ws/ugv_ws/install/vizanti_msgs:/home/ws/ugv_ws/install/vizanti_cpp:/home/ws/ugv_ws/install/ugv_slam:/home/ws/ugv_ws/install/ugv_nav:/home/ws/ugv_ws/install/ugv_interface:/home/ws/ugv_ws/install/ugv_gazebo:/home/ws/ugv_ws/install/ugv_description:/home/ws/ugv_ws/install/ugv_base_node:/home/ws/ugv_ws/install/teb_local_planner:/home/ws/ugv_ws/install/teb_msgs:/home/ws/ugv_ws/install/slam_gmapping:/home/ws/ugv_ws/install/rf2o_laser_odometry:/home/ws/ugv_ws/install/openslam_gmapping:/home/ws/ugv_ws/install/ldlidar:/home/ws/ugv_ws/install/explore_lite:/home/ws/ugv_ws/install/emcl2:/home/ws/ugv_ws/install/costmap_converter:/home/ws/ugv_ws/install/costmap_converter_msgs:/home/ws/ugv_ws/install/cartographer:/home/ws/ugv_ws/install/apriltag_ros:/home/ws/ugv_ws/install/apriltag_msgs:/home/ws/ugv_ws/install/apriltag:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_servo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_mtc_demo:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit_ikfast_plugins:/home/ws/ugv_roarm_ws/install/ugv_roarm_moveit:/home/ws/ugv_roarm_ws/install/ugv_roarm_description:/home/ws/ugv_roarm_ws/install/ugv_roarm_cmd:/home/ws/roarm_ws/install/roarm_moveit_mtc_demo:/home/ws/roarm_ws/install/moveit_task_constructor_visualization:/home/ws/roarm_ws/install/moveit_task_constructor_capabilities:/home/ws/roarm_ws/install/moveit_task_constructor_core:/home/ws/roarm_ws/install/rviz_marker_tools:/home/ws/roarm_ws/install/roarm_moveit_cmd:/home/ws/roarm_ws/install/moveit_servo:/home/ws/roarm_ws/install/roarm_msgs:/home/ws/roarm_ws/install/roarm_moveit_servo:/home/ws/roarm_ws/install/roarm_moveit_ikfast_plugins:/home/ws/roarm_ws/install/roarm_moveit:/home/ws/roarm_ws/install/roarm_description:/home/ws/roarm_ws/install/moveit_task_constructor_msgs:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/home/ws/ugv_ws/install/robot_pose_publisher:/home/ws/ugv_roarm_ws/install/ugv_roarm_bringup:/home/ws/roarm_ws/install/roarm_vision:/home/ws/roarm_ws/install/roarm_driver:/opt/ros/humble'), ('UGV_MODEL', 'ugv_rover')]), 'shell': False}
+[0.099695] (-) TimerEvent: {}
+[0.166784] (ugv_base_node) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target base_node\x1b[0m\n'}
+[0.199795] (-) TimerEvent: {}
+[0.282619] (ugv_base_node) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/base_node_ekf.dir/src/base_node_ekf.cpp.o\x1b[0m\n'}
+[0.282934] (ugv_base_node) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/base_node.dir/src/base_node.cpp.o\x1b[0m\n'}
+[0.299871] (-) TimerEvent: {}
+[0.400240] (-) TimerEvent: {}
+[0.500733] (-) TimerEvent: {}
+[0.601092] (-) TimerEvent: {}
+[0.702101] (-) TimerEvent: {}
+[0.805052] (-) TimerEvent: {}
+[0.905409] (-) TimerEvent: {}
+[1.005772] (-) TimerEvent: {}
+[1.106166] (-) TimerEvent: {}
+[1.206859] (-) TimerEvent: {}
+[1.310838] (-) TimerEvent: {}
+[1.411216] (-) TimerEvent: {}
+[1.511615] (-) TimerEvent: {}
+[1.612026] (-) TimerEvent: {}
+[1.712432] (-) TimerEvent: {}
+[1.812816] (-) TimerEvent: {}
+[1.913224] (-) TimerEvent: {}
+[2.013633] (-) TimerEvent: {}
+[2.114092] (-) TimerEvent: {}
+[2.214481] (-) TimerEvent: {}
+[2.314910] (-) TimerEvent: {}
+[2.418574] (-) TimerEvent: {}
+[2.519051] (-) TimerEvent: {}
+[2.619463] (-) TimerEvent: {}
+[2.719970] (-) TimerEvent: {}
+[2.820445] (-) TimerEvent: {}
+[2.921068] (-) TimerEvent: {}
+[3.021664] (-) TimerEvent: {}
+[3.122227] (-) TimerEvent: {}
+[3.222836] (-) TimerEvent: {}
+[3.323442] (-) TimerEvent: {}
+[3.424095] (-) TimerEvent: {}
+[3.524710] (-) TimerEvent: {}
+[3.625242] (-) TimerEvent: {}
+[3.725770] (-) TimerEvent: {}
+[3.826414] (-) TimerEvent: {}
+[3.926930] (-) TimerEvent: {}
+[4.027475] (-) TimerEvent: {}
+[4.128025] (-) TimerEvent: {}
+[4.228581] (-) TimerEvent: {}
+[4.328972] (-) TimerEvent: {}
+[4.367851] (ugv_base_node) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:\x1b[m\x1b[K In member function \xe2\x80\x98\x1b[01m\x1b[Kvoid OdomPublisher::handle_imu(std::shared_ptr<sensor_msgs::msg::Imu_<std::allocator<void> > >)\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[4.368237] (ugv_base_node) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:123:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kimu_valid\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[4.368336] (ugv_base_node) StderrLine: {'line': b'  123 |         \x1b[01;31m\x1b[Kimu_valid\x1b[m\x1b[K = true;\n'}
+[4.368413] (ugv_base_node) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~~~~~~~\x1b[m\x1b[K\n'}
+[4.379230] (ugv_base_node) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:\x1b[m\x1b[K In member function \xe2\x80\x98\x1b[01m\x1b[Kvoid OdomPublisher::handle_odom(std::shared_ptr<std_msgs::msg::Float32MultiArray_<std::allocator<void> > >)\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[4.379463] (ugv_base_node) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:162:28:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kyaw\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[Kyaw_\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[4.379557] (ugv_base_node) StderrLine: {'line': b'  162 |             x_pos_ += (cos(\x1b[01;31m\x1b[Kyaw\x1b[m\x1b[K) * dx - sin(yaw) * dy);\n'}
+[4.379628] (ugv_base_node) StderrLine: {'line': b'      |                            \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[4.379696] (ugv_base_node) StderrLine: {'line': b'      |                            \x1b[32m\x1b[Kyaw_\x1b[m\x1b[K\n'}
+[4.387680] (ugv_base_node) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:168:13:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kodom_yaw\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[Kodom_yaw_\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[4.387950] (ugv_base_node) StderrLine: {'line': b'  168 |             \x1b[01;31m\x1b[Kodom_yaw\x1b[m\x1b[K += dth;\n'}
+[4.388036] (ugv_base_node) StderrLine: {'line': b'      |             \x1b[01;31m\x1b[K^~~~~~~~\x1b[m\x1b[K\n'}
+[4.388105] (ugv_base_node) StderrLine: {'line': b'      |             \x1b[32m\x1b[Kodom_yaw_\x1b[m\x1b[K\n'}
+[4.395615] (ugv_base_node) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:172:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kyaw\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[Kyaw_\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[4.395858] (ugv_base_node) StderrLine: {'line': b'  172 |         \x1b[01;31m\x1b[Kyaw\x1b[m\x1b[K = odom_yaw;\n'}
+[4.395941] (ugv_base_node) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[4.396010] (ugv_base_node) StderrLine: {'line': b'      |         \x1b[32m\x1b[Kyaw_\x1b[m\x1b[K\n'}
+[4.403917] (ugv_base_node) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:172:15:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kodom_yaw\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[Kodom_yaw_\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[4.404140] (ugv_base_node) StderrLine: {'line': b'  172 |         yaw = \x1b[01;31m\x1b[Kodom_yaw\x1b[m\x1b[K;\n'}
+[4.404214] (ugv_base_node) StderrLine: {'line': b'      |               \x1b[01;31m\x1b[K^~~~~~~~\x1b[m\x1b[K\n'}
+[4.404279] (ugv_base_node) StderrLine: {'line': b'      |               \x1b[32m\x1b[Kodom_yaw_\x1b[m\x1b[K\n'}
+[4.412050] (ugv_base_node) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:\x1b[m\x1b[K In member function \xe2\x80\x98\x1b[01m\x1b[Kvoid OdomPublisher::publish_odom()\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[4.412253] (ugv_base_node) StderrLine: {'line': b'\x1b[01m\x1b[K/home/ws/ugv_ws/src/ugv_main/ugv_base_node/src/base_node_ekf.cpp:193:44:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kyaw\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[Kyaw_\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[4.412324] (ugv_base_node) StderrLine: {'line': b'  193 |         odom.pose.pose.orientation.z = sin(\x1b[01;31m\x1b[Kyaw\x1b[m\x1b[K / 2.0);\n'}
+[4.412386] (ugv_base_node) StderrLine: {'line': b'      |                                            \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[4.412447] (ugv_base_node) StderrLine: {'line': b'      |                                            \x1b[32m\x1b[Kyaw_\x1b[m\x1b[K\n'}
+[4.429069] (-) TimerEvent: {}
+[4.529656] (-) TimerEvent: {}
+[4.630260] (-) TimerEvent: {}
+[4.730914] (-) TimerEvent: {}
+[4.831512] (-) TimerEvent: {}
+[4.932095] (-) TimerEvent: {}
+[5.032688] (-) TimerEvent: {}
+[5.133274] (-) TimerEvent: {}
+[5.234271] (-) TimerEvent: {}
+[5.335038] (-) TimerEvent: {}
+[5.435777] (-) TimerEvent: {}
+[5.536581] (-) TimerEvent: {}
+[5.637410] (-) TimerEvent: {}
+[5.738082] (-) TimerEvent: {}
+[5.838770] (-) TimerEvent: {}
+[5.939392] (-) TimerEvent: {}
+[6.039944] (-) TimerEvent: {}
+[6.140585] (-) TimerEvent: {}
+[6.241101] (-) TimerEvent: {}
+[6.341626] (-) TimerEvent: {}
+[6.442148] (-) TimerEvent: {}
+[6.542659] (-) TimerEvent: {}
+[6.643213] (-) TimerEvent: {}
+[6.743755] (-) TimerEvent: {}
+[6.844324] (-) TimerEvent: {}
+[6.944859] (-) TimerEvent: {}
+[7.045410] (-) TimerEvent: {}
+[7.145963] (-) TimerEvent: {}
+[7.247758] (-) TimerEvent: {}
+[7.348311] (-) TimerEvent: {}
+[7.448859] (-) TimerEvent: {}
+[7.549405] (-) TimerEvent: {}
+[7.649968] (-) TimerEvent: {}
+[7.750543] (-) TimerEvent: {}
+[7.851113] (-) TimerEvent: {}
+[7.951661] (-) TimerEvent: {}
+[8.052247] (-) TimerEvent: {}
+[8.152640] (-) TimerEvent: {}
+[8.253246] (-) TimerEvent: {}
+[8.353877] (-) TimerEvent: {}
+[8.454396] (-) TimerEvent: {}
+[8.554910] (-) TimerEvent: {}
+[8.655461] (-) TimerEvent: {}
+[8.756049] (-) TimerEvent: {}
+[8.856663] (-) TimerEvent: {}
+[8.957084] (-) TimerEvent: {}
+[9.014989] (ugv_base_node) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/base_node_ekf.dir/build.make:76: CMakeFiles/base_node_ekf.dir/src/base_node_ekf.cpp.o] Error 1\n'}
+[9.016164] (ugv_base_node) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:165: CMakeFiles/base_node_ekf.dir/all] Error 2\n'}
+[9.016270] (ugv_base_node) StderrLine: {'line': b'gmake[1]: *** Waiting for unfinished jobs....\n'}
+[9.057184] (-) TimerEvent: {}
+[9.157769] (-) TimerEvent: {}
+[9.258361] (-) TimerEvent: {}
+[9.358955] (-) TimerEvent: {}
+[9.459369] (-) TimerEvent: {}
+[9.560181] (-) TimerEvent: {}
+[9.660536] (-) TimerEvent: {}
+[9.761129] (-) TimerEvent: {}
+[9.861594] (-) TimerEvent: {}
+[9.962184] (-) TimerEvent: {}
+[10.062699] (-) TimerEvent: {}
+[10.163194] (-) TimerEvent: {}
+[10.263689] (-) TimerEvent: {}
+[10.364178] (-) TimerEvent: {}
+[10.464659] (-) TimerEvent: {}
+[10.565137] (-) TimerEvent: {}
+[10.665621] (-) TimerEvent: {}
+[10.766167] (-) TimerEvent: {}
+[10.866725] (-) TimerEvent: {}
+[10.967192] (-) TimerEvent: {}
+[11.067692] (-) TimerEvent: {}
+[11.168182] (-) TimerEvent: {}
+[11.268656] (-) TimerEvent: {}
+[11.369131] (-) TimerEvent: {}
+[11.469619] (-) TimerEvent: {}
+[11.570122] (-) TimerEvent: {}
+[11.670604] (-) TimerEvent: {}
+[11.771111] (-) TimerEvent: {}
+[11.871578] (-) TimerEvent: {}
+[11.972061] (-) TimerEvent: {}
+[12.072736] (-) TimerEvent: {}
+[12.173407] (-) TimerEvent: {}
+[12.273981] (-) TimerEvent: {}
+[12.374562] (-) TimerEvent: {}
+[12.475177] (-) TimerEvent: {}
+[12.575749] (-) TimerEvent: {}
+[12.676321] (-) TimerEvent: {}
+[12.776897] (-) TimerEvent: {}
+[12.877436] (-) TimerEvent: {}
+[12.978792] (-) TimerEvent: {}
+[13.079361] (-) TimerEvent: {}
+[13.179829] (-) TimerEvent: {}
+[13.280290] (-) TimerEvent: {}
+[13.380754] (-) TimerEvent: {}
+[13.481214] (-) TimerEvent: {}
+[13.581689] (-) TimerEvent: {}
+[13.682175] (-) TimerEvent: {}
+[13.782656] (-) TimerEvent: {}
+[13.883154] (-) TimerEvent: {}
+[13.983636] (-) TimerEvent: {}
+[14.084128] (-) TimerEvent: {}
+[14.184628] (-) TimerEvent: {}
+[14.284952] (-) TimerEvent: {}
+[14.385290] (-) TimerEvent: {}
+[14.485850] (-) TimerEvent: {}
+[14.586326] (-) TimerEvent: {}
+[14.686791] (-) TimerEvent: {}
+[14.787117] (-) TimerEvent: {}
+[14.887451] (-) TimerEvent: {}
+[14.987857] (-) TimerEvent: {}
+[15.088190] (-) TimerEvent: {}
+[15.188515] (-) TimerEvent: {}
+[15.288834] (-) TimerEvent: {}
+[15.389145] (-) TimerEvent: {}
+[15.489450] (-) TimerEvent: {}
+[15.589759] (-) TimerEvent: {}
+[15.690056] (-) TimerEvent: {}
+[15.790348] (-) TimerEvent: {}
+[15.890654] (-) TimerEvent: {}
+[15.990986] (-) TimerEvent: {}
+[16.091315] (-) TimerEvent: {}
+[16.191666] (-) TimerEvent: {}
+[16.292031] (-) TimerEvent: {}
+[16.392394] (-) TimerEvent: {}
+[16.492809] (-) TimerEvent: {}
+[16.593225] (-) TimerEvent: {}
+[16.693639] (-) TimerEvent: {}
+[16.794035] (-) TimerEvent: {}
+[16.894449] (-) TimerEvent: {}
+[16.994965] (-) TimerEvent: {}
+[17.095495] (-) TimerEvent: {}
+[17.196087] (-) TimerEvent: {}
+[17.296432] (-) TimerEvent: {}
+[17.303945] (ugv_base_node) StdoutLine: {'line': b'[ 75%] \x1b[32m\x1b[1mLinking CXX executable base_node\x1b[0m\n'}
+[17.396552] (-) TimerEvent: {}
+[17.496975] (-) TimerEvent: {}
+[17.597484] (-) TimerEvent: {}
+[17.697897] (-) TimerEvent: {}
+[17.798353] (-) TimerEvent: {}
+[17.899167] (-) TimerEvent: {}
+[18.002842] (-) TimerEvent: {}
+[18.103267] (-) TimerEvent: {}
+[18.203801] (-) TimerEvent: {}
+[18.304086] (-) TimerEvent: {}
+[18.404350] (-) TimerEvent: {}
+[18.504615] (-) TimerEvent: {}
+[18.604891] (-) TimerEvent: {}
+[18.705212] (-) TimerEvent: {}
+[18.762889] (ugv_base_node) StdoutLine: {'line': b'[ 75%] Built target base_node\n'}
+[18.763338] (ugv_base_node) StderrLine: {'line': b'gmake: *** [Makefile:146: all] Error 2\n'}
+[18.764658] (ugv_base_node) CommandEnded: {'returncode': 2}
+[18.805287] (-) TimerEvent: {}
+[18.861224] (ugv_base_node) JobEnded: {'identifier': 'ugv_base_node', 'rc': 2}
+[18.871637] (-) EventReactorShutdown: {}

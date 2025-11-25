@@ -1,0 +1,856 @@
+Not searching for unused variables given on the command line.
+-- The C compiler identification is GNU 11.4.0
+-- The CXX compiler identification is GNU 11.4.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found std_msgs: 4.2.4 (/opt/ros/humble/share/std_msgs/cmake)
+-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found geometry_msgs: 4.2.4 (/opt/ros/humble/share/geometry_msgs/cmake)
+-- Found sensor_msgs: 4.2.4 (/opt/ros/humble/share/sensor_msgs/cmake)
+-- Found audio_utils_msgs: 0.0.0 (/home/ws/ugv_ws/install/audio_utils_msgs/share/audio_utils_msgs/cmake)
+-- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)
+-- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") 
+-- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)
+-- Found PythonLibs: /usr/lib/aarch64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") 
+-- Using PYTHON_EXECUTABLE: /usr/bin/python3
+-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10
+-- Using PYTHON_LIBRARIES: /usr/lib/aarch64-linux-gnu/libpython3.10.so
+-- Found PythonExtra: .so  
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/ws/ugv_ws/build/opentera_webrtc_ros_msgs
+[  1%] [34m[1mGenerating C code for ROS interfaces[0m
+[  1%] [34m[1mGenerating C++ code for ROS interfaces[0m
+[  1%] Built target ament_cmake_python_symlink_opentera_webrtc_ros_msgs
+running egg_info
+creating opentera_webrtc_ros_msgs.egg-info
+writing opentera_webrtc_ros_msgs.egg-info/PKG-INFO
+writing dependency_links to opentera_webrtc_ros_msgs.egg-info/dependency_links.txt
+writing top-level names to opentera_webrtc_ros_msgs.egg-info/top_level.txt
+writing manifest file 'opentera_webrtc_ros_msgs.egg-info/SOURCES.txt'
+reading manifest file 'opentera_webrtc_ros_msgs.egg-info/SOURCES.txt'
+writing manifest file 'opentera_webrtc_ros_msgs.egg-info/SOURCES.txt'
+[  1%] Built target ament_cmake_python_build_opentera_webrtc_ros_msgs_egg
+[  1%] Built target opentera_webrtc_ros_msgs__cpp
+[  2%] [34m[1mGenerating C++ type support dispatch for ROS interfaces[0m
+[  3%] [34m[1mGenerating C++ type support for eProsima Fast-RTPS[0m
+[  4%] [34m[1mGenerating C++ introspection for ROS interfaces[0m
+[  4%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/database_event__functions.c.o[0m
+[  5%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/device_event__functions.c.o[0m
+[  5%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/join_session_event__functions.c.o[0m
+[  5%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__functions.c.o[0m
+[  6%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/label_array__functions.c.o[0m
+[  6%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/label_edit__functions.c.o[0m
+[  7%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/label__functions.c.o[0m
+[  7%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/label_simple__functions.c.o[0m
+[  8%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__functions.c.o[0m
+[  8%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__functions.c.o[0m
+[  8%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__functions.c.o[0m
+[  9%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/log_event__functions.c.o[0m
+[  9%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/participant_event__functions.c.o[0m
+[ 10%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__functions.c.o[0m
+[ 10%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/user_event__functions.c.o[0m
+[ 10%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__functions.c.o[0m
+[ 10%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/database_event__type_support.cpp.o[0m
+[ 11%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/peer__functions.c.o[0m
+[ 11%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/peer_data__functions.c.o[0m
+[ 12%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/peer_image__functions.c.o[0m
+[ 12%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/peer_audio__functions.c.o[0m
+[ 13%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/peer_status__functions.c.o[0m
+[ 13%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/robot_status__functions.c.o[0m
+[ 13%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/device_event__type_support.cpp.o[0m
+[ 13%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/waypoint__functions.c.o[0m
+[ 14%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__functions.c.o[0m
+[ 14%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/database_event__type_support.cpp.o[0m
+[ 14%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/srv/detail/change_map_view__functions.c.o[0m
+[ 15%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__functions.c.o[0m
+[ 15%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_c.dir/rosidl_generator_c/opentera_webrtc_ros_msgs/srv/detail/set_string__functions.c.o[0m
+[ 15%] [32m[1mLinking C shared library libopentera_webrtc_ros_msgs__rosidl_generator_c.so[0m
+[ 16%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/join_session_event__type_support.cpp.o[0m
+[ 16%] Built target opentera_webrtc_ros_msgs__rosidl_generator_c
+[ 17%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/device_event__type_support.cpp.o[0m
+[ 17%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/database_event__type_support.cpp.o[0m
+[ 18%] [34m[1mGenerating C type support for eProsima Fast-RTPS[0m
+[ 18%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/join_session_reply_event__type_support.cpp.o[0m
+[ 18%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/join_session_event__type_support.cpp.o[0m
+[ 19%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/device_event__type_support.cpp.o[0m
+[ 20%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/label_array__type_support.cpp.o[0m
+[ 20%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/label_edit__type_support.cpp.o[0m
+[ 20%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__type_support.cpp.o[0m
+[ 20%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/join_session_event__type_support.cpp.o[0m
+[ 21%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/label__type_support.cpp.o[0m
+[ 22%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/label_array__type_support.cpp.o[0m
+[ 22%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/label_simple__type_support.cpp.o[0m
+[ 22%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/join_session_reply_event__type_support.cpp.o[0m
+[ 22%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/label_simple_array__type_support.cpp.o[0m
+[ 22%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/label_edit__type_support.cpp.o[0m
+[ 23%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/label_array__type_support.cpp.o[0m
+[ 24%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/label_simple_edit__type_support.cpp.o[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/label__type_support.cpp.o[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/leave_session_event__type_support.cpp.o[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/database_event__type_support_c.cpp.o[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/label_edit__type_support.cpp.o[0m
+[ 26%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/log_event__type_support.cpp.o[0m
+[ 26%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/label_simple__type_support.cpp.o[0m
+[ 27%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/device_event__type_support_c.cpp.o[0m
+[ 27%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/participant_event__type_support.cpp.o[0m
+[ 28%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/label__type_support.cpp.o[0m
+[ 29%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__type_support.cpp.o[0m
+[ 29%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/stop_session_event__type_support.cpp.o[0m
+[ 29%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/join_session_event__type_support_c.cpp.o[0m
+[ 30%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/user_event__type_support.cpp.o[0m
+[ 30%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/label_simple__type_support.cpp.o[0m
+[ 30%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__type_support.cpp.o[0m
+[ 30%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__type_support_c.cpp.o[0m
+[ 30%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/open_tera_event__type_support.cpp.o[0m
+[ 30%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/label_simple_array__type_support.cpp.o[0m
+[ 30%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__type_support.cpp.o[0m
+[ 31%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/label_array__type_support_c.cpp.o[0m
+[ 32%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/peer__type_support.cpp.o[0m
+[ 32%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/peer_data__type_support.cpp.o[0m
+[ 32%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/label_edit__type_support_c.cpp.o[0m
+[ 33%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/log_event__type_support.cpp.o[0m
+[ 34%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/label_simple_edit__type_support.cpp.o[0m
+[ 35%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/peer_image__type_support.cpp.o[0m
+[ 36%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/label__type_support_c.cpp.o[0m
+[ 36%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/participant_event__type_support.cpp.o[0m
+[ 36%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/leave_session_event__type_support.cpp.o[0m
+[ 36%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/peer_audio__type_support.cpp.o[0m
+[ 36%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/label_simple__type_support_c.cpp.o[0m
+[ 36%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/peer_status__type_support.cpp.o[0m
+[ 37%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__type_support.cpp.o[0m
+[ 38%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/log_event__type_support.cpp.o[0m
+[ 38%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__type_support_c.cpp.o[0m
+[ 39%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/robot_status__type_support.cpp.o[0m
+[ 39%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/user_event__type_support.cpp.o[0m
+[ 39%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/waypoint__type_support.cpp.o[0m
+[ 39%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/participant_event__type_support.cpp.o[0m
+[ 40%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__type_support_c.cpp.o[0m
+[ 41%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/msg/waypoint_array__type_support.cpp.o[0m
+[ 41%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__type_support.cpp.o[0m
+[ 41%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__type_support_c.cpp.o[0m
+[ 42%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/stop_session_event__type_support.cpp.o[0m
+[ 42%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/srv/change_map_view__type_support.cpp.o[0m
+[ 43%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/log_event__type_support_c.cpp.o[0m
+[ 43%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/srv/image_goal_to_map_goal__type_support.cpp.o[0m
+[ 43%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/user_event__type_support.cpp.o[0m
+[ 44%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_cpp.dir/rosidl_typesupport_cpp/opentera_webrtc_ros_msgs/srv/set_string__type_support.cpp.o[0m
+[ 44%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/participant_event__type_support_c.cpp.o[0m
+[ 45%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/peer__type_support.cpp.o[0m
+[ 45%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/open_tera_event__type_support.cpp.o[0m
+[ 45%] [32m[1mLinking CXX shared library libopentera_webrtc_ros_msgs__rosidl_typesupport_cpp.so[0m
+[ 45%] Built target opentera_webrtc_ros_msgs__rosidl_typesupport_cpp
+[ 46%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/peer__type_support.cpp.o[0m
+[ 47%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__type_support_c.cpp.o[0m
+[ 47%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/peer_data__type_support.cpp.o[0m
+[ 47%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/user_event__type_support_c.cpp.o[0m
+[ 47%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__type_support_c.cpp.o[0m
+[ 47%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/peer_data__type_support.cpp.o[0m
+[ 48%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/peer_image__type_support.cpp.o[0m
+[ 49%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/peer__type_support_c.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/peer_image__type_support.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/peer_data__type_support_c.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/peer_audio__type_support.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/peer_audio__type_support.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/peer_status__type_support.cpp.o[0m
+[ 51%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/peer_image__type_support_c.cpp.o[0m
+[ 52%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/peer_status__type_support.cpp.o[0m
+[ 53%] [34m[1mGenerating C introspection for ROS interfaces[0m
+[ 54%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/robot_status__type_support.cpp.o[0m
+[ 54%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/peer_audio__type_support_c.cpp.o[0m
+[ 54%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/robot_status__type_support.cpp.o[0m
+[ 54%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/waypoint__type_support.cpp.o[0m
+[ 54%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/peer_status__type_support_c.cpp.o[0m
+[ 54%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/waypoint__type_support.cpp.o[0m
+[ 55%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/robot_status__type_support_c.cpp.o[0m
+[ 56%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/msg/detail/dds_fastrtps/waypoint_array__type_support.cpp.o[0m
+[ 57%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__type_support.cpp.o[0m
+[ 57%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/waypoint__type_support_c.cpp.o[0m
+[ 57%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/srv/detail/dds_fastrtps/change_map_view__type_support.cpp.o[0m
+[ 58%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__type_support_c.cpp.o[0m
+[ 58%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/srv/detail/change_map_view__type_support.cpp.o[0m
+[ 59%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/srv/detail/dds_fastrtps/image_goal_to_map_goal__type_support.cpp.o[0m
+[ 59%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/srv/detail/change_map_view__type_support_c.cpp.o[0m
+[ 59%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/database_event__type_support.c.o[0m
+[ 60%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__type_support.cpp.o[0m
+[ 61%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/device_event__type_support.c.o[0m
+[ 61%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/join_session_event__type_support.c.o[0m
+[ 61%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__type_support.c.o[0m
+[ 62%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/label_array__type_support.c.o[0m
+[ 62%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/label_edit__type_support.c.o[0m
+[ 63%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/label__type_support.c.o[0m
+[ 63%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/label_simple__type_support.c.o[0m
+[ 64%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__type_support.c.o[0m
+[ 64%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.dir/rosidl_typesupport_fastrtps_cpp/opentera_webrtc_ros_msgs/srv/detail/dds_fastrtps/set_string__type_support.cpp.o[0m
+[ 64%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__type_support.c.o[0m
+[ 64%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__type_support.c.o[0m
+[ 65%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__type_support_c.cpp.o[0m
+[ 66%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/log_event__type_support.c.o[0m
+[ 66%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/participant_event__type_support.c.o[0m
+[ 67%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__type_support.c.o[0m
+[ 67%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.dir/rosidl_typesupport_introspection_cpp/opentera_webrtc_ros_msgs/srv/detail/set_string__type_support.cpp.o[0m
+[ 67%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/user_event__type_support.c.o[0m
+[ 68%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__type_support.c.o[0m
+[ 68%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/peer__type_support.c.o[0m
+[ 68%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/peer_data__type_support.c.o[0m
+[ 69%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/peer_image__type_support.c.o[0m
+[ 69%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/peer_audio__type_support.c.o[0m
+[ 69%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.dir/rosidl_typesupport_fastrtps_c/opentera_webrtc_ros_msgs/srv/detail/set_string__type_support_c.cpp.o[0m
+[ 70%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/peer_status__type_support.c.o[0m
+[ 70%] [32m[1mLinking CXX shared library libopentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.so[0m
+[ 70%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/robot_status__type_support.c.o[0m
+[ 70%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/waypoint__type_support.c.o[0m
+[ 71%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__type_support.c.o[0m
+[ 71%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/srv/detail/change_map_view__type_support.c.o[0m
+[ 71%] Built target opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp
+[ 72%] [34m[1mGenerating C type support dispatch for ROS interfaces[0m
+[ 73%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__type_support.c.o[0m
+[ 74%] [32m[1mLinking CXX shared library libopentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.so[0m
+[ 74%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.dir/rosidl_typesupport_introspection_c/opentera_webrtc_ros_msgs/srv/detail/set_string__type_support.c.o[0m
+[ 75%] [32m[1mLinking C shared library libopentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.so[0m
+[ 75%] Built target opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c
+[ 75%] Built target opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp
+[ 75%] [32m[1mLinking CXX shared library libopentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.so[0m
+[ 75%] Built target opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c
+[ 75%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/database_event__type_support.cpp.o[0m
+[ 75%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/device_event__type_support.cpp.o[0m
+[ 75%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/join_session_reply_event__type_support.cpp.o[0m
+[ 76%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/join_session_event__type_support.cpp.o[0m
+[ 77%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/label_edit__type_support.cpp.o[0m
+[ 77%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/label_array__type_support.cpp.o[0m
+[ 78%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/label__type_support.cpp.o[0m
+[ 78%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/label_simple__type_support.cpp.o[0m
+[ 78%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/label_simple_array__type_support.cpp.o[0m
+[ 78%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/leave_session_event__type_support.cpp.o[0m
+[ 79%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/label_simple_edit__type_support.cpp.o[0m
+[ 80%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/log_event__type_support.cpp.o[0m
+[ 81%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/stop_session_event__type_support.cpp.o[0m
+[ 81%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/participant_event__type_support.cpp.o[0m
+[ 81%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/user_event__type_support.cpp.o[0m
+[ 81%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/open_tera_event__type_support.cpp.o[0m
+[ 82%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/peer__type_support.cpp.o[0m
+[ 82%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/peer_data__type_support.cpp.o[0m
+[ 83%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/peer_image__type_support.cpp.o[0m
+[ 83%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/peer_audio__type_support.cpp.o[0m
+[ 83%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/peer_status__type_support.cpp.o[0m
+[ 84%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/robot_status__type_support.cpp.o[0m
+[ 85%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/waypoint_array__type_support.cpp.o[0m
+[ 85%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/msg/waypoint__type_support.cpp.o[0m
+[ 85%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/srv/change_map_view__type_support.cpp.o[0m
+[ 86%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/srv/image_goal_to_map_goal__type_support.cpp.o[0m
+[ 86%] [32mBuilding CXX object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c.dir/rosidl_typesupport_c/opentera_webrtc_ros_msgs/srv/set_string__type_support.cpp.o[0m
+[ 86%] [32m[1mLinking CXX shared library libopentera_webrtc_ros_msgs__rosidl_typesupport_c.so[0m
+[ 86%] Built target opentera_webrtc_ros_msgs__rosidl_typesupport_c
+[ 86%] Built target opentera_webrtc_ros_msgs
+[ 86%] [34m[1mGenerating Python code for ROS interfaces[0m
+[ 86%] Built target opentera_webrtc_ros_msgs__py
+[ 88%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_device_event_s.c.o[0m
+[ 88%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_join_session_event_s.c.o[0m
+[ 88%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_database_event_s.c.o[0m
+[ 88%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_join_session_reply_event_s.c.o[0m
+[ 89%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_label_array_s.c.o[0m
+[ 89%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_label_edit_s.c.o[0m
+[ 89%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_label_s.c.o[0m
+[ 90%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_label_simple_s.c.o[0m
+[ 90%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_label_simple_array_s.c.o[0m
+[ 91%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_label_simple_edit_s.c.o[0m
+[ 91%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_leave_session_event_s.c.o[0m
+[ 91%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_log_event_s.c.o[0m
+[ 92%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_participant_event_s.c.o[0m
+[ 92%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_stop_session_event_s.c.o[0m
+[ 93%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_user_event_s.c.o[0m
+[ 93%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_open_tera_event_s.c.o[0m
+[ 94%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_peer_s.c.o[0m
+[ 94%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_peer_data_s.c.o[0m
+[ 94%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_peer_image_s.c.o[0m
+[ 95%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_peer_audio_s.c.o[0m
+[ 95%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_peer_status_s.c.o[0m
+[ 96%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_robot_status_s.c.o[0m
+[ 96%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_waypoint_s.c.o[0m
+[ 97%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/msg/_waypoint_array_s.c.o[0m
+[ 97%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/srv/_change_map_view_s.c.o[0m
+[ 97%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/srv/_image_goal_to_map_goal_s.c.o[0m
+[ 98%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_generator_py.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/srv/_set_string_s.c.o[0m
+[ 98%] [32m[1mLinking C shared library rosidl_generator_py/opentera_webrtc_ros_msgs/libopentera_webrtc_ros_msgs__rosidl_generator_py.so[0m
+[ 98%] Built target opentera_webrtc_ros_msgs__rosidl_generator_py
+[ 99%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_c__pyext.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/_opentera_webrtc_ros_msgs_s.ep.rosidl_typesupport_c.c.o[0m
+[ 99%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c__pyext.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/_opentera_webrtc_ros_msgs_s.ep.rosidl_typesupport_introspection_c.c.o[0m
+[100%] [32mBuilding C object CMakeFiles/opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c__pyext.dir/rosidl_generator_py/opentera_webrtc_ros_msgs/_opentera_webrtc_ros_msgs_s.ep.rosidl_typesupport_fastrtps_c.c.o[0m
+[100%] [32m[1mLinking C shared library rosidl_generator_py/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so[0m
+[100%] [32m[1mLinking C shared library rosidl_generator_py/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so[0m
+[100%] [32m[1mLinking C shared library rosidl_generator_py/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so[0m
+[100%] Built target opentera_webrtc_ros_msgs__rosidl_typesupport_c__pyext
+[100%] Built target opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c__pyext
+[100%] Built target opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c__pyext
+-- Install configuration: "Debug"
+-- Execute custom install script
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/ament_index/resource_index/rosidl_interfaces/opentera_webrtc_ros_msgs
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/database_event.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/database_event__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/database_event__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/database_event__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/device_event__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/device_event__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/device_event__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_event__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_event__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_event__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_array__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_array__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_array__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_edit__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_edit__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_edit__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/log_event__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/log_event__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/log_event__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/participant_event__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/participant_event__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/participant_event__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_audio__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_audio__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_audio__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_data__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_data__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_data__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_image__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_image__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_image__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_status__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_status__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_status__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/robot_status__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/robot_status__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/robot_status__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/user_event__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/user_event__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/user_event__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/device_event.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/join_session_event.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/join_session_reply_event.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label_array.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label_edit.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label_simple.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label_simple_array.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label_simple_edit.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/leave_session_event.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/log_event.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/open_tera_event.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/participant_event.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/peer.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/peer_audio.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/peer_data.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/peer_image.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/peer_status.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/robot_status.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/rosidl_generator_c__visibility_control.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/stop_session_event.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/user_event.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/waypoint.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/waypoint_array.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/change_map_view.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/change_map_view__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/change_map_view__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/change_map_view__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/set_string__functions.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/set_string__struct.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/set_string__type_support.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/image_goal_to_map_goal.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/set_string.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/environment/library_path.sh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/environment/library_path.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/database_event__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/device_event__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_event__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_array__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_edit__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/log_event__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/participant_event__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_audio__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_data__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_image__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_status__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/robot_status__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/user_event__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/rosidl_typesupport_fastrtps_c__visibility_control.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/change_map_view__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/set_string__rosidl_typesupport_fastrtps_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/database_event.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/database_event__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/database_event__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/database_event__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/device_event__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/device_event__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/device_event__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_event__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_event__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_event__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_array__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_array__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_array__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_edit__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_edit__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_edit__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/log_event__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/log_event__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/log_event__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/participant_event__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/participant_event__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/participant_event__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_audio__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_audio__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_audio__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_data__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_data__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_data__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_image__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_image__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_image__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_status__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_status__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_status__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/robot_status__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/robot_status__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/robot_status__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/user_event__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/user_event__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/user_event__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/device_event.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/join_session_event.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/join_session_reply_event.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label_array.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label_edit.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label_simple.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label_simple_array.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/label_simple_edit.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/leave_session_event.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/log_event.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/open_tera_event.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/participant_event.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/peer.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/peer_audio.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/peer_data.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/peer_image.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/peer_status.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/robot_status.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/stop_session_event.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/user_event.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/waypoint.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/waypoint_array.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/change_map_view.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/change_map_view__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/change_map_view__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/change_map_view__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/set_string__builder.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/set_string__struct.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/set_string__traits.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/image_goal_to_map_goal.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/set_string.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/database_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/device_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_array__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_edit__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/log_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/participant_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_audio__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_data__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_image__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_status__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/robot_status__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/user_event__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/rosidl_typesupport_fastrtps_cpp__visibility_control.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/change_map_view__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/set_string__rosidl_typesupport_fastrtps_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/database_event__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/device_event__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_event__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_array__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_edit__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/log_event__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/participant_event__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_audio__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_data__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_image__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_status__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/robot_status__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/user_event__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/rosidl_typesupport_introspection_c__visibility_control.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/change_map_view__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/set_string__rosidl_typesupport_introspection_c.h
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/database_event__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/device_event__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_event__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/join_session_reply_event__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_array__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_edit__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_array__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/label_simple_edit__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/leave_session_event__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/log_event__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/open_tera_event__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/participant_event__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_audio__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_data__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_image__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/peer_status__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/robot_status__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/stop_session_event__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/user_event__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/msg/detail/waypoint_array__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/change_map_view__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/image_goal_to_map_goal__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/include/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs/srv/detail/set_string__rosidl_typesupport_introspection_cpp.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/environment/pythonpath.sh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/environment/pythonpath.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs-0.0.0-py3.10.egg-info/PKG-INFO
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs-0.0.0-py3.10.egg-info/SOURCES.txt
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs-0.0.0-py3.10.egg-info/dependency_links.txt
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs-0.0.0-py3.10.egg-info/top_level.txt
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/__init__.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/_opentera_webrtc_ros_msgs_s.ep.rosidl_typesupport_c.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/_opentera_webrtc_ros_msgs_s.ep.rosidl_typesupport_fastrtps_c.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/_opentera_webrtc_ros_msgs_s.ep.rosidl_typesupport_introspection_c.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/libopentera_webrtc_ros_msgs__rosidl_generator_py.so
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/__init__.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_database_event.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_database_event_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_device_event.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_device_event_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_join_session_event.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_join_session_event_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_join_session_reply_event.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_join_session_reply_event_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_array.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_array_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_edit.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_edit_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_simple.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_simple_array.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_simple_array_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_simple_edit.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_simple_edit_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_simple_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_leave_session_event.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_leave_session_event_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_log_event.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_log_event_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_open_tera_event.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_open_tera_event_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_participant_event.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_participant_event_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_audio.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_audio_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_data.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_data_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_image.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_image_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_status.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_status_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_robot_status.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_robot_status_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_stop_session_event.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_stop_session_event_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_user_event.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_user_event_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_waypoint.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_waypoint_array.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_waypoint_array_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_waypoint_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/__init__.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/_change_map_view.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/_change_map_view_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/_image_goal_to_map_goal.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/_image_goal_to_map_goal_s.c
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/_set_string.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/_set_string_s.c
+-- Up-to-date symlink: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs_s__rosidl_typesupport_fastrtps_c.cpython-310-aarch64-linux-gnu.so
+-- Up-to-date symlink: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs_s__rosidl_typesupport_introspection_c.cpython-310-aarch64-linux-gnu.so
+-- Up-to-date symlink: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/opentera_webrtc_ros_msgs_s__rosidl_typesupport_c.cpython-310-aarch64-linux-gnu.so
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/DatabaseEvent.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/DeviceEvent.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/JoinSessionEvent.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/JoinSessionReplyEvent.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LabelArray.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LabelEdit.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/Label.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LabelSimple.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LabelSimpleArray.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LabelSimpleEdit.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LeaveSessionEvent.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LogEvent.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/ParticipantEvent.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/StopSessionEvent.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/UserEvent.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/OpenTeraEvent.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/Peer.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/PeerData.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/PeerImage.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/PeerAudio.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/PeerStatus.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/RobotStatus.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/Waypoint.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/WaypointArray.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/ChangeMapView.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/ImageGoalToMapGoal.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/SetString.idl
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/DatabaseEvent.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/DeviceEvent.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/JoinSessionEvent.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/JoinSessionReplyEvent.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LabelArray.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LabelEdit.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/Label.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LabelSimple.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LabelSimpleArray.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LabelSimpleEdit.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LeaveSessionEvent.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/LogEvent.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/ParticipantEvent.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/StopSessionEvent.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/UserEvent.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/OpenTeraEvent.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/Peer.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/PeerData.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/PeerImage.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/PeerAudio.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/PeerStatus.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/RobotStatus.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/Waypoint.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/msg/WaypointArray.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/ChangeMapView.srv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/ChangeMapView_Request.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/ChangeMapView_Response.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/ImageGoalToMapGoal.srv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/ImageGoalToMapGoal_Request.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/ImageGoalToMapGoal_Response.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/SetString.srv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/SetString_Request.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/srv/SetString_Response.msg
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/ament_index/resource_index/package_run_dependencies/opentera_webrtc_ros_msgs
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/ament_index/resource_index/parent_prefix_path/opentera_webrtc_ros_msgs
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/environment/ament_prefix_path.sh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/environment/ament_prefix_path.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/environment/path.sh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/environment/path.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/local_setup.bash
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/local_setup.sh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/local_setup.zsh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/local_setup.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/package.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/ament_index/resource_index/packages/opentera_webrtc_ros_msgs
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/rosidl_cmake-extras.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/ament_cmake_export_dependencies-extras.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/ament_cmake_export_include_directories-extras.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/ament_cmake_export_libraries-extras.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/ament_cmake_export_targets-extras.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/rosidl_cmake_export_typesupport_targets-extras.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/opentera_webrtc_ros_msgsConfig.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/opentera_webrtc_ros_msgsConfig-version.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/package.xml
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_generator_c.so
+-- Set runtime path of "/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_generator_c.so" to ""
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.so
+-- Set runtime path of "/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_c.so" to ""
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.so
+-- Set runtime path of "/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cpp.so" to ""
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.so
+-- Set runtime path of "/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_introspection_c.so" to ""
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_c.so
+-- Set runtime path of "/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_c.so" to ""
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.so
+-- Set runtime path of "/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cpp.so" to ""
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_cpp.so
+-- Set runtime path of "/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_typesupport_cpp.so" to ""
+Listing '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/__init__.py'...
+Listing '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/__init__.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_database_event.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_device_event.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_join_session_event.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_join_session_reply_event.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_array.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_edit.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_simple.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_simple_array.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_label_simple_edit.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_leave_session_event.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_log_event.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_open_tera_event.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_participant_event.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_audio.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_data.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_image.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_peer_status.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_robot_status.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_stop_session_event.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_user_event.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_waypoint.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/msg/_waypoint_array.py'...
+Listing '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/__init__.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/_change_map_view.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/_image_goal_to_map_goal.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/local/lib/python3.10/dist-packages/opentera_webrtc_ros_msgs/srv/_set_string.py'...
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_generator_py.so
+-- Set runtime path of "/home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/lib/libopentera_webrtc_ros_msgs__rosidl_generator_py.so" to ""
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/export_opentera_webrtc_ros_msgs__rosidl_generator_cExport.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/export_opentera_webrtc_ros_msgs__rosidl_generator_cExport-debug.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/export_opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cExport.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/export_opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cExport-debug.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/export_opentera_webrtc_ros_msgs__rosidl_generator_cppExport.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/export_opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cppExport.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/export_opentera_webrtc_ros_msgs__rosidl_typesupport_fastrtps_cppExport-debug.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cExport.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cExport-debug.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/opentera_webrtc_ros_msgs__rosidl_typesupport_cExport.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/opentera_webrtc_ros_msgs__rosidl_typesupport_cExport-debug.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cppExport.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/opentera_webrtc_ros_msgs__rosidl_typesupport_introspection_cppExport-debug.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/opentera_webrtc_ros_msgs__rosidl_typesupport_cppExport.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/opentera_webrtc_ros_msgs__rosidl_typesupport_cppExport-debug.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/export_opentera_webrtc_ros_msgs__rosidl_generator_pyExport.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros_msgs/share/opentera_webrtc_ros_msgs/cmake/export_opentera_webrtc_ros_msgs__rosidl_generator_pyExport-debug.cmake

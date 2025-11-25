@@ -1,0 +1,41 @@
+[0.053s] Invoking command in '/home/ws/ugv_ws/build/explore_lite': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/explore_lite -- -j4 -l4
+[0.270s] [ 20%] Built target gtest_main
+[0.273s] [ 40%] Built target gtest
+[0.311s] [ 60%] Built target test_explore
+[0.335s] [ 70%] [32mBuilding CXX object CMakeFiles/explore.dir/src/costmap_client.cpp.o[0m
+[0.344s] [ 90%] [32mBuilding CXX object CMakeFiles/explore.dir/src/explore.cpp.o[0m
+[0.344s] [ 90%] [32mBuilding CXX object CMakeFiles/explore.dir/src/frontier_search.cpp.o[0m
+[18.772s] [100%] [32m[1mLinking CXX executable explore[0m
+[25.539s] [100%] Built target explore
+[25.552s] Invoked command in '/home/ws/ugv_ws/build/explore_lite' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/explore_lite -- -j4 -l4
+[25.591s] Invoking command in '/home/ws/ugv_ws/build/explore_lite': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/explore_lite
+[25.601s] -- Install configuration: ""
+[25.601s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/include/explore/
+[25.601s] -- Installing: /home/ws/ugv_ws/install/explore_lite/include/explore//explore.h
+[25.601s] -- Installing: /home/ws/ugv_ws/install/explore_lite/include/explore//costmap_client.h
+[25.602s] -- Installing: /home/ws/ugv_ws/install/explore_lite/include/explore//costmap_tools.h
+[25.602s] -- Installing: /home/ws/ugv_ws/install/explore_lite/include/explore//frontier_search.h
+[25.602s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/config
+[25.603s] -- Installing: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/config/params_costmap.yaml
+[25.603s] -- Installing: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/config/params.yaml
+[25.603s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/launch
+[25.604s] -- Installing: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/launch/explore.launch.py
+[25.606s] -- Installing: /home/ws/ugv_ws/install/explore_lite/lib/explore_lite/explore
+[25.614s] -- Set runtime path of "/home/ws/ugv_ws/install/explore_lite/lib/explore_lite/explore" to ""
+[25.615s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/ament_index/resource_index/package_run_dependencies/explore_lite
+[25.615s] -- Installing: /home/ws/ugv_ws/install/explore_lite/share/ament_index/resource_index/parent_prefix_path/explore_lite
+[25.616s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/environment/ament_prefix_path.sh
+[25.616s] -- Installing: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/environment/ament_prefix_path.dsv
+[25.616s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/environment/path.sh
+[25.616s] -- Installing: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/environment/path.dsv
+[25.617s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/local_setup.bash
+[25.617s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/local_setup.sh
+[25.617s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/local_setup.zsh
+[25.617s] -- Installing: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/local_setup.dsv
+[25.617s] -- Installing: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/package.dsv
+[25.618s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/ament_index/resource_index/packages/explore_lite
+[25.618s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/cmake/ament_cmake_export_include_directories-extras.cmake
+[25.618s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/cmake/explore_liteConfig.cmake
+[25.618s] -- Up-to-date: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/cmake/explore_liteConfig-version.cmake
+[25.618s] -- Installing: /home/ws/ugv_ws/install/explore_lite/share/explore_lite/package.xml
+[25.622s] Invoked command in '/home/ws/ugv_ws/build/explore_lite' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --install /home/ws/ugv_ws/build/explore_lite

@@ -1,0 +1,244 @@
+[35m[1mConsolidate compiler generated dependencies of target opentera_webrtc_ros_json_data_handler[0m
+[35m[1mConsolidate compiler generated dependencies of target OpenteraWebrtcNativeGStreamer[0m
+[  0%] Built target ament_cmake_python_symlink_opentera_webrtc_ros
+[  2%] Built target opentera_webrtc_ros_json_data_handler
+[35m[1mConsolidate compiler generated dependencies of target ixwebsocket[0m
+[  3%] Built target signaling_server-build-requirements-target
+[ 33%] Built target ixwebsocket
+[ 33%] Built target native_client-requirements-target
+[ 36%] Built target signaling_server-run-requirements-target
+[ 47%] Built target OpenteraWebrtcNativeGStreamer
+[ 50%] Built target signaling_server-dist-target
+[ 51%] Built target OpenteraWebrtcNativeGStreamer-so-target
+[35m[1mConsolidate compiler generated dependencies of target OpenteraWebrtcNativeClient[0m
+[ 71%] Built target OpenteraWebrtcNativeClient
+[35m[1mConsolidate compiler generated dependencies of target opentera_webrtc_ros_data_channel_bridge[0m
+[35m[1mConsolidate compiler generated dependencies of target opentera_webrtc_ros_topic_streamer[0m
+[ 75%] Built target opentera_webrtc_ros_data_channel_bridge
+[35m[1mConsolidate compiler generated dependencies of target _opentera_webrtc_native_client[0m
+[ 80%] Built target opentera_webrtc_ros_topic_streamer
+[ 93%] Built target _opentera_webrtc_native_client
+[ 93%] Built target _opentera_webrtc_native_client-so-target
+[ 96%] Built target _opentera_webrtc_native_client-stub-target
+[ 96%] [34m[1mGenerating cmake/pip_utils/dist.stamp[0m
+running egg_info
+writing opentera_webrtc_ros.egg-info/PKG-INFO
+writing dependency_links to opentera_webrtc_ros.egg-info/dependency_links.txt
+writing top-level names to opentera_webrtc_ros.egg-info/top_level.txt
+reading manifest file 'opentera_webrtc_ros.egg-info/SOURCES.txt'
+writing manifest file 'opentera_webrtc_ros.egg-info/SOURCES.txt'
+[ 96%] Built target ament_cmake_python_build_opentera_webrtc_ros_egg
+/usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+  warnings.warn(
+[100%] Built target native_client-dist-target
+-- Install configuration: "Debug"
+-- Execute custom install script
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/cmake/ixwebsocket/ixwebsocket-config.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/pkgconfig/ixwebsocket.pc
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/bin/libOpenteraWebrtcNativeGStreamer.so
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libOpenteraWebrtcNativeClient.a
+-- Up-to-date symlink: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libOpenteraWebrtcNativeClient.a
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libOpenteraWebrtcNativeGStreamer.so
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libwebrtc.a
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libboringssl.a
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/opentera_webrtc_ros/topic_streamer
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/opentera_webrtc_ros/data_channel_bridge
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/opentera_webrtc_ros/json_data_handler
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/opentera_webrtc_ros/lib/json.hpp
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/launch/opentera_data_test.launch.xml
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/launch/ros_data_channel_client.launch.xml
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/launch/ros_json_data_handler.launch.xml
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/launch/ros_stream_client.launch.xml
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/opentera_webrtc_ros/goal_manager.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/opentera_webrtc_ros/labels_manager.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/library_path.sh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/library_path.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/pythonpath.sh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/pythonpath.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros-0.1.0-py3.10.egg-info/PKG-INFO
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros-0.1.0-py3.10.egg-info/SOURCES.txt
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros-0.1.0-py3.10.egg-info/dependency_links.txt
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros-0.1.0-py3.10.egg-info/top_level.txt
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/__init__.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libmapimageconverter.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libnavigation.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libyamldatabase.py
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/ament_index/resource_index/package_run_dependencies/opentera_webrtc_ros
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/ament_index/resource_index/parent_prefix_path/opentera_webrtc_ros
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/ament_prefix_path.sh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/ament_prefix_path.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/path.sh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/environment/path.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/local_setup.bash
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/local_setup.sh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/local_setup.zsh
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/local_setup.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/package.dsv
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/ament_index/resource_index/packages/opentera_webrtc_ros
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/cmake/ament_cmake_export_include_directories-extras.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/cmake/ament_cmake_export_libraries-extras.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/cmake/opentera_webrtc_rosConfig.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/cmake/opentera_webrtc_rosConfig-version.cmake
+-- Symlinking: /home/ws/ugv_ws/install/opentera_webrtc_ros/share/opentera_webrtc_ros/package.xml
+Listing '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/__init__.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libmapimageconverter.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libnavigation.py'...
+Compiling '/home/ws/ugv_ws/install/opentera_webrtc_ros/local/lib/python3.10/dist-packages/opentera_webrtc_ros/libyamldatabase.py'...
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/libixwebsocket.a
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXBase64.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXBench.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXCancellationRequest.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXConnectionState.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXDNSLookup.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXExponentialBackoff.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXGetFreePort.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXGzipCodec.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXHttp.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXHttpClient.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXHttpServer.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXNetSystem.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXProgressCallback.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSelectInterrupt.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSelectInterruptFactory.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSelectInterruptPipe.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSelectInterruptEvent.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSetThreadName.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocket.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocketConnect.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocketFactory.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocketServer.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocketTLSOptions.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXStrCaseCompare.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUdpSocket.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUniquePtr.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUrlParser.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUuid.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUtf8Validator.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXUserAgent.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocket.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketCloseConstants.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketCloseInfo.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketErrorInfo.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketHandshake.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketHandshakeKeyGen.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketHttpHeaders.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketInitResult.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketMessage.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketMessageType.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketOpenInfo.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketPerMessageDeflate.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketPerMessageDeflateCodec.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketPerMessageDeflateOptions.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketProxyServer.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketSendData.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketSendInfo.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketServer.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketTransport.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXWebSocketVersion.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/ixwebsocket/IXSocketOpenSSL.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/cmake/ixwebsocket/ixwebsocket-targets.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/lib/cmake/ixwebsocket/ixwebsocket-targets-debug.cmake
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/ordered_map.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/adl_serializer.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/json_fwd.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/byte_container_with_subtype.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/primitive_iterator.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/internal_iterator.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/iter_impl.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/json_reverse_iterator.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/iteration_proxy.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/iterators/iterator_traits.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/value_t.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/json_pointer.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/hash.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/string_concat.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/json_ref.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/abi_macros.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/json_custom_base_class.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/string_escape.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/macro_unscope.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/output
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/output/output_adapters.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/output/binary_writer.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/output/serializer.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/conversions
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/conversions/to_json.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/conversions/from_json.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/conversions/to_chars.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/macro_scope.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/std_fs.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/detected.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/identity_tag.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/cpp_future.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/void_t.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/call_std
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/call_std/end.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/call_std/begin.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/type_traits.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/meta/is_sax.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/exceptions.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/position_t.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/json_sax.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/input_adapters.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/parser.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/lexer.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/detail/input/binary_reader.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/thirdparty
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/thirdparty/hedley
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/thirdparty/hedley/hedley.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/thirdparty/hedley/hedley_undef.hpp
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/include/nlohmann/json.hpp
+-- Up-to-date: /home/ws/ugv_ws/install/opentera_webrtc_ros/include
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Codecs
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Codecs/VideoCodecFactories.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sinks
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sinks/AudioSink.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sinks/EncodedVideoSink.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sinks/VideoSink.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Handlers
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Handlers/PeerConnectionHandler.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Handlers/DataChannelPeerConnectionHandler.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Handlers/StreamPeerConnectionHandler.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/thread.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/FunctionTask.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/IceServer.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/Client.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/ClassMacro.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Utils/Http.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/DataChannelClient.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/VideoSourceConfiguration.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/SignalingServerConfiguration.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/AudioSourceConfiguration.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/DataChannelConfiguration.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/WebrtcConfiguration.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Configurations/VideoStreamConfiguration.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sources
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sources/AudioSource.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Sources/VideoSource.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/StreamClient.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Signaling
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Signaling/SignalingClient.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/Signaling/WebSocketSignalingClient.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/version.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/OpenteraAudioDeviceModule.h
+-- Installing: /home/ws/ugv_ws/install/opentera_webrtc_ros/include/OpenteraWebrtcNativeClient/WebrtcClient.h
+Looking in links: /home/ws/ugv_ws/build/opentera_webrtc_ros/SYSTEM/opentera-webrtc-native-client/OpenteraWebrtcNativeClient/python/package/opentera_webrtc_native_client/dist
+Processing ./dist/opentera_webrtc_native_client-1.2.6-cp310-cp310-linux_aarch64.whl
+Installing collected packages: opentera_webrtc.native_client
+Successfully installed opentera_webrtc.native_client-1.2.6
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+Looking in links: /home/ws/ugv_ws/build/opentera_webrtc_ros/SYSTEM/signaling-server/opentera_webrtc_signaling_server/dist
+Processing ./dist/opentera_webrtc_signaling_server-1.2.6-py3-none-any.whl
+Installing collected packages: opentera_webrtc.signaling_server
+Successfully installed opentera_webrtc.signaling_server-1.2.6
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
