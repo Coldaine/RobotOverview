@@ -84,7 +84,7 @@
     apt install ros-humble-rosbridge-*
     apt install ros-humble-rqt-*
     apt install ros-humble-rtabmap-*
-    apt install ros-humble-v4l2_camera
+    apt install ros-humble-v4l2-camera
     apt install ros-humble-depthai-*
     
     #Simulation virtual machine installation
