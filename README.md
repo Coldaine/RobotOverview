@@ -71,7 +71,6 @@
     
     ```jsx
     apt-get update 
-    apt-get upgrade 
     
     apt install python3-pip
     apt-get install alsa-utils
