@@ -1,3 +1,5 @@
-build/
+#
+build/ 
 install/
-log/src/ugv_main/ugv_voice/ugv_voice/models/sherpa-onnx-vits-zh-ll/*.onnx
+log/
+# src/ugv_main/ugv_voice/ugv_voice/models/sherpa-onnx-vits-zh-ll/*.onnx

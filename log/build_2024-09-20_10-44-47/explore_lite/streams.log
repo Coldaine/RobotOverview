@@ -1,7 +1,0 @@
-[0.040s] Invoking command in '/home/ws/ugv_ws/build/explore_lite': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/ws/ugv_ws/install/ugv_web_app:/home/ws/ugv_ws/install/ugv_vision:/home/ws/ugv_ws/install/ugv_tools:/home/ws/ugv_ws/install/ugv_chat_ai:/home/ws/ugv_ws/install/ugv_bringup:/opt/ros/humble /usr/bin/cmake --build /home/ws/ugv_ws/build/explore_lite -- -j4 -l4
-[0.164s] [ 20%] Built target gtest_main
-[0.173s] [ 40%] Built target gtest
-[0.191s] [ 50%] [32mBuilding CXX object CMakeFiles/explore.dir/src/costmap_client.cpp.o[0m
-[0.212s] [ 60%] [32mBuilding CXX object CMakeFiles/explore.dir/src/frontier_search.cpp.o[0m
-[0.223s] [ 70%] [32mBuilding CXX object CMakeFiles/explore.dir/src/explore.cpp.o[0m
-[0.255s] [ 90%] Built target test_explore

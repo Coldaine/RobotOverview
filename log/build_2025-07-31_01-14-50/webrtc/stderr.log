@@ -1,6 +1,0 @@
-Cloning into 'depot_tools'...
-fatal: unable to access 'https://chromium.googlesource.com/chromium/tools/depot_tools.git/': Failed to connect to chromium.googlesource.com port 443 after 134792 ms: Connection timed out
-[31mCMake Error at CMakeLists.txt:21 (message):
-  cannot fetch depot_tools
-
-[0m
