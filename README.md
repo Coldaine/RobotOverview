@@ -84,7 +84,7 @@
     apt install ros-humble-rosbridge-*
     apt install ros-humble-rqt-*
     apt install ros-humble-rtabmap-*
-    apt install ros-humble-usb-cam
+    apt install ros-humble-v4l2_camera
     apt install ros-humble-depthai-*
     
     #Simulation virtual machine installation
@@ -113,8 +113,8 @@
     ```jsx
     pyserial
     flask
-    mediapipe
     requests
+    dt_apriltags
     ```
     
 - Feature pack ugv_ws 
