@@ -51,7 +51,7 @@ ugv_ws
 ---
 
 <details>
-<summary><strong>1.2. Package Description</strong></summary>
+<summary><strong>1.2 Package Description</strong></summary>
 
 #### README.md
 This file provides an overview of the project, including usage instructions, build steps, and general documentation.
@@ -118,7 +118,7 @@ This folder contains the core software package of the UGV system, including func
 ## 2. Environment
 
 <details open>
-<summary><strong>2.1. Base</strong></summary>
+<summary><strong>2.1 Base</strong></summary>
 
 - Operating System: Ubuntu 22.04
 
@@ -153,12 +153,12 @@ This folder contains the core software package of the UGV system, including func
 ---
 
 <details>
-<summary><strong>2.2. Build from source</strong></summary>
+<summary><strong>2.2 Build from source</strong></summary>
 
 #### Download source code
 
 ```jsx
-git clone -b main https://github.com/waveshareteam/ugv_ws.git
+git clone -b ros2-humble-develop_251125 https://github.com/waveshareteam/ugv_ws.git
 ```
     
 #### First compilation
@@ -190,7 +190,7 @@ This script allows users to select a specific package and perform the compilatio
 ---
 
 <details>
-<summary><strong>2.3. Factory image</strong></summary>
+<summary><strong>2.3 Factory image</strong></summary>
 
 - Oracle VM VirtualBox(simulator) image:
     - [VM_ROS2](https://drive.google.com/file/d/1BUiWwmoEM_r46liVtBiZyStXq5lhEM2j/view?usp=sharing)
@@ -210,17 +210,17 @@ This script allows users to select a specific package and perform the compilatio
 
 **Note: The ROS packages in the factory-provided images are all used within containers.**
 
-**Use `screen` to run multiple tasks simultaneously, for instructions on using `screen`, please refer to section `3.1.4. Control the robot`.**
+**Use `screen` to run multiple tasks simultaneously, for instructions on using `screen`, please refer to section `3.1.4 Control the robot`.**
 
 use_rviz: enable rviz visualization (true/false)
 
 <details open>
-<summary><strong>3.1. Real Robot on UGV</strong></summary>
+<summary><strong>3.1 Real Robot on UGV</strong></summary>
 
 ---
 
 <details>
-<summary><strong>3.1.1. Prepare</strong></summary>
+<summary><strong>3.1.1 Prepare</strong></summary>
 
 - Start the vehicle, use MobarXterm to remotely access the host to stop the `ugv-app` service, start the container and allow SSH remote access to the container.
 
@@ -257,7 +257,7 @@ use_rviz: enable rviz visualization (true/false)
 ---
 
 <details>
-<summary><strong>3.1.2. View model joints</strong></summary>
+<summary><strong>3.1.2 View model joints</strong></summary>
 
 <span style="color:red;">Note: The environment variables of the factory image have been pre-set with UGV_MODEL and LDLIDAR_MODEL.</span>
 
@@ -339,7 +339,7 @@ source ~/.bashrc
 ---
 
 <details>
-<summary><strong>3.1.3. Bring up the robot</strong></summary>
+<summary><strong>3.1.3 Bring up the robot</strong></summary>
 
 - Start up 
     
@@ -356,7 +356,7 @@ source ~/.bashrc
 ---
 
 <details>
-<summary><strong>3.1.4. Control the robot</strong></summary>
+<summary><strong>3.1.4 Control the robot</strong></summary>
 
 Use `screen` to run multiple tasks simultaneously.
 
@@ -526,7 +526,7 @@ Use `screen` to run multiple tasks simultaneously.
 ---
 
 <details>
-<summary><strong>3.1.5. Lidar interaction</strong></summary>
+<summary><strong>3.1.5 Lidar interaction</strong></summary>
 
 <span style="color:red;">Note: Please ensure the environment is open and clean.</span>
 - Start up 
@@ -599,7 +599,7 @@ Use `screen` to run multiple tasks simultaneously.
 ---
 
 <details>
-<summary><strong>3.1.6. Visual interaction</strong></summary>
+<summary><strong>3.1.6 Visual interaction</strong></summary>
 
 - Start up 
         
@@ -967,7 +967,7 @@ Use `screen` to run multiple tasks simultaneously.
 ---
 
 <details>
-<summary><strong>3.1.7. Voice interaction</strong></summary>
+<summary><strong>3.1.7 Voice interaction</strong></summary>
 
 <details>
 <summary>Voice interaction by topics</summary>
@@ -1110,7 +1110,7 @@ It uses [ollama](https://github.com/ollama/ollama#chat-with-a-model) to run llm 
 
 <details>
 
-<summary><strong>3.1.8. Mapping</strong></summary>
+<summary><strong>3.1.8 Mapping</strong></summary>
 
 After the map is built, execute the script to save the map.
 
@@ -1191,7 +1191,7 @@ Map saved folder： `/home/ws/ugv_ws/src/ugv_main/ugv_nav/maps`
 ---
 
 <details>
-<summary><strong>3.1.9. Navigation</strong></summary>
+<summary><strong>3.1.9 Navigation</strong></summary>
 
 <details>
 <summary>Local localization</summary>
@@ -1338,7 +1338,7 @@ ros2 launch ugv_nav nav.launch.py use_slam:=true use_rviz:=true
 ---
 
 <details>
-<summary><strong>3.1.10. Web ai interaction</strong></summary>
+<summary><strong>3.1.10 Web ai interaction</strong></summary>
 
 - Start the car
     
@@ -1400,11 +1400,11 @@ ros2 launch ugv_nav nav.launch.py use_slam:=true use_rviz:=true
 ---
 
 <details>
-<summary><strong>3.1.11. Web side control</strong></summary>
+<summary><strong>3.1.11 Web side control</strong></summary>
  
 - Start mapping
 
-    Please refer to section `3.1.7. Mapping`. 
+    Please refer to section `3.1.7 Mapping`. 
 
     ```jsx
     ros2 launch ugv_slam slam_toolbox.launch.py use_slam:=sync use_rviz:=true
@@ -1423,7 +1423,7 @@ ros2 launch ugv_nav nav.launch.py use_slam:=true use_rviz:=true
 ---
 
 <details>
-<summary><strong>3.1.12. Command interaction </strong></summary>
+<summary><strong>3.1.12 Command interaction </strong></summary>
 
 <span style="color:red;">**Note: you need to put the car down and run, and judge whether the goal has been completed based on the odometer**</span>
     
@@ -1513,12 +1513,12 @@ ros2 run ugv_tools behavior_ctrl
 ---
 
 <details open>
-<summary><strong>3.2. Simulation on VMware Workstation 17Pro / Oracle VM VirtualBox</strong></summary>
+<summary><strong>3.2 Simulation on VMware Workstation 17Pro / Oracle VM VirtualBox</strong></summary>
 
 ---
 
 <details>
-<summary><strong>3.2.1. Prepare</strong></summary>
+<summary><strong>3.2.1 Prepare</strong></summary>
 
 - Start the VMware Workstation 17 Pro / Oracle VM VirtualBox, start the container and allow SSH remote access to the container.
 
@@ -1537,7 +1537,7 @@ ros2 run ugv_tools behavior_ctrl
 ---
 
 <details>
-<summary><strong>3.2.2. View model joints</strong></summary>
+<summary><strong>3.2.2 View model joints</strong></summary>
 
 <span style="color:red;">Note: The environment variables of the factory image have been pre-set with UGV_MODEL and LDLIDAR_MODEL.</span>
 
@@ -1619,7 +1619,7 @@ source ~/.bashrc
 ---
 
 <details>
-<summary><strong>3.2.3. Bring up the robot</strong></summary>
+<summary><strong>3.2.3 Bring up the robot</strong></summary>
 
 - Start up 
     
@@ -1634,7 +1634,7 @@ source ~/.bashrc
 ---
 
 <details>
-<summary><strong>3.2.4. Control the robot</strong></summary>
+<summary><strong>3.2.4 Control the robot</strong></summary>
 
 - Start up 
 
@@ -1729,7 +1729,7 @@ source ~/.bashrc
 ---
 
 <details>
-<summary><strong>3.2.5. Mapping</strong></summary>
+<summary><strong>3.2.5 Mapping</strong></summary>
 
 After the map is built, execute the script to save the map.
 
@@ -1808,7 +1808,7 @@ Map saved folder： `src/ugv_main/ugv_nav/maps`
 ---
 
 <details>
-<summary><strong>3.2.6. Navigation</strong></summary>
+<summary><strong>3.2.6 Navigation</strong></summary>
 
 <details>
 <summary>Local localization</summary>
@@ -1956,7 +1956,7 @@ ros2 launch ugv_nav nav.launch.py use_slam:=true use_rviz:=true use_sim_time:=tr
 ---
 
 <details>
-<summary><strong>3.2.7. Web ai interaction</strong></summary>
+<summary><strong>3.2.7 Web ai interaction</strong></summary>
 
 - Start the car
     
@@ -2018,11 +2018,11 @@ ros2 launch ugv_nav nav.launch.py use_slam:=true use_rviz:=true use_sim_time:=tr
 ---
 
 <details>
-<summary><strong>3.2.8. Web side control</strong></summary>
+<summary><strong>3.2.8 Web side control</strong></summary>
 
 - Start mapping
 
-    Please refer to section `3.2.5. Mapping`. 
+    Please refer to section `3.2.5 Mapping`. 
 
     ```jsx
     ros2 launch ugv_slam slam_toolbox.launch.py use_slam:=sync use_rviz:=true use_sim_time:=true
@@ -2041,7 +2041,7 @@ ros2 launch ugv_nav nav.launch.py use_slam:=true use_rviz:=true use_sim_time:=tr
 ---
 
 <details>
-<summary><strong>3.2.9. Command interaction</strong></summary>
+<summary><strong>3.2.9 Command interaction</strong></summary>
     
 ```jsx
 ros2 run ugv_tools behavior_ctrl
