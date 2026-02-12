@@ -25,7 +25,7 @@ def generate_launch_description():
     camera_node = Node(
             package='v4l2_camera', 
             executable='v4l2_camera_node', 
-            name='usb_cam',
+            name='v4l2_camera',
             parameters= [param_file]
             #remappings=camera.remappings
     )

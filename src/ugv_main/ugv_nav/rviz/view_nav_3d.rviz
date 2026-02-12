@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /RobotModel1
         - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
@@ -60,7 +61,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /ugv/robot_description
+        Value: /robot_description
       Enabled: true
       Links:
         3d_camera_link:
@@ -74,14 +75,6 @@ Visualization Manager:
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
         base_footprint:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_imu_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        base_lidar_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -105,6 +98,39 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        oak-d_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_left_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_left_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_model_origin:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        oak_rgb_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_rgb_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_right_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_right_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         pt_base_link:
           Alpha: 1
           Show Axes: false
@@ -152,10 +178,6 @@ Visualization Manager:
         All Enabled: false
         base_footprint:
           Value: true
-        base_imu_link:
-          Value: false
-        base_lidar_frame:
-          Value: false
         base_lidar_link:
           Value: false
         base_link:
@@ -165,11 +187,9 @@ Visualization Manager:
         left_up_wheel_link:
           Value: false
         map:
-          Value: false
-        oak:
-          Value: false
-        oak_imu_frame:
-          Value: false
+          Value: true
+        oak-d_frame:
+          Value: true
         oak_left_camera_frame:
           Value: false
         oak_left_camera_optical_frame:
@@ -209,9 +229,7 @@ Visualization Manager:
             base_footprint:
               base_link:
                 3d_camera_link:
-                  oak:
-                    oak_imu_frame:
-                      {}
+                  oak-d_frame:
                     oak_left_camera_frame:
                       oak_left_camera_optical_frame:
                         {}
@@ -223,10 +241,6 @@ Visualization Manager:
                     oak_right_camera_frame:
                       oak_right_camera_optical_frame:
                         {}
-                base_imu_link:
-                  {}
-                base_lidar_frame:
-                  {}
                 base_lidar_link:
                   {}
                 left_down_wheel_link:
@@ -259,9 +273,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 245
+      Max Intensity: 255
       Min Color: 0; 0; 0
-      Min Intensity: 58
+      Min Intensity: 8
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -747,25 +761,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 1.4990668296813965
+      Distance: 4.655873775482178
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -1.2638574838638306
-        Y: 0.07565801590681076
-        Z: 1.8713780641555786
+        X: -0.8860012292861938
+        Y: -0.04937342554330826
+        Z: 2.2134501934051514
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6347965598106384
+      Pitch: 0.8497965931892395
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 3.042388677597046
+      Yaw: 3.03238844871521
     Saved: ~
 Window Geometry:
   Displays:
@@ -774,10 +788,10 @@ Window Geometry:
     collapsed: false
   Height: 893
   Hide Left Dock: false
-  Hide Right Dock: false
+  Hide Right Dock: true
   Navigation 2:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000015600000327fc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000100044006900730070006c006100790073010000003b0000015a000000c700fffffffb00000018004e0061007600690067006100740069006f006e00200032010000019b000001c70000012300fffffffb0000001e005200650061006c00730065006e0073006500430061006d00650072006100000002c6000000c10000002800ffffff000000010000014700000327fc0200000005fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003b00000327000000a000fffffffb0000000e0044006f0063006b0069006e006700000001840000011e0000006e00fffffffb0000001000530065006c006500630074006f0072000000023d000001250000006e00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d00650100000000000004500000000000000000000003a10000032700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000015600000327fc020000000bfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000100044006900730070006c006100790073010000003b0000015a000000c700fffffffb00000018004e0061007600690067006100740069006f006e00200032010000019b000001c70000012300fffffffb0000001e005200650061006c00730065006e0073006500430061006d00650072006100000002c6000000c10000002800fffffffb0000001e005200650061006c00730065006e0073006500430061006d006500720061000000029e000000c40000000000000000000000010000014700000327fc0200000005fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003b00000327000000a000fffffffb0000000e0044006f0063006b0069006e006700000001840000011e0000006e00fffffffb0000001000530065006c006500630074006f0072000000023d000001250000006e00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004420000003efc0100000002fb0000000800540069006d00650100000000000004420000000000000000fb0000000800540069006d00650100000000000004500000000000000000000004ee0000032700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   RealsenseCamera:
     collapsed: false
   Selection:
@@ -787,7 +801,7 @@ Window Geometry:
   Tool Properties:
     collapsed: false
   Views:
-    collapsed: false
+    collapsed: true
   Width: 1610
-  X: 2816
-  Y: 629
+  X: 3324
+  Y: 405

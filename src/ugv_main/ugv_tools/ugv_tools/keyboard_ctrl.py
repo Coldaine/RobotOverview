@@ -71,6 +71,7 @@ class ugv_Keyboard(Node):
 		super().__init__(name)
 		# Create a publisher to publish the Twist message
 		self.pub = self.create_publisher(Twist,'cmd_vel',1)
+		# self.pub = self.create_publisher(Twist,'cmd_vel_teleop',1)
 		self.pub_ptJointStateCtrl = self.create_publisher(Float64MultiArray, 'pt_joint_position_controller/commands', 10)
 		# Declare parameters for linear and angular speed limits
 		self.declare_parameter("linear_speed_limit",1.0)

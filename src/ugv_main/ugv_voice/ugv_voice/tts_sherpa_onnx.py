@@ -34,7 +34,7 @@ class tts_sherpa_onnx:
 
     def synthesize(self, text, output_wav=None):
         audio = self.tts_sess.generate(text, sid=4, speed=1.0)
-        scale = 4
+        scale = 5
         samples = np.array(audio.samples) * scale
         samples = np.clip(samples, -1.0, 1.0)
 

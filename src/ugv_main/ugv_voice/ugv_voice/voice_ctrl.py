@@ -3,16 +3,17 @@ import os
 import re
 import time
 import yaml
-import random
 import threading
-import tempfile
 
 import pyttsx3
 import pygame
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from std_msgs.msg import Bool, String
+from rcl_interfaces.msg import ParameterDescriptor,SetParametersResult
 
+from .kws_sherpa_onnx import kws_sherpa_onnx
+from .asr_sherpa_ncnn import asr_sherpa_ncnn
 from .tts_sherpa_onnx import tts_sherpa_onnx
 
 import subprocess
@@ -28,6 +29,62 @@ class VoiceCtrl(Node):
 
         pygame.mixer.init()
         pygame.mixer.music.set_volume(self.config['audio_config']['default_volume'])
+
+        self.declare_parameter("language", "en", ParameterDescriptor(description="Language: zh or en"))
+        language = self.get_parameter("language").value
+
+        # ---------------- KWS ----------------
+        if language == "en":
+            kws_model_dir = os.path.join(
+                this_path,
+                "models",
+                "kws",
+                "sherpa-onnx-kws-zipformer-gigaspeech-3.3M-2024-01-01"
+            )
+        elif language == "zh":
+            kws_model_dir = os.path.join(
+                this_path,
+                "models",
+                "kws",
+                "sherpa-onnx-kws-zipformer-wenetspeech-3.3M-2024-01-01"
+            )
+        else:
+            self.get_logger().warn(
+                f"Unsupported language '{language}', fallback to zh"
+            )
+            language = "zh"
+            kws_model_dir = os.path.join(
+                this_path,
+                "models",
+                "kws",
+                "sherpa-onnx-kws-zipformer-wenetspeech-3.3M-2024-01-01"
+            )
+
+        self.kws = kws_sherpa_onnx(kws_model_dir)
+        self.kws_enabled = False
+        self.kws_thread = threading.Thread(target=self.kws_loop, daemon=True)
+        self.kws_thread.start()
+
+        # ---------------- ASR ----------------
+        if language == "en":
+            asr_model_dir = os.path.join(
+                this_path,
+                "models",
+                "asr",
+                "sherpa-ncnn-streaming-zipformer-20M-2023-02-17"
+            )
+        else:  # zh
+            asr_model_dir = os.path.join(
+                this_path,
+                "models",
+                "asr",
+                "sherpa-ncnn-streaming-zipformer-zh-14M-2023-02-23"
+            )
+
+        self.asr = asr_sherpa_ncnn(asr_model_dir)
+        self.asr_enabled = False
+        self.asr_thread = threading.Thread(target=self.asr_loop, daemon=True)
+        self.asr_thread.start()
 
         tts_model_dir = os.path.join(this_path, "models", "sherpa-onnx-vits-zh-ll")
         self.tts = tts_sherpa_onnx(tts_model_dir)
@@ -45,7 +102,29 @@ class VoiceCtrl(Node):
         self.play_audio_event = threading.Event()
         self.min_time_between_play = self.config['audio_config']['min_time_bewteen_play']
 
-        self.subscription = self.create_subscription(String,'/speech',self.speech_callback,10)
+        self.kws_subscription = self.create_subscription(Bool,'/kws',self.kws_callback,10)
+        self.asr_subscription = self.create_subscription(Bool,'/asr',self.asr_callback,10)
+        self.tts_subscription = self.create_subscription(String,'/tts',self.tts_callback,10)
+
+    def kws_loop(self):
+        while True:
+            if self.kws_enabled:
+                result = self.kws.get_result()
+                if result:
+                    print("Keyword Spotting", result)
+                    time.sleep(0.1)
+            else:
+                time.sleep(0.1)
+
+    def asr_loop(self):
+        while True:
+            if self.asr_enabled:
+                result = self.asr.get_result()
+                if result:
+                    print("voice reconize", result)
+                    time.sleep(0.1)
+            else:
+                time.sleep(0.1)
 
     def contains_chinese(self, text):
         return bool(re.search('[\u4e00-\u9fff]', text))
@@ -90,7 +169,31 @@ class VoiceCtrl(Node):
                     self.get_logger().warn(f"[delete file failure] {e}")
             self.play_audio_event.clear()
 
-    def speech_callback(self, msg):
+    def kws_callback(self, msg):
+        if msg.data:
+            if not self.kws_enabled:
+                self.get_logger().info("KWS start")
+                self.kws.start()
+                self.kws_enabled = True
+        else:
+            if self.kws_enabled:
+                self.get_logger().info("KWS stop")
+                self.kws.stop()
+                self.kws_enabled = False
+
+    def asr_callback(self, msg):
+        if msg.data:
+            if not self.asr_enabled:
+                self.get_logger().info("ASR start")
+                self.asr.start()
+                self.asr_enabled = True
+        else:
+            if self.asr_enabled:
+                self.get_logger().info("ASR stop")
+                self.asr.stop()
+                self.asr_enabled = False
+
+    def tts_callback(self, msg):
         self.get_logger().info(f"Speech request: {msg.data}")
 
         if not self.usb_connected:
@@ -112,6 +215,3 @@ def main(args=None):
         node.destroy_node()
         rclpy.shutdown()
 
-
-if __name__ == '__main__':
-    main()

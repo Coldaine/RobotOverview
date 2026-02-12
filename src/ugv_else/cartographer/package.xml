@@ -2,10 +2,10 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>cartographer</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="ws@todo.todo">ws</maintainer>
-  <license>TODO: License declaration</license>
+  <version>0.0.1</version>
+  <description>This package provides 2D SLAM mapping and pure localization configuration based on Google Cartographer.</description>
+  <maintainer email="dudulrx@todo.todo">dudulrx</maintainer>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

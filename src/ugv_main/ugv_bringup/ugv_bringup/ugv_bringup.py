@@ -1,9 +1,11 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Header, Float32MultiArray, Float32
+from std_msgs.msg import Header, Float32MultiArray
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import Imu, MagneticField, JointState
+from sensor_msgs.msg import Imu, MagneticField, JointState, BatteryState
 
+import os
+import time
 import json
 import threading
 import subprocess
@@ -28,10 +30,11 @@ class ugv_bringup(Node):
     def __init__(self):
         super().__init__('ugv_bringup')
         # Publishers for IMU data, magnetic field data, odometry, and voltage
-        self.imu_data_raw_publisher_ = self.create_publisher(Imu, "imu/data_raw", 20)
+        # self.imu_data_raw_publisher_ = self.create_publisher(Imu, "imu/data_raw", 20)
+        self.imu_data_raw_publisher_ = self.create_publisher(Imu, "imu/raw", 20)
         self.imu_mag_publisher_ = self.create_publisher(MagneticField, "imu/mag", 20)
         self.odom_publisher_ = self.create_publisher(Float32MultiArray, "odom/odom_raw", 20)
-        self.voltage_publisher_ = self.create_publisher(Float32, "voltage", 20)
+        self.voltage_publisher_ = self.create_publisher(BatteryState, "ugv/voltage", 20)
         # Subscribe to velocity commands (cmd_vel topic)
         self.cmd_vel_sub_ = self.create_subscription(Twist, "cmd_vel", self.cmd_vel_callback, 20)
         self.zero_vel_count = 0
@@ -44,7 +47,7 @@ class ugv_bringup(Node):
         
         self.pt_steady_ctrl_sub = self.create_subscription(Float32MultiArray, 'ugv/pt_steady_ctrl', self.pt_steady_ctrl_callback, 20)
         # Subscribe to voltage data (voltage topic)
-        self.voltage_sub = self.create_subscription(Float32, 'voltage', self.voltage_callback, 20)
+        self.voltage_sub = self.create_subscription(BatteryState, 'ugv/voltage', self.voltage_callback, 20)
         
         self.declare_parameter('serial_port', '/dev/ttyAMA0')
         self.declare_parameter('baud_rate', 115200)
@@ -61,7 +64,22 @@ class ugv_bringup(Node):
         self.ip_thread = threading.Thread(target=self.ip_thread_func, daemon=True)
         self.ip_thread.start()
 
-        version_data = json.dumps({"T":900,"main":2,"module":"0"}) + "\n"
+        self.set_ugv_version()
+
+    def set_ugv_version(self):
+        model = os.getenv("UGV_MODEL", "ugv_rover")
+        ugv_main = 2
+
+        if model == "ugv_rover":
+            ugv_main = 2
+        elif model == "ugv_beast":
+            ugv_main = 3
+        elif model == "rasp_rover":
+            ugv_main = 1
+        else:
+            ugv_main = 2
+
+        version_data = json.dumps({"T":900,"main":ugv_main,"module":"0"}) + "\n"
         self.base_controller.send_command(version_data.encode())   
         
     def feedback_loop_thread(self):
@@ -140,15 +158,17 @@ class ugv_bringup(Node):
     # Publish odometry data to the ROS topic "odom/odom_raw" m
     def publish_odom_raw(self):
         odom_raw_data = self.base_controller.base_data
-        array = [odom_raw_data["odl"]/100, odom_raw_data["odr"]/100]
+        array = [odom_raw_data["odl"]/100, odom_raw_data["odr"]/100,odom_raw_data["L"], odom_raw_data["R"]]
         msg = Float32MultiArray(data=array)
         self.odom_publisher_.publish(msg)  # Publish the odometry data
 
     # Publish voltage data to the ROS topic "voltage" v
     def publish_voltage(self):
         voltage_data = self.base_controller.base_data
-        msg = Float32()
-        msg.data = float(voltage_data["v"]/100)
+        msg = BatteryState()
+        msg.voltage = float(voltage_data["v"]/100)
+        msg.percentage = float(voltage_data["v"]/1260)
+        msg.present = True
         self.voltage_publisher_.publish(msg)  # Publish the voltage data
 
     # Callback for processing velocity commands m/s
@@ -244,7 +264,7 @@ class ugv_bringup(Node):
 
     # Callback for processing voltage data
     def voltage_callback(self, msg):
-        voltage_value = msg.data
+        voltage_value = msg.voltage
 
         # If voltage drops below a threshold, play a low battery warning sound
         if 0.1 < voltage_value < 9:

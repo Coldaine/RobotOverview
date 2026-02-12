@@ -959,12 +959,12 @@ function ptPoseCtrl() {
     if (steady_mode) {
         publishPtSteadyState([0,ptPoseState.y]);
     } else {
+        console.log(clampedState)
 		publishPtJointState([
 			degToRadian(clampedState.x),
 			degToRadian(clampedState.y)
 		]);		
     }
-
     updatingPt = false;
 }
 
@@ -1222,12 +1222,12 @@ function gamepadCtrl() {
             if (Math.abs(gp_z) < threshold) gp_z = 0;
 
             // 速度变化才发布
-            if (gp_x !== last_gp_x || gp_z !== last_gp_z) {
-                rosBaseSpeedState.x = gp_x;
-                rosBaseSpeedState.z = gp_z;
-                last_gp_x = gp_x;
-                last_gp_z = gp_z;
-            }
+            // if (gp_x !== last_gp_x || gp_z !== last_gp_z) {
+            rosBaseSpeedState.x = gp_x;
+            rosBaseSpeedState.z = gp_z;
+            last_gp_x = gp_x;
+            last_gp_z = gp_z;
+            // }
 
             if (gp.buttons[11].pressed) {
                 lookAhead();

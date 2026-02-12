@@ -62,7 +62,10 @@ class CamWebrtc(Node):
     def __init__(self):
         super().__init__('cam_webrtc')
         # Create a subscription to the image_raw topic
-        self.image_raw_subscription = self.create_subscription(Image,'/image_raw', self.image_callback,10)
+        self.declare_parameter('image_topic', '/image_raw')
+        image_topic = self.get_parameter('image_topic').value
+        self.image_raw_subscription = self.create_subscription(Image,image_topic, self.image_callback,10)
+        
         # Create a CvBridge object to convert between ROS Image messages and OpenCV images
         self.bridge = CvBridge()
    

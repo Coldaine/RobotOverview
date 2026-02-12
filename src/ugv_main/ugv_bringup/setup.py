@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'ugv_bringup = ugv_bringup.ugv_bringup:main',
+            'odom_publisher = ugv_bringup.odom_publisher:main',
         ],
     },
 )

@@ -1,35 +1,52 @@
-from ament_index_python.packages import get_package_share_path
-from launch_ros.substitutions import FindPackageShare
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import Command, LaunchConfiguration
-
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch_ros.parameter_descriptions import ParameterValue
-import os
-from ament_index_python.packages import get_package_share_directory
 
-from launch.actions import IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
-                                   
-    # Create a node to read joystick input
+
+    xspeed_limit_arg = DeclareLaunchArgument(
+        'xspeed_limit',
+        default_value='0.5',
+        description='Max linear x speed'
+    )
+
+    yspeed_limit_arg = DeclareLaunchArgument(
+        'yspeed_limit',
+        default_value='0.5',
+        description='Max linear y speed'
+    )
+
+    angular_speed_limit_arg = DeclareLaunchArgument(
+        'angular_speed_limit',
+        default_value='1.0',
+        description='Max angular speed'
+    )
+
+    # Joystick driver
     joy_node = Node(
         package='joy',
         executable='joy_node',
+        name='joy_node'
     )
 
-    # Create a node to control the robot using joystick input
+    # Joystick control node
     joy_ctrl_node = Node(
         package='ugv_tools',
         executable='joy_ctrl',
+        name='joy_ctrl',
+        parameters=[{
+            'xspeed_limit': LaunchConfiguration('xspeed_limit'),
+            'yspeed_limit': LaunchConfiguration('yspeed_limit'),
+            'angular_speed_limit': LaunchConfiguration('angular_speed_limit'),
+        }]
     )
 
-    # Return the launch description
     return LaunchDescription([
+        xspeed_limit_arg,
+        yspeed_limit_arg,
+        angular_speed_limit_arg,
         joy_node,
         joy_ctrl_node
     ])
-

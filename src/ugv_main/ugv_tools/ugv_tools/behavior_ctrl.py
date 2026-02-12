@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionServer
-from ugv_interface.action import Behavior
+from ugv_msgs.action import Behavior
 from std_msgs.msg import String
 from geometry_msgs.msg import Twist, PoseStamped, Pose
 from nav_msgs.msg import Odometry 

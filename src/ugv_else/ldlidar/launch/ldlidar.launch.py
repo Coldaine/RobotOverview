@@ -41,7 +41,8 @@ def launch_setup(context, *args, **kwargs):
             'laser_scan_dir': LaunchConfiguration('laser_scan_dir'),
             'enable_angle_crop_func': LaunchConfiguration('enable_angle_crop_func'),
             'angle_crop_min': LaunchConfiguration('angle_crop_min'),
-            'angle_crop_max': LaunchConfiguration('angle_crop_max')
+            'angle_crop_max': LaunchConfiguration('angle_crop_max'),
+            'bins': LaunchConfiguration('bins')
         }]
     )
 
@@ -71,6 +72,7 @@ def generate_launch_description():
         DeclareLaunchArgument('enable_angle_crop_func', default_value='true'),
         DeclareLaunchArgument('angle_crop_min', default_value='225.0'),
         DeclareLaunchArgument('angle_crop_max', default_value='315.0'),
+        DeclareLaunchArgument('bins', default_value='480'),
         DeclareLaunchArgument('use_rviz', default_value='false'),
         OpaqueFunction(function=launch_setup)
     ])

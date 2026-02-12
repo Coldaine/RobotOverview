@@ -8,9 +8,9 @@ import logging
 import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
-from ugv_interface.action import Behavior
+from ugv_msgs.action import Behavior
 from rclpy.duration import Duration
-
+from rcl_interfaces.msg import ParameterDescriptor
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
@@ -21,6 +21,14 @@ class ChatAi(Node):
     def __init__(self):
         super().__init__('chat_ai')
         self._action_client = ActionClient(self, Behavior, 'behavior')
+        self.declare_parameter(
+            "server_url",
+            "http://192.168.9.125:11434/api/chat",
+            ParameterDescriptor(description="Server url")
+        )
+        self.server_url = self.get_parameter("server_url").value
+
+        print(self.server_url)
 
     def publish_behavior(self, message):
         msg = String()
@@ -80,9 +88,9 @@ def generate(messages):
     i = 0
 
     try:
-        data = {"stream": True, "model": 'gemma2', "messages": messages}
+        data = {"stream": True, "model": 'qwen3:8b', "messages": messages}
         response = requests.post(
-            "http://192.168.10.185:11434/api/chat", 
+            "self.server_url", 
             headers={"Content-Type": "application/json"}, 
             json=data, 
             stream=True
@@ -105,7 +113,7 @@ def generate(messages):
                     one_message["content"] += message_content
                     yield message_content
                 except json.JSONDecodeError:
-                    logger.debug(f"JSON 解码错误: {line_str}")
+                    logger.debug(f"JSON decode error: {line_str}")
                     yield line_str
                     
             elif line_str.strip():
@@ -126,7 +134,7 @@ def generate(messages):
                 ros_node.send_goal(json_str)
                  
     except requests.exceptions.RequestException as e:
-        yield f"服务器请求出错: {str(e)}"
+        yield f"Server request error: {str(e)}"
 
 def ros_spin(chat_ai):
     rclpy.spin(chat_ai)

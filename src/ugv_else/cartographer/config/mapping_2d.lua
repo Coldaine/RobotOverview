@@ -10,7 +10,7 @@ options = {
   odom_frame = "odom",  -- 里程计帧的名称
   provide_odom_frame = false,  -- 是否提供里程计帧
   publish_frame_projected_to_2d = false,  -- 是否发布2d姿态
-  use_pose_extrapolator = false,
+  use_pose_extrapolator = true,
   use_odometry = true,  -- 是否使用里程计
   use_nav_sat = false,  -- 是否使用导航卫星
   use_landmarks = false,  -- 是否使用地标
@@ -30,14 +30,22 @@ options = {
 }
  
 MAP_BUILDER.use_trajectory_builder_2d = true  -- 是否启动2D SLAM
-TRAJECTORY_BUILDER_2D.submaps.num_range_data = 35  -- 2D轨迹构建器中子地图的范围数据数量
+TRAJECTORY_BUILDER_2D.submaps.num_range_data = 60  -- 2D轨迹构建器中子地图的范围数据数量 35-90
 TRAJECTORY_BUILDER_2D.min_range = 0.1  -- 限制在雷达最小扫描范围，比机器人半径小的都忽略
-TRAJECTORY_BUILDER_2D.max_range = 3.5  -- 限制在雷达最大扫描范围
-TRAJECTORY_BUILDER_2D.missing_data_ray_length = 5.  -- 限制在雷达最大扫描范围
+TRAJECTORY_BUILDER_2D.max_range = 11.5  -- 限制在雷达最大扫描范围
+TRAJECTORY_BUILDER_2D.missing_data_ray_length = 5. -- 当某方向无回波时，假设该方向在此距离内是 free space
 TRAJECTORY_BUILDER_2D.use_imu_data = false  -- 是否使用IMU数据
 TRAJECTORY_BUILDER_2D.use_online_correlative_scan_matching = true  -- 是否使用实时回环检测扫描匹配
 
 TRAJECTORY_BUILDER_2D.motion_filter.max_angle_radians = math.rad(0.1)  -- 1.0改成0.1,提高对运动的敏感度
+TRAJECTORY_BUILDER_2D.ceres_scan_matcher.occupied_space_weight = 5.
+TRAJECTORY_BUILDER_2D.submaps.range_data_inserter.probability_grid_range_data_inserter.hit_probability = 0.65
+
+-- 回环
+POSE_GRAPH.optimize_every_n_nodes = 90
+POSE_GRAPH.constraint_builder.sampling_ratio = 0.3
+POSE_GRAPH.global_sampling_ratio = 0.003
+
 POSE_GRAPH.constraint_builder.min_score = 0.65  -- 0.55改成0.65,Fast csm的最低分数，高于此分数才进行优化。
 POSE_GRAPH.constraint_builder.global_localization_min_score = 0.7  --0.6改成0.7,全局定位最小分数，低于此分数则认为目前全局定位不准确
 

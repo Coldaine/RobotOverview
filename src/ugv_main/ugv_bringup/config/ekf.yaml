@@ -1,19 +1,16 @@
 ### ekf config file ###
 ekf_filter_node:
     ros__parameters:
-
         use_sim_time: false
-
-        
 # The frequency, in Hz, at which the filter will output a position estimate. Note that the filter will not begin
 # computation until it receives at least one message from one of the inputs. It will then run continuously at the
 # frequency specified here, regardless of whether it receives more measurements. Defaults to 30 if unspecified.
-        frequency: 30.0
+        frequency: 20.0
 
 # The period, in seconds, after which we consider a sensor to have timed out. In this event, we carry out a predict
 # cycle on the EKF without correcting it. This parameter can be thought of as the minimum frequency with which the
 # filter will generate new output. Defaults to 1 / frequency if not specified.
-        sensor_timeout: 0.1
+        sensor_timeout: 2.0
 
 # ekf_localization_node and ukf_localization_node both use a 3D omnidirectional motion model. If this parameter is
 # set to true, no 3D information will be used in your state estimate. Use this if you are operating in a planar
@@ -28,7 +25,7 @@ ekf_filter_node:
 
 # Use this parameter to provide specify how long the tf listener should wait for a transform to become available. 
 # Defaults to 0.0 if unspecified.
-        transform_timeout: 0.0
+        transform_timeout: 0.2
 
 # If you're having trouble, try setting this to true, and then echo the /diagnostics_agg topic to see if the node is
 # unhappy with any settings or data.
@@ -49,7 +46,7 @@ ekf_filter_node:
         publish_acceleration: false
 
 # If the filter sees a jump back in time, the filter is reset (convenient for testing with rosbags!)
-        reset_on_time_jump: true
+        # reset_on_time_jump: true
 
 # REP-105 (http://www.ros.org/reps/rep-0105.html) specifies four principal coordinate frames: base_link, odom, map, and
 # earth. base_link is the coordinate frame that is affixed to the robot. Both odom and map are world-fixed frames.
@@ -70,17 +67,17 @@ ekf_filter_node:
 #     3a. Set your "world_frame" to your map_frame value
 #     3b. MAKE SURE something else is generating the odom->base_link transform. Note that this can even be another state
 #         estimation node from robot_localization! However, that instance should *not* fuse the global data.
-        #map_frame: map                   # Defaults to "map" if unspecified
+        map_frame: map                   # Defaults to "map" if unspecified
         odom_frame: odom                 # Defaults to "odom" if unspecified
         base_link_frame: base_footprint  # Defaults to "base_link" if unspecified
-        world_frame: odom                # Defaults to the value of odom_frame if unspecified
+        # world_frame: odom                # Defaults to the value of odom_frame if unspecified
 
 # The filter accepts an arbitrary number of inputs from each input message type (nav_msgs/Odometry,
 # geometry_msgs/PoseWithCovarianceStamped, geometry_msgs/TwistWithCovarianceStamped,
 # sensor_msgs/Imu). To add an input, simply append the next number in the sequence to its "base" name, e.g., odom0,
 # odom1, twist0, twist1, imu0, imu1, imu2, etc. The value should be the topic name. These parameters obviously have no
 # default values, and must be specified.
-        odom0: /odom_raw
+        odom0: odom_wheel
 
 # Each sensor reading updates some or all of the filter's state. These options give you greater control over which
 # values from each measurement are fed to the filter. For example, if you have an odometry message as input, but only
@@ -89,10 +86,10 @@ ekf_filter_node:
 # do not provide some of the state variables estimated by the filter. For example, a TwistWithCovarianceStamped message
 # has no pose information, so the first six values would be meaningless in that case. Each vector defaults to all false
 # if unspecified, effectively making this parameter required for each sensor.
-        odom0_config: [true, true, false,
-                       false, false, true,
-                       true, false, false,
-                       false, false, true,
+        odom0_config: [false, false, false,
+                       false, false, false,
+                       true, true, false,
+                       false, false, false,
                        false, false, false]
 
         #        [x_pos   , y_pos    , z_pos,
@@ -103,12 +100,12 @@ ekf_filter_node:
 
 # If you have high-frequency data or are running with a low frequency parameter value, then you may want to increase
 # the size of the subscription queue so that more measurements are fused.
-        odom0_queue_size: 10
+        odom0_queue_size: 2
 
 # [ADVANCED] Large messages in ROS can exhibit strange behavior when they arrive at a high frequency. This is a result
 # of Nagle's algorithm. This option tells the ROS subscriber to use the tcpNoDelay option, which disables Nagle's
 # algorithm.
-        odom0_nodelay: false
+        # odom0_nodelay: false
 
 # [ADVANCED] When measuring one pose variable with two sensors, a situation can arise in which both sensors under-
 # report their covariances. This can lead to the filter rapidly jumping back and forth between each measurement as they
@@ -126,21 +123,30 @@ ekf_filter_node:
 # integrating it. If you simply want your measurements to start at 0 for a given sensor, set this to true.
         odom0_relative: false
 
+        odom1: odom_rf2o
+        odom1_config: [true, true, false,
+                     false, false, true,
+                     false, false, false,
+                     false, false, true,
+                     false, false, false]
+        odom1_differential: true
+        odom1_relative: false
+        odom1_queue_size: 2
 # [ADVANCED] If your data is subject to outliers, use these threshold settings, expressed as Mahalanobis distances, to
 # control how far away from the current vehicle state a sensor measurement is permitted to be. Each defaults to
 # numeric_limits<double>::max() if unspecified. It is strongly recommended that these parameters be removed if not
 # required. Data is specified at the level of pose and twist variables, rather than for each variable in isolation.
 # For messages that have both pose and twist data, the parameter specifies to which part of the message we are applying
 # the thresholds.
-        odom0_pose_rejection_threshold: 20.0
-        odom0_twist_rejection_threshold: 1.542
+        # odom0_pose_rejection_threshold: 20.0
+        # odom0_twist_rejection_threshold: 1.542
 
-        imu0: /imu/data
-        imu0_config: [false, false, false,
-                      false, false, true ,
-                      false, false, false,
-                      false, false, true,
-                      false, false, false]
+        # imu0: imu0/data
+        # imu0_config: [false, false, false,
+        #               false, false, false ,
+        #               false, false, false,
+        #               false, false, true,
+        #               true, true, false]
 
         #        [x_pos   , y_pos    , z_pos,
         #         roll    , pitch    , yaw,
@@ -148,17 +154,17 @@ ekf_filter_node:
         #         roll_vel, pitch_vel, yaw_vel,
         #         x_accel , y_accel  , z_accel]
         
-        imu0_nodelay: false
-        imu0_differential: false
-        imu0_relative: true
-        imu0_queue_size: 10
-        imu0_pose_rejection_threshold: 20.0                 # Note the difference in parameter names     # 0.8
-        imu0_twist_rejection_threshold: 1.542               # 0.8
-        imu0_linear_acceleration_rejection_threshold: 10.0  #
+        # imu0_nodelay: false
+        # imu0_differential: false
+        # imu0_relative: false
+        # imu0_queue_size: 4
+        # imu0_pose_rejection_threshold: 20.0                 # Note the difference in parameter names     # 0.8
+        # imu0_twist_rejection_threshold: 1.542               # 0.8
+        # imu0_linear_acceleration_rejection_threshold: 10.0  #
 
 # [ADVANCED] Some IMUs automatically remove acceleration due to gravity, and others don't. If yours doesn't, please set
 # this to true, and *make sure* your data conforms to REP-103, specifically, that the data is in ENU frame.
-        imu0_remove_gravitational_acceleration: false
+        # imu0_remove_gravitational_acceleration: false
 
 # [ADVANCED]  The EKF and UKF models follow a standard predict/correct cycle. During prediction, if there is no
 # acceleration reference, the velocity at time t+1 is simply predicted to be the same as the velocity at time t. During
@@ -218,12 +224,12 @@ ekf_filter_node:
 # question. Users should take care not to use large values for variables that will not be measured directly. The values
 # are ordered as x, y, z, roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az. Defaults to the matrix below
 #if unspecified.
-        initial_estimate_covariance: [1e-9,   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
-                                      0.0,    1e-9,   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+        initial_estimate_covariance: [1.0,   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    1.0,   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
                                       0.0,    0.0,    1e-9,   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
                                       0.0,    0.0,    0.0,    1e-9,   0.0,    0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
                                       0.0,    0.0,    0.0,    0.0,    1e-9,   0.0,    0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
-                                      0.0,    0.0,    0.0,    0.0,    0.0,    1e-9,   0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
+                                      0.0,    0.0,    0.0,    0.0,    0.0,    1.0,   0.0,    0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
                                       0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    1e-9,   0.0,    0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
                                       0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    1e-9,   0.0,    0.0,     0.0,     0.0,     0.0,    0.0,    0.0,
                                       0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    0.0,    1e-9,   0.0,     0.0,     0.0,     0.0,    0.0,    0.0,

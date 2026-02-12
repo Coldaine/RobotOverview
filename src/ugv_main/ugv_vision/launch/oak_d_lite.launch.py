@@ -16,7 +16,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 # Import the necessary modules from the launch.substitutions package
 from launch.substitutions import LaunchConfiguration
 # Import the necessary modules from the launch_ros.actions package
-from launch_ros.actions import LoadComposableNodes, Node
+from launch_ros.actions import ComposableNodeContainer, LoadComposableNodes, Node
 # Import the necessary modules from the launch_ros.descriptions package
 from launch_ros.descriptions import ComposableNode
 
@@ -30,20 +30,42 @@ def launch_setup(context, *args, **kwargs):
     # Get the params_file of the launch configuration
     params_file = LaunchConfiguration("params_file")
     
+    tf_params = {}
+
+    log_level = "info"
+    if context.environment.get("DEPTHAI_DEBUG") == "1":
+        log_level = "debug"
+
     # Return a list of actions to be executed
     return [
         # Include the camera.launch.py launch file from the depthai_ros_driver package
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(
-                os.path.join(depthai_prefix, "launch", "camera.launch.py")
-            ),
-            launch_arguments={
-                "name": name, 
-                "parent_frame": '3d_camera_link',
-                "params_file": params_file,
-                'use_rviz': 'False',
-            }.items(),
-        ),
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource(
+        #         os.path.join(depthai_prefix, "launch", "camera.launch.py")
+        #     ),
+        #     launch_arguments={
+        #         "name": name, 
+        #         "parent_frame": '3d_camera_link',
+        #         "params_file": params_file,
+        #         'use_rviz': 'False',
+        #     }.items(),
+        # ),
+        ComposableNodeContainer(
+            name=name + "_container",
+            namespace="",
+            package="rclcpp_components",
+            executable="component_container",
+            composable_node_descriptions=[
+                ComposableNode(
+                    package="depthai_ros_driver",
+                    plugin="depthai_ros_driver::Camera",
+                    name=name,
+                    parameters=[params_file, tf_params],
+                )
+            ],
+            arguments=["--ros-args", "--log-level", log_level],
+            output="both",
+        ),    
         # Load the rectify_color_node composable node if the rectify_rgb launch configuration is set to True
         LoadComposableNodes(
             condition=IfCondition(LaunchConfiguration("rectify_rgb")),
@@ -79,7 +101,7 @@ def generate_launch_description():
             "params_file",
             default_value=os.path.join(get_package_share_directory("ugv_vision"), "config", "oak_d_lite.yaml"),
         ),
-        DeclareLaunchArgument("rectify_rgb", default_value="True"),
+        DeclareLaunchArgument("rectify_rgb", default_value="False"),
     ]
 
     # Return the launch description

@@ -25,12 +25,21 @@ setup(
     entry_points={
         'console_scripts': [
             'cam_webrtc = ugv_vision.cam_webrtc:main',
+            'color_select = ugv_vision.color_select:main',
+            'pt_color_ball_track = ugv_vision.pt_color_ball_track:main',
+            'pt_apriltag_track = ugv_vision.pt_apriltag_track:main',
+            'pt_face_track = ugv_vision.pt_face_track:main',
+            'pt_gesture_ctrl = ugv_vision.pt_gesture_ctrl:main',
+            'color_ball_track = ugv_vision.color_ball_track:main',
+            'apriltag_track = ugv_vision.apriltag_track:main',
+            'apriltag_track_nav2 = ugv_vision.apriltag_track_nav2:main',
+            'color_line_follow = ugv_vision.color_line_follow:main',
+            'face_track = ugv_vision.face_track:main',
+            'gesture_ctrl = ugv_vision.gesture_ctrl:main',
             'cam_oak_webrtc = ugv_vision.cam_oak_webrtc:main',
-            'color_track_pid = ugv_vision.color_track_pid:main',
-            'color_track_line_pid = ugv_vision.color_track_line_pid:main',
-            'pt_color_track = ugv_vision.pt_color_track:main',
-            'apriltag_track_pid = ugv_vision.apriltag_track_pid:main',
-            'apriltag_track_nav2 = ugv_vision.apriltag_track_nav2:main'
+            'oak_color_select = ugv_vision.oak_color_select:main',
+            'oak_color_ball_track = ugv_vision.oak_color_ball_track:main',
+            'oak_object_track = ugv_vision.oak_object_track:main',
         ],
     },
 )

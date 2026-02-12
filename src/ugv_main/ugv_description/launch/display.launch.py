@@ -137,7 +137,3 @@ def generate_launch_description():
         # Opaque function to execute the setup
         OpaqueFunction(function=launch_setup)
     ])
-
-# Main entry point for launching the description
-if __name__ == '__main__':
-    generate_launch_description()

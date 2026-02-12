@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'voice_ctrl = ugv_voice.voice_ctrl:main',
+            'voice_chat = ugv_voice.voice_chat:main',
         ],
     },
 )

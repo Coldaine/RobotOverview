@@ -11,9 +11,9 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
+from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult
 from std_msgs.msg import Float32, Float32MultiArray, Float64MultiArray
 import pygame
-
 
 def get_joystick_names():
 	pygame.init()
@@ -107,12 +107,12 @@ class JoyTeleop(Node):
 		self.pub_ptJointStateCtrl = self.create_publisher(Float64MultiArray, 'pt_joint_position_controller/commands', 10)
 		self.sub_Joy = self.create_subscription(Joy, 'joy', self.buttonCallback, 10)
 
-		self.declare_parameter('xspeed_limit', 0.5)
-		self.declare_parameter('yspeed_limit', 0.5)
-		self.declare_parameter('angular_speed_limit', 1.0)
-		self.xspeed_limit = self.get_parameter('xspeed_limit').get_parameter_value().double_value
-		self.yspeed_limit = self.get_parameter('yspeed_limit').get_parameter_value().double_value
-		self.angular_speed_limit = self.get_parameter('angular_speed_limit').get_parameter_value().double_value
+		self.declare_parameter('xspeed_limit', 1.0)
+		self.declare_parameter('yspeed_limit', 1.0)
+		self.declare_parameter('angular_speed_limit', 3.14)
+		self.xspeed_limit = self.get_parameter('xspeed_limit').value
+		self.yspeed_limit = self.get_parameter('yspeed_limit').value
+		self.angular_speed_limit = self.get_parameter('angular_speed_limit').value
 		self.led_limit = 255.0
 
 		joysticks = get_joystick_names()
@@ -122,6 +122,22 @@ class JoyTeleop(Node):
 		self.ptPoseState = type('', (), {})()  
 		self.ptPoseState.x = 0.0
 		self.ptPoseState.y = 0.0
+		self.add_on_set_parameters_callback(self.on_param_change)
+
+	def on_param_change(self, params):
+		for param in params:
+			if param.name in (
+				"xspeed_limit", "yspeed_limit", "angular_speed_limit",
+			):
+				self.xspeed_limit = self.get_parameter('xspeed_limit').value
+				self.yspeed_limit = self.get_parameter('yspeed_limit').value
+				self.angular_speed_limit = self.get_parameter('angular_speed_limit').value
+				
+				self.get_logger().info(
+					f"Updated speed_limit: xspeed_limit={self.xspeed_limit}, yspeed_limit={self.yspeed_limit}, angular_speed_limit={self.angular_speed_limit}"
+				)
+
+		return SetParametersResult(successful=True)
 
 	def buttonCallback(self, joy_data):
 		if not isinstance(joy_data, Joy):

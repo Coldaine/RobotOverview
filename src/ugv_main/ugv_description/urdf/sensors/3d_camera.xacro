@@ -43,6 +43,15 @@
 </xacro:if>
 
 <xacro:unless value="${use_gazebo}">
+
+<xacro:include filename="$(find depthai_descriptions)/urdf/include/depthai_macro.urdf.xacro" />
+
+<xacro:depthai_camera camera_name="oak" parent="3d_camera_link"
+  camera_model="OAK-D-LITE" base_frame="oak-d_frame"
+  cam_pos_x="0.017" cam_pos_y="0.0" cam_pos_z="0.005"
+  cam_roll="0.0" cam_pitch="0.0" cam_yaw="0.0"
+  rs_compat="false" />
+  
 <link name="3d_camera_link">
   <inertial>
     <origin xyz="0.0085 0 0" rpy="0 0 0" />

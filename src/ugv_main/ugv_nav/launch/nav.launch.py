@@ -1,103 +1,115 @@
 import os
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
-from ament_index_python.packages import get_package_share_directory
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
-from launch.conditions import IfCondition, UnlessCondition, LaunchConfigurationEquals
-from launch.actions import IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.conditions import LaunchConfigurationEquals, IfCondition, UnlessCondition
 
-# Function to get the localplan config file based on the launch configuration
-def get_localplan_config_file(context):
-    # Get the use_localplan and use_localization launch configurations
-    use_localplan = context.launch_configurations['use_localplan']
-    use_localization = context.launch_configurations['use_localization']
+import launch
+from launch import LaunchContext
+from launch.utilities import perform_substitutions
 
-    # Get the package share directory for ugv_nav
-    ugv_nav_dir = get_package_share_directory('ugv_nav')
+class LaunchConfigAsBool(launch.Substitution):
+    """
+    Converts a LaunchConfiguration value into a normalized boolean string: 'true' or 'false'.
 
-    # Get the paths to the different localplan config files
-    amcl_teb_param_path = os.path.join(ugv_nav_dir, 'param', 'amcl_teb.yaml')
-    amcl_dwa_param_path = os.path.join(ugv_nav_dir, 'param', 'amcl_dwa.yaml')
-    emcl_teb_param_path = os.path.join(ugv_nav_dir, 'param', 'emcl_teb.yaml')
-    emcl_dwa_param_path = os.path.join(ugv_nav_dir, 'param', 'emcl_dwa.yaml')
+    Allows CLI arguments like 'True', 'true', '1', 'yes' and 'False', 'false', '0', 'no'.
+    Returns a string 'true' or 'false' for use in PythonExpression and IfCondition contexts.
+    """
 
-    # Create a dictionary to map the localplan and localization configurations to their respective config files
-    config_map = {
-        ('amcl', 'teb'): amcl_teb_param_path,
-        ('amcl', 'dwa'): amcl_dwa_param_path,
-        ('emcl', 'teb'): emcl_teb_param_path,
-        ('emcl', 'dwa'): emcl_dwa_param_path
-    }
+    def __init__(self, name: str) -> None:
+        super().__init__()
+        self._config = LaunchConfiguration(name)
 
-    # Return the config file based on the launch configurations
-    return config_map.get((use_localization, use_localplan), amcl_teb_param_path)
+    def perform(self, context: LaunchContext) -> str:
+        value = perform_substitutions(context, [self._config])
+        if value.strip().lower() in ['true', '1', 'yes', 'on']:
+            return 'True'
+        return 'False'
+
+    def describe(self) -> str:
+        return f'LaunchConfigAsBool({self._config.describe()})'
 
 # Function to set up the launch description
 def launch_setup(context, *args, **kwargs):
-
-    # Get the use_localplan launch configuration
-    use_localplan = context.launch_configurations['use_localplan']
-    
-    # Get the localplan config file
-    param_file = get_localplan_config_file(context)
-    
     # Get the package share directories for ugv_nav, nav2_bringup, and emcl2
     ugv_nav_dir = get_package_share_directory('ugv_nav')
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
-    emcl_dir = get_package_share_directory('emcl2')
+
+    use_slam = context.launch_configurations['use_slam']
+
+    use_sim_time = LaunchConfiguration('use_sim_time')
+    use_localization = LaunchConfiguration('use_localization')
+    use_localization_text = context.launch_configurations['use_localization']
+    use_localplan = context.launch_configurations['use_localplan']
+    
+    # Get the paths to the different localplan config files
+    teb_param_path = os.path.join(ugv_nav_dir, 'params', 'teb.yaml')
+    dwa_param_path = os.path.join(ugv_nav_dir, 'params', 'dwa.yaml')
+    rpp_param_path = os.path.join(ugv_nav_dir, 'params', 'rpp.yaml')
+    mppi_param_path = os.path.join(ugv_nav_dir, 'params', 'mppi.yaml')
+
+    # Create a dictionary to map the localplan and localization configurations to their respective config files
+    config_map = {
+        ('teb'): teb_param_path,
+        ('dwa'): dwa_param_path,
+        ('rpp'): rpp_param_path,
+        ('mppi'): mppi_param_path,
+    }
+    param_file = config_map.get((use_localplan), teb_param_path)
 
     # Get the map yaml path
     map_yaml_path = LaunchConfiguration('map', default=os.path.join(ugv_nav_dir, 'maps', 'map.yaml'))
-    # Get the emcl param file
-    emcl_param_file = os.path.join(emcl_dir, 'config', 'emcl2_quick_start.param.yaml')                        
+    pbstream_path = LaunchConfiguration('pbstream', default=os.path.join(ugv_nav_dir, 'maps', 'map.pbstream'))
+    posegraph_path = LaunchConfiguration('posegraph', default=os.path.join(ugv_nav_dir, 'maps', 'map'))
+    slam_toolbox_params_file = LaunchConfiguration('slam_toolbox_params_file', default=os.path.join(ugv_nav_dir, 'params', 'slam_toolbox_localization.yaml'))
+    
+    rviz_config = 'nav_2d'
+
+    if use_localization_text=='rtabmap':
+        rviz_config = 'nav_3d'
+
     # Include the bringup_lidar launch description
     bringup_lidar_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('ugv_roarm_bringup'), 'launch', 'bringup_lidar.launch.py')),
+        PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('ugv_bringup'), 'launch', 'bringup_lidar.launch.py')),
         launch_arguments={
             'use_rviz': LaunchConfiguration('use_rviz'),
-            'rviz_config': 'nav_2d', 
-        }.items()
-    )
-
-    # Include the nav2_bringup_amcl launch description if use_localization is amcl
-    nav2_bringup_amcl_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')),
-        launch_arguments={
-            'map': map_yaml_path,
-            'params_file': param_file,
+            'rviz_config': rviz_config, 
         }.items(),
-        condition=LaunchConfigurationEquals('use_localization', 'amcl')
+        condition=UnlessCondition(use_sim_time)   
     )
 
-    # Include the nav2_bringup_emcl launch description if use_localization is emcl
-    nav2_bringup_emcl_launch = IncludeLaunchDescription(
+    bringup_gazebo_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(
+        [os.path.join(get_package_share_directory('ugv_gazebo'), 'launch'),
+         '/bringup_gazebo.launch.py']),
+        launch_arguments={
+            'use_rviz': LaunchConfiguration('use_rviz'),
+            'rviz_config': rviz_config,
+        }.items(),
+        condition=IfCondition(use_sim_time)        
+    )
+
+    oak_d_lite_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+        [os.path.join(get_package_share_directory('ugv_vision'), 'launch'),
+            '/oak_d_lite.launch.py']
+        ),
+        condition=UnlessCondition(use_sim_time),
+    )
+
+    nav2_bringup_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(ugv_nav_dir, 'launch/nav_bringup', 'nav2_bringup.launch.py')),
         launch_arguments={
             'map': map_yaml_path,
-            'params_file': param_file
+            'pbstream': pbstream_path,
+            'posegraph': posegraph_path,
+            'params_file': param_file,
+            'slam_toolbox_params_file': slam_toolbox_params_file,
+            'use_sim_time': use_sim_time,
+            'use_localization': use_localization,
+            'use_slam': use_slam,
         }.items(),
-        condition=LaunchConfigurationEquals('use_localization', 'emcl')
-    )
-    
-    # Include the emcl launch description if use_localization is emcl
-    emcl_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(emcl_dir, 'launch', 'emcl2.launch.py')),
-        launch_arguments={
-            'params_file': emcl_param_file,
-        }.items(),
-        condition=LaunchConfigurationEquals('use_localization', 'emcl')
-    )
-    
-    # Include the nav2_bringup_cartographer launch description if use_localization is cartographer
-    nav2_bringup_cartographer_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('ugv_nav'), 'launch/nav_bringup', 'bringup_launch_cartographer.launch.py')),
-         launch_arguments={
-            'params_file': os.path.join(get_package_share_directory('ugv_nav'), 'param', 'emcl_dwa.yaml')
-        }.items(),
-        condition=LaunchConfigurationEquals('use_localization', 'cartographer')
     )
     
     # Include the robot_pose_publisher launch description
@@ -106,22 +118,32 @@ def launch_setup(context, *args, **kwargs):
          '/robot_pose_publisher_launch.py'])
     ) 
     
-    # Return the list of launch descriptions
-    return [
-        bringup_lidar_launch,
-        nav2_bringup_amcl_launch,
-        nav2_bringup_emcl_launch,
-        emcl_launch,
-        robot_pose_publisher_launch,
-        nav2_bringup_cartographer_launch
-    ]
+    if use_localization_text=='rtabmap':
+        # Return the list of launch descriptions
+        return [
+            oak_d_lite_launch,
+            bringup_lidar_launch,
+            bringup_gazebo_launch,
+            nav2_bringup_launch,
+            robot_pose_publisher_launch,
+        ]
+    else:     
+        return [
+            bringup_lidar_launch,
+            bringup_gazebo_launch,
+            nav2_bringup_launch,
+            robot_pose_publisher_launch,
+        ]
 
 # Function to generate the launch description
 def generate_launch_description():
     # Return the launch description
     return LaunchDescription([
-        DeclareLaunchArgument('use_localplan', default_value='teb', description='Choose which localplan to use: dwa,teb'),
-        DeclareLaunchArgument('use_localization', default_value='amcl', description='Choose which use_localization to use: amcl,cartographer'),
+        DeclareLaunchArgument('use_sim_time',default_value='false',description='Use simulation/Gazebo clock'),
+        DeclareLaunchArgument('use_slam',default_value='false',description='Whether run a SLAM'),
+        DeclareLaunchArgument('use_rviz', default_value='false',description='Whether to launch RViz2'),
+        DeclareLaunchArgument('use_localplan', default_value='teb', description='Choose which localplan to use: dwa,teb,rpp,mppi'),
+        DeclareLaunchArgument('use_localization', default_value='amcl', description='Choose which localization to use: amcl,emcl,cartographer,slam_toolbox,rtabmap'),
         OpaqueFunction(function=launch_setup)
     ])
 

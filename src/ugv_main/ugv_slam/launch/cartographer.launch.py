@@ -12,18 +12,32 @@ def generate_launch_description():
 
     # Declare launch argument for whether to launch RViz2
     use_rviz_arg = DeclareLaunchArgument('use_rviz', default_value='false',
-                                     description='Whether to launch RViz2')                              
-                                     
+                                     description='Whether to launch RViz2')      
+
+    use_sim_time_arg = DeclareLaunchArgument('use_sim_time',default_value='false',
+                                    description='Use simulation/Gazebo clock')
+                                            
     # Include launch description for bringing up the lidar
     bringup_lidar_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(
-        [os.path.join(get_package_share_directory('ugv_roarm_bringup'), 'launch'),
+        [os.path.join(get_package_share_directory('ugv_bringup'), 'launch'),
          '/bringup_lidar.launch.py']),
         launch_arguments={
             'use_rviz': LaunchConfiguration('use_rviz'),
             'rviz_config': 'slam_2d',
-        }.items()
+        }.items(),
+        condition=UnlessCondition(LaunchConfiguration('use_sim_time'))        
     )
-            
+
+    bringup_gazebo_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(
+        [os.path.join(get_package_share_directory('ugv_gazebo'), 'launch'),
+         '/bringup_gazebo.launch.py']),
+        launch_arguments={
+            'use_rviz': LaunchConfiguration('use_rviz'),
+            'rviz_config': 'slam_2d',
+        }.items(),
+        condition=IfCondition(LaunchConfiguration('use_sim_time'))        
+    )
+
     # Include launch description for robot pose publisher
     robot_pose_publisher_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(
         [os.path.join(get_package_share_directory('robot_pose_publisher'), 'launch'),
@@ -33,13 +47,18 @@ def generate_launch_description():
     # Include launch description for cartographer
     cartographer_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(
         [os.path.join(get_package_share_directory('cartographer'), 'launch'),
-         '/mapping.launch.py'])
+         '/mapping.launch.py']),
+        launch_arguments={
+            'use_sim_time': LaunchConfiguration('use_sim_time'),
+        }.items(),
     )   
     
     # Return launch description
     return LaunchDescription([
         use_rviz_arg,
+        use_sim_time_arg,
         bringup_lidar_launch,
+        bringup_gazebo_launch,
         robot_pose_publisher_launch,
         cartographer_launch
     ])

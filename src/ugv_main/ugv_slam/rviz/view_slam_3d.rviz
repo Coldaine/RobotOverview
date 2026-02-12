@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /RobotModel1
       Splitter Ratio: 0.5
     Tree Height: 555
   - Class: rviz_common/Selection
@@ -57,7 +58,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /ugv/robot_description
+        Value: /robot_description
       Enabled: true
       Links:
         3d_camera_link:
@@ -69,7 +70,11 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        oak-d_frame:
+        oak:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_imu_frame:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -146,9 +151,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 246
+      Max Intensity: 255
       Min Color: 0; 0; 0
-      Min Intensity: 58
+      Min Intensity: 18
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -285,25 +290,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 4.358590126037598
+      Distance: 4.4747443199157715
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.17482921481132507
-        Y: -0.15795667469501495
+        X: 0.3375256657600403
+        Y: -1.0946611166000366
         Z: 0.36547765135765076
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.3953979015350342
+      Pitch: 0.5853979587554932
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.110398769378662
+      Yaw: 1.7103986740112305
     Saved: ~
 Window Geometry:
   Displays:
@@ -321,5 +326,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 3834
-  Y: 681
+  X: 3494
+  Y: 530

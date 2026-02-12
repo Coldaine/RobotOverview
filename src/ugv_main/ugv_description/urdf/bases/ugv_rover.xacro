@@ -5,6 +5,10 @@
 <xacro:arg name="use_gazebo" default="false"/>
 <xacro:property name="use_gazebo" value="$(arg use_gazebo)"/>
 
+<xacro:macro name="GZ_VERSION" params="GZ_VERSION"></xacro:macro>
+<xacro:arg name="GZ_VERSION" default="classic"/>
+<xacro:property name="GZ_VERSION" value="$(arg GZ_VERSION)"/>
+
 <xacro:macro name="add_pt" params="add_pt"></xacro:macro>
 <xacro:arg name="add_pt" default="true"/>
 <xacro:property name="add_pt" value="$(arg add_pt)"/>
@@ -35,15 +39,19 @@
 
 <xacro:if value="${add_pt}">
 <xacro:include filename="$(find ugv_description)/urdf/sensors/pt.xacro"/>
-<xacro:pt use_gazebo="$(arg use_gazebo)" pt_base_link_joint_pose_z="0.04"/>
+<xacro:pt use_gazebo="$(arg use_gazebo)" GZ_VERSION="$(arg GZ_VERSION)" pt_base_link_joint_pose_z="0.04" initial_positions_file="$(find ugv_description)/config/initial_positions.yaml"/>
+</xacro:if>
+
+<xacro:if value="${use_gazebo}">
 <xacro:include filename="$(find ugv_description)/urdf/gazebo/ugv_rover.gazebo"/>
+<xacro:gazebo GZ_VERSION="$(arg GZ_VERSION)"/>
 </xacro:if>
 
 <xacro:property name="base_inertial">
   <inertial>
-    <origin xyz="0.0 0 -0.018" rpy="0 0 0" />
-    <mass value="1.8601194" />
-    <inertia ixx="0.010769685" ixy="0" ixz="0" iyy="0.0118592" iyz="0" izz="0.017549519" />
+    <origin xyz="0.0 0 -0.0205" rpy="0 0 0" />
+    <mass value="2.1852443" />
+    <inertia ixx="0.012344031" ixy="0" ixz="0" iyy="0.01362398" iyz="0" izz="0.020616949" />
   </inertial>
 </xacro:property>
 
@@ -80,93 +88,25 @@
   <xacro:insert_block name="base_joint_pose" />
 </joint>
 
-
-<xacro:property name="wheel_inertial_pose_z" value="0.027"/>
-
-<xacro:macro name="wheel_inertial" params="inertial_pose_z">
-  <inertial>
-    <origin xyz="0 0 ${inertial_pose_z}" rpy="0 0 0" />
-    <mass value="0.1153110" />
-    <inertia ixx="8.06312E-05" ixy="0" ixz="0" iyy="8.06312E-05" iyz="0" izz="0.000127361" />
-  </inertial>
-</xacro:macro>
-
-<xacro:property name="wheel_pose">
-  <origin xyz="0 0 0" rpy="1.5708 -0 0" />
-</xacro:property>
-
 <xacro:property name="wheel_joint_pose_x" value="0.0855"/>
-<xacro:property name="wheel_joint_pose_y" value="0.06"/>
+<xacro:property name="wheel_joint_pose_y" value="0.08725"/>
 <xacro:property name="wheel_joint_pose_z" value="-0.041212"/>
-<xacro:property name="wheel_joint_pose_rpy" value="-1.5708 0 0"/>
 
 <xacro:wheel wheel_prefix="left_up">
-  <xacro:wheel_inertial inertial_pose_z="${wheel_inertial_pose_z}"></xacro:wheel_inertial>
-  <xacro:insert_block name="wheel_pose" />
-  
-  <origin xyz="${wheel_joint_pose_x} ${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="${wheel_joint_pose_rpy}" />
+  <origin xyz="${wheel_joint_pose_x} ${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="0 0 0" />
 </xacro:wheel>
 
 <xacro:wheel wheel_prefix="left_down">
-  <xacro:wheel_inertial inertial_pose_z="${wheel_inertial_pose_z}"></xacro:wheel_inertial>
-  <xacro:insert_block name="wheel_pose" />
-  
-  <origin xyz="-${wheel_joint_pose_x} ${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="${wheel_joint_pose_rpy}" />
+  <origin xyz="-${wheel_joint_pose_x} ${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="0 0 0" />
 </xacro:wheel>
 
 <xacro:wheel wheel_prefix="right_up">
-  <xacro:wheel_inertial inertial_pose_z="-${wheel_inertial_pose_z}"></xacro:wheel_inertial>
-  <xacro:insert_block name="wheel_pose" />
-  
-  <origin xyz="${wheel_joint_pose_x} -${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="${wheel_joint_pose_rpy}" />
+  <origin xyz="${wheel_joint_pose_x} -${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="0 0 0" />
 </xacro:wheel>
 
 <xacro:wheel wheel_prefix="right_down">
-  <xacro:wheel_inertial inertial_pose_z="-${wheel_inertial_pose_z}"></xacro:wheel_inertial>
-  <xacro:insert_block name="wheel_pose" />
-  
-  <origin xyz="-${wheel_joint_pose_x} -${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="${wheel_joint_pose_rpy}" />
+  <origin xyz="-${wheel_joint_pose_x} -${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="0 0 0" />
 </xacro:wheel>  
-
-<ros2_control name="WheelHardware" type="system">
-  <hardware>
-    <plugin>mock_components/GenericSystem</plugin>
-  </hardware>
-
-  <joint name="left_up_wheel_link_joint">
-    <command_interface name="position"/>
-    <state_interface name="position">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-    <state_interface name="velocity">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-  </joint>
-  <joint name="left_down_wheel_link_joint">
-    <command_interface name="position"/>
-    <state_interface name="position">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-    <state_interface name="velocity">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-  </joint>
-  <joint name="right_up_wheel_link_joint">
-    <command_interface name="position"/>
-    <state_interface name="position">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-    <state_interface name="velocity">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-  </joint>
-  <joint name="right_down_wheel_link_joint">
-    <command_interface name="position"/>
-    <state_interface name="position">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-  </joint>    
-</ros2_control>
 
 <xacro:include filename="$(arg urdf_extras)" />
 

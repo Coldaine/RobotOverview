@@ -5,9 +5,17 @@
 <xacro:arg name="use_gazebo" default="false"/>
 <xacro:property name="use_gazebo" value="$(arg use_gazebo)"/>
 
+<xacro:macro name="GZ_VERSION" params="GZ_VERSION"></xacro:macro>
+<xacro:arg name="GZ_VERSION" default="classic"/>
+<xacro:property name="GZ_VERSION" value="$(arg GZ_VERSION)"/>
+
 <xacro:macro name="add_pt" params="add_pt"></xacro:macro>
 <xacro:arg name="add_pt" default="true"/>
 <xacro:property name="add_pt" value="$(arg add_pt)"/>
+
+<xacro:macro name="add_depth_camera" params="add_depth_camera"></xacro:macro>
+<xacro:arg name="add_depth_camera" default="false"/>
+<xacro:property name="add_depth_camera" value="$(arg add_depth_camera)"/>
 
 <xacro:arg name="robot_namespace" default="/" />
 <xacro:arg name="urdf_extras" default="empty.urdf" />
@@ -22,15 +30,21 @@
 <xacro:insert_block name="lidar_joint_pose" />
 </xacro:lidar>
 
+<xacro:unless value="${add_depth_camera}">
 <xacro:include filename="$(find ugv_description)/urdf/sensors/3d_camera.xacro" />
 <xacro:oak use_gazebo="$(arg use_gazebo)">
   <origin xyz="0.07031 0 0.0793" rpy="0 0 0" />
 </xacro:oak>
+</xacro:unless>
 
 <xacro:if value="${add_pt}">
 <xacro:include filename="$(find ugv_description)/urdf/sensors/pt.xacro"/>
-<xacro:pt use_gazebo="$(arg use_gazebo)" pt_base_link_joint_pose_z="0.0973"/>
+<xacro:pt use_gazebo="$(arg use_gazebo)"  GZ_VERSION="$(arg GZ_VERSION)" pt_base_link_joint_pose_z="0.0973" initial_positions_file="$(find ugv_description)/config/initial_positions.yaml"/>
+</xacro:if>
+
+<xacro:if value="${use_gazebo}">
 <xacro:include filename="$(find ugv_description)/urdf/gazebo/ugv_beast.gazebo"/>
+<xacro:gazebo GZ_VERSION="$(arg GZ_VERSION)"/>
 </xacro:if>
 
 <xacro:property name="base_inertial">
@@ -132,46 +146,6 @@
   
   <origin xyz="-${down_wheel_joint_pose_x} -${down_wheel_joint_pose_y} ${down_wheel_joint_pose_z}" rpy="${wheel_joint_pose_rpy}" />
 </xacro:wheel>  
-
-<ros2_control name="WheelHardware" type="system">
-  <hardware>
-    <plugin>mock_components/GenericSystem</plugin>
-  </hardware>
-
-  <joint name="left_up_wheel_link_joint">
-    <command_interface name="position"/>
-    <state_interface name="position">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-    <state_interface name="velocity">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-  </joint>
-  <joint name="left_down_wheel_link_joint">
-    <command_interface name="position"/>
-    <state_interface name="position">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-    <state_interface name="velocity">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-  </joint>
-  <joint name="right_up_wheel_link_joint">
-    <command_interface name="position"/>
-    <state_interface name="position">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-    <state_interface name="velocity">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-  </joint>
-  <joint name="right_down_wheel_link_joint">
-    <command_interface name="position"/>
-    <state_interface name="position">
-      <param name="initial_value">0.0</param>
-    </state_interface>
-  </joint>    
-</ros2_control>
 
 <xacro:include filename="$(arg urdf_extras)" />
 

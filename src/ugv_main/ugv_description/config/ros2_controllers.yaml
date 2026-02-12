@@ -13,3 +13,4 @@ pt_joint_position_controller:
     joints:
       - pt_base_link_to_pt_link1
       - pt_link1_to_pt_link2
+    interface_name: position   

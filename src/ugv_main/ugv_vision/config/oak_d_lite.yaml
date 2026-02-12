@@ -1,8 +1,24 @@
 /oak:
   ros__parameters:
     camera:
-      i_enable_imu: false
       i_enable_ir: false
       i_nn_type: none
+    pipeline_gen:
+      i_enable_imu: false
+    rgb:
+      i_publish_topic: false
+      i_enable_preview: true
+      i_preview_width: 640
+      i_preview_height: 480
+      i_keep_preview_aspect_ratio: false
     stereo:
+      i_height: 480
+      i_width: 640
+      i_lr_check: true
       i_subpixel: true
+      i_extended_disp: true
+      # i_enable_spatial_filter: true
+      # i_spatial_filter_hole_filling_radius: 2
+      # i_spatial_filter_alpha: 0.5
+      # i_spatial_filter_delta: 20
+      # i_spatial_filter_iterations: 1
