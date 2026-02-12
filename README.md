@@ -4,7 +4,7 @@
 ![GitHub language count](https://img.shields.io/github/languages/count/waveshareteam/ugv_ws)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/waveshareteam/ugv_ws)
 ![GitHub repo size](https://img.shields.io/github/repo-size/waveshareteam/ugv_ws)
-![GitHub last commit (branch)](https://img.shields.io/github/last-commit/waveshareteam/ugv_ws/main)
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/waveshareteam/ugv_ws/ros2-humble-develop-251125)
 
 ## 1. Introduction of Function Package
 
