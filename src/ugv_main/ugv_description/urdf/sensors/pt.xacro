@@ -150,6 +150,40 @@
     </state_interface>
   </joint>
 
+  <joint name="left_up_wheel_link_joint">
+    <command_interface name="position"/>
+    <state_interface name="position">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+    <state_interface name="velocity">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+  </joint>
+  <joint name="left_down_wheel_link_joint">
+    <command_interface name="position"/>
+    <state_interface name="position">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+    <state_interface name="velocity">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+  </joint>
+  <joint name="right_up_wheel_link_joint">
+    <command_interface name="position"/>
+    <state_interface name="position">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+    <state_interface name="velocity">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+  </joint>
+  <joint name="right_down_wheel_link_joint">
+    <command_interface name="position"/>
+    <state_interface name="position">
+      <param name="initial_value">0.0</param>
+    </state_interface>
+  </joint>  
+  
 </ros2_control>
 
 <transmission name="pt_base_link_to_pt_link1_transmission">

@@ -6,9 +6,6 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /RobotModel1
-        - /Odometry1
-        - /Odometry1/Shape1
       Splitter Ratio: 0.5
     Tree Height: 555
   - Class: rviz_common/Selection
@@ -97,6 +94,39 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        oak-d_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_left_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_left_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_model_origin:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        oak_rgb_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_rgb_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_right_camera_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        oak_right_camera_optical_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         pt_base_link:
           Alpha: 1
           Show Axes: false
@@ -135,45 +165,6 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
-    - Angle Tolerance: 0.10000000149011612
-      Class: rviz_default_plugins/Odometry
-      Covariance:
-        Orientation:
-          Alpha: 0.5
-          Color: 255; 255; 127
-          Color Style: Unique
-          Frame: Local
-          Offset: 1
-          Scale: 1
-          Value: true
-        Position:
-          Alpha: 0.30000001192092896
-          Color: 204; 51; 204
-          Scale: 1
-          Value: true
-        Value: false
-      Enabled: true
-      Keep: 100
-      Name: Odometry
-      Position Tolerance: 0.10000000149011612
-      Shape:
-        Alpha: 1
-        Axes Length: 0.009999999776482582
-        Axes Radius: 0.009999999776482582
-        Color: 255; 25; 0
-        Head Length: 0.009999999776482582
-        Head Radius: 0.009999999776482582
-        Shaft Length: 0.009999999776482582
-        Shaft Radius: 0.009999999776482582
-        Value: Arrow
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /odom
-      Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -189,9 +180,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 56
+      Max Intensity: 255
       Min Color: 0; 0; 0
-      Min Intensity: 56
+      Min Intensity: 22
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
@@ -261,18 +252,18 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.9479004144668579
-        Y: -0.22416312992572784
-        Z: 0.3543030917644501
+        X: 0.5803951621055603
+        Y: -0.2096615433692932
+        Z: -0.20720332860946655
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.36479651927948
+      Pitch: 0.579796552658081
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.1822078227996826
+      Yaw: 3.082207679748535
     Saved: ~
 Window Geometry:
   Displays:
