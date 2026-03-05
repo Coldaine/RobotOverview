@@ -4,7 +4,6 @@ flask==3.1.2
 mediapipe==0.10.5
 ncnn==1.0.20250916
 numpy==1.21.5
-opencv-python==4.10.0.84
 opencv_contrib_python==4.10.0.84
 requests==2.32.5
 sherpa_ncnn==2.1.15
