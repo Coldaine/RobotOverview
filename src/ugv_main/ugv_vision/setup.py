@@ -34,6 +34,7 @@ setup(
             'apriltag_track = ugv_vision.apriltag_track:main',
             'apriltag_track_nav2 = ugv_vision.apriltag_track_nav2:main',
             'color_line_follow = ugv_vision.color_line_follow:main',
+            'roarm_color_line_follow = ugv_vision.roarm_color_line_follow:main',
             'face_track = ugv_vision.face_track:main',
             'gesture_ctrl = ugv_vision.gesture_ctrl:main',
             'cam_oak_webrtc = ugv_vision.cam_oak_webrtc:main',
