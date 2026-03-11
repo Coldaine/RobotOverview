@@ -60,6 +60,10 @@ enter_container() {
         echo "ℹ You can connect via SSH if needed"
         echo "ℹ Stop ugv-app.service"
         systemctl --user stop ugv-app.service
+        echo "ℹ Stop ugv-jupyter.service"
+        systemctl --user stop ugv-jupyter.service   
+        echo "ℹ Stop roarm_web_app.service"
+        systemctl --user stop roarm_web_app.service
         exit
     fi
 }
