@@ -4,6 +4,9 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import Twist
 from rcl_interfaces.msg import SetParametersResult
 from cv_bridge import CvBridge
+from tf2_ros import Buffer, TransformListener
+from tf2_ros import TransformException
+from roarm_msgs.srv import PickPlaceCmd
 
 import cv2
 import numpy as np
@@ -17,55 +20,6 @@ import math
 from math import isnan
 from collections import deque
 from enum import Enum
-
-curpath = os.path.realpath(__file__)
-thisPath = os.path.dirname(curpath)
-
-try:
-    existing_mediamtx_pids = subprocess.check_output(
-        ["pgrep", "-f", "mediamtx"], encoding="utf-8"
-    ).splitlines()
-
-    existing_gst_launch_pids = subprocess.check_output(
-        ["pgrep", "-f", "gst-launch-1.0"], encoding="utf-8"
-    ).splitlines()
-
-    for pid_str in existing_mediamtx_pids:
-        pid = int(pid_str)
-        print(f"Killing existing mediamtx process: {pid}")
-        os.kill(pid, signal.SIGTERM) 
-
-    for pid_str in existing_gst_launch_pids:
-        pid = int(pid_str)
-        print(f"Killing existing gst-launch-1.0 process: {pid}")
-        os.kill(pid, signal.SIGTERM) 
-except subprocess.CalledProcessError:
-    pass
-    
-log_file_path = os.path.join(thisPath,"Mediamtx", "mediamtx.log")
-
-with open(log_file_path, "w") as log_file:
-    mediamtx_command = [
-        os.path.join(thisPath,"Mediamtx", "mediamtx"),
-        os.path.join(thisPath,"Mediamtx", "mediamtx.yml"),
-    ]
-    mediamtx_process = subprocess.Popen(
-        mediamtx_command,
-        stdout=log_file,
-        stderr=log_file
-    )
-        
-gst_command = [
-    'gst-launch-1.0',
-    'fdsrc', '!',
-    'rawvideoparse', 'format=bgr', 'width=640', 'height=480', 'framerate=30/1', '!',
-    'videoconvert', '!',
-    'x264enc', 'bitrate=1000', 'speed-preset=ultrafast', 'tune=zerolatency', '!',
-    'h264parse', '!',
-    'rtspclientsink', 'location=rtsp://localhost:8554/cam', 'latency=0'
-]
-
-gst_process = subprocess.Popen(gst_command, stdin=subprocess.PIPE)
 
 def robust_mean_remove_outliers(arr, mz_thresh=3.5):
     if arr.size == 0:
@@ -84,6 +38,10 @@ class TrackState(Enum):
     SEARCH_SCAN = 1
     RECOVER = 2
 
+    OBJECT_FOUND = 10
+    PICKING = 11
+    PLACING = 12
+
 class ColorTrackPID(Node):
     def __init__(self):
         super().__init__('color_track_pid')
@@ -101,7 +59,7 @@ class ColorTrackPID(Node):
 
         self.kp = 3.0
         self.kd = 0.05
-        self.base_speed = 0.2
+        self.base_speed = 0.1
         self.recover_time = 0.4
 
         self.scan_dir = 1
@@ -131,21 +89,25 @@ class ColorTrackPID(Node):
         self.add_on_set_parameters_callback(self.on_param_change)
 
         # ROI
-        model = os.environ.get('ROARM_MODEL', None)
-        if model:
-            self.roi = [
-                (150,  200, 40, 600, 0.2),
-                (200,  250, 40, 600, 0.3),
-                (250,  300, 40, 600, 0.5),
-            ]
-        else:
-            self.roi = [
-                (250, 300, 40, 600, 0.1),
-                (300, 400, 40, 600, 0.3),
-                (400, 480, 40, 600, 0.6),
-            ]
+        self.roi = [
+            (150,  200, 40, 600, 0.2),
+            (200,  250, 40, 600, 0.3),
+            (250,  300, 40, 600, 0.5),
+        ]
 
         self.get_logger().info("ColorTrackPID Node started")
+
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.target_detected = False
+        self.task_busy = False
+        self.pick_started = False
+        self.last_task_time = 0
+        self.task_cooldown = 3.0
+        self.tf_timer = self.create_timer(0.1, self.check_target_tf)
+        self.pick_client = self.create_client(PickPlaceCmd, 'pick_place_cmd')
+        while not self.pick_client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Waiting for pick_place_cmd service...')
 
     def on_param_change(self, params):
         for param in params:
@@ -168,6 +130,51 @@ class ColorTrackPID(Node):
                 self.get_logger().info(f"Updated LAB range: lower={self.lower_color}, upper={self.upper_color}")
 
         return SetParametersResult(successful=True)
+
+    def call_pick(self, target=1, gripper=0.0):
+
+        req = PickPlaceCmd.Request()
+        req.cmd = 1
+        req.target = target
+        req.gripper = gripper
+
+        future = self.pick_client.call_async(req)
+
+        return future
+
+    def call_place(self):
+
+        req = PickPlaceCmd.Request()
+        req.cmd = 2
+
+        future = self.pick_client.call_async(req)
+
+        return future
+
+    def check_target_tf(self):
+
+        if self.task_busy:
+            return
+
+        try:
+            trans = self.tf_buffer.lookup_transform(
+                "ugv_roarm_base_link",
+                "object_1",
+                rclpy.time.Time()
+            )
+
+            x = trans.transform.translation.x
+            y = trans.transform.translation.y
+
+            dist = math.sqrt(x*x + y*y)
+
+            if x >= 0.2 and 0.15 < dist < 0.3 and abs(y) < 0.2:
+                self.target_detected = True
+            else:
+                self.target_detected = False
+
+        except TransformException:
+            self.target_detected = False
 
     def image_callback(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
@@ -204,6 +211,19 @@ class ColorTrackPID(Node):
         twist = Twist()
 
         if self.state == TrackState.FOLLOW:
+            if self.target_detected and not self.task_busy \
+            and time.time() - self.last_task_time > self.task_cooldown:
+
+                self.get_logger().info("Target detected → PICK")
+
+                self.state = TrackState.OBJECT_FOUND
+                self.task_busy = True
+                twist.linear.x = 0.0
+                twist.angular.z = 0.0
+
+                self.pub_cmd.publish(twist)
+                return
+
             if has_line and weight_sum > 0:
                 x_avg = cx_sum / weight_sum
                 err = (x_avg - cx) / cx
@@ -258,6 +278,52 @@ class ColorTrackPID(Node):
                 twist.angular.z = self.scan_dir * self.scan_yaw_base
                 self.get_logger().warn("Lost line during RECOVER → SEARCH_SCAN")
 
+        elif self.state == TrackState.OBJECT_FOUND:
+
+            twist.linear.x = 0.0
+            twist.angular.z = 0.0
+
+            if not self.pick_started:
+
+                self.pick_future = self.call_pick(target=1, gripper=0.0)
+                self.pick_started = True
+                self.state = TrackState.PICKING
+
+        elif self.state == TrackState.PICKING:
+
+            twist.linear.x = 0.0
+            twist.angular.z = 0.0
+
+            if self.pick_future.done():
+
+                result = self.pick_future.result()
+
+                if result.success:
+                    self.get_logger().info("Pick success")
+                    self.place_future = self.call_place()
+                    self.state = TrackState.PLACING
+                else:
+                    self.get_logger().warn("Pick failed")
+                    self.state = TrackState.FOLLOW
+
+        elif self.state == TrackState.PLACING:
+
+            twist.linear.x = 0.0
+            twist.angular.z = 0.0
+
+            if self.place_future.done():
+
+                result = self.place_future.result()
+
+                if result.success:
+                    self.get_logger().info("Place success")
+
+                self.last_task_time = time.time()
+
+                self.task_busy = False
+                self.pick_started = False
+                self.state = TrackState.FOLLOW
+
         cv2.rectangle(frame, (10, 10), (260, 90), (0, 0, 0), -1)
         cv2.putText(
             frame,
@@ -270,8 +336,6 @@ class ColorTrackPID(Node):
             cv2.LINE_AA
         )
 
-        gst_process.stdin.write(frame.tobytes())
-        gst_process.stdin.flush()
         self.pub_img.publish(self.bridge.cv2_to_imgmsg(frame, "bgr8"))
         self.pub_cmd.publish(twist)
 
