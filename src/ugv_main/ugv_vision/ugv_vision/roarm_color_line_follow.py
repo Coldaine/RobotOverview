@@ -165,10 +165,14 @@ class ColorTrackPID(Node):
 
             x = trans.transform.translation.x
             y = trans.transform.translation.y
+            z = trans.transform.translation.z
 
-            dist = math.sqrt(x*x + y*y)
-
-            if x >= 0.2 and 0.15 < dist < 0.3 and abs(y) < 0.2:
+            min_radius = 0.15
+            max_radius = 0.40
+        
+            dist = math.sqrt(x**2 + y**2 + z**2)
+        
+            if min_radius <= dist <= max_radius:
                 self.target_detected = True
             else:
                 self.target_detected = False
@@ -285,7 +289,7 @@ class ColorTrackPID(Node):
 
             if not self.pick_started:
 
-                self.pick_future = self.call_pick(target=1, gripper=0.0)
+                self.pick_future = self.call_pick(target=1, gripper=0.25)
                 self.pick_started = True
                 self.state = TrackState.PICKING
 
