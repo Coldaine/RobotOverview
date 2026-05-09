@@ -41,16 +41,30 @@ fi
 echo
 echo "[2/6] Installing ROS 2 packages..."
 apt-get install -y \
-  ros-humble-cartographer-* \
-  ros-humble-desktop-* \
-  ros-humble-joint-state-publisher-* \
-  ros-humble-position-controllers \
-  ros-humble-nav2-* \
-  ros-humble-rosbridge-* \
-  ros-humble-rqt-* \
-  ros-humble-rtabmap-* \
-  ros-humble-v4l2-camera \
-  ros-humble-depthai-*
+    ros-humble-cartographer-* \
+    ros-humble-desktop-* \
+    ros-humble-joint-state-publisher-* \
+    ros-humble-position-controllers \
+    ros-humble-nav2-* \
+    ros-humble-rosbridge-* \
+    ros-humble-rqt-* \
+    ros-humble-rtabmap-* \
+    ros-humble-v4l2-camera \
+    ros-humble-depthai-bridge-dbgsym \
+    ros-humble-depthai-ros-driver \
+    ros-humble-depthai-ros-msgs \
+    ros-humble-depthai-ros-msgs-dbgsym \
+    ros-humble-depthai-bridge \
+    ros-humble-depthai-descriptions \
+    ros-humble-depthai-examples \
+    ros-humble-depthai-ros-driver-dbgsym \
+    ros-humble-depthai \
+    ros-humble-depthai-dbgsym \
+    ros-humble-depthai-examples-dbgsym \
+    ros-humble-depthai-filters \
+    ros-humble-depthai-filters-dbgsym \
+    ros-humble-depthai-ros
+  
 
 # ---------- Gazebo (OPTIONAL) ----------
 echo
@@ -205,13 +219,10 @@ add_if_not_exist "source $WS/install/setup.bash"
 add_if_not_exist "export PULSE_SERVER=unix:/run/user/1000/pulse/native"
 add_if_not_exist "export XDG_RUNTIME_DIR=/run/user/1000"
 add_if_not_exist "# ---- ROS 2 & colcon argcomplete ----"
-add_if_not_exist "if [ -f /usr/share/ros2cli/ros2cli-completion.bash ]; then"
-add_if_not_exist "  source /usr/share/ros2cli/ros2cli-completion.bash"
-add_if_not_exist "fi"
 
-add_if_not_exist "if [ -f /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash ]; then"
-add_if_not_exist "  source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash"
-add_if_not_exist "fi"
+# ROS 2 CLI completion
+add_if_not_exist 'if [ -f /usr/share/ros2cli/ros2cli-completion.bash ]; then source /usr/share/ros2cli/ros2cli-completion.bash; fi'
+add_if_not_exist 'if [ -f /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash ]; then source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash; fi'
 
 source ~/.bashrc
 

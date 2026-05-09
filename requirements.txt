@@ -7,7 +7,8 @@ numpy==1.21.5
 opencv_contrib_python==4.10.0.84
 requests==2.32.5
 sherpa_ncnn==2.1.15
-sherpa_onnx==1.12.18
+sherpa_onnx==1.12.18 ; platform_machine=="aarch64"
+sherpa_onnx==1.12.28 ; platform_machine=="x86_64"
 soundfile==0.13.1
 pygame==2.6.1
 pyserial==3.5

@@ -217,8 +217,6 @@ def generate_launch_description():
         DeclareLaunchArgument('use_rviz', default_value='false', description='Whether to launch RViz2'),
         # Argument to specify which RViz configuration to use
         DeclareLaunchArgument('rviz_config', default_value='description', description='Choose which rviz configuration to use: description, bringup, slam_2d, slam_3d, nav_2d, nav_3d'),
-        # Argument to specify which gazebo version to use
-        DeclareLaunchArgument('gazebo_config', default_value='description', description='Choose which gazebo version to use: description, bringup, slam_2d, slam_3d, nav_2d, nav_3d'),
         # Opaque function to execute the setup
         OpaqueFunction(function=launch_setup)
     ])
