@@ -14,9 +14,9 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 
 ## Decision Tree
 
-- **Understand project intent** -> `NORTH_STAR.md`
-- **Architectural decisions** -> `architecture.md`
-- **Active work / Milestones** -> `PROGRESS.md`
+- **Understand project intent** -> `docs/NORTH_STAR.md`
+- **Architectural decisions** -> `docs/architecture.md`
+- **Active work / Milestones** -> `docs/PROGRESS.md`
 - **Code implementation** -> `src/`
 
 ## Tech Stack & Commands
@@ -35,4 +35,4 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 
 ## Handoff Format
 
-Update `PROGRESS.md` before end of session.
+Update `docs/PROGRESS.md` before end of session.

@@ -23,6 +23,7 @@ last_confirmed: confirmed
 - **Git State:** Establishing the remote repository and baseline branch.
 - **Persistent Store:** Implementing `localStorage` sync for user preferences (source toggle, active mission).
 - **Execution Plans:** Added ordered plan handoffs under `docs/plans/` for alpha stabilization, deployment, and product expansion.
+- **Documentation Hygiene:** Correcting authority-doc links and Markdown drift before the next implementation pass.
 
 ## Roadmap & Milestones
 
@@ -30,7 +31,7 @@ last_confirmed: confirmed
 - [x] Data Spine (initial roster seed)
 - [x] Mission 01: Undercroft implemented
 - [x] Quartermaster / Wishlist view
-- [x] Reactive Constraint Logic (Live power/mass summing)
+- [ ] Reactive Constraint Logic finalized (preserve authored baselines)
 - [ ] Persistent Global State (localStorage sync)
 - [ ] External Hosting (GitHub Pages / Vercel candidate)
 

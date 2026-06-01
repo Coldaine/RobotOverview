@@ -13,7 +13,7 @@ last_confirmed: unconfirmed
 
 ## Architecture Thesis
 
-The system is a content spine (a uniform record model) with a game-styled view layer; the data is the source of truth and the UI is a projection that scales by adding records, not screens. Hosting, storage, and stack are undecided. `[INFERRED]` the "uniform record" framing came from our design conversation, not your stated words; confirm before it hardens
+The system is a content spine (a uniform record model) with a game-styled view layer; the data is the source of truth and the UI is a projection that scales by adding records, not screens. Hosting remains undecided; the current implementation uses a static TypeScript data module and the Vite/React stack recorded below. `[INFERRED]` the "uniform record" framing came from our design conversation, not your stated words; confirm before it hardens
 
 ## Status Legend
 
@@ -28,7 +28,7 @@ The system is a content spine (a uniform record model) with a game-styled view l
 |---|---|---|
 | Information model | Current | Everything is a "unit" record (robots, computers, network gear, home systems, audio), with sibling collections for missions, capabilities, and insights. |
 | Top-level taxonomy (bays) | Current | Robotics, Compute, Network, Home Systems, Audio; extensible. |
-| Asset lifecycle | Current | inventory | assembled | deployed | wishlist | on-order |
+| Asset lifecycle | Current | inventory / assembled / deployed / wishlist / on-order |
 | Missions | Current | Named jobs that requisition units and a loadout; Undercroft is Mission 01. |
 | Presentation | Current | A base-builder HUD / Hangar SPA built with Vite, React, Tailwind CSS, and Framer Motion. |
 | Population pipeline | Open | Mostly LLM-driven; manual seed data in `src/data/hangar.ts`. |
@@ -73,7 +73,7 @@ Confirmed:
 
 ## Links
 
-- `NORTH_STAR.md` — project intent
-- `PROGRESS.md` — current status and open questions
-- `AGENTS.md` — agent entrypoint
-- research brief and UI mockup prompt — session artifacts feeding this design
+- [NORTH_STAR.md](./NORTH_STAR.md) - project intent
+- [PROGRESS.md](./PROGRESS.md) - current status and open questions
+- [AGENTS.md](../AGENTS.md) - agent entrypoint
+- [hangar_ui_mockup_prompt.md](./hangar_ui_mockup_prompt.md) - session artifact feeding this design

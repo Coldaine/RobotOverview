@@ -18,7 +18,7 @@ Make the current alpha truthful, stable, and ready for review. This phase fixes 
 - Read [NORTH_STAR.md](../NORTH_STAR.md), [architecture.md](../architecture.md), and [PROGRESS.md](../PROGRESS.md) for authority boundaries.
 - Inspect `src/lib/store.tsx`, mission rendering, unit-card rendering, and `src/data/hangar.ts`.
 - Reproduce or reason through the seeded `undercroft` constraint bug: authored values are `22W`, `380g`, and `$35`, but live calculation currently replaces them with raw wishlist sums.
-- Check `AGENTS.md` links and any `@RTK.md` reference visible in session context; do not invent an RTK document unless project intent is confirmed.
+- Confirm `AGENTS.md` authority links still point at the `docs/` folder and check any `@RTK.md` reference visible in session context; do not invent an RTK document unless project intent is confirmed.
 
 ## Implement
 
@@ -27,8 +27,8 @@ Make the current alpha truthful, stable, and ready for review. This phase fixes 
   - Wishlist items should add only incremental values that are actually selected for the mission.
   - Cost must not blindly sum mutually exclusive wishlist alternatives for the same loadout choice.
   - If no selection model exists yet, use the mission's authored cost value as the displayed baseline and avoid replacing it with a sum of all alternatives.
-- Fix authority doc links:
-  - Point AGENTS decision-tree links to `docs/NORTH_STAR.md`, `docs/architecture.md`, and `docs/PROGRESS.md`.
+- Preserve authority doc links:
+  - Keep AGENTS decision-tree links pointed at `docs/NORTH_STAR.md`, `docs/architecture.md`, and `docs/PROGRESS.md`.
   - Leave missing `RTK.md` as a documented handoff note unless the file exists or the owner supplies it.
 - Add persistent global store state:
   - Persist `source` and `lensMissionId` in `localStorage`.
