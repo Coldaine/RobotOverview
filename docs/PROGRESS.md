@@ -22,6 +22,7 @@ last_confirmed: confirmed
 - **Finalizing Repository:** Stabilizing the folder structure, moving authority docs to `docs/` and entrypoints to root.
 - **Git State:** Establishing the remote repository and baseline branch.
 - **Persistent Store:** Implementing `localStorage` sync for user preferences (source toggle, active mission).
+- **Execution Plans:** Added ordered plan handoffs under `docs/plans/` for alpha stabilization, deployment, and product expansion.
 
 ## Roadmap & Milestones
 
