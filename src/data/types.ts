@@ -49,6 +49,15 @@ export interface PowerProfile {
   rail?: '5V' | '12V' | 'battery' | 'mains' | null;
 }
 
+export interface Hotspot {
+  id: string;
+  label: string;
+  detail: string;
+  x: number; // % of viewBox 0-100
+  y: number;
+  status: 'ok' | 'empty' | 'attention';
+}
+
 export interface Unit {
   id: string;
   name: string;
@@ -64,6 +73,7 @@ export interface Unit {
   power?: PowerProfile;
   massGrams?: number | null;
   loadout?: LoadoutSlot[];
+  hotspots?: Hotspot[];
   capabilities?: string[]; // capability ids this unit grants/enables
   missions?: string[]; // mission ids
   insights?: string[]; // insight ids
@@ -110,6 +120,8 @@ export interface WishlistItem {
   forMission?: string; // mission id
   rationale: string; // why it matters
   price: Price;
+  power?: PowerProfile;
+  massGrams?: number | null;
   status: 'watching' | 'researching' | 'planned' | 'buy-next' | 'on-order' | 'received' | 'rejected';
   unlocks?: string; // capability id
   riskNote?: string; // import / counterfeit / warranty risk
@@ -122,6 +134,7 @@ export interface Capability {
   name: string;
   description: string;
   unlockedBy: string[]; // unit ids or wishlist item ids required
+  dependsOn?: string[]; // capability ids
   bay?: BayId;
   unlocked: boolean;
 }

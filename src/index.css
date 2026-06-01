@@ -5,6 +5,17 @@
 @layer base {
   :root {
     color-scheme: dark;
+    --color-void: #05070d;
+    --color-hull: #0a0e17;
+    --color-panel: #10151f;
+    --color-rim: #1f2937;
+    --color-grid: #11202e;
+    --color-ink: #c7d3e3;
+    --color-cyan: #36e0e0;
+    --color-amber: #ffb020;
+    --color-signal-ok: #34d399;
+    --color-signal-warn: #fbbf24;
+    --color-signal-crit: #fb5b5b;
   }
 
   html,
@@ -18,7 +29,7 @@
     background-image:
       radial-gradient(circle at 15% -10%, rgba(54, 224, 224, 0.08), transparent 45%),
       radial-gradient(circle at 90% 0%, rgba(255, 176, 32, 0.06), transparent 40%),
-      linear-gradient(180deg, #05070d 0%, #060912 100%);
+      linear-gradient(180deg, var(--color-void) 0%, #060912 100%);
     background-attachment: fixed;
   }
 
@@ -29,14 +40,14 @@
   /* Scrollbar — instrument style */
   * {
     scrollbar-width: thin;
-    scrollbar-color: #1f2937 transparent;
+    scrollbar-color: var(--color-rim) transparent;
   }
   *::-webkit-scrollbar {
     width: 10px;
     height: 10px;
   }
   *::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #1f2937, #131a26);
+    background: linear-gradient(180deg, var(--color-rim), #131a26);
     border-radius: 999px;
     border: 2px solid transparent;
     background-clip: padding-box;

@@ -80,21 +80,20 @@ export function useHangar(): HangarStore {
 }
 
 export function useCalculatedConstraints(missionId: string) {
-  const { mission, unit, wish, source } = useHangar();
+  const { mission, wish, source } = useHangar();
   const m = mission(missionId);
 
   return useMemo(() => {
     if (!m) return [];
 
-    const units = m.requisitionedUnits.map(unit).filter(Boolean);
     const wishes = (m.wishlist ?? []).map(wish).filter(Boolean);
 
     return m.constraints.map((c) => {
       let liveValue = 0;
       if (c.unit === 'W') {
-        liveValue = units.reduce((sum, u) => sum + (u!.power?.watts ?? 0), 0);
+        liveValue = wishes.reduce((sum, w) => sum + (w!.power?.watts ?? 0), 0);
       } else if (c.unit === 'g') {
-        liveValue = units.reduce((sum, u) => sum + (u!.massGrams ?? 0), 0);
+        liveValue = wishes.reduce((sum, w) => sum + (w!.massGrams ?? 0), 0);
       } else if (c.unit === '$') {
         liveValue = wishes.reduce((sum, w) => {
           const p = source === 'us' ? w!.price.us : w!.price.import ?? w!.price.us;
@@ -103,5 +102,5 @@ export function useCalculatedConstraints(missionId: string) {
       }
       return { ...c, value: liveValue };
     });
-  }, [m, unit, wish, source]);
+  }, [m, wish, source]);
 }
