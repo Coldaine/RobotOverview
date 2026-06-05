@@ -1,1 +1,2 @@
 src/ugv_main/ugv_voice/ugv_voice/models/sherpa-onnx-vits-zh-ll/*.onnx filter=lfs diff=lfs merge=lfs -text
+src/ugv_main/ugv_voice/ugv_voice/models/asr/sherpa-ncnn-streaming-zipformer-bilingual-zh-en-2023-02-13/encoder_jit_trace-pnnx.ncnn.bin filter=lfs diff=lfs merge=lfs -text
