@@ -108,7 +108,6 @@ class BaseController:
             if t is not None:
                 if str(t) == "3" or str(t) == "13":
                     try:
-                        print(data)
                         self.ser.write(data)
                     except Exception as e:
                         print(f"Failed to immediately send T=3 data: {e}")
@@ -127,7 +126,6 @@ class BaseController:
                     continue
                 for t_key, data in self.command_dict.items():
                     try:
-                        print(data)
                         self.ser.write(data)
                     except Exception as e:
                         print(f"Failed to send {t_key}: {e}")

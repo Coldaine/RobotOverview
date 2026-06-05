@@ -150,7 +150,6 @@ class OdomPublisher(Node):
         if dth != 0.0:
             self.yaw_odom += dth
 
-        # IMU 优先
         self.yaw = self.yaw_imu if self.imu_valid else self.yaw_odom
 
         self.publish_odom(now)
@@ -208,7 +207,3 @@ def main(args=None):
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
-
-
-if __name__ == "__main__":
-    main()

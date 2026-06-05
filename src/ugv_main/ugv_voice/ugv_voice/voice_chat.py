@@ -22,13 +22,13 @@ from .tts_sherpa_onnx import tts_sherpa_onnx
 LANG_CONFIG = {
     "zh": {
         "kws_model": "sherpa-onnx-kws-zipformer-wenetspeech-3.3M-2024-01-01",
-        "asr_model": "sherpa-ncnn-streaming-zipformer-zh-14M-2023-02-23",
+        "asr_model": "sherpa-ncnn-streaming-zipformer-bilingual-zh-en-2023-02-13",
         "wake_prompt": "我在，你说",
         "no_hear_prompt": "没有听清，请再说一遍",
     },
     "en": {
         "kws_model": "sherpa-onnx-kws-zipformer-gigaspeech-3.3M-2024-01-01",
-        "asr_model": "sherpa-ncnn-streaming-zipformer-20M-2023-02-17",
+        "asr_model": "sherpa-ncnn-streaming-zipformer-bilingual-zh-en-2023-02-13",
         "wake_prompt": "I'm listening",
         "no_hear_prompt": "Sorry, I didn't catch that",
     }
@@ -48,14 +48,14 @@ class VoiceChat(Node):
         # ---------- Language ----------
         self.declare_parameter(
             "language",
-            "en",
+            "zh",
             ParameterDescriptor(description="Language: zh or en")
         )
         self.language = self.get_parameter("language").value
 
         self.declare_parameter(
             "server_url",
-            "http://192.168.9.125:11434/api/chat",
+            "http://192.168.9.130:11434/api/chat",
             ParameterDescriptor(description="Server url")
         )
         self.server_url = self.get_parameter("server_url").value
@@ -91,7 +91,21 @@ class VoiceChat(Node):
         self.asr = asr_sherpa_ncnn(asr_model_dir)
 
         # ---------- LLM ----------
-        self.llm = ollama_llm_chat(self.server_url)
+        self.declare_parameter(
+            "prompt_file",
+            os.path.join(this_path, "prompt.txt"),
+        )
+        self.declare_parameter("llm_model", "qwen3:8b")
+        prompt_path = self.get_parameter("prompt_file").value
+        self.system_prompt = ""
+        if os.path.isfile(prompt_path):
+            with open(prompt_path, "r", encoding="utf-8") as f:
+                self.system_prompt = f.read().strip()
+            self.get_logger().info(f"Loaded prompt ({len(self.system_prompt)} chars)")
+        else:
+            self.get_logger().warn(f"prompt file not found: {prompt_path}")
+        llm_model = self.get_parameter("llm_model").value
+        self.llm = ollama_llm_chat(self.server_url, model=llm_model)
 
         tts_model_dir = os.path.join(this_path, "models/sherpa-onnx-vits-zh-ll")
         self.tts = tts_sherpa_onnx(tts_model_dir)
@@ -222,4 +236,3 @@ def main(args=None):
         pass
     node.destroy_node()
     rclpy.shutdown()
-

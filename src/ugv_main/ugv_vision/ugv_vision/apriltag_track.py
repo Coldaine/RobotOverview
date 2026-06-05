@@ -128,7 +128,7 @@ class ApriltagTrackPid(Node):
             [0.0, 0.0, 1.0]
         ], dtype=np.float64)
 
-        self.tag_size = 0.064
+        self.tag_size = 0.028
         self.obj_pts = np.array([
             [-self.tag_size / 2, -self.tag_size / 2, 0],
             [ self.tag_size / 2, -self.tag_size / 2, 0],

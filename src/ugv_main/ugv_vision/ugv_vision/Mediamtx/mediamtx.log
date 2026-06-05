@@ -1,4 +1,0 @@
-2026/03/10 08:24:18 INF MediaMTX v1.13.1
-2026/03/10 08:24:18 INF configuration loaded from /home/ws/ugv_ws/src/ugv_main/ugv_vision/ugv_vision/Mediamtx/mediamtx.yml
-2026/03/10 08:24:18 ERR listen udp :8000: bind: address already in use
-2026/03/10 08:24:18 INF waiting for running hooks

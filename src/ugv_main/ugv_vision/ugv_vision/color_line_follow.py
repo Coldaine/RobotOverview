@@ -17,6 +17,10 @@ import math
 from math import isnan
 from collections import deque
 from enum import Enum
+from pathlib import Path
+_MODULE_DIR = Path(__file__).resolve().parent
+CONFIG_DIR = _MODULE_DIR.parent / "config"
+CONFIG_PATH = CONFIG_DIR / "lab_tool_colors.json"
 
 curpath = os.path.realpath(__file__)
 thisPath = os.path.dirname(curpath)
@@ -109,24 +113,7 @@ class ColorTrackPID(Node):
         self.scan_yaw_max = math.pi
         self.max_scan_time = 10.0
 
-        self.declare_parameter("lower_l", 0)
-        self.declare_parameter("lower_a", 100)
-        self.declare_parameter("lower_b", 187)
-        self.declare_parameter("upper_l", 255)
-        self.declare_parameter("upper_a", 255)
-        self.declare_parameter("upper_b", 255)
-
-        self.lower_color = np.array([
-            self.get_parameter("lower_l").value,
-            self.get_parameter("lower_a").value,
-            self.get_parameter("lower_b").value
-        ], dtype=np.uint8)
-
-        self.upper_color = np.array([
-            self.get_parameter("upper_l").value,
-            self.get_parameter("upper_a").value,
-            self.get_parameter("upper_b").value
-        ], dtype=np.uint8)
+        self._load_colors_from_json()
 
         self.add_on_set_parameters_callback(self.on_param_change)
 
@@ -147,26 +134,44 @@ class ColorTrackPID(Node):
 
         self.get_logger().info("ColorTrackPID Node started")
 
+    def _load_colors_from_json(self):
+        profile = "yellow"
+
+        if not CONFIG_PATH.is_file():
+            self.get_logger().warn(
+                f"Config not found: {CONFIG_PATH}, use default LAB"
+            )
+            self.lower_color = np.array(_DEFAULT_LOWER, dtype=np.uint8)
+            self.upper_color = np.array(_DEFAULT_UPPER, dtype=np.uint8)
+            return
+
+        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+            profiles = json.load(f)
+
+        if profile not in profiles:
+            self.get_logger().warn(
+                f"Profile '{profile}' not in {CONFIG_PATH}, "
+                f"available: {list(profiles.keys())}, use default"
+            )
+            self.lower_color = np.array(_DEFAULT_LOWER, dtype=np.uint8)
+            self.upper_color = np.array(_DEFAULT_UPPER, dtype=np.uint8)
+            return
+
+        p = profiles[profile]
+        self.lower_color = np.array(p["lower"], dtype=np.uint8)
+        self.upper_color = np.array(p["upper"], dtype=np.uint8)
+        self.get_logger().info(
+            f"LAB from json [{profile}]: lower={self.lower_color.tolist()} "
+            f"upper={self.upper_color.tolist()}"
+        )
+
     def on_param_change(self, params):
+        reload_needed = False
         for param in params:
-            if param.name in (
-                "lower_l", "lower_a", "lower_b",
-                "upper_l", "upper_a", "upper_b"
-            ):
-                self.lower_color = np.array([
-                    self.get_parameter("lower_l").value,
-                    self.get_parameter("lower_a").value,
-                    self.get_parameter("lower_b").value
-                ], dtype=np.uint8)
-
-                self.upper_color = np.array([
-                    self.get_parameter("upper_l").value,
-                    self.get_parameter("upper_a").value,
-                    self.get_parameter("upper_b").value
-                ], dtype=np.uint8)
-
-                self.get_logger().info(f"Updated LAB range: lower={self.lower_color}, upper={self.upper_color}")
-
+            if param.name == "color":
+                reload_needed = True
+        if reload_needed:
+            self._load_colors_from_json()
         return SetParametersResult(successful=True)
 
     def image_callback(self, msg):

@@ -4,17 +4,23 @@ from rcl_interfaces.msg import ParameterDescriptor,SetParametersResult
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from std_msgs.msg import Float64MultiArray
-from cv_bridge import CvBridge
-import cv2
-import numpy as np
-import math
-
 from geometry_msgs.msg import Twist
+from cv_bridge import CvBridge
 
 from .track_pid import PID
+
+import cv2
+import numpy as np
+import json
 import os
+import yaml
 import subprocess
 import signal
+import math
+from pathlib import Path
+_MODULE_DIR = Path(__file__).resolve().parent
+CONFIG_DIR = _MODULE_DIR.parent / "config"
+CONFIG_PATH = CONFIG_DIR / "lab_tool_colors.json"
 
 curpath = os.path.realpath(__file__)
 thisPath = os.path.dirname(curpath)
@@ -69,22 +75,11 @@ class PtColorTrackerNode(Node):
     def __init__(self):
         super().__init__('pt_color_tracker')
 
-        # Declare parameters for lower and upper hue, saturation, and value
-        self.declare_parameter("lower_l", 110, ParameterDescriptor(description="Lower L"))
-        self.declare_parameter("lower_a", 0, ParameterDescriptor(description="Lower A"))
-        self.declare_parameter("lower_b", 0, ParameterDescriptor(description="Lower B"))
-        
-        self.declare_parameter("upper_l", 255, ParameterDescriptor(description="Upper L"))
-        self.declare_parameter("upper_a", 110, ParameterDescriptor(description="Upper A"))
-        self.declare_parameter("upper_b", 255, ParameterDescriptor(description="Upper B"))
-
-        # Initialize the lower and upper color arrays with the parameter values
-        self.lower_color = np.array([self.get_parameter("lower_l").value, 
-                                     self.get_parameter("lower_a").value, 
-                                     self.get_parameter("lower_b").value])
-        self.upper_color = np.array([self.get_parameter("upper_l").value, 
-                                     self.get_parameter("upper_a").value, 
-                                     self.get_parameter("upper_b").value])
+        self.declare_parameter(
+            "color", "green",
+            ParameterDescriptor(description="Key in config/lab_tool_colors.json")
+        )
+        self._load_colors_from_json()
 
         self.pt_x = 0.0  
         self.pt_y = 0.0 
@@ -106,30 +101,46 @@ class PtColorTrackerNode(Node):
         self.y_pid = PID(kp=0.7, ki=0.0, kd=0.05, output_limits=(-math.pi/4, math.pi/4), tolerance=0.02)
         self.add_on_set_parameters_callback(self.on_param_change)
 
+    def _load_colors_from_json(self):
+        profile = self.get_parameter("color").get_parameter_value().string_value
+
+        if not CONFIG_PATH.is_file():
+            self.get_logger().warn(
+                f"Config not found: {CONFIG_PATH}, use default LAB"
+            )
+            self.lower_color = np.array(_DEFAULT_LOWER, dtype=np.uint8)
+            self.upper_color = np.array(_DEFAULT_UPPER, dtype=np.uint8)
+            return
+
+        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+            profiles = json.load(f)
+
+        if profile not in profiles:
+            self.get_logger().warn(
+                f"Profile '{profile}' not in {CONFIG_PATH}, "
+                f"available: {list(profiles.keys())}, use default"
+            )
+            self.lower_color = np.array(_DEFAULT_LOWER, dtype=np.uint8)
+            self.upper_color = np.array(_DEFAULT_UPPER, dtype=np.uint8)
+            return
+
+        p = profiles[profile]
+        self.lower_color = np.array(p["lower"], dtype=np.uint8)
+        self.upper_color = np.array(p["upper"], dtype=np.uint8)
+        self.get_logger().info(
+            f"LAB from json [{profile}]: lower={self.lower_color.tolist()} "
+            f"upper={self.upper_color.tolist()}"
+        )
+
     def on_param_change(self, params):
+        reload_needed = False
         for param in params:
-            if param.name in (
-                "lower_l", "lower_a", "lower_b",
-                "upper_l", "upper_a", "upper_b"
-            ):
-                self.lower_color = np.array([
-                    self.get_parameter("lower_l").value,
-                    self.get_parameter("lower_a").value,
-                    self.get_parameter("lower_b").value
-                ], dtype=np.uint8)
-    
-                self.upper_color = np.array([
-                    self.get_parameter("upper_l").value,
-                    self.get_parameter("upper_a").value,
-                    self.get_parameter("upper_b").value
-                ], dtype=np.uint8)
-    
-                self.get_logger().info(
-                    f"Updated LAB range: lower={self.lower_color}, upper={self.upper_color}"
-                )
-    
+            if param.name == "color":
+                reload_needed = True
+        if reload_needed:
+            self._load_colors_from_json()
         return SetParametersResult(successful=True)
-        
+
     def image_callback(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
 

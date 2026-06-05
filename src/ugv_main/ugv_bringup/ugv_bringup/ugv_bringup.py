@@ -35,6 +35,9 @@ class ugv_bringup(Node):
         self.imu_mag_publisher_ = self.create_publisher(MagneticField, "imu/mag", 20)
         self.odom_publisher_ = self.create_publisher(Float32MultiArray, "odom/odom_raw", 20)
         self.voltage_publisher_ = self.create_publisher(BatteryState, "ugv/voltage", 20)
+        self._low_battery_warn_interval = 5.0
+        self._last_low_battery_warn = 0.0
+
         # Subscribe to velocity commands (cmd_vel topic)
         self.cmd_vel_sub_ = self.create_subscription(Twist, "cmd_vel", self.cmd_vel_callback, 20)
         self.zero_vel_count = 0
@@ -46,8 +49,6 @@ class ugv_bringup(Node):
         self.led_ctrl_sub = self.create_subscription(Float32MultiArray, 'ugv/led_ctrl', self.led_ctrl_callback, 20)
         
         self.pt_steady_ctrl_sub = self.create_subscription(Float32MultiArray, 'ugv/pt_steady_ctrl', self.pt_steady_ctrl_callback, 20)
-        # Subscribe to voltage data (voltage topic)
-        self.voltage_sub = self.create_subscription(BatteryState, 'ugv/voltage', self.voltage_callback, 20)
         
         self.declare_parameter('serial_port', '/dev/ttyAMA0')
         self.declare_parameter('baud_rate', 115200)
@@ -162,14 +163,40 @@ class ugv_bringup(Node):
         msg = Float32MultiArray(data=array)
         self.odom_publisher_.publish(msg)  # Publish the odometry data
 
+    def _maybe_low_battery_warning(self, voltage_value: float):
+        if not (0.1 < voltage_value < 9):
+            return
+        now = time.monotonic()
+        if now - self._last_low_battery_warn < self._low_battery_warn_interval:
+            return
+        self._last_low_battery_warn = now
+        threading.Thread(
+            target=self._low_battery_warn_worker,
+            args=(voltage_value,),
+            daemon=True,
+        ).start()
+
+    def _low_battery_warn_worker(self, voltage_value: float):
+        try:
+            subprocess.run(
+                ['spd-say', 'low battery'],
+                check=False,
+                timeout=10,
+            )
+            data = json.dumps({'T': '3', 'lineNum': 2, 'Text': f"V:{voltage_value}"}) + "\n"
+            self.base_controller.send_command(data.encode())
+        except Exception as e:
+            self.get_logger().error(f"Failed low battery warning: {e}")
+
     # Publish voltage data to the ROS topic "voltage" v
     def publish_voltage(self):
         voltage_data = self.base_controller.base_data
         msg = BatteryState()
-        msg.voltage = float(voltage_data["v"]/100)
-        msg.percentage = float(voltage_data["v"]/1260)
+        msg.voltage = float(voltage_data["v"] / 100)
+        msg.percentage = float(voltage_data["v"] / 1260)
         msg.present = True
-        self.voltage_publisher_.publish(msg)  # Publish the voltage data
+        self.voltage_publisher_.publish(msg)
+        self._maybe_low_battery_warning(msg.voltage)
 
     # Callback for processing velocity commands m/s
     def cmd_vel_callback(self, msg):
