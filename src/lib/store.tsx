@@ -28,6 +28,8 @@ function selectedMissionWishes(wishes: WishlistItem[]): WishlistItem[] {
   wishes.forEach((w) => {
     if (!SELECTED_WISHLIST_STATUSES.has(w.status)) return;
 
+    // Treat matching categories in a mission wishlist as alternative choices
+    // until there is a first-class loadout-selection model.
     const current = selected.get(w.category);
     const currentPriority = current ? SELECTED_STATUS_PRIORITY[current.status] ?? 0 : 0;
     const nextPriority = SELECTED_STATUS_PRIORITY[w.status] ?? 0;
@@ -120,10 +122,10 @@ export function useCalculatedConstraints(missionId: string) {
       let liveValue = c.value;
       if (c.unit === 'W') {
         const selectedWatts = selectedWishes.reduce((sum, w) => sum + (w.power?.watts ?? 0), 0);
-        liveValue = c.value + selectedWatts;
+        liveValue = Math.max(c.value, c.value + selectedWatts);
       } else if (c.unit === 'g') {
         const selectedMass = selectedWishes.reduce((sum, w) => sum + (w.massGrams ?? 0), 0);
-        liveValue = c.value + selectedMass;
+        liveValue = Math.max(c.value, c.value + selectedMass);
       } else if (c.unit === '$') {
         const selectedCost = selectedWishes.reduce((sum, w) => {
           const p = source === 'us' ? w.price.us : w.price.import ?? w.price.us;
