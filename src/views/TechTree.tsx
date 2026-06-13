@@ -44,14 +44,22 @@ export function TechTree() {
               }}
               onMouseEnter={() => setSpotlightId(c.id)}
               onFocus={() => setSpotlightId(c.id)}
-              onClick={() => setSpotlightId(isActive ? null : c.id)}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                  setSpotlightId(null);
+                }
+              }}
+              onClick={() => setSpotlightId(c.id)}
               onKeyDown={(event) => {
                 if (event.target !== event.currentTarget) return;
                 if (event.key === 'Enter' || event.key === ' ') {
                   event.preventDefault();
-                  setSpotlightId(isActive ? null : c.id);
+                  setSpotlightId(c.id);
                 }
               }}
+              role="button"
+              aria-pressed={isActive}
+              aria-label={`Spotlight ${c.name} capability`}
               tabIndex={0}
               transition={{ delay: i * 0.05, duration: 0.3 }}
               className={clsx(
