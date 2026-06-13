@@ -19,7 +19,7 @@ last_confirmed: confirmed
 
 ## Active Work
 
-- **PR Review Remediation:** Addressed open PR #1 feedback for mission requisition statuses, hub mission fallback safety, tech-tree requirement discriminators, loadout constraint math, and mobile navigation.
+- **PR Review Remediation:** Addressed open PR #1 feedback for mission requisition statuses, hub mission fallback safety, tech-tree requirement discriminators, loadout constraint math, mobile navigation, integral loadout data, and timestamp fallback safety.
 - **Persistent Store:** Implementing `localStorage` sync for user preferences (source toggle, active mission).
 - **Execution Plans:** Added ordered plan handoffs under `docs/plans/` for alpha stabilization, deployment, and product expansion.
 - **Documentation Hygiene:** Authority-doc links and Markdown drift are cleaned up for the next implementation pass.

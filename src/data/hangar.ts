@@ -51,7 +51,7 @@ export const hangarData: HangarData = {
         { slot: 'Sensing', filledBy: null, note: 'Camera-only today; depth cam candidate' },
         { slot: 'Compute', filledBy: 'pi5', note: 'Pi 5 onboard; CUDA brain offboard via WiFi 6' },
         { slot: 'Comms', filledBy: null, note: 'WiFi 6 link to workstation for offload' },
-        { slot: 'Manipulator', filledBy: null, note: 'RoArm-M2 integral' },
+        { slot: 'Manipulator', filledBy: 'RoArm-M2', note: 'Integral to BEAST-01 chassis' },
       ],
       hotspots: [
         { id: 'arm', label: 'RoArm-M2', detail: '4-DOF manipulator · integral', x: 70, y: 22, status: 'ok' },

@@ -41,6 +41,8 @@ export const TONE_CLASSES: Record<
 
 export function timeAgo(iso: string): string {
   const then = new Date(iso).getTime();
+  if (!Number.isFinite(then)) return 'unknown';
+
   const now = Date.now();
   const diff = Math.max(0, now - then);
   const min = Math.floor(diff / 60000);
