@@ -1,0 +1,232 @@
+import clsx from 'clsx';
+import { motion } from 'framer-motion';
+import {
+  Boxes,
+  Cpu,
+  Hexagon,
+  Network,
+  Radio,
+  ScrollText,
+  Target,
+  Headphones,
+  Bot,
+  Activity,
+} from 'lucide-react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { useHangar } from '../lib/store';
+import { timeAgo } from '../lib/format';
+import type { ReactNode } from 'react';
+
+const NAV = [
+  { to: '/', label: 'Hangar', code: 'HUB', icon: Boxes, end: true },
+  { to: '/missions', label: 'Missions', code: 'MSN', icon: Target },
+  { to: '/quartermaster', label: 'Quartermaster', code: 'QM', icon: Hexagon },
+  { to: '/tech-tree', label: 'Tech Tree', code: 'CAP', icon: Network },
+  { to: '/codex', label: 'Codex', code: 'WIKI', icon: ScrollText },
+];
+
+const BAY_ICON: Record<string, typeof Cpu> = {
+  robotics: Bot,
+  compute: Cpu,
+  network: Radio,
+  home: Network,
+  audio: Headphones,
+};
+
+export function Shell({ children }: { children: ReactNode }) {
+  const { data } = useHangar();
+  const loc = useLocation();
+
+  return (
+    <div className="relative flex min-h-screen overflow-x-hidden text-ink">
+      {/* ── SIDEBAR ─────────────────────────────────────────── */}
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-rim/70 bg-hull/70 backdrop-blur-md lg:flex">
+        <div className="flex items-center gap-3 border-b border-rim/70 px-5 py-5">
+          <div className="relative grid h-10 w-10 place-items-center rounded-lg border border-cyan/40 bg-cyan/5 shadow-hud-cyan">
+            <Hexagon className="h-5 w-5 text-cyan" />
+            <div className="absolute inset-0 animate-sweep rounded-lg [mask:linear-gradient(transparent,transparent_60%,rgba(54,224,224,0.4))]" />
+          </div>
+          <div>
+            <div className="font-display text-sm font-bold tracking-[0.18em] text-glow-cyan">HANGAR</div>
+            <div className="font-mono text-[9px] uppercase tracking-[0.25em] text-ink-dim">{data.meta.codename}</div>
+          </div>
+        </div>
+
+        <nav className="flex flex-col gap-1 px-3 py-4">
+          <div className="hud-label px-2 pb-1">Stations</div>
+          {NAV.map((n) => {
+            const Icon = n.icon;
+            return (
+              <NavLink
+                key={n.to}
+                to={n.to}
+                end={n.end}
+                className={({ isActive }) =>
+                  clsx(
+                    'group relative flex items-center gap-3 rounded-md px-3 py-2 font-mono text-xs uppercase tracking-[0.14em] transition-all',
+                    isActive
+                      ? 'border border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
+                      : 'border border-transparent text-ink-dim hover:border-rim hover:bg-panel-2/40 hover:text-ink',
+                  )
+                }
+              >
+                <Icon className="h-4 w-4" />
+                <span className="flex-1">{n.label}</span>
+                <span className="text-[9px] text-ink-dim/60 group-hover:text-cyan/60">{n.code}</span>
+              </NavLink>
+            );
+          })}
+        </nav>
+
+        <div className="px-3 py-2">
+          <div className="hud-label px-2 pb-1">Bays</div>
+          <div className="flex flex-col gap-0.5">
+            {data.bays.map((b) => {
+              const Icon = BAY_ICON[b.id] ?? Cpu;
+              const count = data.units.filter((u) => u.bay === b.id).length;
+              return (
+                <NavLink
+                  key={b.id}
+                  to={`/bay/${b.id}`}
+                  className={({ isActive }) =>
+                    clsx(
+                      'flex items-center gap-3 rounded-md px-3 py-1.5 text-xs transition-all',
+                      isActive ? 'bg-panel-2/60 text-ink' : 'text-ink-dim hover:bg-panel-2/40 hover:text-ink',
+                    )
+                  }
+                >
+                  <Icon className={clsx('h-3.5 w-3.5', b.accent === 'amber' ? 'text-amber' : 'text-cyan')} />
+                  <span className="flex-1 font-mono text-[11px]">{b.name}</span>
+                  <span className="font-mono text-[10px] tabular-nums text-ink-dim/70">{count}</span>
+                </NavLink>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-auto border-t border-rim/70 px-5 py-4">
+          <div className="hud-label">Operator</div>
+          <div className="mt-0.5 font-mono text-xs text-ink">{data.meta.operator}</div>
+          <div className="mt-2 flex items-center gap-1.5 font-mono text-[10px] text-ink-dim">
+            <span className="h-1.5 w-1.5 animate-pulse-trace rounded-full bg-signal-ok" />
+            SYNC · {data.meta.updated}
+          </div>
+        </div>
+      </aside>
+
+      {/* ── MAIN ───────────────────────────────────────────── */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        <ActivityTicker />
+        <motion.main
+          key={loc.pathname}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="min-w-0 max-w-full flex-1 overflow-x-hidden px-5 pb-28 pt-6 sm:px-8 lg:px-10 lg:pb-6"
+        >
+          {children}
+        </motion.main>
+      </div>
+
+      <MobileNav />
+      <div className="crt-overlay" aria-hidden />
+    </div>
+  );
+}
+
+function MobileNav() {
+  const { data } = useHangar();
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-rim/70 bg-hull/95 px-3 pb-3 pt-2 backdrop-blur-md lg:hidden">
+      <div className="no-scrollbar overflow-x-auto">
+        <div className="flex min-w-max items-center gap-2">
+          {NAV.map((n) => {
+            const Icon = n.icon;
+            return (
+              <NavLink
+                key={n.to}
+                to={n.to}
+                end={n.end}
+                className={({ isActive }) =>
+                  clsx(
+                    'flex h-14 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
+                    isActive
+                      ? 'border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
+                      : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
+                  )
+                }
+              >
+                <Icon className="h-4 w-4" />
+                <span className="max-w-full truncate px-1">{n.code}</span>
+              </NavLink>
+            );
+          })}
+
+          <div className="mx-1 h-10 w-px shrink-0 bg-rim/70" />
+
+          {data.bays.map((b) => {
+            const Icon = BAY_ICON[b.id] ?? Cpu;
+            return (
+              <NavLink
+                key={b.id}
+                to={`/bay/${b.id}`}
+                className={({ isActive }) =>
+                  clsx(
+                    'flex h-14 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
+                    isActive
+                      ? b.accent === 'amber'
+                        ? 'border-amber/40 bg-amber/10 text-amber shadow-hud-amber'
+                        : 'border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
+                      : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
+                  )
+                }
+              >
+                <Icon className={clsx('h-4 w-4', b.accent === 'amber' ? 'text-amber' : 'text-cyan')} />
+                <span className="max-w-full truncate px-1">{b.code}</span>
+              </NavLink>
+            );
+          })}
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+function ActivityTicker() {
+  const { data } = useHangar();
+  const items = [...data.activity, ...data.activity]; // duplicate for seamless loop
+  return (
+    <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-rim/70 bg-hull/85 px-4 py-2 backdrop-blur-md">
+      <div className="flex shrink-0 items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-amber">
+        <Activity className="h-3.5 w-3.5 animate-pulse-trace" />
+        Live Feed
+      </div>
+      <div className="relative flex-1 overflow-hidden [mask:linear-gradient(90deg,transparent,black_4%,black_96%,transparent)]">
+        <motion.div
+          className="flex gap-10 whitespace-nowrap"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ duration: 38, ease: 'linear', repeat: Infinity }}
+        >
+          {items.map((ev, i) => (
+            <span key={`${ev.id}-${i}`} className="flex items-center gap-2 font-mono text-[11px] text-ink-dim">
+              <span
+                className={clsx(
+                  'h-1.5 w-1.5 rounded-full',
+                  ev.kind === 'acquired' && 'bg-signal-ok',
+                  ev.kind === 'price-drop' && 'bg-amber',
+                  ev.kind === 'shipped' && 'bg-cyan',
+                  ev.kind === 'insight' && 'bg-cyan',
+                  ev.kind === 'mission' && 'bg-amber',
+                  ev.kind === 'researched' && 'bg-ink-dim',
+                )}
+              />
+              <span className="text-cyan/70">{ev.kind.toUpperCase()}</span>
+              {ev.text}
+              <span className="text-ink-dim/50">· {timeAgo(ev.at)}</span>
+            </span>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
