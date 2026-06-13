@@ -1,9 +1,9 @@
 ---
 title: Alpha Stabilize Plan
-date: 2026-06-01
+date: 2026-06-13
 author: Patrick MacLyman
-status: planned
-last_confirmed: 2026-06-01
+status: active
+last_confirmed: 2026-06-13
 ---
 
 # Alpha Stabilize
@@ -11,6 +11,10 @@ last_confirmed: 2026-06-01
 ## Objective
 
 Make the current alpha truthful, stable, and ready for review. This phase fixes known misleading behavior, finishes lightweight persistence, and updates handoff docs before deployment work starts.
+
+## Status
+
+Active. PR #1 remediation has landed; persistent store sync, unit-card requirement flags, and final alpha handoff checks remain.
 
 ## Investigate
 

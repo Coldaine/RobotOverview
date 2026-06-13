@@ -1,9 +1,9 @@
 ---
 title: Expand Product Plan
-date: 2026-06-01
+date: 2026-06-13
 author: Patrick MacLyman
-status: planned
-last_confirmed: 2026-06-01
+status: queued
+last_confirmed: 2026-06-13
 ---
 
 # Expand Product
@@ -11,6 +11,10 @@ last_confirmed: 2026-06-01
 ## Objective
 
 Move beyond the static alpha into the smallest next slice of product value while preserving the Hangar's core identity: one content spine for inventory, wiki, want list, missions, and lessons.
+
+## Status
+
+Queued until stabilization and deployment are complete or explicitly accepted.
 
 ## Investigate
 
