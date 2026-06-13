@@ -108,7 +108,7 @@ export function useCalculatedConstraints(missionId: string) {
           const p = source === 'us' ? w.price.us : w.price.import ?? w.price.us;
           return sum + (p ?? 0);
         }, 0);
-        liveValue = selectedWishes.length > 0 ? selectedCost : c.value;
+        liveValue = c.value > 0 ? c.value : selectedCost;
       }
       return { ...c, value: liveValue };
     });
