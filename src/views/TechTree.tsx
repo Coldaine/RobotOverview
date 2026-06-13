@@ -4,6 +4,11 @@ import { Link } from 'react-router-dom';
 import { SectionTitle } from '../components/ui/Primitives';
 import { useHangar } from '../lib/store';
 import clsx from 'clsx';
+import type { Unit, WishlistItem } from '../data/types';
+
+function isUnitRecord(record: Unit | WishlistItem): record is Unit {
+  return 'bay' in record && 'lifecycle' in record;
+}
 
 export function TechTree() {
   const { data, unit, wish, spotlightId, setSpotlightId } = useHangar();
@@ -66,7 +71,9 @@ export function TechTree() {
                 <div className="hud-label mb-1">Requirement Check</div>
                 <div className="flex flex-wrap gap-1.5">
                   {unlockers.map((u, idx) => {
-                    const available = 'status' in u! ? u.status === 'operational' || u.status === 'received' : false;
+                    const available = isUnitRecord(u!)
+                      ? u!.status === 'operational'
+                      : u!.status === 'received';
                     return (
                       <span key={`${u!.id}-${idx}`} className={clsx('chip flex items-center gap-1.5', available ? 'border-cyan/30 bg-cyan/5 text-cyan' : 'border-rim bg-panel-2/30 text-ink-dim')}>
                         <Sparkles className={clsx('h-3 w-3', available ? 'text-amber' : 'text-ink-dim')} /> {u!.name}

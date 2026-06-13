@@ -115,6 +115,15 @@
   .btn-active {
     @apply border-cyan/50 bg-cyan/10 text-cyan shadow-hud-cyan;
   }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* CRT vignette + scanline overlay applied at the app shell */

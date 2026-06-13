@@ -16,10 +16,10 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
   const toneText = tone === 'crit' ? 'text-signal-crit' : tone === 'warn' ? 'text-signal-warn' : 'text-cyan';
 
   return (
-    <div className="panel-inset px-3 py-2.5">
-      <div className="mb-1.5 flex items-baseline justify-between">
-        <span className="hud-label">{gauge.label}</span>
-        <span className={clsx('font-mono text-xs tabular-nums', toneText)}>
+    <div className="panel-inset min-w-0 px-3 py-2.5">
+      <div className="mb-1.5 flex min-w-0 items-baseline justify-between gap-2">
+        <span className="hud-label min-w-0 truncate">{gauge.label}</span>
+        <span className={clsx('shrink-0 font-mono text-xs tabular-nums', toneText)}>
           {gauge.value}
           <span className="text-ink-dim">/{gauge.budget}{gauge.unit}</span>
         </span>

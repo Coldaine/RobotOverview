@@ -11,12 +11,12 @@ export function SectionTitle({
   className?: string;
 }) {
   return (
-    <div className={clsx('mb-3 flex items-center gap-3', className)}>
+    <div className={clsx('mb-3 flex min-w-0 flex-wrap items-center gap-2 sm:gap-3', className)}>
       {code && (
-        <span className="font-mono text-[10px] tracking-[0.3em] text-cyan/70">{code}</span>
+        <span className="shrink-0 font-mono text-[10px] tracking-[0.3em] text-cyan/70">{code}</span>
       )}
-      <h2 className="font-display text-sm uppercase tracking-[0.2em] text-ink">{children}</h2>
-      <div className="h-px flex-1 bg-gradient-to-r from-rim to-transparent" />
+      <h2 className="min-w-0 flex-1 break-words font-display text-sm uppercase leading-6 tracking-[0.2em] text-ink">{children}</h2>
+      <div className="hidden h-px min-w-8 flex-1 bg-gradient-to-r from-rim to-transparent sm:block" />
     </div>
   );
 }

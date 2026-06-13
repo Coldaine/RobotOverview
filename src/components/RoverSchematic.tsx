@@ -24,13 +24,13 @@ export function RoverSchematic() {
   const sel = hotspots.find((h) => h.id === active) ?? null;
 
   return (
-    <div className="relative overflow-hidden rounded-lg border border-rim bg-void/60 blueprint-grid corner-bracket">
+    <div className="relative max-w-full overflow-hidden rounded-lg border border-rim bg-void/60 blueprint-grid corner-bracket">
       {/* scanning sweep */}
       <div className="pointer-events-none absolute inset-0 animate-sweep [mask:linear-gradient(180deg,transparent,transparent_70%,rgba(54,224,224,0.25))]" />
 
-      <div className="relative grid gap-4 p-5 md:grid-cols-[1.4fr_1fr]">
+      <div className="relative grid min-w-0 gap-4 p-4 sm:p-5 md:grid-cols-[1.4fr_1fr]">
         {/* SVG schematic */}
-        <div className="relative">
+        <div className="relative min-w-0 aspect-[4/3] md:min-h-[320px]">
           <svg viewBox="0 0 100 100" className="h-full w-full" preserveAspectRatio="xMidYMid meet">
             {/* connecting comms arc to base station */}
             <defs>
@@ -101,7 +101,7 @@ export function RoverSchematic() {
         </div>
 
         {/* readout panel */}
-        <div className="flex flex-col gap-3">
+        <div className="flex min-w-0 flex-col gap-3">
           <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-cyan/70">Exploded View · Tap a subsystem</div>
           <div className="grid grid-cols-2 gap-1.5">
             {hotspots.map((h) => (
@@ -134,10 +134,10 @@ export function RoverSchematic() {
               initial={{ opacity: 0, x: 8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.25 }}
-              className="panel-inset mt-auto p-3"
+              className="panel-inset mt-auto min-w-0 p-3"
             >
-              <div className="flex items-center justify-between">
-                <span className="font-display text-sm uppercase tracking-[0.12em] text-ink">{sel.label}</span>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="min-w-0 font-display text-sm uppercase tracking-[0.12em] text-ink">{sel.label}</span>
                 <span
                   className={clsx(
                     'chip',

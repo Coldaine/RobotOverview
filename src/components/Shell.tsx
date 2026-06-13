@@ -38,7 +38,7 @@ export function Shell({ children }: { children: ReactNode }) {
   const loc = useLocation();
 
   return (
-    <div className="relative flex min-h-screen text-ink">
+    <div className="relative flex min-h-screen overflow-x-hidden text-ink">
       {/* ── SIDEBAR ─────────────────────────────────────────── */}
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-rim/70 bg-hull/70 backdrop-blur-md lg:flex">
         <div className="flex items-center gap-3 border-b border-rim/70 px-5 py-5">
@@ -122,14 +122,73 @@ export function Shell({ children }: { children: ReactNode }) {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="flex-1 px-5 py-6 sm:px-8 lg:px-10"
+          className="min-w-0 max-w-full flex-1 overflow-x-hidden px-5 pb-28 pt-6 sm:px-8 lg:px-10 lg:pb-6"
         >
           {children}
         </motion.main>
       </div>
 
+      <MobileNav />
       <div className="crt-overlay" aria-hidden />
     </div>
+  );
+}
+
+function MobileNav() {
+  const { data } = useHangar();
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-rim/70 bg-hull/95 px-3 pb-3 pt-2 backdrop-blur-md lg:hidden">
+      <div className="no-scrollbar overflow-x-auto">
+        <div className="flex min-w-max items-center gap-2">
+          {NAV.map((n) => {
+            const Icon = n.icon;
+            return (
+              <NavLink
+                key={n.to}
+                to={n.to}
+                end={n.end}
+                className={({ isActive }) =>
+                  clsx(
+                    'flex h-14 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
+                    isActive
+                      ? 'border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
+                      : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
+                  )
+                }
+              >
+                <Icon className="h-4 w-4" />
+                <span className="max-w-full truncate px-1">{n.code}</span>
+              </NavLink>
+            );
+          })}
+
+          <div className="mx-1 h-10 w-px shrink-0 bg-rim/70" />
+
+          {data.bays.map((b) => {
+            const Icon = BAY_ICON[b.id] ?? Cpu;
+            return (
+              <NavLink
+                key={b.id}
+                to={`/bay/${b.id}`}
+                className={({ isActive }) =>
+                  clsx(
+                    'flex h-14 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
+                    isActive
+                      ? b.accent === 'amber'
+                        ? 'border-amber/40 bg-amber/10 text-amber shadow-hud-amber'
+                        : 'border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
+                      : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
+                  )
+                }
+              >
+                <Icon className={clsx('h-4 w-4', b.accent === 'amber' ? 'text-amber' : 'text-cyan')} />
+                <span className="max-w-full truncate px-1">{b.code}</span>
+              </NavLink>
+            );
+          })}
+        </div>
+      </div>
+    </nav>
   );
 }
 

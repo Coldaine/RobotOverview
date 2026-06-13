@@ -19,11 +19,10 @@ last_confirmed: confirmed
 
 ## Active Work
 
-- **Finalizing Repository:** Stabilizing the folder structure, moving authority docs to `docs/` and entrypoints to root.
-- **Git State:** Establishing the remote repository and baseline branch.
+- **PR Review Remediation:** Addressed open PR #1 feedback for mission requisition statuses, hub mission fallback safety, tech-tree requirement discriminators, loadout constraint math, and mobile navigation.
 - **Persistent Store:** Implementing `localStorage` sync for user preferences (source toggle, active mission).
 - **Execution Plans:** Added ordered plan handoffs under `docs/plans/` for alpha stabilization, deployment, and product expansion.
-- **Documentation Hygiene:** Correcting authority-doc links and Markdown drift before the next implementation pass.
+- **Documentation Hygiene:** Authority-doc links and Markdown drift are cleaned up for the next implementation pass.
 
 ## Roadmap & Milestones
 
@@ -31,7 +30,8 @@ last_confirmed: confirmed
 - [x] Data Spine (initial roster seed)
 - [x] Mission 01: Undercroft implemented
 - [x] Quartermaster / Wishlist view
-- [ ] Reactive Constraint Logic finalized (preserve authored baselines)
+- [x] Reactive Constraint Logic finalized (preserve authored baselines)
+- [x] Mobile navigation for station and bay routes
 - [ ] Persistent Global State (localStorage sync)
 - [ ] External Hosting (GitHub Pages / Vercel candidate)
 
@@ -43,7 +43,6 @@ last_confirmed: confirmed
 
 ## Next Session Focus
 
-- Finalize simulation logic (calculated constraints).
 - Implement persistent store (localStorage).
 - Add "High Draw" and "Requirement Missing" flags to unit cards.
 - Commit and tag `v0.1.0-alpha`.

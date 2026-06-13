@@ -10,6 +10,12 @@ import type {
   WishlistItem,
 } from '../data/types';
 
+const SELECTED_WISHLIST_STATUSES = new Set<WishlistItem['status']>(['planned', 'buy-next', 'on-order', 'received']);
+
+function isWishlistItem(item: WishlistItem | undefined): item is WishlistItem {
+  return Boolean(item);
+}
+
 interface HangarStore {
   data: HangarData;
   // Mission lens — when set, the hub spotlights the mission's requisitioned units.
@@ -86,19 +92,23 @@ export function useCalculatedConstraints(missionId: string) {
   return useMemo(() => {
     if (!m) return [];
 
-    const wishes = (m.wishlist ?? []).map(wish).filter(Boolean);
+    const wishes = (m.wishlist ?? []).map(wish).filter(isWishlistItem);
+    const selectedWishes = wishes.filter((w) => SELECTED_WISHLIST_STATUSES.has(w.status));
 
     return m.constraints.map((c) => {
-      let liveValue = 0;
+      let liveValue = c.value;
       if (c.unit === 'W') {
-        liveValue = wishes.reduce((sum, w) => sum + (w!.power?.watts ?? 0), 0);
+        const selectedWatts = selectedWishes.reduce((sum, w) => sum + (w.power?.watts ?? 0), 0);
+        liveValue = c.value > 0 ? c.value : selectedWatts;
       } else if (c.unit === 'g') {
-        liveValue = wishes.reduce((sum, w) => sum + (w!.massGrams ?? 0), 0);
+        const selectedMass = selectedWishes.reduce((sum, w) => sum + (w.massGrams ?? 0), 0);
+        liveValue = c.value > 0 ? c.value : selectedMass;
       } else if (c.unit === '$') {
-        liveValue = wishes.reduce((sum, w) => {
-          const p = source === 'us' ? w!.price.us : w!.price.import ?? w!.price.us;
+        const selectedCost = selectedWishes.reduce((sum, w) => {
+          const p = source === 'us' ? w.price.us : w.price.import ?? w.price.us;
           return sum + (p ?? 0);
         }, 0);
+        liveValue = selectedWishes.length > 0 ? selectedCost : c.value;
       }
       return { ...c, value: liveValue };
     });

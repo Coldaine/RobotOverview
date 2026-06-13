@@ -2,19 +2,28 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, CheckCircle2, Circle, Crosshair, Package, Users } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { Gauge } from '../components/ui/Gauge';
-import { StatusBadge } from '../components/ui/Badges';
 import { SectionTitle } from '../components/ui/Primitives';
 import { UnitCard } from '../components/UnitCard';
 import { useHangar, useCalculatedConstraints } from '../lib/store';
 import { money } from '../lib/format';
 import clsx from 'clsx';
-import type { Mission } from '../data/types';
+import type { Mission, WishlistItem } from '../data/types';
 
 const MSTATUS: Record<Mission['status'], { label: string; cls: string }> = {
   planning: { label: 'Planning', cls: 'text-amber border-amber/40 bg-amber/10' },
   active: { label: 'Active', cls: 'text-signal-ok border-signal-ok/40 bg-signal-ok/10' },
   standby: { label: 'Standby', cls: 'text-ink-dim border-rim bg-panel-2/40' },
   complete: { label: 'Complete', cls: 'text-cyan border-cyan/40 bg-cyan/10' },
+};
+
+const WSTATUS: Record<WishlistItem['status'], { label: string; cls: string }> = {
+  watching: { label: 'Watching', cls: 'text-ink-dim border-rim bg-panel-2/40' },
+  researching: { label: 'Researching', cls: 'text-cyan border-cyan/40 bg-cyan/10' },
+  planned: { label: 'Planned', cls: 'text-cyan border-cyan/40 bg-cyan/10' },
+  'buy-next': { label: 'Buy Next', cls: 'text-amber border-amber/40 bg-amber/10' },
+  'on-order': { label: 'On Order', cls: 'text-amber border-amber/40 bg-amber/10' },
+  received: { label: 'Received', cls: 'text-signal-ok border-signal-ok/40 bg-signal-ok/10' },
+  rejected: { label: 'Rejected', cls: 'text-signal-crit border-signal-crit/40 bg-signal-crit/10' },
 };
 
 export function MissionsList() {
@@ -191,7 +200,7 @@ export function MissionView() {
                   <Link key={w!.id} to="/quartermaster" className="panel flex items-center justify-between p-3 transition-all hover:border-amber/40">
                     <div className="min-w-0">
                       <div className="truncate font-mono text-[11px] text-ink">{w!.name}</div>
-                      <StatusBadge status={'wishlist'} />
+                      <span className={clsx('chip mt-1', WSTATUS[w!.status].cls)}>{WSTATUS[w!.status].label}</span>
                     </div>
                     <span className="font-mono text-sm text-amber">{money(w!.price.us)}</span>
                   </Link>

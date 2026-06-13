@@ -14,10 +14,12 @@ export function HangarHub() {
 
   const flagship = data.units.find((u) => u.flagship && u.bay === 'robotics');
   const primaryMissionId = 'undercroft';
-  const activeMissionId = lensMissionId || primaryMissionId;
-  const activeMission = mission(activeMissionId)!;
+  const primaryMission = mission(primaryMissionId) ?? data.missions[0];
+  const lensedMission = lensMissionId ? mission(lensMissionId) : undefined;
+  const activeMission = lensedMission ?? primaryMission;
+  const activeMissionId = activeMission?.id ?? '';
   
-  const lens = lensMissionId ? mission(lensMissionId) : null;
+  const lens = lensedMission ?? null;
   const spotlightUnits = new Set(lens?.requisitionedUnits ?? []);
 
   const buyNext = data.wishlist.filter((w) => w.status === 'buy-next' || w.status === 'planned');
@@ -70,19 +72,21 @@ export function HangarHub() {
                   ))}
                 </div>
               </div>
-              <Link
-                to={`/mission/${activeMission.id}`}
-                className="panel group flex items-center gap-3 p-4 transition-all hover:border-amber/40 hover:shadow-hud-amber"
-              >
-                <div className="grid h-10 w-10 place-items-center rounded-lg border border-amber/40 bg-amber/5">
-                  <Crosshair className="h-5 w-5 text-amber" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber">{activeMission.code} · {lensMissionId ? 'Lensed Objective' : 'Active Objective'}</div>
-                  <div className="truncate font-display text-sm uppercase tracking-[0.06em] text-ink">{activeMission.name}</div>
-                </div>
-                <ArrowUpRight className="h-4 w-4 text-ink-dim transition-transform group-hover:translate-x-0.5 group-hover:text-amber" />
-              </Link>
+              {activeMission && (
+                <Link
+                  to={`/mission/${activeMission.id}`}
+                  className="panel group flex items-center gap-3 p-4 transition-all hover:border-amber/40 hover:shadow-hud-amber"
+                >
+                  <div className="grid h-10 w-10 place-items-center rounded-lg border border-amber/40 bg-amber/5">
+                    <Crosshair className="h-5 w-5 text-amber" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber">{activeMission.code} · {lens ? 'Lensed Objective' : 'Active Objective'}</div>
+                    <div className="truncate font-display text-sm uppercase tracking-[0.06em] text-ink">{activeMission.name}</div>
+                  </div>
+                  <ArrowUpRight className="h-4 w-4 text-ink-dim transition-transform group-hover:translate-x-0.5 group-hover:text-amber" />
+                </Link>
+              )}
             </div>
           </div>
         </section>
@@ -166,14 +170,16 @@ export function HangarHub() {
       )}
 
       {/* ── CONSTRAINTS GAUGES ───────────────────────── */}
-      <section>
-        <SectionTitle code={activeMission.code}>{activeMission.name} · Constraints</SectionTitle>
-        <div className="grid gap-3 sm:grid-cols-3">
-          {constraints.map((g, i) => (
-            <Gauge key={g.label} gauge={g} delay={i * 0.1} />
-          ))}
-        </div>
-      </section>
+      {activeMission && (
+        <section>
+          <SectionTitle code={activeMission.code}>{activeMission.name} · Constraints</SectionTitle>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {constraints.map((g, i) => (
+              <Gauge key={g.label} gauge={g} delay={i * 0.1} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
