@@ -11,9 +11,30 @@ import type {
 } from '../data/types';
 
 const SELECTED_WISHLIST_STATUSES = new Set<WishlistItem['status']>(['planned', 'buy-next', 'on-order', 'received']);
+const SELECTED_STATUS_PRIORITY: Partial<Record<WishlistItem['status'], number>> = {
+  planned: 1,
+  'buy-next': 2,
+  'on-order': 3,
+  received: 4,
+};
 
 function isWishlistItem(item: WishlistItem | undefined): item is WishlistItem {
   return Boolean(item);
+}
+
+function selectedMissionWishes(wishes: WishlistItem[]): WishlistItem[] {
+  const selected = new Map<string, WishlistItem>();
+
+  wishes.forEach((w) => {
+    if (!SELECTED_WISHLIST_STATUSES.has(w.status)) return;
+
+    const current = selected.get(w.category);
+    const currentPriority = current ? SELECTED_STATUS_PRIORITY[current.status] ?? 0 : 0;
+    const nextPriority = SELECTED_STATUS_PRIORITY[w.status] ?? 0;
+    if (!current || nextPriority > currentPriority) selected.set(w.category, w);
+  });
+
+  return Array.from(selected.values());
 }
 
 interface HangarStore {
@@ -93,22 +114,22 @@ export function useCalculatedConstraints(missionId: string) {
     if (!m) return [];
 
     const wishes = (m.wishlist ?? []).map(wish).filter(isWishlistItem);
-    const selectedWishes = wishes.filter((w) => SELECTED_WISHLIST_STATUSES.has(w.status));
+    const selectedWishes = selectedMissionWishes(wishes);
 
     return m.constraints.map((c) => {
       let liveValue = c.value;
       if (c.unit === 'W') {
         const selectedWatts = selectedWishes.reduce((sum, w) => sum + (w.power?.watts ?? 0), 0);
-        liveValue = c.value > 0 ? c.value : selectedWatts;
+        liveValue = c.value + selectedWatts;
       } else if (c.unit === 'g') {
         const selectedMass = selectedWishes.reduce((sum, w) => sum + (w.massGrams ?? 0), 0);
-        liveValue = c.value > 0 ? c.value : selectedMass;
+        liveValue = c.value + selectedMass;
       } else if (c.unit === '$') {
         const selectedCost = selectedWishes.reduce((sum, w) => {
           const p = source === 'us' ? w.price.us : w.price.import ?? w.price.us;
           return sum + (p ?? 0);
         }, 0);
-        liveValue = c.value > 0 ? c.value : selectedCost;
+        liveValue = Math.max(c.value, selectedCost);
       }
       return { ...c, value: liveValue };
     });

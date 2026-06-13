@@ -12,6 +12,7 @@ function isUnitRecord(record: Unit | WishlistItem): record is Unit {
 
 export function TechTree() {
   const { data, unit, wish, spotlightId, setSpotlightId } = useHangar();
+  const spotlightCapability = spotlightId ? data.capabilities.find((c) => c.id === spotlightId) : undefined;
 
   return (
     <div className="space-y-6">
@@ -29,7 +30,7 @@ export function TechTree() {
             .filter(Boolean);
           
           const isActive = spotlightId === c.id;
-          const isDependency = spotlightId ? data.capabilities.find(cat => cat.id === spotlightId)?.dependsOn?.includes(c.id) : false;
+          const isDependency = spotlightCapability?.dependsOn?.includes(c.id) ?? false;
           const isDependent = spotlightId ? c.dependsOn?.includes(spotlightId) : false;
 
           return (
