@@ -1,9 +1,9 @@
 ---
 title: Hangar Plans Index
-date: 2026-06-01
+date: 2026-06-13
 author: Patrick MacLyman
 status: active
-last_confirmed: 2026-06-01
+last_confirmed: 2026-06-13
 ---
 
 # Hangar Plans
@@ -18,9 +18,9 @@ These plans are execution handoffs. They do not replace the authority docs:
 
 Run these plans in numeric order:
 
-1. [01-alpha-stabilize.md](./01-alpha-stabilize.md) - make the current alpha truthful, stable, and ready for review.
-2. [02-deploy-alpha.md](./02-deploy-alpha.md) - publish the stabilized alpha.
-3. [03-expand-product.md](./03-expand-product.md) - expand the product once the alpha is stable and deployed.
+1. [01-alpha-stabilize.md](./01-alpha-stabilize.md) - active; make the current alpha truthful, stable, and ready for review.
+2. [02-deploy-alpha.md](./02-deploy-alpha.md) - queued; publish the stabilized alpha.
+3. [03-expand-product.md](./03-expand-product.md) - queued; expand the product once the alpha is stable and deployed.
 
 ## Agent Workflow
 

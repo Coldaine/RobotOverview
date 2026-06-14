@@ -1,9 +1,9 @@
 ---
 title: Deploy Alpha Plan
-date: 2026-06-01
+date: 2026-06-13
 author: Patrick MacLyman
-status: planned
-last_confirmed: 2026-06-01
+status: queued
+last_confirmed: 2026-06-13
 ---
 
 # Deploy Alpha
@@ -11,6 +11,10 @@ last_confirmed: 2026-06-01
 ## Objective
 
 Publish the stabilized alpha so the Hangar can be opened from a real URL and reviewed outside the local dev environment.
+
+## Status
+
+Queued until alpha stabilization is complete or explicitly accepted.
 
 ## Investigate
 

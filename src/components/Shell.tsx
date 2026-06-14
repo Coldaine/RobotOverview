@@ -139,7 +139,7 @@ function MobileNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-rim/70 bg-hull/95 px-3 pb-3 pt-2 backdrop-blur-md lg:hidden">
       <div className="no-scrollbar overflow-x-auto">
-        <div className="flex min-w-max items-center gap-2">
+        <div className="flex min-w-max items-center gap-1.5">
           {NAV.map((n) => {
             const Icon = n.icon;
             return (
@@ -149,7 +149,7 @@ function MobileNav() {
                 end={n.end}
                 className={({ isActive }) =>
                   clsx(
-                    'flex h-14 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
+                    'flex h-14 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
                     isActive
                       ? 'border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
                       : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
@@ -172,7 +172,7 @@ function MobileNav() {
                 to={`/bay/${b.id}`}
                 className={({ isActive }) =>
                   clsx(
-                    'flex h-14 w-20 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
+                    'flex h-14 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
                     isActive
                       ? b.accent === 'amber'
                         ? 'border-amber/40 bg-amber/10 text-amber shadow-hud-amber'

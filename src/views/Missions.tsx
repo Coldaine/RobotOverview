@@ -88,7 +88,6 @@ export function MissionView() {
       </Link>
 
       <header className="panel relative overflow-hidden p-5">
-        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-radial-glow opacity-30" />
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-2xl">
             <div className="flex items-center gap-3">

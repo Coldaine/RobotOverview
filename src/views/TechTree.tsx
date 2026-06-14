@@ -43,9 +43,26 @@ export function TechTree() {
                 scale: isActive ? 1.02 : 1 
               }}
               onMouseEnter={() => setSpotlightId(c.id)}
+              onFocus={() => setSpotlightId(c.id)}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                  setSpotlightId(null);
+                }
+              }}
+              onClick={() => setSpotlightId(c.id)}
+              onKeyDown={(event) => {
+                if (event.target !== event.currentTarget) return;
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setSpotlightId(c.id);
+                }
+              }}
+              role="button"
+              aria-label={`Spotlight ${c.name} capability`}
+              tabIndex={0}
               transition={{ delay: i * 0.05, duration: 0.3 }}
               className={clsx(
-                'group panel relative overflow-hidden p-4 transition-all duration-300',
+                'group panel relative overflow-hidden p-4 transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan/50',
                 c.unlocked ? 'border-signal-ok/40 bg-signal-ok/5' : 'border-rim',
                 isActive && 'border-amber/60 shadow-hud-amber ring-1 ring-amber/20',
               )}
@@ -85,7 +102,7 @@ export function TechTree() {
               </div>
 
               <div className="relative mt-3 text-right">
-                <Link to="/quartermaster" className="font-mono text-[10px] uppercase tracking-wider text-amber hover:underline">
+                <Link to="/quartermaster" onClick={(event) => event.stopPropagation()} className="font-mono text-[10px] uppercase tracking-wider text-amber hover:underline">
                   source parts
                 </Link>
               </div>
