@@ -34,9 +34,9 @@ export function UnitCard({
   const highDraw = (unit.power?.watts ?? 0) >= 25 && unit.bay === 'robotics';
   const attention = unit.status === 'needs-attention' || unit.status === 'blocked';
   const emptyLoadoutSlots = unit.loadout?.filter((slot) => !slot.filledBy) ?? [];
-  const missionRequirements = mission?.requiredLoadout.map(normalizeRequirement) ?? [];
-  const missionWishlistGaps =
-    mission?.wishlist
+  const missionRequirements = mission?.requiredLoadout?.map(normalizeRequirement) ?? [];
+  const missionWishlistGaps = mission
+    ? mission.wishlist
       .map(wish)
       .filter((item): item is WishlistItem => Boolean(item))
       .filter((item) => item.forUnit === unit.id && MISSING_WISHLIST_STATUSES.has(item.status))
@@ -47,14 +47,15 @@ export function UnitCard({
         return missionRequirements.some(
           (requirement) => requirement.includes(category) || (unlocks.length > 0 && requirement.includes(unlocks)),
         );
-      }) ?? [];
+      })
+    : [];
   const missingRequiredSlots = missionRequirements.length
     ? emptyLoadoutSlots.filter((slot) => {
         const slotName = normalizeRequirement(slot.slot);
         return missionRequirements.some((requirement) => requirement.includes(slotName) || slotName.includes(requirement));
       })
-    : emptyLoadoutSlots;
-  const hasRequirementGap = emptyLoadoutSlots.length > 0 || missionWishlistGaps.length > 0;
+    : [];
+  const hasRequirementGap = missingRequiredSlots.length > 0 || missionWishlistGaps.length > 0;
   const requirementGapSummary = [
     missingRequiredSlots.length > 0 && `Open slots: ${missingRequiredSlots.map((slot) => slot.slot).join(', ')}`,
     missionWishlistGaps.length > 0 && `Pending requisitions: ${missionWishlistGaps.map((item) => item.name).join(', ')}`,
