@@ -3,7 +3,7 @@ title: Hangar North Star
 date: 2026-05-31
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-05-31
+last_confirmed: 2026-06-14
 ---
 
 # Hangar North Star
@@ -24,6 +24,7 @@ Directional, not testable.
 - **G3.** Make the experience fun enough to sustain, modeled on a base-builder hangar.
 - **G4.** Show what to acquire next and why (an upgrade path), and what I already own and where it sits.
 - **G5.** Capture lessons learned so knowledge is retrievable by unit and mission, not lost to chat history.
+- **G6.** Design primarily for desktop, widescreen, and ultrawide use. Phone layouts must not break or become unusable, but mobile support must not compromise the desktop command-center experience.
 
 ## Anti-Goals
 

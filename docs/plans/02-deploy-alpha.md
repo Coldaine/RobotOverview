@@ -14,11 +14,11 @@ Publish the stabilized alpha so the Hangar can be opened from a real URL and rev
 
 ## Status
 
-Queued until alpha stabilization is complete or explicitly accepted.
+Queued. Alpha stabilization has already landed.
 
 ## Investigate
 
-- Start only after [01-alpha-stabilize.md](./01-alpha-stabilize.md) is merged or explicitly accepted.
+- Start from current `main`; alpha stabilization has already landed.
 - Confirm the repo's current branch, remote, and uncommitted state.
 - Inspect `package.json`, `vite.config.ts`, router setup, and any existing deployment files.
 - Check whether GitHub Pages or Vercel is already configured in repo history or remote settings.
@@ -31,7 +31,7 @@ Queued until alpha stabilization is complete or explicitly accepted.
   - For GitHub Pages, set the correct Vite base path and document any workflow or Pages setting required.
 - Preserve HashRouter behavior unless deployment testing proves it is wrong for the chosen host.
 - Avoid adding backend services, databases, auth, or containerized workflows.
-- Add a short deployment note to [PROGRESS.md](../PROGRESS.md) with the chosen host, build command, output directory, and deployment URL when known.
+- Include the chosen host, build command, output directory, and deployment URL when known in the PR description.
 
 ## Verify
 
