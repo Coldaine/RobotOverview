@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { hangarData } from '../data/hangar';
 import type {
   Bay,
@@ -17,6 +17,55 @@ const SELECTED_STATUS_PRIORITY: Partial<Record<WishlistItem['status'], number>> 
   'on-order': 3,
   received: 4,
 };
+const STORE_KEYS = {
+  source: 'hangar:source',
+  lensMissionId: 'hangar:lensMissionId',
+} as const;
+const SOURCES = ['us', 'import'] as const;
+
+type SourcePreference = (typeof SOURCES)[number];
+
+function isSourcePreference(value: string | null): value is SourcePreference {
+  return SOURCES.some((source) => source === value);
+}
+
+function readStoredSource(): SourcePreference {
+  if (typeof window === 'undefined') return 'us';
+
+  try {
+    const storedSource = window.localStorage.getItem(STORE_KEYS.source);
+    return isSourcePreference(storedSource) ? storedSource : 'us';
+  } catch {
+    return 'us';
+  }
+}
+
+function readStoredLensMissionId(): string | null {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const storedMissionId = window.localStorage.getItem(STORE_KEYS.lensMissionId);
+    if (!storedMissionId) return null;
+
+    return hangarData.missions.some((mission) => mission.id === storedMissionId) ? storedMissionId : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeStorageValue(key: string, value: string | null) {
+  if (typeof window === 'undefined') return;
+
+  try {
+    if (value === null) {
+      window.localStorage.removeItem(key);
+    } else {
+      window.localStorage.setItem(key, value);
+    }
+  } catch {
+    // Persistence is a convenience layer; private browsing and quotas should not break the app.
+  }
+}
 
 function isWishlistItem(item: WishlistItem | undefined): item is WishlistItem {
   return Boolean(item);
@@ -45,8 +94,8 @@ interface HangarStore {
   lensMissionId: string | null;
   setLensMissionId: (id: string | null) => void;
   // Global sourcing preference
-  source: 'us' | 'import';
-  setSource: (source: 'us' | 'import') => void;
+  source: SourcePreference;
+  setSource: (source: SourcePreference) => void;
   // Tech Tree spotlight
   spotlightId: string | null;
   setSpotlightId: (id: string | null) => void;
@@ -63,9 +112,17 @@ interface HangarStore {
 const Ctx = createContext<HangarStore | null>(null);
 
 export function HangarProvider({ children }: { children: ReactNode }) {
-  const [lensMissionId, setLensMissionId] = useState<string | null>(null);
-  const [source, setSource] = useState<'us' | 'import'>('us');
+  const [lensMissionId, setLensMissionId] = useState<string | null>(() => readStoredLensMissionId());
+  const [source, setSource] = useState<SourcePreference>(() => readStoredSource());
   const [spotlightId, setSpotlightId] = useState<string | null>(null);
+
+  useEffect(() => {
+    writeStorageValue(STORE_KEYS.source, source);
+  }, [source]);
+
+  useEffect(() => {
+    writeStorageValue(STORE_KEYS.lensMissionId, lensMissionId);
+  }, [lensMissionId]);
 
   const value = useMemo<HangarStore>(() => {
     const data = hangarData;

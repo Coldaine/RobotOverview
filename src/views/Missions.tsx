@@ -186,7 +186,7 @@ export function MissionView() {
             <SectionTitle code="UNITS">Requisitioned</SectionTitle>
             <div className="space-y-3">
               {units.map((u, i) => (
-                <UnitCard key={u!.id} unit={u!} index={i} />
+                <UnitCard key={u!.id} unit={u!} index={i} mission={m} />
               ))}
             </div>
           </section>
