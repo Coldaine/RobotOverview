@@ -58,7 +58,6 @@ export function TechTree() {
                 }
               }}
               role="button"
-              aria-pressed={isActive}
               aria-label={`Spotlight ${c.name} capability`}
               tabIndex={0}
               transition={{ delay: i * 0.05, duration: 0.3 }}

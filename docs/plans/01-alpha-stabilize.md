@@ -21,8 +21,11 @@ Active. PR #1 remediation has landed; persistent store sync, unit-card requireme
 - Confirm the current branch and inspect uncommitted work before editing.
 - Read [NORTH_STAR.md](../NORTH_STAR.md), [architecture.md](../architecture.md), and [PROGRESS.md](../PROGRESS.md) for authority boundaries.
 - Inspect `src/lib/store.tsx`, mission rendering, unit-card rendering, and `src/data/hangar.ts`.
-- Reproduce or reason through the seeded `undercroft` constraint bug: authored values are `22W`, `380g`, and `$35`, but live calculation currently replaces them with raw wishlist sums.
 - Confirm `AGENTS.md` authority links still point at the `docs/` folder and check any `@RTK.md` reference visible in session context; do not invent an RTK document unless project intent is confirmed.
+
+## Historical Notes
+
+- PR #1 remediated the seeded `undercroft` constraint bug where authored values of `22W`, `380g`, and `$35` were replaced by raw wishlist sums.
 
 ## Implement
 

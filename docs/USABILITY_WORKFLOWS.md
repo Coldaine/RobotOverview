@@ -52,6 +52,4 @@ These workflows describe the paths the Hangar UI should keep smooth as features 
 ## Mobile Navigation
 
 - Use the fixed bottom nav for all primary stations.
-- Swipe the nav rail for bay shortcuts.
 - Confirm each page avoids document-level horizontal scrolling at common phone widths.
-
