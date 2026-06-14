@@ -23,7 +23,7 @@ last_confirmed: 2026-06-14
 - **Usability Pass:** PR #4 is active on `chore/ui-usability-pass`; PR review comments are addressed and browser-driven workflow checks have prioritized desktop and wide layouts, with mobile used as a guardrail.
 - **Branch Migration:** `main` is now canonical for RobotOverview; default branch switched from `feat/hangar-static-app`; PRs #4, #3, and #5 are retargeted to `main`; branch protection now requires PR review, status checks (`GitGuardian Security Checks`, `Kilo Code Review`), and disallows force-push/delete.
 - **PR Review Remediation:** PR #1 remediation has been merged for mission requisition statuses, hub mission fallback safety, tech-tree requirement discriminators and lookup performance, loadout constraint math, mobile navigation, integral loadout data, and timestamp fallback safety.
-- **Alpha Stabilization:** `docs/plans/01-alpha-stabilize.md` is the active handoff; persistent `localStorage` sync and unit-card missing-requirement flags remain pending.
+- **Alpha Stabilization:** `docs/plans/01-alpha-stabilize.md` implementation is complete for authored constraint baselines, `localStorage` source/lens sync, visible high-draw labeling, and unit-card missing-requirement flags.
 - **Documentation Hygiene:** Plan status drift has been corrected; `docs/architecture.md` remains draft/unconfirmed until the open architecture questions are explicitly confirmed.
 - **Workflow Coverage:** Core user paths are captured in `docs/USABILITY_WORKFLOWS.md` for repeat usability checks.
 
@@ -44,17 +44,16 @@ last_confirmed: 2026-06-14
 - [x] Quartermaster / Wishlist view
 - [x] Reactive Constraint Logic finalized (preserve authored baselines)
 - [x] Mobile navigation for station and bay routes
-- [ ] Persistent Global State (localStorage sync)
+- [x] Persistent Global State (localStorage sync)
 - [ ] External Hosting (GitHub Pages / Vercel candidate)
 
 ## Blockers and Open Questions
 
 - **Hosting:** Decide on a deployment target.
-- **Persistence:** How to handle user-driven price/status updates (Local Storage is current candidate).
+- **Persistence:** User-driven price/status updates still need a model beyond the current source/lens `localStorage` sync.
 - **Automation Hub Sync:** Future goal: can HA feed status back to the Hangar?
 
 ## Next Session Focus
 
-- Implement persistent store (localStorage).
-- Add "High Draw" and "Requirement Missing" flags to unit cards.
-- Commit and tag `v0.1.0-alpha`.
+- Prepare external hosting and alpha release tagging.
+- Decide whether user-driven wishlist/status edits stay local-only or need a backend.

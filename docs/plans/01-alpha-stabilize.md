@@ -14,7 +14,7 @@ Make the current alpha truthful, stable, and ready for review. This phase fixes 
 
 ## Status
 
-Active. PR #1 remediation has landed; persistent store sync, unit-card requirement flags, and final alpha handoff checks remain.
+Complete for the stabilization scope. PR #1 remediation has landed, authored constraint baselines are preserved, source and mission lens state persist in local storage, unit cards surface high-draw and missing-requirement flags, and handoff docs have been updated.
 
 ## Investigate
 
