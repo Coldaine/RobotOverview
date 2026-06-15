@@ -1,8 +1,9 @@
+﻿'use client';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { useHangar } from '../lib/store';
-import type { Hotspot } from '../data/types';
+import { useHangar } from '@/lib/store';
+import type { Hotspot } from '@/data/types';
 
 const DOT: Record<Hotspot['status'], string> = {
   ok: 'fill-signal-ok',

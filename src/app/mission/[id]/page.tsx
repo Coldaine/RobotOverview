@@ -1,13 +1,15 @@
+﻿'use client';
 import { motion } from 'framer-motion';
-import { ArrowLeft, CheckCircle2, Circle, Crosshair, Package, Users } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
-import { Gauge } from '../components/ui/Gauge';
-import { SectionTitle } from '../components/ui/Primitives';
-import { UnitCard } from '../components/UnitCard';
-import { useHangar, useCalculatedConstraints } from '../lib/store';
-import { money } from '../lib/format';
+import { ArrowLeft, CheckCircle2, Circle, Crosshair, Package } from 'lucide-react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { Gauge } from '@/components/ui/Gauge';
+import { SectionTitle } from '@/components/ui/Primitives';
+import { UnitCard } from '@/components/UnitCard';
+import { useHangar, useCalculatedConstraints } from '@/lib/store';
+import { money } from '@/lib/format';
 import clsx from 'clsx';
-import type { Mission, WishlistItem } from '../data/types';
+import type { Mission, WishlistItem } from '@/data/types';
 
 const MSTATUS: Record<Mission['status'], { label: string; cls: string }> = {
   planning: { label: 'Planning', cls: 'text-amber border-amber/40 bg-amber/10' },
@@ -26,52 +28,19 @@ const WSTATUS: Record<WishlistItem['status'], { label: string; cls: string }> = 
   rejected: { label: 'Rejected', cls: 'text-signal-crit border-signal-crit/40 bg-signal-crit/10' },
 };
 
-export function MissionsList() {
-  const { data } = useHangar();
-  return (
-    <div className="space-y-6">
-      <header>
-        <div className="font-mono text-[11px] uppercase tracking-[0.35em] text-cyan/70">Operations Board</div>
-        <h1 className="mt-1 font-display text-2xl font-bold uppercase tracking-[0.06em] text-ink">Missions</h1>
-      </header>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {data.missions.map((m, i) => {
-          const ms = MSTATUS[m.status];
-          const done = m.objectives.filter((o) => o.done).length;
-          return (
-            <motion.div key={m.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-              <Link to={`/mission/${m.id}`} className="panel group block p-4 transition-all hover:border-amber/40 hover:shadow-hud-amber">
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-[10px] tracking-[0.3em] text-amber/70">{m.code}</span>
-                  <span className={clsx('chip', ms.cls)}>{ms.label}</span>
-                </div>
-                <h2 className="mt-2 font-display text-base uppercase tracking-[0.06em] text-ink group-hover:text-glow-amber">{m.name}</h2>
-                <p className="mt-1 line-clamp-2 font-mono text-[11px] leading-relaxed text-ink-dim">{m.objective}</p>
-                <div className="mt-3 flex items-center justify-between font-mono text-[10px] text-ink-dim">
-                  <span><Users className="mr-1 inline h-3 w-3" />{m.requisitionedUnits.length} units</span>
-                  <span>{done}/{m.objectives.length} objectives</span>
-                </div>
-              </Link>
-            </motion.div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-export function MissionView() {
-  const { id } = useParams();
+export default function MissionView() {
+  const params = useParams();
+  const id = params?.id as string | undefined;
   const { mission, unit, wish, insight, setLensMissionId } = useHangar();
   const m = id ? mission(id) : undefined;
-  
+
   const constraints = useCalculatedConstraints(id || '');
 
   if (!m) {
     return (
       <div className="panel p-8 text-center">
         <p className="font-mono text-sm text-ink-dim">Mission not found.</p>
-        <Link to="/missions" className="btn btn-ghost mt-4 inline-flex"><ArrowLeft className="h-3 w-3" /> Missions</Link>
+        <Link href="/missions" className="btn btn-ghost mt-4 inline-flex"><ArrowLeft className="h-3 w-3" /> Missions</Link>
       </div>
     );
   }
@@ -83,7 +52,7 @@ export function MissionView() {
 
   return (
     <div className="space-y-6">
-      <Link to="/missions" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-dim transition-colors hover:text-amber">
+      <Link href="/missions" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-dim transition-colors hover:text-amber">
         <ArrowLeft className="h-3 w-3" /> Missions
       </Link>
 
@@ -171,7 +140,7 @@ export function MissionView() {
               <SectionTitle code="CODEX">Linked Insights</SectionTitle>
               <div className="space-y-2">
                 {insights.map((ins) => (
-                  <Link key={ins!.id} to="/codex" className="panel block p-3 transition-all hover:border-cyan/40">
+                  <Link key={ins!.id} href="/codex" className="panel block p-3 transition-all hover:border-cyan/40">
                     <div className="font-display text-xs uppercase tracking-[0.08em] text-ink">{ins!.title}</div>
                     <p className="mt-1 font-mono text-[11px] leading-relaxed text-ink-dim">{ins!.body}</p>
                   </Link>
@@ -196,7 +165,7 @@ export function MissionView() {
               <SectionTitle code="REQ"><span className="inline-flex items-center gap-2"><Package className="h-3.5 w-3.5 text-amber" /> Requisitions</span></SectionTitle>
               <div className="space-y-2">
                 {wishes.map((w) => (
-                  <Link key={w!.id} to="/quartermaster" className="panel flex items-center justify-between p-3 transition-all hover:border-amber/40">
+                  <Link key={w!.id} href="/quartermaster" className="panel flex items-center justify-between p-3 transition-all hover:border-amber/40">
                     <div className="min-w-0">
                       <div className="truncate font-mono text-[11px] text-ink">{w!.name}</div>
                       <span className={clsx('chip mt-1', WSTATUS[w!.status].cls)}>{WSTATUS[w!.status].label}</span>

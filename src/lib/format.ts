@@ -1,4 +1,4 @@
-import type { LifecycleState, UnitStatus } from '../data/types';
+﻿import type { LifecycleState, UnitStatus } from '../data/types';
 
 export function money(n: number | null | undefined): string {
   if (n == null) return '—';

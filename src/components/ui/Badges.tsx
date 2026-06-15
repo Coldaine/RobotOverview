@@ -1,7 +1,7 @@
-import clsx from 'clsx';
+﻿import clsx from 'clsx';
 import type { ReactNode } from 'react';
-import { STATUS_META, TONE_CLASSES } from '../../lib/format';
-import type { UnitStatus } from '../../data/types';
+import { STATUS_META, TONE_CLASSES } from '@/lib/format';
+import type { UnitStatus } from '@/data/types';
 
 export function StatusBadge({ status }: { status: UnitStatus }) {
   const meta = STATUS_META[status];

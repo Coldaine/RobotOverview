@@ -1,15 +1,16 @@
+﻿'use client';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Crosshair, Target, Zap } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { RoverSchematic } from '../components/RoverSchematic';
-import { UnitCard } from '../components/UnitCard';
-import { Gauge } from '../components/ui/Gauge';
-import { SectionTitle, StatReadout } from '../components/ui/Primitives';
-import { useHangar, useCalculatedConstraints } from '../lib/store';
-import { money } from '../lib/format';
+import Link from 'next/link';
+import { RoverSchematic } from '@/components/RoverSchematic';
+import { UnitCard } from '@/components/UnitCard';
+import { Gauge } from '@/components/ui/Gauge';
+import { SectionTitle, StatReadout } from '@/components/ui/Primitives';
+import { useHangar, useCalculatedConstraints } from '@/lib/store';
+import { money } from '@/lib/format';
 import clsx from 'clsx';
 
-export function HangarHub() {
+export default function HangarHub() {
   const { data, unit, mission, setLensMissionId, lensMissionId } = useHangar();
 
   const flagship = data.units.find((u) => u.flagship && u.bay === 'robotics');
@@ -18,7 +19,7 @@ export function HangarHub() {
   const lensedMission = lensMissionId ? mission(lensMissionId) : undefined;
   const activeMission = lensedMission ?? primaryMission;
   const activeMissionId = activeMission?.id ?? '';
-  
+
   const lens = lensedMission ?? null;
   const spotlightUnits = new Set(lens?.requisitionedUnits ?? []);
 
@@ -58,7 +59,7 @@ export function HangarHub() {
               <div className="panel p-4">
                 <div className="flex items-center justify-between">
                   <span className="font-display text-sm uppercase tracking-[0.1em] text-ink">{flagship.name}</span>
-                  <Link to={`/unit/${flagship.id}`} className="btn btn-ghost text-[10px]">
+                  <Link href={`/unit/${flagship.id}`} className="btn btn-ghost text-[10px]">
                     Open <ArrowUpRight className="h-3 w-3" />
                   </Link>
                 </div>
@@ -74,7 +75,7 @@ export function HangarHub() {
               </div>
               {activeMission && (
                 <Link
-                  to={`/mission/${activeMission.id}`}
+                  href={`/mission/${activeMission.id}`}
                   className="panel group flex items-center gap-3 p-4 transition-all hover:border-amber/40 hover:shadow-hud-amber"
                 >
                   <div className="grid h-10 w-10 place-items-center rounded-lg border border-amber/40 bg-amber/5">
@@ -116,7 +117,7 @@ export function HangarHub() {
         return (
           <section key={bay.id}>
             <div className="mb-3 flex items-center gap-3">
-              <Link to={`/bay/${bay.id}`} className="group flex items-center gap-3">
+              <Link href={`/bay/${bay.id}`} className="group flex items-center gap-3">
                 <span className={clsx('font-mono text-[10px] tracking-[0.3em]', bay.accent === 'amber' ? 'text-amber/70' : 'text-cyan/70')}>
                   {bay.code}
                 </span>
@@ -145,7 +146,7 @@ export function HangarHub() {
               return (
                 <Link
                   key={w.id}
-                  to="/quartermaster"
+                  href="/quartermaster"
                   className="panel group flex items-center gap-4 p-4 transition-all hover:border-cyan/40 hover:shadow-hud-cyan"
                 >
                   <div className="grid h-10 w-10 place-items-center rounded-lg border border-cyan/40 bg-cyan/5">

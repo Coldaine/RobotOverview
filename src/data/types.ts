@@ -1,4 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
+﻿// ─────────────────────────────────────────────────────────────────────────────
 // The Hangar — data spine types.
 // Per the North Star: the data is the source of truth; the UI is a projection.
 // Everything scales by adding records, not screens.

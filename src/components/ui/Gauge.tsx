@@ -1,6 +1,7 @@
+﻿'use client';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import type { ConstraintGauge } from '../../data/types';
+import type { ConstraintGauge } from '@/data/types';
 
 /**
  * Live constraint gauge — value vs budget. Goes critical (red) when busted.

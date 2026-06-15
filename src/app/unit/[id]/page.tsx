@@ -1,15 +1,18 @@
+﻿'use client';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Target, FileText } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
-import { RoverSchematic } from '../components/RoverSchematic';
-import { StatusBadge, Tag, ProvenanceTag } from '../components/ui/Badges';
-import { SectionTitle } from '../components/ui/Primitives';
-import { useHangar } from '../lib/store';
-import { LIFECYCLE_META, money } from '../lib/format';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { RoverSchematic } from '@/components/RoverSchematic';
+import { StatusBadge, Tag, ProvenanceTag } from '@/components/ui/Badges';
+import { SectionTitle } from '@/components/ui/Primitives';
+import { useHangar } from '@/lib/store';
+import { LIFECYCLE_META, money } from '@/lib/format';
 import clsx from 'clsx';
 
-export function UnitDetail() {
-  const { id } = useParams();
+export default function UnitDetail() {
+  const params = useParams();
+  const id = params?.id as string | undefined;
   const { unit, mission, insight, capability } = useHangar();
   const u = id ? unit(id) : undefined;
 
@@ -17,7 +20,7 @@ export function UnitDetail() {
     return (
       <div className="panel p-8 text-center">
         <p className="font-mono text-sm text-ink-dim">Unit not found.</p>
-        <Link to="/" className="btn btn-ghost mt-4 inline-flex">
+        <Link href="/" className="btn btn-ghost mt-4 inline-flex">
           <ArrowLeft className="h-3 w-3" /> Back to Hangar
         </Link>
       </div>
@@ -30,7 +33,7 @@ export function UnitDetail() {
 
   return (
     <div className="space-y-6">
-      <Link to="/" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-dim transition-colors hover:text-cyan">
+      <Link href="/" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-dim transition-colors hover:text-cyan">
         <ArrowLeft className="h-3 w-3" /> Hangar
       </Link>
 
@@ -86,7 +89,7 @@ export function UnitDetail() {
               <SectionTitle code="SLOTS"><span className="inline-flex items-center gap-2"><Layers className="h-3.5 w-3.5 text-amber" /> Loadout Configuration</span></SectionTitle>
               <div className="space-y-4">
                 {(() => {
-                  const grouped = u.loadout.reduce((acc, slot) => {
+                  const grouped = u.loadout!.reduce((acc, slot) => {
                     const g = slot.group || 'Uncategorized';
                     if (!acc[g]) acc[g] = [];
                     acc[g].push(slot);
@@ -99,7 +102,7 @@ export function UnitDetail() {
                         <div className="font-mono text-[10px] uppercase tracking-widest text-cyan/70 border-b border-rim/50 pb-1 mb-2">{groupName}</div>
                       )}
                       <div className="space-y-2">
-                        {slots.map((slot) => {
+                        {slots!.map((slot) => {
                           const filled = !!slot.filledBy;
                           return (
                             <div
@@ -136,7 +139,7 @@ export function UnitDetail() {
               <SectionTitle code="CODEX"><span className="inline-flex items-center gap-2"><Lightbulb className="h-3.5 w-3.5 text-amber" /> Field Insights</span></SectionTitle>
               <div className="space-y-2">
                 {insights.map((ins) => (
-                  <Link key={ins!.id} to="/codex" className="panel block p-3 transition-all hover:border-cyan/40">
+                  <Link key={ins!.id} href="/codex" className="panel block p-3 transition-all hover:border-cyan/40">
                     <div className="font-display text-xs uppercase tracking-[0.08em] text-ink">{ins!.title}</div>
                     <p className="mt-1 font-mono text-[11px] leading-relaxed text-ink-dim">{ins!.body}</p>
                   </Link>
@@ -198,7 +201,7 @@ export function UnitDetail() {
               <SectionTitle code="CAP">Grants</SectionTitle>
               <div className="space-y-1.5">
                 {caps.map((c) => (
-                  <Link key={c!.id} to="/tech-tree" className="flex items-center gap-2 rounded-md border border-rim/60 bg-panel-2/30 px-3 py-2 transition-colors hover:border-cyan/40">
+                  <Link key={c!.id} href="/tech-tree" className="flex items-center gap-2 rounded-md border border-rim/60 bg-panel-2/30 px-3 py-2 transition-colors hover:border-cyan/40">
                     <span className={clsx('h-1.5 w-1.5 rounded-full', c!.unlocked ? 'bg-signal-ok' : 'bg-ink-dim')} />
                     <span className="font-mono text-[11px] text-ink">{c!.name}</span>
                   </Link>
@@ -213,7 +216,7 @@ export function UnitDetail() {
               <SectionTitle code="MSN"><span className="inline-flex items-center gap-2"><Target className="h-3.5 w-3.5 text-amber" /> Assigned</span></SectionTitle>
               <div className="space-y-1.5">
                 {missions.map((m) => (
-                  <Link key={m!.id} to={`/mission/${m!.id}`} className="flex items-center justify-between rounded-md border border-rim/60 bg-panel-2/30 px-3 py-2 transition-colors hover:border-amber/40">
+                  <Link key={m!.id} href={`/mission/${m!.id}`} className="flex items-center justify-between rounded-md border border-rim/60 bg-panel-2/30 px-3 py-2 transition-colors hover:border-amber/40">
                     <span className="font-mono text-[11px] text-ink">{m!.name}</span>
                     <span className="font-mono text-[9px] uppercase tracking-wider text-amber">{m!.status}</span>
                   </Link>
