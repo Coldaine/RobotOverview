@@ -42,6 +42,7 @@ export interface LoadoutSlot {
   slot: string; // e.g. "Lighting", "Compute", "Sensing"
   filledBy: string | null; // unit id currently slotted, or null if empty
   note?: string;
+  hotspotId?: string; // Links this structural slot to a visual region on the schematic
 }
 
 export interface PowerProfile {
@@ -53,10 +54,9 @@ export interface PowerProfile {
 export interface Hotspot {
   id: string;
   label: string;
-  detail: string;
   x: number; // % of viewBox 0-100
   y: number;
-  status: 'ok' | 'empty' | 'attention';
+  // detail and status are now derived dynamically from the LoadoutSlots mapped to this hotspotId!
 }
 
 export interface Unit {

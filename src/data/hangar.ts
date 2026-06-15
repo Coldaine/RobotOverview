@@ -47,59 +47,49 @@ export const hangarData: HangarData = {
       power: { watts: 25, volts: 5, rail: '5V' },
       massGrams: 3200,
       loadout: [
-        { group: 'Chassis Mounts', slot: 'Host Controller Mount', filledBy: 'pi5', note: 'Currently holds Pi 5; Orin is future path' },
-        { group: 'Chassis Mounts', slot: '21mm Picatinny Rail', filledBy: null, note: 'Top deck. Accepts OAK-D Lite, D435, or LED spots' },
-        { group: 'Chassis Mounts', slot: 'Middle Deck', filledBy: null, note: 'Pre-drilled. Accepts D500 ToF LiDAR or STL-27L' },
-        { group: 'Chassis Mounts', slot: '1020 Aluminum Rails', filledBy: null, note: 'Sides. Accepts T-slot nuts for batteries, arms, brackets' },
-        { group: 'Chassis Mounts', slot: 'Undercarriage Bay', filledBy: 'stock-ups', note: 'Holds 3x 18650 UPS. Fits 3S LiPo packs' },
-        
-        { group: 'Driver Board Interfaces', slot: 'XH2.54 Battery Input', filledBy: null, note: 'Wire in larger external 3S packs to bypass UPS' },
-        { group: 'Driver Board Interfaces', slot: 'Aux Interface (IO4/5)', filledBy: null, note: 'High-current MOSFET switched for LEDs or payloads' },
-        { group: 'Driver Board Interfaces', slot: 'Serial Bus Servo', filledBy: 'roarm-m2', note: 'Daisy-chains ST3215/ST3235 magnetic encoder servos' },
-        { group: 'Driver Board Interfaces', slot: 'PWM Output Pins', filledBy: null, note: 'Drives standard hobby servos or external motor controllers' },
-        { group: 'Driver Board Interfaces', slot: '40-Pin GPIO Header', filledBy: null, note: 'Re-exposes unused Pi/Jetson pins for external HATs' },
-        { group: 'Driver Board Interfaces', slot: 'USB HUB / Type-C', filledBy: null, note: 'Accepts 4G/5G modems, receivers, or host-slave bypass' },
-        { group: 'Driver Board Interfaces', slot: 'Audio Expansion', filledBy: null, note: '3.5mm AUX, dual speaker/mic headers for TTS/spatial audio' },
-        { group: 'Driver Board Interfaces', slot: 'LiDAR UART Port', filledBy: null, note: 'Direct serial-to-USB routing for 360° mapping sensors' },
-        { group: 'Driver Board Interfaces', slot: 'TF (MicroSD) Slot', filledBy: null, note: 'Standalone data logging directly to ESP32 sub-controller' },
-        { group: 'Driver Board Interfaces', slot: 'Display Header', filledBy: null, note: 'Drives 0.91"/0.96" OLED for voltage/IP telemetry' },
-        { group: 'Driver Board Interfaces', slot: 'Power Output Pins', filledBy: null, note: 'Raw 5V/3.3V out for independent MCUs or sensors' },
+        { group: 'Chassis Mounts', slot: 'Host Controller Mount', filledBy: 'pi5', note: 'Currently holds Pi 5; Orin is future path', hotspotId: 'compute' },
+        { group: 'Chassis Mounts', slot: '21mm Picatinny Rail', filledBy: null, note: 'Top deck. Accepts OAK-D Lite, D435, or LED spots', hotspotId: 'lighting' },
+        { group: 'Chassis Mounts', slot: 'Middle Deck', filledBy: null, note: 'Pre-drilled. Accepts D500 ToF LiDAR or STL-27L', hotspotId: 'compute' },
+        { group: 'Chassis Mounts', slot: '1020 Aluminum Rails', filledBy: null, note: 'Sides. Accepts T-slot nuts for batteries, arms, brackets', hotspotId: 'power' },
+        { group: 'Chassis Mounts', slot: 'Undercarriage Bay', filledBy: 'stock-ups', note: 'Holds 3x 18650 UPS. Fits 3S LiPo packs', hotspotId: 'power' },
+
+        { group: 'Driver Board Interfaces', slot: 'XH2.54 Battery Input', filledBy: null, note: 'Wire in larger external 3S packs to bypass UPS', hotspotId: 'power' },
+        { group: 'Driver Board Interfaces', slot: 'Aux Interface (IO4/5)', filledBy: null, note: 'High-current MOSFET switched for LEDs or payloads', hotspotId: 'driver' },
+        { group: 'Driver Board Interfaces', slot: 'Serial Bus Servo', filledBy: 'roarm-m2', note: 'Daisy-chains ST3215/ST3235 magnetic encoder servos', hotspotId: 'arm' },
+        { group: 'Driver Board Interfaces', slot: 'PWM Output Pins', filledBy: null, note: 'Drives standard hobby servos or external motor controllers', hotspotId: 'driver' },
+        { group: 'Driver Board Interfaces', slot: '40-Pin GPIO Header', filledBy: null, note: 'Re-exposes unused Pi/Jetson pins for external HATs', hotspotId: 'driver' },
+        { group: 'Driver Board Interfaces', slot: 'USB HUB / Type-C', filledBy: null, note: 'Accepts 4G/5G modems, receivers, or host-slave bypass', hotspotId: 'compute' },
+        { group: 'Driver Board Interfaces', slot: 'Audio Expansion', filledBy: null, note: '3.5mm AUX, dual speaker/mic headers for TTS/spatial audio', hotspotId: 'driver' },
+        { group: 'Driver Board Interfaces', slot: 'LiDAR UART Port', filledBy: null, note: 'Direct serial-to-USB routing for 360° mapping sensors', hotspotId: 'driver' },
+        { group: 'Driver Board Interfaces', slot: 'TF (MicroSD) Slot', filledBy: null, note: 'Standalone data logging directly to ESP32 sub-controller', hotspotId: 'driver' },
+        { group: 'Driver Board Interfaces', slot: 'Display Header', filledBy: null, note: 'Drives 0.91"/0.96" OLED for voltage/IP telemetry', hotspotId: 'driver' },
+        { group: 'Driver Board Interfaces', slot: 'Power Output Pins', filledBy: null, note: 'Raw 5V/3.3V out for independent MCUs or sensors', hotspotId: 'driver' },
       ],
       hotspots: [
         {
           id: 'lighting',
           label: 'Top Deck / Sensor Mast',
-          detail: '21mm Picatinny Rail. Accepts OAK-D Lite, D435, or LED spots. Currently unfilled.',
-          x: 30, y: 19,
-          status: 'empty'
+          x: 30, y: 19
         },
         {
           id: 'compute',
           label: 'Host Controller Board',
-          detail: 'Middle Deck. Holds Raspberry Pi 5. Provides 40-Pin GPIO and USB Hub bypass.',
-          x: 50, y: 54,
-          status: 'ok'
+          x: 50, y: 54
         },
         {
           id: 'power',
           label: 'Undercarriage Bay',
-          detail: 'Stock 3x18650 UPS with XH2.54 Battery Input for external 3S packs.',
-          x: 50, y: 79,
-          status: 'ok'
+          x: 50, y: 79
         },
         {
           id: 'arm',
           label: 'Manipulator Arm Base',
-          detail: 'Waveshare RoArm-M2. Driven by Serial Bus Servo daisy-chain.',
-          x: 64, y: 40,
-          status: 'ok'
+          x: 64, y: 40
         },
         {
           id: 'driver',
           label: 'Driver Board I/O',
-          detail: 'Rear IO 40-pin header, Aux MOSFET, and LiDAR UART port. Needs wiring review.',
-          x: 40, y: 48,
-          status: 'attention'
+          x: 40, y: 48
         }
       ],
       capabilities: ['teleop', 'crawlspace-ops'],

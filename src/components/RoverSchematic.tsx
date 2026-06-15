@@ -5,12 +5,12 @@ import { useState } from 'react';
 import { useHangar } from '@/lib/store';
 import type { Hotspot } from '@/data/types';
 
-const DOT: Record<Hotspot['status'], string> = {
+const DOT: Record<'ok' | 'empty' | 'attention', string> = {
   ok: 'fill-signal-ok',
   empty: 'fill-signal-warn',
   attention: 'fill-amber',
 };
-const RING: Record<Hotspot['status'], string> = {
+const RING: Record<'ok' | 'empty' | 'attention', string> = {
   ok: 'stroke-signal-ok',
   empty: 'stroke-signal-warn',
   attention: 'stroke-amber',
@@ -21,8 +21,20 @@ export function RoverSchematic() {
   const beast = unit('beast');
   const hotspots = beast?.hotspots ?? [];
 
+  const loadout = beast?.loadout ?? [];
+
   const [active, setActive] = useState<string | null>('lighting');
   const sel = hotspots.find((h) => h.id === active) ?? null;
+
+  const getStatus = (hid: string): 'ok' | 'empty' | 'attention' => {
+    const mapped = loadout.filter(s => s.hotspotId === hid);
+    if (mapped.length === 0) return 'empty';
+    const allFilled = mapped.every(s => s.filledBy !== null);
+    const noneFilled = mapped.every(s => s.filledBy === null);
+    if (allFilled) return 'ok';
+    if (noneFilled) return 'empty';
+    return 'attention';
+  };
 
   return (
     <div className="relative max-w-full overflow-hidden rounded-lg border border-rim bg-void/60 blueprint-grid corner-bracket">
@@ -81,6 +93,7 @@ export function RoverSchematic() {
             {/* hotspots */}
             {hotspots.map((h) => {
               const isActive = h.id === active;
+              const status = getStatus(h.id);
               return (
                 <g
                   key={h.id}
@@ -89,12 +102,12 @@ export function RoverSchematic() {
                   onMouseEnter={() => setActive(h.id)}
                 >
                   {isActive && (
-                    <circle cx={h.x} cy={h.y} r="4.5" className={clsx(RING[h.status], 'fill-none')} strokeWidth="0.4" strokeOpacity="0.6">
+                    <circle cx={h.x} cy={h.y} r="4.5" className={clsx(RING[status], 'fill-none')} strokeWidth="0.4" strokeOpacity="0.6">
                       <animate attributeName="r" values="3.2;5;3.2" dur="2s" repeatCount="indefinite" />
                     </circle>
                   )}
-                  <circle cx={h.x} cy={h.y} r={isActive ? 2 : 1.5} className={clsx(DOT[h.status])} />
-                  <circle cx={h.x} cy={h.y} r="3" className={clsx(RING[h.status], 'fill-none')} strokeWidth="0.3" strokeOpacity="0.5" />
+                  <circle cx={h.x} cy={h.y} r={isActive ? 2 : 1.5} className={clsx(DOT[status])} />
+                  <circle cx={h.x} cy={h.y} r="3" className={clsx(RING[status], 'fill-none')} strokeWidth="0.3" strokeOpacity="0.5" />
                 </g>
               );
             })}
@@ -105,7 +118,9 @@ export function RoverSchematic() {
         <div className="flex min-w-0 flex-col gap-3">
           <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-cyan/70">Exploded View · Tap a subsystem</div>
           <div className="grid grid-cols-2 gap-1.5">
-            {hotspots.map((h) => (
+            {hotspots.map((h) => {
+              const status = getStatus(h.id);
+              return (
               <button
                 key={h.id}
                 onClick={() => setActive(h.id)}
@@ -119,17 +134,20 @@ export function RoverSchematic() {
                 <span
                   className={clsx(
                     'h-1.5 w-1.5 shrink-0 rounded-full',
-                    h.status === 'ok' && 'bg-signal-ok',
-                    h.status === 'empty' && 'bg-signal-warn',
-                    h.status === 'attention' && 'bg-amber',
+                    status === 'ok' && 'bg-signal-ok',
+                    status === 'empty' && 'bg-signal-warn',
+                    status === 'attention' && 'bg-amber',
                   )}
                 />
                 <span className="truncate">{h.label}</span>
               </button>
-            ))}
+            )})}
           </div>
 
-          {sel && (
+          {sel && (() => {
+            const status = getStatus(sel.id);
+            const mappedSlots = loadout.filter(s => s.hotspotId === sel.id);
+            return (
             <motion.div
               key={sel.id}
               initial={{ opacity: 0, x: 8 }}
@@ -142,17 +160,28 @@ export function RoverSchematic() {
                 <span
                   className={clsx(
                     'chip',
-                    sel.status === 'ok' && 'border-signal-ok/40 bg-signal-ok/10 text-signal-ok',
-                    sel.status === 'empty' && 'border-signal-warn/40 bg-signal-warn/10 text-signal-warn',
-                    sel.status === 'attention' && 'border-amber/40 bg-amber/10 text-amber',
+                    status === 'ok' && 'border-signal-ok/40 bg-signal-ok/10 text-signal-ok',
+                    status === 'empty' && 'border-signal-warn/40 bg-signal-warn/10 text-signal-warn',
+                    status === 'attention' && 'border-amber/40 bg-amber/10 text-amber',
                   )}
                 >
-                  {sel.status === 'ok' ? 'NOMINAL' : sel.status === 'empty' ? 'UNFILLED' : 'REVIEW'}
+                  {status === 'ok' ? 'NOMINAL' : status === 'empty' ? 'UNFILLED' : 'REVIEW'}
                 </span>
               </div>
-              <p className="mt-1 font-mono text-[11px] leading-relaxed text-ink-dim">{sel.detail}</p>
+              <div className="mt-3 space-y-2">
+                {mappedSlots.length > 0 ? mappedSlots.map(s => (
+                  <div key={s.slot} className="flex justify-between font-mono text-[11px] leading-tight">
+                    <span className="text-ink-dim truncate pr-2">{s.slot}</span>
+                    <span className={clsx("shrink-0", s.filledBy ? "text-cyan" : "text-signal-warn")}>
+                      {s.filledBy ? (unit(s.filledBy)?.name ?? s.filledBy) : 'UNFILLED'}
+                    </span>
+                  </div>
+                )) : (
+                  <p className="font-mono text-[11px] leading-relaxed text-ink-dim">No slots mapped to this region.</p>
+                )}
+              </div>
             </motion.div>
-          )}
+          )})}
         </div>
       </div>
     </div>
