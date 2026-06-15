@@ -24,6 +24,7 @@ export function RoverSchematic() {
   const loadout = beast?.loadout ?? [];
 
   const [active, setActive] = useState<string | null>('lighting');
+  const [flavor, setFlavor] = useState<'blueprint' | 'solid' | 'abstract'>('blueprint');
   const sel = hotspots.find((h) => h.id === active) ?? null;
 
   const getStatus = (hid: string): 'ok' | 'empty' | 'attention' => {
@@ -65,30 +66,57 @@ export function RoverSchematic() {
               CORE-PRIME
             </text>
 
-            {/* chassis body */}
-            <g stroke="var(--color-rim)" strokeWidth="0.4" fill="var(--color-panel)">
-              {/* tracks */}
-              <rect x="22" y="72" width="56" height="14" rx="3" fill="var(--color-void)" />
-              <rect x="24" y="74" width="52" height="10" rx="2" fill="var(--color-hull)" stroke="var(--color-cyan)" strokeOpacity="0.25" />
-              {/* track wheels */}
-              {[28, 38, 48, 58, 68].map((cx) => (
-                <circle key={cx} cx={cx} cy="79" r="2.6" fill="var(--color-void)" stroke="var(--color-rim)" />
-              ))}
-              {/* main hull */}
-              <rect x="30" y="40" width="40" height="30" rx="2.5" fill="var(--color-panel)" />
-              <rect x="34" y="44" width="32" height="22" rx="1.5" fill="var(--color-hull)" stroke="var(--color-cyan)" strokeOpacity="0.2" />
-              {/* compute board */}
-              <rect x="40" y="48" width="20" height="12" rx="1" fill="var(--color-panel)" stroke="var(--color-amber)" strokeOpacity="0.3" />
-              {/* sensor mast */}
-              <rect x="27" y="20" width="6" height="20" rx="1" fill="var(--color-panel)" />
-              <rect x="25" y="16" width="10" height="6" rx="1" fill="var(--color-panel)" stroke="var(--color-amber)" strokeOpacity="0.3" />
-              {/* arm base + segments */}
-              <circle cx="64" cy="40" r="3" fill="var(--color-panel)" stroke="var(--color-cyan)" strokeOpacity="0.3" />
-              <line x1="64" y1="40" x2="70" y2="28" stroke="var(--color-rim)" strokeWidth="1.4" />
-              <line x1="70" y1="28" x2="78" y2="24" stroke="var(--color-rim)" strokeWidth="1.2" />
-              <circle cx="70" cy="28" r="1.4" fill="var(--color-void)" stroke="var(--color-cyan)" strokeOpacity="0.4" />
-              <circle cx="78" cy="24" r="1.6" fill="var(--color-void)" stroke="var(--color-amber)" strokeOpacity="0.4" />
-            </g>
+            {/* chassis body flavors */}
+            {flavor === 'blueprint' && (
+              <g stroke="var(--color-rim)" strokeWidth="0.4" fill="var(--color-panel)">
+                <rect x="22" y="72" width="56" height="14" rx="3" fill="var(--color-void)" />
+                <rect x="24" y="74" width="52" height="10" rx="2" fill="var(--color-hull)" stroke="var(--color-cyan)" strokeOpacity="0.25" />
+                {[28, 38, 48, 58, 68].map((cx) => (
+                  <circle key={cx} cx={cx} cy="79" r="2.6" fill="var(--color-void)" stroke="var(--color-rim)" />
+                ))}
+                <rect x="30" y="40" width="40" height="30" rx="2.5" fill="var(--color-panel)" />
+                <rect x="34" y="44" width="32" height="22" rx="1.5" fill="var(--color-hull)" stroke="var(--color-cyan)" strokeOpacity="0.2" />
+                <rect x="40" y="48" width="20" height="12" rx="1" fill="var(--color-panel)" stroke="var(--color-amber)" strokeOpacity="0.3" />
+                <rect x="27" y="20" width="6" height="20" rx="1" fill="var(--color-panel)" />
+                <rect x="25" y="16" width="10" height="6" rx="1" fill="var(--color-panel)" stroke="var(--color-amber)" strokeOpacity="0.3" />
+                <circle cx="64" cy="40" r="3" fill="var(--color-panel)" stroke="var(--color-cyan)" strokeOpacity="0.3" />
+                <line x1="64" y1="40" x2="70" y2="28" stroke="var(--color-rim)" strokeWidth="1.4" />
+                <line x1="70" y1="28" x2="78" y2="24" stroke="var(--color-rim)" strokeWidth="1.2" />
+                <circle cx="70" cy="28" r="1.4" fill="var(--color-void)" stroke="var(--color-cyan)" strokeOpacity="0.4" />
+                <circle cx="78" cy="24" r="1.6" fill="var(--color-void)" stroke="var(--color-amber)" strokeOpacity="0.4" />
+              </g>
+            )}
+
+            {flavor === 'solid' && (
+              <g stroke="none" fill="var(--color-panel)">
+                <rect x="22" y="72" width="56" height="14" rx="3" fill="#111" />
+                <rect x="24" y="74" width="52" height="10" rx="2" fill="#222" />
+                {[28, 38, 48, 58, 68].map((cx) => (
+                  <circle key={cx} cx={cx} cy="79" r="2.6" fill="#000" />
+                ))}
+                <rect x="30" y="40" width="40" height="30" rx="2.5" fill="#333" />
+                <rect x="34" y="44" width="32" height="22" rx="1.5" fill="#1f2937" />
+                <rect x="40" y="48" width="20" height="12" rx="1" fill="#4b5563" />
+                <rect x="27" y="20" width="6" height="20" rx="1" fill="#333" />
+                <rect x="25" y="16" width="10" height="6" rx="1" fill="#1f2937" />
+                <circle cx="64" cy="40" r="3" fill="#333" />
+                <line x1="64" y1="40" x2="70" y2="28" stroke="#555" strokeWidth="1.8" />
+                <line x1="70" y1="28" x2="78" y2="24" stroke="#555" strokeWidth="1.4" />
+                <circle cx="70" cy="28" r="1.4" fill="#222" />
+                <circle cx="78" cy="24" r="1.6" fill="#111" />
+              </g>
+            )}
+
+            {flavor === 'abstract' && (
+              <g stroke="var(--color-cyan)" strokeWidth="0.2" fill="none" opacity="0.6">
+                {/* Structural connection lines between hotspots */}
+                <path d="M 30 19 L 50 54 L 50 79 M 50 54 L 40 48 M 50 54 L 64 40" strokeDasharray="1 1.5" />
+                {/* Abstract radar/topology rings */}
+                <circle cx="50" cy="50" r="30" stroke="var(--color-rim)" strokeWidth="0.1" strokeDasharray="0.5 2" />
+                <circle cx="50" cy="50" r="20" stroke="var(--color-rim)" strokeWidth="0.1" strokeDasharray="0.5 2" />
+                <circle cx="50" cy="50" r="10" stroke="var(--color-rim)" strokeWidth="0.1" strokeDasharray="0.5 2" />
+              </g>
+            )}
 
             {/* hotspots */}
             {hotspots.map((h) => {
@@ -116,7 +144,23 @@ export function RoverSchematic() {
 
         {/* readout panel */}
         <div className="flex min-w-0 flex-col gap-3">
-          <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-cyan/70">Exploded View · Tap a subsystem</div>
+          <div className="flex items-center justify-between">
+            <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-cyan/70">Exploded View</div>
+            <div className="flex gap-1.5">
+              {(['blueprint', 'solid', 'abstract'] as const).map(f => (
+                <button
+                  key={f}
+                  onClick={() => setFlavor(f)}
+                  className={clsx(
+                    "px-1.5 py-0.5 font-mono text-[9px] uppercase border rounded transition-colors",
+                    flavor === f ? "border-cyan/50 text-cyan bg-cyan/10" : "border-rim/50 text-ink-dim hover:text-ink hover:border-rim"
+                  )}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-1.5">
             {hotspots.map((h) => {
               const status = getStatus(h.id);
