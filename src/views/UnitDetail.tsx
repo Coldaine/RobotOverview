@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Target, FileText } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Target } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { RoverSchematic } from '../components/RoverSchematic';
 import { StatusBadge, Tag, ProvenanceTag } from '../components/ui/Badges';
