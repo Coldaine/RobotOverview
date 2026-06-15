@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Target } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Target, FileText } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { RoverSchematic } from '../components/RoverSchematic';
 import { StatusBadge, Tag, ProvenanceTag } from '../components/ui/Badges';
@@ -83,31 +83,49 @@ export function UnitDetail() {
           {/* loadout */}
           {u.loadout && u.loadout.length > 0 && (
             <section>
-              <SectionTitle code="SLOTS"><span className="inline-flex items-center gap-2"><Layers className="h-3.5 w-3.5 text-amber" /> Loadout</span></SectionTitle>
-              <div className="space-y-2">
-                {u.loadout.map((slot) => {
-                  const filled = !!slot.filledBy;
-                  return (
-                    <div
-                      key={slot.slot}
-                      className={clsx(
-                        'flex items-center gap-3 rounded-md border px-3 py-2.5',
-                        filled ? 'border-rim bg-panel-2/30' : 'border-signal-warn/30 bg-signal-warn/5',
+              <SectionTitle code="SLOTS"><span className="inline-flex items-center gap-2"><Layers className="h-3.5 w-3.5 text-amber" /> Loadout Configuration</span></SectionTitle>
+              <div className="space-y-4">
+                {(() => {
+                  const grouped = u.loadout.reduce((acc, slot) => {
+                    const g = slot.group || 'Uncategorized';
+                    if (!acc[g]) acc[g] = [];
+                    acc[g].push(slot);
+                    return acc;
+                  }, {} as Record<string, typeof u.loadout>);
+
+                  return Object.entries(grouped).map(([groupName, slots]) => (
+                    <div key={groupName} className="space-y-2">
+                      {groupName !== 'Uncategorized' && (
+                        <div className="font-mono text-[10px] uppercase tracking-widest text-cyan/70 border-b border-rim/50 pb-1 mb-2">{groupName}</div>
                       )}
-                    >
-                      <span className={clsx('h-2 w-2 rounded-full', filled ? 'bg-signal-ok' : 'bg-signal-warn animate-pulse-trace')} />
-                      <div className="w-24 shrink-0 font-mono text-[11px] uppercase tracking-wider text-ink">{slot.slot}</div>
-                      <div className="min-w-0 flex-1 font-mono text-[11px] text-ink-dim">
-                        {filled ? (
-                          <span className="text-cyan">{unit(slot.filledBy!)?.name ?? slot.filledBy}</span>
-                        ) : (
-                          <span className="text-signal-warn">UNFILLED</span>
-                        )}
-                        {slot.note && <span className="text-ink-dim"> — {slot.note}</span>}
+                      <div className="space-y-2">
+                        {slots.map((slot) => {
+                          const filled = !!slot.filledBy;
+                          return (
+                            <div
+                              key={slot.slot}
+                              className={clsx(
+                                'flex items-center gap-3 rounded-md border px-3 py-2.5',
+                                filled ? 'border-rim bg-panel-2/30' : 'border-signal-warn/30 bg-signal-warn/5',
+                              )}
+                            >
+                              <span className={clsx('h-2 w-2 shrink-0 rounded-full', filled ? 'bg-signal-ok' : 'bg-signal-warn animate-pulse-trace')} />
+                              <div className="w-32 shrink-0 font-mono text-[11px] uppercase tracking-wider text-ink truncate">{slot.slot}</div>
+                              <div className="min-w-0 flex-1 font-mono text-[11px] text-ink-dim truncate">
+                                {filled ? (
+                                  <span className="text-cyan">{unit(slot.filledBy!)?.name ?? slot.filledBy}</span>
+                                ) : (
+                                  <span className="text-signal-warn">UNFILLED</span>
+                                )}
+                                {slot.note && <span className="text-ink-dim hidden sm:inline"> — {slot.note}</span>}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
-                  );
-                })}
+                  ));
+                })()}
               </div>
             </section>
           )}
