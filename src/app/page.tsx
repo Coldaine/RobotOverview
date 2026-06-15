@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Crosshair, Target, Zap } from 'lucide-react';
 import Link from 'next/link';

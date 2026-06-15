@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { motion } from 'framer-motion';
 import { ArrowLeft, CheckCircle2, Circle, Crosshair, Package } from 'lucide-react';
 import Link from 'next/link';
@@ -7,16 +7,9 @@ import { Gauge } from '@/components/ui/Gauge';
 import { SectionTitle } from '@/components/ui/Primitives';
 import { UnitCard } from '@/components/UnitCard';
 import { useHangar, useCalculatedConstraints } from '@/lib/store';
-import { money } from '@/lib/format';
+import { MISSION_STATUS_META, money } from '@/lib/format';
 import clsx from 'clsx';
-import type { Mission, WishlistItem } from '@/data/types';
-
-const MSTATUS: Record<Mission['status'], { label: string; cls: string }> = {
-  planning: { label: 'Planning', cls: 'text-amber border-amber/40 bg-amber/10' },
-  active: { label: 'Active', cls: 'text-signal-ok border-signal-ok/40 bg-signal-ok/10' },
-  standby: { label: 'Standby', cls: 'text-ink-dim border-rim bg-panel-2/40' },
-  complete: { label: 'Complete', cls: 'text-cyan border-cyan/40 bg-cyan/10' },
-};
+import type { WishlistItem } from '@/data/types';
 
 const WSTATUS: Record<WishlistItem['status'], { label: string; cls: string }> = {
   watching: { label: 'Watching', cls: 'text-ink-dim border-rim bg-panel-2/40' },
@@ -48,7 +41,7 @@ export default function MissionView() {
   const units = m.requisitionedUnits.map(unit).filter(Boolean);
   const wishes = m.wishlist.map(wish).filter(Boolean);
   const insights = (m.insights ?? []).map(insight).filter(Boolean);
-  const ms = MSTATUS[m.status];
+  const ms = MISSION_STATUS_META[m.status];
 
   return (
     <div className="space-y-6">

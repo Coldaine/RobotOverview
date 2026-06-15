@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import {
@@ -19,9 +19,18 @@ import { useHangar } from '@/lib/store';
 import { timeAgo } from '@/lib/format';
 import type { ReactNode } from 'react';
 
-const NAV = [
+type NavStation = {
+  to: string;
+  label: string;
+  code: string;
+  icon: typeof Cpu;
+  end?: boolean;
+  activePrefixes?: string[];
+};
+
+const NAV: NavStation[] = [
   { to: '/', label: 'Hangar', code: 'HUB', icon: Boxes, end: true },
-  { to: '/missions', label: 'Missions', code: 'MSN', icon: Target },
+  { to: '/missions', label: 'Missions', code: 'MSN', icon: Target, activePrefixes: ['/mission'] },
   { to: '/quartermaster', label: 'Quartermaster', code: 'QM', icon: Hexagon },
   { to: '/tech-tree', label: 'Tech Tree', code: 'CAP', icon: Network },
   { to: '/codex', label: 'Codex', code: 'WIKI', icon: ScrollText },
@@ -38,15 +47,25 @@ const BAY_ICON: Record<string, typeof Cpu> = {
 function NavItem({
   href,
   end,
+  activePrefixes = [],
   children,
 }: {
   href: string;
   end?: boolean;
-  children: (isActive: boolean) => React.ReactNode;
+  activePrefixes?: string[];
+  children: (isActive: boolean) => ReactNode;
 }) {
   const pathname = usePathname();
-  const isActive = end ? pathname === href : pathname.startsWith(href);
-  return <Link href={href}>{children(isActive)}</Link>;
+  const isActive = end
+    ? pathname === href
+    : pathname === href ||
+      pathname.startsWith(`${href}/`) ||
+      activePrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  return (
+    <Link href={href} aria-current={isActive ? 'page' : undefined}>
+      {children(isActive)}
+    </Link>
+  );
 }
 
 export function Shell({ children }: { children: ReactNode }) {
@@ -73,7 +92,7 @@ export function Shell({ children }: { children: ReactNode }) {
           {NAV.map((n) => {
             const Icon = n.icon;
             return (
-              <NavItem key={n.to} href={n.to} end={n.end}>
+              <NavItem key={n.to} href={n.to} end={n.end} activePrefixes={n.activePrefixes}>
                 {(isActive) => (
                   <span
                     className={clsx(
@@ -157,7 +176,7 @@ function MobileNav() {
           {NAV.map((n) => {
             const Icon = n.icon;
             return (
-              <NavItem key={n.to} href={n.to} end={n.end}>
+              <NavItem key={n.to} href={n.to} end={n.end} activePrefixes={n.activePrefixes}>
                 {(isActive) => (
                   <span
                     className={clsx(

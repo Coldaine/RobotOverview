@@ -65,6 +65,43 @@ export const hangarData: HangarData = {
         { group: 'Driver Board Interfaces', slot: 'Display Header', filledBy: null, note: 'Drives 0.91"/0.96" OLED for voltage/IP telemetry' },
         { group: 'Driver Board Interfaces', slot: 'Power Output Pins', filledBy: null, note: 'Raw 5V/3.3V out for independent MCUs or sensors' },
       ],
+      hotspots: [
+        {
+          id: 'lighting',
+          label: 'Top Deck / Sensor Mast',
+          detail: '21mm Picatinny Rail. Accepts OAK-D Lite, D435, or LED spots. Currently unfilled.',
+          x: 30, y: 19,
+          status: 'empty'
+        },
+        {
+          id: 'compute',
+          label: 'Host Controller Board',
+          detail: 'Middle Deck. Holds Raspberry Pi 5. Provides 40-Pin GPIO and USB Hub bypass.',
+          x: 50, y: 54,
+          status: 'ok'
+        },
+        {
+          id: 'power',
+          label: 'Undercarriage Bay',
+          detail: 'Holds 3x 18650 UPS. XH2.54 Battery Input for external 3S packs.',
+          x: 50, y: 79,
+          status: 'ok'
+        },
+        {
+          id: 'arm',
+          label: 'Manipulator Arm Base',
+          detail: 'RoArm-M2. Driven by Serial Bus Servo daisy-chain.',
+          x: 64, y: 40,
+          status: 'ok'
+        },
+        {
+          id: 'driver',
+          label: 'Driver Board I/O',
+          detail: 'Rear IO 40-pin header, Aux MOSFET, and LiDAR UART port. Needs wiring review.',
+          x: 40, y: 48,
+          status: 'attention'
+        }
+      ],
       tags: ['rover', 'flagship', 'waveshare', 'roarm'],
       links: [
         { label: 'Waveshare UGV Beast', url: 'https://www.waveshare.com/ugv-beast.htm' },

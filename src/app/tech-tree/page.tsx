@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { motion } from 'framer-motion';
 import { GitBranchPlus, Lock, Sparkles, Unlock } from 'lucide-react';
 import Link from 'next/link';

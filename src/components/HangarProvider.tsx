@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { HangarProvider as Provider } from '@/lib/store';
 import type { ReactNode } from 'react';
 

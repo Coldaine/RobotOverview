@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Target, FileText } from 'lucide-react';
 import Link from 'next/link';

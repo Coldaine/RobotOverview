@@ -1,21 +1,10 @@
-﻿'use client';
+'use client';
 import { motion } from 'framer-motion';
-import { ArrowLeft, CheckCircle2, Circle, Crosshair, Package, Users } from 'lucide-react';
+import { Users } from 'lucide-react';
 import Link from 'next/link';
-import { Gauge } from '@/components/ui/Gauge';
-import { SectionTitle } from '@/components/ui/Primitives';
-import { UnitCard } from '@/components/UnitCard';
 import { useHangar } from '@/lib/store';
-import { money } from '@/lib/format';
+import { MISSION_STATUS_META } from '@/lib/format';
 import clsx from 'clsx';
-import type { Mission, WishlistItem } from '@/data/types';
-
-const MSTATUS: Record<Mission['status'], { label: string; cls: string }> = {
-  planning: { label: 'Planning', cls: 'text-amber border-amber/40 bg-amber/10' },
-  active: { label: 'Active', cls: 'text-signal-ok border-signal-ok/40 bg-signal-ok/10' },
-  standby: { label: 'Standby', cls: 'text-ink-dim border-rim bg-panel-2/40' },
-  complete: { label: 'Complete', cls: 'text-cyan border-cyan/40 bg-cyan/10' },
-};
 
 export default function MissionsList() {
   const { data } = useHangar();
@@ -27,7 +16,7 @@ export default function MissionsList() {
       </header>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {data.missions.map((m, i) => {
-          const ms = MSTATUS[m.status];
+          const ms = MISSION_STATUS_META[m.status];
           const done = m.objectives.filter((o) => o.done).length;
           return (
             <motion.div key={m.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>

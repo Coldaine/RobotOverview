@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { Geist_Mono, Geist } from 'next/font/google';
 import './globals.css';
 import { HangarProvider } from '@/components/HangarProvider';
