@@ -50,10 +50,10 @@ function NavItem({
   activePrefixes = [],
   children,
 }: {
-  href: string;
-  end?: boolean;
-  activePrefixes?: string[];
-  children: (isActive: boolean) => ReactNode;
+  readonly href: string;
+  readonly end?: boolean;
+  readonly activePrefixes?: readonly string[];
+  readonly children: (isActive: boolean) => ReactNode;
 }) {
   const pathname = usePathname();
   const isActive = end
@@ -68,7 +68,7 @@ function NavItem({
   );
 }
 
-export function Shell({ children }: { children: ReactNode }) {
+export function Shell({ children }: { readonly children: ReactNode }) {
   const { data } = useHangar();
   const pathname = usePathname();
 

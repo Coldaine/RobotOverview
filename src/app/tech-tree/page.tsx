@@ -33,13 +33,15 @@ export default function TechTree() {
           const isActive = spotlightId === c.id;
           const isDependency = spotlightCapability?.dependsOn?.includes(c.id) ?? false;
           const isDependent = spotlightId ? c.dependsOn?.includes(spotlightId) : false;
+          const isRelated = isActive || isDependency || isDependent;
+          const opacity = !spotlightId || isRelated ? 1 : 0.4;
 
           return (
             <motion.div
               key={c.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{
-                opacity: spotlightId ? (isActive || isDependency || isDependent ? 1 : 0.4) : 1,
+                opacity,
                 y: 0,
                 scale: isActive ? 1.02 : 1
               }}

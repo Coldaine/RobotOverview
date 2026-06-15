@@ -101,7 +101,7 @@
 
   ::selection {
     background-color: rgba(54, 224, 224, 0.3);
-    color: white;
+    color: var(--color-void);
   }
 
   /* Scrollbar — instrument style */

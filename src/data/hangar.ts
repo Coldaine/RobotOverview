@@ -51,11 +51,11 @@ export const hangarData: HangarData = {
         { group: 'Chassis Mounts', slot: '21mm Picatinny Rail', filledBy: null, note: 'Top deck. Accepts OAK-D Lite, D435, or LED spots' },
         { group: 'Chassis Mounts', slot: 'Middle Deck', filledBy: null, note: 'Pre-drilled. Accepts D500 ToF LiDAR or STL-27L' },
         { group: 'Chassis Mounts', slot: '1020 Aluminum Rails', filledBy: null, note: 'Sides. Accepts T-slot nuts for batteries, arms, brackets' },
-        { group: 'Chassis Mounts', slot: 'Undercarriage Bay', filledBy: 'Stock UPS', note: 'Holds 3x 18650 UPS. Fits 3S LiPo packs' },
+        { group: 'Chassis Mounts', slot: 'Undercarriage Bay', filledBy: 'stock-ups', note: 'Holds 3x 18650 UPS. Fits 3S LiPo packs' },
         
         { group: 'Driver Board Interfaces', slot: 'XH2.54 Battery Input', filledBy: null, note: 'Wire in larger external 3S packs to bypass UPS' },
         { group: 'Driver Board Interfaces', slot: 'Aux Interface (IO4/5)', filledBy: null, note: 'High-current MOSFET switched for LEDs or payloads' },
-        { group: 'Driver Board Interfaces', slot: 'Serial Bus Servo', filledBy: 'RoArm-M2', note: 'Daisy-chains ST3215/ST3235 magnetic encoder servos' },
+        { group: 'Driver Board Interfaces', slot: 'Serial Bus Servo', filledBy: 'roarm-m2', note: 'Daisy-chains ST3215/ST3235 magnetic encoder servos' },
         { group: 'Driver Board Interfaces', slot: 'PWM Output Pins', filledBy: null, note: 'Drives standard hobby servos or external motor controllers' },
         { group: 'Driver Board Interfaces', slot: '40-Pin GPIO Header', filledBy: null, note: 'Re-exposes unused Pi/Jetson pins for external HATs' },
         { group: 'Driver Board Interfaces', slot: 'USB HUB / Type-C', filledBy: null, note: 'Accepts 4G/5G modems, receivers, or host-slave bypass' },
@@ -83,14 +83,14 @@ export const hangarData: HangarData = {
         {
           id: 'power',
           label: 'Undercarriage Bay',
-          detail: 'Holds 3x 18650 UPS. XH2.54 Battery Input for external 3S packs.',
+          detail: 'Stock 3x18650 UPS with XH2.54 Battery Input for external 3S packs.',
           x: 50, y: 79,
           status: 'ok'
         },
         {
           id: 'arm',
           label: 'Manipulator Arm Base',
-          detail: 'RoArm-M2. Driven by Serial Bus Servo daisy-chain.',
+          detail: 'Waveshare RoArm-M2. Driven by Serial Bus Servo daisy-chain.',
           x: 64, y: 40,
           status: 'ok'
         },
@@ -102,12 +102,54 @@ export const hangarData: HangarData = {
           status: 'attention'
         }
       ],
+      capabilities: ['teleop', 'crawlspace-ops'],
+      missions: ['undercroft'],
+      insights: ['dust-backscatter', 'power-rail', 'watchdog', 'wifi-tail'],
       tags: ['rover', 'flagship', 'waveshare', 'roarm'],
       links: [
         { label: 'Waveshare UGV Beast', url: 'https://www.waveshare.com/ugv-beast.htm' },
         { label: 'Waveshare UGV hardware tutorial', url: 'https://www.youtube.com/watch?v=8wqPs7rNkJ4' }
       ],
       acquired: '2026',
+    },
+    {
+      id: 'roarm-m2',
+      name: 'Waveshare RoArm-M2',
+      callsign: 'ARM-M2',
+      bay: 'robotics',
+      class: 'Manipulator Arm',
+      status: 'operational',
+      lifecycle: 'assembled',
+      provenance: 'owner',
+      summary:
+        '4-DOF manipulator mounted on BEAST-01 and driven through the serial bus servo chain.',
+      specs: [
+        { label: 'Form', value: '4-DOF arm' },
+        { label: 'Drive', value: 'ST3215/ST3235 serial bus servos' },
+        { label: 'Host slot', value: 'BEAST-01 Serial Bus Servo' },
+      ],
+      tags: ['arm', 'roarm', 'beast'],
+      acquired: 'owned',
+    },
+    {
+      id: 'stock-ups',
+      name: 'Stock 3x18650 UPS',
+      callsign: 'BEAST-PWR',
+      bay: 'robotics',
+      class: 'Power Module',
+      status: 'operational',
+      lifecycle: 'assembled',
+      provenance: 'owner',
+      summary:
+        'Stock undercarriage UPS module installed in BEAST-01, with room for 3x 18650 cells and external 3S pack experiments.',
+      specs: [
+        { label: 'Cells', value: '3x 18650' },
+        { label: 'Chassis slot', value: 'Undercarriage Bay' },
+        { label: 'Expansion', value: 'External 3S packs via XH2.54 input' },
+      ],
+      power: { watts: null, volts: 11.1, rail: 'battery' },
+      tags: ['power', 'ups', 'beast'],
+      acquired: 'included',
     },
     {
       id: 'rover-slot-2',

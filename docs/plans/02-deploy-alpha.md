@@ -20,16 +20,16 @@ Queued. Alpha stabilization has already landed.
 
 - Start from current `main`; alpha stabilization has already landed.
 - Confirm the repo's current branch, remote, and uncommitted state.
-- Inspect `package.json`, `vite.config.ts`, router setup, and any existing deployment files.
+- Inspect `package.json`, `next.config.ts`, the App Router tree under `src/app`, and any existing deployment files.
 - Check whether GitHub Pages or Vercel is already configured in repo history or remote settings.
 - Default to Vercel if no clear hosting decision already exists.
 
 ## Implement
 
 - Configure the minimum deployment path for the chosen host:
-  - For Vercel, keep Vite defaults unless a config file is required.
-  - For GitHub Pages, set the correct Vite base path and document any workflow or Pages setting required.
-- Preserve HashRouter behavior unless deployment testing proves it is wrong for the chosen host.
+  - For Vercel, use the Next.js defaults unless a config file is required.
+  - For GitHub Pages, document the static export constraints and any Pages setting required before choosing it.
+- Preserve clean App Router deep-link behavior unless deployment testing proves a host-specific adjustment is required.
 - Avoid adding backend services, databases, auth, or containerized workflows.
 - Include the chosen host, build command, output directory, and deployment URL when known in the PR description.
 
@@ -37,13 +37,13 @@ Queued. Alpha stabilization has already landed.
 
 - Run `npm run lint`.
 - Run `npm run build`.
-- Preview the production build locally with `npm run preview` when practical.
+- Preview the production build locally with `npm run start` when practical.
 - Check the deployed or previewed app routes:
   - Hub opens.
   - Mission detail opens.
   - Unit detail opens.
   - Quartermaster source toggle works.
-  - Reloading a deep hash route returns to the expected view.
+  - Reloading a clean deep route returns to the expected view.
 
 ## Handoff
 

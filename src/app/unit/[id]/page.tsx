@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Target, FileText } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Target } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { RoverSchematic } from '@/components/RoverSchematic';
@@ -89,12 +89,12 @@ export default function UnitDetail() {
               <SectionTitle code="SLOTS"><span className="inline-flex items-center gap-2"><Layers className="h-3.5 w-3.5 text-amber" /> Loadout Configuration</span></SectionTitle>
               <div className="space-y-4">
                 {(() => {
-                  const grouped = u.loadout!.reduce((acc, slot) => {
+                  const grouped = u.loadout.reduce((acc, slot) => {
                     const g = slot.group || 'Uncategorized';
                     if (!acc[g]) acc[g] = [];
                     acc[g].push(slot);
                     return acc;
-                  }, {} as Record<string, typeof u.loadout>);
+                  }, {} as Record<string, NonNullable<typeof u.loadout>>);
 
                   return Object.entries(grouped).map(([groupName, slots]) => (
                     <div key={groupName} className="space-y-2">
@@ -102,21 +102,22 @@ export default function UnitDetail() {
                         <div className="font-mono text-[10px] uppercase tracking-widest text-cyan/70 border-b border-rim/50 pb-1 mb-2">{groupName}</div>
                       )}
                       <div className="space-y-2">
-                        {slots!.map((slot) => {
-                          const filled = !!slot.filledBy;
+                        {slots.map((slot) => {
+                          const filledBy = slot.filledBy;
+                          const filledUnit = filledBy ? unit(filledBy) : undefined;
                           return (
                             <div
                               key={slot.slot}
                               className={clsx(
                                 'flex items-center gap-3 rounded-md border px-3 py-2.5',
-                                filled ? 'border-rim bg-panel-2/30' : 'border-signal-warn/30 bg-signal-warn/5',
+                                filledBy ? 'border-rim bg-panel-2/30' : 'border-signal-warn/30 bg-signal-warn/5',
                               )}
                             >
-                              <span className={clsx('h-2 w-2 shrink-0 rounded-full', filled ? 'bg-signal-ok' : 'bg-signal-warn animate-pulse-trace')} />
+                              <span className={clsx('h-2 w-2 shrink-0 rounded-full', filledBy ? 'bg-signal-ok' : 'bg-signal-warn animate-pulse-trace')} />
                               <div className="w-32 shrink-0 font-mono text-[11px] uppercase tracking-wider text-ink truncate">{slot.slot}</div>
                               <div className="min-w-0 flex-1 font-mono text-[11px] text-ink-dim truncate">
-                                {filled ? (
-                                  <span className="text-cyan">{unit(slot.filledBy!)?.name ?? slot.filledBy}</span>
+                                {filledBy ? (
+                                  <span className="text-cyan">{filledUnit?.name ?? filledBy}</span>
                                 ) : (
                                   <span className="text-signal-warn">UNFILLED</span>
                                 )}

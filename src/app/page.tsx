@@ -14,8 +14,7 @@ export default function HangarHub() {
   const { data, unit, mission, setLensMissionId, lensMissionId } = useHangar();
 
   const flagship = data.units.find((u) => u.flagship && u.bay === 'robotics');
-  const primaryMissionId = 'undercroft';
-  const primaryMission = mission(primaryMissionId) ?? data.missions[0];
+  const primaryMission = data.missions.find((m) => m.status === 'active') ?? data.missions[0];
   const lensedMission = lensMissionId ? mission(lensMissionId) : undefined;
   const activeMission = lensedMission ?? primaryMission;
   const activeMissionId = activeMission?.id ?? '';
