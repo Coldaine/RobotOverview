@@ -14,12 +14,12 @@ Move beyond the static alpha into the smallest next slice of product value while
 
 ## Status
 
-Queued until stabilization and deployment are complete or explicitly accepted.
+Queued until deployment is complete or explicitly accepted.
 
 ## Investigate
 
-- Start only after [01-alpha-stabilize.md](./01-alpha-stabilize.md) and [02-deploy-alpha.md](./02-deploy-alpha.md) are complete or explicitly accepted.
-- Re-read [NORTH_STAR.md](../NORTH_STAR.md), [architecture.md](../architecture.md), and [PROGRESS.md](../PROGRESS.md).
+- Start only after [02-deploy-alpha.md](./02-deploy-alpha.md) is complete or explicitly accepted.
+- Re-read [NORTH_STAR.md](../NORTH_STAR.md).
 - Inspect current data shape in `src/data/hangar.ts` and `src/data/types.ts`.
 - Identify the smallest expansion that makes the app more useful without turning it into a generic CRUD dashboard.
 - Consider these candidates in order:
@@ -31,8 +31,8 @@ Queued until stabilization and deployment are complete or explicitly accepted.
 
 ## Implement
 
-- Choose one v1 expansion slice and document the choice in [PROGRESS.md](../PROGRESS.md) before broad implementation.
-- Keep `src/data/hangar.ts` as the data source of truth unless an explicit architecture update changes storage.
+- Choose one v1 expansion slice before broad implementation and keep that scope visible in the PR.
+- Keep `src/data/hangar.ts` as the data source of truth unless a later architecture pass, regenerated after the North Star is finalized, explicitly changes storage.
 - Prefer local, reversible state for user interactions before introducing durable external storage.
 - Keep the robot and mission views as first-class surfaces; do not bury new capability in a settings-only workflow.
 - Preserve the Dark Engineering HUD aesthetic and avoid landing-page or marketing-page drift.
@@ -52,6 +52,5 @@ Queued until stabilization and deployment are complete or explicitly accepted.
 
 ## Handoff
 
-- Update [PROGRESS.md](../PROGRESS.md) with the expansion shipped, any tradeoffs, and the next candidate slice.
 - Commit in meaningful chunks.
 - Push the branch and open a ready, non-draft PR.

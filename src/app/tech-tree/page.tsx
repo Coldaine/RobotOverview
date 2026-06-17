@@ -1,16 +1,17 @@
+'use client';
 import { motion } from 'framer-motion';
 import { GitBranchPlus, Lock, Sparkles, Unlock } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { SectionTitle } from '../components/ui/Primitives';
-import { useHangar } from '../lib/store';
+import Link from 'next/link';
+import { SectionTitle } from '@/components/ui/Primitives';
+import { useHangar } from '@/lib/store';
 import clsx from 'clsx';
-import type { Unit, WishlistItem } from '../data/types';
+import type { Unit, WishlistItem } from '@/data/types';
 
 function isUnitRecord(record: Unit | WishlistItem): record is Unit {
   return 'bay' in record && 'lifecycle' in record;
 }
 
-export function TechTree() {
+export default function TechTree() {
   const { data, unit, wish, spotlightId, setSpotlightId } = useHangar();
   const spotlightCapability = spotlightId ? data.capabilities.find((c) => c.id === spotlightId) : undefined;
 
@@ -28,19 +29,21 @@ export function TechTree() {
           const unlockers = c.unlockedBy
             .map((id) => unit(id) ?? wish(id))
             .filter(Boolean);
-          
+
           const isActive = spotlightId === c.id;
           const isDependency = spotlightCapability?.dependsOn?.includes(c.id) ?? false;
           const isDependent = spotlightId ? c.dependsOn?.includes(spotlightId) : false;
+          const isRelated = isActive || isDependency || isDependent;
+          const opacity = !spotlightId || isRelated ? 1 : 0.4;
 
           return (
             <motion.div
               key={c.id}
               initial={{ opacity: 0, y: 10 }}
-              animate={{ 
-                opacity: spotlightId ? (isActive || isDependency || isDependent ? 1 : 0.4) : 1, 
+              animate={{
+                opacity,
                 y: 0,
-                scale: isActive ? 1.02 : 1 
+                scale: isActive ? 1.02 : 1
               }}
               onMouseEnter={() => setSpotlightId(c.id)}
               onFocus={() => setSpotlightId(c.id)}
@@ -102,7 +105,7 @@ export function TechTree() {
               </div>
 
               <div className="relative mt-3 text-right">
-                <Link to="/quartermaster" onClick={(event) => event.stopPropagation()} className="font-mono text-[10px] uppercase tracking-wider text-amber hover:underline">
+                <Link href="/quartermaster" onClick={(event) => event.stopPropagation()} className="font-mono text-[10px] uppercase tracking-wider text-amber hover:underline">
                   source parts
                 </Link>
               </div>

@@ -1,13 +1,14 @@
+'use client';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { SectionTitle } from '../components/ui/Primitives';
-import { useHangar } from '../lib/store';
+import Link from 'next/link';
+import { SectionTitle } from '@/components/ui/Primitives';
+import { useHangar } from '@/lib/store';
 import clsx from 'clsx';
 
 type ConfidenceFilter = 'all' | 'high' | 'medium' | 'low';
 
-export function Codex() {
+export default function Codex() {
   const { data, unit, mission } = useHangar();
   const [q, setQ] = useState('');
   const [bay, setBay] = useState<'all' | string>('all');
@@ -111,13 +112,13 @@ export function Codex() {
                 {ins.units?.map((uid) => {
                   const u = unit(uid);
                   return u ? (
-                    <Link key={uid} to={`/unit/${uid}`} className="mr-2 inline-flex text-cyan hover:underline">unit:{u.name}</Link>
+                    <Link key={uid} href={`/unit/${uid}`} className="mr-2 inline-flex text-cyan hover:underline">unit:{u.name}</Link>
                   ) : null;
                 })}
                 {ins.missions?.map((mid) => {
                   const m = mission(mid);
                   return m ? (
-                    <Link key={mid} to={`/mission/${mid}`} className="mr-2 inline-flex text-amber hover:underline">mission:{m.code}</Link>
+                    <Link key={mid} href={`/mission/${mid}`} className="mr-2 inline-flex text-amber hover:underline">mission:{m.code}</Link>
                   ) : null;
                 })}
               </div>

@@ -1,3 +1,4 @@
+'use client';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import {
@@ -12,14 +13,24 @@ import {
   Bot,
   Activity,
 } from 'lucide-react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { useHangar } from '../lib/store';
-import { timeAgo } from '../lib/format';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useHangar } from '@/lib/store';
+import { timeAgo } from '@/lib/format';
 import type { ReactNode } from 'react';
 
-const NAV = [
+type NavStation = {
+  to: string;
+  label: string;
+  code: string;
+  icon: typeof Cpu;
+  end?: boolean;
+  activePrefixes?: string[];
+};
+
+const NAV: NavStation[] = [
   { to: '/', label: 'Hangar', code: 'HUB', icon: Boxes, end: true },
-  { to: '/missions', label: 'Missions', code: 'MSN', icon: Target },
+  { to: '/missions', label: 'Missions', code: 'MSN', icon: Target, activePrefixes: ['/mission'] },
   { to: '/quartermaster', label: 'Quartermaster', code: 'QM', icon: Hexagon },
   { to: '/tech-tree', label: 'Tech Tree', code: 'CAP', icon: Network },
   { to: '/codex', label: 'Codex', code: 'WIKI', icon: ScrollText },
@@ -33,9 +44,33 @@ const BAY_ICON: Record<string, typeof Cpu> = {
   audio: Headphones,
 };
 
-export function Shell({ children }: { children: ReactNode }) {
+function NavItem({
+  href,
+  end,
+  activePrefixes = [],
+  children,
+}: {
+  readonly href: string;
+  readonly end?: boolean;
+  readonly activePrefixes?: readonly string[];
+  readonly children: (isActive: boolean) => ReactNode;
+}) {
+  const pathname = usePathname();
+  const isActive = end
+    ? pathname === href
+    : pathname === href ||
+      pathname.startsWith(`${href}/`) ||
+      activePrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  return (
+    <Link href={href} aria-current={isActive ? 'page' : undefined}>
+      {children(isActive)}
+    </Link>
+  );
+}
+
+export function Shell({ children }: { readonly children: ReactNode }) {
   const { data } = useHangar();
-  const loc = useLocation();
+  const pathname = usePathname();
 
   return (
     <div className="relative flex min-h-screen overflow-x-hidden text-ink">
@@ -57,23 +92,22 @@ export function Shell({ children }: { children: ReactNode }) {
           {NAV.map((n) => {
             const Icon = n.icon;
             return (
-              <NavLink
-                key={n.to}
-                to={n.to}
-                end={n.end}
-                className={({ isActive }) =>
-                  clsx(
-                    'group relative flex items-center gap-3 rounded-md px-3 py-2 font-mono text-xs uppercase tracking-[0.14em] transition-all',
-                    isActive
-                      ? 'border border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
-                      : 'border border-transparent text-ink-dim hover:border-rim hover:bg-panel-2/40 hover:text-ink',
-                  )
-                }
-              >
-                <Icon className="h-4 w-4" />
-                <span className="flex-1">{n.label}</span>
-                <span className="text-[9px] text-ink-dim/60 group-hover:text-cyan/60">{n.code}</span>
-              </NavLink>
+              <NavItem key={n.to} href={n.to} end={n.end} activePrefixes={n.activePrefixes}>
+                {(isActive) => (
+                  <span
+                    className={clsx(
+                      'group relative flex items-center gap-3 rounded-md px-3 py-2 font-mono text-xs uppercase tracking-[0.14em] transition-all',
+                      isActive
+                        ? 'border border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
+                        : 'border border-transparent text-ink-dim hover:border-rim hover:bg-panel-2/40 hover:text-ink',
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span className="flex-1">{n.label}</span>
+                    <span className="text-[9px] text-ink-dim/60 group-hover:text-cyan/60">{n.code}</span>
+                  </span>
+                )}
+              </NavItem>
             );
           })}
         </nav>
@@ -85,20 +119,20 @@ export function Shell({ children }: { children: ReactNode }) {
               const Icon = BAY_ICON[b.id] ?? Cpu;
               const count = data.units.filter((u) => u.bay === b.id).length;
               return (
-                <NavLink
-                  key={b.id}
-                  to={`/bay/${b.id}`}
-                  className={({ isActive }) =>
-                    clsx(
-                      'flex items-center gap-3 rounded-md px-3 py-1.5 text-xs transition-all',
-                      isActive ? 'bg-panel-2/60 text-ink' : 'text-ink-dim hover:bg-panel-2/40 hover:text-ink',
-                    )
-                  }
-                >
-                  <Icon className={clsx('h-3.5 w-3.5', b.accent === 'amber' ? 'text-amber' : 'text-cyan')} />
-                  <span className="flex-1 font-mono text-[11px]">{b.name}</span>
-                  <span className="font-mono text-[10px] tabular-nums text-ink-dim/70">{count}</span>
-                </NavLink>
+                <NavItem key={b.id} href={`/bay/${b.id}`}>
+                  {(isActive) => (
+                    <span
+                      className={clsx(
+                        'flex items-center gap-3 rounded-md px-3 py-1.5 text-xs transition-all',
+                        isActive ? 'bg-panel-2/60 text-ink' : 'text-ink-dim hover:bg-panel-2/40 hover:text-ink',
+                      )}
+                    >
+                      <Icon className={clsx('h-3.5 w-3.5', b.accent === 'amber' ? 'text-amber' : 'text-cyan')} />
+                      <span className="flex-1 font-mono text-[11px]">{b.name}</span>
+                      <span className="font-mono text-[10px] tabular-nums text-ink-dim/70">{count}</span>
+                    </span>
+                  )}
+                </NavItem>
               );
             })}
           </div>
@@ -118,7 +152,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <ActivityTicker />
         <motion.main
-          key={loc.pathname}
+          key={pathname}
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
@@ -129,7 +163,6 @@ export function Shell({ children }: { children: ReactNode }) {
       </div>
 
       <MobileNav />
-      <div className="crt-overlay" aria-hidden />
     </div>
   );
 }
@@ -143,22 +176,21 @@ function MobileNav() {
           {NAV.map((n) => {
             const Icon = n.icon;
             return (
-              <NavLink
-                key={n.to}
-                to={n.to}
-                end={n.end}
-                className={({ isActive }) =>
-                  clsx(
-                    'flex h-14 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
-                    isActive
-                      ? 'border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
-                      : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
-                  )
-                }
-              >
-                <Icon className="h-4 w-4" />
-                <span className="max-w-full truncate px-1">{n.code}</span>
-              </NavLink>
+              <NavItem key={n.to} href={n.to} end={n.end} activePrefixes={n.activePrefixes}>
+                {(isActive) => (
+                  <span
+                    className={clsx(
+                      'flex h-14 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
+                      isActive
+                        ? 'border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
+                        : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span className="max-w-full truncate px-1">{n.code}</span>
+                  </span>
+                )}
+              </NavItem>
             );
           })}
 
@@ -167,23 +199,23 @@ function MobileNav() {
           {data.bays.map((b) => {
             const Icon = BAY_ICON[b.id] ?? Cpu;
             return (
-              <NavLink
-                key={b.id}
-                to={`/bay/${b.id}`}
-                className={({ isActive }) =>
-                  clsx(
-                    'flex h-14 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
-                    isActive
-                      ? b.accent === 'amber'
-                        ? 'border-amber/40 bg-amber/10 text-amber shadow-hud-amber'
-                        : 'border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
-                      : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
-                  )
-                }
-              >
-                <Icon className={clsx('h-4 w-4', b.accent === 'amber' ? 'text-amber' : 'text-cyan')} />
-                <span className="max-w-full truncate px-1">{b.code}</span>
-              </NavLink>
+              <NavItem key={b.id} href={`/bay/${b.id}`}>
+                {(isActive) => (
+                  <span
+                    className={clsx(
+                      'flex h-14 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
+                      isActive
+                        ? b.accent === 'amber'
+                          ? 'border-amber/40 bg-amber/10 text-amber shadow-hud-amber'
+                          : 'border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
+                        : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
+                    )}
+                  >
+                    <Icon className={clsx('h-4 w-4', b.accent === 'amber' ? 'text-amber' : 'text-cyan')} />
+                    <span className="max-w-full truncate px-1">{b.code}</span>
+                  </span>
+                )}
+              </NavItem>
             );
           })}
         </div>

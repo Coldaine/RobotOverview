@@ -38,6 +38,7 @@ export interface SpecRow {
 }
 
 export interface LoadoutSlot {
+  group?: string; // e.g. "Chassis Mounts", "Driver Board"
   slot: string; // e.g. "Lighting", "Compute", "Sensing"
   filledBy: string | null; // unit id currently slotted, or null if empty
   note?: string;

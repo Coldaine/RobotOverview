@@ -3,7 +3,7 @@ title: Hangar North Star
 date: 2026-05-31
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-05-31
+last_confirmed: 2026-06-14
 ---
 
 # Hangar North Star
@@ -24,6 +24,7 @@ Directional, not testable.
 - **G3.** Make the experience fun enough to sustain, modeled on a base-builder hangar.
 - **G4.** Show what to acquire next and why (an upgrade path), and what I already own and where it sits.
 - **G5.** Capture lessons learned so knowledge is retrievable by unit and mission, not lost to chat history.
+- **G6.** Design primarily for desktop, widescreen, and ultrawide use. Phone layouts must not break or become unusable, but mobile support must not compromise the desktop command-center experience.
 
 ## Anti-Goals
 
@@ -41,10 +42,13 @@ Directional, not testable.
 
 **The LLM populates; I own.** I accept rougher, machine-drafted entries in exchange for low enough activation energy that the thing actually gets populated. The reasonable opposite, hand-authoring everything, yields cleaner entries but reintroduces the friction that kills personal knowledge bases.
 
+## Resolved Questions
+
+- **In what form is the content stored?** For the current alpha, `src/data/hangar.ts` is the source of truth. The model keeps a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) while leaving room for flexible, localized metadata (power budgets, pricing, specs). A PostgreSQL backend can become the storage layer later, but it is not authoritative yet.
+- **What is the model for what I own and its state?** Inventory is tracked as `Units`. Assembly is modeled via grouped `Loadout Slots` (e.g. Chassis Mounts, Driver Board Interfaces), allowing any unit to act as a parent chassis that other units plug into, replicating a base-builder upgrade tree.
+
 ## Open Questions
 
 - Where does it live (hosting)?
-- In what form is the content stored: a single file, a database, something else?
 - How does population actually work, given it is mostly LLM-driven: what is the intake from a chat or a research run into an entry?
 - How do I add to the want list and turn it into an upgrade plan that says what to buy next?
-- What is the model for what I own and its state: in inventory, assembled into a parent like a rover or a PC, or deployed?

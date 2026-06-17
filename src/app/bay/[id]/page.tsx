@@ -1,12 +1,15 @@
-import { Link, useParams } from 'react-router-dom';
+'use client';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import { UnitCard } from '../components/UnitCard';
-import { SectionTitle } from '../components/ui/Primitives';
-import { useHangar } from '../lib/store';
-import type { BayId } from '../data/types';
+import { UnitCard } from '@/components/UnitCard';
+import { SectionTitle } from '@/components/ui/Primitives';
+import { useHangar } from '@/lib/store';
+import type { BayId } from '@/data/types';
 
-export function BayView() {
-  const { id } = useParams();
+export default function BayView() {
+  const params = useParams();
+  const id = params?.id as string | undefined;
   const { bay, unitsByBay } = useHangar();
   const bayId = id as BayId | undefined;
   const b = bayId ? bay(bayId) : undefined;
@@ -23,7 +26,7 @@ export function BayView() {
 
   return (
     <div className="space-y-6">
-      <Link to="/" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-dim transition-colors hover:text-cyan">
+      <Link href="/" className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-ink-dim transition-colors hover:text-cyan">
         <ArrowLeft className="h-3 w-3" /> Hangar
       </Link>
 

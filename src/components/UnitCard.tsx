@@ -1,11 +1,12 @@
+'use client';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { AlertTriangle, ChevronRight, Star } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import type { Mission, Unit, WishlistItem } from '../data/types';
-import { money } from '../lib/format';
-import { StatusBadge } from './ui/Badges';
-import { useHangar } from '../lib/store';
+import Link from 'next/link';
+import type { Mission, Unit, WishlistItem } from '@/data/types';
+import { money } from '@/lib/format';
+import { StatusBadge } from '@/components/ui/Badges';
+import { useHangar } from '@/lib/store';
 
 const MISSING_WISHLIST_STATUSES = new Set<WishlistItem['status']>([
   'watching',
@@ -70,7 +71,7 @@ export function UnitCard({
       transition={{ delay: index * 0.04, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
       <Link
-        to={`/unit/${unit.id}`}
+        href={`/unit/${unit.id}`}
         className={clsx(
           'panel group relative block overflow-hidden p-4 transition-all duration-300',
           'hover:border-cyan/40 hover:shadow-hud-cyan',

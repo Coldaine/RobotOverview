@@ -1,12 +1,13 @@
+'use client';
 import { motion } from 'framer-motion';
 import { AlertTriangle, Globe, Home, Package, ShoppingCart } from 'lucide-react';
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { SectionTitle, StatReadout } from '../components/ui/Primitives';
-import { useHangar } from '../lib/store';
-import { money } from '../lib/format';
+import Link from 'next/link';
+import { SectionTitle, StatReadout } from '@/components/ui/Primitives';
+import { useHangar } from '@/lib/store';
+import { money } from '@/lib/format';
 import clsx from 'clsx';
-import type { WishlistItem } from '../data/types';
+import type { WishlistItem } from '@/data/types';
 
 const WSTATUS: Record<WishlistItem['status'], { label: string; cls: string }> = {
   watching: { label: 'Watching', cls: 'text-ink-dim border-rim bg-panel-2/40' },
@@ -18,7 +19,7 @@ const WSTATUS: Record<WishlistItem['status'], { label: string; cls: string }> = 
   rejected: { label: 'Rejected', cls: 'text-signal-crit border-signal-crit/40 bg-signal-crit/10' },
 };
 
-export function Quartermaster() {
+export default function Quartermaster() {
   const { data, unit, capability, source, setSource } = useHangar();
 
   const total = useMemo(
@@ -100,12 +101,12 @@ export function Quartermaster() {
                   <div className="mt-2 flex flex-wrap items-center gap-2 font-mono text-[10px]">
                     <span className="chip border-rim bg-panel-2/40 text-ink-dim">{w.category}</span>
                     {fu && (
-                      <Link to={`/unit/${fu.id}`} className="chip border-cyan/30 bg-cyan/5 text-cyan hover:underline">
+                      <Link href={`/unit/${fu.id}`} className="chip border-cyan/30 bg-cyan/5 text-cyan hover:underline">
                         → {fu.name}
                       </Link>
                     )}
                     {cap && (
-                      <Link to="/tech-tree" className="chip border-amber/30 bg-amber/5 text-amber hover:underline">
+                      <Link href="/tech-tree" className="chip border-amber/30 bg-amber/5 text-amber hover:underline">
                         unlocks {cap.name}
                       </Link>
                     )}
