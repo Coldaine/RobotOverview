@@ -104,7 +104,9 @@ function readStoredObjectives(): ObjectiveOverrides {
     const raw = window.localStorage.getItem(STORE_KEYS.objectives);
     if (!raw) return {};
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' ? (parsed as ObjectiveOverrides) : {};
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as ObjectiveOverrides)
+      : {};
   } catch {
     return {};
   }
@@ -269,9 +271,13 @@ export function HangarProvider({ children }: { children: ReactNode }) {
     const title = input.title.trim();
     const body = input.body.trim();
     if (!title || !body) return; // ignore empty drafts
-    const stamp = typeof performance !== 'undefined' ? Math.round(performance.now()) : 0;
+    // Collision-free id even for rapid/batched adds (Date.now() is only ms-granular).
+    const rand =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.round(typeof performance !== 'undefined' ? performance.now() : 0)}`;
     const insight: Insight = {
-      id: `${LOCAL_INSIGHT_PREFIX}${Date.now()}-${stamp}`,
+      id: `${LOCAL_INSIGHT_PREFIX}${rand}`,
       title,
       body,
       tags: input.tags?.map((t) => t.trim()).filter(Boolean) ?? [],

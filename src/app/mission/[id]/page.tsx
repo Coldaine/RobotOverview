@@ -99,7 +99,7 @@ export default function MissionView() {
               {objectives.map((o, i) => (
                 <motion.button
                   type="button"
-                  key={o.text}
+                  key={i}
                   onClick={() => toggleObjective(m.id, i)}
                   aria-pressed={o.done}
                   initial={{ opacity: 0, x: -6 }}

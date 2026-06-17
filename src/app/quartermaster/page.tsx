@@ -45,11 +45,11 @@ export default function Quartermaster() {
 
   // Upgrade-path: group buy-next items by their target mission (or "Unassigned").
   const upgradePath = useMemo(() => {
-    const groups = new Map<string, { label: string; items: WishlistItem[]; us: number; imp: number }>();
+    const groups = new Map<string, { key: string; label: string; items: WishlistItem[]; us: number; imp: number }>();
     buyNextItems.forEach((w) => {
       const key = w.forMission ?? '—';
       const label = w.forMission ? mission(w.forMission)?.name ?? w.forMission : 'Unassigned';
-      const g = groups.get(key) ?? { label, items: [], us: 0, imp: 0 };
+      const g = groups.get(key) ?? { key, label, items: [], us: 0, imp: 0 };
       g.items.push(w);
       g.us += priceFor(w, 'us');
       g.imp += priceFor(w, 'import');
@@ -118,7 +118,7 @@ export default function Quartermaster() {
           </SectionTitle>
           <div className="grid gap-2 sm:grid-cols-2">
             {upgradePath.map((g) => (
-              <div key={g.label} className="panel-inset px-3 py-2">
+              <div key={g.key} className="panel-inset px-3 py-2">
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-[11px] uppercase tracking-wider text-ink">{g.label}</span>
                   <span className="font-mono text-[10px] tabular-nums text-amber">{money(source === 'us' ? g.us : g.imp)}</span>

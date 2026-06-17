@@ -1,4 +1,5 @@
 'use client';
+import { Fragment } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Radio, Target } from 'lucide-react';
 import Link from 'next/link';
@@ -185,9 +186,9 @@ export default function UnitDetail() {
                     </thead>
                     <tbody>
                       {Object.entries(grouped).map(([groupName, slots]) => (
-                        <>
+                        <Fragment key={groupName}>
                           {groupName !== 'Uncategorized' && (
-                            <tr key={`group-${groupName}`} className="bg-panel-2/60 border-b border-rim/40">
+                            <tr className="bg-panel-2/60 border-b border-rim/40">
                               <td colSpan={4} className="px-3 py-1 font-mono text-[9px] uppercase tracking-widest text-cyan/60">
                                 {groupName}
                               </td>
@@ -234,7 +235,7 @@ export default function UnitDetail() {
                               </tr>
                             );
                           })}
-                        </>
+                        </Fragment>
                       ))}
                     </tbody>
                   </table>

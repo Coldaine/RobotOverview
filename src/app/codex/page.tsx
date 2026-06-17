@@ -200,7 +200,7 @@ export default function Codex() {
               ))}
             </div>
 
-            {(ins.units?.length || ins.missions?.length) && (
+            {((ins.units?.length ?? 0) > 0 || (ins.missions?.length ?? 0) > 0) && (
               <div className="mt-3 border-t border-rim/50 pt-2 font-mono text-[10px] text-ink-dim">
                 {ins.units?.map((uid) => {
                   const u = unit(uid);
