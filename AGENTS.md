@@ -1,16 +1,16 @@
 ---
 title: Hangar AGENTS
-date: 2026-06-01
+date: 2026-06-17
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-06-01
+last_confirmed: 2026-06-17
 ---
 
 # AGENTS.md
 
 ## Identity
 
-The Hangar is a high-fidelity command center for all physical tech and hobbies. It is a React SPA built with Vite, Tailwind, and Framer Motion.
+The Hangar is a high-fidelity command center for all physical tech and hobbies. The active PR stack has migrated it to Next.js 16, React 19, Tailwind CSS 4, and Framer Motion.
 
 ## Decision Tree
 
@@ -19,7 +19,7 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 
 ## Tech Stack & Commands
 
-- **Environment:** Node.js, Vite, React, TypeScript, Tailwind CSS.
+- **Environment:** Node.js, Next.js, React, TypeScript, Tailwind CSS.
 - **Boot:** `npm run dev`
 - **Build:** `npm run build`
 - **Lint:** `npm run lint`
@@ -27,7 +27,11 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 ## Working Rules
 
 - The robot is the interface (flagship schematic focus).
-- Data source of truth is `src/data/hangar.ts`.
+- Current data source of truth is `src/data/hangar.ts` until the resolved PostgreSQL backend migration lands.
 - Use the `HangarProvider` store for global state (lenses, sourcing).
 - Maintain "Dark Engineering HUD" aesthetics (blueprint grids, cyan/amber accents).
 
+## Branch Workflow
+
+- Open development is a stacked PR chain. Do not put new work directly on `main` when the active stack is ahead.
+- For follow-on feature work, branch from the newest relevant stack tip unless the user explicitly chooses a different base.

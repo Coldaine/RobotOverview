@@ -37,6 +37,48 @@ export interface SpecRow {
   value: string;
 }
 
+export type InventoryItemStatus =
+  | 'owned'
+  | 'on-order'
+  | 'wishlist'
+  | 'researching'
+  | 'deployed'
+  | 'retired'
+  | 'rejected';
+
+export interface SourceRecord {
+  label: string;
+  url: string;
+  accessedAt: string;
+  kind: 'official' | 'certification' | 'review' | 'community' | 'research';
+}
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  manufacturer?: string;
+  model?: string;
+  bay: BayId;
+  category: string;
+  status: InventoryItemStatus;
+  summary: string;
+  description: string;
+  planningNotes?: string;
+  limitations?: string[];
+  specs: SpecRow[];
+  price?: Price;
+  quantity?: number;
+  relatedUnits?: string[];
+  relatedMissions?: string[];
+  relatedCapabilities?: string[];
+  relatedInsights?: string[];
+  tags?: string[];
+  sources?: SourceRecord[];
+  acquired?: string;
+  horizon?: string;
+  provenance?: 'owner' | 'inferred' | 'open';
+}
+
 export interface LoadoutSlot {
   group?: string; // e.g. "Chassis Mounts", "Driver Board"
   slot: string; // e.g. "Lighting", "Compute", "Sensing"
@@ -168,6 +210,7 @@ export interface HangarData {
     updated: string;
   };
   bays: Bay[];
+  items: InventoryItem[];
   units: Unit[];
   missions: Mission[];
   wishlist: WishlistItem[];
