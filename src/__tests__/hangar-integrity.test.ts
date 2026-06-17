@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { hangarData } from '@/data/hangar';
-import type { BayId, UnitStatus } from '@/data/types';
+import type { BayId, InventoryItemStatus, UnitStatus } from '@/data/types';
 
 const VALID_BAY_IDS: BayId[] = ['robotics', 'compute', 'network', 'home', 'audio'];
 const VALID_UNIT_STATUSES: UnitStatus[] = [
@@ -12,6 +12,15 @@ const VALID_UNIT_STATUSES: UnitStatus[] = [
   'on-order',
   'researching',
   'retired',
+];
+const VALID_ITEM_STATUSES: InventoryItemStatus[] = [
+  'owned',
+  'on-order',
+  'wishlist',
+  'researching',
+  'deployed',
+  'retired',
+  'rejected',
 ];
 
 describe('hangar.ts data integrity', () => {
@@ -139,6 +148,56 @@ describe('hangar.ts data integrity', () => {
         if (slot.filledBy) {
           expect(unitIds.has(slot.filledBy), `unit "${u.id}" slot "${slot.slot}" filledBy unknown unit "${slot.filledBy}"`).toBe(true);
         }
+      });
+    });
+  });
+
+  // ── Inventory items ──────────────────────────────────────────────────────
+  it('has no duplicate item IDs', () => {
+    const ids = hangarData.items.map((it) => it.id);
+    expect(ids.length).toBe(new Set(ids).size);
+  });
+
+  it('all item.bay values are valid BayIds', () => {
+    hangarData.items.forEach((it) => {
+      expect(VALID_BAY_IDS, `item "${it.id}" has invalid bay "${it.bay}"`).toContain(it.bay);
+    });
+  });
+
+  it('all item.status values are valid InventoryItemStatus values', () => {
+    hangarData.items.forEach((it) => {
+      expect(VALID_ITEM_STATUSES, `item "${it.id}" has invalid status "${it.status}"`).toContain(it.status);
+    });
+  });
+
+  it('all item.relatedUnits IDs exist in units', () => {
+    hangarData.items.forEach((it) => {
+      (it.relatedUnits ?? []).forEach((id) => {
+        expect(unitIds.has(id), `item "${it.id}" references unknown unit "${id}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all item.relatedMissions IDs exist in missions', () => {
+    hangarData.items.forEach((it) => {
+      (it.relatedMissions ?? []).forEach((id) => {
+        expect(missionIds.has(id), `item "${it.id}" references unknown mission "${id}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all item.relatedCapabilities IDs exist in capabilities', () => {
+    hangarData.items.forEach((it) => {
+      (it.relatedCapabilities ?? []).forEach((id) => {
+        expect(capabilityIds.has(id), `item "${it.id}" references unknown capability "${id}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all item.relatedInsights IDs exist in the insights collection', () => {
+    hangarData.items.forEach((it) => {
+      (it.relatedInsights ?? []).forEach((id) => {
+        expect(insightIds.has(id), `item "${it.id}" references unknown insight "${id}"`).toBe(true);
       });
     });
   });

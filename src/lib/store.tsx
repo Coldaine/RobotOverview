@@ -6,6 +6,7 @@ import type {
   Capability,
   HangarData,
   Insight,
+  InventoryItem,
   Mission,
   Unit,
   WishlistItem,
@@ -109,6 +110,7 @@ export function selectedMissionWishes(wishes: WishlistItem[]): WishlistItem[] {
 interface HangarStore {
   data: HangarData;
   units: Unit[];
+  items: InventoryItem[];
   // Active UI theme
   theme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
@@ -123,6 +125,7 @@ interface HangarStore {
   setSpotlightId: (id: string | null) => void;
   // selectors
   unit: (id: string) => Unit | undefined;
+  item: (id: string) => InventoryItem | undefined;
   mission: (id: string) => Mission | undefined;
   capability: (id: string) => Capability | undefined;
   insight: (id: string) => Insight | undefined;
@@ -211,6 +214,7 @@ export function HangarProvider({ children }: { children: ReactNode }) {
       return m;
     };
     const unitsMap = byId(units);
+    const itemsMap = byId(data.items);
     const missions = byId(data.missions);
     const caps = byId(data.capabilities);
     const insights = byId(data.insights);
@@ -220,6 +224,7 @@ export function HangarProvider({ children }: { children: ReactNode }) {
     return {
       data,
       units,
+      items: data.items,
       theme,
       setTheme,
       lensMissionId,
@@ -229,6 +234,7 @@ export function HangarProvider({ children }: { children: ReactNode }) {
       spotlightId,
       setSpotlightId,
       unit: (id) => unitsMap.get(id),
+      item: (id) => itemsMap.get(id),
       mission: (id) => missions.get(id),
       capability: (id) => caps.get(id),
       insight: (id) => insights.get(id),

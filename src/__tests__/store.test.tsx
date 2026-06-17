@@ -196,6 +196,27 @@ describe('updateSlot()', () => {
   });
 });
 
+// ─── item() accessor ─────────────────────────────────────────────────────────
+
+describe('item() accessor', () => {
+  it('exposes all seeded inventory items', () => {
+    const { result } = renderHook(() => useHangar(), { wrapper });
+    expect(result.current.items.length).toBe(hangarData.items.length);
+    expect(result.current.items.length).toBeGreaterThan(0);
+  });
+
+  it('resolves a known item id to its record', () => {
+    const seeded = hangarData.items[0];
+    const { result } = renderHook(() => useHangar(), { wrapper });
+    expect(result.current.item(seeded.id)?.name).toBe(seeded.name);
+  });
+
+  it('returns undefined for an unknown item id', () => {
+    const { result } = renderHook(() => useHangar(), { wrapper });
+    expect(result.current.item('does-not-exist')).toBeUndefined();
+  });
+});
+
 // ─── openDrawer() / closeDrawer() ────────────────────────────────────────────
 
 describe('openDrawer() / closeDrawer()', () => {
