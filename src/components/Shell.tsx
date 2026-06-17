@@ -17,6 +17,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useHangar } from '@/lib/store';
+import { isNavActive } from '@/lib/nav';
 import { InventoryDrawer } from './InventoryDrawer';
 import { timeAgo } from '@/lib/format';
 import type { ReactNode } from 'react';
@@ -59,11 +60,7 @@ function NavItem({
   readonly children: (isActive: boolean) => ReactNode;
 }) {
   const pathname = usePathname();
-  const isActive = end
-    ? pathname === href
-    : pathname === href ||
-      pathname.startsWith(`${href}/`) ||
-      activePrefixes.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  const isActive = isNavActive(pathname, href, { end, activePrefixes });
   return (
     <Link href={href} aria-current={isActive ? 'page' : undefined}>
       {children(isActive)}

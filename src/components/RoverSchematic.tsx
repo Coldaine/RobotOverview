@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useHangar, useCalculatedConstraints } from '@/lib/store';
+import { hotspotStatus } from '@/lib/schematic';
 import { WiringDiagram } from './WiringDiagram';
 
 const DOT: Record<'ok' | 'empty' | 'attention', string> = {
@@ -76,15 +77,7 @@ export function RoverSchematic() {
     }
   }, [loadout]);
 
-  const getStatus = (hid: string): 'ok' | 'empty' | 'attention' => {
-    const mapped = loadout.filter(s => s.hotspotId === hid);
-    if (mapped.length === 0) return 'empty';
-    const allFilled = mapped.every(s => s.filledBy !== null);
-    const noneFilled = mapped.every(s => s.filledBy === null);
-    if (allFilled) return 'ok';
-    if (noneFilled) return 'empty';
-    return 'attention';
-  };
+  const getStatus = (hid: string) => hotspotStatus(loadout, hid);
   const selectedStatus = sel ? getStatus(sel.id) : null;
   const selectedSlots = sel ? loadout.filter((s) => s.hotspotId === sel.id) : [];
 

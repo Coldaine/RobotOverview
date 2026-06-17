@@ -125,6 +125,9 @@ export interface Unit {
   acquired?: string; // ISO date or "—"
   horizon?: string; // for future items: when it's expected
   provenance?: 'owner' | 'inferred' | 'open';
+  // External system this unit's live status is *referenced* from (e.g. "Home Assistant").
+  // Catalog reference only — the Hangar never controls the system (North Star AG2).
+  monitoredVia?: string;
 }
 
 export interface MissionObjective {

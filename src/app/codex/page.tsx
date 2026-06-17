@@ -1,42 +1,120 @@
 'use client';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SectionTitle } from '@/components/ui/Primitives';
-import { useHangar } from '@/lib/store';
+import { useHangar, LOCAL_INSIGHT_PREFIX } from '@/lib/store';
+import type { BayId } from '@/data/types';
 import clsx from 'clsx';
 
 type ConfidenceFilter = 'all' | 'high' | 'medium' | 'low';
 
 export default function Codex() {
-  const { data, unit, mission } = useHangar();
+  const { data, insights, unit, mission, addLocalInsight, removeLocalInsight } = useHangar();
   const [q, setQ] = useState('');
   const [bay, setBay] = useState<'all' | string>('all');
   const [conf, setConf] = useState<ConfidenceFilter>('all');
+
+  // Content intake — a lightweight, reversible local-notes capture (no backend).
+  const [showCapture, setShowCapture] = useState(false);
+  const [draftTitle, setDraftTitle] = useState('');
+  const [draftBody, setDraftBody] = useState('');
+  const [draftBay, setDraftBay] = useState<'' | string>('');
+  const [draftTags, setDraftTags] = useState('');
 
   const onConfidenceChange = (value: string) => {
     const allowed: ConfidenceFilter[] = ['all', 'high', 'medium', 'low'];
     setConf(allowed.includes(value as ConfidenceFilter) ? (value as ConfidenceFilter) : 'all');
   };
 
+  const submitDraft = () => {
+    addLocalInsight({
+      title: draftTitle,
+      body: draftBody,
+      bay: draftBay ? (draftBay as BayId) : undefined,
+      tags: draftTags.split(',').map((t) => t.trim()).filter(Boolean),
+    });
+    setDraftTitle('');
+    setDraftBody('');
+    setDraftBay('');
+    setDraftTags('');
+    setShowCapture(false);
+  };
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return data.insights.filter((ins) => {
+    return insights.filter((ins) => {
       if (bay !== 'all' && ins.bay !== bay) return false;
       if (conf !== 'all' && ins.confidence !== conf) return false;
       if (!needle) return true;
       const hay = `${ins.title} ${ins.body} ${ins.tags.join(' ')}`.toLowerCase();
       return hay.includes(needle);
     });
-  }, [data.insights, q, bay, conf]);
+  }, [insights, q, bay, conf]);
 
   return (
     <div className="space-y-6">
-      <header>
-        <div className="font-mono text-[11px] uppercase tracking-[0.35em] text-cyan/70">Field Notes</div>
-        <h1 className="mt-1 font-display text-2xl font-bold uppercase tracking-[0.06em] text-ink">Codex</h1>
-        <p className="mt-1 font-mono text-xs text-ink-dim">Searchable tactical knowledge. Tiny wiki brain, no fluff.</p>
+      <header className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <div className="font-mono text-[11px] uppercase tracking-[0.35em] text-cyan/70">Field Notes</div>
+          <h1 className="mt-1 font-display text-2xl font-bold uppercase tracking-[0.06em] text-ink">Codex</h1>
+          <p className="mt-1 font-mono text-xs text-ink-dim">Searchable tactical knowledge. Tiny wiki brain, no fluff.</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowCapture((v) => !v)}
+          className="btn btn-ghost text-[10px]"
+        >
+          {showCapture ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+          {showCapture ? 'Cancel' : 'Capture Note'}
+        </button>
       </header>
+
+      {showCapture && (
+        <div className="panel space-y-2 p-3">
+          <input
+            value={draftTitle}
+            onChange={(e) => setDraftTitle(e.target.value)}
+            placeholder="Insight title"
+            className="w-full rounded-md border border-rim bg-panel-2/40 px-3 py-2 font-mono text-xs text-ink outline-none ring-cyan/40 transition focus:ring"
+          />
+          <textarea
+            value={draftBody}
+            onChange={(e) => setDraftBody(e.target.value)}
+            placeholder="What did you learn? (body)"
+            rows={3}
+            className="w-full rounded-md border border-rim bg-panel-2/40 px-3 py-2 font-mono text-xs text-ink outline-none ring-cyan/40 transition focus:ring"
+          />
+          <div className="grid gap-2 sm:grid-cols-2">
+            <select
+              value={draftBay}
+              onChange={(e) => setDraftBay(e.target.value)}
+              className="rounded-md border border-rim bg-panel-2/40 px-2.5 py-2 font-mono text-xs text-ink outline-none"
+            >
+              <option value="">No bay</option>
+              {data.bays.map((b) => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
+            </select>
+            <input
+              value={draftTags}
+              onChange={(e) => setDraftTags(e.target.value)}
+              placeholder="tags, comma, separated"
+              className="rounded-md border border-rim bg-panel-2/40 px-3 py-2 font-mono text-xs text-ink outline-none ring-cyan/40 transition focus:ring"
+            />
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={submitDraft}
+              disabled={!draftTitle.trim() || !draftBody.trim()}
+              className="btn btn-active text-[10px] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Plus className="h-3 w-3" /> Save Note
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="panel p-3">
         <div className="grid gap-2 md:grid-cols-[1.6fr_0.8fr_0.8fr]">
@@ -74,7 +152,9 @@ export default function Codex() {
 
       <SectionTitle code="WIKI">{filtered.length} insight{filtered.length === 1 ? '' : 's'}</SectionTitle>
       <div className="space-y-3">
-        {filtered.map((ins) => (
+        {filtered.map((ins) => {
+          const isLocal = ins.id.startsWith(LOCAL_INSIGHT_PREFIX);
+          return (
           <article key={ins.id} className="panel p-4">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="font-display text-sm uppercase tracking-[0.08em] text-ink">{ins.title}</h2>
@@ -90,6 +170,19 @@ export default function Codex() {
               </span>
               {ins.bay && (
                 <span className="chip border-rim bg-panel-2/40 text-ink-dim">{ins.bay}</span>
+              )}
+              {isLocal && (
+                <>
+                  <span className="chip border-cyan/30 bg-cyan/5 text-cyan">LOCAL</span>
+                  <button
+                    type="button"
+                    aria-label={`Delete note ${ins.title}`}
+                    onClick={() => removeLocalInsight(ins.id)}
+                    className="ml-auto grid h-6 w-6 place-items-center rounded border border-rim/60 text-ink-dim hover:border-signal-crit/50 hover:text-signal-crit cursor-pointer"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </>
               )}
             </div>
 
@@ -107,7 +200,7 @@ export default function Codex() {
               ))}
             </div>
 
-            {(ins.units?.length || ins.missions?.length) && (
+            {((ins.units?.length ?? 0) > 0 || (ins.missions?.length ?? 0) > 0) && (
               <div className="mt-3 border-t border-rim/50 pt-2 font-mono text-[10px] text-ink-dim">
                 {ins.units?.map((uid) => {
                   const u = unit(uid);
@@ -124,7 +217,8 @@ export default function Codex() {
               </div>
             )}
           </article>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
