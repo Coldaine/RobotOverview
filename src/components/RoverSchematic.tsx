@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useHangar } from '@/lib/store';
-import type { Hotspot } from '@/data/types';
 
 const DOT: Record<'ok' | 'empty' | 'attention', string> = {
   ok: 'fill-signal-ok',
@@ -35,6 +34,8 @@ export function RoverSchematic() {
     if (noneFilled) return 'empty';
     return 'attention';
   };
+  const selectedStatus = sel ? getStatus(sel.id) : null;
+  const selectedSlots = sel ? loadout.filter((s) => s.hotspotId === sel.id) : [];
 
   return (
     <div className="relative max-w-full overflow-hidden rounded-lg border border-rim bg-void/60 blueprint-grid corner-bracket">
@@ -144,10 +145,7 @@ export function RoverSchematic() {
             )})}
           </div>
 
-          {sel && (() => {
-            const status = getStatus(sel.id);
-            const mappedSlots = loadout.filter(s => s.hotspotId === sel.id);
-            return (
+          {sel && selectedStatus && (
             <motion.div
               key={sel.id}
               initial={{ opacity: 0, x: 8 }}
@@ -160,16 +158,16 @@ export function RoverSchematic() {
                 <span
                   className={clsx(
                     'chip',
-                    status === 'ok' && 'border-signal-ok/40 bg-signal-ok/10 text-signal-ok',
-                    status === 'empty' && 'border-signal-warn/40 bg-signal-warn/10 text-signal-warn',
-                    status === 'attention' && 'border-amber/40 bg-amber/10 text-amber',
+                    selectedStatus === 'ok' && 'border-signal-ok/40 bg-signal-ok/10 text-signal-ok',
+                    selectedStatus === 'empty' && 'border-signal-warn/40 bg-signal-warn/10 text-signal-warn',
+                    selectedStatus === 'attention' && 'border-amber/40 bg-amber/10 text-amber',
                   )}
                 >
-                  {status === 'ok' ? 'NOMINAL' : status === 'empty' ? 'UNFILLED' : 'REVIEW'}
+                  {selectedStatus === 'ok' ? 'NOMINAL' : selectedStatus === 'empty' ? 'UNFILLED' : 'REVIEW'}
                 </span>
               </div>
               <div className="mt-3 space-y-2">
-                {mappedSlots.length > 0 ? mappedSlots.map(s => (
+                {selectedSlots.length > 0 ? selectedSlots.map(s => (
                   <div key={s.slot} className="flex justify-between font-mono text-[11px] leading-tight">
                     <span className="text-ink-dim truncate pr-2">{s.slot}</span>
                     <span className={clsx("shrink-0", s.filledBy ? "text-cyan" : "text-signal-warn")}>
@@ -181,7 +179,7 @@ export function RoverSchematic() {
                 )}
               </div>
             </motion.div>
-          )})}
+          )}
         </div>
       </div>
     </div>
