@@ -22,6 +22,170 @@ export const hangarData: HangarData = {
     { id: 'audio', name: 'Audio Lab', code: 'AUD', tagline: 'Transducers · signal chain', accent: 'cyan' },
   ],
 
+  items: [
+    {
+      id: 'glinet-comet-q-gl-rmq1',
+      name: 'Comet Q',
+      manufacturer: 'GL.iNet',
+      model: 'GL-RMQ1',
+      bay: 'network',
+      category: 'Remote KVM',
+      status: 'on-order',
+      provenance: 'owner',
+      summary:
+        'Palm-sized USB-C remote KVM for controlling one USB-C target device from a browser or GLKVM app over Wi-Fi 6.',
+      description:
+        'Comet Q is the mobile-device and compact-host member of the Comet KVM line. It connects to a target over USB-C and depends on the target supporting DisplayPort Alt Mode, then exposes remote keyboard, video, and mouse control through a browser or app. It is useful for Mac minis, closed-lid laptops, iPhone/iPad test devices, kiosks, and small homelab machines where physical monitor and keyboard access is inconvenient.',
+      planningNotes:
+        'Treat as a single-target convenience KVM for USB-C video devices, not as a replacement for HDMI rack KVMs. Best Hangar placement is Network Ops until assigned to a specific unit or service workflow.',
+      limitations: [
+        'Requires USB-C DisplayPort Alt Mode on the controlled device.',
+        'Controls one target at a time.',
+        'Not the right tool for older HDMI-only servers without an adapter path.',
+      ],
+      specs: [
+        { label: 'OS', value: 'Buildroot' },
+        { label: 'CPU', value: 'ARM Cortex, quad-core' },
+        { label: 'Memory / storage', value: '512 MB LPDDR4 / 512 MB NAND' },
+        { label: 'Display', value: '1.8 in touchscreen' },
+        { label: 'Wireless', value: 'Wi-Fi 6, IEEE 802.11 a/b/g/n/ac/ax' },
+        { label: 'Wi-Fi speed', value: '5 GHz: 286 Mbps; 2.4 GHz: 286 Mbps' },
+        { label: 'Video', value: '2K QHD @ 60 FPS' },
+        { label: 'Interface', value: 'USB-C power passthrough plus USB-C cable with DP Alt Mode support' },
+        { label: 'Power input', value: 'USB-C PD, 5V/3A' },
+      ],
+      price: { us: 89, import: null },
+      quantity: 1,
+      tags: ['kvm', 'usb-c', 'wifi-6', 'glinet', 'kickstarter'],
+      acquired: '2026 Kickstarter pledge',
+      horizon: 'Estimated shipping Aug 2026',
+      sources: [
+        {
+          label: 'GL.iNet Comet Q product page',
+          url: 'https://www.gl-inet.com/products/gl-rmq1/',
+          accessedAt: '2026-06-16',
+          kind: 'official',
+        },
+        {
+          label: 'CNX Software Comet Q crowdfunding coverage',
+          url: 'https://www.cnx-software.com/2026/06/03/comet-q-usb-c-kvm-device-is-made-for-smartphones-tablets-and-laptops-crowdfunding/',
+          accessedAt: '2026-06-16',
+          kind: 'review',
+        },
+      ],
+    },
+    {
+      id: 'glinet-comet-x-gl-rm4pe',
+      name: 'Comet X',
+      manufacturer: 'GL.iNet',
+      model: 'GL-RM4PE',
+      bay: 'network',
+      category: 'Rack KVM',
+      status: 'on-order',
+      provenance: 'owner',
+      summary:
+        'Quad-port remote KVM with PoE for managing up to four nearby hosts from a browser, app, or local rack console.',
+      description:
+        'Comet X is the rack and homelab member of the Comet line. It provides four HDMI inputs, four USB-C device ports for host control, a local HDMI output, USB-A host ports for peripherals, and remote browser/app access. Its 64 GB eMMC storage is positioned as an image repository for ISO storage, OS deployment, and emergency recovery.',
+      planningNotes:
+        'This belongs in Network Ops as the likely rack-side management point for grouped mini PCs, servers, or test hosts. It should be modeled as an item first, then linked to specific units once those hosts are attached.',
+      limitations: [
+        'Controls up to four hosts.',
+        'Video handling is listed as 4K @ 30 FPS, not 4K @ 60 FPS.',
+        'USB host ports are USB 2.0 and rated 5V/0.5A per port.',
+        'No cellular failover is listed for this model.',
+      ],
+      specs: [
+        { label: 'OS', value: 'Linux 6.1' },
+        { label: 'CPU', value: 'ARM Cortex, quad-core' },
+        { label: 'Memory / storage', value: '1 GB DDR3L / 64 GB eMMC' },
+        { label: 'Host inputs', value: '4 x HDMI IN; 4 x USB 2.0 Type-C device ports' },
+        { label: 'Local console', value: '1 x HDMI OUT; 7 x USB 2.0 Type-A host ports' },
+        { label: 'Network', value: '1 x RJ45, 10/100/1000 Mbps, 802.3af/at PoE' },
+        { label: 'Display', value: '3.69 in TFT touchscreen' },
+        { label: 'Video', value: '4K @ 30 FPS' },
+        { label: 'Power input', value: 'Ethernet PoE or optional USB-C 5V/3A PD' },
+        { label: 'Dimensions / weight', value: '170 x 90 x 40 mm / 560 g' },
+        { label: 'Rack mounting', value: 'Compatible with 10 in and 19 in racks; brackets included' },
+      ],
+      price: { us: 202, import: null },
+      quantity: 1,
+      tags: ['kvm', 'rack', 'poe', 'homelab', 'glinet', 'kickstarter'],
+      acquired: '2026 Kickstarter add-on',
+      horizon: 'Estimated shipping Aug 2026',
+      sources: [
+        {
+          label: 'GL.iNet Comet X product page',
+          url: 'https://www.gl-inet.com/products/gl-rm4pe/',
+          accessedAt: '2026-06-16',
+          kind: 'official',
+        },
+        {
+          label: 'NAS Compares Comet X coverage',
+          url: 'https://nascompares.com/2026/05/28/gl-inet-comet-x-kvm-host-revealed/',
+          accessedAt: '2026-06-16',
+          kind: 'review',
+        },
+      ],
+    },
+    {
+      id: 'lafaer-lwr02-presence-sensor',
+      name: 'LWR02 All-in-One Wireless Presence Sensor',
+      manufacturer: 'GL.iNet / Lafaer',
+      model: 'LWR02',
+      bay: 'home',
+      category: 'Presence Sensor',
+      status: 'on-order',
+      provenance: 'owner',
+      summary:
+        'Matter-over-Thread 5-in-1 smart-home sensor combining PIR, mmWave presence detection, ambient light, temperature, and humidity.',
+      description:
+        'LWR02 is a battery-powered occupancy and environment sensor for smart-home automations. PIR covers larger motion events while mmWave radar helps maintain presence when a person is relatively still. The sensor reports movement or presence, ambient light, temperature, humidity, and battery percentage to compatible Matter ecosystems.',
+      planningNotes:
+        'Best initial placement is Home Systems. It can become a useful occupancy signal for lights, HVAC context, bathroom/kitchen automations, and future Hangar references to room state, but the Hangar should catalog it rather than operate the home.',
+      limitations: [
+        'Requires a Matter-capable platform and a Thread Border Router.',
+        'Horizontal installation is recommended; vertical installation is explicitly not advised unless angled downward from target height.',
+        'Avoid aiming at large glass surfaces, fans, curtains, or other moving objects to reduce false triggers.',
+        'IPX3 is splash resistance, not outdoor weatherproofing or submersion.',
+        'GL.iNet does not publish mmWave frequency, lux accuracy, temperature/humidity accuracy, reporting interval, zone mapping, or multi-person tracking specs.',
+      ],
+      specs: [
+        { label: 'Sensors', value: 'Presence, motion, ambient light, temperature, humidity' },
+        { label: 'Detection method', value: 'PIR plus mmWave radar' },
+        { label: 'Battery', value: '2 x AAA, rechargeable AAA supported' },
+        { label: 'Battery life', value: 'Claimed 2+ years' },
+        { label: 'Detection range', value: 'Presence: 4 m / 13.1 ft; motion: 8 m / 26.2 ft' },
+        { label: 'Detection angle', value: 'Approx. 120 degrees' },
+        { label: 'Protocol', value: 'Matter over Thread' },
+        { label: 'Wireless', value: 'IEEE 802.15.4, 2.4 GHz' },
+        { label: 'Dimensions', value: 'Device only: 71 x 46 x 36 mm; with stand: 71 x 46 x 49 mm' },
+        { label: 'Operating temperature', value: '0-40 C / 32-104 F' },
+        { label: 'Protection rating', value: 'IPX3' },
+        { label: 'Matter certification', value: 'CSA262BRMAT52423-24; spec 1.4.2; certified 2026-05-06' },
+      ],
+      price: { us: 36, import: null },
+      quantity: 1,
+      tags: ['matter', 'thread', 'presence', 'mmwave', 'pir', 'home-assistant', 'kickstarter'],
+      acquired: '2026 Kickstarter add-on',
+      horizon: 'Estimated shipping Aug 2026',
+      sources: [
+        {
+          label: 'GL.iNet LWR02 product page',
+          url: 'https://www.gl-inet.com/en-us/products/lwr02',
+          accessedAt: '2026-06-16',
+          kind: 'official',
+        },
+        {
+          label: 'CSA Matter certification record',
+          url: 'https://csa-iot.org/csa_product/all-in-one-wireless-presence-sensor/',
+          accessedAt: '2026-06-16',
+          kind: 'certification',
+        },
+      ],
+    },
+  ],
+
   units: [
     // ── ROBOTICS ──────────────────────────────────────────────────────────────
     {
