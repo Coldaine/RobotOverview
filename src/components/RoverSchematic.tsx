@@ -16,7 +16,7 @@ const RING: Record<'ok' | 'empty' | 'attention', string> = {
 };
 
 export function RoverSchematic() {
-  const { unit, theme } = useHangar();
+  const { unit, theme, openDrawer, updateSlot } = useHangar();
   const beast = unit('beast');
   const hotspots = beast?.hotspots ?? [];
 
@@ -193,15 +193,106 @@ export function RoverSchematic() {
                   {selectedStatus === 'ok' ? 'NOMINAL' : selectedStatus === 'empty' ? 'UNFILLED' : 'REVIEW'}
                 </span>
               </div>
-              <div className="mt-3 space-y-2">
-                {selectedSlots.length > 0 ? selectedSlots.map(s => (
-                  <div key={s.slot} className="flex justify-between font-mono text-[11px] leading-tight">
-                    <span className="text-ink-dim truncate pr-2">{s.slot}</span>
-                    <span className={clsx("shrink-0", s.filledBy ? "text-cyan" : "text-signal-warn")}>
-                      {s.filledBy ? (unit(s.filledBy)?.name ?? s.filledBy) : 'UNFILLED'}
-                    </span>
-                  </div>
-                )) : (
+              <div className="mt-3">
+                {selectedSlots.length > 0 ? (
+                  <>
+                    {theme === 'blueprint' && (
+                      <div className="space-y-2 font-mono text-[10px]">
+                        {selectedSlots.map((s, idx) => (
+                          <div key={s.slot} className="flex items-center justify-between border-b border-rim/20 pb-1">
+                            <span className="text-ink-dim">0x{idx.toString(16).toUpperCase().padStart(2, '0')}</span>
+                            <span className="text-ink truncate max-w-[120px] font-semibold ml-1">{s.slot}</span>
+                            {s.filledBy ? (
+                              <div className="flex items-center gap-1">
+                                <span className="text-cyan truncate max-w-[80px]">{unit(s.filledBy)?.name ?? s.filledBy}</span>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); updateSlot('beast', s.slot, null); }}
+                                  className="text-signal-crit hover:underline text-[9px] uppercase cursor-pointer"
+                                >
+                                  [CLR]
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); openDrawer('beast', s.slot); }}
+                                className="text-signal-warn hover:underline text-[9px] uppercase cursor-pointer"
+                              >
+                                [LOAD]
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {theme === 'industrial' && (
+                      <div className="space-y-1 font-mono text-[11px] border border-rim/40 rounded-sm overflow-hidden">
+                        {selectedSlots.map((s, idx) => (
+                          <div
+                            key={s.slot}
+                            className={clsx(
+                              "flex items-center justify-between px-2 py-1.5",
+                              idx % 2 === 0 ? "bg-panel/30" : "bg-panel-2/40"
+                            )}
+                          >
+                            <span className="text-ink truncate max-w-[140px]">{s.slot}</span>
+                            {s.filledBy ? (
+                              <div className="flex items-center gap-2">
+                                <span className="text-cyan font-bold">{unit(s.filledBy)?.name ?? s.filledBy}</span>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); updateSlot('beast', s.slot, null); }}
+                                  className="px-1 py-0.5 text-[9px] border border-signal-crit/30 bg-signal-crit/5 text-signal-crit hover:bg-signal-crit/20 rounded-sm cursor-pointer"
+                                >
+                                  Unslot
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); openDrawer('beast', s.slot); }}
+                                className="px-1.5 py-0.5 text-[9px] border border-amber/30 bg-amber/5 text-amber hover:bg-amber/20 rounded-sm cursor-pointer"
+                              >
+                                Equip
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {theme === 'topology' && (
+                      <div className="space-y-2">
+                        {selectedSlots.map((s) => (
+                          <div
+                            key={s.slot}
+                            className="flex items-center justify-between p-2.5 rounded-lg border border-rim/45 bg-panel-2/20 hover:border-cyan/35 transition-colors"
+                          >
+                            <div className="min-w-0 flex-1 pr-2">
+                              <div className="font-mono text-[10px] text-ink-dim uppercase tracking-wider">{s.slot}</div>
+                              <div className="font-display text-xs font-bold text-ink truncate mt-0.5">
+                                {s.filledBy ? (unit(s.filledBy)?.name ?? s.filledBy) : 'UNFILLED'}
+                              </div>
+                            </div>
+                            {s.filledBy ? (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); updateSlot('beast', s.slot, null); }}
+                                className="text-[10px] font-mono font-bold text-signal-crit hover:underline cursor-pointer"
+                              >
+                                Unequip
+                              </button>
+                            ) : (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); openDrawer('beast', s.slot); }}
+                                className="text-[10px] font-mono font-bold text-cyan hover:underline cursor-pointer"
+                              >
+                                Equip
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
                   <p className="font-mono text-[11px] leading-relaxed text-ink-dim">No slots mapped to this region.</p>
                 )}
               </div>

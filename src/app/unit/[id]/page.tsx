@@ -13,7 +13,7 @@ import clsx from 'clsx';
 export default function UnitDetail() {
   const params = useParams();
   const id = params?.id as string | undefined;
-  const { unit, mission, insight, capability } = useHangar();
+  const { unit, mission, insight, capability, openDrawer, updateSlot, theme } = useHangar();
   const u = id ? unit(id) : undefined;
 
   if (!u) {
@@ -87,50 +87,163 @@ export default function UnitDetail() {
           {u.loadout && u.loadout.length > 0 && (
             <section>
               <SectionTitle code="SLOTS"><span className="inline-flex items-center gap-2"><Layers className="h-3.5 w-3.5 text-amber" /> Loadout Configuration</span></SectionTitle>
-              <div className="space-y-4">
-                {(() => {
-                  const grouped = u.loadout.reduce((acc, slot) => {
-                    const g = slot.group || 'Uncategorized';
-                    if (!acc[g]) acc[g] = [];
-                    acc[g].push(slot);
-                    return acc;
-                  }, {} as Record<string, NonNullable<typeof u.loadout>>);
+              
+              {/* Theme: Blueprint — Raw Terminal / Hex Editor Grid */}
+              {theme === 'blueprint' && (
+                <div className="font-mono text-xs border border-rim/60 bg-void/50 p-4 rounded-md">
+                  <div className="grid grid-cols-[60px_140px_1fr_100px] gap-2 border-b border-rim/70 pb-1.5 text-cyan/70 font-semibold uppercase text-[10px] tracking-wider mb-2">
+                    <span>[ADDR]</span>
+                    <span>SLOT INTERFACE</span>
+                    <span>EQUIPPED MODULE</span>
+                    <span className="text-right">[ACTION]</span>
+                  </div>
+                  <div className="space-y-1 divide-y divide-rim/20">
+                    {u.loadout.map((slot, idx) => {
+                      const filledBy = slot.filledBy;
+                      const filledUnit = filledBy ? unit(filledBy) : undefined;
+                      return (
+                        <div key={slot.slot} className="grid grid-cols-[60px_140px_1fr_100px] gap-2 py-2 items-center">
+                          <span className="text-ink-dim font-mono">0x{idx.toString(16).toUpperCase().padStart(2, '0')}</span>
+                          <span className="text-ink truncate font-bold uppercase text-[10px] tracking-wider">{slot.slot}</span>
+                          <div className="min-w-0">
+                            {filledBy ? (
+                              <span className="text-cyan font-bold truncate block">{filledUnit?.name ?? filledBy}</span>
+                            ) : (
+                              <span className="text-signal-warn font-semibold block">UNFILLED</span>
+                            )}
+                            {slot.note && <span className="text-[10px] text-ink-dim block mt-0.5 truncate">{slot.note}</span>}
+                          </div>
+                          <div className="text-right">
+                            {filledBy ? (
+                              <button
+                                onClick={() => updateSlot(u.id, slot.slot, null)}
+                                className="px-2 py-0.5 rounded border border-signal-crit/45 bg-signal-crit/10 text-signal-crit hover:bg-signal-crit/20 text-[9px] uppercase font-mono cursor-pointer transition-all"
+                              >
+                                UNSLOT
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => openDrawer(u.id, slot.slot)}
+                                className="px-2 py-0.5 rounded border border-cyan/45 bg-cyan/10 text-cyan hover:bg-cyan/20 text-[9px] uppercase font-mono cursor-pointer transition-all"
+                              >
+                                LOAD
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-                  return Object.entries(grouped).map(([groupName, slots]) => (
-                    <div key={groupName} className="space-y-2">
-                      {groupName !== 'Uncategorized' && (
-                        <div className="font-mono text-[10px] uppercase tracking-widest text-cyan/70 border-b border-rim/50 pb-1 mb-2">{groupName}</div>
-                      )}
-                      <div className="space-y-2">
-                        {slots.map((slot) => {
-                          const filledBy = slot.filledBy;
-                          const filledUnit = filledBy ? unit(filledBy) : undefined;
-                          return (
-                            <div
-                              key={slot.slot}
-                              className={clsx(
-                                'flex items-center gap-3 rounded-md border px-3 py-2.5',
-                                filledBy ? 'border-rim bg-panel-2/30' : 'border-signal-warn/30 bg-signal-warn/5',
-                              )}
+              {/* Theme: Industrial — Alternating Ledger Table */}
+              {theme === 'industrial' && (
+                <table className="w-full text-left font-mono text-xs border border-rim">
+                  <thead>
+                    <tr className="border-b border-rim text-ink bg-panel-2/50 text-[10px] uppercase tracking-wider">
+                      <th className="py-2 px-3">Slot Details</th>
+                      <th className="py-2 px-3">Equipped Unit</th>
+                      <th className="py-2 px-3">Note / Constraints</th>
+                      <th className="py-2 px-3 text-right">Operation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {u.loadout.map((slot, i) => {
+                      const filledBy = slot.filledBy;
+                      const filledUnit = filledBy ? unit(filledBy) : undefined;
+                      return (
+                        <tr
+                          key={slot.slot}
+                          className={clsx(
+                            'hover:bg-amber/10 border-b border-rim/30 transition-colors',
+                            i % 2 === 0 ? 'bg-panel/30' : 'bg-panel-2/40'
+                          )}
+                        >
+                          <td className="py-2.5 px-3 font-semibold text-ink uppercase tracking-wider">{slot.slot}</td>
+                          <td className="py-2.5 px-3">
+                            {filledBy ? (
+                              <span className="text-cyan font-bold">{filledUnit?.name ?? filledBy}</span>
+                            ) : (
+                              <span className="text-signal-warn font-semibold">UNFILLED</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 px-3 text-ink-dim truncate max-w-xs">{slot.note || '—'}</td>
+                          <td className="py-2.5 px-3 text-right">
+                            {filledBy ? (
+                              <button
+                                onClick={() => updateSlot(u.id, slot.slot, null)}
+                                className="px-2 py-1 bg-signal-crit/15 hover:bg-signal-crit/30 text-signal-crit border border-signal-crit/30 rounded uppercase tracking-wider text-[9px] font-bold cursor-pointer transition-all"
+                              >
+                                Unequip
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => openDrawer(u.id, slot.slot)}
+                                className="px-2 py-1 bg-amber/15 hover:bg-amber/30 text-amber border border-amber/30 rounded uppercase tracking-wider text-[9px] font-bold cursor-pointer transition-all"
+                              >
+                                Equip
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+
+              {/* Theme: Topology — Floating Modern Card Grid */}
+              {theme === 'topology' && (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {u.loadout.map((slot) => {
+                    const filledBy = slot.filledBy;
+                    const filledUnit = filledBy ? unit(filledBy) : undefined;
+                    return (
+                      <div
+                        key={slot.slot}
+                        className={clsx(
+                          'panel p-4 flex flex-col justify-between transition-all border',
+                          filledBy ? 'border-rim bg-panel-2/30 hover:border-cyan/40 hover:shadow-hud-cyan' : 'border-signal-warn/30 bg-signal-warn/5 hover:border-signal-warn/60'
+                        )}
+                      >
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className={clsx('h-2 w-2 rounded-full', filledBy ? 'bg-signal-ok' : 'bg-signal-warn animate-pulse-trace')} />
+                            <span className="font-mono text-[9px] uppercase tracking-wider text-ink-dim">{slot.group || 'System'}</span>
+                          </div>
+                          <h4 className="font-display text-sm font-bold uppercase tracking-wider text-ink">{slot.slot}</h4>
+                          <p className="font-mono text-xs text-ink-dim mt-1">
+                            {filledBy ? (
+                              <span>Equipped: <span className="text-cyan font-semibold">{filledUnit?.name ?? filledBy}</span></span>
+                            ) : (
+                              <span className="text-signal-warn font-semibold">Empty Slot</span>
+                            )}
+                          </p>
+                          {slot.note && <p className="font-mono text-[10px] text-ink-dim/80 mt-1.5 italic">Note: {slot.note}</p>}
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-rim/40 flex justify-end">
+                          {filledBy ? (
+                            <button
+                              onClick={() => updateSlot(u.id, slot.slot, null)}
+                              className="text-xs font-mono font-bold text-signal-crit hover:underline cursor-pointer"
                             >
-                              <span className={clsx('h-2 w-2 shrink-0 rounded-full', filledBy ? 'bg-signal-ok' : 'bg-signal-warn animate-pulse-trace')} />
-                              <div className="w-32 shrink-0 font-mono text-[11px] uppercase tracking-wider text-ink truncate">{slot.slot}</div>
-                              <div className="min-w-0 flex-1 font-mono text-[11px] text-ink-dim truncate">
-                                {filledBy ? (
-                                  <span className="text-cyan">{filledUnit?.name ?? filledBy}</span>
-                                ) : (
-                                  <span className="text-signal-warn">UNFILLED</span>
-                                )}
-                                {slot.note && <span className="text-ink-dim hidden sm:inline"> — {slot.note}</span>}
-                              </div>
-                            </div>
-                          );
-                        })}
+                              Unequip Module
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => openDrawer(u.id, slot.slot)}
+                              className="text-xs font-mono font-bold text-cyan hover:underline cursor-pointer"
+                            >
+                              Equip Module &rarr;
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ));
-                })()}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </section>
           )}
 

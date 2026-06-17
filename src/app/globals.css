@@ -248,6 +248,8 @@
 
 /* ── Theme: Industrial ───────────────────────────────────── */
 body.theme-industrial {
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-inter);
   --color-void: #f4f4f0;
   --color-hull: #e9e9e3;
   --color-panel: #ffffff;
@@ -275,8 +277,16 @@ body.theme-industrial .blueprint-grid { background-image: none; }
 body.theme-industrial .corner-bracket::before,
 body.theme-industrial .corner-bracket::after { border-color: rgba(37,99,235,0.4); }
 
+/* ── Theme: Blueprint Override ───────────────────────────── */
+body.theme-blueprint {
+  --font-sans: var(--font-jetbrains-mono);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
 /* ── Theme: Topology ─────────────────────────────────────── */
 body.theme-topology {
+  --font-sans: var(--font-outfit);
+  --font-mono: var(--font-jetbrains-mono);
   --color-void: #0d1117;
   --color-hull: #131929;
   --color-panel: #18213a;
