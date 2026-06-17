@@ -249,7 +249,7 @@
 /* ── Theme: Industrial ───────────────────────────────────── */
 body.theme-industrial {
   --font-sans: var(--font-inter);
-  --font-mono: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
   --color-void: #f4f4f0;
   --color-hull: #e9e9e3;
   --color-panel: #ffffff;
@@ -335,3 +335,21 @@ body.theme-topology .corner-bracket::after { border-color: rgba(167,139,250,0.4)
     );
   mix-blend-mode: multiply;
 }
+
+@keyframes voltage-drop {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  2% { opacity: 0.82; filter: brightness(0.85); }
+  4% { opacity: 1; filter: brightness(1); }
+  35% { opacity: 1; filter: brightness(1); }
+  37% { opacity: 0.68; filter: brightness(0.72); }
+  39% { opacity: 0.92; filter: brightness(0.95); }
+  41% { opacity: 1; filter: brightness(1); }
+  72% { opacity: 1; filter: brightness(1); }
+  74% { opacity: 0.78; filter: brightness(0.8); }
+  76% { opacity: 1; filter: brightness(1); }
+}
+
+.voltage-drop-active {
+  animation: voltage-drop 3s infinite;
+}
+
