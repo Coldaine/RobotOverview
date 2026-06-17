@@ -1,0 +1,116 @@
+name: Build RobotOverview image
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: coldaine/robot-overview
+
+jobs:
+  image:
+    name: Build and publish image
+    runs-on: ubuntu-latest
+    outputs:
+      image-ref: ${{ steps.image-ref.outputs.ref }}
+    steps:
+      - name: Check out RobotOverview
+        uses: actions/checkout@v5
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute deploy image ref
+        id: image-ref
+        run: echo "ref=${REGISTRY}/${IMAGE_NAME}:sha-${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Extract image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=sha-,format=long
+            type=ref,event=pr,prefix=pr-
+            type=raw,value=0.1.0,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  update-k8cluster:
+    name: Open k8cluster image bump PR
+    needs: image
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.K8CLUSTER_REPO_TOKEN }}
+      IMAGE_REF: ${{ needs.image.outputs.image-ref }}
+    steps:
+      - name: Skip if k8cluster token is not configured
+        if: ${{ env.GH_TOKEN == '' }}
+        run: |
+          echo "::notice::Set K8CLUSTER_REPO_TOKEN to let this workflow open coldaine-k8cluster image bump PRs."
+
+      - name: Check out coldaine-k8cluster
+        if: ${{ env.GH_TOKEN != '' }}
+        uses: actions/checkout@v5
+        with:
+          repository: Coldaine/coldaine-k8cluster
+          token: ${{ env.GH_TOKEN }}
+          path: coldaine-k8cluster
+
+      - name: Bump RobotOverview image and open PR
+        if: ${{ env.GH_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          cd coldaine-k8cluster
+
+          if [ ! -f apps/robot-overview/deployment.yaml ]; then
+            echo "::notice::coldaine-k8cluster does not have apps/robot-overview/deployment.yaml yet; merge the GitOps PR first."
+            exit 0
+          fi
+
+          branch="codex/robot-overview-image-${GITHUB_SHA:0:12}"
+          git checkout -b "$branch"
+          sed -i -E "s#image: ghcr.io/coldaine/robot-overview:[^[:space:]]+#image: ${IMAGE_REF}#" apps/robot-overview/deployment.yaml
+
+          if git diff --quiet; then
+            echo "RobotOverview image is already ${IMAGE_REF}; nothing to open."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/robot-overview/deployment.yaml
+          git commit -m "chore(robot-overview): deploy ${GITHUB_SHA:0:12}"
+          git push origin "HEAD:${branch}"
+
+          gh pr create \
+            --repo Coldaine/coldaine-k8cluster \
+            --base main \
+            --head "$branch" \
+            --title "chore(robot-overview): deploy ${GITHUB_SHA:0:12}" \
+            --body "Updates RobotOverview to ${IMAGE_REF} after the app image build succeeded."
