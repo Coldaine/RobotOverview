@@ -5,9 +5,9 @@ import type { UnitStatus, LifecycleState } from '@/data/types';
 describe('money()', () => {
   it('returns em-dash for null', () => expect(money(null)).toBe('—'));
   it('returns em-dash for undefined', () => expect(money(undefined)).toBe('—'));
-  it('formats zero', () => expect(money(0)).toBe('$0'));
-  it('formats 1234 with comma separator', () => expect(money(1234)).toBe('$1,234'));
-  it('formats 999999 with commas', () => expect(money(999999)).toBe('$999,999'));
+  it('formats zero as $0', () => expect(money(0)).toBe(`$${(0).toLocaleString('en-US')}`));
+  it('formats 1234 with locale grouping', () => expect(money(1234)).toBe(`$${(1234).toLocaleString('en-US')}`));
+  it('formats 999999 with locale grouping', () => expect(money(999999)).toBe(`$${(999999).toLocaleString('en-US')}`));
 });
 
 describe('timeAgo()', () => {

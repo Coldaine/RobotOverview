@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { HangarProvider, useHangar, useCalculatedConstraints, selectedMissionWishes } from '@/lib/store';
+import { hangarData } from '@/data/hangar';
 import type { WishlistItem } from '@/data/types';
 
 function wrapper({ children }: { children: React.ReactNode }) {
@@ -106,28 +107,34 @@ describe('useCalculatedConstraints()', () => {
     expect(result.current).toEqual([]);
   });
 
-  it('augments the W constraint with buy-next wish power (light-bar: 8W)', () => {
+  it('augments the W constraint with buy-next wish power (light-bar)', () => {
     const { result } = renderHook(() => useCalculatedConstraints('undercroft'), { wrapper });
+    const undercroft = hangarData.missions.find((m) => m.id === 'undercroft')!;
+    const lightBar = hangarData.wishlist.find((w) => w.id === 'light-bar')!;
+    const base = undercroft.constraints.find((c) => c.unit === 'W')!.value;
     const power = result.current.find((c) => c.unit === 'W');
-    // Base: 22W + light-bar 8W = 30W
-    expect(power?.value).toBe(30);
+    expect(power?.value).toBe(base + (lightBar.power?.watts ?? 0));
   });
 
-  it('augments the g constraint with buy-next wish mass (light-bar: 85g)', () => {
+  it('augments the g constraint with buy-next wish mass (light-bar)', () => {
     const { result } = renderHook(() => useCalculatedConstraints('undercroft'), { wrapper });
+    const undercroft = hangarData.missions.find((m) => m.id === 'undercroft')!;
+    const lightBar = hangarData.wishlist.find((w) => w.id === 'light-bar')!;
+    const base = undercroft.constraints.find((c) => c.unit === 'g')!.value;
     const mass = result.current.find((c) => c.unit === 'g');
-    // Base: 380g + light-bar 85g = 465g
-    expect(mass?.value).toBe(465);
+    expect(mass?.value).toBe(base + (lightBar.massGrams ?? 0));
   });
 
-  it('uses US price by default for $ constraint (light-bar: $35 US)', () => {
+  it('uses US price by default for $ constraint (light-bar)', () => {
     const { result } = renderHook(() => useCalculatedConstraints('undercroft'), { wrapper });
+    const undercroft = hangarData.missions.find((m) => m.id === 'undercroft')!;
+    const lightBar = hangarData.wishlist.find((w) => w.id === 'light-bar')!;
+    const base = undercroft.constraints.find((c) => c.unit === '$')!.value;
     const cost = result.current.find((c) => c.unit === '$');
-    // Base: $35 + light-bar $35 US = $70
-    expect(cost?.value).toBe(70);
+    expect(cost?.value).toBe(base + (lightBar.price.us ?? 0));
   });
 
-  it('uses import price when source is switched to "import" (light-bar: $18 import)', () => {
+  it('uses import price when source is switched to "import" (light-bar)', () => {
     const { result } = renderHook(
       () => ({
         hangar: useHangar(),
@@ -135,20 +142,23 @@ describe('useCalculatedConstraints()', () => {
       }),
       { wrapper }
     );
+    const undercroft = hangarData.missions.find((m) => m.id === 'undercroft')!;
+    const lightBar = hangarData.wishlist.find((w) => w.id === 'light-bar')!;
+    const base = undercroft.constraints.find((c) => c.unit === '$')!.value;
     act(() => {
       result.current.hangar.setSource('import');
     });
     const cost = result.current.constraints.find((c) => c.unit === '$');
-    // Base: $35 + light-bar $18 import = $53
-    expect(cost?.value).toBe(53);
+    expect(cost?.value).toBe(base + (lightBar.price.import ?? lightBar.price.us ?? 0));
   });
 
-  it('does not alter constraints for a mission whose wishlist items are all "watching"', () => {
-    // perimeter-mapping wishlist: ['depth-cam'] — depth-cam is 'researching' (excluded)
+  it('does not alter constraints for a mission whose wishlist items are all "researching" (excluded status)', () => {
+    // perimeter-mapping wishlist: ['depth-cam'] — depth-cam is 'researching', not in SELECTED_WISHLIST_STATUSES
     const { result } = renderHook(() => useCalculatedConstraints('perimeter-mapping'), { wrapper });
     const power = result.current.find((c) => c.unit === 'W');
-    // Base: 0W (perimeter-mapping has value: 0), no selected wishes
-    expect(power?.value).toBe(0);
+    const perimeter = hangarData.missions.find((m) => m.id === 'perimeter-mapping')!;
+    const base = perimeter.constraints.find((c) => c.unit === 'W')!.value;
+    expect(power?.value).toBe(base);
   });
 });
 

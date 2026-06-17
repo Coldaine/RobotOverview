@@ -33,8 +33,7 @@ export function checkCompatibility(u: Unit, targetSlot: LoadoutSlot | null): boo
     nameLower.includes('sensor') ||
     nameLower.includes('camera') ||
     nameLower.includes('lidar') ||
-    nameLower.includes('lighting') ||
-    nameLower.includes('interface')
+    nameLower.includes('lighting')
   ) {
     return (
       classLower.includes('sensor') ||

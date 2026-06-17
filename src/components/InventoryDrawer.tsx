@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Package, Info } from 'lucide-react';
 import { useHangar } from '@/lib/store';
 import { useMemo, useState } from 'react';
-import type { LoadoutSlot } from '@/data/types';
+import type { Unit, LoadoutSlot } from '@/data/types';
 import { checkCompatibility } from '@/lib/compatibility';
 import clsx from 'clsx';
 
