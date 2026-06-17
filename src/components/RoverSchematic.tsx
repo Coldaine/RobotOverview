@@ -63,7 +63,7 @@ export function RoverSchematic() {
     let newlySlotted = false;
 
     loadout.forEach((s) => {
-      if (s.filledBy && prev[s.slot] === null) {
+      if (s.filledBy && prev[s.slot] == null) {
         newlySlotted = true;
       }
       prev[s.slot] = s.filledBy;

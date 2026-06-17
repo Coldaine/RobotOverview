@@ -85,14 +85,16 @@ export function InventoryDrawer() {
     });
   }, [units, drawerSlotContext]);
 
-  const { compatibleUnits } = useMemo(() => {
+  const { compatibleUnits, compatibleIds } = useMemo(() => {
     const comp: Unit[] = [];
+    const ids = new Set<string>();
     unassignedUnits.forEach(u => {
       if (checkCompatibility(u, targetSlot)) {
         comp.push(u);
+        ids.add(u.id);
       }
     });
-    return { compatibleUnits: comp };
+    return { compatibleUnits: comp, compatibleIds: ids };
   }, [unassignedUnits, targetSlot]);
 
   const handleEquip = (unitId: string) => {
@@ -222,7 +224,7 @@ export function InventoryDrawer() {
                       </div>
                       <div className="space-y-1 divide-y divide-rim/20 pt-1">
                         {activeList.map((u, i) => {
-                          const compat = checkCompatibility(u, targetSlot);
+                          const compat = compatibleIds.has(u.id);
                           return (
                             <div
                               key={u.id}
@@ -262,7 +264,7 @@ export function InventoryDrawer() {
                       </thead>
                       <tbody>
                         {activeList.map((u, i) => {
-                          const compat = checkCompatibility(u, targetSlot);
+                          const compat = compatibleIds.has(u.id);
                           return (
                             <tr
                               key={u.id}
@@ -299,7 +301,7 @@ export function InventoryDrawer() {
                   {theme === 'topology' && (
                     <div className="grid gap-2.5 grid-cols-1">
                       {activeList.map((u) => {
-                        const compat = checkCompatibility(u, targetSlot);
+                        const compat = compatibleIds.has(u.id);
                         return (
                           <div
                             key={u.id}

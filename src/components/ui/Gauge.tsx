@@ -17,7 +17,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
 
   const massG = allConstraints.find(c => c.unit === 'g') || { value: 0, budget: 1, label: 'Mass' };
   const powerG = allConstraints.find(c => c.unit === 'W') || { value: 0, budget: 1, label: 'Power' };
-  const costG = allConstraints.find(c => c.unit === '$' || c.unit === 'S') || { value: 0, budget: 1, label: 'Cost' };
+  const costG = allConstraints.find(c => c.unit === '$') || { value: 0, budget: 1, label: 'Cost' };
 
   const formatVal = (val: number, unit: string) => {
     if (unit === '$') return money(val);
@@ -190,7 +190,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
   // Topology: clean, concentric radial rings showing mass, power, and cost simultaneously.
   const isMass = gauge.unit === 'g';
   const isPower = gauge.unit === 'W';
-  const isCost = gauge.unit === '$' || gauge.unit === 'S' || gauge.label.toLowerCase().includes('cost');
+  const isCost = gauge.unit === '$' || gauge.label.toLowerCase().includes('cost');
 
   const massPct = massG.budget > 0 ? (massG.value / massG.budget) * 100 : 0;
   const powerPct = powerG.budget > 0 ? (powerG.value / powerG.budget) * 100 : 0;

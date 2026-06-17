@@ -266,16 +266,16 @@ export function useCalculatedConstraints(missionId: string) {
       let liveValue = c.value;
       if (c.unit === 'W') {
         const selectedWatts = selectedWishes.reduce((sum, w) => sum + (w.power?.watts ?? 0), 0);
-        liveValue = Math.max(c.value, c.value + selectedWatts);
+        liveValue = c.value + selectedWatts;
       } else if (c.unit === 'g') {
         const selectedMass = selectedWishes.reduce((sum, w) => sum + (w.massGrams ?? 0), 0);
-        liveValue = Math.max(c.value, c.value + selectedMass);
+        liveValue = c.value + selectedMass;
       } else if (c.unit === '$') {
         const selectedCost = selectedWishes.reduce((sum, w) => {
           const p = source === 'us' ? w.price.us : w.price.import ?? w.price.us;
           return sum + (p ?? 0);
         }, 0);
-        liveValue = Math.max(c.value, selectedCost);
+        liveValue = c.value + selectedCost;
       }
       return { ...c, value: liveValue };
     });
