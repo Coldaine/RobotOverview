@@ -68,8 +68,14 @@ function NavItem({
   );
 }
 
+const THEME_LABELS: Record<string, string> = {
+  blueprint: 'BLU',
+  industrial: 'IND',
+  topology: 'TOP',
+};
+
 export function Shell({ children }: { readonly children: ReactNode }) {
-  const { data } = useHangar();
+  const { data, theme, setTheme } = useHangar();
   const pathname = usePathname();
 
   return (
@@ -135,6 +141,26 @@ export function Shell({ children }: { readonly children: ReactNode }) {
                 </NavItem>
               );
             })}
+          </div>
+        </div>
+
+        <div className="border-t border-rim/70 px-4 py-3">
+          <div className="hud-label px-1 pb-2">Paradigm</div>
+          <div className="flex gap-1">
+            {(['blueprint', 'industrial', 'topology'] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setTheme(t)}
+                className={clsx(
+                  'flex-1 rounded border py-1 font-mono text-[9px] uppercase tracking-[0.12em] transition-colors',
+                  theme === t
+                    ? 'border-cyan/50 bg-cyan/10 text-cyan'
+                    : 'border-rim/50 text-ink-dim hover:border-rim hover:text-ink',
+                )}
+              >
+                {THEME_LABELS[t]}
+              </button>
+            ))}
           </div>
         </div>
 
