@@ -1,0 +1,145 @@
+import { describe, it, expect } from 'vitest';
+import { hangarData } from '@/data/hangar';
+import type { BayId, UnitStatus } from '@/data/types';
+
+const VALID_BAY_IDS: BayId[] = ['robotics', 'compute', 'network', 'home', 'audio'];
+const VALID_UNIT_STATUSES: UnitStatus[] = [
+  'operational',
+  'needs-attention',
+  'blocked',
+  'in-mission',
+  'wishlist',
+  'on-order',
+  'researching',
+  'retired',
+];
+
+describe('hangar.ts data integrity', () => {
+  const unitIds = new Set(hangarData.units.map((u) => u.id));
+  const missionIds = new Set(hangarData.missions.map((m) => m.id));
+  const wishlistIds = new Set(hangarData.wishlist.map((w) => w.id));
+  const capabilityIds = new Set(hangarData.capabilities.map((c) => c.id));
+  const insightIds = new Set(hangarData.insights.map((i) => i.id));
+
+  it('has no duplicate unit IDs', () => {
+    const ids = hangarData.units.map((u) => u.id);
+    expect(ids.length).toBe(new Set(ids).size);
+  });
+
+  it('has no duplicate mission IDs', () => {
+    const ids = hangarData.missions.map((m) => m.id);
+    expect(ids.length).toBe(new Set(ids).size);
+  });
+
+  it('has no duplicate wishlist IDs', () => {
+    const ids = hangarData.wishlist.map((w) => w.id);
+    expect(ids.length).toBe(new Set(ids).size);
+  });
+
+  it('has no duplicate capability IDs', () => {
+    const ids = hangarData.capabilities.map((c) => c.id);
+    expect(ids.length).toBe(new Set(ids).size);
+  });
+
+  it('all unit.bay values are valid BayIds', () => {
+    hangarData.units.forEach((u) => {
+      expect(VALID_BAY_IDS, `unit "${u.id}" has invalid bay "${u.bay}"`).toContain(u.bay);
+    });
+  });
+
+  it('all unit.status values are valid UnitStatus values', () => {
+    hangarData.units.forEach((u) => {
+      expect(VALID_UNIT_STATUSES, `unit "${u.id}" has invalid status "${u.status}"`).toContain(u.status);
+    });
+  });
+
+  it('all mission.requisitionedUnits IDs exist in units', () => {
+    hangarData.missions.forEach((m) => {
+      m.requisitionedUnits.forEach((uid) => {
+        expect(unitIds.has(uid), `mission "${m.id}" references unknown unit "${uid}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all mission.wishlist IDs exist in the wishlist collection', () => {
+    hangarData.missions.forEach((m) => {
+      (m.wishlist ?? []).forEach((wid) => {
+        expect(wishlistIds.has(wid), `mission "${m.id}" references unknown wishlist item "${wid}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all wishlist.forUnit IDs exist in units', () => {
+    hangarData.wishlist.forEach((w) => {
+      if (w.forUnit) {
+        expect(unitIds.has(w.forUnit), `wishlist item "${w.id}" references unknown unit "${w.forUnit}"`).toBe(true);
+      }
+    });
+  });
+
+  it('all wishlist.forMission IDs exist in missions', () => {
+    hangarData.wishlist.forEach((w) => {
+      if (w.forMission) {
+        expect(missionIds.has(w.forMission), `wishlist item "${w.id}" references unknown mission "${w.forMission}"`).toBe(true);
+      }
+    });
+  });
+
+  it('all capability.unlockedBy IDs exist in units or wishlist', () => {
+    const allIds = new Set([...unitIds, ...wishlistIds]);
+    hangarData.capabilities.forEach((cap) => {
+      cap.unlockedBy.forEach((id) => {
+        expect(allIds.has(id), `capability "${cap.id}" unlockedBy references unknown ID "${id}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all capability.dependsOn IDs exist in capabilities', () => {
+    hangarData.capabilities.forEach((cap) => {
+      (cap.dependsOn ?? []).forEach((id) => {
+        expect(capabilityIds.has(id), `capability "${cap.id}" dependsOn references unknown capability "${id}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all unit.insights IDs exist in the insights collection', () => {
+    hangarData.units.forEach((u) => {
+      (u.insights ?? []).forEach((iid) => {
+        expect(insightIds.has(iid), `unit "${u.id}" references unknown insight "${iid}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all mission.insights IDs exist in the insights collection', () => {
+    hangarData.missions.forEach((m) => {
+      (m.insights ?? []).forEach((iid) => {
+        expect(insightIds.has(iid), `mission "${m.id}" references unknown insight "${iid}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all loadout.hotspotId values reference a hotspot on the same unit', () => {
+    hangarData.units.forEach((u) => {
+      if (!u.loadout || !u.hotspots) return;
+      const hotspotIds = new Set(u.hotspots.map((h) => h.id));
+      u.loadout.forEach((slot) => {
+        if (slot.hotspotId) {
+          expect(
+            hotspotIds.has(slot.hotspotId),
+            `unit "${u.id}" slot "${slot.slot}" references unknown hotspot "${slot.hotspotId}"`
+          ).toBe(true);
+        }
+      });
+    });
+  });
+
+  it('all loadout.filledBy unit IDs (initial data) reference existing units', () => {
+    hangarData.units.forEach((u) => {
+      (u.loadout ?? []).forEach((slot) => {
+        if (slot.filledBy) {
+          expect(unitIds.has(slot.filledBy), `unit "${u.id}" slot "${slot.slot}" filledBy unknown unit "${slot.filledBy}"`).toBe(true);
+        }
+      });
+    });
+  });
+});

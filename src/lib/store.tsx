@@ -89,7 +89,7 @@ function isWishlistItem(item: WishlistItem | undefined): item is WishlistItem {
   return Boolean(item);
 }
 
-function selectedMissionWishes(wishes: WishlistItem[]): WishlistItem[] {
+export function selectedMissionWishes(wishes: WishlistItem[]): WishlistItem[] {
   const selected = new Map<string, WishlistItem>();
 
   wishes.forEach((w) => {
