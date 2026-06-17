@@ -16,6 +16,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useHangar } from '@/lib/store';
+import { InventoryDrawer } from './InventoryDrawer';
 import { timeAgo } from '@/lib/format';
 import type { ReactNode } from 'react';
 
@@ -189,6 +190,7 @@ export function Shell({ children }: { readonly children: ReactNode }) {
       </div>
 
       <MobileNav />
+      <InventoryDrawer />
     </div>
   );
 }

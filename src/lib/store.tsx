@@ -108,6 +108,7 @@ function selectedMissionWishes(wishes: WishlistItem[]): WishlistItem[] {
 
 interface HangarStore {
   data: HangarData;
+  units: Unit[];
   // Active UI theme
   theme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
@@ -128,6 +129,13 @@ interface HangarStore {
   wish: (id: string) => WishlistItem | undefined;
   bay: (id: string) => Bay | undefined;
   unitsByBay: (bayId: string) => Unit[];
+  // slot management
+  updateSlot: (parentId: string, slotName: string, unitId: string | null) => void;
+  // drawer state
+  drawerOpen: boolean;
+  drawerSlotContext: { parentId: string; slotName: string } | null;
+  openDrawer: (parentId: string, slotName: string) => void;
+  closeDrawer: () => void;
 }
 
 const Ctx = createContext<HangarStore | null>(null);
@@ -137,6 +145,9 @@ export function HangarProvider({ children }: { children: ReactNode }) {
   const [lensMissionId, setLensMissionId] = useState<string | null>(() => readStoredLensMissionId());
   const [source, setSource] = useState<SourcePreference>(() => readStoredSource());
   const [spotlightId, setSpotlightId] = useState<string | null>(null);
+  const [units, setUnits] = useState<Unit[]>(() => hangarData.units);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerSlotContext, setDrawerSlotContext] = useState<{ parentId: string; slotName: string } | null>(null);
 
   useEffect(() => {
     writeStorageValue(STORE_KEYS.theme, theme);
@@ -153,14 +164,53 @@ export function HangarProvider({ children }: { children: ReactNode }) {
     writeStorageValue(STORE_KEYS.lensMissionId, lensMissionId);
   }, [lensMissionId]);
 
+  const updateSlot = (parentId: string, slotName: string, unitId: string | null) => {
+    setUnits((prevUnits) =>
+      prevUnits.map((u) => {
+        if (u.id === parentId) {
+          const updatedLoadout = u.loadout?.map((s) => {
+            if (s.slot === slotName) {
+              return { ...s, filledBy: unitId };
+            }
+            return s;
+          });
+          return { ...u, loadout: updatedLoadout };
+        }
+        if (unitId !== null && u.loadout) {
+          const hasUnit = u.loadout.some((s) => s.filledBy === unitId);
+          if (hasUnit) {
+            const updatedLoadout = u.loadout.map((s) => {
+              if (s.filledBy === unitId) {
+                return { ...s, filledBy: null };
+              }
+              return s;
+            });
+            return { ...u, loadout: updatedLoadout };
+          }
+        }
+        return u;
+      })
+    );
+  };
+
+  const openDrawer = (parentId: string, slotName: string) => {
+    setDrawerSlotContext({ parentId, slotName });
+    setDrawerOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+    setDrawerSlotContext(null);
+  };
+
   const value = useMemo<HangarStore>(() => {
-    const data = hangarData;
+    const data = { ...hangarData, units };
     const byId = <T extends { id: string }>(arr: T[]) => {
       const m = new Map<string, T>();
       arr.forEach((x) => m.set(x.id, x));
       return m;
     };
-    const units = byId(data.units);
+    const unitsMap = byId(units);
     const missions = byId(data.missions);
     const caps = byId(data.capabilities);
     const insights = byId(data.insights);
@@ -169,6 +219,7 @@ export function HangarProvider({ children }: { children: ReactNode }) {
 
     return {
       data,
+      units,
       theme,
       setTheme,
       lensMissionId,
@@ -177,15 +228,20 @@ export function HangarProvider({ children }: { children: ReactNode }) {
       setSource,
       spotlightId,
       setSpotlightId,
-      unit: (id) => units.get(id),
+      unit: (id) => unitsMap.get(id),
       mission: (id) => missions.get(id),
       capability: (id) => caps.get(id),
       insight: (id) => insights.get(id),
       wish: (id) => wishes.get(id),
       bay: (id) => bays.get(id),
-      unitsByBay: (bayId) => data.units.filter((u) => u.bay === bayId),
+      unitsByBay: (bayId) => units.filter((u) => u.bay === bayId),
+      updateSlot,
+      drawerOpen,
+      drawerSlotContext,
+      openDrawer,
+      closeDrawer,
     };
-  }, [theme, lensMissionId, source, spotlightId]);
+  }, [theme, lensMissionId, source, spotlightId, units, drawerOpen, drawerSlotContext]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
@@ -210,16 +266,16 @@ export function useCalculatedConstraints(missionId: string) {
       let liveValue = c.value;
       if (c.unit === 'W') {
         const selectedWatts = selectedWishes.reduce((sum, w) => sum + (w.power?.watts ?? 0), 0);
-        liveValue = Math.max(c.value, c.value + selectedWatts);
+        liveValue = c.value + selectedWatts;
       } else if (c.unit === 'g') {
         const selectedMass = selectedWishes.reduce((sum, w) => sum + (w.massGrams ?? 0), 0);
-        liveValue = Math.max(c.value, c.value + selectedMass);
+        liveValue = c.value + selectedMass;
       } else if (c.unit === '$') {
         const selectedCost = selectedWishes.reduce((sum, w) => {
           const p = source === 'us' ? w.price.us : w.price.import ?? w.price.us;
           return sum + (p ?? 0);
         }, 0);
-        liveValue = Math.max(c.value, selectedCost);
+        liveValue = c.value + selectedCost;
       }
       return { ...c, value: liveValue };
     });
