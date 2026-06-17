@@ -3,7 +3,7 @@ title: Deploy Alpha Plan
 date: 2026-06-13
 author: Patrick MacLyman
 status: queued
-last_confirmed: 2026-06-13
+last_confirmed: 2026-06-16
 ---
 
 # Deploy Alpha
@@ -16,29 +16,30 @@ Publish the stabilized alpha so the Hangar can be opened from a real URL and rev
 
 Queued. Alpha stabilization has already landed.
 
-## Investigate
+## Infrastructure
 
-- Start from current `main`; alpha stabilization has already landed.
-- Confirm the repo's current branch, remote, and uncommitted state.
-- Inspect `package.json`, `next.config.ts`, the App Router tree under `src/app`, and any existing deployment files.
-- Check whether GitHub Pages or Vercel is already configured in repo history or remote settings.
-- Default to Vercel if no clear hosting decision already exists.
+The Hangar deploys to the same single-node k3s cluster that hosts MooseGoose Studio — a Linux laptop exposed publicly via Cloudflare Tunnel. This matches the existing stack: Next.js standalone container, imported image tarball, k3s Deployment and Service, Cloudflare Tunnel ingress rule.
+
+Secrets managed via Doppler. No Vercel, no GitHub Pages.
 
 ## Implement
 
-- Configure the minimum deployment path for the chosen host:
-  - For Vercel, use the Next.js defaults unless a config file is required.
-  - For GitHub Pages, document the static export constraints and any Pages setting required before choosing it.
-- Preserve clean App Router deep-link behavior unless deployment testing proves a host-specific adjustment is required.
-- Avoid adding backend services, databases, auth, or containerized workflows.
-- Include the chosen host, build command, output directory, and deployment URL when known in the PR description.
+- Enable `output: 'standalone'` in `next.config.ts`.
+- Write a `Dockerfile` that builds the Next.js standalone output and copies `.next/standalone` + `.next/static` + `public/`.
+- Build the image on the k3s host machine (not icarus-laptop): `docker build -t hangar-web:v0.1.0 .`
+- Import into k3s: `docker save hangar-web:v0.1.0 | sudo k3s ctr images import -`
+- Write a k3s manifest (`k8s/hangar.yaml`) with Deployment, Service, and an Ingress or Cloudflare Tunnel route entry pointing to the service port.
+- Add the Hangar hostname to the Cloudflare Tunnel ingress config (same tunnel as MooseGoose).
+- Wire any required env vars through Doppler and a k3s Secret.
+- Preserve clean App Router deep-link behavior — standalone output handles this natively.
 
 ## Verify
 
 - Run `npm run lint`.
 - Run `npm run build`.
-- Preview the production build locally with `npm run start` when practical.
-- Check the deployed or previewed app routes:
+- Confirm `output: 'standalone'` produces `.next/standalone/`.
+- Smoke-test the running container locally before importing to k3s.
+- Check the deployed app routes:
   - Hub opens.
   - Mission detail opens.
   - Unit detail opens.
@@ -47,6 +48,6 @@ Queued. Alpha stabilization has already landed.
 
 ## Handoff
 
-- Commit deployment configuration and docs as a coherent chunk.
+- Commit `Dockerfile`, `k8s/hangar.yaml`, and updated `next.config.ts` as a coherent chunk.
 - Push the branch.
-- Open a ready, non-draft PR that includes the deployment URL or the exact remaining deployment step.
+- Open a ready, non-draft PR that includes the deployment URL or the exact remaining k3s step.

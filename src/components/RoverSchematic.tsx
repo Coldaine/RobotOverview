@@ -16,14 +16,13 @@ const RING: Record<'ok' | 'empty' | 'attention', string> = {
 };
 
 export function RoverSchematic() {
-  const { unit } = useHangar();
+  const { unit, theme } = useHangar();
   const beast = unit('beast');
   const hotspots = beast?.hotspots ?? [];
 
   const loadout = beast?.loadout ?? [];
 
   const [active, setActive] = useState<string | null>('lighting');
-  const [flavor, setFlavor] = useState<'blueprint' | 'solid' | 'abstract'>('blueprint');
   const sel = hotspots.find((h) => h.id === active) ?? null;
 
   const getStatus = (hid: string): 'ok' | 'empty' | 'attention' => {
@@ -67,8 +66,8 @@ export function RoverSchematic() {
               CORE-PRIME
             </text>
 
-            {/* chassis body flavors */}
-            {flavor === 'blueprint' && (
+            {/* chassis body — rendered per active theme */}
+            {theme === 'blueprint' && (
               <g stroke="var(--color-rim)" strokeWidth="0.4" fill="var(--color-panel)">
                 <rect x="22" y="72" width="56" height="14" rx="3" fill="var(--color-void)" />
                 <rect x="24" y="74" width="52" height="10" rx="2" fill="var(--color-hull)" stroke="var(--color-cyan)" strokeOpacity="0.25" />
@@ -88,7 +87,7 @@ export function RoverSchematic() {
               </g>
             )}
 
-            {flavor === 'solid' && (
+            {theme === 'industrial' && (
               <g stroke="none" fill="var(--color-panel)">
                 <rect x="22" y="72" width="56" height="14" rx="3" fill="#111" />
                 <rect x="24" y="74" width="52" height="10" rx="2" fill="#222" />
@@ -108,7 +107,7 @@ export function RoverSchematic() {
               </g>
             )}
 
-            {flavor === 'abstract' && (
+            {theme === 'topology' && (
               <g stroke="var(--color-cyan)" strokeWidth="0.2" fill="none" opacity="0.6">
                 {/* Structural connection lines between hotspots */}
                 <path d="M 30 19 L 50 54 L 50 79 M 50 54 L 40 48 M 50 54 L 64 40" strokeDasharray="1 1.5" />
@@ -145,23 +144,7 @@ export function RoverSchematic() {
 
         {/* readout panel */}
         <div className="flex min-w-0 flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-cyan/70">Exploded View</div>
-            <div className="flex gap-1.5">
-              {(['blueprint', 'solid', 'abstract'] as const).map(f => (
-                <button
-                  key={f}
-                  onClick={() => setFlavor(f)}
-                  className={clsx(
-                    "px-1.5 py-0.5 font-mono text-[9px] uppercase border rounded transition-colors",
-                    flavor === f ? "border-cyan/50 text-cyan bg-cyan/10" : "border-rim/50 text-ink-dim hover:text-ink hover:border-rim"
-                  )}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-          </div>
+          <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-cyan/70">Exploded View</div>
           <div className="grid grid-cols-2 gap-1.5">
             {hotspots.map((h) => {
               const status = getStatus(h.id);

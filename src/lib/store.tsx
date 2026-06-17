@@ -21,10 +21,27 @@ const SELECTED_STATUS_PRIORITY: Partial<Record<WishlistItem['status'], number>> 
 const STORE_KEYS = {
   source: 'hangar:source',
   lensMissionId: 'hangar:lensMissionId',
+  theme: 'hangar:theme',
 } as const;
 const SOURCES = ['us', 'import'] as const;
+const THEMES = ['blueprint', 'industrial', 'topology'] as const;
+export type ThemeMode = (typeof THEMES)[number];
 
 type SourcePreference = (typeof SOURCES)[number];
+
+function isThemeMode(value: string | null): value is ThemeMode {
+  return THEMES.some((t) => t === value);
+}
+
+function readStoredTheme(): ThemeMode {
+  if (typeof window === 'undefined') return 'blueprint';
+  try {
+    const stored = window.localStorage.getItem(STORE_KEYS.theme);
+    return isThemeMode(stored) ? stored : 'blueprint';
+  } catch {
+    return 'blueprint';
+  }
+}
 
 function isSourcePreference(value: string | null): value is SourcePreference {
   return SOURCES.some((source) => source === value);
@@ -91,6 +108,9 @@ function selectedMissionWishes(wishes: WishlistItem[]): WishlistItem[] {
 
 interface HangarStore {
   data: HangarData;
+  // Active UI theme
+  theme: ThemeMode;
+  setTheme: (theme: ThemeMode) => void;
   // Mission lens — when set, the hub spotlights the mission's requisitioned units.
   lensMissionId: string | null;
   setLensMissionId: (id: string | null) => void;
@@ -113,9 +133,17 @@ interface HangarStore {
 const Ctx = createContext<HangarStore | null>(null);
 
 export function HangarProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<ThemeMode>(() => readStoredTheme());
   const [lensMissionId, setLensMissionId] = useState<string | null>(() => readStoredLensMissionId());
   const [source, setSource] = useState<SourcePreference>(() => readStoredSource());
   const [spotlightId, setSpotlightId] = useState<string | null>(null);
+
+  useEffect(() => {
+    writeStorageValue(STORE_KEYS.theme, theme);
+    const body = document.body;
+    THEMES.forEach((t) => body.classList.remove(`theme-${t}`));
+    body.classList.add(`theme-${theme}`);
+  }, [theme]);
 
   useEffect(() => {
     writeStorageValue(STORE_KEYS.source, source);
@@ -141,6 +169,8 @@ export function HangarProvider({ children }: { children: ReactNode }) {
 
     return {
       data,
+      theme,
+      setTheme,
       lensMissionId,
       setLensMissionId,
       source,
@@ -155,7 +185,7 @@ export function HangarProvider({ children }: { children: ReactNode }) {
       bay: (id) => bays.get(id),
       unitsByBay: (bayId) => data.units.filter((u) => u.bay === bayId),
     };
-  }, [lensMissionId, source, spotlightId]);
+  }, [theme, lensMissionId, source, spotlightId]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
