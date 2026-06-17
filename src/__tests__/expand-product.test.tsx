@@ -121,4 +121,42 @@ describe('addLocalInsight() / removeLocalInsight()', () => {
     const second = renderHook(() => useHangar(), { wrapper });
     expect(second.result.current.insights.some((i) => i.title === 'Persisted')).toBe(true);
   });
+
+  it('dedupes tags so a "dust, dust" entry yields one tag', () => {
+    const { result } = renderHook(() => useHangar(), { wrapper });
+    act(() => result.current.addLocalInsight({ title: 'Dust', body: 'b', tags: ['dust', 'dust', 'haze'] }));
+    const added = result.current.insights.find((i) => i.title === 'Dust')!;
+    expect(added.tags).toEqual(['dust', 'haze']);
+  });
+});
+
+// ─── defensive localStorage parsing (review hardening) ───────────────────────
+
+describe('corrupt-localStorage resilience', () => {
+  it('ignores non-boolean nested objective overrides instead of crashing', () => {
+    // a primitive nested value would make `index in overrides` throw
+    localStorage.setItem('hangar:objectives', JSON.stringify({ 'perimeter-mapping': 5, undercroft: { 0: 'yes' } }));
+    const { result } = renderHook(() => useHangar(), { wrapper });
+    const spine = hangarData.missions.find((m) => m.id === 'perimeter-mapping')!;
+    // falls back to spine values, no throw
+    expect(result.current.missionObjectives('perimeter-mapping').map((o) => o.done)).toEqual(
+      spine.objectives.map((o) => o.done),
+    );
+    // the non-boolean 'yes' is dropped, so undercroft objective 0 keeps its spine value
+    const undercroftSpine = hangarData.missions.find((m) => m.id === 'undercroft')!;
+    expect(result.current.missionObjectives('undercroft')[0].done).toBe(undercroftSpine.objectives[0].done);
+  });
+
+  it('normalizes a stored local insight with a non-array tags field (no crash)', () => {
+    localStorage.setItem(
+      'hangar:localInsights',
+      JSON.stringify([{ id: 'local-bad', title: 'Bad', body: 'corrupt', tags: 'not-an-array' }]),
+    );
+    const { result } = renderHook(() => useHangar(), { wrapper });
+    const recovered = result.current.insight('local-bad');
+    expect(recovered).toBeDefined();
+    expect(Array.isArray(recovered!.tags)).toBe(true);
+    expect(recovered!.tags).toEqual([]);
+    expect(recovered!.confidence).toBe('medium');
+  });
 });

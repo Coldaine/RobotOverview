@@ -104,9 +104,20 @@ function readStoredObjectives(): ObjectiveOverrides {
     const raw = window.localStorage.getItem(STORE_KEYS.objectives);
     if (!raw) return {};
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-      ? (parsed as ObjectiveOverrides)
-      : {};
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return {};
+    // Validate the nested shape (missionId -> index -> boolean). A primitive nested
+    // value would make `index in overrides` throw and corrupt the done flags.
+    const out: ObjectiveOverrides = {};
+    for (const [missionId, idxMap] of Object.entries(parsed as Record<string, unknown>)) {
+      if (!idxMap || typeof idxMap !== 'object' || Array.isArray(idxMap)) continue;
+      const inner: Record<number, boolean> = {};
+      for (const [idx, done] of Object.entries(idxMap as Record<string, unknown>)) {
+        const n = Number(idx);
+        if (Number.isInteger(n) && typeof done === 'boolean') inner[n] = done;
+      }
+      if (Object.keys(inner).length > 0) out[missionId] = inner;
+    }
+    return out;
   } catch {
     return {};
   }
@@ -138,11 +149,29 @@ function readStoredLocalInsights(): Insight[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    // Keep only well-formed records so a corrupt entry can't break the Codex.
-    return parsed.filter(
-      (x): x is Insight =>
-        x && typeof x.id === 'string' && typeof x.title === 'string' && typeof x.body === 'string',
-    );
+    // Keep only records with the required string identity, then NORMALIZE the rest of
+    // the Insight shape — Codex calls ins.tags.join()/.map(), so a missing/non-array
+    // `tags` (or bad confidence/capturedAt) would crash rendering.
+    return parsed
+      .filter(
+        (x): x is Record<string, unknown> =>
+          Boolean(x) && typeof x === 'object' &&
+          typeof (x as Record<string, unknown>).id === 'string' &&
+          typeof (x as Record<string, unknown>).title === 'string' &&
+          typeof (x as Record<string, unknown>).body === 'string',
+      )
+      .map((x): Insight => {
+        const conf = x.confidence;
+        return {
+          id: x.id as string,
+          title: x.title as string,
+          body: x.body as string,
+          tags: Array.isArray(x.tags) ? (x.tags as unknown[]).filter((t): t is string => typeof t === 'string') : [],
+          bay: typeof x.bay === 'string' ? (x.bay as BayId) : undefined,
+          confidence: conf === 'high' || conf === 'medium' || conf === 'low' ? conf : 'medium',
+          capturedAt: typeof x.capturedAt === 'string' ? x.capturedAt : '',
+        };
+      });
   } catch {
     return [];
   }
@@ -280,7 +309,8 @@ export function HangarProvider({ children }: { children: ReactNode }) {
       id: `${LOCAL_INSIGHT_PREFIX}${rand}`,
       title,
       body,
-      tags: input.tags?.map((t) => t.trim()).filter(Boolean) ?? [],
+      // dedupe so a "dust, dust" entry can't yield duplicate React keys in the tag list
+      tags: [...new Set(input.tags?.map((t) => t.trim()).filter(Boolean) ?? [])],
       bay: input.bay,
       confidence: input.confidence ?? 'medium',
       capturedAt: new Date().toISOString(),

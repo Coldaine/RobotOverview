@@ -63,8 +63,10 @@ export default function Quartermaster() {
 
   function stepStatus(w: WishlistItem, dir: 1 | -1) {
     const idx = ACQ_ORDER.indexOf(w.status);
-    const base = idx === -1 ? 0 : idx;
-    const next = Math.min(ACQ_ORDER.length - 1, Math.max(0, base + dir));
+    // Out-of-band statuses (e.g. 'rejected') are not part of the pipeline — don't let
+    // a stepper click silently reactivate them.
+    if (idx === -1) return;
+    const next = Math.min(ACQ_ORDER.length - 1, Math.max(0, idx + dir));
     setWishlistStatus(w.id, ACQ_ORDER[next]);
   }
 
@@ -136,6 +138,7 @@ export default function Quartermaster() {
       <div className="space-y-3">
         {wishlist.map((w, i) => {
           const st = WSTATUS[w.status];
+          const steppable = ACQ_ORDER.indexOf(w.status) !== -1;
           const us = w.price.us;
           const imp = w.price.import;
           const active = source === 'us' ? us : imp ?? us;
@@ -162,7 +165,8 @@ export default function Quartermaster() {
                         type="button"
                         aria-label={`Move ${w.name} back a stage`}
                         onClick={() => stepStatus(w, -1)}
-                        className="grid h-5 w-5 place-items-center rounded border border-rim/60 bg-panel-2/40 text-ink-dim hover:border-cyan/40 hover:text-cyan cursor-pointer"
+                        disabled={!steppable}
+                        className="grid h-5 w-5 place-items-center rounded border border-rim/60 bg-panel-2/40 text-ink-dim hover:border-cyan/40 hover:text-cyan cursor-pointer disabled:cursor-not-allowed disabled:opacity-30"
                       >
                         <ChevronLeft className="h-3 w-3" />
                       </button>
@@ -171,7 +175,8 @@ export default function Quartermaster() {
                         type="button"
                         aria-label={`Advance ${w.name} a stage`}
                         onClick={() => stepStatus(w, 1)}
-                        className="grid h-5 w-5 place-items-center rounded border border-rim/60 bg-panel-2/40 text-ink-dim hover:border-amber/40 hover:text-amber cursor-pointer"
+                        disabled={!steppable}
+                        className="grid h-5 w-5 place-items-center rounded border border-rim/60 bg-panel-2/40 text-ink-dim hover:border-amber/40 hover:text-amber cursor-pointer disabled:cursor-not-allowed disabled:opacity-30"
                       >
                         <ChevronRight className="h-3 w-3" />
                       </button>
