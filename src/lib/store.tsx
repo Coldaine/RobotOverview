@@ -3,11 +3,13 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { hangarData } from '../data/hangar';
 import type {
   Bay,
+  BayId,
   Capability,
   HangarData,
   Insight,
   InventoryItem,
   Mission,
+  MissionObjective,
   Unit,
   WishlistItem,
 } from '../data/types';
@@ -23,8 +25,32 @@ const STORE_KEYS = {
   source: 'hangar:source',
   lensMissionId: 'hangar:lensMissionId',
   theme: 'hangar:theme',
+  objectives: 'hangar:objectives',
+  wishStatus: 'hangar:wishStatus',
+  localInsights: 'hangar:localInsights',
 } as const;
+export const LOCAL_INSIGHT_PREFIX = 'local-';
 const SOURCES = ['us', 'import'] as const;
+const WISHLIST_STATUSES: WishlistItem['status'][] = [
+  'watching',
+  'researching',
+  'planned',
+  'buy-next',
+  'on-order',
+  'received',
+  'rejected',
+];
+export type WishlistStatus = WishlistItem['status'];
+// User overrides layered over the static spine — keep hangarData immutable.
+type ObjectiveOverrides = Record<string, Record<number, boolean>>; // missionId -> objIdx -> done
+type WishStatusOverrides = Record<string, WishlistStatus>; // wishlist id -> status
+export interface NewInsightInput {
+  title: string;
+  body: string;
+  bay?: BayId;
+  tags?: string[];
+  confidence?: Insight['confidence'];
+}
 const THEMES = ['blueprint', 'industrial', 'topology'] as const;
 export type ThemeMode = (typeof THEMES)[number];
 
@@ -69,6 +95,54 @@ function readStoredLensMissionId(): string | null {
     return hangarData.missions.some((mission) => mission.id === storedMissionId) ? storedMissionId : null;
   } catch {
     return null;
+  }
+}
+
+function readStoredObjectives(): ObjectiveOverrides {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = window.localStorage.getItem(STORE_KEYS.objectives);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? (parsed as ObjectiveOverrides) : {};
+  } catch {
+    return {};
+  }
+}
+
+function readStoredWishStatus(): WishStatusOverrides {
+  if (typeof window === 'undefined') return {};
+  try {
+    const raw = window.localStorage.getItem(STORE_KEYS.wishStatus);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return {};
+    const out: WishStatusOverrides = {};
+    for (const [id, status] of Object.entries(parsed as Record<string, unknown>)) {
+      if (typeof status === 'string' && WISHLIST_STATUSES.includes(status as WishlistStatus)) {
+        out[id] = status as WishlistStatus;
+      }
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+function readStoredLocalInsights(): Insight[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(STORE_KEYS.localInsights);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    // Keep only well-formed records so a corrupt entry can't break the Codex.
+    return parsed.filter(
+      (x): x is Insight =>
+        x && typeof x.id === 'string' && typeof x.title === 'string' && typeof x.body === 'string',
+    );
+  } catch {
+    return [];
   }
 }
 
@@ -129,9 +203,18 @@ interface HangarStore {
   mission: (id: string) => Mission | undefined;
   capability: (id: string) => Capability | undefined;
   insight: (id: string) => Insight | undefined;
+  // combined spine + locally-authored insights (the LLM-populate / curate loop)
+  insights: Insight[];
+  addLocalInsight: (input: NewInsightInput) => void;
+  removeLocalInsight: (id: string) => void;
   wish: (id: string) => WishlistItem | undefined;
   bay: (id: string) => Bay | undefined;
   unitsByBay: (bayId: string) => Unit[];
+  // mission objective progress (local, reversible overrides over the spine)
+  missionObjectives: (missionId: string) => MissionObjective[];
+  toggleObjective: (missionId: string, idx: number) => void;
+  // wishlist acquisition status (local, reversible overrides over the spine)
+  setWishlistStatus: (id: string, status: WishlistStatus) => void;
   // slot management
   updateSlot: (parentId: string, slotName: string, unitId: string | null) => void;
   // drawer state
@@ -149,6 +232,9 @@ export function HangarProvider({ children }: { children: ReactNode }) {
   const [source, setSource] = useState<SourcePreference>(() => readStoredSource());
   const [spotlightId, setSpotlightId] = useState<string | null>(null);
   const [units, setUnits] = useState<Unit[]>(() => hangarData.units);
+  const [objectiveOverrides, setObjectiveOverrides] = useState<ObjectiveOverrides>(() => readStoredObjectives());
+  const [wishStatusOverrides, setWishStatusOverrides] = useState<WishStatusOverrides>(() => readStoredWishStatus());
+  const [localInsights, setLocalInsights] = useState<Insight[]>(() => readStoredLocalInsights());
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerSlotContext, setDrawerSlotContext] = useState<{ parentId: string; slotName: string } | null>(null);
 
@@ -166,6 +252,54 @@ export function HangarProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     writeStorageValue(STORE_KEYS.lensMissionId, lensMissionId);
   }, [lensMissionId]);
+
+  useEffect(() => {
+    writeStorageValue(STORE_KEYS.objectives, JSON.stringify(objectiveOverrides));
+  }, [objectiveOverrides]);
+
+  useEffect(() => {
+    writeStorageValue(STORE_KEYS.wishStatus, JSON.stringify(wishStatusOverrides));
+  }, [wishStatusOverrides]);
+
+  useEffect(() => {
+    writeStorageValue(STORE_KEYS.localInsights, JSON.stringify(localInsights));
+  }, [localInsights]);
+
+  const addLocalInsight = (input: NewInsightInput) => {
+    const title = input.title.trim();
+    const body = input.body.trim();
+    if (!title || !body) return; // ignore empty drafts
+    const stamp = typeof performance !== 'undefined' ? Math.round(performance.now()) : 0;
+    const insight: Insight = {
+      id: `${LOCAL_INSIGHT_PREFIX}${Date.now()}-${stamp}`,
+      title,
+      body,
+      tags: input.tags?.map((t) => t.trim()).filter(Boolean) ?? [],
+      bay: input.bay,
+      confidence: input.confidence ?? 'medium',
+      capturedAt: new Date().toISOString(),
+    };
+    setLocalInsights((prev) => [insight, ...prev]);
+  };
+
+  const removeLocalInsight = (id: string) => {
+    setLocalInsights((prev) => prev.filter((ins) => ins.id !== id));
+  };
+
+  const toggleObjective = (missionId: string, idx: number) => {
+    setObjectiveOverrides((prev) => {
+      const base = hangarData.missions.find((m) => m.id === missionId)?.objectives[idx]?.done ?? false;
+      const current = prev[missionId]?.[idx] ?? base;
+      return {
+        ...prev,
+        [missionId]: { ...(prev[missionId] ?? {}), [idx]: !current },
+      };
+    });
+  };
+
+  const setWishlistStatus = (id: string, status: WishlistStatus) => {
+    setWishStatusOverrides((prev) => ({ ...prev, [id]: status }));
+  };
 
   const updateSlot = (parentId: string, slotName: string, unitId: string | null) => {
     setUnits((prevUnits) =>
@@ -217,7 +351,8 @@ export function HangarProvider({ children }: { children: ReactNode }) {
     const itemsMap = byId(data.items);
     const missions = byId(data.missions);
     const caps = byId(data.capabilities);
-    const insights = byId(data.insights);
+    const allInsights = [...data.insights, ...localInsights];
+    const insights = byId(allInsights);
     const wishes = byId(data.wishlist);
     const bays = byId(data.bays);
 
@@ -238,16 +373,33 @@ export function HangarProvider({ children }: { children: ReactNode }) {
       mission: (id) => missions.get(id),
       capability: (id) => caps.get(id),
       insight: (id) => insights.get(id),
-      wish: (id) => wishes.get(id),
+      insights: allInsights,
+      addLocalInsight,
+      removeLocalInsight,
+      wish: (id) => {
+        const w = wishes.get(id);
+        if (!w) return undefined;
+        const override = wishStatusOverrides[id];
+        return override && override !== w.status ? { ...w, status: override } : w;
+      },
       bay: (id) => bays.get(id),
       unitsByBay: (bayId) => units.filter((u) => u.bay === bayId),
+      missionObjectives: (missionId) => {
+        const m = missions.get(missionId);
+        if (!m) return [];
+        const overrides = objectiveOverrides[missionId];
+        if (!overrides) return m.objectives;
+        return m.objectives.map((o, i) => (i in overrides ? { ...o, done: overrides[i] } : o));
+      },
+      toggleObjective,
+      setWishlistStatus,
       updateSlot,
       drawerOpen,
       drawerSlotContext,
       openDrawer,
       closeDrawer,
     };
-  }, [theme, lensMissionId, source, spotlightId, units, drawerOpen, drawerSlotContext]);
+  }, [theme, lensMissionId, source, spotlightId, units, objectiveOverrides, wishStatusOverrides, localInsights, drawerOpen, drawerSlotContext]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

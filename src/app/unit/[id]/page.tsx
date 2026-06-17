@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Target } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Radio, Target } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { RoverSchematic } from '@/components/RoverSchematic';
@@ -50,6 +50,14 @@ export default function UnitDetail() {
             <StatusBadge status={u.status} />
             <ProvenanceTag provenance={u.provenance} />
             <span className="chip border-rim bg-panel-2/40 text-ink-dim">{LIFECYCLE_META[u.lifecycle].label}</span>
+            {u.monitoredVia && (
+              <span
+                className="chip border-cyan/30 bg-cyan/5 text-cyan"
+                title="Catalog reference only — the Hangar does not control this system."
+              >
+                <Radio className="h-3 w-3" /> {u.monitoredVia} · ref
+              </span>
+            )}
           </div>
         </div>
       </header>

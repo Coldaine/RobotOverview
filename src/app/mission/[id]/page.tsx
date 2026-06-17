@@ -24,7 +24,7 @@ const WSTATUS: Record<WishlistItem['status'], { label: string; cls: string }> = 
 export default function MissionView() {
   const params = useParams();
   const id = params?.id as string | undefined;
-  const { mission, unit, wish, insight, setLensMissionId } = useHangar();
+  const { mission, unit, wish, insight, setLensMissionId, missionObjectives, toggleObjective } = useHangar();
   const m = id ? mission(id) : undefined;
 
   const constraints = useCalculatedConstraints(id || '');
@@ -42,6 +42,8 @@ export default function MissionView() {
   const wishes = m.wishlist.map(wish).filter(Boolean);
   const insights = (m.insights ?? []).map(insight).filter(Boolean);
   const ms = MISSION_STATUS_META[m.status];
+  const objectives = missionObjectives(m.id);
+  const doneCount = objectives.filter((o) => o.done).length;
 
   return (
     <div className="space-y-6">
@@ -85,15 +87,25 @@ export default function MissionView() {
         <div className="space-y-6">
           {/* objectives */}
           <section>
-            <SectionTitle code="OBJ">Objectives</SectionTitle>
+            <SectionTitle code="OBJ">
+              <span className="inline-flex items-center gap-2">
+                Objectives
+                <span className="font-mono text-[10px] tabular-nums text-ink-dim">
+                  {doneCount}/{objectives.length}
+                </span>
+              </span>
+            </SectionTitle>
             <div className="space-y-2">
-              {m.objectives.map((o, i) => (
-                <motion.div
+              {objectives.map((o, i) => (
+                <motion.button
+                  type="button"
                   key={o.text}
+                  onClick={() => toggleObjective(m.id, i)}
+                  aria-pressed={o.done}
                   initial={{ opacity: 0, x: -6 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="flex items-center gap-3 rounded-md border border-rim/60 bg-panel-2/30 px-3 py-2.5"
+                  className="flex w-full items-center gap-3 rounded-md border border-rim/60 bg-panel-2/30 px-3 py-2.5 text-left transition-colors hover:border-signal-ok/40 hover:bg-panel-2/50 cursor-pointer"
                 >
                   {o.done ? (
                     <CheckCircle2 className="h-4 w-4 shrink-0 text-signal-ok" />
@@ -101,7 +113,7 @@ export default function MissionView() {
                     <Circle className="h-4 w-4 shrink-0 text-ink-dim" />
                   )}
                   <span className={clsx('font-mono text-[11px]', o.done ? 'text-ink-dim line-through' : 'text-ink')}>{o.text}</span>
-                </motion.div>
+                </motion.button>
               ))}
             </div>
           </section>

@@ -438,6 +438,7 @@ export const hangarData: HangarData = {
       power: { watts: 33, rail: 'mains' },
       capabilities: ['gpu-offload'],
       tags: ['unifi', 'gateway', 'homelab'],
+      monitoredVia: 'Home Assistant',
       acquired: 'owned',
     },
     {
@@ -470,6 +471,7 @@ export const hangarData: HangarData = {
       summary: 'PTZ camera coverage across the property — eyes for the base, distinct from on-rover sensing.',
       specs: [{ label: 'Type', value: 'G6 PTZ' }],
       tags: ['unifi', 'camera', 'ptz'],
+      monitoredVia: 'Home Assistant',
       acquired: 'owned',
     },
 

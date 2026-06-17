@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { HangarProvider } from '@/lib/store';
 import { hangarData } from '@/data/hangar';
 import { ITEM_STATUS_META } from '@/lib/format';
