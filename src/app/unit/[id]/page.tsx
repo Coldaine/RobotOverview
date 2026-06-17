@@ -110,7 +110,7 @@ export default function UnitDetail() {
                         <div key={groupName}>
                           {groupName !== 'Uncategorized' && (
                             <div className="col-span-4 font-mono text-[9px] uppercase tracking-widest text-cyan/50 pt-2 pb-1">
-                              // {groupName}
+                              {`// ${groupName}`}
                             </div>
                           )}
                           {slots.map((slot) => {
