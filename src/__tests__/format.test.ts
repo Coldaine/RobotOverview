@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { money, timeAgo, STATUS_META, LIFECYCLE_META } from '@/lib/format';
-import type { UnitStatus, LifecycleState } from '@/data/types';
+import { money, timeAgo, STATUS_META, LIFECYCLE_META, ITEM_STATUS_META } from '@/lib/format';
+import type { UnitStatus, LifecycleState, InventoryItemStatus } from '@/data/types';
 
 describe('money()', () => {
   it('returns em-dash for null', () => expect(money(null)).toBe('—'));
@@ -66,5 +66,23 @@ describe('LIFECYCLE_META exhaustiveness', () => {
   it.each(ALL_LIFECYCLE_STATES)('has an entry for lifecycle "%s"', (state) => {
     expect(LIFECYCLE_META[state]).toBeDefined();
     expect(LIFECYCLE_META[state].label).toBeTruthy();
+  });
+});
+
+describe('ITEM_STATUS_META exhaustiveness', () => {
+  const ALL_ITEM_STATUSES: InventoryItemStatus[] = [
+    'owned',
+    'on-order',
+    'wishlist',
+    'researching',
+    'deployed',
+    'retired',
+    'rejected',
+  ];
+
+  it.each(ALL_ITEM_STATUSES)('has an entry for item status "%s"', (status) => {
+    expect(ITEM_STATUS_META[status]).toBeDefined();
+    expect(ITEM_STATUS_META[status].label).toBeTruthy();
+    expect(ITEM_STATUS_META[status].tone).toBeTruthy();
   });
 });

@@ -6,6 +6,7 @@ import {
   Cpu,
   Hexagon,
   Network,
+  Package,
   Radio,
   ScrollText,
   Target,
@@ -32,6 +33,7 @@ type NavStation = {
 const NAV: NavStation[] = [
   { to: '/', label: 'Hangar', code: 'HUB', icon: Boxes, end: true },
   { to: '/missions', label: 'Missions', code: 'MSN', icon: Target, activePrefixes: ['/mission'] },
+  { to: '/items', label: 'Items', code: 'INV', icon: Package },
   { to: '/quartermaster', label: 'Quartermaster', code: 'QM', icon: Hexagon },
   { to: '/tech-tree', label: 'Tech Tree', code: 'CAP', icon: Network },
   { to: '/codex', label: 'Codex', code: 'WIKI', icon: ScrollText },
