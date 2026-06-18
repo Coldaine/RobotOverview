@@ -33,7 +33,7 @@ jobs:
       image-digest: ${{ steps.build.outputs.digest }}
     steps:
       - name: Check out RobotOverview
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           persist-credentials: false
 
@@ -68,7 +68,7 @@ jobs:
 
       - name: Build image
         id: build
-        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
@@ -95,27 +95,28 @@ jobs:
     env:
       # Empty until BOTH GitHub App secrets are configured — lets the job no-op instead of
       # hard-failing (an id without a key would otherwise fail when minting the token).
-      APP_READY: ${{ secrets.GITOPS_APP_ID != '' && secrets.GITOPS_APP_KEY != '' }}
+      APP_READY: ${{ secrets.GITOPS_APP_CLIENT_ID != '' && secrets.GITOPS_APP_KEY != '' }}
       IMAGE_DIGEST: ${{ needs.image.outputs.image-digest }}
     steps:
       - name: Note if the GitOps App is not configured yet
         if: ${{ env.APP_READY != 'true' }}
         run: |
-          echo "::notice::Set GITOPS_APP_ID / GITOPS_APP_KEY (a GitHub App with contents:write on coldaine-k8cluster) to enable auto-deploy. Skipping."
+          echo "::notice::Set GITOPS_APP_CLIENT_ID / GITOPS_APP_KEY (a GitHub App with contents:write on coldaine-k8cluster) to enable auto-deploy. Skipping."
 
       - name: Mint a scoped GitHub App token for the GitOps repo
         id: app-token
         if: ${{ env.APP_READY == 'true' }}
-        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
         with:
-          app-id: ${{ secrets.GITOPS_APP_ID }}
+          # v3 deprecated app-id in favor of client-id (the App's Client ID).
+          client-id: ${{ secrets.GITOPS_APP_CLIENT_ID }}
           private-key: ${{ secrets.GITOPS_APP_KEY }}
           owner: Coldaine
           repositories: coldaine-k8cluster
 
       - name: Check out coldaine-k8cluster
         if: ${{ env.APP_READY == 'true' }}
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           repository: Coldaine/coldaine-k8cluster
           token: ${{ steps.app-token.outputs.token }}

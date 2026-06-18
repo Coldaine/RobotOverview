@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RobotOverview · Auto-Deploy — A Horizontal Story</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --panel: #11161f;
+    --panel2: #0d1219;
+    --rim: rgba(120,140,170,.18);
+    --ink: #e6edf3;
+    --ink-dim: #93a1b3;
+    --cyan: #36e0e0;
+    --amber: #f5b133;
+    --ok: #46d39a;
+    --crit: #ff5d5d;
+    --violet: #8b7fd6;
+    --mono: ui-monospace, 'JetBrains Mono', Menlo, monospace;
+    --sans: system-ui, 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  /* blueprint grid texture */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(rgba(54,224,224,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(54,224,224,.035) 1px, transparent 1px),
+      linear-gradient(rgba(54,224,224,.016) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(54,224,224,.016) 1px, transparent 1px);
+    background-size: 132px 132px, 132px 132px, 22px 22px, 22px 22px;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(circle at 14% 16%, rgba(54,224,224,.10), transparent 42%),
+      radial-gradient(circle at 88% 84%, rgba(245,177,51,.08), transparent 46%),
+      radial-gradient(circle at 60% 50%, rgba(139,127,214,.05), transparent 55%);
+  }
+
+  /* ---------- HUD chrome ---------- */
+  #hud {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 50;
+    padding: 14px 20px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(0deg, rgba(10,14,20,.92), rgba(10,14,20,0));
+    pointer-events: none;
+  }
+  #hud > * { pointer-events: auto; }
+
+  .ctrl {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .06em;
+    color: var(--ink);
+    background: rgba(17,22,31,.85);
+    border: 1px solid var(--rim);
+    border-radius: 9px;
+    padding: 9px 14px;
+    cursor: pointer;
+    backdrop-filter: blur(7px);
+    transition: border-color .15s, color .15s, background .15s, box-shadow .15s;
+    white-space: nowrap;
+  }
+  .ctrl:hover:not(:disabled) {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 14px rgba(54,224,224,.18);
+  }
+  .ctrl:focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+  }
+  .ctrl:disabled { opacity: .35; cursor: default; }
+
+  #playBtn {
+    border-color: rgba(54,224,224,.55);
+    color: var(--cyan);
+    font-weight: 600;
+    min-width: 120px;
+  }
+  #playBtn.playing {
+    border-color: var(--amber);
+    color: var(--amber);
+    box-shadow: 0 0 16px rgba(245,177,51,.22);
+  }
+
+  /* progress bar (horizontal travel) */
+  #progressWrap {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(120,140,170,.12);
+    border: 1px solid var(--rim);
+    overflow: hidden;
+    position: relative;
+    min-width: 80px;
+  }
+  #progress {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--cyan), var(--amber));
+    box-shadow: 0 0 12px rgba(54,224,224,.5);
+    transition: width .35s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* dots */
+  #dots { display: flex; gap: 8px; flex-wrap: nowrap; }
+  .dot {
+    width: 10px; height: 10px; padding: 0;
+    border-radius: 50%;
+    border: 1px solid var(--rim);
+    background: rgba(120,140,170,.18);
+    cursor: pointer;
+    transition: background .2s, transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .dot:hover { border-color: var(--cyan); }
+  .dot:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  .dot.active {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    transform: scale(1.25);
+    box-shadow: 0 0 10px rgba(54,224,224,.6);
+  }
+
+  #counter {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .08em;
+    color: var(--ink-dim);
+    white-space: nowrap;
+  }
+  #counter b { color: var(--cyan); }
+
+  /* top label strip */
+  #brand {
+    position: fixed;
+    top: 14px; left: 20px;
+    z-index: 50;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    display: flex; align-items: center; gap: 9px;
+  }
+  #brand .pip {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--ok);
+    box-shadow: 0 0 10px var(--ok);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+  #hint {
+    position: fixed;
+    top: 14px; right: 20px;
+    z-index: 50;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    color: var(--ink-dim);
+    background: rgba(13,18,25,.7);
+    border: 1px solid var(--rim);
+    border-radius: 999px;
+    padding: 5px 12px;
+    backdrop-filter: blur(6px);
+  }
+  #hint kbd {
+    font-family: var(--mono);
+    background: rgba(120,140,170,.16);
+    border: 1px solid var(--rim);
+    border-radius: 4px;
+    padding: 0 5px;
+    color: var(--ink);
+  }
+
+  /* ---------- horizontal track ---------- */
+  #track {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+  #track::-webkit-scrollbar { display: none; }
+
+  .panel {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 64px clamp(24px, 7vw, 120px) 96px;
+    position: relative;
+  }
+  .inner {
+    width: min(980px, 100%);
+    max-height: 100%;
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--rim) transparent;
+  }
+  .inner::-webkit-scrollbar { width: 8px; }
+  .inner::-webkit-scrollbar-thumb { background: var(--rim); border-radius: 8px; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow .num {
+    color: var(--bg);
+    background: var(--cyan);
+    border-radius: 5px;
+    padding: 1px 7px;
+    font-weight: 700;
+  }
+  .eyebrow.amber { color: var(--amber); } .eyebrow.amber .num { background: var(--amber); }
+  .eyebrow.crit  { color: var(--crit);  } .eyebrow.crit .num  { background: var(--crit); }
+  .eyebrow.ok    { color: var(--ok);    } .eyebrow.ok .num    { background: var(--ok); }
+  .eyebrow.violet{ color: var(--violet);} .eyebrow.violet .num{ background: var(--violet); }
+
+  h1 {
+    font-size: clamp(34px, 6vw, 68px);
+    line-height: 1.04;
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: 18px;
+  }
+  h1 .grad {
+    background: linear-gradient(100deg, var(--cyan), var(--amber));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  h2 {
+    font-size: clamp(26px, 3.6vw, 44px);
+    line-height: 1.1;
+    font-weight: 750;
+    letter-spacing: -.015em;
+    margin-bottom: 16px;
+  }
+  .lead { font-size: clamp(16px, 1.9vw, 21px); color: var(--ink-dim); max-width: 64ch; }
+  .lead strong { color: var(--ink); font-weight: 650; }
+  p + p { margin-top: 12px; }
+
+  code, .mono { font-family: var(--mono); }
+  .chip {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: rgba(54,224,224,.08);
+    border: 1px solid rgba(54,224,224,.28);
+    color: var(--cyan);
+    border-radius: 6px;
+    padding: 1px 6px;
+    white-space: nowrap;
+  }
+  .chip.amber { background: rgba(245,177,51,.08); border-color: rgba(245,177,51,.3); color: var(--amber); }
+  .chip.crit  { background: rgba(255,93,93,.08); border-color: rgba(255,93,93,.32); color: var(--crit); }
+  .chip.ok    { background: rgba(70,211,154,.08); border-color: rgba(70,211,154,.3); color: var(--ok); }
+
+  .panel-card {
+    background: linear-gradient(180deg, var(--panel), var(--panel2));
+    border: 1px solid var(--rim);
+    border-radius: 14px;
+    padding: 22px 24px;
+  }
+
+  /* reveal animation */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; }
+  .panel.active .reveal { opacity: 1; transform: none; }
+  .panel.active .reveal:nth-child(1){ transition-delay:.05s }
+  .panel.active .reveal:nth-child(2){ transition-delay:.16s }
+  .panel.active .reveal:nth-child(3){ transition-delay:.27s }
+  .panel.active .reveal:nth-child(4){ transition-delay:.38s }
+  .panel.active .reveal:nth-child(5){ transition-delay:.49s }
+  .panel.active .reveal:nth-child(6){ transition-delay:.6s }
+
+  /* generic layouts */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+  @media (max-width: 760px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+  }
+
+  ul.ticks { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 11px; }
+  ul.ticks li { position: relative; padding-left: 26px; color: var(--ink-dim); font-size: 15.5px; }
+  ul.ticks li::before {
+    content: "›"; position: absolute; left: 4px; top: -1px;
+    color: var(--cyan); font-family: var(--mono); font-weight: 700;
+  }
+  ul.ticks li strong { color: var(--ink); }
+  ul.ticks.crit li::before { color: var(--crit); content: "✕"; font-size: 12px; }
+  ul.ticks.ok li::before { color: var(--ok); content: "✓"; font-size: 13px; }
+
+  /* numbers / count-ups */
+  .num-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 880px){ .num-grid { grid-template-columns: 1fr 1fr; } }
+  .stat {
+    background: linear-gradient(180deg, var(--panel), var(--panel2));
+    border: 1px solid var(--rim);
+    border-radius: 14px;
+    padding: 22px 18px;
+    text-align: center;
+  }
+  .stat .big {
+    font-family: var(--mono);
+    font-size: clamp(32px, 4.4vw, 52px);
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(100deg, var(--cyan), var(--amber));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat .unit { font-family: var(--mono); font-size: 14px; color: var(--ink-dim); }
+  .stat .cap { margin-top: 9px; font-size: 13.5px; color: var(--ink-dim); }
+
+  /* code block */
+  pre.code {
+    background: var(--panel2);
+    border: 1px solid var(--rim);
+    border-radius: 12px;
+    padding: 16px 18px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  pre.code .c { color: var(--ink-dim); }
+  pre.code .k { color: var(--violet); }
+  pre.code .s { color: var(--ok); }
+  pre.code .a { color: var(--amber); }
+  pre.code .y { color: var(--cyan); }
+
+  .badge-steps { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+  .step {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--panel2);
+    border: 1px solid var(--rim);
+    border-radius: 11px;
+    padding: 14px 16px;
+  }
+  .step .n {
+    flex: 0 0 auto;
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    display: grid; place-items: center;
+    font-family: var(--mono); font-weight: 700; font-size: 13px;
+    background: rgba(139,127,214,.14);
+    border: 1px solid rgba(139,127,214,.4);
+    color: var(--violet);
+  }
+  .step .t { font-size: 15px; }
+  .step .t b { color: var(--ink); }
+  .step .t span { color: var(--ink-dim); }
+
+  /* SVG flow diagram */
+  .diagram-wrap { margin-top: 18px; }
+  svg .node-box { fill: var(--panel); stroke: var(--rim); }
+  svg .node-lbl { fill: var(--ink); font-family: var(--mono); font-size: 13px; font-weight: 600; }
+  svg .node-sub { fill: var(--ink-dim); font-family: var(--mono); font-size: 10.5px; }
+  svg .flow-path {
+    fill: none; stroke-width: 2;
+    stroke-dasharray: 7 7;
+  }
+  svg .flow-anim { animation: dash 1.1s linear infinite; }
+  @keyframes dash { to { stroke-dashoffset: -28; } }
+
+  /* draw-in for flow nodes */
+  .build-node { opacity: 0; transform: scale(.85); transform-box: fill-box; transform-origin: center; transition: opacity .5s ease, transform .5s ease; }
+  .panel.active .build-node { opacity: 1; transform: none; }
+  .panel.active .build-node:nth-of-type(1){transition-delay:.2s}
+  .panel.active .build-node:nth-of-type(2){transition-delay:.5s}
+  .panel.active .build-node:nth-of-type(3){transition-delay:.8s}
+  .panel.active .build-node:nth-of-type(4){transition-delay:1.1s}
+  .panel.active .build-node:nth-of-type(5){transition-delay:1.4s}
+  .panel.active .build-node:nth-of-type(6){transition-delay:1.7s}
+
+  .edge { stroke-dashoffset: 60; stroke-dasharray: 60; transition: stroke-dashoffset .6s ease; }
+  .panel.active .edge { stroke-dashoffset: 0; }
+  .panel.active .edge.e1{transition-delay:.4s}
+  .panel.active .edge.e2{transition-delay:.7s}
+  .panel.active .edge.e3{transition-delay:1.0s}
+  .panel.active .edge.e4{transition-delay:1.3s}
+  .panel.active .edge.e5{transition-delay:1.6s}
+
+  /* end card cta */
+  .endcard { text-align: center; }
+
+  /* reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    html, #track { scroll-behavior: auto; }
+    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .build-node { opacity: 1 !important; transform: none !important; transition: none !important; }
+    .edge { stroke-dashoffset: 0 !important; transition: none !important; }
+    svg .flow-anim { animation: none !important; }
+    #brand .pip { animation: none !important; }
+    #progress { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="brand"><span class="pip" aria-hidden="true"></span> RobotOverview · Delivery</div>
+<div id="hint" aria-hidden="true">Scroll → or <kbd>←</kbd> <kbd>→</kbd> · or hit Play</div>
+
+<main id="track" tabindex="0" aria-label="Auto-deploy pipeline horizontal story. Use left and right arrow keys to navigate.">
+
+  <!-- 1 · TITLE / HOOK -->
+  <section class="panel" aria-roledescription="panel" aria-label="Panel 1 of 9: Title">
+    <div class="inner">
+      <div class="eyebrow reveal"><span class="num">01</span> The pipeline, as a story</div>
+      <h1 class="reveal">Merge to <span class="grad">main</span>.<br/>It's live in <span class="grad">under 5 minutes.</span><br/>Zero hands.</h1>
+      <p class="lead reveal">A pull-based, hands-off continuous deployment pipeline for <strong>RobotOverview</strong> — Next.js 16.2 on a single-node k3s cluster called <span class="chip">bee-mini</span>. No manual <code>docker push</code>. No <code>kubectl apply</code>. No second PR.</p>
+      <p class="lead reveal" style="margin-top:16px">Scroll right (or press Play) to see how a mutable tag broke everything — and the one-line insight that fixed it.</p>
+    </div>
+  </section>
+
+  <!-- 2 · THE PROBLEM -->
+  <section class="panel" aria-roledescription="panel" aria-label="Panel 2 of 9: The Problem">
+    <div class="inner">
+      <div class="eyebrow crit reveal"><span class="num">02</span> The problem</div>
+      <h2 class="reveal">A mutable tag never redeploys.</h2>
+      <p class="lead reveal">The original setup pinned a mutable tag <span class="chip crit">:0.1.0</span> with <span class="chip crit">imagePullPolicy: IfNotPresent</span>. New code merged to <code>main</code>… and never reached the pod.</p>
+      <div class="grid2" style="margin-top:22px">
+        <div class="panel-card reveal">
+          <div class="mono" style="color:var(--crit);font-size:12px;letter-spacing:.1em">ARGO SEES NO CHANGE</div>
+          <p style="margin-top:8px;color:var(--ink-dim)">Argo CD reconciles git <strong style="color:var(--ink)">text</strong>. The tag <code>:0.1.0</code> never changes, so the manifest never changes — so Argo never triggers a rollout.</p>
+        </div>
+        <div class="panel-card reveal">
+          <div class="mono" style="color:var(--crit);font-size:12px;letter-spacing:.1em">NODE CACHES FOREVER</div>
+          <p style="margin-top:8px;color:var(--ink-dim)"><code>IfNotPresent</code> means the node keeps the <strong style="color:var(--ink)">first</strong> image it pulled. Even if it did roll, it would never re-pull the same tag.</p>
+        </div>
+      </div>
+      <ul class="ticks crit reveal">
+        <li>New code merged, but the live pod kept serving the old bits.</li>
+        <li>Two independent reasons stacked: unchanged git text + cached image.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 3 · THE INSIGHT -->
+  <section class="panel" aria-roledescription="panel" aria-label="Panel 3 of 9: The Insight">
+    <div class="inner">
+      <div class="eyebrow reveal"><span class="num">03</span> The insight</div>
+      <h2 class="reveal">Argo CD watches <span class="grad">git</span>, not the registry.</h2>
+      <p class="lead reveal">That's the whole key. Pushing a new image to GHCR is invisible to Argo. The only thing Argo reacts to is a change in the <strong>desired-state manifest</strong> sitting in the GitOps repo.</p>
+      <div class="panel-card reveal" style="margin-top:22px;border-color:rgba(54,224,224,.3)">
+        <p class="lead" style="color:var(--ink)">So "auto-deploy" reduces to one job:<br/><span class="grad" style="font-weight:700;font-size:1.15em">automatically change the image reference in git.</span></p>
+      </div>
+      <p class="lead reveal" style="margin-top:18px">Once a release writes a <em>new</em> reference into git, Argo's normal reconcile loop does the rest. No new in-cluster machinery required.</p>
+    </div>
+  </section>
+
+  <!-- 4 · THE FIX -->
+  <section class="panel" aria-roledescription="panel" aria-label="Panel 4 of 9: The Fix">
+    <div class="inner">
+      <div class="eyebrow ok reveal"><span class="num">04</span> The fix</div>
+      <h2 class="reveal">CI writes the digest into the GitOps repo.</h2>
+      <p class="lead reveal">The <strong>CI-writes-to-GitOps</strong> pattern — Argo CD's own documented CI flow. On merge to <code>main</code>, CI builds &amp; pushes the image, then commits the new <span class="chip ok">@sha256</span> digest directly into the GitOps repo's <code>main</code>.</p>
+      <ul class="ticks ok reveal">
+        <li><strong>Two repos.</strong> <code>Coldaine/RobotOverview</code> (app + CI) writes into <code>Coldaine/coldaine-k8cluster</code> (the state Argo watches).</li>
+        <li><strong>Bot commit, no PR.</strong> Committed as <code>robot-overview-delivery-bot</code> with <code>[skip ci]</code>.</li>
+        <li><strong>Immutable digest pin.</strong> A unique <code>@sha256</code> per release changes the manifest every time → guaranteed rollout, exact bits, rollback = <code>git revert</code>.</li>
+        <li><strong>Pull-only cluster.</strong> CI never reaches into <code>bee-mini</code>; the node only pulls git + images. No inbound path added.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5 · THE FLOW (diagram) -->
+  <section class="panel" aria-roledescription="panel" aria-label="Panel 5 of 9: The Flow">
+    <div class="inner">
+      <div class="eyebrow violet reveal"><span class="num">05</span> The flow</div>
+      <h2 class="reveal">Build → push → pin digest → commit → Argo → pod.</h2>
+      <div class="diagram-wrap reveal">
+        <svg viewBox="0 0 940 360" width="100%" role="img" aria-label="Flow diagram: GitHub Actions builds and pushes the image to GHCR, exposes the sha256 digest, the update-k8cluster job commits the digest into the coldaine-k8cluster GitOps repo, Argo CD polls git roughly every 3 minutes, detects the diff and syncs, and the Deployment rolls a new pod that pulls the pinned image and goes live.">
+          <defs>
+            <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="var(--cyan)"/>
+            </marker>
+            <marker id="arrowV" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L9,4.5 L0,9 z" fill="var(--violet)"/>
+            </marker>
+          </defs>
+
+          <!-- Row 1: CI -->
+          <g class="build-node">
+            <rect class="node-box" x="14" y="30" width="180" height="70" rx="11"/>
+            <text class="node-lbl" x="32" y="58">1 · docker build</text>
+            <text class="node-sub" x="32" y="78">Next.js standalone</text>
+            <text class="node-sub" x="32" y="92">node:24-alpine</text>
+          </g>
+          <line class="edge e1 flow-path" x1="194" y1="65" x2="252" y2="65" stroke="var(--cyan)" marker-end="url(#arrow)"/>
+
+          <g class="build-node">
+            <rect class="node-box" x="254" y="30" width="186" height="70" rx="11"/>
+            <text class="node-lbl" x="272" y="58">2 · push → GHCR</text>
+            <text class="node-sub" x="272" y="78">ghcr.io/coldaine/</text>
+            <text class="node-sub" x="272" y="92">robot-overview (public)</text>
+          </g>
+          <line class="edge e2 flow-path" x1="440" y1="65" x2="498" y2="65" stroke="var(--cyan)" marker-end="url(#arrow)"/>
+
+          <g class="build-node">
+            <rect class="node-box" x="500" y="30" width="200" height="70" rx="11"/>
+            <text class="node-lbl" x="518" y="58">3 · expose digest</text>
+            <text class="node-sub" x="518" y="78">@sha256:&lt;digest&gt;</text>
+            <text class="node-sub" x="518" y="92">as job output</text>
+          </g>
+
+          <!-- down to commit -->
+          <path class="edge e3 flow-path" d="M600,100 L600,140" stroke="var(--violet)" marker-end="url(#arrowV)"/>
+
+          <!-- Row 2: GitOps commit -->
+          <g class="build-node">
+            <rect class="node-box" x="470" y="146" width="260" height="78" rx="11" stroke="rgba(139,127,214,.4)"/>
+            <text class="node-lbl" x="490" y="174" style="fill:var(--violet)">4 · commit to GitOps</text>
+            <text class="node-sub" x="490" y="194">coldaine-k8cluster @ main</text>
+            <text class="node-sub" x="490" y="210">delivery-bot · [skip ci] · no PR</text>
+          </g>
+          <line class="edge e4 flow-path" x1="470" y1="185" x2="404" y2="185" stroke="var(--violet)" marker-end="url(#arrowV)"/>
+
+          <!-- Row 2 left: Argo -->
+          <g class="build-node">
+            <rect class="node-box" x="200" y="146" width="200" height="78" rx="11"/>
+            <text class="node-lbl" x="218" y="174">5 · Argo CD polls</text>
+            <text class="node-sub" x="218" y="194">git ~every 3 min</text>
+            <text class="node-sub" x="218" y="210">detects diff → sync</text>
+          </g>
+          <path class="edge e5 flow-path" d="M300,224 L300,270" stroke="var(--cyan)" marker-end="url(#arrow)"/>
+
+          <!-- Row 3: pod -->
+          <g class="build-node">
+            <rect class="node-box" x="190" y="276" width="220" height="70" rx="11" stroke="rgba(70,211,154,.45)"/>
+            <text class="node-lbl" x="208" y="304" style="fill:var(--ok)">6 · Deployment rolls</text>
+            <text class="node-sub" x="208" y="324">new pod pulls digest</text>
+            <text class="node-sub" x="208" y="338">→ live</text>
+          </g>
+
+          <!-- animated flow overlay (same paths, animated dash) -->
+          <line class="flow-path flow-anim" x1="194" y1="65" x2="252" y2="65" stroke="rgba(54,224,224,.5)"/>
+          <line class="flow-path flow-anim" x1="440" y1="65" x2="498" y2="65" stroke="rgba(54,224,224,.5)"/>
+        </svg>
+      </div>
+      <p class="lead reveal" style="margin-top:6px">CI only <em>commits</em>; it never runs an explicit <code>argocd app sync</code> — combining that with auto-sync is the documented race-condition footgun, so we avoid it.</p>
+    </div>
+  </section>
+
+  <!-- 6 · WHY NOT -->
+  <section class="panel" aria-roledescription="panel" aria-label="Panel 6 of 9: Why not the alternatives">
+    <div class="inner">
+      <div class="eyebrow amber reveal"><span class="num">06</span> Why not the alternatives</div>
+      <h2 class="reveal">Two obvious tools — both deliberately rejected.</h2>
+      <div class="grid2" style="margin-top:20px">
+        <div class="panel-card reveal" style="border-color:rgba(245,177,51,.28)">
+          <div class="mono" style="color:var(--amber);font-size:13px;letter-spacing:.08em">argocd-image-updater</div>
+          <ul class="ticks crit" style="margin-top:10px">
+            <li><strong>Decisive:</strong> only supports Kustomize/Helm — <strong>not plain-YAML / Directory apps</strong>, which robot-overview is. (Still true June 2026.)</li>
+            <li>Needs a separate write-capable git credential; Argo's deploy key is read-only.</li>
+            <li>Rejected on the plain-YAML limit — not on "not prod-ready." <strong>Do not install it.</strong></li>
+          </ul>
+        </div>
+        <div class="panel-card reveal" style="border-color:rgba(245,177,51,.28)">
+          <div class="mono" style="color:var(--amber);font-size:13px;letter-spacing:.08em">Flux image-automation</div>
+          <ul class="ticks crit" style="margin-top:10px">
+            <li>Would mean running a <strong>second GitOps engine</strong> next to Argo — on a single node.</li>
+            <li>Overkill for the job.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="panel-card reveal" style="margin-top:18px;border-color:rgba(70,211,154,.3)">
+        <p class="lead" style="color:var(--ink)">CI-writes-to-GitOps is the <strong>canonical Argo CD CI flow</strong> and the lowest surface area: <span class="chip ok">zero in-cluster components</span>, works the same for plain-YAML &amp; Kustomize, and fails loudly in an Actions log.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · THE NUMBERS -->
+  <section class="panel" aria-roledescription="panel" aria-label="Panel 7 of 9: The Numbers">
+    <div class="inner">
+      <div class="eyebrow reveal"><span class="num">07</span> The numbers</div>
+      <h2 class="reveal">What it actually costs you.</h2>
+      <div class="num-grid reveal" style="margin-top:22px">
+        <div class="stat">
+          <div class="big"><span data-count="5" data-prefix="&lt; ">0</span></div>
+          <div class="unit">minutes</div>
+          <div class="cap">merge → live, end to end</div>
+        </div>
+        <div class="stat">
+          <div class="big"><span data-count="3" data-prefix="≤ ">0</span></div>
+          <div class="unit">min poll</div>
+          <div class="cap">Argo reconcile: 120s + ≤60s jitter</div>
+        </div>
+        <div class="stat">
+          <div class="big"><span data-count="0">0</span></div>
+          <div class="unit">manual steps</div>
+          <div class="cap">no push, apply, or second PR</div>
+        </div>
+        <div class="stat">
+          <div class="big"><span data-count="0">0</span></div>
+          <div class="unit">in-cluster add-ons</div>
+          <div class="cap">no image-updater, no Flux</div>
+        </div>
+      </div>
+      <p class="lead reveal" style="margin-top:20px">Image build runs ~1–2 min; the Argo git poll adds ≤ ~3 min. The cluster keeps exactly its two hand-seeded bootstrap creds — nothing new lives inside.</p>
+    </div>
+  </section>
+
+  <!-- 8 · MONITOR -->
+  <section class="panel" aria-roledescription="panel" aria-label="Panel 8 of 9: How to monitor">
+    <div class="inner">
+      <div class="eyebrow reveal"><span class="num">08</span> How to monitor it</div>
+      <h2 class="reveal">Four checks, top to bottom.</h2>
+      <div class="grid2" style="margin-top:20px;align-items:start">
+        <div class="reveal">
+          <ul class="ticks">
+            <li><strong>Build + write-back ran?</strong> RobotOverview → Actions → the <code>update-k8cluster</code> job log shows the pinned digest (or the no-op notice).</li>
+            <li><strong>Digest landed in git?</strong> <code>coldaine-k8cluster</code> main history — a <code>deploy &lt;sha&gt; [skip ci]</code> commit by <code>robot-overview-delivery-bot</code>.</li>
+          </ul>
+        </div>
+        <div class="reveal">
+          <pre class="code"><span class="c"># Did Argo sync?</span>
+<span class="k">kubectl</span> get application robot-overview <span class="a">-n</span> argocd
+  <span class="c"># expect:</span> <span class="s">Synced / Healthy</span>
+
+<span class="c"># New pod on the new digest?</span>
+<span class="k">kubectl</span> <span class="a">-n</span> robot-overview get pods
+  <span class="c"># expect:</span> <span class="s">1/1 Running</span>
+
+<span class="k">kubectl</span> <span class="a">-n</span> robot-overview get deploy \
+  robot-overview <span class="a">-o</span> jsonpath=<span class="y">'{..image}'</span>
+  <span class="c"># → ...@sha256:&lt;digest&gt;</span></pre>
+        </div>
+      </div>
+      <p class="lead reveal" style="margin-top:18px">Serving check — publicly via the <strong>Cloudflare Tunnel</strong> hostname; in-cluster at <code>robot-overview.robot-overview.svc.cluster.local:80</code>. (argocd CLI isn't installed — use kubectl.)</p>
+    </div>
+  </section>
+
+  <!-- 9 · SETUP STATUS -->
+  <section class="panel" aria-roledescription="panel" aria-label="Panel 9 of 9: Setup status">
+    <div class="inner">
+      <div class="eyebrow ok reveal"><span class="num">09</span> Setup status</div>
+      <h2 class="reveal">Three steps arm the GitHub App.</h2>
+      <p class="lead reveal">Until both secrets exist, the <code>update-k8cluster</code> job <strong>no-ops gracefully</strong> (checks <code>APP_READY</code> = both present) — by design, so the workflow never hard-fails before setup.</p>
+      <div class="badge-steps reveal">
+        <div class="step">
+          <span class="n">1</span>
+          <div class="t"><b>Create a GitHub App.</b> <span>Repository permission <span class="chip">Contents: Read &amp; write</span> only — installed on <span class="chip">only</span> <code>Coldaine/coldaine-k8cluster</code>.</span></div>
+        </div>
+        <div class="step">
+          <span class="n">2</span>
+          <div class="t"><b>Add two repo secrets to RobotOverview.</b> <span><span class="chip ok">GITOPS_APP_CLIENT_ID</span> (the App's Client ID — <code>create-github-app-token@v3</code> uses <code>client-id</code>) and <span class="chip ok">GITOPS_APP_KEY</span> (the PEM private key). Remove the old <code>K8CLUSTER_REPO_TOKEN</code> PAT.</span></div>
+        </div>
+        <div class="step">
+          <span class="n">3</span>
+          <div class="t"><b>Allow the bot to push to <code>coldaine-k8cluster</code> main.</b> <span>Add the App to the branch-protection bypass/allowlist (direct push, no PR).</span></div>
+        </div>
+      </div>
+      <div class="endcard reveal" style="margin-top:26px">
+        <span class="chip ok" style="font-size:14px;padding:5px 12px">Once armed: merge → live in &lt; 5 min, hands-off.</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- HUD -->
+<div id="hud" role="group" aria-label="Story controls">
+  <button id="playBtn" class="ctrl" aria-label="Play the story; auto-advances each panel">▶ Play</button>
+  <button id="prevBtn" class="ctrl" aria-label="Previous panel" title="Previous (←)">‹ Prev</button>
+  <button id="nextBtn" class="ctrl" aria-label="Next panel" title="Next (→)">Next ›</button>
+  <div id="progressWrap" role="progressbar" aria-label="Story progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div id="progress"></div>
+  </div>
+  <div id="dots" role="tablist" aria-label="Jump to panel"></div>
+  <div id="counter"><b id="cNow">1</b>/<span id="cTot">9</span></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var track = document.getElementById('track');
+  var panels = Array.prototype.slice.call(track.querySelectorAll('.panel'));
+  var progress = document.getElementById('progress');
+  var progWrap = document.getElementById('progressWrap');
+  var dotsWrap = document.getElementById('dots');
+  var playBtn = document.getElementById('playBtn');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var cNow = document.getElementById('cNow');
+  var cTot = document.getElementById('cTot');
+  var total = panels.length;
+  var current = 0;
+  var playing = false;
+  var timer = null;
+  var STEP_MS = 6000;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  cTot.textContent = total;
+
+  // build dots
+  var dots = [];
+  panels.forEach(function (p, i) {
+    var b = document.createElement('button');
+    b.className = 'dot';
+    b.setAttribute('role', 'tab');
+    b.setAttribute('aria-label', 'Go to panel ' + (i + 1));
+    b.addEventListener('click', function () { stopPlay(); goTo(i); });
+    dotsWrap.appendChild(b);
+    dots.push(b);
+  });
+
+  function scrollToPanel(i) {
+    var left = panels[i].offsetLeft;
+    track.scrollTo({ left: left, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+
+  function goTo(i) {
+    i = Math.max(0, Math.min(total - 1, i));
+    current = i;
+    scrollToPanel(i);
+    updateHUD();
+  }
+
+  function updateHUD() {
+    // progress reflects travel across panels
+    var pct = total > 1 ? (current / (total - 1)) * 100 : 100;
+    progress.style.width = pct + '%';
+    progWrap.setAttribute('aria-valuenow', Math.round(pct));
+    cNow.textContent = current + 1;
+    dots.forEach(function (d, i) {
+      d.classList.toggle('active', i === current);
+      d.setAttribute('aria-selected', i === current ? 'true' : 'false');
+    });
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+  }
+
+  // ---- active panel detection via IntersectionObserver ----
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting && e.intersectionRatio >= 0.55) {
+        var idx = panels.indexOf(e.target);
+        e.target.classList.add('active');
+        if (idx !== -1 && idx !== current) {
+          current = idx;
+          updateHUD();
+        } else if (idx === current) {
+          updateHUD();
+        }
+        runCountUps(e.target);
+      }
+    });
+  }, { root: track, threshold: [0.55, 0.9] });
+  panels.forEach(function (p) { io.observe(p); });
+
+  // ---- count-up numbers ----
+  function runCountUps(panel) {
+    var nums = panel.querySelectorAll('[data-count]');
+    nums.forEach(function (el) {
+      if (el.dataset.done === '1') return;
+      el.dataset.done = '1';
+      var target = parseFloat(el.getAttribute('data-count'));
+      var prefix = el.getAttribute('data-prefix') || '';
+      if (reduceMotion || target === 0) {
+        el.textContent = prefix + target;
+        return;
+      }
+      var dur = 900, start = null;
+      function tick(ts) {
+        if (start === null) start = ts;
+        var t = Math.min(1, (ts - start) / dur);
+        var eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = prefix + Math.round(eased * target);
+        if (t < 1) requestAnimationFrame(tick);
+        else el.textContent = prefix + target;
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  // ---- autoplay ----
+  function setPlayUI() {
+    playBtn.textContent = playing ? '⏸ Pause' : '▶ Play';
+    playBtn.classList.toggle('playing', playing);
+    playBtn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+  }
+  function startPlay() {
+    if (playing) return;
+    playing = true;
+    setPlayUI();
+    if (current === total - 1) goTo(0);
+    schedule();
+  }
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      if (!playing) return;
+      if (current >= total - 1) { stopPlay(); return; }
+      goTo(current + 1);
+      schedule();
+    }, STEP_MS);
+  }
+  function stopPlay() {
+    if (!playing) { clearTimeout(timer); return; }
+    playing = false;
+    clearTimeout(timer);
+    setPlayUI();
+  }
+  function togglePlay() { playing ? stopPlay() : startPlay(); }
+
+  playBtn.addEventListener('click', togglePlay);
+  nextBtn.addEventListener('click', function () { stopPlay(); goTo(current + 1); });
+  prevBtn.addEventListener('click', function () { stopPlay(); goTo(current - 1); });
+
+  // ---- keyboard ----
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { stopPlay(); goTo(current + 1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { stopPlay(); goTo(current - 1); e.preventDefault(); }
+    else if (e.key === 'Home') { stopPlay(); goTo(0); e.preventDefault(); }
+    else if (e.key === 'End') { stopPlay(); goTo(total - 1); e.preventDefault(); }
+    else if (e.key === ' ' || e.code === 'Space') {
+      if (e.target === playBtn) return; // let button handle it
+      togglePlay(); e.preventDefault();
+    }
+  });
+
+  // ---- wheel: vertical wheel → horizontal travel ----
+  var wheelLock = false;
+  track.addEventListener('wheel', function (e) {
+    // if mostly vertical intent, translate to horizontal
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      // allow inner vertical scroll when panel content overflows
+      var inner = e.target.closest ? e.target.closest('.inner') : null;
+      if (inner && inner.scrollHeight > inner.clientHeight + 4) {
+        var atTop = inner.scrollTop <= 0;
+        var atBottom = inner.scrollTop + inner.clientHeight >= inner.scrollHeight - 1;
+        if (!((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom))) {
+          return; // let the inner content scroll
+        }
+      }
+      e.preventDefault();
+      stopPlay();
+      if (wheelLock) return;
+      wheelLock = true;
+      goTo(current + (e.deltaY > 0 ? 1 : -1));
+      setTimeout(function () { wheelLock = false; }, 480);
+    }
+  }, { passive: false });
+
+  // ---- manual horizontal scroll (trackpad / drag) pauses autoplay & syncs ----
+  var scrollIdle;
+  track.addEventListener('scroll', function () {
+    clearTimeout(scrollIdle);
+    scrollIdle = setTimeout(function () {
+      // snap-resolve current index by nearest panel
+      var nearest = Math.round(track.scrollLeft / track.clientWidth);
+      if (nearest !== current) { current = Math.max(0, Math.min(total - 1, nearest)); updateHUD(); }
+    }, 120);
+  }, { passive: true });
+
+  // pointer drag = user-initiated → pause autoplay
+  track.addEventListener('pointerdown', function () { if (playing) stopPlay(); });
+
+  // touch swipe (basic)
+  var tsx = null;
+  track.addEventListener('touchstart', function (e) { tsx = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', function (e) {
+    if (tsx === null) return;
+    var dx = e.changedTouches[0].clientX - tsx;
+    if (Math.abs(dx) > 50) { stopPlay(); goTo(current + (dx < 0 ? 1 : -1)); }
+    tsx = null;
+  }, { passive: true });
+
+  // recompute scroll position on resize (panels are width-based)
+  var rsz;
+  window.addEventListener('resize', function () {
+    clearTimeout(rsz);
+    rsz = setTimeout(function () { scrollToPanel(current); }, 150);
+  });
+
+  // init
+  panels[0].classList.add('active');
+  runCountUps(panels[0]);
+  setPlayUI();
+  updateHUD();
+})();
+</script>
+</body>
+</html>

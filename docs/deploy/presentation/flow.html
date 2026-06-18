@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RobotOverview — Auto-Deploy Pipeline Flow</title>
+<style>
+  :root {
+    --bg: #0a0e14;
+    --panel: #11161f;
+    --panel2: #0d1219;
+    --rim: rgba(120, 140, 170, 0.18);
+    --ink: #e6edf3;
+    --ink-dim: #93a1b3;
+    --cyan: #36e0e0;
+    --amber: #f5b133;
+    --ok: #46d39a;
+    --crit: #ff5d5d;
+    --violet: #8b7fd6;
+    --mono: ui-monospace, 'JetBrains Mono', Menlo, monospace;
+    --sans: system-ui, 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(rgba(120, 140, 170, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(120, 140, 170, 0.045) 1px, transparent 1px),
+      radial-gradient(900px 500px at 18% -10%, rgba(54, 224, 224, 0.07), transparent 60%),
+      radial-gradient(800px 460px at 92% 0%, rgba(245, 177, 51, 0.055), transparent 60%);
+    background-size: 28px 28px, 28px 28px, 100% 100%, 100% 100%;
+    color: var(--ink);
+    font-family: var(--sans);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 22px 22px 34px;
+  }
+
+  /* ---------- Header ---------- */
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .head-left h1 {
+    font-size: 18px;
+    margin: 0 0 4px;
+    letter-spacing: 0.2px;
+    font-weight: 650;
+  }
+  .head-left .sub {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+  .head-left .sub b { color: var(--ok); font-weight: 600; }
+
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; }
+  button {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--rim);
+    border-radius: 9px;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: border-color 0.18s, background 0.18s, box-shadow 0.18s, transform 0.08s;
+  }
+  button:hover { border-color: rgba(54, 224, 224, 0.5); background: #141b26; }
+  button:active { transform: translateY(1px); }
+  button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  button.primary {
+    color: #04221f;
+    background: linear-gradient(180deg, #4ff0e0, #28c4c4);
+    border-color: rgba(54, 224, 224, 0.6);
+    font-weight: 650;
+    box-shadow: 0 0 18px rgba(54, 224, 224, 0.25);
+  }
+  button.primary:hover { box-shadow: 0 0 26px rgba(54, 224, 224, 0.45); }
+  button[aria-pressed="true"] { border-color: var(--amber); color: var(--amber); }
+
+  /* ---------- Stack badges ---------- */
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 18px;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-dim);
+    border: 1px solid var(--rim);
+    background: var(--panel2);
+    border-radius: 999px;
+    padding: 5px 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 7px var(--cyan); }
+  .badge.amber .dot { background: var(--amber); box-shadow: 0 0 7px var(--amber); }
+  .badge.violet .dot { background: var(--violet); box-shadow: 0 0 7px var(--violet); }
+  .badge.ok .dot { background: var(--ok); box-shadow: 0 0 7px var(--ok); }
+
+  /* ---------- Stage area ---------- */
+  .stagebox {
+    position: relative;
+    width: 100%;
+  }
+  .svg-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px 18px;
+  }
+
+  /* trust boundary band wrapping cluster nodes */
+  .boundary {
+    position: relative;
+    z-index: 2;
+    margin-top: 22px;
+    border: 1.5px dashed rgba(245, 177, 51, 0.55);
+    border-radius: 16px;
+    padding: 30px 16px 16px;
+    background: linear-gradient(180deg, rgba(245, 177, 51, 0.05), rgba(245, 177, 51, 0.015));
+  }
+  .boundary-label {
+    position: absolute;
+    top: -11px;
+    left: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+    background: var(--bg);
+    padding: 1px 9px;
+    border: 1px solid rgba(245, 177, 51, 0.4);
+    border-radius: 999px;
+    letter-spacing: 0.3px;
+  }
+  .boundary .grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* stage node */
+  .node {
+    position: relative;
+    background: linear-gradient(180deg, var(--panel), var(--panel2));
+    border: 1px solid var(--rim);
+    border-radius: 13px;
+    padding: 14px 14px 13px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s, background 0.2s;
+    min-height: 96px;
+    outline: none;
+  }
+  .node:hover, .node.active, .node:focus-visible {
+    border-color: rgba(54, 224, 224, 0.6);
+    box-shadow: 0 0 0 1px rgba(54, 224, 224, 0.25), 0 0 22px rgba(54, 224, 224, 0.16);
+    transform: translateY(-2px);
+  }
+  .node.active {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 1px var(--cyan), 0 0 28px rgba(54, 224, 224, 0.3);
+  }
+  .node:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  /* sequence "lit" pulse during trigger demo */
+  .node.lit {
+    border-color: var(--amber);
+    box-shadow: 0 0 0 1px var(--amber), 0 0 34px rgba(245, 177, 51, 0.5);
+    background: linear-gradient(180deg, #1b1c14, var(--panel2));
+  }
+  .node .num {
+    position: absolute;
+    top: 10px;
+    right: 11px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-dim);
+    opacity: 0.65;
+  }
+  .node .ico {
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 8px;
+    background: rgba(54, 224, 224, 0.09);
+    border: 1px solid rgba(54, 224, 224, 0.22);
+    margin-bottom: 9px;
+  }
+  .node.amber-ico .ico { background: rgba(245, 177, 51, 0.1); border-color: rgba(245, 177, 51, 0.25); }
+  .node.violet-ico .ico { background: rgba(139, 127, 214, 0.12); border-color: rgba(139, 127, 214, 0.3); }
+  .node.ok-ico .ico { background: rgba(70, 211, 154, 0.1); border-color: rgba(70, 211, 154, 0.28); }
+  .node .ico svg { width: 17px; height: 17px; }
+  .node .title { font-size: 13.5px; font-weight: 600; margin: 0 0 3px; line-height: 1.2; }
+  .node .desc { font-size: 11.5px; color: var(--ink-dim); line-height: 1.35; margin: 0; }
+  .node .dur {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--cyan);
+    opacity: 0.85;
+  }
+  .node.amber-ico .dur { color: var(--amber); }
+
+  .registry-note {
+    grid-column: 1 / -1;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-align: center;
+    margin: 2px 0 -4px;
+  }
+
+  /* ---------- Detail panel ---------- */
+  .detail {
+    margin-top: 22px;
+    background: linear-gradient(180deg, var(--panel), var(--panel2));
+    border: 1px solid var(--rim);
+    border-radius: 13px;
+    padding: 16px 18px;
+    min-height: 116px;
+  }
+  .detail .d-head { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; flex-wrap: wrap; }
+  .detail .d-title { font-size: 15px; font-weight: 650; margin: 0; }
+  .detail .d-tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--cyan);
+    border: 1px solid rgba(54, 224, 224, 0.3);
+    border-radius: 999px;
+    padding: 2px 9px;
+  }
+  .detail .d-body { font-size: 13px; color: var(--ink); line-height: 1.5; margin: 0 0 11px; max-width: 90ch; }
+  .detail .d-meta { display: flex; flex-wrap: wrap; gap: 18px; }
+  .detail .d-meta div { font-size: 11.5px; color: var(--ink-dim); }
+  .detail .d-meta .lbl { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; display: block; margin-bottom: 2px; }
+  .detail code {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--amber);
+    background: rgba(245, 177, 51, 0.08);
+    border: 1px solid rgba(245, 177, 51, 0.16);
+    border-radius: 5px;
+    padding: 1px 6px;
+  }
+
+  .foot {
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-dim);
+    text-align: center;
+    opacity: 0.7;
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .boundary .grid { grid-template-columns: repeat(2, 1fr); }
+    .svg-layer { display: none; }
+  }
+  @media (max-width: 600px) {
+    .wrap { padding: 16px 13px 28px; }
+    .grid, .boundary .grid { grid-template-columns: 1fr; }
+    .head { flex-direction: column; align-items: flex-start; }
+    .controls { width: 100%; }
+    .controls button { flex: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .packet-anim { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <div class="head-left">
+      <h1>RobotOverview — Auto-Deploy Pipeline</h1>
+      <div class="sub">Pull-based GitOps · CI writes to git, the cluster reconciles · <b>merge → live in &lt; 5 min</b></div>
+    </div>
+    <div class="controls">
+      <button id="playBtn" aria-pressed="true" aria-label="Pause continuous packet animation">⏸ Pause</button>
+      <button id="triggerBtn" class="primary" aria-label="Trigger a single end-to-end demo deploy">▶ Trigger a deploy</button>
+    </div>
+  </header>
+
+  <div class="badges" aria-label="Technology stack">
+    <span class="badge"><span class="dot"></span>Next.js 16.2</span>
+    <span class="badge"><span class="dot"></span>React 19</span>
+    <span class="badge amber"><span class="dot"></span>GitHub Actions</span>
+    <span class="badge violet"><span class="dot"></span>Argo CD 3.x</span>
+    <span class="badge ok"><span class="dot"></span>k3s · bee-mini</span>
+    <span class="badge amber"><span class="dot"></span>GHCR</span>
+    <span class="badge"><span class="dot"></span>Cloudflare Tunnel</span>
+  </div>
+
+  <div class="stagebox">
+    <svg class="svg-layer" id="svgLayer" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="connGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="rgba(54,224,224,0.15)"/>
+          <stop offset="1" stop-color="rgba(54,224,224,0.45)"/>
+        </linearGradient>
+        <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="3" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g id="connectors"></g>
+      <g id="packets"></g>
+    </svg>
+
+    <!-- Row 1: CI / source side -->
+    <div class="grid" id="rowTop">
+      <div class="node violet-ico" data-key="merge" tabindex="0" role="button" aria-label="Stage 1: Merge PR to main">
+        <span class="num">01</span>
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#8b7fd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="9" r="2.4"/><path d="M6 8.4v7.2"/><path d="M18 11.4v.6a4 4 0 0 1-4 4H8.4"/></svg></div>
+        <p class="title">Merge to main</p>
+        <p class="desc">Developer merges a PR into <code style="font-size:10px">RobotOverview/main</code></p>
+        <div class="dur">trigger event</div>
+      </div>
+
+      <div class="node amber-ico" data-key="build" tabindex="0" role="button" aria-label="Stage 2: GitHub Actions builds the image">
+        <span class="num">02</span>
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#f5b133" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l-3 16"/><path d="M7 8l-4 4 4 4"/><path d="M17 8l4 4-4 4"/></svg></div>
+        <p class="title">GitHub Actions build</p>
+        <p class="desc">Docker build — Next.js standalone, <code style="font-size:10px">node:24-alpine</code></p>
+        <div class="dur">~1–2 min</div>
+      </div>
+
+      <div class="node amber-ico" data-key="push" tabindex="0" role="button" aria-label="Stage 3: Push image to GHCR">
+        <span class="num">03</span>
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#f5b133" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="9" rx="1.5"/><path d="M12 11V4"/><path d="M8.5 7.5L12 4l3.5 3.5"/><circle cx="7.5" cy="15.5" r=".6" fill="#f5b133"/></svg></div>
+        <p class="title">Push to GHCR</p>
+        <p class="desc">Public image + capture <code style="font-size:10px">@sha256</code> digest</p>
+        <div class="dur">part of build job</div>
+      </div>
+
+      <div class="node violet-ico" data-key="token" tabindex="0" role="button" aria-label="Stage 4: Mint a short-lived GitHub App token">
+        <span class="num">04</span>
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#8b7fd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="4"/><path d="M11 12l8 8"/><path d="M16 17l2-2"/><path d="M19 14l1.5-1.5"/></svg></div>
+        <p class="title">Mint App token</p>
+        <p class="desc">Short-lived, scoped <code style="font-size:10px">contents:write</code></p>
+        <div class="dur">~1h lifetime</div>
+      </div>
+
+      <div class="node violet-ico" data-key="commit" tabindex="0" role="button" aria-label="Stage 5: Commit the digest to the GitOps repo">
+        <span class="num">05</span>
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#8b7fd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.4"/><path d="M12 3v5.6"/><path d="M12 15.4V21"/></svg></div>
+        <p class="title">Commit digest → GitOps</p>
+        <p class="desc">Bot pins <code style="font-size:10px">deployment.yaml</code>, push to main · no PR</p>
+        <div class="dur">bot commit · [skip ci]</div>
+      </div>
+    </div>
+
+    <!-- GHCR external registry note + cluster boundary -->
+    <div class="boundary" aria-label="bee-mini k3s cluster, pull-only, no inbound path">
+      <span class="boundary-label">bee-mini · k3s — pull-only, no inbound path</span>
+      <div class="grid">
+        <div class="node violet-ico" data-key="argo" tabindex="0" role="button" aria-label="Stage 6: Argo CD polls git and syncs">
+          <span class="num">06</span>
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#8b7fd6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v4h-4"/></svg></div>
+          <p class="title">Argo CD reconciles</p>
+          <p class="desc">Polls git ~every 3 min, detects diff, auto-syncs (selfHeal)</p>
+          <div class="dur">≤ ~3 min poll</div>
+        </div>
+
+        <div class="node ok-ico" data-key="roll" tabindex="0" role="button" aria-label="Stage 7: Deployment rolls and the new pod pulls the image">
+          <span class="num">07</span>
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#46d39a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 12l9 4 9-4"/><path d="M3 17l9 4 9-4"/></svg></div>
+          <p class="title">Deployment rolls</p>
+          <p class="desc">New pod pulls the <code style="font-size:10px">@sha256</code> digest from GHCR</p>
+          <div class="dur">rolling update</div>
+        </div>
+
+        <div class="node ok-ico" data-key="live" tabindex="0" role="button" aria-label="Stage 8: Served live via Cloudflare Tunnel">
+          <span class="num">08</span>
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#46d39a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/></svg></div>
+          <p class="title">Live via Cloudflare</p>
+          <p class="desc">Served at the public Cloudflare Tunnel hostname</p>
+          <div class="dur">end → live &lt; 5 min</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail panel -->
+  <section class="detail" id="detail" aria-live="polite">
+    <div class="d-head">
+      <h2 class="d-title" id="dTitle">Hover or click a stage</h2>
+      <span class="d-tag" id="dTag">pipeline</span>
+    </div>
+    <p class="d-body" id="dBody">This is RobotOverview's pull-based continuous deployment pipeline. CI builds and pushes the image, then writes the immutable digest into the GitOps repo; the bee-mini cluster pulls and reconciles it. Explore any stage for the file, command, and timing. Press <b>▶ Trigger a deploy</b> to watch one change travel end-to-end.</p>
+    <div class="d-meta">
+      <div><span class="lbl">File / Command</span><span id="dFile">—</span></div>
+      <div><span class="lbl">Duration</span><span id="dDur">—</span></div>
+      <div><span class="lbl">Where</span><span id="dWhere">—</span></div>
+    </div>
+  </section>
+
+  <div class="foot">Pull-only cluster · immutable @sha256 digest pin · zero in-cluster CI components · source: docs/deploy/auto-deploy-pipeline.md</div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var STAGES = {
+    merge: {
+      title: "Merge PR → main",
+      tag: "trigger",
+      body: "A developer merges a pull request into the RobotOverview repo's main branch. This single merge is the only human action in the whole pipeline — no manual docker push, no kubectl apply, no cluster-side PR.",
+      file: "Coldaine/RobotOverview @ main",
+      dur: "instant (the trigger)",
+      where: "RobotOverview repo"
+    },
+    build: {
+      title: "GitHub Actions builds the image",
+      tag: "CI",
+      body: "The image.yml workflow runs a 3-stage Docker build producing a Next.js standalone image on node:24-alpine (non-root, with a HEALTHCHECK). next.config.ts sets output: \"standalone\".",
+      file: ".github/workflows/image.yml · Dockerfile",
+      dur: "~1–2 min",
+      where: "GitHub Actions runner"
+    },
+    push: {
+      title: "Push to GHCR",
+      tag: "CI",
+      body: "The built image is pushed to ghcr.io/coldaine/robot-overview as sha-<commit> (+ :0.1.0) — a public package, so no pull secret is needed. The pushed image's @sha256 digest is captured as a job output.",
+      file: "ghcr.io/coldaine/robot-overview@sha256:<digest>",
+      dur: "part of build job",
+      where: "GitHub Container Registry (external)"
+    },
+    token: {
+      title: "Mint a short-lived GitHub App token",
+      tag: "CI",
+      body: "The update-k8cluster job mints a short-lived (~1h) GitHub App token via create-github-app-token v3, scoped to only coldaine-k8cluster with only contents:write — a bot identity, never a PAT, and never stored in the cluster.",
+      file: "create-github-app-token@v3 (client-id)",
+      dur: "~1h lifetime",
+      where: "GitHub Actions runner"
+    },
+    commit: {
+      title: "Commit the digest into the GitOps repo",
+      tag: "CI → git",
+      body: "Using yq, CI pins apps/robot-overview/deployment.yaml to the immutable @sha256 digest and commits directly to coldaine-k8cluster main as robot-overview-delivery-bot ([skip ci]) — no PR. The unique digest changes the manifest text every release, guaranteeing a rollout.",
+      file: "apps/robot-overview/deployment.yaml (coldaine-k8cluster)",
+      dur: "seconds (rebase-retry)",
+      where: "coldaine-k8cluster repo (GitOps)"
+    },
+    argo: {
+      title: "Argo CD reconciles git → cluster",
+      tag: "cluster · pull-only",
+      body: "Argo CD (already running inside bee-mini) polls coldaine-k8cluster main on its reconciliation timer (120s + up to 60s jitter, i.e. ≤ ~3 min). It detects the manifest diff and the robot-overview Application (automated + selfHeal) syncs. CI never reaches into the cluster — there is no inbound path.",
+      file: "clusters/bee-mini/robot-overview.app.yaml",
+      dur: "≤ ~3 min (git poll)",
+      where: "bee-mini · k3s (pull-only)"
+    },
+    roll: {
+      title: "Deployment rolls to the new digest",
+      tag: "cluster · pull-only",
+      body: "The synced manifest changes the Deployment's image: line, so Kubernetes performs a rolling update. The new pod pulls the exact image bits by @sha256 digest from GHCR — the immutable digest is what defeats the IfNotPresent caching that a mutable tag would never bust.",
+      file: "apps/robot-overview/deployment.yaml",
+      dur: "rolling update (seconds)",
+      where: "bee-mini · k3s (pull-only)"
+    },
+    live: {
+      title: "Live via Cloudflare Tunnel",
+      tag: "served",
+      body: "The new pod is healthy and serving. The app is reachable in-cluster at robot-overview.robot-overview.svc.cluster.local and publicly via the Cloudflare Tunnel hostname. Total time from merge to live is under ~5 minutes.",
+      file: "Cloudflare Tunnel → robot-overview Service",
+      dur: "merge → live: < 5 min",
+      where: "public hostname"
+    }
+  };
+
+  // pipeline order for the trigger demo
+  var ORDER = ["merge", "build", "push", "token", "commit", "argo", "roll", "live"];
+
+  var nodes = {};
+  document.querySelectorAll(".node[data-key]").forEach(function (el) {
+    nodes[el.getAttribute("data-key")] = el;
+  });
+
+  var dTitle = document.getElementById("dTitle");
+  var dTag = document.getElementById("dTag");
+  var dBody = document.getElementById("dBody");
+  var dFile = document.getElementById("dFile");
+  var dDur = document.getElementById("dDur");
+  var dWhere = document.getElementById("dWhere");
+
+  function showDetail(key) {
+    var s = STAGES[key];
+    if (!s) return;
+    dTitle.textContent = s.title;
+    dTag.textContent = s.tag;
+    dBody.textContent = s.body;
+    dFile.textContent = s.file;
+    dDur.textContent = s.dur;
+    dWhere.textContent = s.where;
+  }
+
+  function setActive(key) {
+    Object.keys(nodes).forEach(function (k) { nodes[k].classList.toggle("active", k === key); });
+  }
+
+  Object.keys(nodes).forEach(function (key) {
+    var el = nodes[key];
+    el.addEventListener("mouseenter", function () { showDetail(key); setActive(key); });
+    el.addEventListener("focus", function () { showDetail(key); setActive(key); });
+    el.addEventListener("click", function () { showDetail(key); setActive(key); });
+    el.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); showDetail(key); setActive(key); }
+    });
+  });
+
+  /* ---------------- SVG connectors + continuous packets ---------------- */
+  var svg = document.getElementById("svgLayer");
+  var gConn = document.getElementById("connectors");
+  var gPkt = document.getElementById("packets");
+  var stagebox = document.querySelector(".stagebox");
+
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var segments = []; // {x1,y1,x2,y2,len, from, to}
+  var pathPoints = []; // ordered center points for trigger packet
+
+  function nodeCenter(el, box) {
+    var r = el.getBoundingClientRect();
+    return {
+      x: r.left - box.left + r.width / 2,
+      y: r.top - box.top + r.height / 2,
+      el: el
+    };
+  }
+
+  function buildGeometry() {
+    if (!stagebox) return;
+    var box = stagebox.getBoundingClientRect();
+    svg.setAttribute("width", box.width);
+    svg.setAttribute("height", box.height);
+    svg.setAttribute("viewBox", "0 0 " + box.width + " " + box.height);
+
+    segments = [];
+    pathPoints = [];
+    while (gConn.firstChild) gConn.removeChild(gConn.firstChild);
+    while (gPkt.firstChild) gPkt.removeChild(gPkt.firstChild);
+
+    // skip drawing connectors on narrow layouts (svg-layer is display:none anyway)
+    var cs = window.getComputedStyle(svg);
+    if (cs.display === "none") return;
+
+    var pts = ORDER.map(function (k) { return nodeCenter(nodes[k], box); });
+    pathPoints = pts;
+
+    for (var i = 0; i < pts.length - 1; i++) {
+      var a = pts[i], b = pts[i + 1];
+      var dx = b.x - a.x, dy = b.y - a.y;
+      var len = Math.sqrt(dx * dx + dy * dy);
+      segments.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, len: len });
+
+      var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", a.x); line.setAttribute("y1", a.y);
+      line.setAttribute("x2", b.x); line.setAttribute("y2", b.y);
+      line.setAttribute("stroke", "url(#connGrad)");
+      line.setAttribute("stroke-width", "1.6");
+      line.setAttribute("stroke-dasharray", "5 6");
+      line.setAttribute("opacity", "0.65");
+      gConn.appendChild(line);
+    }
+  }
+
+  // continuous flowing packets — each is a position fraction along whole path
+  var flowPkts = [];
+  var NUM_FLOW = 4;
+
+  function createFlowPackets() {
+    flowPkts.forEach(function (p) { if (p.node && p.node.parentNode) p.node.parentNode.removeChild(p.node); });
+    flowPkts = [];
+    if (!segments.length) return;
+    for (var i = 0; i < NUM_FLOW; i++) {
+      var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("r", "3.4");
+      c.setAttribute("fill", "#36e0e0");
+      c.setAttribute("filter", "url(#glow)");
+      gPkt.appendChild(c);
+      flowPkts.push({ node: c, t: i / NUM_FLOW });
+    }
+  }
+
+  var totalLen = 0;
+  function recomputeTotal() {
+    totalLen = segments.reduce(function (s, seg) { return s + seg.len; }, 0);
+  }
+
+  function posAtDistance(d) {
+    // wrap
+    if (totalLen <= 0) return { x: 0, y: 0 };
+    d = ((d % totalLen) + totalLen) % totalLen;
+    for (var i = 0; i < segments.length; i++) {
+      var seg = segments[i];
+      if (d <= seg.len) {
+        var f = seg.len === 0 ? 0 : d / seg.len;
+        return { x: seg.x1 + (seg.x2 - seg.x1) * f, y: seg.y1 + (seg.y2 - seg.y1) * f };
+      }
+      d -= seg.len;
+    }
+    var last = segments[segments.length - 1];
+    return { x: last.x2, y: last.y2 };
+  }
+
+  var playing = !reduceMotion;
+  var lastTime = null;
+  var SPEED = 90; // px / sec for continuous flow
+
+  // trigger demo state
+  var trigger = null; // {dist, seg}
+
+  function frame(now) {
+    if (lastTime === null) lastTime = now;
+    var dt = (now - lastTime) / 1000;
+    lastTime = now;
+    if (dt > 0.1) dt = 0.1; // clamp after tab switch
+
+    if (segments.length && totalLen > 0) {
+      // continuous packets
+      if (playing) {
+        for (var i = 0; i < flowPkts.length; i++) {
+          var p = flowPkts[i];
+          p.t += (SPEED * dt) / totalLen;
+          if (p.t > 1) p.t -= 1;
+          var pos = posAtDistance(p.t * totalLen);
+          p.node.setAttribute("cx", pos.x);
+          p.node.setAttribute("cy", pos.y);
+          p.node.setAttribute("opacity", "0.85");
+        }
+      }
+
+      // trigger demo packet
+      if (trigger) {
+        trigger.dist += (160 * dt); // brighter, faster
+        var tpos = posAtDistance(Math.min(trigger.dist, totalLen));
+        trigger.node.setAttribute("cx", tpos.x);
+        trigger.node.setAttribute("cy", tpos.y);
+
+        // light stages as the packet passes each node center
+        var cumulative = 0;
+        for (var s = 0; s < ORDER.length; s++) {
+          // distance to node s = sum of seg lengths before it
+          if (s > 0) cumulative += segments[s - 1].len;
+          if (trigger.dist >= cumulative - 6 && !trigger.lit[s]) {
+            trigger.lit[s] = true;
+            lightStage(ORDER[s]);
+          }
+        }
+
+        if (trigger.dist >= totalLen + 4) {
+          // finished
+          if (trigger.node.parentNode) trigger.node.parentNode.removeChild(trigger.node);
+          showDetail("live");
+          setActive("live");
+          trigger = null;
+          triggerBtn.disabled = false;
+          triggerBtn.textContent = "▶ Trigger a deploy";
+        }
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  function lightStage(key) {
+    var el = nodes[key];
+    if (!el) return;
+    el.classList.add("lit");
+    showDetail(key);
+    setActive(key);
+    setTimeout(function () { el.classList.remove("lit"); }, 1100);
+  }
+
+  /* ---------------- controls ---------------- */
+  var playBtn = document.getElementById("playBtn");
+  var triggerBtn = document.getElementById("triggerBtn");
+
+  function updatePlayBtn() {
+    playBtn.setAttribute("aria-pressed", String(playing));
+    playBtn.textContent = playing ? "⏸ Pause" : "▶ Play";
+    playBtn.setAttribute("aria-label", playing ? "Pause continuous packet animation" : "Play continuous packet animation");
+    // dim continuous packets when paused
+    flowPkts.forEach(function (p) { p.node.setAttribute("opacity", playing ? "0.85" : "0.18"); });
+  }
+
+  playBtn.addEventListener("click", function () {
+    playing = !playing;
+    updatePlayBtn();
+  });
+
+  triggerBtn.addEventListener("click", function () {
+    if (trigger) return;
+    if (!segments.length || totalLen <= 0) { buildGeometry(); recomputeTotal(); createFlowPackets(); }
+    if (!segments.length || totalLen <= 0) {
+      // narrow layout fallback: light stages in sequence without packet
+      runSequenceFallback();
+      return;
+    }
+    triggerBtn.disabled = true;
+    triggerBtn.textContent = "● deploying…";
+    var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("r", "6.5");
+    c.setAttribute("fill", "#f5b133");
+    c.setAttribute("filter", "url(#glow)");
+    gPkt.appendChild(c);
+    trigger = { dist: 0, node: c, lit: {} };
+  });
+
+  function runSequenceFallback() {
+    triggerBtn.disabled = true;
+    triggerBtn.textContent = "● deploying…";
+    var i = 0;
+    function step() {
+      if (i > 0) nodes[ORDER[i - 1]].classList.remove("lit");
+      if (i >= ORDER.length) {
+        triggerBtn.disabled = false;
+        triggerBtn.textContent = "▶ Trigger a deploy";
+        showDetail("live"); setActive("live");
+        return;
+      }
+      var k = ORDER[i];
+      nodes[k].classList.add("lit");
+      showDetail(k); setActive(k);
+      i++;
+      setTimeout(step, 650);
+    }
+    step();
+  }
+
+  /* ---------------- init + resize ---------------- */
+  function rebuild() {
+    buildGeometry();
+    recomputeTotal();
+    createFlowPackets();
+    updatePlayBtn();
+  }
+
+  var resizeTimer = null;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(rebuild, 120);
+  });
+
+  // build after layout settles
+  if (document.readyState === "complete") {
+    rebuild();
+  } else {
+    window.addEventListener("load", rebuild);
+  }
+  // also rebuild shortly after to catch font/layout shifts
+  setTimeout(rebuild, 300);
+
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
