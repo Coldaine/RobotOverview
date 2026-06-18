@@ -30,14 +30,15 @@ jobs:
       packages: write
     outputs:
       image-ref: ${{ steps.image-ref.outputs.ref }}
+      image-digest: ${{ steps.build.outputs.digest }}
     steps:
       - name: Check out RobotOverview
-        uses: actions/checkout@v5
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           persist-credentials: false
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       - name: Read package version
         id: pkg
@@ -45,7 +46,7 @@ jobs:
 
       - name: Log in to GHCR
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -57,7 +58,7 @@ jobs:
 
       - name: Extract image metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -66,7 +67,8 @@ jobs:
             type=raw,value=${{ steps.pkg.outputs.version }},enable=${{ github.ref == 'refs/heads/main' }}
 
       - name: Build image
-        uses: docker/build-push-action@v6
+        id: build
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
@@ -75,59 +77,110 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+  # CI-writes-to-GitOps (per coldaine-k8cluster docs/app-delivery.md): commit the new
+  # immutable @sha256 digest straight into the cluster repo's main — bot commit, no PR —
+  # and the robot-overview Argo Application (automated + selfHeal) rolls the workload.
+  # No image-updater, no inbound path to the cluster.
   update-k8cluster:
-    name: Open k8cluster image bump PR
+    name: Deploy digest to coldaine-k8cluster main
     needs: image
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
+    # Serialize cluster-repo writes so two rapid main merges can't collide on push.
+    concurrency:
+      group: gitops-write-coldaine-k8cluster
+      cancel-in-progress: false
+    permissions:
+      contents: read # writes happen on the OTHER repo via the App token, not this one
     env:
-      GH_TOKEN: ${{ secrets.K8CLUSTER_REPO_TOKEN }}
-      IMAGE_REF: ${{ needs.image.outputs.image-ref }}
+      # Empty until BOTH GitHub App secrets are configured — lets the job no-op instead of
+      # hard-failing (an id without a key would otherwise fail when minting the token).
+      APP_READY: ${{ secrets.GITOPS_APP_ID != '' && secrets.GITOPS_APP_KEY != '' }}
+      IMAGE_DIGEST: ${{ needs.image.outputs.image-digest }}
     steps:
-      - name: Skip if k8cluster token is not configured
-        if: ${{ env.GH_TOKEN == '' }}
+      - name: Note if the GitOps App is not configured yet
+        if: ${{ env.APP_READY != 'true' }}
         run: |
-          echo "::notice::Set K8CLUSTER_REPO_TOKEN to let this workflow open coldaine-k8cluster image bump PRs."
+          echo "::notice::Set GITOPS_APP_ID / GITOPS_APP_KEY (a GitHub App with contents:write on coldaine-k8cluster) to enable auto-deploy. Skipping."
 
-      # Uses a cross-repo PAT; credentials must persist for the later git push.
+      - name: Mint a scoped GitHub App token for the GitOps repo
+        id: app-token
+        if: ${{ env.APP_READY == 'true' }}
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1
+        with:
+          app-id: ${{ secrets.GITOPS_APP_ID }}
+          private-key: ${{ secrets.GITOPS_APP_KEY }}
+          owner: Coldaine
+          repositories: coldaine-k8cluster
+
       - name: Check out coldaine-k8cluster
-        if: ${{ env.GH_TOKEN != '' }}
-        uses: actions/checkout@v5
+        if: ${{ env.APP_READY == 'true' }}
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
         with:
           repository: Coldaine/coldaine-k8cluster
-          token: ${{ env.GH_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           path: coldaine-k8cluster
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false # don't leave the privileged token in git config
 
-      - name: Bump RobotOverview image and open PR
-        if: ${{ env.GH_TOKEN != '' }}
+      - name: Ensure yq (mikefarah) is available
+        if: ${{ env.APP_READY == 'true' }}
+        run: |
+          set -euo pipefail
+          if ! command -v yq >/dev/null 2>&1; then
+            sudo curl -fsSL https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64 -o /usr/local/bin/yq
+            sudo chmod +x /usr/local/bin/yq
+          fi
+          yq --version
+
+      - name: Pin the new image digest and commit to main
+        if: ${{ env.APP_READY == 'true' }}
+        env:
+          GITOPS_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
           cd coldaine-k8cluster
 
-          if [ ! -f apps/robot-overview/deployment.yaml ]; then
-            echo "::notice::coldaine-k8cluster does not have apps/robot-overview/deployment.yaml yet; merge the GitOps PR first."
+          if [ -z "${IMAGE_DIGEST}" ]; then
+            echo "::error::No image digest from the build job (was the image pushed?)."
+            exit 1
+          fi
+
+          target="apps/robot-overview/deployment.yaml"
+          if [ ! -f "$target" ]; then
+            echo "::notice::$target not found in coldaine-k8cluster; nothing to update."
             exit 0
           fi
 
-          # Run id keeps the branch unique across reruns of the same commit.
-          branch="codex/robot-overview-image-${GITHUB_SHA:0:12}-${GITHUB_RUN_ID}"
-          git checkout -b "$branch"
-          sed -i -E "s#image: ghcr.io/coldaine/robot-overview:[^[:space:]]+#image: ${IMAGE_REF}#" apps/robot-overview/deployment.yaml
+          # IMAGE_DIGEST is already 'sha256:...'; pin the immutable digest (maximally reproducible).
+          new_ref="${REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST}"
+          yq -i "(.spec.template.spec.containers[] | select(.name == \"robot-overview\") | .image) = \"${new_ref}\"" "$target"
 
           if git diff --quiet; then
-            echo "RobotOverview image is already ${IMAGE_REF}; nothing to open."
+            echo "robot-overview already pinned to ${new_ref}; nothing to commit."
             exit 0
           fi
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/robot-overview/deployment.yaml
-          git commit -m "chore(robot-overview): deploy ${GITHUB_SHA:0:12}"
-          git push origin "HEAD:${branch}"
+          git config user.name "robot-overview-delivery-bot"
+          git config user.email "robot-overview-delivery-bot@users.noreply.github.com"
+          # persist-credentials is off, so carry the App token on the remote URL for fetch/push.
+          git remote set-url origin "https://x-access-token:${GITOPS_TOKEN}@github.com/Coldaine/coldaine-k8cluster.git"
+          git add "$target"
+          git commit -m "chore(robot-overview): deploy ${GITHUB_SHA:0:12} [skip ci]" -m "Image: ${new_ref}"
 
-          gh pr create \
-            --repo Coldaine/coldaine-k8cluster \
-            --base main \
-            --head "$branch" \
-            --title "chore(robot-overview): deploy ${GITHUB_SHA:0:12}" \
-            --body "Updates RobotOverview to ${IMAGE_REF} after the app image build succeeded."
+          # Rebase-and-retry in case main advanced between checkout and push.
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "Deployed ${new_ref} to coldaine-k8cluster@main."
+              exit 0
+            fi
+            echo "Push rejected (attempt ${attempt}); rebasing on latest main."
+            git fetch origin main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              echo "Rebase hit a conflict; will retry from a clean fetch."
+            fi
+          done
+          echo "::error::Could not push to coldaine-k8cluster@main after 3 attempts."
+          exit 1
