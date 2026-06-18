@@ -93,8 +93,9 @@ jobs:
     permissions:
       contents: read # writes happen on the OTHER repo via the App token, not this one
     env:
-      # Empty until the GitHub App is configured — lets the job no-op instead of hard-failing.
-      APP_READY: ${{ secrets.GITOPS_APP_ID != '' }}
+      # Empty until BOTH GitHub App secrets are configured — lets the job no-op instead of
+      # hard-failing (an id without a key would otherwise fail when minting the token).
+      APP_READY: ${{ secrets.GITOPS_APP_ID != '' && secrets.GITOPS_APP_KEY != '' }}
       IMAGE_DIGEST: ${{ needs.image.outputs.image-digest }}
     steps:
       - name: Note if the GitOps App is not configured yet
@@ -121,9 +122,22 @@ jobs:
           path: coldaine-k8cluster
           ref: main
           fetch-depth: 0
+          persist-credentials: false # don't leave the privileged token in git config
+
+      - name: Ensure yq (mikefarah) is available
+        if: ${{ env.APP_READY == 'true' }}
+        run: |
+          set -euo pipefail
+          if ! command -v yq >/dev/null 2>&1; then
+            sudo curl -fsSL https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64 -o /usr/local/bin/yq
+            sudo chmod +x /usr/local/bin/yq
+          fi
+          yq --version
 
       - name: Pin the new image digest and commit to main
         if: ${{ env.APP_READY == 'true' }}
+        env:
+          GITOPS_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
           cd coldaine-k8cluster
@@ -140,7 +154,7 @@ jobs:
           fi
 
           # IMAGE_DIGEST is already 'sha256:...'; pin the immutable digest (maximally reproducible).
-          new_ref="ghcr.io/coldaine/robot-overview@${IMAGE_DIGEST}"
+          new_ref="${REGISTRY}/${IMAGE_NAME}@${IMAGE_DIGEST}"
           yq -i "(.spec.template.spec.containers[] | select(.name == \"robot-overview\") | .image) = \"${new_ref}\"" "$target"
 
           if git diff --quiet; then
@@ -150,6 +164,8 @@ jobs:
 
           git config user.name "robot-overview-delivery-bot"
           git config user.email "robot-overview-delivery-bot@users.noreply.github.com"
+          # persist-credentials is off, so carry the App token on the remote URL for fetch/push.
+          git remote set-url origin "https://x-access-token:${GITOPS_TOKEN}@github.com/Coldaine/coldaine-k8cluster.git"
           git add "$target"
           git commit -m "chore(robot-overview): deploy ${GITHUB_SHA:0:12} [skip ci]" -m "Image: ${new_ref}"
 
@@ -161,7 +177,10 @@ jobs:
             fi
             echo "Push rejected (attempt ${attempt}); rebasing on latest main."
             git fetch origin main
-            git rebase origin/main
+            if ! git rebase origin/main; then
+              git rebase --abort || true
+              echo "Rebase hit a conflict; will retry from a clean fetch."
+            fi
           done
           echo "::error::Could not push to coldaine-k8cluster@main after 3 attempts."
           exit 1
