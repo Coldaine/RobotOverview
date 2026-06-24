@@ -113,6 +113,7 @@ jobs:
           private-key: ${{ secrets.GITOPS_APP_KEY }}
           owner: Coldaine
           repositories: coldaine-k8cluster
+          permission-contents: write
 
       - name: Check out coldaine-k8cluster
         if: ${{ env.APP_READY == 'true' }}

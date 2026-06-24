@@ -305,8 +305,8 @@
       <div class="sub">Pull-based GitOps · CI writes to git, the cluster reconciles · <b>merge → live in &lt; 5 min</b></div>
     </div>
     <div class="controls">
-      <button id="playBtn" aria-pressed="true" aria-label="Pause continuous packet animation">⏸ Pause</button>
-      <button id="triggerBtn" class="primary" aria-label="Trigger a single end-to-end demo deploy">▶ Trigger a deploy</button>
+      <button type="button" id="playBtn" aria-pressed="true" aria-label="⏸ Pause continuous packet animation">⏸ Pause</button>
+      <button type="button" id="triggerBtn" class="primary" aria-label="▶ Trigger a deploy (single end-to-end demo)">▶ Trigger a deploy</button>
     </div>
   </header>
 
@@ -641,6 +641,17 @@
   // trigger demo state
   var trigger = null; // {dist, seg}
 
+  function resetTriggerDemo() {
+    if (trigger && trigger.node && trigger.node.parentNode) trigger.node.parentNode.removeChild(trigger.node);
+    trigger = null;
+    ORDER.forEach(function (k) { if (nodes[k]) nodes[k].classList.remove("lit"); });
+    if (triggerBtn) {
+      triggerBtn.disabled = false;
+      triggerBtn.textContent = "▶ Trigger a deploy";
+      triggerBtn.setAttribute("aria-label", "▶ Trigger a deploy (single end-to-end demo)");
+    }
+  }
+
   function frame(now) {
     if (lastTime === null) lastTime = now;
     var dt = (now - lastTime) / 1000;
@@ -681,12 +692,9 @@
 
         if (trigger.dist >= totalLen + 4) {
           // finished
-          if (trigger.node.parentNode) trigger.node.parentNode.removeChild(trigger.node);
           showDetail("live");
           setActive("live");
-          trigger = null;
-          triggerBtn.disabled = false;
-          triggerBtn.textContent = "▶ Trigger a deploy";
+          resetTriggerDemo();
         }
       }
     }
@@ -710,7 +718,7 @@
   function updatePlayBtn() {
     playBtn.setAttribute("aria-pressed", String(playing));
     playBtn.textContent = playing ? "⏸ Pause" : "▶ Play";
-    playBtn.setAttribute("aria-label", playing ? "Pause continuous packet animation" : "Play continuous packet animation");
+    playBtn.setAttribute("aria-label", playing ? "⏸ Pause continuous packet animation" : "▶ Play continuous packet animation");
     // dim continuous packets when paused
     flowPkts.forEach(function (p) { p.node.setAttribute("opacity", playing ? "0.85" : "0.18"); });
   }
@@ -730,6 +738,7 @@
     }
     triggerBtn.disabled = true;
     triggerBtn.textContent = "● deploying…";
+    triggerBtn.setAttribute("aria-label", "● deploying…");
     var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     c.setAttribute("r", "6.5");
     c.setAttribute("fill", "#f5b133");
@@ -741,12 +750,14 @@
   function runSequenceFallback() {
     triggerBtn.disabled = true;
     triggerBtn.textContent = "● deploying…";
+    triggerBtn.setAttribute("aria-label", "● deploying…");
     var i = 0;
     function step() {
       if (i > 0) nodes[ORDER[i - 1]].classList.remove("lit");
       if (i >= ORDER.length) {
         triggerBtn.disabled = false;
         triggerBtn.textContent = "▶ Trigger a deploy";
+        triggerBtn.setAttribute("aria-label", "▶ Trigger a deploy (single end-to-end demo)");
         showDetail("live"); setActive("live");
         return;
       }
@@ -763,6 +774,7 @@
   function rebuild() {
     buildGeometry();
     recomputeTotal();
+    if (trigger && (!segments.length || totalLen <= 0)) resetTriggerDemo();
     createFlowPackets();
     updatePlayBtn();
   }

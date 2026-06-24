@@ -702,9 +702,9 @@
 
 <!-- HUD -->
 <div id="hud" role="group" aria-label="Story controls">
-  <button id="playBtn" class="ctrl" aria-label="Play the story; auto-advances each panel">▶ Play</button>
-  <button id="prevBtn" class="ctrl" aria-label="Previous panel" title="Previous (←)">‹ Prev</button>
-  <button id="nextBtn" class="ctrl" aria-label="Next panel" title="Next (→)">Next ›</button>
+  <button type="button" id="playBtn" class="ctrl" aria-label="▶ Play the story; auto-advances each panel">▶ Play</button>
+  <button type="button" id="prevBtn" class="ctrl" aria-label="‹ Prev panel" title="Previous (←)">‹ Prev</button>
+  <button type="button" id="nextBtn" class="ctrl" aria-label="Next › panel" title="Next (→)">Next ›</button>
   <div id="progressWrap" role="progressbar" aria-label="Story progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
     <div id="progress"></div>
   </div>
@@ -727,6 +727,7 @@
   var cTot = document.getElementById('cTot');
   var total = panels.length;
   var current = 0;
+  var programmaticScroll = false;
   var playing = false;
   var timer = null;
   var STEP_MS = 6000;
@@ -738,6 +739,7 @@
   var dots = [];
   panels.forEach(function (p, i) {
     var b = document.createElement('button');
+    b.type = 'button';
     b.className = 'dot';
     b.setAttribute('role', 'tab');
     b.setAttribute('aria-label', 'Go to panel ' + (i + 1));
@@ -748,7 +750,9 @@
 
   function scrollToPanel(i) {
     var left = panels[i].offsetLeft;
+    programmaticScroll = true;
     track.scrollTo({ left: left, behavior: reduceMotion ? 'auto' : 'smooth' });
+    setTimeout(function () { programmaticScroll = false; }, reduceMotion ? 80 : 520);
   }
 
   function goTo(i) {
@@ -820,6 +824,7 @@
     playBtn.textContent = playing ? '⏸ Pause' : '▶ Play';
     playBtn.classList.toggle('playing', playing);
     playBtn.setAttribute('aria-pressed', playing ? 'true' : 'false');
+    playBtn.setAttribute('aria-label', playing ? '⏸ Pause the story autoplay' : '▶ Play the story; auto-advances each panel');
   }
   function startPlay() {
     if (playing) return;
@@ -856,8 +861,12 @@
     else if (e.key === 'Home') { stopPlay(); goTo(0); e.preventDefault(); }
     else if (e.key === 'End') { stopPlay(); goTo(total - 1); e.preventDefault(); }
     else if (e.key === ' ' || e.code === 'Space') {
-      if (e.target === playBtn) return; // let button handle it
-      togglePlay(); e.preventDefault();
+      var target = e.target;
+      var onControl = target && target.closest &&
+        target.closest('button, [role="tab"], a, input, select, textarea, [contenteditable="true"]');
+      if (onControl) return;
+      togglePlay();
+      e.preventDefault();
     }
   });
 
@@ -887,6 +896,7 @@
   // ---- manual horizontal scroll (trackpad / drag) pauses autoplay & syncs ----
   var scrollIdle;
   track.addEventListener('scroll', function () {
+    if (!programmaticScroll && playing) stopPlay();
     clearTimeout(scrollIdle);
     scrollIdle = setTimeout(function () {
       // snap-resolve current index by nearest panel
