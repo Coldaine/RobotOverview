@@ -23,21 +23,21 @@ research run into an entry?"* — items land here first, get curated, then gradu
 
 ---
 
-## INTK-01 — Waveshare Jetson Nano Adapter (C)  · `ready-to-ingest`
+## INTK-01 — Waveshare Jetson Nano Adapter (C)  · `orphan / do-not-ingest`
 
 - **What it is:** the power/LED breakout board from Waveshare's **Type-C metal case for the
-  NVIDIA Jetson Nano dev kit**. Plugs onto the Nano's header (5 right-angle pins) to bring
-  the **power button / power LED** out to the closed case exterior. Clearly labeled
+  *original* NVIDIA Jetson Nano dev kit**. Plugs onto the Nano's button header (5 right-angle
+  pins) to bring the **power button / power LED** out to the closed case exterior. Labeled
   "Waveshare · Jetson Nano Adapter (C)".
-- **Belongs to:** a **Jetson Nano** (+ that Type-C case) — *not* the Pi-based Beast it shipped with.
-- **Confidence:** High (board is labeled).
-- **Why it matters (upgrade-path signal, G4):** `hangar.ts` notes the Beast's Pi 5 has *no
-  CUDA*, so learned-policy inference runs offboard. A **Jetson Nano re-host** (which has CUDA)
-  would move that inference *onboard*. This bundled adapter hints the Jetson path is viable —
-  candidate for the want-list / upgrade tree, not just a loose part.
-- **Suggested catalog shape:** bay `robotics` (or `compute`), category `Accessory / Host Adapter`,
-  provenance `owner`, acquired `Included in Beast kit (2026)`, tags `['waveshare','jetson-nano','case-accessory','upgrade-path']`.
-- **Open:** do you actually have a Jetson Nano + Type-C case on hand, or just this adapter?
+- **Status: ORPHAN.** The "(C)" case line is for the **classic Jetson Nano**, not the Orin.
+  Operator owns **no classic Jetson Nano**, and it would **not** fit a current **Orin Nano**
+  either (different board + case). It therefore pairs with no device in the fleet — almost
+  certainly generic kit filler Waveshare tossed into the Beast box.
+- **Not an upgrade-path signal** *(correction — earlier framing retracted)*: a Jetson re-host
+  of the Beast would use an **Orin Nano**, which this classic-Nano case part does not serve.
+- **Disposition:** do **not** ingest into the live roster. Keep here as a known loose part, or
+  set aside / discard. Re-evaluate only if a classic Jetson Nano + (C) case ever enters the fleet.
+- **Confidence:** High (board labeled; classic-Nano-only applicability confirmed).
 
 ## INTK-02 — Phone clamp adapter  · `needs-photo`
 
@@ -63,14 +63,19 @@ research run into an entry?"* — items land here first, get curated, then gradu
 - **Confidence:** Medium; function depends on which header they pair with.
 - **Next:** low priority; note any board on the Beast with an empty 2-pin header.
 
-## INTK-05 — 4-pin ↔ 4-pin adapter cable  · `needs-ID`
+## INTK-05 — I²C adapter cable (4-pin ↔ slightly-larger 4-pin)  · `needs-ID (target)`
 
-- **What it is:** short adapter cable, **4-pin housing on each end but different sizes/pitches**
-  (small white connector ↔ larger white connector). A 4-conductor pitch adapter.
-- **Best hypothesis:** an **I²C adapter** (`VCC · GND · SDA · SCL`) — the Beast's driver board
-  exposes an I²C OLED header and runs IMU/power-monitor on I²C, and 4-pin I²C connectors come
-  in many pitches (Qwiic/STEMMA-QT 1.0 mm, Grove 2.0 mm, PH 2.0, 2.54 mm). **Second guess:**
-  **UART** (`VCC · GND · TX · RX`), also 4-pin.
-- **Confidence:** Low — needs disambiguation.
-- **Next:** any text on the housings, or which empty socket on the Beast it drops into, settles
-  I²C vs UART.
+- **What it is:** short **I²C** adapter cable *(operator-confirmed)* — 4-pin housing on each
+  end, **different pitches**: a small white connector ↔ a slightly larger white connector.
+  Carries the four I²C wires (`VCC · GND · SDA · SCL`) between two connector standards.
+- **Likely pitches:** small = **PH2.0 (2.0 mm)** [poss. SH1.0 / 1.0 mm]; larger = **XH2.54 /
+  0.1″ (2.54 mm)**. Measure pin spacing to confirm.
+- **What it's for:** connects an I²C peripheral to the Beast driver board's **I²C expansion
+  header**. Waveshare's "General Driver for Robots" board calls this port out for **OLED / IMU /
+  I²C sensors** — matching the `hangar.ts` "Display Header → 0.91/0.96″ OLED" slot. Most likely
+  job: wiring a small **OLED status display** (or a sensor) to the driver board.
+- **⚠️ Caution:** I²C pin *order* is not standardized across vendors — verify VCC/GND/SDA/SCL
+  labels match on both ends and the device (continuity-check VCC↔VCC, GND↔GND) before powering,
+  or a swapped VCC/GND can kill the peripheral.
+- **Next:** confirm whether an **OLED / sensor module** is in the Beast box (that's the larger
+  end's mate); measure pitches to name the connectors.
