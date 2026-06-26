@@ -261,6 +261,8 @@ export const hangarData: HangarData = {
       insights: ['dust-backscatter', 'power-rail', 'watchdog', 'wifi-tail'],
       tags: ['rover', 'flagship', 'waveshare', 'roarm'],
       links: [
+        { label: 'Live control dashboard', url: 'http://beast.local:5000' },
+        { label: 'JupyterLab (lessons)', url: 'http://beast.local:8888' },
         { label: 'Waveshare UGV Beast', url: 'https://www.waveshare.com/ugv-beast.htm' },
         { label: 'Waveshare UGV hardware tutorial', url: 'https://www.youtube.com/watch?v=8wqPs7rNkJ4' }
       ],
@@ -378,12 +380,14 @@ export const hangarData: HangarData = {
       lifecycle: 'wishlist',
       provenance: 'inferred',
       summary:
-        'Candidate onboard CUDA brain for dropout-proof, in-motion autonomy. Ampere-gen, the stable mainstream entry tier (lifecycle extended through 2032). Only needed once the WiFi-offload path is outgrown.',
+        'Candidate onboard CUDA brain for dropout-proof, in-motion autonomy, and the affordable ($249) edge generative-AI tier — runs vision transformers, LLMs, and VLMs. Ampere GPU + 6-core Arm CPU; the "Super" boost (up to 67 TOPS, ~1.7× the original Orin Nano) ships as a software upgrade to existing kits. Reference carrier accepts all Orin Nano + Orin NX modules and up to 2× 4-lane MIPI CSI cameras, and runs the NVIDIA stack incl. Isaac ROS for robotics. Only needed once the WiFi-offload path is outgrown.',
       specs: [
-        { label: 'AI perf', value: 'up to 67 TOPS (Super)' },
-        { label: 'Arch', value: 'Ampere' },
+        { label: 'AI perf', value: 'up to 67 TOPS (Super); ~1.7× prior' },
+        { label: 'Arch', value: 'Ampere GPU + 6-core Arm' },
         { label: 'Power', value: '7–25 W' },
         { label: 'Memory', value: '8 GB' },
+        { label: 'Cameras', value: '2× MIPI CSI (4-lane)' },
+        { label: 'Carrier', value: 'Accepts Orin Nano + Orin NX' },
         { label: 'Stack', value: 'CUDA · TensorRT · Isaac ROS' },
         { label: 'Lifecycle', value: 'through 2032' },
       ],
