@@ -1,0 +1,4 @@
+interface:
+  display_name: "Hangar Logbook"
+  short_description: "Record Hangar mission and ops updates"
+  default_prompt: "Use $hangar-logbook to record a Beast mission update in the Hangar model."
