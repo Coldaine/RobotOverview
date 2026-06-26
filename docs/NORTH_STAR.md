@@ -29,7 +29,7 @@ Directional, not testable.
 ## Anti-Goals
 
 - **AG1.** Not a flat inventory list. It refuses to be a catalog of disconnected possessions; the reason it exists is the connected model where units, missions, and lessons relate to one another.
-- **AG2.** Not a control plane for the systems it catalogs. It references things like Home Assistant and the network gear; it does not operate them.
+- **AG2.** Not an *autonomous* control plane. It may link out to a unit's own controls (e.g. redirecting to the Beast's dashboard at `beast.local:5000` for supervised teleop) and may one day host a *supervised* command view, but it does not autonomously operate the systems it catalogs or act on them unattended. The line is supervision: a human stays in the loop for any action it surfaces. Operating detail for a unit lives in its runbook (see `docs/beast-ops.md`), not here.
 - **AG3.** Undercroft, and any mission, is content inside the system, never the system's identity.
 
 ## Pillars

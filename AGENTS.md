@@ -15,6 +15,7 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 ## Decision Tree
 
 - **Understand project intent** -> `docs/NORTH_STAR.md`
+- **Operate / control the Beast (network, drive, telemetry, programming)** -> `docs/beast-ops.md`
 - **Code implementation** -> `src/`
 
 ## Tech Stack & Commands
