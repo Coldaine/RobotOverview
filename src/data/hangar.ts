@@ -261,6 +261,8 @@ export const hangarData: HangarData = {
       insights: ['dust-backscatter', 'power-rail', 'watchdog', 'wifi-tail'],
       tags: ['rover', 'flagship', 'waveshare', 'roarm'],
       links: [
+        { label: 'Live control dashboard', url: 'http://beast.local:5000' },
+        { label: 'JupyterLab (lessons)', url: 'http://beast.local:8888' },
         { label: 'Waveshare UGV Beast', url: 'https://www.waveshare.com/ugv-beast.htm' },
         { label: 'Waveshare UGV hardware tutorial', url: 'https://www.youtube.com/watch?v=8wqPs7rNkJ4' }
       ],
