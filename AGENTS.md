@@ -15,8 +15,13 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 ## Decision Tree
 
 - **Understand project intent** -> `docs/NORTH_STAR.md`
+- **How we've chosen to build it, and why** -> `docs/architecture.md` (approach + rationale; routes to the component docs)
+- **Data layer (master-inventory model, Postgres, `hangar.ts`)** -> `docs/components/data-backend.md`
+- **Frontend / Next.js server layer** -> `docs/components/web-app.md`
+- **Deployment (current direction — in transition to Shipwright)** -> `docs/deploy/deployment.md`
 - **Operate / control the Beast (network, drive, telemetry, programming)** -> `docs/beast-ops.md`
 - **Code implementation** -> `src/`
+- **Superseded / historical docs** -> `docs/history/`
 
 ## Tech Stack & Commands
 

@@ -7,6 +7,11 @@ last_updated: 2026-06-25
 
 # Hangar Service Boundary
 
+> **Note:** the *service boundary, subdomain, and cross-repo ownership* below are current. The
+> deployment **mechanism** described in **GitOps Write-Back** (GitHub Actions → GitOps → Argo CD) is
+> **superseded** — deployment is moving to Shipwright. See
+> [`deployment.md`](deployment.md) for the current direction.
+
 RobotOverview, also called **The Hangar**, should be treated as a self-contained service in the
 MooseGoose web estate. It is not currently code that lives inside `MooseGooseWebsite`, and it does
 not need to be folded into that app to be useful.
@@ -60,6 +65,9 @@ GHCR without changing what the cluster runs. The manifest must change before Arg
 Deployment forward.
 
 ## GitOps Write-Back
+
+> **⚠️ Superseded mechanism.** This section describes the old Argo/GitOps write-back, which is being
+> replaced by a Shipwright-based approach. Kept for context; see [`deployment.md`](deployment.md).
 
 The GitOps write-back is a GitHub Actions and GitHub App handoff, not an Argo setting.
 
