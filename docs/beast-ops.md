@@ -76,12 +76,22 @@ Key payloads:
 arrives within its timeout, so a single nudge then silence is self-safing. Still: lift the
 tracks or ensure clear runway before any motion command, and send an explicit stop after.
 
-Example — gentle forward nudge then stop (PowerShell / curl):
+Example — gentle forward nudge then stop. The JSON is URL-encoded in the query string.
+
+**bash (Git Bash):**
 
 ```bash
 curl -s 'http://beast.local:5000/js?json=%7B%22T%22%3A1%2C%22L%22%3A0.2%2C%22R%22%3A0.2%7D'  # {"T":1,"L":0.2,"R":0.2}
 sleep 0.5
 curl -s 'http://beast.local:5000/js?json=%7B%22T%22%3A1%2C%22L%22%3A0%2C%22R%22%3A0%7D'      # stop
+```
+
+**PowerShell:**
+
+```powershell
+Invoke-RestMethod 'http://beast.local:5000/js?json=%7B%22T%22%3A1%2C%22L%22%3A0.2%2C%22R%22%3A0.2%7D'  # forward
+Start-Sleep -Milliseconds 500
+Invoke-RestMethod 'http://beast.local:5000/js?json=%7B%22T%22%3A1%2C%22L%22%3A0%2C%22R%22%3A0%7D'       # stop
 ```
 
 ## Telemetry
