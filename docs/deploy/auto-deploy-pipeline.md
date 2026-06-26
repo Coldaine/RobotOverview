@@ -9,6 +9,9 @@ last_updated: 2026-06-18
 
 > Read this before touching deploys for RobotOverview. It is the source of truth for how the app
 > ships to the cluster, why it's built this way, and how to operate it.
+>
+> For the product/service boundary with MooseGooseWebsite, read
+> [Hangar Service Boundary](./hangar-service-boundary.md).
 
 ## 1. What it is
 
@@ -24,6 +27,17 @@ running in the cluster) reconciles git → cluster.
 Two repos are involved:
 - **`Coldaine/RobotOverview`** (this repo) — the Next.js app + the CI that builds and deploys it.
 - **`Coldaine/coldaine-k8cluster`** — the GitOps repo Argo CD watches; the cluster's desired state.
+
+Current reality, as last checked on 2026-06-25:
+
+- Image builds on RobotOverview `main` are succeeding.
+- The GitOps write-back job is still skipping its real work when the GitHub App secrets are not
+  configured.
+- `coldaine-k8cluster` is still pinned to the older
+  `ghcr.io/coldaine/robot-overview:sha-18930f680aca8d5f3b7d5397eb6899f7400011bf` image.
+- The Cloudflare hostname for `hangar.moosegoose.xyz` is not represented as finished GitOps config.
+- Live cluster health still needs to be verified with `kubectl get application robot-overview -n
+  argocd`, pod status, service response, and the public/protected URL.
 
 ## 2. End-to-end flow
 
@@ -101,6 +115,10 @@ both secrets present). This is intentional so the workflow never hard-fails befo
 3. **Allow the delivery bot to push to `coldaine-k8cluster` `main`** — add the App to the branch
    protection bypass/allowlist (direct push, no PR). The cluster repo's docs already require this.
 
+This setup happens in GitHub, not in Argo. Argo only watches the GitOps repo and reconciles what it
+finds there. The GitHub App is the narrow credential that lets RobotOverview CI update the one image
+reference Argo later applies.
+
 ## 6. How to monitor it
 
 - **Did the build + write-back run?** RobotOverview → Actions → "Build RobotOverview image" run for
@@ -116,7 +134,7 @@ both secrets present). This is intentional so the workflow never hard-fails befo
   `kubectl -n robot-overview get pods` (expect `1/1 Running`) and
   `kubectl -n robot-overview get deploy robot-overview -o jsonpath='{.spec.template.spec.containers[0].image}'`.
 - **Is it serving?** In-cluster: `http://robot-overview.robot-overview.svc.cluster.local:80/`.
-  Publicly: the Cloudflare Tunnel hostname (routed in the Cloudflare dashboard to that service).
+  Publicly: `hangar.moosegoose.xyz` once Cloudflare routes that hostname to the service.
 
 ## 7. Operating rules & gotchas
 
