@@ -36,7 +36,7 @@ CREATE TABLE assets (
   callsign       TEXT,
   status         asset_status NOT NULL,
   lifecycle      lifecycle_state,
-  provenance     TEXT,                         -- owner | inferred | open
+  provenance     TEXT CHECK (provenance IN ('owner','inferred','open')),
   flagship       BOOLEAN NOT NULL DEFAULT false,
   summary        TEXT,
   description    TEXT,
@@ -44,14 +44,14 @@ CREATE TABLE assets (
   monitored_via  TEXT,                         -- external system referenced (never operated) — AG2
   acquired       TEXT,
   horizon        TEXT,
-  quantity       INTEGER NOT NULL DEFAULT 1,
+  quantity       INTEGER NOT NULL DEFAULT 1 CHECK (quantity > 0),
   -- typed, queryable numerics (revision #2)
-  power_watts    NUMERIC,
-  power_volts    NUMERIC,
-  power_rail     TEXT,                          -- 5V | 12V | battery | mains
-  mass_grams     INTEGER,
-  price_us       NUMERIC,
-  price_import   NUMERIC,
+  power_watts    NUMERIC CHECK (power_watts IS NULL OR power_watts >= 0),
+  power_volts    NUMERIC CHECK (power_volts IS NULL OR power_volts >= 0),
+  power_rail     TEXT CHECK (power_rail IN ('5V','12V','battery','mains')),
+  mass_grams     INTEGER CHECK (mass_grams IS NULL OR mass_grams >= 0),
+  price_us       NUMERIC CHECK (price_us IS NULL OR price_us >= 0),
+  price_import   NUMERIC CHECK (price_import IS NULL OR price_import >= 0),
   -- display-only leaves
   specs          JSONB,                         -- [{label,value}]
   links          JSONB,                         -- [{label,url}]
@@ -61,7 +61,8 @@ CREATE TABLE assets (
   updated_at     TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
--- 1:1 extension — only present for lifecycle='wishlist' assets (revision #7)
+-- 1:1 optional extension for lifecycle='wishlist' assets (revision #7); no DB-level constraint
+-- enforces this — any asset_id can have a wishlist_meta row.
 CREATE TABLE wishlist_meta (
   asset_id              TEXT PRIMARY KEY REFERENCES assets(id) ON DELETE CASCADE,
   rationale             TEXT,
@@ -117,7 +118,8 @@ CREATE TABLE sockets (
   name          TEXT NOT NULL,
   hotspot_id    INTEGER REFERENCES hotspots(id) ON DELETE SET NULL,
   capacity      INTEGER NOT NULL DEFAULT 1,
-  note          TEXT
+  note          TEXT,
+  UNIQUE (host_asset_id, name)
 );
 
 -- dedicated interface taxonomy drives compatibility (revision #5)
@@ -137,11 +139,11 @@ CREATE TABLE socket_accepts (                    -- what a socket ACCEPTS
   interface_type_id TEXT NOT NULL REFERENCES interface_types(id) ON DELETE CASCADE,
   PRIMARY KEY (socket_id, interface_type_id)
 );
-CREATE TABLE loadout_assignments (               -- what is currently equipped
+CREATE TABLE loadout_assignments (               -- what is currently equipped (one per socket)
   socket_id   INTEGER NOT NULL REFERENCES sockets(id) ON DELETE CASCADE,
   asset_id    TEXT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
   equipped_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (socket_id, asset_id)
+  PRIMARY KEY (socket_id)
 );
 
 -- ── MISSIONS ─────────────────────────────────────────────────────────────────

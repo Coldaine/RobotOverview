@@ -43,7 +43,7 @@ docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP
   display-only leaves (`specs`/`links`/`limitations`/`sources`). Wishlist folds in via
   `lifecycle='wishlist'` + a 1:1 `wishlist_meta`.
 - **Grouping** — `tags`/`asset_tags` (flexible, namespaced: `tag`/`class`/`category`) and
-  first-class **`groups`/`asset_groups`** (`bay`|`kit`|`location`|`project`). **Bays are views.**
+  first-class **`groups`/`asset_groups`** (`bay`|`kit`|`location`|`project`). Bays are **rows in `groups` with `kind='bay'`** — not SQL views.
 - **Loadout** — `sockets` on a host, `interface_types` taxonomy, `socket_accepts` +
   `asset_interfaces` ⇒ candidacy, `loadout_assignments` ⇒ what's equipped.
 - **`missions` · `capabilities` · `insights` · `activity_log`** — explicit junctions
