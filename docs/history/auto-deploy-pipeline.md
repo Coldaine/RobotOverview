@@ -20,7 +20,7 @@ archived: 2026-06-26
 > for how the app ships to the cluster, why it's built this way, and how to operate it.
 >
 > For the product/service boundary with MooseGooseWebsite, read
-> [Hangar Service Boundary](./hangar-service-boundary.md).
+> [Hangar Service Boundary](../deploy/hangar-service-boundary.md).
 
 ## 1. What it is
 

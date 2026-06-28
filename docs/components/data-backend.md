@@ -52,7 +52,7 @@ second engine.
 
 ## Shape (~24 tables, 7 enums)
 
-```
+```text
 ENUMS    asset_kind · asset_status · lifecycle · group_kind(bay|kit|location|project)
          · mission_status · confidence_level · interface_kind(electrical|mechanical|power|data)
 

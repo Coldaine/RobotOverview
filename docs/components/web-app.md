@@ -19,7 +19,7 @@ fuses the frontend with a secure Node.js backend in one project:
 
 - **Server Components** run only on the server, can query data directly, and never ship to the browser bundle.
 - **Server Actions** (`"use server"`) run securely on the server in response to user interaction; they replace REST routes for mutations.
-- **`proxy.ts`** (Next.js 16, replaces `middleware.ts`) is the network boundary — auth checks, redirects, routing — before any page logic runs.
+- **Next.js middleware** (`middleware.ts`) is the network boundary — auth checks, redirects, routing — before any page logic runs. The Hangar app does not implement middleware yet; this is a placeholder for future auth/redirect work.
 
 Net result: the UI and the data layer speak through the server, with secrets injected at runtime and
 never exposed to the client.
@@ -43,8 +43,8 @@ Global UI state (lenses, sourcing) lives in the `HangarProvider` store.
 
 ## Data flow (target, DB-backed)
 
-```
-read:   Browser → proxy.ts → Server Component → (data layer) → render → HTML
+```text
+read:   Browser → Next.js server → Server Component → (data layer) → render → HTML
 write:  Browser onClick → Server Action ("use server") → (data layer) → revalidatePath()/Tag → re-render
 ```
 
