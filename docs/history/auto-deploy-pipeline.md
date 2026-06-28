@@ -1,17 +1,26 @@
 ---
-title: RobotOverview Auto-Deploy Pipeline
-audience: AI agents and operators working on RobotOverview or coldaine-k8cluster
-status: living
+title: RobotOverview Auto-Deploy Pipeline (SUPERSEDED)
+audience: historical — AI agents and operators working on RobotOverview or coldaine-k8cluster
+status: superseded
+superseded_by: docs/deploy/deployment.md
 last_updated: 2026-06-18
+archived: 2026-06-26
 ---
 
 # RobotOverview Auto-Deploy Pipeline
 
-> Read this before touching deploys for RobotOverview. It is the source of truth for how the app
-> ships to the cluster, why it's built this way, and how to operate it.
+> **⚠️ SUPERSEDED — historical record only.** The deployment mechanism described here
+> (GitHub Actions build → write digest to the GitOps repo → Argo CD reconcile) is **no longer the
+> plan.** Deployment is being redesigned around Shipwright. See
+> [`docs/deploy/deployment.md`](../deploy/deployment.md) for the current direction. This document is
+> kept for the design reasoning (pull-based, immutable digest pin, no inbound path) that may inform
+> the new pipeline. It was never fully activated — the GitOps App secrets were never configured.
+
+> (Original intent) Read this before touching deploys for RobotOverview. It is the source of truth
+> for how the app ships to the cluster, why it's built this way, and how to operate it.
 >
 > For the product/service boundary with MooseGooseWebsite, read
-> [Hangar Service Boundary](./hangar-service-boundary.md).
+> [Hangar Service Boundary](../deploy/hangar-service-boundary.md).
 
 ## 1. What it is
 
