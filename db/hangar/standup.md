@@ -3,13 +3,13 @@ title: Hangar DB — Master Inventory Standup
 date: 2026-06-26
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-06-26
+last_confirmed: 2026-06-28
 ---
 
 # Hangar DB — master-inventory Postgres standup
 
 The relational backend for the Hangar: **one master inventory of all gear**, with bays as
-views, a video-game loadout, and the connected model (North Star AG1) preserved. Design
+first-class group rows, a video-game loadout, and the connected model (North Star AG1) preserved. Design
 provenance: `.omc/specs/deep-interview-hangar-master-inventory.md` (deep-interview session,
 2026-06-26), which itself recovered + reconciled the deleted `docs/plans/postgres_schema.md`.
 
@@ -33,7 +33,7 @@ provenance: `.omc/specs/deep-interview-hangar-master-inventory.md` (deep-intervi
 docker exec techdeals-postgres18 psql -U techdeals -d postgres \
   -c "DROP DATABASE IF EXISTS hangar;" -c "CREATE DATABASE hangar;"
 docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP=1 < db/hangar/schema.sql
-npx tsx db/hangar/gen-seed.ts > db/hangar/seed.sql        # regenerate after editing hangar.ts
+npx tsx db/hangar/gen-seed.ts --out db/hangar/seed.sql    # regenerate after editing hangar.ts
 docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP=1 < db/hangar/seed.sql
 ```
 
@@ -45,7 +45,8 @@ docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP
 - **Grouping** — `tags`/`asset_tags` (flexible, namespaced: `tag`/`class`/`category`) and
   first-class **`groups`/`asset_groups`** (`bay`|`kit`|`location`|`project`). Bays are **rows in `groups` with `kind='bay'`** — not SQL views.
 - **Loadout** — `sockets` on a host, `interface_types` taxonomy, `socket_accepts` +
-  `asset_interfaces` ⇒ candidacy, `loadout_assignments` ⇒ what's equipped.
+  `asset_interfaces` ⇒ candidacy, `loadout_assignments` ⇒ what's equipped with the
+  proven compatible `interface_type_id`.
 - **`missions` · `capabilities` · `insights` · `activity_log`** — explicit junctions
   (`mission_requisitions`, `asset_capabilities`, `insight_assets`/`insight_missions`, …).
 
@@ -56,14 +57,16 @@ SELECT a.id, (la.asset_id IS NOT NULL) AS equipped
 FROM sockets s JOIN socket_accepts sa ON sa.socket_id=s.id
   JOIN asset_interfaces ai ON ai.interface_type_id=sa.interface_type_id
   JOIN assets a ON a.id=ai.asset_id
-  LEFT JOIN loadout_assignments la ON la.socket_id=s.id AND la.asset_id=a.id
+  LEFT JOIN loadout_assignments la ON la.socket_id=s.id
+    AND la.asset_id=a.id
+    AND la.interface_type_id=sa.interface_type_id
 WHERE s.host_asset_id='beast' AND s.name='Host Controller Mount';
 
 -- budget math: sum the typed power column for a mission's requisitioned assets
 SELECT SUM(a.power_watts) FROM mission_requisitions mr JOIN assets a ON a.id=mr.asset_id
 WHERE mr.mission_id='undercroft';
 
--- bays as views: membership through groups, not a hard column
+-- bay membership through groups, not a hard column
 SELECT g.code, count(ag.asset_id) FROM groups g
   LEFT JOIN asset_groups ag ON ag.group_id=g.id WHERE g.kind='bay' GROUP BY g.code;
 ```

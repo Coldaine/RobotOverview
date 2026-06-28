@@ -5,7 +5,7 @@
 --
 -- Principles: one unified `assets` table (single-table inheritance); typed columns
 -- for anything queried/aggregated (power/mass/price); JSONB only for display-only
--- leaves; first-class groups (bays are views); a dedicated interface taxonomy drives
+-- leaves; first-class groups (bays are rows); a dedicated interface taxonomy drives
 -- the video-game loadout; explicit junctions for referential integrity.
 -- ─────────────────────────────────────────────────────────────────────────────
 
@@ -58,18 +58,21 @@ CREATE TABLE assets (
   limitations    JSONB,                         -- [text]
   sources        JSONB,                         -- [{label,url,accessedAt,kind}]
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+  updated_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (id, lifecycle)
 );
 
--- 1:1 optional extension for lifecycle='wishlist' assets (revision #7); no DB-level constraint
--- enforces this — any asset_id can have a wishlist_meta row.
+-- 1:1 optional extension for lifecycle='wishlist' assets (revision #7).
 CREATE TABLE wishlist_meta (
-  asset_id              TEXT PRIMARY KEY REFERENCES assets(id) ON DELETE CASCADE,
+  asset_id              TEXT PRIMARY KEY,
+  asset_lifecycle       lifecycle_state NOT NULL DEFAULT 'wishlist' CHECK (asset_lifecycle = 'wishlist'),
   rationale             TEXT,
   unlocks_capability_id TEXT,                   -- FK added after capabilities exists
   risk_note             TEXT,
   for_asset_id          TEXT REFERENCES assets(id) ON DELETE SET NULL,
-  for_mission_id        TEXT                    -- FK added after missions exists
+  for_mission_id        TEXT,                   -- FK added after missions exists
+  FOREIGN KEY (asset_id, asset_lifecycle)
+    REFERENCES assets(id, lifecycle) ON DELETE CASCADE
 );
 
 -- ── GROUPING ─────────────────────────────────────────────────────────────────
@@ -140,10 +143,15 @@ CREATE TABLE socket_accepts (                    -- what a socket ACCEPTS
   PRIMARY KEY (socket_id, interface_type_id)
 );
 CREATE TABLE loadout_assignments (               -- what is currently equipped (one per socket)
-  socket_id   INTEGER NOT NULL REFERENCES sockets(id) ON DELETE CASCADE,
-  asset_id    TEXT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
-  equipped_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  PRIMARY KEY (socket_id)
+  socket_id         INTEGER NOT NULL,
+  asset_id          TEXT NOT NULL,
+  interface_type_id TEXT NOT NULL,
+  equipped_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (socket_id),
+  FOREIGN KEY (socket_id, interface_type_id)
+    REFERENCES socket_accepts(socket_id, interface_type_id) ON DELETE CASCADE,
+  FOREIGN KEY (asset_id, interface_type_id)
+    REFERENCES asset_interfaces(asset_id, interface_type_id) ON DELETE CASCADE
 );
 
 -- ── MISSIONS ─────────────────────────────────────────────────────────────────
@@ -240,6 +248,6 @@ CREATE INDEX idx_assets_lifecycle   ON assets(lifecycle);
 CREATE INDEX idx_asset_groups_group ON asset_groups(group_id);
 CREATE INDEX idx_asset_tags_tag     ON asset_tags(tag_id);
 CREATE INDEX idx_sockets_host       ON sockets(host_asset_id);
-CREATE INDEX idx_assignments_asset  ON loadout_assignments(asset_id);
+CREATE INDEX idx_assignments_asset_iface ON loadout_assignments(asset_id, interface_type_id);
 
 COMMIT;
