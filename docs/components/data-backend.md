@@ -7,7 +7,7 @@ last_updated: 2026-06-29
 
 # Data Backend — Master-Inventory Model
 
-> The Hangar's data spine: the static bootstrap dataset it reads today, the normalized Postgres store it is making authoritative, and the cluster target it will run on.
+> The Hangar's data spine: the static bootstrap dataset it reads today, the normalized Postgres store intended to become authoritative after seed/parity/read-cutover gates, and the cluster target it will run on.
 > The live SQL lives in `db/hangar/` (`schema.sql`, `seed.sql`, `standup.md`).
 
 ## Current reality (read this first)
