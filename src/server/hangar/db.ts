@@ -47,16 +47,29 @@ function getStructuredHangarPoolConfig(): PoolConfig | null {
   const host = optionalEnv('HANGAR_DB_HOST');
   if (!host) return null;
 
-  const sslmode = optionalEnv('HANGAR_DB_SSLMODE');
-
   return {
     host,
     port: positiveIntegerEnv('HANGAR_DB_PORT', 5432),
     database: optionalEnv('HANGAR_DB_NAME') ?? 'hangar',
     user: optionalEnv('HANGAR_DB_USER') ?? 'hangar',
     password: optionalEnv('HANGAR_DB_PASSWORD'),
-    ssl: sslmode && sslmode !== 'disable' ? true : false,
+    ssl: sslConfigFromMode(optionalEnv('HANGAR_DB_SSLMODE')),
   };
+}
+
+function sslConfigFromMode(sslmode: string | undefined): PoolConfig['ssl'] {
+  const mode = sslmode?.toLowerCase() ?? 'disable';
+
+  switch (mode) {
+    case 'disable':
+      return false;
+    case 'require':
+      return true;
+    default:
+      throw new Error(
+        `Unsupported HANGAR_DB_SSLMODE "${sslmode}". Supported values: disable, require.`,
+      );
+  }
 }
 
 function poolConfigWithRuntimeOptions(poolConfig: PoolConfig): PoolConfig {

@@ -82,9 +82,12 @@ HANGAR_DB_SSLMODE
 HANGAR_DB_PASSWORD
 ```
 
-Host, port, database, user, and SSL mode are ordinary deployment config. `HANGAR_DB_PASSWORD` is the
-phase-1 credential and should later be replaceable by workload-identity-backed auth (client cert,
-Vault lease, or proxy-issued token) without changing the browser-facing app.
+Host, port, database, user, and SSL mode are ordinary deployment config. The current app helper
+explicitly supports `HANGAR_DB_SSLMODE=disable` or `require`; certificate-verified modes should be
+added with the actual cert/trust-bundle fields rather than silently treated as generic TLS.
+`HANGAR_DB_PASSWORD` is the phase-1 credential and should later be replaceable by
+workload-identity-backed auth (client cert, Vault lease, or proxy-issued token) without changing the
+browser-facing app.
 
 Keep DB clients lazily initialized inside server-only accessors so `next build` can run without
 runtime credentials. For the current inventory route, missing DB config is not fatal; it is an

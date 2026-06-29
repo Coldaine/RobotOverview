@@ -10,6 +10,7 @@ import {
 
 afterEach(async () => {
   await closeHangarPoolForTests();
+  vi.restoreAllMocks();
   vi.unstubAllEnvs();
 });
 
@@ -60,6 +61,21 @@ describe('Hangar inventory Postgres read path', () => {
     expect(config?.poolConfig).toMatchObject({
       connectionString: 'postgres://hangar:secret@pg18-rw/hangar',
     });
+  });
+
+  it('rejects unsupported SSL modes instead of silently weakening their meaning', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    vi.stubEnv('HANGAR_DB_HOST', 'pg18-rw.data-platform.svc.cluster.local');
+    vi.stubEnv('HANGAR_DB_SSLMODE', 'verify-full');
+
+    expect(() => getHangarPoolConfig()).toThrow(
+      'Unsupported HANGAR_DB_SSLMODE "verify-full". Supported values: disable, require.',
+    );
+
+    const result = await getInventoryItems();
+
+    expect(result.source).toBe('static');
+    expect(result.fallbackReason).toBe('postgres-error');
   });
 
   it('maps item rows from the normalized assets schema back into the app read model', () => {

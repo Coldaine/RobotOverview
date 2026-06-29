@@ -100,7 +100,7 @@ App env:
 
 Do **not** create a new Postgres server for Hangar. Per `coldaine-k8cluster`, current app databases are logical databases inside `pg18`; `pg19` is future/PG19-specific and not for irreplaceable data yet; `falkordb` is for graph data.
 
-`HANGAR_DB_HOST`, port, database name, role, and SSL mode are configuration, not secrets. Only the runtime credential carries authority. Longer-term, that credential should become workload-identity backed (client certificate, Vault lease, or proxy-issued token) rather than a durable password; the app-side contract can stay structured either way.
+`HANGAR_DB_HOST`, port, database name, role, and SSL mode are configuration, not secrets. Only the runtime credential carries authority. The app helper currently accepts `HANGAR_DB_SSLMODE=disable` or `require`; future certificate-verified modes should add the real certificate/trust-bundle config instead of being treated as a generic on/off switch. Longer-term, that credential should become workload-identity backed (client certificate, Vault lease, or proxy-issued token) rather than a durable password; the app-side contract can stay structured either way.
 
 ## App read path foundation
 
