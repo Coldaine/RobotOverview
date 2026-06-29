@@ -24,7 +24,7 @@ This local database proves the schema and seed shape. It is not the production t
 
 ### Target deployment
 
-The target database belongs to `C:\_projects\coldaine-k8cluster`: a logical `hangar` database inside the `pg18` CloudNativePG cluster. Provisioning is cluster-repo work (`databases/pg18.yaml` plus `docs/connection-registry.md`), with a `hangar` role, Doppler/ESO-managed password, `DATABASE_URL` for the app, and restore-tested backups before cutover.
+The target database belongs to `C:\_projects\coldaine-k8cluster`: a logical `hangar` database inside the `pg18` CloudNativePG cluster. Provisioning is cluster-repo work (`databases/pg18.yaml` plus `docs/connection-registry.md`), with a `hangar` role, structured `HANGAR_DB_*` app config, a runtime credential path, and restore-tested backups before cutover.
 
 Do not stand up a RobotOverview-owned Postgres server for Hangar; add a logical DB to `pg18`.
 
@@ -47,7 +47,7 @@ npx tsx db/hangar/gen-seed.ts --out db/hangar/seed.sql    # regenerate after edi
 docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP=1 < db/hangar/seed.sql
 ```
 
-Cluster deployment is different: reserve the logical DB/role in `coldaine-k8cluster`, obtain `DATABASE_URL` via Doppler/ESO, apply migrations/schema there, restore-test backups, then wire the app.
+Cluster deployment is different: reserve the logical DB/role in `coldaine-k8cluster`, provide address config as `HANGAR_DB_HOST`/`HANGAR_DB_PORT`/`HANGAR_DB_NAME`/`HANGAR_DB_USER`, provide only the credential-bearing piece through the chosen runtime auth path, apply migrations/schema there, restore-test backups, then wire the app.
 
 ## Schema in one breath
 

@@ -1,18 +1,22 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GET } from '@/app/api/hangar/items/route';
 import { hangarData } from '@/data/hangar';
+import { closeHangarPoolForTests, getHangarPoolConfig } from '@/server/hangar/db';
 import {
   getInventoryItems,
   mapInventoryItemRow,
   readInventoryItemsFromPostgres,
 } from '@/server/hangar/items';
 
-afterEach(() => {
+afterEach(async () => {
+  await closeHangarPoolForTests();
+  vi.restoreAllMocks();
   vi.unstubAllEnvs();
 });
 
 describe('Hangar inventory Postgres read path', () => {
-  it('falls back to the static inventory spine when no database URL is configured', async () => {
+  it('falls back to the static inventory spine when no database config is present', async () => {
+    vi.stubEnv('HANGAR_DB_HOST', '');
     vi.stubEnv('HANGAR_DATABASE_URL', '');
     vi.stubEnv('DATABASE_URL', '');
 
@@ -21,6 +25,57 @@ describe('Hangar inventory Postgres read path', () => {
     expect(result.source).toBe('static');
     expect(result.fallbackReason).toBe('not-configured');
     expect(result.items).toBe(hangarData.items);
+  });
+
+  it('prefers structured Hangar database config over credential-bearing URLs', () => {
+    vi.stubEnv('HANGAR_DB_HOST', 'pg18-rw.data-platform.svc.cluster.local');
+    vi.stubEnv('HANGAR_DB_PORT', '5432');
+    vi.stubEnv('HANGAR_DB_NAME', 'hangar');
+    vi.stubEnv('HANGAR_DB_USER', 'hangar');
+    vi.stubEnv('HANGAR_DB_PASSWORD', ' temporary-or-runtime-secret ');
+    vi.stubEnv('HANGAR_DB_SSLMODE', 'require');
+    vi.stubEnv('HANGAR_DATABASE_URL', 'postgres://legacy:secret@legacy/hangar');
+
+    const config = getHangarPoolConfig();
+
+    expect(config?.source).toBe('structured');
+    expect(config?.poolConfig).toMatchObject({
+      host: 'pg18-rw.data-platform.svc.cluster.local',
+      port: 5432,
+      database: 'hangar',
+      user: 'hangar',
+      password: ' temporary-or-runtime-secret ',
+      ssl: true,
+    });
+    expect(config?.poolConfig).not.toHaveProperty('connectionString');
+  });
+
+  it('keeps credential-bearing database URLs as a compatibility fallback', () => {
+    vi.stubEnv('HANGAR_DB_HOST', '');
+    vi.stubEnv('HANGAR_DATABASE_URL', 'postgres://hangar:secret@pg18-rw/hangar');
+    vi.stubEnv('DATABASE_URL', '');
+
+    const config = getHangarPoolConfig();
+
+    expect(config?.source).toBe('url');
+    expect(config?.poolConfig).toMatchObject({
+      connectionString: 'postgres://hangar:secret@pg18-rw/hangar',
+    });
+  });
+
+  it('rejects unsupported SSL modes instead of silently weakening their meaning', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    vi.stubEnv('HANGAR_DB_HOST', 'pg18-rw.data-platform.svc.cluster.local');
+    vi.stubEnv('HANGAR_DB_SSLMODE', 'verify-full');
+
+    expect(() => getHangarPoolConfig()).toThrow(
+      'Unsupported HANGAR_DB_SSLMODE "verify-full". Supported values: disable, require.',
+    );
+
+    const result = await getInventoryItems();
+
+    expect(result.source).toBe('static');
+    expect(result.fallbackReason).toBe('postgres-error');
   });
 
   it('maps item rows from the normalized assets schema back into the app read model', () => {
@@ -112,6 +167,7 @@ describe('Hangar inventory Postgres read path', () => {
   });
 
   it('exposes the read path through a non-static route handler', async () => {
+    vi.stubEnv('HANGAR_DB_HOST', '');
     vi.stubEnv('HANGAR_DATABASE_URL', '');
     vi.stubEnv('DATABASE_URL', '');
 

@@ -31,7 +31,7 @@ The Beast research and the wiring-twin work initially landed in the wrong shape:
   - `pg18`: PostgreSQL 18, CloudNativePG, all-extension image, current logical DBs.
   - `pg19`: PostgreSQL 19, CloudNativePG, future/empty/PG19-specific; not for irreplaceable data yet.
   - `falkordb`: graph database, KubeBlocks.
-- Hangar should target `pg18` as a logical database (`hangar`) with a role (`hangar`) and Doppler/ESO-managed password.
+- Hangar should target `pg18` as a logical database (`hangar`) with a role (`hangar`) and structured app config (`HANGAR_DB_*`). In phase 1, only the runtime credential (`HANGAR_DB_PASSWORD`) should come from Doppler/ESO; longer-term auth can move to client certs, Vault leases, or a proxy-issued token without changing the address contract.
 - `coldaine-k8cluster` declares **Garage** for in-cluster S3: database backups plus light app object storage. Do not assume the default `kubeblocks-backups` bucket is the Hangar document bucket; choose a Hangar source-document bucket/key/policy deliberately.
 - App code should use an S3-compatible abstraction so the archive can move from interim storage to the final object-store path without changing the data model.
 
@@ -51,7 +51,7 @@ In `C:\_projects\coldaine-k8cluster`:
 
 1. Add Hangar to the database contract:
    - CNPG `Database` in `databases/pg18.yaml`.
-   - `hangar` role/password contract.
+   - `hangar` role and structured connection contract.
    - `docs/connection-registry.md` row.
    - Doppler key, likely `HANGAR_DB_PASSWORD`.
 2. Decide source-document object storage:
@@ -65,7 +65,7 @@ In `C:\_projects\coldaine-k8cluster`:
 
 1. Apply the Hangar schema to the cluster `pg18` logical DB.
 2. Load seed data generated from `src/data/hangar.ts`.
-3. Wire the Next.js server layer/ORM to `DATABASE_URL` while keeping rollback to `hangar.ts` clear.
+3. Wire the Next.js server layer/ORM to structured `HANGAR_DB_*` config while keeping rollback to `hangar.ts` clear.
 4. Prove representative reads and app pages from the DB.
 5. Only then retire `hangar.ts` as runtime source.
 
