@@ -213,7 +213,12 @@ const col = s => (CSS.getPropertyValue('--'+s).trim()||'#888');
 const NS='http://www.w3.org/2000/svg';
 const svg=document.getElementById('svg');
 const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in (a||{}))e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;};
-const resolve = p => /^https?:/.test(p) ? p : '../../'+p;
+const ROOT_FROM_HERE = '../../../';
+const resolve = p => {
+  const value = String(p || '');
+  if (/^(?:[a-z][a-z0-9+.-]*:|#|\/)/i.test(value)) return value;
+  return new URL(ROOT_FROM_HERE + value.replace(/^\.?\//, ''), window.location.href).href;
+};
 
 const state = { host:'none', selected:null, off:new Set() };
 
@@ -274,7 +279,7 @@ function panel(){
     return `<div class="netrow"><span class="pill" style="background:${col(e.signal)}">${e.signal}</span>
       <span>${dir} ${on?on.label:other}</span><span style="color:var(--dim);margin-left:auto">${e.label}</span></div>`;
   }).join('') || '<div class="hint">No connections in this host configuration.</div>';
-  const docs=(n.docs||[]).map(d=>`<a class="doc" href="${resolve(d[1])}" target="_blank">${d[0]} ↗</a>`).join('');
+  const docs=(n.docs||[]).map(d=>`<a class="doc" href="${resolve(d[1])}" target="_blank" rel="noopener noreferrer">${d[0]} ↗</a>`).join('');
   p.innerHTML=`
     <button onclick="state.selected=null;render();panel()" style="background:none;border:0;color:var(--dim);cursor:pointer;font:11px ui-monospace">← system overview</button>
     <div class="role">${n.role||n.type}</div>
