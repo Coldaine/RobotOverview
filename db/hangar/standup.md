@@ -18,17 +18,20 @@ provenance: `.omc/specs/deep-interview-hangar-master-inventory.md` (deep-intervi
 > the app migrates onto next.
 
 ## Where it lives
+
 - **Instance:** the existing `techdeals-postgres18` container (Postgres 18, host `:54329`).
 - **Database:** `hangar` — a *separate* database in that instance. TechdealsHandoff data
   (`market_*`, `techdeals_work*`, `legacy_supabase`) is untouched.
 - Creds (dev): `techdeals` / `techdeals`.
 
 ## Files
+
 - `schema.sql` — the DDL (24 tables, 7 enums). The source of truth for the shape.
 - `gen-seed.ts` — transforms `src/data/hangar.ts` → seed SQL (defensive: junctions filtered to resolvable refs).
 - `seed.sql` — generated output (committed so the DB rebuilds with psql alone).
 
 ## Rebuild from scratch
+
 ```bash
 docker exec techdeals-postgres18 psql -U techdeals -d postgres \
   -c "DROP DATABASE IF EXISTS hangar;" -c "CREATE DATABASE hangar;"
@@ -38,6 +41,7 @@ docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP
 ```
 
 ## Schema in one breath
+
 - **`assets`** — every possession in one table (single-table inheritance); `kind` discriminator;
   **typed `power_*`/`mass_grams`/`price_*` columns** (queryable for budgets); JSONB only for
   display-only leaves (`specs`/`links`/`limitations`/`sources`). Wishlist folds in via
@@ -51,6 +55,7 @@ docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP
   (`mission_requisitions`, `asset_capabilities`, `insight_assets`/`insight_missions`, …).
 
 ## Verification queries (the three proofs)
+
 ```sql
 -- video-game loadout: who can fill the Beast's host mount? (pi5 equipped, orin-nano = swap)
 SELECT a.id, (la.asset_id IS NOT NULL) AS equipped
@@ -72,6 +77,7 @@ SELECT g.code, count(ag.asset_id) FROM groups g
 ```
 
 ## Known follow-ups (not blockers)
+
 - An **"onboard power"** view should filter mission power by location/tag — the raw
   requisition sum includes the offboard 5090 workstation.
 - `interface_types` is seeded with a demonstrative set (host-mount, serial-bus-servo, ups-bay,

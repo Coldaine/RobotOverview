@@ -14,12 +14,23 @@ const out: string[] = [];
 const w = (s: string) => out.push(s);
 
 // ── SQL escapers ────────────────────────────────────────────────────────────
+const stripNul = (value: string) => value.replace(/\0/g, '');
+const sanitizeJson = (value: unknown): unknown => {
+  if (typeof value === 'string') return stripNul(value);
+  if (Array.isArray(value)) return value.map(sanitizeJson);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, nested]) => [stripNul(key), sanitizeJson(nested)]),
+    );
+  }
+  return value;
+};
 const S = (v: unknown) =>
-  v === null || v === undefined ? 'NULL' : `'${String(v).replace(/'/g, "''")}'`;
+  v === null || v === undefined ? 'NULL' : `'${stripNul(String(v)).replace(/'/g, "''")}'`;
 const N = (v: unknown) => (v === null || v === undefined || v === '' ? 'NULL' : Number(v));
 const B = (v: unknown) => (v ? 'true' : 'false');
 const J = (v: unknown) =>
-  v === null || v === undefined ? 'NULL' : `'${JSON.stringify(v).replace(/'/g, "''")}'::jsonb`;
+  v === null || v === undefined ? 'NULL' : `'${JSON.stringify(sanitizeJson(v)).replace(/'/g, "''")}'::jsonb`;
 
 // ── id registries (for defensive filtering) ─────────────────────────────────
 const assetIds = new Set<string>([
@@ -82,7 +93,7 @@ w('\n-- assets: inventory items');
 for (const i of H.items) {
   const life = i.status === 'on-order' ? 'on-order' : i.status === 'owned' ? 'inventory' : null;
   w(
-    `INSERT INTO assets(${assetCols}) VALUES (${S(i.id)},'peripheral',${S(i.name)},${S(i.manufacturer)},${S(i.model)},NULL,${S(i.status)},${S(life)},${S(i.provenance)},false,${S(i.summary)},${S(i.description)},${S(i.planningNotes)},NULL,${S(i.acquired)},${S(i.horizon)},${N(i.quantity) || 1},NULL,NULL,NULL,NULL,${N(i.price?.us)},${N(i.price?.import)},${J(i.specs)},NULL,${J(i.limitations)},${J(i.sources)});`,
+    `INSERT INTO assets(${assetCols}) VALUES (${S(i.id)},'peripheral',${S(i.name)},${S(i.manufacturer)},${S(i.model)},NULL,${S(i.status)},${S(life)},${S(i.provenance)},false,${S(i.summary)},${S(i.description)},${S(i.planningNotes)},NULL,${S(i.acquired)},${S(i.horizon)},${N(i.quantity)},NULL,NULL,NULL,NULL,${N(i.price?.us)},${N(i.price?.import)},${J(i.specs)},NULL,${J(i.limitations)},${J(i.sources)});`,
   );
 }
 

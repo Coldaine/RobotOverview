@@ -120,7 +120,7 @@ CREATE TABLE sockets (
   slot_group    TEXT,                           -- 'Chassis Mounts' | 'Driver Board Interfaces'
   name          TEXT NOT NULL,
   hotspot_id    INTEGER REFERENCES hotspots(id) ON DELETE SET NULL,
-  capacity      INTEGER NOT NULL DEFAULT 1,
+  capacity      INTEGER NOT NULL DEFAULT 1 CHECK (capacity > 0),
   note          TEXT,
   UNIQUE (host_asset_id, name)
 );
@@ -178,9 +178,9 @@ CREATE TABLE mission_constraints (
   id         SERIAL PRIMARY KEY,
   mission_id TEXT NOT NULL REFERENCES missions(id) ON DELETE CASCADE,
   label      TEXT NOT NULL,
-  value      NUMERIC NOT NULL,
-  budget     NUMERIC NOT NULL,
-  unit       TEXT                                -- 'W' | 'g' | '$'
+  value      NUMERIC NOT NULL CHECK (value >= 0),
+  budget     NUMERIC NOT NULL CHECK (budget >= 0),
+  unit       TEXT NOT NULL CHECK (unit IN ('W','g','$'))
 );
 
 -- ── CAPABILITIES (tech tree) ─────────────────────────────────────────────────
