@@ -32,7 +32,7 @@ describe('Hangar inventory Postgres read path', () => {
     vi.stubEnv('HANGAR_DB_PORT', '5432');
     vi.stubEnv('HANGAR_DB_NAME', 'hangar');
     vi.stubEnv('HANGAR_DB_USER', 'hangar');
-    vi.stubEnv('HANGAR_DB_PASSWORD', 'temporary-or-runtime-secret');
+    vi.stubEnv('HANGAR_DB_PASSWORD', ' temporary-or-runtime-secret ');
     vi.stubEnv('HANGAR_DB_SSLMODE', 'require');
     vi.stubEnv('HANGAR_DATABASE_URL', 'postgres://legacy:secret@legacy/hangar');
 
@@ -44,7 +44,7 @@ describe('Hangar inventory Postgres read path', () => {
       port: 5432,
       database: 'hangar',
       user: 'hangar',
-      password: 'temporary-or-runtime-secret',
+      password: ' temporary-or-runtime-secret ',
       ssl: true,
     });
     expect(config?.poolConfig).not.toHaveProperty('connectionString');

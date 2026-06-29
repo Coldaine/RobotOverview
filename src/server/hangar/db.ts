@@ -43,6 +43,11 @@ function optionalEnv(name: string) {
   return value ? value : undefined;
 }
 
+function optionalRawEnv(name: string) {
+  const value = process.env[name];
+  return value === undefined || value === '' ? undefined : value;
+}
+
 function getStructuredHangarPoolConfig(): PoolConfig | null {
   const host = optionalEnv('HANGAR_DB_HOST');
   if (!host) return null;
@@ -52,7 +57,7 @@ function getStructuredHangarPoolConfig(): PoolConfig | null {
     port: positiveIntegerEnv('HANGAR_DB_PORT', 5432),
     database: optionalEnv('HANGAR_DB_NAME') ?? 'hangar',
     user: optionalEnv('HANGAR_DB_USER') ?? 'hangar',
-    password: optionalEnv('HANGAR_DB_PASSWORD'),
+    password: optionalRawEnv('HANGAR_DB_PASSWORD'),
     ssl: sslConfigFromMode(optionalEnv('HANGAR_DB_SSLMODE')),
   };
 }
