@@ -3,70 +3,89 @@ title: Storage + Twin Pivot Plan
 date: 2026-06-28
 author: Patrick MacLyman (drafted with assistant)
 status: proposal
+last_updated: 2026-06-29
 ---
 
 # Storage + Twin Pivot Plan
 
 ## Why pivot
 
-The Beast research and the wiring-twin work landed in the wrong shape: ~75 MB of binaries at the app-repo root (not gitignored, not dockerignored), a `docs/twin/` silo outside the `AGENTS.md` decision tree, and standalone HTML previews instead of app code. The correct shape separates concerns by lifecycle: app code and data in `RobotOverview`, storage and infra in `coldaine-k8cluster`, bulk binaries in object storage, all sitting on a hardware fabric. This plan realigns everything we discussed into that shape.
+The Beast research and the wiring-twin work initially landed in the wrong shape: bulk binaries at the app-repo root, a `docs/twin/` silo outside the decision tree, and standalone HTML previews instead of app-integrated code. The correct shape separates concerns by lifecycle: app code and data model in `RobotOverview`, runtime infrastructure in `coldaine-k8cluster`, bulk source binaries in object storage, and the physical hardware fabric underneath.
 
 ## Target architecture: where each thing lives
 
 | Concern | Home | Notes |
 |---|---|---|
-| Hangar app + the wiring view UI | `RobotOverview/src` | React/Next; reads from DB/API, not from binaries |
-| Twin data model (assets / terminals / nets) | `RobotOverview/src/data` + Postgres schema | data-is-truth; documented in `docs/components/data-backend.md` |
-| Hangar knowledge (Beast wiring, Orin path, storage decisions) | `RobotOverview/docs` (`beast-ops.md`, `deploy/`) | fold out of the `docs/twin/` silo; register in `AGENTS.md` + `architecture.md` |
-| Bulk source files (PDF/CAD/zips) | Object-storage bucket, referenced by URL from Postgres | never git, never the image |
-| Object-storage service (S3/RGW) | `coldaine-k8cluster` | currently absent; must be added |
-| Hangar Postgres | `coldaine-k8cluster` | reuse the existing DB provisioning you already have |
-| Storage/infra research notes | `coldaine-k8cluster/docs` | persist once I have repo access |
-| Hardware fabric | 3-node TB4-mesh mini PCs, hyperconverged Proxmox/Talos + Ceph | RBD backs PVCs/Postgres; RGW serves buckets |
+| Hangar app + wiring view UI | `RobotOverview/src` | React/Next; reads from app data layer/DB, not from local binaries. |
+| Master inventory schema | `RobotOverview/db/hangar` | `schema.sql`, generated seed, future migrations/ORM mapping. |
+| Twin data model | RobotOverview schema + seed inputs | Assets/sockets/interfaces now; terminals/nets/source refs next. |
+| Hangar docs/knowledge | `RobotOverview/docs` | Beast ops, connected twin, source archive digest, storage plan. |
+| Bulk source files (PDF/CAD/ZIP/firmware/wiki captures) | S3-compatible object bucket | Never git, never Docker image; DB stores metadata + object keys/URLs. |
+| Hangar Postgres target | `coldaine-k8cluster` `pg18` | Logical `hangar` database in the CloudNativePG `pg18` cluster; not a new server. |
+| Object-storage service | `coldaine-k8cluster` | Backup MinIO is declared for DB backups; app document storage still needs explicit bucket/tenant/access decision. |
+| Deployment | `coldaine-k8cluster/apps` + `builds` | App service, image build, secrets, and route live in cluster repo once ready. |
 
-## Confirmed from this thread
+## Confirmed from `coldaine-k8cluster`
 
-- The cluster currently stands up **no S3/R2-compatible object storage**; it must be added for the hangar's documents.
-- Postgres / database backing **is** already provisioned (to verify in-repo), so the hangar DB reuses that pattern rather than inventing one.
-- Object storage is S3-compatible end to end, so app code is identical whether the bucket is an interim Garage/R2 today or Ceph RGW later. Storage choice never blocks app work.
+- The target database set is already enumerated:
+  - `pg18`: PostgreSQL 18, CloudNativePG, all-extension image, current logical DBs.
+  - `pg19`: PostgreSQL 19, CloudNativePG, future/empty/PG19-specific; not for irreplaceable data yet.
+  - `falkordb`: graph database, KubeBlocks.
+- Hangar should target `pg18` as a logical database (`hangar`) with a role (`hangar`) and Doppler/ESO-managed password.
+- `coldaine-k8cluster` declares in-cluster MinIO for **database backups**. Do not assume that backup bucket is automatically the Hangar document bucket; choose an app-document bucket/tenant/policy deliberately.
+- App code should use an S3-compatible abstraction so the archive can move from interim storage to the final object-store path without changing the data model.
 
 ## Workstreams and sequencing
 
-### Phase 0 — App repo, doable now (no hardware)
-1. Stop the bleeding: add `UGV-Beast-Archive/` to `.gitignore` and `.dockerignore`.
-2. Realign docs into their real homes; retire `docs/twin/`; register in `AGENTS.md` + `architecture.md`.
-3. Build the storage abstraction: an S3 client plus a `sources`/`assets` reference scheme that reads endpoint and credentials from env, so the app is storage-agnostic.
-4. Land the twin data model (`Terminal`/`Net` types + `beast.nets.json`) and convert `WiringDiagram.tsx` from hardcoded paths to data-driven nets.
+### Phase 0 — App repo, doable now
 
-### Phase 1 — Infra repo (needs `coldaine-k8cluster` access)
-1. Verify state: confirm no object storage, confirm the Postgres provisioning, and write the findings + storage research as notes in the k8s repo.
-2. Stand up the hangar Postgres (reuse existing pattern) and apply the master-inventory schema + `terminals`/`nets`.
-3. Stand up an S3 endpoint. Interim (pre-hardware): a lightweight single-node Garage/SeaweedFS, or R2 as a stopgap, so the hangar is not blocked on the cluster build. Long-term: Ceph RGW.
+1. Keep `UGV-Beast-Archive/` ignored in `.gitignore` and `.dockerignore`.
+2. Keep the DB schema/seed in `db/hangar/` and document that local standup is proof-of-shape only.
+3. Register the connected-twin direction in `docs/components/connected-twin.md` and the data-backend docs.
+4. Preserve source-archive knowledge as a digest/reference doc, not as committed binaries.
+5. When implementing code, add `Terminal`/`Net` types + seed inputs and convert `WiringDiagram.tsx` from hardcoded paths to data-driven nets.
 
-### Phase 2 — Hardware fabric
-1. Acquire 3 identical mini PCs (dual TB4/USB4, 2+ M.2, 64 GB), wire the TB4 mesh, OS on one NVMe and a dedicated OSD NVMe on each.
-2. Stand up Proxmox/Talos + Ceph (Rook or Proxmox-Ceph). Pools: replicated size 3 for RBD/Postgres; replicated or EC for the document bucket via RGW.
-3. Decide 3 vs 4 nodes (4 gives Ceph self-heal headroom).
+### Phase 1 — Cluster contract
 
-### Phase 3 — Migration and cutover
-1. Upload the archive binaries to the bucket; write reference rows in Postgres; repoint each twin `net.source_doc` to a bucket URL; delete the in-repo archive.
-2. Point the hangar Postgres onto Ceph RBD; move the bucket onto RGW; flip the app's S3 endpoint (a config change only, thanks to Phase 0).
-3. Wire Drizzle to Postgres (the deferred ORM step); the app reads the DB instead of `hangar.ts`.
+In `C:\_projects\coldaine-k8cluster`:
 
-## Per-repo ownership (the boundary)
+1. Add Hangar to the database contract:
+   - CNPG `Database` in `databases/pg18.yaml`.
+   - `hangar` role/password contract.
+   - `docs/connection-registry.md` row.
+   - Doppler key, likely `HANGAR_DB_PASSWORD`.
+2. Decide source-document object storage:
+   - same MinIO tenant with a separate bucket/policy,
+   - separate tenant/bucket,
+   - or R2/offsite first.
+3. Record the bucket contract: bucket name, app role/secret names, access pattern, retention/offsite stance.
+4. Restore-test the DB backup path before any app depends on the cluster DB.
 
-- `RobotOverview` owns what the hangar **is**: app, data model, wiring UI, knowledge docs. It references storage by URL and env, never embeds it.
-- `coldaine-k8cluster` owns how it **runs**: Postgres, object storage, deployments, and the storage research notes.
-- The hardware fabric is the Ceph layer underneath both.
+### Phase 2 — Schema/app cutover
+
+1. Apply the Hangar schema to the cluster `pg18` logical DB.
+2. Load seed data generated from `src/data/hangar.ts`.
+3. Wire the Next.js server layer/ORM to `DATABASE_URL` while keeping rollback to `hangar.ts` clear.
+4. Prove representative reads and app pages from the DB.
+5. Only then retire `hangar.ts` as runtime source.
+
+### Phase 3 — Source-backed connected twin
+
+1. Upload curated source archive binaries to the chosen object bucket.
+2. Add source-document metadata rows and link specs/nets to source documents.
+3. Add `terminals` and `nets` schema/seed.
+4. Build the in-app wiring/board dossier view using the existing Hangar shell, store, theme system, and loadout compatibility.
+
+## Per-repo ownership
+
+- `RobotOverview` owns what the Hangar **is**: app, schema, data model, wiring UI, and knowledge docs.
+- `coldaine-k8cluster` owns how it **runs**: logical DB provisioning, app deployment, secrets, object storage, backups, and restore gates.
+- Bulk source archives are data, not source code: store them in object storage and reference them from the DB/app.
 
 ## Open decisions
 
-- Interim object storage before the cluster exists: Garage/SeaweedFS on an existing node, or R2 as a stopgap. App code is identical either way.
-- Target node count: 3 (size 3, no self-heal headroom during a node loss) vs 4 (Ceph can self-heal).
-- Bucket pool encoding: replication (simpler, better for small/random) vs EC (more usable space, better for large write-once objects).
-
-## Immediate next steps
-
-1. With your OK, gitignore + dockerignore the archive in `RobotOverview` now (no-regret safety fix).
-2. Grant access to `coldaine-k8cluster` (mount the folder, or enable the GitHub connector) so I can verify the S3/Postgres state and drop the storage notes there.
-3. I land the Phase 0 app changes on a branch for your review.
+- Exact logical database name: likely `hangar`.
+- Exact role and Doppler key: likely `hangar` / `HANGAR_DB_PASSWORD`.
+- Whether the source-document bucket shares the backup MinIO tenant or uses a separate object-store path.
+- Whether source archive objects need offsite durability before being considered safe.
+- Whether/when any Hangar relationship data belongs in `falkordb`; default is no, Postgres first.

@@ -38,7 +38,7 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 
 - The robot is the interface (flagship schematic focus).
 - Current app runtime source of truth is `src/data/hangar.ts` until the PostgreSQL-backed read path lands.
-- The Postgres master-inventory schema/seed lives in `db/hangar/`; it is staged alongside the app, not yet the app's runtime source.
+- The Postgres master-inventory schema/seed lives in `db/hangar/`; local standup proves shape only. The target database is a logical `hangar` DB in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster.
 - Use the `HangarProvider` store for global state (lenses, sourcing).
 - Maintain "Dark Engineering HUD" aesthetics (blueprint grids, cyan/amber accents).
 - Do not commit bulk BEAST-01 archive binaries; store them in object storage and reference them from data/docs.

@@ -28,7 +28,7 @@ The twin layer fills that gap without replacing the loadout model.
   - `base-harness.model.json`
   - `board-review.html`
   - `twin-model.json`
-- These prototypes are **historical/reference artifacts**, not app code and not the current route surface.
+- These prototypes are reference artifacts, not app code and not the current route surface.
 - The old `docs/twin/` silo was deliberately retired. Current guidance lives here and in the component/data docs.
 - Bulk BEAST-01 source files are intentionally **not tracked** in git. See `docs/reference/ugv-beast-source-archive.md` for the digest and object-storage boundary.
 
@@ -47,6 +47,12 @@ Relationship to existing concepts:
 - `loadout_assignments` records what is equipped.
 - `terminals` / `nets` answer what is physically connected and where that claim came from.
 
+## Persistence target
+
+RobotOverview owns the schema, seed inputs, and app behavior for this model. The deployment target is the logical Hangar database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster, not a new database server and not the local proof container.
+
+Source-document metadata should live in the Hangar schema. Large source binaries (PDF/CAD/firmware/wiki captures) should live in S3-compatible object storage and be referenced by key/URL. Do not assume the cluster's database-backup MinIO bucket is also the app document store. The app archive bucket needs its own explicit decision about bucket name, access policy, retention/offsite mirror, and whether it shares the MinIO tenant or uses a separate object-store path.
+
 ## App integration path
 
 Smallest coherent implementation slice:
@@ -56,7 +62,7 @@ Smallest coherent implementation slice:
 3. Replace the hardcoded `WiringDiagram.tsx` splines with data-driven nets, keeping the same visual language.
 4. Add a board/terminal dossier panel using the existing drawer pattern.
 5. Add provenance chips that link to source documents once object storage URLs exist.
-6. Extend the DB schema/seed generator with `terminals` and `nets` after the master-inventory PR lands cleanly.
+6. Extend the DB schema/seed generator with `terminals`, `nets`, and source-document metadata after the master-inventory DB branch lands cleanly.
 
 Do not build a parallel app, standalone HTML page, or second state system. The wiring view should reuse the existing Hangar shell, theme system, store, loadout compatibility, and unit routes.
 
@@ -73,5 +79,5 @@ The UI should make that difference visible as a supervised build/diagnostic view
 
 - Do not treat this as autonomous robot control.
 - Do not commit the 100+ MB source archive binaries into the app repo.
-- Do not revive `docs/twin/` as a second documentation tree.
+- Do not create a RobotOverview-owned Postgres server; target the cluster repo's `pg18` logical DB pattern.
 - Do not keep standalone HTML as the product surface; use it only as reference for the in-app implementation.
