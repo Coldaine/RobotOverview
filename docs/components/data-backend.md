@@ -7,14 +7,14 @@ last_updated: 2026-06-29
 
 # Data Backend — Master-Inventory Model
 
-> The Hangar's data spine: the static source it reads today, the normalized Postgres schema it is migrating to, and the cluster target it will eventually run on.
+> The Hangar's data spine: the static bootstrap dataset it reads today, the normalized Postgres store it is making authoritative, and the cluster target it will run on.
 > The live SQL lives in `db/hangar/` (`schema.sql`, `seed.sql`, `standup.md`).
 
 ## Current reality (read this first)
 
-- **`src/data/hangar.ts` is the authoritative runtime source.** The Next.js app reads it directly today.
-- The **Postgres `hangar` schema has been stood up locally as a proof of shape**: schema applied, seeded from `hangar.ts`, and verified. It is **not yet authoritative**.
-- The first app read-path foundation now exists for inventory items: `GET /api/hangar/items` attempts a server-side Postgres read when structured `HANGAR_DB_*` config is present, and falls back to `src/data/hangar.ts` when it is not configured or the read fails. `HANGAR_DATABASE_URL`/`DATABASE_URL` remain compatibility paths, but the preferred contract is not a credential-bearing URL. This is a proof lane, not the primary UI source yet.
+- **`src/data/hangar.ts` is the current runtime source and bootstrap dataset.** The browser-facing Next.js app still reads it directly today.
+- The **Postgres `hangar` schema is the intended authoritative store** once the cluster DB is provisioned, seeded from `hangar.ts`, parity-checked, and app reads are cut over. The local standup proves shape only; it is not the production target.
+- The first app read-path foundation now exists for inventory items: `GET /api/hangar/items` attempts a server-side Postgres read when structured `HANGAR_DB_*` config is present, and falls back to `src/data/hangar.ts` when it is not configured or the read fails. `HANGAR_DATABASE_URL`/`DATABASE_URL` remain compatibility paths, but the preferred contract is not a credential-bearing URL. This is the first proof lane toward Postgres authority, not the full UI cutover yet.
 - The **target deployment database is not decided inside RobotOverview.** It is a logical Hangar database in `C:\_projects\coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`databases/pg18.yaml` + `docs/connection-registry.md`). RobotOverview owns the app schema/migrations and app behavior; the cluster repo owns provisioning, roles/secrets, backups, and restore gates.
 - This staging is intentional, per the North Star pillar **"do not prescribe before populating"**: the relational shape was designed only after there was real content to fit it to.
 
@@ -110,7 +110,7 @@ The current server boundary is intentionally small:
 - `src/server/hangar/items.ts` maps the normalized `assets`/`groups`/`tags` shape back into the existing `InventoryItem` read model.
 - `src/app/api/hangar/items/route.ts` exposes a read-only smoke-test route with `{ source, fallbackReason, count, items }`.
 
-This keeps `next build` safe without database secrets and gives the deployment path a simple verification target. The browser-facing Hangar store still reads `hangar.ts`; moving UI pages to server reads is the next step.
+This keeps `next build` safe without database secrets and gives the deployment path a simple verification target. The browser-facing Hangar store still reads `hangar.ts`; moving UI pages to server reads is the next step before Postgres is declared authoritative.
 
 ## How it's seeded
 
@@ -120,4 +120,4 @@ This keeps `next build` safe without database secrets and gives the deployment p
 
 - **Cluster reservation**: add Hangar to `coldaine-k8cluster` as a `pg18` logical database and registry row before deployment depends on it.
 - **Broader app / ORM wiring**: the first direct `pg` read path exists, but an ORM choice remains deferred. If Drizzle is introduced, its schema must map to `db/hangar/schema.sql`, and the server-side data-access pattern is described in [`web-app.md`](web-app.md).
-- **Retiring `hangar.ts`** as the runtime source — only after the DB-backed read path is proven and rollback is understood.
+- **Retiring `hangar.ts`** as the runtime source — only after the cluster DB is provisioned, seeded from `hangar.ts`, parity-checked, the DB-backed read path is proven, app reads are cut over, and rollback is understood.

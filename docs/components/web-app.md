@@ -61,6 +61,8 @@ GET /api/hangar/items
 This proves server-only credentials, query shape, normalized-to-UI mapping, and fallback behavior
 without moving the interactive Hangar store yet. A future UI migration should move one page or
 server component to this repository boundary while keeping rollback to `hangar.ts` straightforward.
+After the cluster DB is seeded and parity-checked, those server reads are the path to making
+Postgres authoritative.
 
 ## Caching
 
