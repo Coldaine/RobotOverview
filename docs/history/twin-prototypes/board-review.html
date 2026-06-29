@@ -1,0 +1,337 @@
+<meta charset="utf-8">
+<title>Hangar — Beast Board Review (live)</title>
+<style>
+  :root{
+    --void:#0a0e12;--panel:#121922;--panel2:#0e141b;--rim:#26333f;--ink:#dbe7ef;--dim:#7d93a3;
+    --battery:#f5a623;--power5v:#e5484d;--motor:#ff7a45;--control:#b07cf0;
+    --i2c:#3ecf8e;--servo:#c084fc;--data:#36e0e0;--ok:#3ecf8e;--warn:#f5a623;--crit:#e5484d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--void);color:var(--ink);font:14px/1.5 ui-sans-serif,system-ui,Segoe UI,Roboto,sans-serif}
+  header{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--rim)}
+  h1{margin:0;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+  .controls{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .seg{display:flex;border:1px solid var(--rim);border-radius:8px;overflow:hidden}
+  .seg button{background:var(--panel);color:var(--dim);border:0;padding:6px 12px;font:600 12px ui-monospace,monospace;cursor:pointer}
+  .seg button.on{background:var(--data);color:#06121a}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{display:flex;align-items:center;gap:6px;border:1px solid var(--rim);border-radius:14px;padding:3px 9px;font:11px ui-monospace,monospace;color:var(--dim);cursor:pointer;user-select:none}
+  .chip.off{opacity:.35}
+  .sw{width:14px;height:4px;border-radius:2px}
+  .wrap{display:grid;grid-template-columns:1fr 340px;min-height:calc(100vh - 56px)}
+  @media(max-width:920px){.wrap{grid-template-columns:1fr}}
+  .stage{padding:8px}
+  svg{width:100%;height:auto;display:block;background:
+     linear-gradient(var(--panel2) 1px,transparent 1px) 0 0/30px 30px,
+     linear-gradient(90deg,var(--panel2) 1px,transparent 1px) 0 0/30px 30px,var(--void);border-radius:8px}
+  .grp{fill:rgba(54,224,224,.03);stroke:var(--rim);stroke-dasharray:4 4}
+  .grp-l{fill:var(--dim);font:600 11px ui-monospace,monospace;letter-spacing:.1em}
+  .node{cursor:pointer}
+  .node rect{fill:var(--panel);stroke:var(--rim);stroke-width:1.3}
+  .node.sel rect{stroke:var(--data);stroke-width:2.2}
+  .node.dim{opacity:.22}
+  .node .t{fill:var(--ink);font-weight:600;font-size:12.5px}
+  .node .s{fill:var(--dim);font:10.5px ui-monospace,monospace}
+  .node.host rect{stroke-dasharray:0}
+  .edge{fill:none;stroke-width:2.3}
+  .edge.dim{opacity:.08}
+  .elabel{font:9.5px ui-monospace,monospace;fill:var(--dim)}
+  .elabel.dim{opacity:.1}
+  aside{border-left:1px solid var(--rim);padding:16px;overflow:auto;max-height:calc(100vh - 56px)}
+  @media(max-width:920px){aside{border-left:0;border-top:1px solid var(--rim);max-height:none}}
+  h2{font:600 11px ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:16px 0 6px}
+  .role{font:600 11px ui-monospace,monospace;color:var(--data);text-transform:uppercase;letter-spacing:.08em}
+  .name{font-size:18px;font-weight:700;margin:2px 0 6px}
+  .does{color:var(--ink)}
+  table{width:100%;border-collapse:collapse;font:11.5px ui-monospace,monospace}
+  td{padding:3px 4px;border-bottom:1px solid var(--rim);vertical-align:top}
+  td:first-child{color:var(--dim);white-space:nowrap;padding-right:10px}
+  .netrow{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--rim);font:11px ui-monospace,monospace}
+  .pill{font:10px ui-monospace,monospace;padding:1px 7px;border-radius:10px;color:#06121a;font-weight:700}
+  a.doc{display:inline-block;color:var(--data);text-decoration:none;border:1px solid var(--rim);border-radius:6px;padding:2px 8px;margin:3px 4px 0 0;font:11px ui-monospace,monospace}
+  a.doc:hover{border-color:var(--data)}
+  .bar{height:14px;border-radius:7px;background:var(--panel);border:1px solid var(--rim);overflow:hidden;margin-top:6px}
+  .bar > i{display:block;height:100%}
+  .budget-note{font-size:11.5px;color:var(--dim);margin-top:6px}
+  .hint{color:var(--dim);font-size:11.5px}
+</style>
+
+<header>
+  <h1>UGV Beast — Board Review <span style="color:var(--dim)">· live</span></h1>
+  <div class="controls">
+    <div>
+      <span class="hint" style="margin-right:6px">HOST</span>
+      <span class="seg" id="hostseg"></span>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="stage"><svg id="svg" viewBox="0 0 960 600" preserveAspectRatio="xMidYMid meet"></svg></div>
+  <aside id="panel"></aside>
+</div>
+
+<script id="model" type="application/json">
+{
+  "$comment": "Hangar connected-twin model (board-level, enriched). Source of truth = data. Pre-populated from UGV-Beast-Archive. Host is selectable; base harness is host-agnostic.",
+  "meta": { "unit": "beast", "revision": 2, "generated": "2026-06-27", "grounding": "UGV-Beast-Archive/" },
+  "groups": [
+    { "id": "driver", "label": "General Driver for Robots — main board", "x": 232, "y": 70, "w": 392, "h": 486 }
+  ],
+  "nodes": [
+    { "id": "ups3s", "label": "UPS Module 3S", "sub": "3x18650 battery", "type": "power-source", "x": 36, "y": 300, "w": 156, "h": 70,
+      "role": "Power source", "does": "Holds three 18650 cells in series and supplies the whole robot, charging while running.",
+      "specs": [["Battery rail","9.0–12.6 V"],["Regulated out","5 V / 5 A, 3.3 V / 300 mA"],["Charge port","12.6 V / 2 A DC5521"]],
+      "power": { "out": "9–12.6 V battery + 5 V/5 A", "rail": "battery" },
+      "docs": [["UPS schematic","UGV-Beast-Archive/03-Power-UPS/Ups01_Schematic.pdf"],["UPS wiki","UGV-Beast-Archive/08-Wiki-Pages/UPS-Module-3S_Wiki.md"]] },
+
+    { "id": "dcin", "label": "DC_IN", "sub": "XH2.54 6–12 V", "type": "terminal", "group": "driver", "x": 252, "y": 300, "w": 120, "h": 46,
+      "role": "Board power inlet", "does": "Battery enters the driver board here and fans out to the motor supply and the 5 V regulator.",
+      "specs": [["Connector","XH2.54 / barrel"],["Range","6–12 V"]],
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "ina219", "label": "INA219", "sub": "V/I monitor", "type": "sensor", "group": "driver", "x": 252, "y": 392, "w": 120, "h": 46,
+      "role": "Power telemetry", "does": "Measures battery voltage and current so the web app can show pack state and draw.",
+      "specs": [["Bus","I2C 0x42"],["Shunt","0.01 Ω"]],
+      "power": { "rail": "battery" },
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "buck", "label": "MP8759", "sub": "5 V / 5 A buck", "type": "power-reg", "group": "driver", "x": 452, "y": 150, "w": 150, "h": 56,
+      "role": "Host/logic power", "does": "Steps the battery down to the 5 V rail that feeds the host and (via AMS1117) the 3.3 V logic.",
+      "specs": [["IC rating","26 V in, 8 A"],["Board rating","5 V / 5 A"],["Note","host-power ceiling — a real design limit"]],
+      "power": { "in": "battery", "out": "5 V / 5 A", "rail": "5V" },
+      "docs": [["MP8759 datasheet","https://www.monolithicpower.com/en/mp8759.html"],["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "esp32", "label": "ESP32-WROOM-32", "sub": "sub-controller", "type": "mcu", "group": "driver", "x": 452, "y": 286, "w": 150, "h": 56,
+      "role": "Real-time sub-controller", "does": "Runs motor PID, reads the IMU, drives the OLED, the servo bus and LEDs, and talks to the host over UART/I2C. Offloads real-time work from the host.",
+      "specs": [["Core","ESP32-WROOM-32UE"],["Host link","UART (U0) + I2C"],["Firmware","ugv_base_general (2025-11-28)"]],
+      "power": { "in": "3.3 V", "rail": "5V" },
+      "docs": [["Base firmware","UGV-Beast-Archive/07-Code-Firmware/ugv_base_general_repo_20260628.zip"],["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "tb6612", "label": "TB6612FNG", "sub": "dual H-bridge", "type": "driver", "group": "driver", "x": 452, "y": 408, "w": 150, "h": 56,
+      "role": "Motor driver", "does": "Two H-bridge channels (A=left, B=right) take battery as motor supply and ESP32 PWM/direction to drive the four geared motors.",
+      "specs": [["Channels","2 (A/B), motors paralleled per side"],["Motor supply","VM = battery"],["Control","AIN/BIN/PWMA/PWMB from ESP32"]],
+      "power": { "in": "battery (VM)", "rail": "battery" },
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "imu", "label": "IMU + Compass", "sub": "QMI8658 + AK09918", "type": "sensor", "group": "driver", "x": 252, "y": 470, "w": 150, "h": 46,
+      "role": "Orientation sensing", "does": "6-axis IMU plus 3-axis magnetometer on a 1.8 V I2C branch (level-shifted), for heading and motion.",
+      "specs": [["Parts","QMI8658C + AK09918C"],["Rail","1.8 V via RT9193"],["Bus","I2C via LSF0204 shifter"]],
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "header40", "label": "40-pin header", "sub": "host interface", "type": "connector", "group": "driver", "x": 470, "y": 92, "w": 130, "h": 44,
+      "role": "Host expansion bus", "does": "Re-exposes 5 V, UART (P_TX/P_RX) and I2C to the host. A Pi stacks directly; an Orin jumpers to it.",
+      "specs": [["Pins","P2 / P4 dual 40-pin"],["Carries","5 V, UART, I2C, GND"]],
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "servo", "label": "Serial Bus Servo", "sub": "ST3215 chain / RoArm", "type": "actuator", "x": 760, "y": 286, "w": 170, "h": 50,
+      "role": "Smart-servo bus", "does": "One TTL serial bus (gated by a SN74LVC1G125) daisy-chains ST3215 magnetic-encoder servos for the pan-tilt and the RoArm-M2.",
+      "specs": [["Bus","1-wire TTL serial"],["Servos","ST3215 / ST3235"],["Feedback","position via bus"]],
+      "docs": [["Servo manual","UGV-Beast-Archive/04-Servos/ST3215_Servo_User_Manual.pdf"],["Bus circuit","UGV-Beast-Archive/04-Servos/ST_Bus_Servo_Control_Circuit.pdf"],["Protocol","UGV-Beast-Archive/04-Servos/ST_Servo_Communication_Protocol_Manual.pdf"]] },
+
+    { "id": "lidar", "label": "LiDAR UART", "sub": "via CP2102 → USB", "type": "connector", "x": 760, "y": 352, "w": 170, "h": 46,
+      "role": "Mapping sensor port", "does": "A dedicated CP2102 bridges a 360 LiDAR's serial stream to USB for the host (used in the ROS2 build).",
+      "specs": [["Bridge","CP2102N"],["For","D500 / STL-27L LiDAR"]],
+      "docs": [["CP210x driver","UGV-Beast-Archive/07-Code-Firmware/CP210x_USB_TO_UART_Driver.zip"]] },
+
+    { "id": "motorsL", "label": "Left motors x2", "sub": "Channel A", "type": "motor", "x": 760, "y": 414, "w": 170, "h": 46,
+      "role": "Drive (left)", "does": "Two geared encoder motors on the left track, paralleled on TB6612 channel A.",
+      "specs": [["Headers","MOTOR-A1 / MOTOR-A2"],["Feedback","encoders → ESP32"]],
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "motorsR", "label": "Right motors x2", "sub": "Channel B", "type": "motor", "x": 760, "y": 476, "w": 170, "h": 46,
+      "role": "Drive (right)", "does": "Two geared encoder motors on the right track, paralleled on TB6612 channel B.",
+      "specs": [["Headers","MOTOR-B1 / MOTOR-B2"],["Feedback","encoders → ESP32"]],
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] }
+  ],
+  "nets": [
+    { "from": "ups3s", "to": "dcin", "signal": "battery", "label": "9–12.6 V", "via": "XH2.54/barrel", "source": "03-Power-UPS/Ups01_Schematic.pdf" },
+    { "from": "dcin", "to": "ina219", "signal": "battery", "label": "Vbatt (monitored)", "via": "trace", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "ina219", "to": "buck", "signal": "battery", "label": "Vbatt → VIN", "via": "trace", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "dcin", "to": "tb6612", "signal": "battery", "label": "VM motor supply", "via": "trace", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "buck", "to": "esp32", "signal": "power5v", "label": "5 V → 3V3 logic", "via": "AMS1117", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "buck", "to": "header40", "signal": "power5v", "label": "5 V / 5 A rail", "via": "P2/P4 pin 2&4", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "tb6612", "signal": "control", "label": "AIN/BIN/PWM", "via": "GPIO", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "tb6612", "to": "motorsL", "signal": "motor", "label": "AO1/AO2", "via": "2-pin", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "tb6612", "to": "motorsR", "signal": "motor", "label": "BO1/BO2", "via": "2-pin", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "ina219", "signal": "i2c", "label": "I2C telemetry", "via": "IIC", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "imu", "signal": "i2c", "label": "I2C (1.8 V)", "via": "LSF0204", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "servo", "signal": "servo", "label": "1-wire TTL", "via": "SN74LVC1G125", "source": "04-Servos/ST_Bus_Servo_Control_Circuit.pdf" },
+    { "from": "esp32", "to": "lidar", "signal": "data", "label": "UART → USB", "via": "CP2102N", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "header40", "signal": "data", "label": "UART U0TX/U0RX", "via": "40-pin", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "header40", "signal": "i2c", "label": "I2C to host", "via": "40-pin", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" }
+  ],
+  "hosts": {
+    "none": { "label": "No host", "node": null, "nets": [], "onRail_w": 0, "note": "Base harness only. The 40-pin header carries 5 V + UART + I2C, waiting for a host." },
+    "pi5": {
+      "label": "Raspberry Pi 5",
+      "node": { "id": "host", "label": "Raspberry Pi 5", "sub": "stacks on 40-pin", "type": "host", "x": 760, "y": 70, "w": 170, "h": 56,
+        "role": "Host computer", "does": "Stacks directly on the 40-pin header; takes 5 V power and UART/I2C through the same pins. No CUDA.",
+        "specs": [["Power","from 5 V rail (header)"],["Link","UART + I2C via header"],["Draw","up to ~25 W under load"]],
+        "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+      "nets": [
+        { "from": "header40", "to": "host", "signal": "power5v", "label": "5 V (stacked)", "via": "40-pin", "source": "Pi stacks on header" },
+        { "from": "header40", "to": "host", "signal": "data", "label": "UART", "via": "40-pin", "source": "header" },
+        { "from": "header40", "to": "host", "signal": "i2c", "label": "I2C", "via": "40-pin", "source": "header" }
+      ],
+      "onRail_w": 15, "peak_w": 25,
+      "note": "Pi 5 draws from the 5 V/5 A rail. Under load it crowds the rail ceiling (the 'protect the 5V rail' insight)."
+    },
+    "orin": {
+      "label": "Jetson Orin Nano",
+      "node": { "id": "host", "label": "Jetson Orin Nano", "sub": "barrel + jumpers", "type": "host", "x": 760, "y": 70, "w": 170, "h": 56,
+        "role": "Host computer (AI)", "does": "Cannot stack or take 5 V. Powered from the battery rail via its 9–19 V barrel jack; UART/I2C jumpered from the header. 67 TOPS.",
+        "specs": [["Power input","9–19 V barrel (from battery rail)"],["Link","TX/RX/GND jumpers to header"],["Draw","up to 25 W (off the 5 V rail)"]],
+        "docs": [["Connected twin direction","docs/components/connected-twin.md"],["Jetson AI Kit wiki","UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast-PT-Jetson-Orin-AI-Kit_Wiki.md"]] },
+      "nets": [
+        { "from": "ups3s", "to": "host", "signal": "battery", "label": "9–12.6 V → barrel", "via": "pigtail", "source": "battery rail, NOT 5V" },
+        { "from": "header40", "to": "host", "signal": "data", "label": "UART TX/RX/GND", "via": "jumpers", "source": "header jumpers" },
+        { "from": "header40", "to": "host", "signal": "i2c", "label": "I2C (optional)", "via": "jumpers", "source": "header jumpers" }
+      ],
+      "onRail_w": 0, "battery_w": 25,
+      "note": "Orin runs off the battery rail, so it does NOT load the 5 V rail. Never feed the Orin 5 V; its input is 9–19 V."
+    }
+  },
+  "powerBudget": { "railName": "5 V host rail (MP8759)", "volts": 5, "capacity_a": 5, "capacity_w": 25, "baseLogic_w": 3 },
+  "legend": {
+    "battery": "Battery rail 9–12.6 V",
+    "power5v": "5 V / 5 A host rail",
+    "motor": "H-bridge motor output",
+    "control": "ESP32 control / PWM",
+    "i2c": "I2C sensor bus",
+    "servo": "Serial bus servo (1-wire)",
+    "data": "UART / serial data"
+  }
+}
+
+</script>
+<script>
+const M = JSON.parse(document.getElementById('model').textContent);
+const CSS = getComputedStyle(document.documentElement);
+const col = s => (CSS.getPropertyValue('--'+s).trim()||'#888');
+const NS='http://www.w3.org/2000/svg';
+const svg=document.getElementById('svg');
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in (a||{}))e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;};
+const ROOT_FROM_HERE = '../../../';
+const resolve = p => {
+  const value = String(p || '');
+  if (/^(?:[a-z][a-z0-9+.-]*:|#|\/)/i.test(value)) return value;
+  return new URL(ROOT_FROM_HERE + value.replace(/^\.?\//, ''), window.location.href).href;
+};
+
+const state = { host:'none', selected:null, off:new Set() };
+
+function curNodes(){ const h=M.hosts[state.host]; return h.node ? M.nodes.concat([h.node]) : M.nodes.slice(); }
+function curNets(){ return M.nets.concat(M.hosts[state.host].nets||[]); }
+function nodeById(id){ return curNodes().find(n=>n.id===id); }
+
+function anchors(a,b){
+  const ac={x:a.x+a.w/2,y:a.y+a.h/2},bc={x:b.x+b.w/2,y:b.y+b.h/2};
+  const dx=bc.x-ac.x,dy=bc.y-ac.y;
+  if(Math.abs(dx)>=Math.abs(dy)) return [{x:dx>0?a.x+a.w:a.x,y:ac.y},{x:dx>0?b.x:b.x+b.w,y:bc.y}];
+  return [{x:ac.x,y:dy>0?a.y+a.h:a.y},{x:bc.x,y:dy>0?b.y:b.y+b.h}];
+}
+
+function render(){
+  svg.innerHTML='';
+  // groups
+  for(const g of (M.groups||[])){
+    el('rect',{x:g.x,y:g.y,width:g.w,height:g.h,rx:10,class:'grp'},svg);
+    el('text',{x:g.x+10,y:g.y+18,class:'grp-l'},svg).textContent=g.label;
+  }
+  const nodes=curNodes(), nets=curNets();
+  // edges
+  for(const n of nets){
+    const a=nodeById(n.from),b=nodeById(n.to); if(!a||!b)continue;
+    const [s,t]=anchors(a,b), mx=(s.x+t.x)/2, hor=Math.abs(t.x-s.x)>=Math.abs(t.y-s.y);
+    const d=hor?`M ${s.x} ${s.y} C ${mx} ${s.y}, ${mx} ${t.y}, ${t.x} ${t.y}`
+               :`M ${s.x} ${s.y} C ${s.x} ${(s.y+t.y)/2}, ${t.x} ${(s.y+t.y)/2}, ${t.x} ${t.y}`;
+    const dim=state.off.has(n.signal);
+    const p=el('path',{d,class:'edge'+(dim?' dim':''),stroke:col(n.signal)},svg);
+    el('title',{},p).textContent=`${n.label} · via ${n.via} · ${n.source}`;
+    const lab=el('text',{x:mx,y:(s.y+t.y)/2-3,class:'elabel'+(dim?' dim':''),'text-anchor':'middle'},svg);
+    lab.textContent=n.label;
+  }
+  // nodes
+  for(const n of nodes){
+    const touches = nets.some(e=>(e.from===n.id||e.to===n.id) && !state.off.has(e.signal));
+    const dim = state.off.size && !touches;
+    const g=el('g',{class:'node'+(n.id===state.selected?' sel':'')+(n.type==='host'?' host':'')+(dim?' dim':'')},svg);
+    g.style.cursor='pointer'; g.onclick=()=>{state.selected=n.id;render();panel();};
+    const r=el('rect',{x:n.x,y:n.y,width:n.w,height:n.h,rx:8},g);
+    const accent={'power-source':'battery','power-reg':'power5v','motor':'motor','mcu':'data','driver':'motor','actuator':'servo','sensor':'i2c','host':'data'}[n.type];
+    if(accent && n.id!==state.selected) r.setAttribute('stroke',col(accent));
+    el('text',{x:n.x+11,y:n.y+(n.sub?21:n.h/2+4),class:'t'},g).textContent=n.label;
+    if(n.sub) el('text',{x:n.x+11,y:n.y+37,class:'s'},g).textContent=n.sub;
+  }
+}
+
+function panel(){
+  const p=document.getElementById('panel');
+  const n = state.selected ? nodeById(state.selected) : null;
+  if(!n){ p.innerHTML=overview(); return; }
+  const nets=curNets().filter(e=>e.from===n.id||e.to===n.id);
+  const specs=(n.specs||[]).map(s=>`<tr><td>${s[0]}</td><td>${s[1]}</td></tr>`).join('');
+  const conns=nets.map(e=>{
+    const other = e.from===n.id?e.to:e.from, dir=e.from===n.id?'→':'←';
+    const on=nodeById(other);
+    return `<div class="netrow"><span class="pill" style="background:${col(e.signal)}">${e.signal}</span>
+      <span>${dir} ${on?on.label:other}</span><span style="color:var(--dim);margin-left:auto">${e.label}</span></div>`;
+  }).join('') || '<div class="hint">No connections in this host configuration.</div>';
+  const docs=(n.docs||[]).map(d=>`<a class="doc" href="${resolve(d[1])}" target="_blank" rel="noopener noreferrer">${d[0]} ↗</a>`).join('');
+  p.innerHTML=`
+    <button onclick="state.selected=null;render();panel()" style="background:none;border:0;color:var(--dim);cursor:pointer;font:11px ui-monospace">← system overview</button>
+    <div class="role">${n.role||n.type}</div>
+    <div class="name">${n.label}</div>
+    <div class="does">${n.does||''}</div>
+    <h2>Specs</h2><table>${specs||'<tr><td class=hint>—</td></tr>'}</table>
+    <h2>Connections (${nets.length})</h2>${conns}
+    ${docs?`<h2>Sources</h2>${docs}`:''}`;
+}
+
+function overview(){
+  const pb=M.powerBudget, h=M.hosts[state.host];
+  const used = pb.baseLogic_w + (h.onRail_w||0);
+  const pct = Math.min(100, Math.round(used/pb.capacity_w*100));
+  const peak = h.peak_w ? Math.min(100, Math.round((pb.baseLogic_w+h.peak_w)/pb.capacity_w*100)) : pct;
+  const c = peak>=90?'crit':peak>=70?'warn':'ok';
+  const boards=M.nodes.length, conns=curNets().length;
+  return `
+    <div class="role">System overview</div>
+    <div class="name">The Beast, connected</div>
+    <div class="does">Click any board to open its dossier: what it is, what it does, its connections, and the source schematic. Switch the host above to see the wiring and the power path change.</div>
+    <h2>${pb.railName}</h2>
+    <div class="bar"><i style="width:${pct}%;background:${col(c)}"></i></div>
+    <div class="budget-note"><b>${used} W</b> of <b>${pb.capacity_w} W</b> used on the 5 V rail (host = ${h.label})${h.peak_w?` · peak ~${pb.baseLogic_w+h.peak_w} W`:''}.</div>
+    <div class="budget-note">${h.note}</div>
+    <h2>At a glance</h2>
+    <table>
+      <tr><td>Boards / modules</td><td>${boards}</td></tr>
+      <tr><td>Connections</td><td>${conns}</td></tr>
+      <tr><td>Battery rail</td><td>9–12.6 V (3S UPS)</td></tr>
+      <tr><td>Host rail</td><td>5 V / 5 A (MP8759)</td></tr>
+      <tr><td>Grounding</td><td>${M.meta.grounding}</td></tr>
+    </table>
+    <h2>Host</h2>
+    <div class="hint">none = base harness · Pi 5 = stacks on header, draws the 5 V rail · Orin = battery-powered barrel + jumpers, off the 5 V rail.</div>`;
+}
+
+// host segmented control
+const hs=document.getElementById('hostseg');
+for(const k of ['none','pi5','orin']){
+  const b=document.createElement('button'); b.textContent=M.hosts[k].label; b.className=k==='none'?'on':'';
+  b.onclick=()=>{state.host=k;[...hs.children].forEach(c=>c.classList.toggle('on',c===b));render();panel();};
+  hs.appendChild(b);
+}
+// signal chips
+const ch=document.getElementById('chips');
+for(const k in M.legend){
+  const c=document.createElement('span'); c.className='chip';
+  c.innerHTML=`<span class="sw" style="background:${col(k)}"></span>${k}`;
+  c.onclick=()=>{state.off.has(k)?state.off.delete(k):state.off.add(k);c.classList.toggle('off');render();};
+  c.title=M.legend[k]; ch.appendChild(c);
+}
+
+render(); panel();
+</script>

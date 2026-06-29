@@ -2,7 +2,7 @@
 title: Hangar Architecture
 audience: AI agents and operators working on RobotOverview
 status: living
-last_updated: 2026-06-26
+last_updated: 2026-06-29
 ---
 
 # Hangar — Architecture Approach
@@ -64,6 +64,13 @@ for a socket when their interfaces intersect, and equipping is an **assignment**
 mating model is the upgrade tree (G3/G4): it makes maintenance feel like a loadout screen and lets
 the system surface what to acquire next and why.
 → detail: [`docs/components/data-backend.md`](components/data-backend.md)
+
+### 4.5. Connected twin as a data layer, not a second app
+
+The Beast wiring/twin work belongs under the same data spine: terminals and nets extend assets/sockets/interfaces so the Hangar can show what is physically wired, what rail or signal a connection carries, and which schematic proves it. The standalone HTML prototypes are historical review artifacts; the product path is an in-app data-driven wiring view that reuses the existing shell, store, themes, loadout compatibility, and source provenance.
+
+Bulk source PDFs/CAD/firmware stay out of git and out of the container image. They should live in object storage and be referenced from the database/app by URL.
+→ detail: [`docs/components/connected-twin.md`](components/connected-twin.md), [`docs/reference/ugv-beast-source-archive.md`](reference/ugv-beast-source-archive.md)
 
 ### 5. Deployment: a separate service at `hangar.moosegoose.xyz`
 
