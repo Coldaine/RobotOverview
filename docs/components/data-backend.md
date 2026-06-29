@@ -13,7 +13,8 @@ last_updated: 2026-06-29
 ## Current reality (read this first)
 
 - **`src/data/hangar.ts` is the authoritative runtime source.** The Next.js app reads it directly today.
-- The **Postgres `hangar` schema has been stood up locally as a proof of shape**: schema applied, seeded from `hangar.ts`, and verified. It is **not yet authoritative**. App/ORM wiring (e.g. Drizzle) is deliberately deferred.
+- The **Postgres `hangar` schema has been stood up locally as a proof of shape**: schema applied, seeded from `hangar.ts`, and verified. It is **not yet authoritative**.
+- The first app read-path foundation now exists for inventory items: `GET /api/hangar/items` attempts a server-side Postgres read when `HANGAR_DATABASE_URL` or `DATABASE_URL` is present, and falls back to `src/data/hangar.ts` when it is not configured or the read fails. This is a proof lane, not the primary UI source yet.
 - The **target deployment database is not decided inside RobotOverview.** It is a logical Hangar database in `C:\_projects\coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`databases/pg18.yaml` + `docs/connection-registry.md`). RobotOverview owns the app schema/migrations and app behavior; the cluster repo owns provisioning, roles/secrets, backups, and restore gates.
 - This staging is intentional, per the North Star pillar **"do not prescribe before populating"**: the relational shape was designed only after there was real content to fit it to.
 
@@ -93,6 +94,16 @@ App env: DATABASE_URL
 
 Do **not** create a new Postgres server for Hangar. Per `coldaine-k8cluster`, current app databases are logical databases inside `pg18`; `pg19` is future/PG19-specific and not for irreplaceable data yet; `falkordb` is for graph data.
 
+## App read path foundation
+
+The current server boundary is intentionally small:
+
+- `src/server/hangar/db.ts` lazily creates a `pg` pool only after a request asks for DB-backed data.
+- `src/server/hangar/items.ts` maps the normalized `assets`/`groups`/`tags` shape back into the existing `InventoryItem` read model.
+- `src/app/api/hangar/items/route.ts` exposes a read-only smoke-test route with `{ source, fallbackReason, count, items }`.
+
+This keeps `next build` safe without database secrets and gives the deployment path a simple verification target. The browser-facing Hangar store still reads `hangar.ts`; moving UI pages to server reads is the next step.
+
 ## How it's seeded
 
 `db/hangar/gen-seed.ts` transforms `src/data/hangar.ts` → `db/hangar/seed.sql` with defensive reference-filtering (no junction row can violate an FK). The committed `seed.sql` rebuilds the DB from `psql` alone. **`seed.sql` is generated — regenerate it whenever `hangar.ts` changes** rather than hand-editing.
@@ -100,5 +111,5 @@ Do **not** create a new Postgres server for Hangar. Per `coldaine-k8cluster`, cu
 ## Deferred (by design)
 
 - **Cluster reservation**: add Hangar to `coldaine-k8cluster` as a `pg18` logical database and registry row before deployment depends on it.
-- **App / ORM wiring** (Drizzle): the Next.js app continues to read `hangar.ts` at runtime until the DB read path is proven. When wired, the ORM schema must map to `db/hangar/schema.sql`, and the server-side data-access pattern is described in [`web-app.md`](web-app.md).
+- **Broader app / ORM wiring**: the first direct `pg` read path exists, but an ORM choice remains deferred. If Drizzle is introduced, its schema must map to `db/hangar/schema.sql`, and the server-side data-access pattern is described in [`web-app.md`](web-app.md).
 - **Retiring `hangar.ts`** as the runtime source — only after the DB-backed read path is proven and rollback is understood.
