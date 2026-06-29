@@ -10,7 +10,7 @@ last_confirmed: 2026-06-29
 
 The relational backend for the Hangar: **one master inventory of all gear**, with bays as first-class group rows, a video-game loadout, and the connected model (North Star AG1) preserved. Design provenance: `.omc/specs/deep-interview-hangar-master-inventory.md` (deep-interview session, 2026-06-26), which itself recovered + reconciled the deleted `docs/plans/postgres_schema.md`.
 
-> **Status:** DB shape stood up + seeded + verified locally. `src/data/hangar.ts` is the current runtime source and bootstrap dataset; the target source of truth is the logical `hangar` database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster after provisioning, seed load, app preflight reachability, parity checks, and app read cutover. App/ORM (Drizzle) wiring is still deferred beyond the first read-only inventory API.
+> **Status:** DB shape stood up + seeded in the `coldaine-k8cluster` logical `hangar` database on `pg18`. `src/data/hangar.ts` remains the bootstrap dataset and rollback source; inventory items are the first browser-facing read cutover through the server read path after cluster seed, preflight, and parity checks. Broader Hangar data and app/ORM (Drizzle) wiring are still deferred.
 
 ## Where it lives
 
@@ -24,7 +24,7 @@ This local database proves the schema and seed shape. It is not the production t
 
 ### Target deployment
 
-The target database belongs to `C:\_projects\coldaine-k8cluster`: a logical `hangar` database inside the `pg18` CloudNativePG cluster. Provisioning is cluster-repo work (`databases/pg18.yaml` plus `docs/connection-registry.md`), with a `hangar` role, structured `HANGAR_DB_*` app config, a runtime credential path, and restore-tested backups before cutover.
+The target database belongs to `C:\_projects\coldaine-k8cluster`: a logical `hangar` database inside the `pg18` CloudNativePG cluster. Provisioning is cluster-repo work (`databases/pg18.yaml` plus `docs/connection-registry.md`), with a `hangar` role, structured `HANGAR_DB_*` app config, a runtime credential path, and restore-tested backups before broader authority.
 
 Do not stand up a RobotOverview-owned Postgres server for Hangar; add a logical DB to `pg18`.
 
@@ -80,7 +80,7 @@ SELECT g.code, count(ag.asset_id) FROM groups g
 
 ## Known follow-ups (not blockers)
 
-- Cluster reservation: add the `hangar` logical DB/role/registry entry in `coldaine-k8cluster`.
+- Restore test: prove a `hangar` backup can restore from the pg18/Garage path before declaring broader production authority.
 - An **"onboard power"** view should filter mission power by location/tag — the raw requisition sum includes the offboard 5090 workstation.
 - `interface_types` is seeded with a demonstrative set (host-mount, serial-bus-servo, ups-bay, i2c-display); expand as real connectors are catalogued.
 - App migration: point the Next.js server/data layer at the DB, require a green `GET /api/hangar/preflight`, parity-check it against the `hangar.ts` bootstrap dataset, then move UI reads before introducing DB writes.

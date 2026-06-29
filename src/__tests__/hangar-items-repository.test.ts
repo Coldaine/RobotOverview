@@ -53,7 +53,7 @@ describe('Hangar inventory Postgres read path', () => {
       database: 'hangar',
       user: 'hangar',
       password: ' temporary-or-runtime-secret ',
-      ssl: true,
+      ssl: { rejectUnauthorized: false },
     });
     expect(config?.poolConfig).not.toHaveProperty('connectionString');
   });

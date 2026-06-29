@@ -100,7 +100,7 @@ App env:
 
 Do **not** create a new Postgres server for Hangar. Per `coldaine-k8cluster`, current app databases are logical databases inside `pg18`; `pg19` is future/PG19-specific and not for irreplaceable data yet; `falkordb` is for graph data.
 
-`HANGAR_DB_HOST`, port, database name, role, and SSL mode are configuration, not secrets. Only the runtime credential carries authority. The app helper currently accepts `HANGAR_DB_SSLMODE=disable` or `require`; future certificate-verified modes should add the real certificate/trust-bundle config instead of being treated as a generic on/off switch. Longer-term, that credential should become workload-identity backed (client certificate, Vault lease, or proxy-issued token) rather than a durable password; the app-side contract can stay structured either way.
+`HANGAR_DB_HOST`, port, database name, role, and SSL mode are configuration, not secrets. Only the runtime credential carries authority. The app helper currently accepts `HANGAR_DB_SSLMODE=disable` or `require`; `require` encrypts without verifying the self-signed CNPG certificate chain, matching libpq `sslmode=require`. Future certificate-verified modes should add the real certificate/trust-bundle config instead of being treated as a generic on/off switch. Longer-term, that credential should become workload-identity backed (client certificate, Vault lease, or proxy-issued token) rather than a durable password; the app-side contract can stay structured either way.
 
 ## App read path foundation
 
@@ -110,8 +110,11 @@ The current server boundary is intentionally small:
 - `src/server/hangar/items.ts` maps the normalized `assets`/`groups`/`tags` shape back into the existing `InventoryItem` read model.
 - `src/app/api/hangar/items/route.ts` exposes a read-only smoke-test route with `{ source, fallbackReason, count, items }`.
 - `src/app/api/hangar/preflight/route.ts` exposes the no-fallback DB reachability gate. `GET /api/hangar/preflight` returns HTTP `200` only when the configured Hangar Postgres endpoint answers `SELECT 1`; otherwise it returns HTTP `503` with `not-configured`, `config-error`, or `unreachable`.
+- `src/app/layout.tsx` reads inventory items through the same server path at request time and passes
+  them into the client store, so the browser-facing Items station can use Postgres-backed data while
+  retaining the static fallback if the DB is unavailable.
 
-This keeps `next build` safe without database secrets, gives the deployment path a simple verification target, and separates "can reach Postgres" from "can fall back to static data." The browser-facing Hangar store still reads `hangar.ts`; moving UI pages to server reads is the next step before Postgres is declared authoritative.
+This keeps `next build` safe without database secrets, gives the deployment path a simple verification target, and separates "can reach Postgres" from "can fall back to static data." Inventory items are the first browser-facing read cutover; broader Hangar data still comes from `hangar.ts` until each surface has its own seed/parity/rollback proof.
 
 ## How it's seeded
 
@@ -119,6 +122,6 @@ This keeps `next build` safe without database secrets, gives the deployment path
 
 ## Deferred (by design)
 
-- **Cluster reservation**: add Hangar to `coldaine-k8cluster` as a `pg18` logical database and registry row before deployment depends on it.
+- **Cluster restore gate**: Hangar is now a `pg18` logical database with schema/seed loaded; restore testing remains the production authority gate.
 - **Broader app / ORM wiring**: the first direct `pg` read path exists, but an ORM choice remains deferred. If Drizzle is introduced, its schema must map to `db/hangar/schema.sql`, and the server-side data-access pattern is described in [`web-app.md`](web-app.md).
-- **Retiring `hangar.ts`** as the runtime source — only after the cluster DB is provisioned, seeded from `hangar.ts`, preflight reachability is green, parity-checked, the DB-backed read path is proven, app reads are cut over, and rollback is understood.
+- **Retiring `hangar.ts`** as the runtime source — only after every Hangar surface has moved through seed/parity/read-cutover gates and rollback is understood. Inventory items are only the first read surface.

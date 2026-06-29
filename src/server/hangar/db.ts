@@ -83,7 +83,7 @@ function sslConfigFromMode(sslmode: string | undefined): PoolConfig['ssl'] {
     case 'disable':
       return false;
     case 'require':
-      return true;
+      return { rejectUnauthorized: false };
     default:
       throw new Error(
         `Unsupported HANGAR_DB_SSLMODE "${sslmode}". Supported values: disable, require.`,

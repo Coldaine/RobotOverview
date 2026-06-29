@@ -3,6 +3,7 @@ import { JetBrains_Mono, Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import { HangarProvider } from '@/components/HangarProvider';
 import { Shell } from '@/components/Shell';
+import { getInventoryItems } from '@/server/hangar/items';
 
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -13,11 +14,15 @@ export const metadata: Metadata = {
   description: 'Fleet command for Patrick MacLyman. Every rig, radio, and acquisition — racked, statused, and mission-assigned.',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const dynamic = 'force-dynamic';
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const inventoryItems = await getInventoryItems();
+
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${outfit.variable}`}>
       <body>
-        <HangarProvider>
+        <HangarProvider initialItems={inventoryItems.items}>
           <Shell>{children}</Shell>
         </HangarProvider>
         <div className="crt-overlay" aria-hidden />

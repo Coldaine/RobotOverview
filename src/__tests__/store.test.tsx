@@ -205,6 +205,24 @@ describe('item() accessor', () => {
     expect(result.current.items.length).toBeGreaterThan(0);
   });
 
+  it('uses server-provided inventory items when present', () => {
+    const dbItem = {
+      ...hangarData.items[0],
+      id: 'db-backed-item',
+      name: 'DB-backed item',
+    };
+    const customWrapper = ({ children }: { children: React.ReactNode }) => (
+      <HangarProvider initialItems={[dbItem]}>{children}</HangarProvider>
+    );
+
+    const { result } = renderHook(() => useHangar(), { wrapper: customWrapper });
+
+    expect(result.current.items).toEqual([dbItem]);
+    expect(result.current.data.items).toEqual([dbItem]);
+    expect(result.current.item('db-backed-item')?.name).toBe('DB-backed item');
+    expect(result.current.item(hangarData.items[0].id)).toBeUndefined();
+  });
+
   it('resolves a known item id to its record', () => {
     const seeded = hangarData.items[0];
     const { result } = renderHook(() => useHangar(), { wrapper });
