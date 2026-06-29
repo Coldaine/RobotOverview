@@ -13,7 +13,7 @@ last_updated: 2026-06-29
 ## Current reality (read this first)
 
 - **`src/data/hangar.ts` is the current runtime source and bootstrap dataset.** The browser-facing Next.js app still reads it directly today.
-- The **Postgres `hangar` schema is the intended authoritative store** once the cluster DB is provisioned, seeded from `hangar.ts`, parity-checked, and app reads are cut over. The local standup proves shape only; it is not the production target.
+- The **Postgres `hangar` schema is the intended authoritative store** once the cluster DB is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked, and app reads are cut over. The local standup proves shape only; it is not the production target.
 - The first app read-path foundation now exists for inventory items: `GET /api/hangar/items` attempts a server-side Postgres read when structured `HANGAR_DB_*` config is present, and falls back to `src/data/hangar.ts` when it is not configured or the read fails. `HANGAR_DATABASE_URL`/`DATABASE_URL` remain compatibility paths, but the preferred contract is not a credential-bearing URL. This is the first proof lane toward Postgres authority, not the full UI cutover yet.
 - The **target deployment database is not decided inside RobotOverview.** It is a logical Hangar database in `C:\_projects\coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`databases/pg18.yaml` + `docs/connection-registry.md`). RobotOverview owns the app schema/migrations and app behavior; the cluster repo owns provisioning, roles/secrets, backups, and restore gates.
 - This staging is intentional, per the North Star pillar **"do not prescribe before populating"**: the relational shape was designed only after there was real content to fit it to.

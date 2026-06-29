@@ -45,8 +45,9 @@ source below.
 Per the pillar **"do not prescribe before populating,"** `src/data/hangar.ts` is the current
 runtime source and bootstrap dataset: it populated the model before the model was prescribed. The
 target source of truth is the normalized Postgres **master-inventory** backend after the cluster DB
-is provisioned, seeded from `hangar.ts`, parity-checked, and the app read path is cut over. Until
-that cutover completes, `hangar.ts` remains the rollback/fallback spine.
+is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked, and
+the app read path is cut over. Until that cutover completes, `hangar.ts` remains the
+rollback/fallback spine.
 → detail: [`docs/components/data-backend.md`](components/data-backend.md)
 
 ### 3. One master inventory; bays are views, not silos

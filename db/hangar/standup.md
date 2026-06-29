@@ -10,7 +10,7 @@ last_confirmed: 2026-06-29
 
 The relational backend for the Hangar: **one master inventory of all gear**, with bays as first-class group rows, a video-game loadout, and the connected model (North Star AG1) preserved. Design provenance: `.omc/specs/deep-interview-hangar-master-inventory.md` (deep-interview session, 2026-06-26), which itself recovered + reconciled the deleted `docs/plans/postgres_schema.md`.
 
-> **Status:** DB shape stood up + seeded + verified locally. `src/data/hangar.ts` is the current runtime source and bootstrap dataset; the target source of truth is the logical `hangar` database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster after provisioning, seed load, parity checks, and app read cutover. App/ORM (Drizzle) wiring is still deferred beyond the first read-only inventory API.
+> **Status:** DB shape stood up + seeded + verified locally. `src/data/hangar.ts` is the current runtime source and bootstrap dataset; the target source of truth is the logical `hangar` database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster after provisioning, seed load, app preflight reachability, parity checks, and app read cutover. App/ORM (Drizzle) wiring is still deferred beyond the first read-only inventory API.
 
 ## Where it lives
 
