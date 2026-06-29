@@ -8,3 +8,7 @@ dist/
 .env*
 .vercel
 .omc/
+.letta/
+
+# Bulk vendor/source archive for BEAST-01. Keep binaries in object storage, not git.
+UGV-Beast-Archive/

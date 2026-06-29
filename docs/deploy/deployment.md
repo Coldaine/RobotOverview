@@ -2,7 +2,7 @@
 title: Hangar Deployment (current direction)
 audience: AI agents and operators working on RobotOverview deployment
 status: living — in transition
-last_updated: 2026-06-26
+last_updated: 2026-06-29
 ---
 
 # Hangar Deployment
@@ -45,6 +45,12 @@ Carry these principles into the Shipwright design unless a reason emerges not to
 - **Pull-based, no inbound path to the cluster** — the cluster pulls; CI never reaches into it.
 - **Immutable image references** (digest pin) so a rollout actually happens and is reproducible.
 - **Separate service / separate pod** for the Hangar (the boundary decision is unchanged).
+
+## Storage boundary for source documents
+
+BEAST-01 source PDFs/CAD/firmware are not deployable app assets. Keep `UGV-Beast-Archive/` out of git and out of Docker builds. The target shape is S3/RGW-compatible object storage with database rows/URLs pointing to source documents. The app code should be endpoint-agnostic so an interim bucket can later move to the final cluster object store without changing the UI model.
+
+See [`storage-and-twin-pivot-plan.md`](storage-and-twin-pivot-plan.md) and [`../reference/ugv-beast-source-archive.md`](../reference/ugv-beast-source-archive.md).
 
 ## Open / to-design
 

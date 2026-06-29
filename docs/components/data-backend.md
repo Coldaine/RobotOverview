@@ -2,7 +2,7 @@
 title: Data Backend — Master-Inventory Model
 audience: AI agents and operators working on the Hangar data layer
 status: living
-last_updated: 2026-06-26
+last_updated: 2026-06-29
 ---
 
 # Data Backend — Master-Inventory Model
@@ -72,6 +72,15 @@ KNOWLEDGE insights ; insight_assets ; insight_missions ; insight_tags ; activity
 ```
 
 The authoritative DDL is `db/hangar/schema.sql`. This table is a map, not a substitute.
+
+## Connected twin extension (next)
+
+The BEAST-01 wiring/twin layer should extend this same relational spine rather than creating a separate model. Add:
+
+- `terminals` — named ports/pins/leads/headers on an asset.
+- `nets` — connections between terminals, with signal/medium and source provenance.
+
+This sits below loadout compatibility: sockets/interfaces say what can mount; terminals/nets say what is physically wired and where that claim came from. The current direction is documented in [`connected-twin.md`](connected-twin.md). Historical standalone prototypes live under `docs/history/twin-prototypes/`; they are not app code.
 
 ## Where it runs
 

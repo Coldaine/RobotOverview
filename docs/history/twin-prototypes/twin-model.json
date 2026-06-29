@@ -1,0 +1,131 @@
+{
+  "$comment": "Hangar connected-twin model (board-level, enriched). Source of truth = data. Pre-populated from UGV-Beast-Archive. Host is selectable; base harness is host-agnostic.",
+  "meta": { "unit": "beast", "revision": 2, "generated": "2026-06-27", "grounding": "UGV-Beast-Archive/" },
+  "groups": [
+    { "id": "driver", "label": "General Driver for Robots — main board", "x": 232, "y": 70, "w": 392, "h": 486 }
+  ],
+  "nodes": [
+    { "id": "ups3s", "label": "UPS Module 3S", "sub": "3x18650 battery", "type": "power-source", "x": 36, "y": 300, "w": 156, "h": 70,
+      "role": "Power source", "does": "Holds three 18650 cells in series and supplies the whole robot, charging while running.",
+      "specs": [["Battery rail","9.0–12.6 V"],["Regulated out","5 V / 5 A, 3.3 V / 300 mA"],["Charge port","12.6 V / 2 A DC5521"]],
+      "power": { "out": "9–12.6 V battery + 5 V/5 A", "rail": "battery" },
+      "docs": [["UPS schematic","UGV-Beast-Archive/03-Power-UPS/Ups01_Schematic.pdf"],["UPS wiki","UGV-Beast-Archive/08-Wiki-Pages/UPS-Module-3S_Wiki.md"]] },
+
+    { "id": "dcin", "label": "DC_IN", "sub": "XH2.54 6–12 V", "type": "terminal", "group": "driver", "x": 252, "y": 300, "w": 120, "h": 46,
+      "role": "Board power inlet", "does": "Battery enters the driver board here and fans out to the motor supply and the 5 V regulator.",
+      "specs": [["Connector","XH2.54 / barrel"],["Range","6–12 V"]],
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "ina219", "label": "INA219", "sub": "V/I monitor", "type": "sensor", "group": "driver", "x": 252, "y": 392, "w": 120, "h": 46,
+      "role": "Power telemetry", "does": "Measures battery voltage and current so the web app can show pack state and draw.",
+      "specs": [["Bus","I2C 0x42"],["Shunt","0.01 Ω"]],
+      "power": { "rail": "battery" },
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "buck", "label": "MP8759", "sub": "5 V / 5 A buck", "type": "power-reg", "group": "driver", "x": 452, "y": 150, "w": 150, "h": 56,
+      "role": "Host/logic power", "does": "Steps the battery down to the 5 V rail that feeds the host and (via AMS1117) the 3.3 V logic.",
+      "specs": [["IC rating","26 V in, 8 A"],["Board rating","5 V / 5 A"],["Note","host-power ceiling — a real design limit"]],
+      "power": { "in": "battery", "out": "5 V / 5 A", "rail": "5V" },
+      "docs": [["MP8759 datasheet","https://www.monolithicpower.com/en/mp8759.html"],["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "esp32", "label": "ESP32-WROOM-32", "sub": "sub-controller", "type": "mcu", "group": "driver", "x": 452, "y": 286, "w": 150, "h": 56,
+      "role": "Real-time sub-controller", "does": "Runs motor PID, reads the IMU, drives the OLED, the servo bus and LEDs, and talks to the host over UART/I2C. Offloads real-time work from the host.",
+      "specs": [["Core","ESP32-WROOM-32UE"],["Host link","UART (U0) + I2C"],["Firmware","ugv_base_general (2025-11-28)"]],
+      "power": { "in": "3.3 V", "rail": "5V" },
+      "docs": [["Base firmware","UGV-Beast-Archive/07-Code-Firmware/ugv_base_general_repo_20260628.zip"],["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "tb6612", "label": "TB6612FNG", "sub": "dual H-bridge", "type": "driver", "group": "driver", "x": 452, "y": 408, "w": 150, "h": 56,
+      "role": "Motor driver", "does": "Two H-bridge channels (A=left, B=right) take battery as motor supply and ESP32 PWM/direction to drive the four geared motors.",
+      "specs": [["Channels","2 (A/B), motors paralleled per side"],["Motor supply","VM = battery"],["Control","AIN/BIN/PWMA/PWMB from ESP32"]],
+      "power": { "in": "battery (VM)", "rail": "battery" },
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "imu", "label": "IMU + Compass", "sub": "QMI8658 + AK09918", "type": "sensor", "group": "driver", "x": 252, "y": 470, "w": 150, "h": 46,
+      "role": "Orientation sensing", "does": "6-axis IMU plus 3-axis magnetometer on a 1.8 V I2C branch (level-shifted), for heading and motion.",
+      "specs": [["Parts","QMI8658C + AK09918C"],["Rail","1.8 V via RT9193"],["Bus","I2C via LSF0204 shifter"]],
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "header40", "label": "40-pin header", "sub": "host interface", "type": "connector", "group": "driver", "x": 470, "y": 92, "w": 130, "h": 44,
+      "role": "Host expansion bus", "does": "Re-exposes 5 V, UART (P_TX/P_RX) and I2C to the host. A Pi stacks directly; an Orin jumpers to it.",
+      "specs": [["Pins","P2 / P4 dual 40-pin"],["Carries","5 V, UART, I2C, GND"]],
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "servo", "label": "Serial Bus Servo", "sub": "ST3215 chain / RoArm", "type": "actuator", "x": 760, "y": 286, "w": 170, "h": 50,
+      "role": "Smart-servo bus", "does": "One TTL serial bus (gated by a SN74LVC1G125) daisy-chains ST3215 magnetic-encoder servos for the pan-tilt and the RoArm-M2.",
+      "specs": [["Bus","1-wire TTL serial"],["Servos","ST3215 / ST3235"],["Feedback","position via bus"]],
+      "docs": [["Servo manual","UGV-Beast-Archive/04-Servos/ST3215_Servo_User_Manual.pdf"],["Bus circuit","UGV-Beast-Archive/04-Servos/ST_Bus_Servo_Control_Circuit.pdf"],["Protocol","UGV-Beast-Archive/04-Servos/ST_Servo_Communication_Protocol_Manual.pdf"]] },
+
+    { "id": "lidar", "label": "LiDAR UART", "sub": "via CP2102 → USB", "type": "connector", "x": 760, "y": 352, "w": 170, "h": 46,
+      "role": "Mapping sensor port", "does": "A dedicated CP2102 bridges a 360 LiDAR's serial stream to USB for the host (used in the ROS2 build).",
+      "specs": [["Bridge","CP2102N"],["For","D500 / STL-27L LiDAR"]],
+      "docs": [["CP210x driver","UGV-Beast-Archive/07-Code-Firmware/CP210x_USB_TO_UART_Driver.zip"]] },
+
+    { "id": "motorsL", "label": "Left motors x2", "sub": "Channel A", "type": "motor", "x": 760, "y": 414, "w": 170, "h": 46,
+      "role": "Drive (left)", "does": "Two geared encoder motors on the left track, paralleled on TB6612 channel A.",
+      "specs": [["Headers","MOTOR-A1 / MOTOR-A2"],["Feedback","encoders → ESP32"]],
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+
+    { "id": "motorsR", "label": "Right motors x2", "sub": "Channel B", "type": "motor", "x": 760, "y": 476, "w": 170, "h": 46,
+      "role": "Drive (right)", "does": "Two geared encoder motors on the right track, paralleled on TB6612 channel B.",
+      "specs": [["Headers","MOTOR-B1 / MOTOR-B2"],["Feedback","encoders → ESP32"]],
+      "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] }
+  ],
+  "nets": [
+    { "from": "ups3s", "to": "dcin", "signal": "battery", "label": "9–12.6 V", "via": "XH2.54/barrel", "source": "03-Power-UPS/Ups01_Schematic.pdf" },
+    { "from": "dcin", "to": "ina219", "signal": "battery", "label": "Vbatt (monitored)", "via": "trace", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "ina219", "to": "buck", "signal": "battery", "label": "Vbatt → VIN", "via": "trace", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "dcin", "to": "tb6612", "signal": "battery", "label": "VM motor supply", "via": "trace", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "buck", "to": "esp32", "signal": "power5v", "label": "5 V → 3V3 logic", "via": "AMS1117", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "buck", "to": "header40", "signal": "power5v", "label": "5 V / 5 A rail", "via": "P2/P4 pin 2&4", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "tb6612", "signal": "control", "label": "AIN/BIN/PWM", "via": "GPIO", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "tb6612", "to": "motorsL", "signal": "motor", "label": "AO1/AO2", "via": "2-pin", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "tb6612", "to": "motorsR", "signal": "motor", "label": "BO1/BO2", "via": "2-pin", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "ina219", "signal": "i2c", "label": "I2C telemetry", "via": "IIC", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "imu", "signal": "i2c", "label": "I2C (1.8 V)", "via": "LSF0204", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "servo", "signal": "servo", "label": "1-wire TTL", "via": "SN74LVC1G125", "source": "04-Servos/ST_Bus_Servo_Control_Circuit.pdf" },
+    { "from": "esp32", "to": "lidar", "signal": "data", "label": "UART → USB", "via": "CP2102N", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "header40", "signal": "data", "label": "UART U0TX/U0RX", "via": "40-pin", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "from": "esp32", "to": "header40", "signal": "i2c", "label": "I2C to host", "via": "40-pin", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" }
+  ],
+  "hosts": {
+    "none": { "label": "No host", "node": null, "nets": [], "onRail_w": 0, "note": "Base harness only. The 40-pin header carries 5 V + UART + I2C, waiting for a host." },
+    "pi5": {
+      "label": "Raspberry Pi 5",
+      "node": { "id": "host", "label": "Raspberry Pi 5", "sub": "stacks on 40-pin", "type": "host", "x": 760, "y": 70, "w": 170, "h": 56,
+        "role": "Host computer", "does": "Stacks directly on the 40-pin header; takes 5 V power and UART/I2C through the same pins. No CUDA.",
+        "specs": [["Power","from 5 V rail (header)"],["Link","UART + I2C via header"],["Draw","up to ~25 W under load"]],
+        "docs": [["Driver schematic","UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf"]] },
+      "nets": [
+        { "from": "header40", "to": "host", "signal": "power5v", "label": "5 V (stacked)", "via": "40-pin", "source": "Pi stacks on header" },
+        { "from": "header40", "to": "host", "signal": "data", "label": "UART", "via": "40-pin", "source": "header" },
+        { "from": "header40", "to": "host", "signal": "i2c", "label": "I2C", "via": "40-pin", "source": "header" }
+      ],
+      "onRail_w": 15, "peak_w": 25,
+      "note": "Pi 5 draws from the 5 V/5 A rail. Under load it crowds the rail ceiling (the 'protect the 5V rail' insight)."
+    },
+    "orin": {
+      "label": "Jetson Orin Nano",
+      "node": { "id": "host", "label": "Jetson Orin Nano", "sub": "barrel + jumpers", "type": "host", "x": 760, "y": 70, "w": 170, "h": 56,
+        "role": "Host computer (AI)", "does": "Cannot stack or take 5 V. Powered from the battery rail via its 9–19 V barrel jack; UART/I2C jumpered from the header. 67 TOPS.",
+        "specs": [["Power input","9–19 V barrel (from battery rail)"],["Link","TX/RX/GND jumpers to header"],["Draw","up to 25 W (off the 5 V rail)"]],
+        "docs": [["Twin plan","docs/twin/TWIN-PLAN.md"],["Jetson AI Kit wiki","UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast-PT-Jetson-Orin-AI-Kit_Wiki.md"]] },
+      "nets": [
+        { "from": "ups3s", "to": "host", "signal": "battery", "label": "9–12.6 V → barrel", "via": "pigtail", "source": "battery rail, NOT 5V" },
+        { "from": "header40", "to": "host", "signal": "data", "label": "UART TX/RX/GND", "via": "jumpers", "source": "header jumpers" },
+        { "from": "header40", "to": "host", "signal": "i2c", "label": "I2C (optional)", "via": "jumpers", "source": "header jumpers" }
+      ],
+      "onRail_w": 0, "battery_w": 25,
+      "note": "Orin runs off the battery rail, so it does NOT load the 5 V rail. Never feed the Orin 5 V; its input is 9–19 V."
+    }
+  },
+  "powerBudget": { "railName": "5 V host rail (MP8759)", "volts": 5, "capacity_a": 5, "capacity_w": 25, "baseLogic_w": 3 },
+  "legend": {
+    "battery": "Battery rail 9–12.6 V",
+    "power5v": "5 V / 5 A host rail",
+    "motor": "H-bridge motor output",
+    "control": "ESP32 control / PWM",
+    "i2c": "I2C sensor bus",
+    "servo": "Serial bus servo (1-wire)",
+    "data": "UART / serial data"
+  }
+}

@@ -1,0 +1,177 @@
+<meta charset="utf-8">
+<title>Hangar Twin — Beast Base Harness (Sprint 1, review)</title>
+<style>
+  :root{
+    --void:#0a0e12; --panel:#121922; --panel2:#0e141b; --rim:#26333f; --ink:#dbe7ef; --dim:#7d93a3;
+    --battery:#f5a623; --power5v:#e5484d; --motor:#ff7a45; --control:#b07cf0;
+    --i2c:#3ecf8e; --servo:#c084fc; --data:#36e0e0; --pending:#5b6b78;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--void);color:var(--ink);font:14px/1.5 ui-sans-serif,system-ui,Segoe UI,Roboto,sans-serif}
+  header{padding:18px 22px;border-bottom:1px solid var(--rim)}
+  h1{margin:0;font-size:16px;letter-spacing:.08em;text-transform:uppercase}
+  .meta{color:var(--dim);font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;margin-top:4px}
+  .wrap{display:grid;grid-template-columns:1fr 300px;gap:0}
+  @media(max-width:900px){.wrap{grid-template-columns:1fr}}
+  .stage{padding:10px}
+  aside{border-left:1px solid var(--rim);padding:16px;min-height:0}
+  @media(max-width:900px){aside{border-left:0;border-top:1px solid var(--rim)}}
+  svg{width:100%;height:auto;display:block;background:
+     linear-gradient(var(--panel2) 1px,transparent 1px) 0 0/28px 28px,
+     linear-gradient(90deg,var(--panel2) 1px,transparent 1px) 0 0/28px 28px,var(--void)}
+  .node rect{fill:var(--panel);stroke:var(--rim);stroke-width:1.2;rx:8}
+  .node .t{fill:var(--ink);font-weight:600;font-size:13px}
+  .node .s{fill:var(--dim);font-size:11px;font-family:ui-monospace,monospace}
+  .empty rect{fill:transparent;stroke-dasharray:5 4;stroke:var(--pending)}
+  .edge{fill:none;stroke-width:2.2;opacity:.9}
+  .edge.pending{stroke-dasharray:6 5;opacity:.7}
+  .elabel{font:10px ui-monospace,monospace;fill:var(--dim)}
+  .legend div{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:12px}
+  .sw{width:22px;height:4px;border-radius:2px;flex:none}
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11px;font-family:ui-monospace,monospace}
+  th,td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--rim);vertical-align:top}
+  th{color:var(--dim);font-weight:600}
+  .pill{font:10px ui-monospace,monospace;padding:1px 6px;border-radius:10px;color:#0a0e12;font-weight:700}
+  .src{color:var(--dim)}
+  h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:18px 0 4px}
+</style>
+
+<header>
+  <h1>UGV Beast — Base Harness <span style="color:var(--dim)">(Sprint 1 · host-agnostic · for review)</span></h1>
+  <div class="meta" id="meta"></div>
+</header>
+
+<div class="wrap">
+  <div class="stage"><svg id="svg" viewBox="0 0 920 540" preserveAspectRatio="xMidYMid meet"></svg></div>
+  <aside>
+    <h2>Signal legend</h2>
+    <div class="legend" id="legend"></div>
+    <h2>Nets (edges)</h2>
+    <div style="max-height:46vh;overflow:auto"><table id="nettab"><thead>
+      <tr><th>signal</th><th>connection</th><th>source</th></tr></thead><tbody></tbody></table></div>
+    <p class="src" style="font-size:11px;margin-top:14px">Every net is grounded in an archived schematic under <code>UGV-Beast-Archive/</code>. The host link (top) is intentionally <b>unpopulated</b> here; the Pi/Orin sprint resolves it.</p>
+  </aside>
+</div>
+
+<script id="model" type="application/json">
+{
+  "$comment": "Hangar digital twin — Sprint 1 base harness (HOST-AGNOSTIC). Source of truth is data, not the renderer. Grounded in the archived Waveshare schematics (see each net's 'source'). No Pi/Orin here on purpose: the host is an unpopulated mount the base wiring already accounts for.",
+  "meta": {
+    "unit": "beast",
+    "layer": "base-harness",
+    "host": "unpopulated",
+    "revision": 1,
+    "generated": "2026-06-27",
+    "grounding": "UGV-Beast-Archive/ (General Driver schematic + UPS 3S schematic)"
+  },
+  "nodes": [
+    { "id": "ups3s",      "label": "UPS Module 3S",        "sub": "3x18650 · 9–12.6V",     "type": "power-source", "x": 40,  "y": 250, "w": 150, "h": 64 },
+    { "id": "dcin",       "label": "DC_IN (XH2.54)",       "sub": "Driver board input 6–12V","type": "terminal",    "x": 250, "y": 258, "w": 150, "h": 48 },
+    { "id": "ina219",     "label": "INA219",               "sub": "V/I monitor (inline)",   "type": "sensor",       "x": 250, "y": 348, "w": 150, "h": 48 },
+    { "id": "buck",       "label": "MP8759 buck",          "sub": "5V / 5A host rail",      "type": "power-reg",    "x": 470, "y": 150, "w": 160, "h": 56 },
+    { "id": "esp32",      "label": "ESP32-WROOM-32",       "sub": "sub-controller (PID/IO)","type": "mcu",          "x": 470, "y": 258, "w": 160, "h": 56 },
+    { "id": "tb6612",     "label": "TB6612FNG",            "sub": "dual H-bridge",          "type": "driver",       "x": 470, "y": 372, "w": 160, "h": 56 },
+    { "id": "imu",        "label": "IMU + Compass",        "sub": "QMI8658 + AK09918",      "type": "sensor",       "x": 470, "y": 470, "w": 160, "h": 48 },
+    { "id": "header40",   "label": "40-pin header",        "sub": "P2/P4 host expansion",   "type": "connector",    "x": 700, "y": 120, "w": 150, "h": 56 },
+    { "id": "host_mount", "label": "Host Controller Mount","sub": "UNPOPULATED (Pi/Orin)",  "type": "mount-empty",  "x": 700, "y": 24,  "w": 200, "h": 56 },
+    { "id": "servobus",   "label": "Serial Bus Servo",     "sub": "ST3215 chain (PT)",      "type": "actuator",     "x": 700, "y": 250, "w": 150, "h": 48 },
+    { "id": "lidar_uart", "label": "LiDAR UART",           "sub": "via CP2102 → USB",       "type": "connector",    "x": 700, "y": 320, "w": 150, "h": 48 },
+    { "id": "motorsL",    "label": "Left motors x2",       "sub": "Channel A",              "type": "motor",        "x": 700, "y": 388, "w": 150, "h": 48 },
+    { "id": "motorsR",    "label": "Right motors x2",      "sub": "Channel B",              "type": "motor",        "x": 700, "y": 452, "w": 150, "h": 48 }
+  ],
+  "nets": [
+    { "id": "n1",  "from": "ups3s",    "to": "dcin",       "signal": "battery", "label": "9–12.6V battery", "via": "XH2.54 / barrel", "source": "03-Power-UPS/Ups01_Schematic.pdf" },
+    { "id": "n2",  "from": "dcin",     "to": "ina219",     "signal": "battery", "label": "Vbatt (monitored)", "via": "board trace", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n3",  "from": "ina219",   "to": "buck",       "signal": "battery", "label": "Vbatt → VIN", "via": "board trace", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n4",  "from": "dcin",     "to": "tb6612",     "signal": "battery", "label": "VM motor supply", "via": "board trace", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n5",  "from": "buck",     "to": "esp32",      "signal": "power5v", "label": "5V → 3V3 logic", "via": "AMS1117", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n6",  "from": "buck",     "to": "header40",   "signal": "power5v", "label": "5V / 5A rail", "via": "P2/P4 pin 2&4", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n7",  "from": "esp32",    "to": "tb6612",     "signal": "control", "label": "AIN/BIN/PWMA/PWMB", "via": "GPIO", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n8",  "from": "tb6612",   "to": "motorsL",    "signal": "motor",   "label": "AO1/AO2 → MOTOR-A1/A2", "via": "2-pin headers", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n9",  "from": "tb6612",   "to": "motorsR",    "signal": "motor",   "label": "BO1/BO2 → MOTOR-B1/B2", "via": "2-pin headers", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n10", "from": "esp32",    "to": "ina219",     "signal": "i2c",     "label": "I2C telemetry", "via": "IIC_SDA/SCL", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n11", "from": "esp32",    "to": "imu",        "signal": "i2c",     "label": "I2C (1.8V via LSF0204)", "via": "IIC_SDA/SCL", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n12", "from": "esp32",    "to": "servobus",   "signal": "servo",   "label": "1-wire TTL bus (TXEN)", "via": "SN74LVC1G125", "source": "04-Servos/ST_Bus_Servo_Control_Circuit.pdf" },
+    { "id": "n13", "from": "esp32",    "to": "lidar_uart", "signal": "data",    "label": "UART → USB", "via": "CP2102N", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n14", "from": "esp32",    "to": "header40",   "signal": "data",    "label": "UART U0TX/U0RX ↔ P_TX/P_RX", "via": "40-pin", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n15", "from": "esp32",    "to": "header40",   "signal": "i2c",     "label": "I2C exposed to host", "via": "40-pin", "source": "02-Driver-Board/General_Driver_for_Robots_Schematic.pdf" },
+    { "id": "n16", "from": "header40", "to": "host_mount", "signal": "pending", "label": "5V + UART + I2C (awaits host)", "via": "header / jumpers", "source": "pending — resolved in host sprint (Pi stacks; Orin = barrel + jumpers)" }
+  ],
+  "legend": {
+    "battery": "Raw battery rail 9–12.6V",
+    "power5v": "Regulated 5V / 5A host rail",
+    "motor": "H-bridge motor output",
+    "control": "ESP32 control / PWM",
+    "i2c": "I2C sensor bus",
+    "servo": "Serial bus servo (1-wire TTL)",
+    "data": "UART / serial data",
+    "pending": "Host link, unpopulated in base layer"
+  }
+}
+
+</script>
+<script>
+const M = JSON.parse(document.getElementById('model').textContent);
+const C = getComputedStyle(document.documentElement);
+const col = s => C.getPropertyValue('--'+s).trim() || '#888';
+document.getElementById('meta').textContent =
+  `unit=${M.meta.unit}  layer=${M.meta.layer}  host=${M.meta.host}  rev=${M.meta.revision}  · grounding: ${M.meta.grounding}`;
+
+const svg = document.getElementById('svg');
+const NS='http://www.w3.org/2000/svg';
+const byId = Object.fromEntries(M.nodes.map(n=>[n.id,n]));
+const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e;};
+
+// anchor side picker
+function anchors(a,b){
+  const ac={x:a.x+a.w/2,y:a.y+a.h/2}, bc={x:b.x+b.w/2,y:b.y+b.h/2};
+  const dx=bc.x-ac.x, dy=bc.y-ac.y;
+  let s,t;
+  if(Math.abs(dx)>=Math.abs(dy)){
+    s={x:dx>0?a.x+a.w:a.x, y:ac.y}; t={x:dx>0?b.x:b.x+b.w, y:bc.y};
+  }else{
+    s={x:ac.x, y:dy>0?a.y+a.h:a.y}; t={x:bc.x, y:dy>0?b.y:b.y+b.h};
+  }
+  return [s,t];
+}
+
+// edges first (under nodes)
+for(const n of M.nets){
+  const a=byId[n.from], b=byId[n.to]; if(!a||!b)continue;
+  const [s,t]=anchors(a,b);
+  const mx=(s.x+t.x)/2;
+  const horiz=Math.abs(t.x-s.x)>=Math.abs(t.y-s.y);
+  const d = horiz
+    ? `M ${s.x} ${s.y} C ${mx} ${s.y}, ${mx} ${t.y}, ${t.x} ${t.y}`
+    : `M ${s.x} ${s.y} C ${s.x} ${(s.y+t.y)/2}, ${t.x} ${(s.y+t.y)/2}, ${t.x} ${t.y}`;
+  const p=el('path',{d,class:'edge'+(n.signal==='pending'?' pending':''),stroke:col(n.signal)});
+  const tip=el('title',{}); tip.textContent=`${n.label}  ·  via ${n.via}  ·  ${n.source}`; p.appendChild(tip);
+  svg.appendChild(p);
+  const lab=el('text',{x:mx,y:(s.y+t.y)/2-3,class:'elabel','text-anchor':'middle'}); lab.textContent=n.label;
+  svg.appendChild(lab);
+}
+
+// nodes
+for(const n of M.nodes){
+  const g=el('g',{class:'node'+(n.type==='mount-empty'?' empty':'')});
+  const accent = n.type==='power-source'?'battery':n.type==='power-reg'?'power5v':n.type==='motor'?'motor':n.type==='mcu'?'data':n.type==='driver'?'motor':n.type==='actuator'?'servo':n.type==='sensor'?'i2c':'';
+  const r=el('rect',{x:n.x,y:n.y,width:n.w,height:n.h,rx:8});
+  if(accent) r.setAttribute('stroke',col(accent));
+  g.appendChild(r);
+  const t=el('text',{x:n.x+12,y:n.y+(n.sub?22:n.h/2+4),class:'t'}); t.textContent=n.label; g.appendChild(t);
+  if(n.sub){const s=el('text',{x:n.x+12,y:n.y+40,class:'s'}); s.textContent=n.sub; g.appendChild(s);}
+  svg.appendChild(g);
+}
+
+// legend
+const lg=document.getElementById('legend');
+for(const k in M.legend){const d=document.createElement('div');
+  d.innerHTML=`<span class="sw" style="background:${col(k)}"></span><b style="font-family:ui-monospace,monospace">${k}</b> — ${M.legend[k]}`;lg.appendChild(d);}
+
+// net table
+const tb=document.querySelector('#nettab tbody');
+for(const n of M.nets){const tr=document.createElement('tr');
+  tr.innerHTML=`<td><span class="pill" style="background:${col(n.signal)}">${n.signal}</span></td>
+  <td>${byId[n.from]?.label} → ${byId[n.to]?.label}<br><span class="src">${n.label}</span></td>
+  <td class="src">${n.source.replace(/^.*\//,'')}</td>`;tb.appendChild(tr);}
+</script>
