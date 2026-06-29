@@ -22,7 +22,7 @@ The Beast research and the wiring-twin work initially landed in the wrong shape:
 | Hangar docs/knowledge | `RobotOverview/docs` | Beast ops, connected twin, source archive digest, storage plan. |
 | Bulk source files (PDF/CAD/ZIP/firmware/wiki captures) | S3-compatible object bucket | Never git, never Docker image; DB stores metadata + object keys/URLs. |
 | Hangar Postgres target | `coldaine-k8cluster` `pg18` | Logical `hangar` database in the CloudNativePG `pg18` cluster; not a new server. |
-| Object-storage service | `coldaine-k8cluster` | Backup MinIO is declared for DB backups; app document storage still needs explicit bucket/tenant/access decision. |
+| Object-storage service | `coldaine-k8cluster` | Garage is the declared in-cluster S3 service for DB backups and light app object storage; Hangar still needs an explicit per-app bucket/key/offsite decision. |
 | Deployment | `coldaine-k8cluster/apps` + `builds` | App service, image build, secrets, and route live in cluster repo once ready. |
 
 ## Confirmed from `coldaine-k8cluster`
@@ -32,7 +32,7 @@ The Beast research and the wiring-twin work initially landed in the wrong shape:
   - `pg19`: PostgreSQL 19, CloudNativePG, future/empty/PG19-specific; not for irreplaceable data yet.
   - `falkordb`: graph database, KubeBlocks.
 - Hangar should target `pg18` as a logical database (`hangar`) with a role (`hangar`) and Doppler/ESO-managed password.
-- `coldaine-k8cluster` declares in-cluster MinIO for **database backups**. Do not assume that backup bucket is automatically the Hangar document bucket; choose an app-document bucket/tenant/policy deliberately.
+- `coldaine-k8cluster` declares **Garage** for in-cluster S3: database backups plus light app object storage. Do not assume the default `kubeblocks-backups` bucket is the Hangar document bucket; choose a Hangar source-document bucket/key/policy deliberately.
 - App code should use an S3-compatible abstraction so the archive can move from interim storage to the final object-store path without changing the data model.
 
 ## Workstreams and sequencing
@@ -55,8 +55,8 @@ In `C:\_projects\coldaine-k8cluster`:
    - `docs/connection-registry.md` row.
    - Doppler key, likely `HANGAR_DB_PASSWORD`.
 2. Decide source-document object storage:
-   - same MinIO tenant with a separate bucket/policy,
-   - separate tenant/bucket,
+   - same Garage service with a separate Hangar bucket/key/policy,
+   - separate Garage instance only if the shared service is not appropriate,
    - or R2/offsite first.
 3. Record the bucket contract: bucket name, app role/secret names, access pattern, retention/offsite stance.
 4. Restore-test the DB backup path before any app depends on the cluster DB.
@@ -86,6 +86,6 @@ In `C:\_projects\coldaine-k8cluster`:
 
 - Exact logical database name: likely `hangar`.
 - Exact role and Doppler key: likely `hangar` / `HANGAR_DB_PASSWORD`.
-- Whether the source-document bucket shares the backup MinIO tenant or uses a separate object-store path.
+- Whether the source-document bucket is a separate Garage bucket/key/policy, or uses R2/offsite first.
 - Whether source archive objects need offsite durability before being considered safe.
 - Whether/when any Hangar relationship data belongs in `falkordb`; default is no, Postgres first.

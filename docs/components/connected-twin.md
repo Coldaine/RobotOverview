@@ -51,7 +51,7 @@ Relationship to existing concepts:
 
 RobotOverview owns the schema, seed inputs, and app behavior for this model. The deployment target is the logical Hangar database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster, not a new database server and not the local proof container.
 
-Source-document metadata should live in the Hangar schema. Large source binaries (PDF/CAD/firmware/wiki captures) should live in S3-compatible object storage and be referenced by key/URL. Do not assume the cluster's database-backup MinIO bucket is also the app document store. The app archive bucket needs its own explicit decision about bucket name, access policy, retention/offsite mirror, and whether it shares the MinIO tenant or uses a separate object-store path.
+Source-document metadata should live in the Hangar schema. Large source binaries (PDF/CAD/firmware/wiki captures) should live in S3-compatible object storage and be referenced by key/URL. Do not assume Garage's default database-backup bucket is also the app document store. The app archive bucket needs its own explicit decision about bucket name, access key/policy, retention/offsite mirror, and whether it uses Garage first or R2/offsite first.
 
 ## App integration path
 
