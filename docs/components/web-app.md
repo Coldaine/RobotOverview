@@ -9,8 +9,8 @@ last_updated: 2026-06-26
 
 > How the Hangar app is structured: the server/client split, mutations, caching, and secrets.
 > Where the data layer is concerned, this describes the **target** server-side pattern; today the
-> app reads the static `src/data/hangar.ts` (see [`data-backend.md`](data-backend.md)), and the
-> DB-backed examples below apply once the database read path is wired.
+> browser-facing app still reads the static `src/data/hangar.ts` (see [`data-backend.md`](data-backend.md)).
+> A narrow server-side inventory item read path now exists as the first DB wiring proof.
 
 ## Why Next.js (not a Vite SPA)
 
@@ -48,9 +48,19 @@ read:   Browser → Next.js server → Server Component → (data layer) → ren
 write:  Browser onClick → Server Action ("use server") → (data layer) → revalidatePath()/Tag → re-render
 ```
 
-When the DB read path is wired, the data layer is the Postgres master-inventory via an ORM whose
-schema maps to `db/hangar/schema.sql`. Until then, the same Server Components read `hangar.ts`
-directly, so the split above already applies — only the data source changes.
+The first DB-backed read path is deliberately narrow:
+
+```text
+GET /api/hangar/items
+  -> src/server/hangar/items.ts
+  -> src/server/hangar/db.ts
+  -> Postgres assets/groups/tags if DATABASE_URL is configured
+  -> src/data/hangar.ts fallback otherwise
+```
+
+This proves server-only credentials, query shape, normalized-to-UI mapping, and fallback behavior
+without moving the interactive Hangar store yet. A future UI migration should move one page or
+server component to this repository boundary while keeping rollback to `hangar.ts` straightforward.
 
 ## Caching
 
@@ -61,9 +71,9 @@ that mutates it. Not load-bearing while reads come from the in-process `hangar.t
 ## Secrets (Doppler) — target state
 
 Doppler injects secrets (e.g. `DATABASE_URL`) into the server process at runtime; Next.js reads them
-server-side and they never touch the browser. Validate them at startup (fail fast on a missing var)
-rather than mid-request. This becomes relevant when the DB is wired — while the app reads `hangar.ts`
-there are no runtime secrets to manage.
+server-side and they never touch the browser. Keep DB clients lazily initialized inside server-only
+accessors so `next build` can run without runtime secrets. For the current inventory route, a missing
+URL is not fatal; it is an explicit static-data fallback.
 
 ## Aesthetics
 
