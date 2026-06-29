@@ -98,7 +98,7 @@ describe('Hangar inventory Postgres read path', () => {
 
     expect(calls).toHaveLength(1);
     expect(calls[0].sql).toContain("WHERE a.kind = 'peripheral'");
-    expect(calls[0].values).toEqual([
+    expect(calls[0].values).toEqual([[
       'owned',
       'on-order',
       'wishlist',
@@ -106,7 +106,7 @@ describe('Hangar inventory Postgres read path', () => {
       'deployed',
       'retired',
       'rejected',
-    ]);
+    ]]);
     expect(items).toHaveLength(1);
     expect(items[0].id).toBe('lafaer-lwr02-presence-sensor');
   });

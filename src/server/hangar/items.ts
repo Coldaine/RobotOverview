@@ -191,7 +191,7 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
 }
 
 export async function readInventoryItemsFromPostgres(client: Queryable) {
-  const result = await client.query<InventoryItemRow>(INVENTORY_ITEMS_SQL, ITEM_STATUSES);
+  const result = await client.query<InventoryItemRow>(INVENTORY_ITEMS_SQL, [ITEM_STATUSES]);
   return result.rows.map(mapInventoryItemRow);
 }
 
