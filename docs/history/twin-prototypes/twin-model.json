@@ -108,7 +108,7 @@
       "node": { "id": "host", "label": "Jetson Orin Nano", "sub": "barrel + jumpers", "type": "host", "x": 760, "y": 70, "w": 170, "h": 56,
         "role": "Host computer (AI)", "does": "Cannot stack or take 5 V. Powered from the battery rail via its 9–19 V barrel jack; UART/I2C jumpered from the header. 67 TOPS.",
         "specs": [["Power input","9–19 V barrel (from battery rail)"],["Link","TX/RX/GND jumpers to header"],["Draw","up to 25 W (off the 5 V rail)"]],
-        "docs": [["Twin plan","docs/twin/TWIN-PLAN.md"],["Jetson AI Kit wiki","UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast-PT-Jetson-Orin-AI-Kit_Wiki.md"]] },
+        "docs": [["Connected twin direction","docs/components/connected-twin.md"],["Jetson AI Kit wiki","UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast-PT-Jetson-Orin-AI-Kit_Wiki.md"]] },
       "nets": [
         { "from": "ups3s", "to": "host", "signal": "battery", "label": "9–12.6 V → barrel", "via": "pigtail", "source": "battery rail, NOT 5V" },
         { "from": "header40", "to": "host", "signal": "data", "label": "UART TX/RX/GND", "via": "jumpers", "source": "header jumpers" },
