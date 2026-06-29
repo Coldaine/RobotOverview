@@ -257,7 +257,13 @@ interface HangarStore {
 
 const Ctx = createContext<HangarStore | null>(null);
 
-export function HangarProvider({ children }: { children: ReactNode }) {
+export function HangarProvider({
+  children,
+  initialItems,
+}: {
+  children: ReactNode;
+  initialItems?: InventoryItem[];
+}) {
   const [theme, setTheme] = useState<ThemeMode>(() => readStoredTheme());
   const [lensMissionId, setLensMissionId] = useState<string | null>(() => readStoredLensMissionId());
   const [source, setSource] = useState<SourcePreference>(() => readStoredSource());
@@ -377,7 +383,7 @@ export function HangarProvider({ children }: { children: ReactNode }) {
   };
 
   const value = useMemo<HangarStore>(() => {
-    const data = { ...hangarData, units };
+    const data = { ...hangarData, items: initialItems ?? hangarData.items, units };
     const byId = <T extends { id: string }>(arr: T[]) => {
       const m = new Map<string, T>();
       arr.forEach((x) => m.set(x.id, x));
@@ -435,7 +441,7 @@ export function HangarProvider({ children }: { children: ReactNode }) {
       openDrawer,
       closeDrawer,
     };
-  }, [theme, lensMissionId, source, spotlightId, units, objectiveOverrides, wishStatusOverrides, localInsights, drawerOpen, drawerSlotContext]);
+  }, [theme, lensMissionId, source, spotlightId, units, initialItems, objectiveOverrides, wishStatusOverrides, localInsights, drawerOpen, drawerSlotContext]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

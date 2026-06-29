@@ -36,18 +36,18 @@ Two pillars drive every choice that follows:
 A browser-only SPA (the original Vite bootstrap) cannot hold database credentials, so it dies the
 moment the inventory needs a real backend. Next.js fuses the UI to a secure server layer — Server
 Components query data server-side and never ship to the browser; Server Actions handle mutations.
-The app is built on Next.js 16 / React 19 / Tailwind 4 today and renders from the static data
-source below.
+The app is built on Next.js 16 / React 19 / Tailwind 4 today. Inventory items now render from
+the server-backed Postgres path with a static fallback while the remaining surfaces finish moving
+off the bootstrap source below.
 → detail: [`docs/components/web-app.md`](components/web-app.md)
 
-### 2. Source of truth: `hangar.ts` bootstraps Postgres
+### 2. Source of truth: Postgres, bootstrapped by `hangar.ts`
 
-Per the pillar **"do not prescribe before populating,"** `src/data/hangar.ts` is the current
-runtime source and bootstrap dataset: it populated the model before the model was prescribed. The
-target source of truth is the normalized Postgres **master-inventory** backend after the cluster DB
-is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked, and
-the app read path is cut over. Until that cutover completes, `hangar.ts` remains the
-rollback/fallback spine.
+Per the pillar **"do not prescribe before populating,"** `src/data/hangar.ts` is the bootstrap
+dataset: it populated the model before the model was prescribed. The normalized Postgres
+**master-inventory** backend is now provisioned and seeded in the cluster, and inventory-item reads
+are the first browser-facing path served through it. Until the remaining surfaces and restore gate
+complete, `hangar.ts` remains the rollback/fallback spine.
 → detail: [`docs/components/data-backend.md`](components/data-backend.md)
 
 ### 3. One master inventory; bays are views, not silos

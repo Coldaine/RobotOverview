@@ -83,7 +83,8 @@ function sslConfigFromMode(sslmode: string | undefined): PoolConfig['ssl'] {
     case 'disable':
       return false;
     case 'require':
-      return true;
+      // CNPG uses a self-signed chain; sslmode=require encrypts without authenticating the server cert.
+      return { rejectUnauthorized: false };
     default:
       throw new Error(
         `Unsupported HANGAR_DB_SSLMODE "${sslmode}". Supported values: disable, require.`,

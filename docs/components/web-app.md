@@ -63,11 +63,11 @@ GET /api/hangar/preflight
   -> HTTP 200 only when the DB is reachable; HTTP 503 when not configured or unreachable
 ```
 
-This proves server-only credentials, query shape, normalized-to-UI mapping, and fallback behavior
-without moving the interactive Hangar store yet. A future UI migration should move one page or
-server component to this repository boundary while keeping rollback to `hangar.ts` straightforward.
-After the cluster DB is seeded, the DB preflight is green, and parity checks pass, those server
-reads are the path to making Postgres authoritative.
+This proves server-only credentials, query shape, normalized-to-UI mapping, and fallback behavior.
+The root layout reads inventory items through this server boundary at request time and seeds the client
+store with those records; if Postgres is not configured or reachable, the same boundary falls back to
+`hangar.ts`. Broader UI/data migration should continue one surface at a time while keeping rollback to
+`hangar.ts` straightforward.
 
 ## Caching
 
@@ -90,8 +90,9 @@ HANGAR_DB_PASSWORD
 ```
 
 Host, port, database, user, and SSL mode are ordinary deployment config. The current app helper
-explicitly supports `HANGAR_DB_SSLMODE=disable` or `require`; certificate-verified modes should be
-added with the actual cert/trust-bundle fields rather than silently treated as generic TLS.
+explicitly supports `HANGAR_DB_SSLMODE=disable` or `require`; `require` encrypts without verifying the
+self-signed CNPG certificate chain, matching libpq `sslmode=require`. Certificate-verified modes should
+be added with the actual cert/trust-bundle fields rather than silently treated as generic TLS.
 `HANGAR_DB_PASSWORD` is the phase-1 credential and should later be replaceable by
 workload-identity-backed auth (client cert, Vault lease, or proxy-issued token) without changing the
 browser-facing app.
