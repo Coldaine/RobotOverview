@@ -54,7 +54,7 @@ The first DB-backed read path is deliberately narrow:
 GET /api/hangar/items
   -> src/server/hangar/items.ts
   -> src/server/hangar/db.ts
-  -> Postgres assets/groups/tags if DATABASE_URL is configured
+  -> Postgres assets/groups/tags if structured HANGAR_DB_* config is present
   -> src/data/hangar.ts fallback otherwise
 ```
 
@@ -68,12 +68,28 @@ Next.js 16's caching (`use cache` / `unstable_cache`) covers expensive reads wit
 Redis: cache the fleet list with a revalidate window + tags, and bust the tag from the Server Action
 that mutates it. Not load-bearing while reads come from the in-process `hangar.ts`.
 
-## Secrets (Doppler) — target state
+## Database Config And Secrets — Target State
 
-Doppler injects secrets (e.g. `DATABASE_URL`) into the server process at runtime; Next.js reads them
-server-side and they never touch the browser. Keep DB clients lazily initialized inside server-only
-accessors so `next build` can run without runtime secrets. For the current inventory route, a missing
-URL is not fatal; it is an explicit static-data fallback.
+Doppler/ESO should inject only the credential-bearing part of the connection into the server process
+at runtime. The preferred app contract is structured config, not a credential-bearing URL:
+
+```text
+HANGAR_DB_HOST
+HANGAR_DB_PORT
+HANGAR_DB_NAME
+HANGAR_DB_USER
+HANGAR_DB_SSLMODE
+HANGAR_DB_PASSWORD
+```
+
+Host, port, database, user, and SSL mode are ordinary deployment config. `HANGAR_DB_PASSWORD` is the
+phase-1 credential and should later be replaceable by workload-identity-backed auth (client cert,
+Vault lease, or proxy-issued token) without changing the browser-facing app.
+
+Keep DB clients lazily initialized inside server-only accessors so `next build` can run without
+runtime credentials. For the current inventory route, missing DB config is not fatal; it is an
+explicit static-data fallback. `HANGAR_DATABASE_URL`/`DATABASE_URL` remain compatibility escape
+hatches, but they are not the preferred contract.
 
 ## Aesthetics
 

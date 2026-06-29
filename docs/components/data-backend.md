@@ -14,7 +14,7 @@ last_updated: 2026-06-29
 
 - **`src/data/hangar.ts` is the authoritative runtime source.** The Next.js app reads it directly today.
 - The **Postgres `hangar` schema has been stood up locally as a proof of shape**: schema applied, seeded from `hangar.ts`, and verified. It is **not yet authoritative**.
-- The first app read-path foundation now exists for inventory items: `GET /api/hangar/items` attempts a server-side Postgres read when `HANGAR_DATABASE_URL` or `DATABASE_URL` is present, and falls back to `src/data/hangar.ts` when it is not configured or the read fails. This is a proof lane, not the primary UI source yet.
+- The first app read-path foundation now exists for inventory items: `GET /api/hangar/items` attempts a server-side Postgres read when structured `HANGAR_DB_*` config is present, and falls back to `src/data/hangar.ts` when it is not configured or the read fails. `HANGAR_DATABASE_URL`/`DATABASE_URL` remain compatibility paths, but the preferred contract is not a credential-bearing URL. This is a proof lane, not the primary UI source yet.
 - The **target deployment database is not decided inside RobotOverview.** It is a logical Hangar database in `C:\_projects\coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`databases/pg18.yaml` + `docs/connection-registry.md`). RobotOverview owns the app schema/migrations and app behavior; the cluster repo owns provisioning, roles/secrets, backups, and restore gates.
 - This staging is intentional, per the North Star pillar **"do not prescribe before populating"**: the relational shape was designed only after there was real content to fit it to.
 
@@ -89,16 +89,24 @@ Operator: CloudNativePG
 Role: hangar
 Doppler password key: HANGAR_DB_PASSWORD
 Owner repo: RobotOverview
-App env: DATABASE_URL
+App env:
+  HANGAR_DB_HOST=pg18-rw.data-platform.svc.cluster.local
+  HANGAR_DB_PORT=5432
+  HANGAR_DB_NAME=hangar
+  HANGAR_DB_USER=hangar
+  HANGAR_DB_SSLMODE=require
+  HANGAR_DB_PASSWORD=<runtime credential, from Doppler/ESO in phase 1>
 ```
 
 Do **not** create a new Postgres server for Hangar. Per `coldaine-k8cluster`, current app databases are logical databases inside `pg18`; `pg19` is future/PG19-specific and not for irreplaceable data yet; `falkordb` is for graph data.
+
+`HANGAR_DB_HOST`, port, database name, role, and SSL mode are configuration, not secrets. Only the runtime credential carries authority. Longer-term, that credential should become workload-identity backed (client certificate, Vault lease, or proxy-issued token) rather than a durable password; the app-side contract can stay structured either way.
 
 ## App read path foundation
 
 The current server boundary is intentionally small:
 
-- `src/server/hangar/db.ts` lazily creates a `pg` pool only after a request asks for DB-backed data.
+- `src/server/hangar/db.ts` lazily creates a `pg` pool only after a request asks for DB-backed data. It prefers a structured `HANGAR_DB_*` connection object and keeps `HANGAR_DATABASE_URL`/`DATABASE_URL` only for compatibility.
 - `src/server/hangar/items.ts` maps the normalized `assets`/`groups`/`tags` shape back into the existing `InventoryItem` read model.
 - `src/app/api/hangar/items/route.ts` exposes a read-only smoke-test route with `{ source, fallbackReason, count, items }`.
 

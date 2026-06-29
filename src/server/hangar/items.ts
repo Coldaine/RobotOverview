@@ -6,7 +6,7 @@ import type {
   SourceRecord,
   SpecRow,
 } from '@/data/types';
-import { getHangarDatabaseUrl, getHangarPool } from './db';
+import { getHangarPool, getHangarPoolConfig } from './db';
 
 type Queryable = {
   query: <T>(sql: string, values?: unknown[]) => Promise<{ rows: T[] }>;
@@ -196,7 +196,7 @@ export async function readInventoryItemsFromPostgres(client: Queryable) {
 }
 
 export async function getInventoryItems(): Promise<InventoryItemsRead> {
-  if (!getHangarDatabaseUrl()) {
+  if (!getHangarPoolConfig()) {
     return {
       source: 'static',
       fallbackReason: 'not-configured',

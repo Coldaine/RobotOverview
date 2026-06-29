@@ -80,11 +80,14 @@ service** in the MooseGoose estate — its own image, pod, probes, and resource 
 **The deployment *mechanism* is being redesigned (moving to Shipwright); it is paused, not broken.**
 → detail: [`docs/deploy/deployment.md`](deploy/deployment.md), [`docs/deploy/hangar-service-boundary.md`](deploy/hangar-service-boundary.md)
 
-### 6. Secrets via Doppler (target state)
+### 6. Database authority lives in runtime identity, not URLs
 
-Database credentials must never reach the browser; Doppler injects them into the server process at
-runtime. This becomes load-bearing once the DB is wired — while the app reads `hangar.ts`, there are
-no runtime secrets to manage.
+Database authority must never reach the browser, and the app should not treat a credential-bearing
+`DATABASE_URL` as the architectural primitive. The target shape is structured connection config
+for address material (host, port, database, role) plus a runtime credential supplied server-side.
+Phase 1 may use a Doppler/ESO password; later phases can replace that with workload identity,
+client certificate auth, a Vault lease, or a proxy-issued token without changing the browser-facing
+app.
 → detail: [`docs/components/web-app.md`](components/web-app.md)
 
 ## What this is not (anti-goals)
