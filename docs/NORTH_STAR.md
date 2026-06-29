@@ -44,7 +44,7 @@ Directional, not testable.
 
 ## Resolved Questions
 
-- **In what form is the content stored?** For the current alpha, `src/data/hangar.ts` is the source of truth. The model keeps a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) while leaving room for flexible, localized metadata (power budgets, pricing, specs). A PostgreSQL backend can become the storage layer later, but it is not authoritative yet.
+- **In what form is the content stored?** For the current alpha, `src/data/hangar.ts` is the current runtime source and bootstrap dataset. The target source of truth is the PostgreSQL master-inventory store once it is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked, and the app read path is cut over. The model keeps a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) while leaving room for flexible, localized metadata (power budgets, pricing, specs).
 - **What is the model for what I own and its state?** Inventory is tracked as `Units`. Assembly is modeled via grouped `Loadout Slots` (e.g. Chassis Mounts, Driver Board Interfaces), allowing any unit to act as a parent chassis that other units plug into, replicating a base-builder upgrade tree.
 
 ## Open Questions

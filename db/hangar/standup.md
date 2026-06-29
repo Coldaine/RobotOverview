@@ -10,7 +10,7 @@ last_confirmed: 2026-06-29
 
 The relational backend for the Hangar: **one master inventory of all gear**, with bays as first-class group rows, a video-game loadout, and the connected model (North Star AG1) preserved. Design provenance: `.omc/specs/deep-interview-hangar-master-inventory.md` (deep-interview session, 2026-06-26), which itself recovered + reconciled the deleted `docs/plans/postgres_schema.md`.
 
-> **Status:** DB shape stood up + seeded + verified locally. App/ORM (Drizzle) wiring is **deferred** — the Next.js app still reads `src/data/hangar.ts` at runtime. The target deployment is a logical `hangar` database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster, not the local proof container.
+> **Status:** DB shape stood up + seeded + verified locally. `src/data/hangar.ts` is the current runtime source and bootstrap dataset; the target source of truth is the logical `hangar` database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster after provisioning, seed load, app preflight reachability, parity checks, and app read cutover. App/ORM (Drizzle) wiring is still deferred beyond the first read-only inventory API.
 
 ## Where it lives
 
@@ -20,7 +20,7 @@ The relational backend for the Hangar: **one master inventory of all gear**, wit
 - **Database:** `hangar` — a separate database in that instance. TechdealsHandoff data (`market_*`, `techdeals_work*`, `legacy_supabase`) is untouched.
 - **Creds (dev):** `techdeals` / `techdeals`.
 
-This local database proves the schema and seed shape. It is not the production target.
+This local database proves the schema and seed shape. It is not the production target and should not be treated as authoritative runtime state.
 
 ### Target deployment
 
@@ -47,7 +47,7 @@ npx tsx db/hangar/gen-seed.ts --out db/hangar/seed.sql    # regenerate after edi
 docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP=1 < db/hangar/seed.sql
 ```
 
-Cluster deployment is different: reserve the logical DB/role in `coldaine-k8cluster`, provide address config as `HANGAR_DB_HOST`/`HANGAR_DB_PORT`/`HANGAR_DB_NAME`/`HANGAR_DB_USER`, provide only the credential-bearing piece through the chosen runtime auth path, apply migrations/schema there, restore-test backups, then wire the app.
+Cluster deployment is different: reserve the logical DB/role in `coldaine-k8cluster`, provide address config as `HANGAR_DB_HOST`/`HANGAR_DB_PORT`/`HANGAR_DB_NAME`/`HANGAR_DB_USER`, provide only the credential-bearing piece through the chosen runtime auth path, apply migrations/schema there, load seed data generated from `hangar.ts`, restore-test backups, verify `GET /api/hangar/preflight` can reach the DB, parity-check representative reads, then cut app reads over to Postgres.
 
 ## Schema in one breath
 
@@ -83,4 +83,4 @@ SELECT g.code, count(ag.asset_id) FROM groups g
 - Cluster reservation: add the `hangar` logical DB/role/registry entry in `coldaine-k8cluster`.
 - An **"onboard power"** view should filter mission power by location/tag — the raw requisition sum includes the offboard 5090 workstation.
 - `interface_types` is seeded with a demonstrative set (host-mount, serial-bus-servo, ups-bay, i2c-display); expand as real connectors are catalogued.
-- App migration: define these tables in Drizzle and point the Next.js server/data layer at the DB.
+- App migration: point the Next.js server/data layer at the DB, require a green `GET /api/hangar/preflight`, parity-check it against the `hangar.ts` bootstrap dataset, then move UI reads before introducing DB writes.

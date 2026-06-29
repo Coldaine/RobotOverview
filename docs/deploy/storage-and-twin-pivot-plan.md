@@ -66,8 +66,10 @@ In `C:\_projects\coldaine-k8cluster`:
 1. Apply the Hangar schema to the cluster `pg18` logical DB.
 2. Load seed data generated from `src/data/hangar.ts`.
 3. Wire the Next.js server layer/ORM to structured `HANGAR_DB_*` config while keeping rollback to `hangar.ts` clear.
-4. Prove representative reads and app pages from the DB.
-5. Only then retire `hangar.ts` as runtime source.
+4. Require `GET /api/hangar/preflight` to prove the deployed app can reach the configured DB.
+5. Parity-check the cluster DB against the `hangar.ts` bootstrap dataset.
+6. Prove representative reads and app pages from the DB.
+7. Declare Postgres authoritative only after those checks pass; only then retire `hangar.ts` as runtime source.
 
 ### Phase 3 — Source-backed connected twin
 

@@ -40,13 +40,14 @@ The app is built on Next.js 16 / React 19 / Tailwind 4 today and renders from th
 source below.
 → detail: [`docs/components/web-app.md`](components/web-app.md)
 
-### 2. Source of truth: static `hangar.ts` now, a Postgres master-inventory next
+### 2. Source of truth: `hangar.ts` bootstraps Postgres
 
-Per the pillar **"do not prescribe before populating,"** `src/data/hangar.ts` stays the
-authoritative runtime source through the alpha, so the shape keeps emerging from real entries. A
-normalized Postgres **master-inventory** backend has been *designed and stood up alongside it* but
-is **not yet authoritative** — the app still reads `hangar.ts` at runtime. App/ORM wiring is the
-deliberately deferred next step.
+Per the pillar **"do not prescribe before populating,"** `src/data/hangar.ts` is the current
+runtime source and bootstrap dataset: it populated the model before the model was prescribed. The
+target source of truth is the normalized Postgres **master-inventory** backend after the cluster DB
+is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked, and
+the app read path is cut over. Until that cutover completes, `hangar.ts` remains the
+rollback/fallback spine.
 → detail: [`docs/components/data-backend.md`](components/data-backend.md)
 
 ### 3. One master inventory; bays are views, not silos
