@@ -47,7 +47,7 @@ npx tsx db/hangar/gen-seed.ts --out db/hangar/seed.sql    # regenerate after edi
 docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP=1 < db/hangar/seed.sql
 ```
 
-Cluster deployment is different: reserve the logical DB/role in `coldaine-k8cluster`, provide address config as `HANGAR_DB_HOST`/`HANGAR_DB_PORT`/`HANGAR_DB_NAME`/`HANGAR_DB_USER`, provide only the credential-bearing piece through the chosen runtime auth path, apply migrations/schema there, load seed data generated from `hangar.ts`, restore-test backups, parity-check representative reads, then cut app reads over to Postgres.
+Cluster deployment is different: reserve the logical DB/role in `coldaine-k8cluster`, provide address config as `HANGAR_DB_HOST`/`HANGAR_DB_PORT`/`HANGAR_DB_NAME`/`HANGAR_DB_USER`, provide only the credential-bearing piece through the chosen runtime auth path, apply migrations/schema there, load seed data generated from `hangar.ts`, restore-test backups, verify `GET /api/hangar/preflight` can reach the DB, parity-check representative reads, then cut app reads over to Postgres.
 
 ## Schema in one breath
 
@@ -83,4 +83,4 @@ SELECT g.code, count(ag.asset_id) FROM groups g
 - Cluster reservation: add the `hangar` logical DB/role/registry entry in `coldaine-k8cluster`.
 - An **"onboard power"** view should filter mission power by location/tag — the raw requisition sum includes the offboard 5090 workstation.
 - `interface_types` is seeded with a demonstrative set (host-mount, serial-bus-servo, ups-bay, i2c-display); expand as real connectors are catalogued.
-- App migration: point the Next.js server/data layer at the DB, parity-check it against the `hangar.ts` bootstrap dataset, then move UI reads before introducing DB writes.
+- App migration: point the Next.js server/data layer at the DB, require a green `GET /api/hangar/preflight`, parity-check it against the `hangar.ts` bootstrap dataset, then move UI reads before introducing DB writes.

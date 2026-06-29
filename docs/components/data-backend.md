@@ -109,8 +109,9 @@ The current server boundary is intentionally small:
 - `src/server/hangar/db.ts` lazily creates a `pg` pool only after a request asks for DB-backed data. It prefers a structured `HANGAR_DB_*` connection object and keeps `HANGAR_DATABASE_URL`/`DATABASE_URL` only for compatibility.
 - `src/server/hangar/items.ts` maps the normalized `assets`/`groups`/`tags` shape back into the existing `InventoryItem` read model.
 - `src/app/api/hangar/items/route.ts` exposes a read-only smoke-test route with `{ source, fallbackReason, count, items }`.
+- `src/app/api/hangar/preflight/route.ts` exposes the no-fallback DB reachability gate. `GET /api/hangar/preflight` returns HTTP `200` only when the configured Hangar Postgres endpoint answers `SELECT 1`; otherwise it returns HTTP `503` with `not-configured`, `config-error`, or `unreachable`.
 
-This keeps `next build` safe without database secrets and gives the deployment path a simple verification target. The browser-facing Hangar store still reads `hangar.ts`; moving UI pages to server reads is the next step before Postgres is declared authoritative.
+This keeps `next build` safe without database secrets, gives the deployment path a simple verification target, and separates "can reach Postgres" from "can fall back to static data." The browser-facing Hangar store still reads `hangar.ts`; moving UI pages to server reads is the next step before Postgres is declared authoritative.
 
 ## How it's seeded
 
@@ -120,4 +121,4 @@ This keeps `next build` safe without database secrets and gives the deployment p
 
 - **Cluster reservation**: add Hangar to `coldaine-k8cluster` as a `pg18` logical database and registry row before deployment depends on it.
 - **Broader app / ORM wiring**: the first direct `pg` read path exists, but an ORM choice remains deferred. If Drizzle is introduced, its schema must map to `db/hangar/schema.sql`, and the server-side data-access pattern is described in [`web-app.md`](web-app.md).
-- **Retiring `hangar.ts`** as the runtime source — only after the cluster DB is provisioned, seeded from `hangar.ts`, parity-checked, the DB-backed read path is proven, app reads are cut over, and rollback is understood.
+- **Retiring `hangar.ts`** as the runtime source — only after the cluster DB is provisioned, seeded from `hangar.ts`, preflight reachability is green, parity-checked, the DB-backed read path is proven, app reads are cut over, and rollback is understood.

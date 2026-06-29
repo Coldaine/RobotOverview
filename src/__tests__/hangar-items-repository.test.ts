@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GET } from '@/app/api/hangar/items/route';
+import { GET as GET_PREFLIGHT } from '@/app/api/hangar/preflight/route';
 import { hangarData } from '@/data/hangar';
-import { closeHangarPoolForTests, getHangarPoolConfig } from '@/server/hangar/db';
+import {
+  checkHangarDatabaseReachability,
+  closeHangarPoolForTests,
+  getHangarPoolConfig,
+} from '@/server/hangar/db';
 import {
   getInventoryItems,
   mapInventoryItemRow,
@@ -178,5 +183,74 @@ describe('Hangar inventory Postgres read path', () => {
     expect(payload.source).toBe('static');
     expect(payload.fallbackReason).toBe('not-configured');
     expect(payload.count).toBe(hangarData.items.length);
+  });
+
+  it('exposes a database preflight route that does not treat fallback as healthy', async () => {
+    vi.stubEnv('HANGAR_DB_HOST', '');
+    vi.stubEnv('HANGAR_DATABASE_URL', '');
+    vi.stubEnv('DATABASE_URL', '');
+
+    const response = await GET_PREFLIGHT();
+    const payload = await response.json();
+
+    expect(response.status).toBe(503);
+    expect(payload).toMatchObject({
+      ok: false,
+      checks: {
+        database: {
+          check: 'hangar-postgres',
+          configured: false,
+          reachable: false,
+          status: 'not-configured',
+          configSource: null,
+        },
+      },
+    });
+  });
+
+  it('reports a reachable configured Hangar database preflight', async () => {
+    const calls: string[] = [];
+    const query = async <T,>(sql: string) => {
+      calls.push(sql);
+      return { rows: [{ ok: 1 }] as T[] };
+    };
+
+    vi.stubEnv('HANGAR_DB_HOST', 'pg18-rw.data-platform.svc.cluster.local');
+    vi.stubEnv('HANGAR_DB_NAME', 'hangar');
+    vi.stubEnv('HANGAR_DB_USER', 'hangar');
+
+    const result = await checkHangarDatabaseReachability({ query });
+
+    expect(result).toMatchObject({
+      check: 'hangar-postgres',
+      configured: true,
+      reachable: true,
+      status: 'reachable',
+      configSource: 'structured',
+    });
+    expect(result.latencyMs).toEqual(expect.any(Number));
+    expect(calls).toEqual(['SELECT 1 AS ok']);
+  });
+
+  it('reports configured Hangar database preflight failures without falling back', async () => {
+    const query = async <T,>(): Promise<{ rows: T[] }> => {
+      throw new Error('connection refused');
+    };
+
+    vi.stubEnv('HANGAR_DB_HOST', 'pg18-rw.data-platform.svc.cluster.local');
+    vi.stubEnv('HANGAR_DB_NAME', 'hangar');
+    vi.stubEnv('HANGAR_DB_USER', 'hangar');
+
+    const result = await checkHangarDatabaseReachability({ query });
+
+    expect(result).toMatchObject({
+      check: 'hangar-postgres',
+      configured: true,
+      reachable: false,
+      status: 'unreachable',
+      configSource: 'structured',
+      error: 'connection refused',
+    });
+    expect(result.latencyMs).toEqual(expect.any(Number));
   });
 });

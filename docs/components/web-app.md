@@ -56,13 +56,18 @@ GET /api/hangar/items
   -> src/server/hangar/db.ts
   -> Postgres assets/groups/tags if structured HANGAR_DB_* config is present
   -> src/data/hangar.ts fallback otherwise
+
+GET /api/hangar/preflight
+  -> src/server/hangar/db.ts
+  -> SELECT 1 against the configured Hangar Postgres endpoint
+  -> HTTP 200 only when the DB is reachable; HTTP 503 when not configured or unreachable
 ```
 
 This proves server-only credentials, query shape, normalized-to-UI mapping, and fallback behavior
 without moving the interactive Hangar store yet. A future UI migration should move one page or
 server component to this repository boundary while keeping rollback to `hangar.ts` straightforward.
-After the cluster DB is seeded and parity-checked, those server reads are the path to making
-Postgres authoritative.
+After the cluster DB is seeded, the DB preflight is green, and parity checks pass, those server
+reads are the path to making Postgres authoritative.
 
 ## Caching
 

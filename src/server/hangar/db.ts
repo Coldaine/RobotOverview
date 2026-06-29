@@ -6,9 +6,23 @@ let poolLock: Promise<void> = Promise.resolve();
 
 type HangarPoolConfigSource = 'structured' | 'url';
 
+type Queryable = {
+  query: <T>(sql: string, values?: unknown[]) => Promise<{ rows: T[] }>;
+};
+
 export interface HangarPoolConfig {
   source: HangarPoolConfigSource;
   poolConfig: PoolConfig;
+}
+
+export interface HangarDatabasePreflight {
+  check: 'hangar-postgres';
+  configured: boolean;
+  reachable: boolean;
+  status: 'not-configured' | 'config-error' | 'reachable' | 'unreachable';
+  configSource: HangarPoolConfigSource | null;
+  latencyMs?: number;
+  error?: string;
 }
 
 export function getHangarDatabaseUrl() {
@@ -115,6 +129,69 @@ export async function getHangarPool() {
   });
 }
 
+export async function checkHangarDatabaseReachability(
+  client?: Queryable,
+): Promise<HangarDatabasePreflight> {
+  let config: HangarPoolConfig | null = null;
+  try {
+    config = getHangarPoolConfig();
+  } catch (error) {
+    return {
+      check: 'hangar-postgres',
+      configured: true,
+      reachable: false,
+      status: 'config-error',
+      configSource: null,
+      error: errorMessage(error),
+    };
+  }
+
+  if (!config && !client) {
+    return {
+      check: 'hangar-postgres',
+      configured: false,
+      reachable: false,
+      status: 'not-configured',
+      configSource: null,
+    };
+  }
+
+  const start = Date.now();
+  try {
+    const queryable = client ?? (await getHangarPool());
+    if (!queryable) {
+      return {
+        check: 'hangar-postgres',
+        configured: false,
+        reachable: false,
+        status: 'not-configured',
+        configSource: null,
+      };
+    }
+
+    await queryable.query('SELECT 1 AS ok');
+
+    return {
+      check: 'hangar-postgres',
+      configured: Boolean(config),
+      reachable: true,
+      status: 'reachable',
+      configSource: config?.source ?? null,
+      latencyMs: Date.now() - start,
+    };
+  } catch (error) {
+    return {
+      check: 'hangar-postgres',
+      configured: Boolean(config),
+      reachable: false,
+      status: 'unreachable',
+      configSource: config?.source ?? null,
+      latencyMs: Date.now() - start,
+      error: errorMessage(error),
+    };
+  }
+}
+
 export async function closeHangarPoolForTests() {
   await withPoolLock(async () => {
     if (!pool) return;
@@ -139,4 +216,8 @@ async function withPoolLock<T>(operation: () => Promise<T>) {
   } finally {
     release();
   }
+}
+
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
 }
