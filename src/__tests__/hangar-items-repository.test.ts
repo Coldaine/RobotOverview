@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GET } from '@/app/api/hangar/items/route';
-import { GET as GET_PREFLIGHT } from '@/app/api/hangar/preflight/route';
+import {
+  GET as GET_PREFLIGHT,
+  toHangarPreflightPayload,
+} from '@/app/api/hangar/preflight/route';
 import { hangarData } from '@/data/hangar';
 import {
   checkHangarDatabaseReachability,
@@ -252,5 +255,32 @@ describe('Hangar inventory Postgres read path', () => {
       error: 'connection refused',
     });
     expect(result.latencyMs).toEqual(expect.any(Number));
+  });
+
+  it('keeps raw database preflight errors out of the public response payload', () => {
+    const payload = toHangarPreflightPayload({
+      check: 'hangar-postgres',
+      configured: true,
+      reachable: false,
+      status: 'unreachable',
+      configSource: 'structured',
+      latencyMs: 12,
+      error: 'password authentication failed for user "hangar"',
+    });
+
+    expect(payload).toMatchObject({
+      ok: false,
+      checks: {
+        database: {
+          check: 'hangar-postgres',
+          configured: true,
+          reachable: false,
+          status: 'unreachable',
+          configSource: 'structured',
+          latencyMs: 12,
+        },
+      },
+    });
+    expect(payload.checks.database).not.toHaveProperty('error');
   });
 });
