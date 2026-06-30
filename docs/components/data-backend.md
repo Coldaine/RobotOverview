@@ -9,6 +9,8 @@ last_updated: 2026-06-30
 
 > The Hangar's data spine: the static bootstrap/fallback dataset, the normalized Postgres store now serving the first inventory read path, and the cluster target it runs on.
 > The live SQL lives in `db/hangar/` (`schema.sql`, `seed.sql`, `standup.md`).
+> This is the source of truth for data-backend current state. High-level docs should summarize and
+> link here rather than duplicating cutover status.
 
 ## Current reality (read this first)
 

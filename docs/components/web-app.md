@@ -11,6 +11,8 @@ last_updated: 2026-06-30
 > Where the data layer is concerned, inventory items now use the server-side Postgres read path with
 > `src/data/hangar.ts` fallback, while remaining surfaces still migrate one at a time (see
 > [`data-backend.md`](data-backend.md)).
+> This is the source of truth for app runtime and server-boundary current state. High-level docs
+> should link here rather than restating route/config status.
 
 ## Why Next.js (not a Vite SPA)
 

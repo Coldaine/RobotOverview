@@ -26,6 +26,18 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 - **Code implementation** -> `src/`
 - **Superseded / historical docs and prototypes** -> `docs/history/`
 
+## Documentation Ownership
+
+- Do not spread live/current state across every doc. Put the full status in the one owning doc, then use a one-line summary and link elsewhere.
+- `docs/NORTH_STAR.md` owns intent, goals, anti-goals, and durable product philosophy. It should not track implementation progress.
+- `docs/architecture.md` owns approach and rationale. It may name the chosen shape, but current cutover mechanics belong in component/deploy docs.
+- `docs/components/data-backend.md` owns data-model status, `hangar.ts` fallback/cutover state, Postgres schema/seed, and DB target summary.
+- `docs/components/web-app.md` owns Next.js server/runtime behavior, credential boundaries, and app-side DB configuration.
+- `docs/deploy/deployment.md` owns live deployment status and current deployment direction.
+- `docs/deploy/hangar-service-boundary.md` owns stable service/subdomain/cross-repo boundaries; superseded mechanics belong in `docs/history/`.
+- `db/hangar/standup.md` owns verification commands, rebuild/proof notes, and operator cautions for the schema/seed.
+- `AGENTS.md` should stay as routing guidance plus durable invariants. Update it only when ownership, commands, or hard project rules change.
+
 ## Tech Stack & Commands
 
 - **Environment:** Node.js, Next.js, React, TypeScript, Tailwind CSS.
@@ -37,8 +49,8 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 ## Working Rules
 
 - The robot is the interface (flagship schematic focus).
-- Current app bootstrap and fallback seed source is `src/data/hangar.ts`; PostgreSQL now serves the first browser-facing inventory-item read path while remaining Hangar surfaces continue to migrate one at a time.
-- The Postgres master-inventory schema/seed lives in `db/hangar/`; local standup proves shape only. The target database is a logical `hangar` DB in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster.
+- `src/data/hangar.ts` remains the bootstrap and fallback seed source until a surface has moved through app-level seed/parity/rollback proof; the current cutover state lives in `docs/components/data-backend.md`.
+- The Postgres master-inventory schema/seed lives in `db/hangar/`; local standup proves shape only. The target DB summary lives in `docs/components/data-backend.md`, with cluster provisioning truth owned by `coldaine-k8cluster`.
 - Use the `HangarProvider` store for global state (lenses, sourcing).
 - Maintain "Dark Engineering HUD" aesthetics (blueprint grids, cyan/amber accents).
 - Do not commit bulk BEAST-01 archive binaries; store them in object storage and reference them from data/docs.
