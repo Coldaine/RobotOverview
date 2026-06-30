@@ -23,19 +23,14 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 - **Storage/object-store pivot for archive-backed documents** -> `docs/deploy/storage-and-twin-pivot-plan.md`
 - **Operate / control the Beast (network, drive, telemetry, programming)** -> `docs/beast-ops.md`
 - **Source archive digest (no bulk binaries in git)** -> `docs/reference/ugv-beast-source-archive.md`
+- **Documentation ownership / source-of-truth workflow** -> `docs/documentation-workflow.md`
 - **Code implementation** -> `src/`
 - **Superseded / historical docs and prototypes** -> `docs/history/`
 
 ## Documentation Ownership
 
 - Do not spread live/current state across every doc. Put the full status in the one owning doc, then use a one-line summary and link elsewhere.
-- `docs/NORTH_STAR.md` owns intent, goals, anti-goals, and durable product philosophy. It should not track implementation progress.
-- `docs/architecture.md` owns approach and rationale. It may name the chosen shape, but current cutover mechanics belong in component/deploy docs.
-- `docs/components/data-backend.md` owns data-model status, `hangar.ts` fallback/cutover state, Postgres schema/seed, and DB target summary.
-- `docs/components/web-app.md` owns Next.js server/runtime behavior, credential boundaries, and app-side DB configuration.
-- `docs/deploy/deployment.md` owns live deployment status and current deployment direction.
-- `docs/deploy/hangar-service-boundary.md` owns stable service/subdomain/cross-repo boundaries; superseded mechanics belong in `docs/history/`.
-- `db/hangar/standup.md` owns verification commands, rebuild/proof notes, and operator cautions for the schema/seed.
+- Use `docs/documentation-workflow.md` before moving, summarizing, or reconciling project docs.
 - `AGENTS.md` should stay as routing guidance plus durable invariants. Update it only when ownership, commands, or hard project rules change.
 
 ## Tech Stack & Commands
