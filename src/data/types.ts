@@ -101,6 +101,22 @@ export interface Hotspot {
   // detail and status are now derived dynamically from the LoadoutSlots mapped to this hotspotId!
 }
 
+export type UnitShortcut =
+  | {
+      id: string;
+      label: string;
+      type: 'url';
+      url: string;
+      note?: string;
+    }
+  | {
+      id: string;
+      label: string;
+      type: 'command';
+      command: string;
+      note?: string;
+    };
+
 export interface Unit {
   id: string;
   name: string;
@@ -121,6 +137,7 @@ export interface Unit {
   missions?: string[]; // mission ids
   insights?: string[]; // insight ids
   tags?: string[];
+  shortcuts?: UnitShortcut[];
   links?: { label: string; url: string }[];
   acquired?: string; // ISO date or "—"
   horizon?: string; // for future items: when it's expected

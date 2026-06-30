@@ -260,9 +260,13 @@ export const hangarData: HangarData = {
       missions: ['undercroft'],
       insights: ['dust-backscatter', 'power-rail', 'watchdog', 'wifi-tail'],
       tags: ['rover', 'flagship', 'waveshare', 'roarm'],
+      shortcuts: [
+        { id: 'control-ui', label: 'Control UI', type: 'url', url: 'http://beast.local:5000', note: 'Drive / FPV / arm' },
+        { id: 'jupyterlab', label: 'JupyterLab', type: 'url', url: 'http://beast.local:8888', note: 'Lessons / notebooks' },
+        { id: 'camera-stream', label: 'Camera stream', type: 'url', url: 'http://beast.local:5000/video_feed', note: 'Raw MJPEG feed' },
+        { id: 'ssh', label: 'SSH', type: 'command', command: 'ssh ws@192.168.20.184', note: 'Connection text' },
+      ],
       links: [
-        { label: 'Live control dashboard', url: 'http://beast.local:5000' },
-        { label: 'JupyterLab (lessons)', url: 'http://beast.local:8888' },
         { label: 'Waveshare UGV Beast', url: 'https://www.waveshare.com/ugv-beast.htm' },
         { label: 'Waveshare UGV hardware tutorial', url: 'https://www.youtube.com/watch?v=8wqPs7rNkJ4' }
       ],
