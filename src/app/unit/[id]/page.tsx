@@ -40,7 +40,7 @@ function shortcutValue(shortcut: UnitShortcut) {
 
 export default function UnitDetail() {
   const [copiedShortcutId, setCopiedShortcutId] = useState<string | null>(null);
-  const copiedShortcutTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const copiedShortcutTimeoutRef = useRef<number | null>(null);
   const params = useParams();
   const id = params?.id as string | undefined;
   const { unit, mission, insight, capability, openDrawer, updateSlot, theme } = useHangar();
