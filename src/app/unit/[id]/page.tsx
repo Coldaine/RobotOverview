@@ -1,7 +1,22 @@
 'use client';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ExternalLink, Cpu, Gauge as GaugeIcon, Layers, Lightbulb, Radio, Target } from 'lucide-react';
+import {
+  ArrowLeft,
+  BookOpen,
+  Camera,
+  Check,
+  Copy,
+  Cpu,
+  ExternalLink,
+  Gauge as GaugeIcon,
+  Layers,
+  Lightbulb,
+  Monitor,
+  Radio,
+  Target,
+  Terminal,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { RoverSchematic } from '@/components/RoverSchematic';
@@ -9,9 +24,22 @@ import { StatusBadge, Tag, ProvenanceTag } from '@/components/ui/Badges';
 import { SectionTitle } from '@/components/ui/Primitives';
 import { useHangar } from '@/lib/store';
 import { LIFECYCLE_META, money } from '@/lib/format';
+import type { UnitShortcut } from '@/data/types';
 import clsx from 'clsx';
 
+function ShortcutIcon({ shortcut }: { shortcut: UnitShortcut }) {
+  if (shortcut.type === 'command') return <Terminal className="h-3.5 w-3.5" />;
+  if (shortcut.id === 'jupyterlab') return <BookOpen className="h-3.5 w-3.5" />;
+  if (shortcut.id === 'camera-stream') return <Camera className="h-3.5 w-3.5" />;
+  return <Monitor className="h-3.5 w-3.5" />;
+}
+
+function shortcutValue(shortcut: UnitShortcut) {
+  return shortcut.type === 'url' ? shortcut.url : shortcut.command;
+}
+
 export default function UnitDetail() {
+  const [copiedShortcutId, setCopiedShortcutId] = useState<string | null>(null);
   const params = useParams();
   const id = params?.id as string | undefined;
   const { unit, mission, insight, capability, openDrawer, updateSlot, theme } = useHangar();
@@ -31,6 +59,20 @@ export default function UnitDetail() {
   const missions = (u.missions ?? []).map(mission).filter(Boolean);
   const insights = (u.insights ?? []).map(insight).filter(Boolean);
   const caps = (u.capabilities ?? []).map(capability).filter(Boolean);
+
+  const handleCopyShortcut = async (shortcut: UnitShortcut) => {
+    if (shortcut.type !== 'command' || typeof navigator === 'undefined' || !navigator.clipboard) return;
+
+    try {
+      await navigator.clipboard.writeText(shortcut.command);
+      setCopiedShortcutId(shortcut.id);
+      window.setTimeout(() => {
+        setCopiedShortcutId((current) => (current === shortcut.id ? null : current));
+      }, 1600);
+    } catch {
+      setCopiedShortcutId(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -63,8 +105,8 @@ export default function UnitDetail() {
         </div>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-        <div className="space-y-6">
+      <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        <div className="min-w-0 space-y-6">
           {/* schematic for the flagship rover */}
           {u.id === 'beast' && (
             <section>
@@ -313,7 +355,73 @@ export default function UnitDetail() {
         </div>
 
         {/* right rail */}
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
+          {/* command shortcuts */}
+          {u.shortcuts && u.shortcuts.length > 0 && (
+            <div className="panel p-4">
+              <SectionTitle code="CMD">
+                <span className="inline-flex items-center gap-2">
+                  <Terminal className="h-3.5 w-3.5 text-amber" /> Command Shortcuts
+                </span>
+              </SectionTitle>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-2">
+                {u.shortcuts.map((shortcut) => {
+                  const copied = copiedShortcutId === shortcut.id;
+                  return (
+                    <div key={shortcut.id} className="panel-inset flex min-w-0 flex-col gap-3 p-3">
+                      <div className="flex min-w-0 items-start gap-2">
+                        <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-cyan/30 bg-cyan/10 text-cyan">
+                          <ShortcutIcon shortcut={shortcut} />
+                        </span>
+                        <div className="min-w-0">
+                          <div className="font-display text-xs uppercase tracking-[0.08em] text-ink">{shortcut.label}</div>
+                          {shortcut.note && <div className="mt-0.5 font-mono text-[10px] leading-snug text-ink-dim">{shortcut.note}</div>}
+                        </div>
+                      </div>
+
+                      <code className="block min-h-8 break-all rounded border border-rim/50 bg-void/45 px-2 py-1.5 font-mono text-[10px] leading-relaxed text-cyan/90">
+                        {shortcutValue(shortcut)}
+                      </code>
+
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink-dim">
+                          {shortcut.type === 'url' ? 'External' : 'Command'}
+                        </span>
+                        {shortcut.type === 'url' ? (
+                          <a
+                            href={shortcut.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label={`Open ${shortcut.label}`}
+                            className="btn btn-ghost h-8 shrink-0 px-2 text-[10px] tracking-[0.12em]"
+                          >
+                            Open <ExternalLink className="h-3 w-3" />
+                          </a>
+                        ) : (
+                          <button
+                            type="button"
+                            aria-label={`Copy ${shortcut.label}`}
+                            onClick={() => void handleCopyShortcut(shortcut)}
+                            className={clsx(
+                              'btn btn-ghost h-8 shrink-0 px-2 text-[10px] tracking-[0.12em]',
+                              copied && 'border-signal-ok/40 text-signal-ok',
+                            )}
+                          >
+                            {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                            {copied ? 'Copied' : 'Copy'}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mt-3 border-t border-rim/50 pt-3 font-mono text-[10px] leading-relaxed text-ink-dim">
+                Supervised launch/copy only. Hangar does not execute robot commands.
+              </p>
+            </div>
+          )}
+
           {/* vitals */}
           <div className="panel p-4">
             <SectionTitle code="VITALS"><span className="inline-flex items-center gap-2"><GaugeIcon className="h-3.5 w-3.5 text-cyan" /> Vitals</span></SectionTitle>
