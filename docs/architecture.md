@@ -2,7 +2,7 @@
 title: Hangar Architecture
 audience: AI agents and operators working on RobotOverview
 status: living
-last_updated: 2026-06-29
+last_updated: 2026-06-30
 ---
 
 # Hangar — Architecture Approach
@@ -46,8 +46,9 @@ off the bootstrap source below.
 Per the pillar **"do not prescribe before populating,"** `src/data/hangar.ts` is the bootstrap
 dataset: it populated the model before the model was prescribed. The normalized Postgres
 **master-inventory** backend is now provisioned and seeded in the cluster, and inventory-item reads
-are the first browser-facing path served through it. Until the remaining surfaces and restore gate
-complete, `hangar.ts` remains the rollback/fallback spine.
+are the first browser-facing path served through it. The cluster-level pg18 backup/restore gate is
+verified; until the remaining Hangar surfaces move over, `hangar.ts` remains the rollback/fallback
+spine.
 → detail: [`docs/components/data-backend.md`](components/data-backend.md)
 
 ### 3. One master inventory; bays are views, not silos

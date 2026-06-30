@@ -3,7 +3,7 @@ title: Storage + Twin Pivot Plan
 date: 2026-06-28
 author: Patrick MacLyman (drafted with assistant)
 status: proposal
-last_updated: 2026-06-29
+last_updated: 2026-06-30
 ---
 
 # Storage + Twin Pivot Plan
@@ -28,10 +28,11 @@ The Beast research and the wiring-twin work initially landed in the wrong shape:
 ## Confirmed from `coldaine-k8cluster`
 
 - The target database set is already enumerated:
-  - `pg18`: PostgreSQL 18, CloudNativePG, all-extension image, current logical DBs.
-  - `pg19`: PostgreSQL 19, CloudNativePG, future/empty/PG19-specific; not for irreplaceable data yet.
+  - `pg18`: PostgreSQL 18, CloudNativePG, all-extension image, current logical DBs, including `hangar`.
+  - `pg19`: PostgreSQL 19, CloudNativePG, live compatibility/lab target for PG19-specific needs; not the Hangar target.
   - `falkordb`: graph database, KubeBlocks.
-- Hangar should target `pg18` as a logical database (`hangar`) with a role (`hangar`) and structured app config (`HANGAR_DB_*`). In phase 1, only the runtime credential (`HANGAR_DB_PASSWORD`) should come from Doppler/ESO; longer-term auth can move to client certs, Vault leases, or a proxy-issued token without changing the address contract.
+- Hangar targets `pg18` as a logical database (`hangar`) with a role (`hangar`) and structured app config (`HANGAR_DB_*`). In phase 1, only the runtime credential (`HANGAR_DB_PASSWORD`) comes from Doppler/ESO; longer-term auth can move to client certs, Vault leases, or a proxy-issued token without changing the address contract.
+- The pg18/Garage backup and physical restore path is verified at the cluster level. RobotOverview still owns app-level seed/parity/rollback proof for each Hangar surface it moves from `hangar.ts` to Postgres.
 - `coldaine-k8cluster` declares **Garage** for in-cluster S3: database backups plus light app object storage. Do not assume the default `kubeblocks-backups` bucket is the Hangar document bucket; choose a Hangar source-document bucket/key/policy deliberately.
 - App code should use an S3-compatible abstraction so the archive can move from interim storage to the final object-store path without changing the data model.
 
@@ -49,27 +50,27 @@ The Beast research and the wiring-twin work initially landed in the wrong shape:
 
 In `C:\_projects\coldaine-k8cluster`:
 
-1. Add Hangar to the database contract:
+1. **Done:** Add Hangar to the database contract:
    - CNPG `Database` in `databases/pg18.yaml`.
    - `hangar` role and structured connection contract.
    - `docs/connection-registry.md` row.
-   - Doppler key, likely `HANGAR_DB_PASSWORD`.
+   - Doppler key `HANGAR_DB_PASSWORD`.
 2. Decide source-document object storage:
    - same Garage service with a separate Hangar bucket/key/policy,
    - separate Garage instance only if the shared service is not appropriate,
    - or R2/offsite first.
 3. Record the bucket contract: bucket name, app role/secret names, access pattern, retention/offsite stance.
-4. Restore-test the DB backup path before any app depends on the cluster DB.
+4. **Done for pg18:** restore-test the DB backup path before any app depends on the cluster DB.
 
 ### Phase 2 — Schema/app cutover
 
-1. Apply the Hangar schema to the cluster `pg18` logical DB.
-2. Load seed data generated from `src/data/hangar.ts`.
-3. Wire the Next.js server layer/ORM to structured `HANGAR_DB_*` config while keeping rollback to `hangar.ts` clear.
+1. **Done for inventory items:** apply the Hangar schema to the cluster `pg18` logical DB.
+2. **Done for inventory items:** load seed data generated from `src/data/hangar.ts`.
+3. Wire each Next.js server layer/ORM surface to structured `HANGAR_DB_*` config while keeping rollback to `hangar.ts` clear.
 4. Require `GET /api/hangar/preflight` to prove the deployed app can reach the configured DB.
-5. Parity-check the cluster DB against the `hangar.ts` bootstrap dataset.
+5. Parity-check each moved surface against the `hangar.ts` bootstrap dataset.
 6. Prove representative reads and app pages from the DB.
-7. Declare Postgres authoritative only after those checks pass; only then retire `hangar.ts` as runtime source.
+7. Treat Postgres as authoritative per surface only after those checks pass; retire `hangar.ts` as a runtime source only after all surfaces have moved.
 
 ### Phase 3 — Source-backed connected twin
 
@@ -86,8 +87,6 @@ In `C:\_projects\coldaine-k8cluster`:
 
 ## Open decisions
 
-- Exact logical database name: likely `hangar`.
-- Exact role and Doppler key: likely `hangar` / `HANGAR_DB_PASSWORD`.
 - Whether the source-document bucket is a separate Garage bucket/key/policy, or uses R2/offsite first.
 - Whether source archive objects need offsite durability before being considered safe.
 - Whether/when any Hangar relationship data belongs in `falkordb`; default is no, Postgres first.
