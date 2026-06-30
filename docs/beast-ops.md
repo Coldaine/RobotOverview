@@ -3,7 +3,7 @@ title: BEAST-01 Operations Runbook
 date: 2026-06-25
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-06-25
+last_confirmed: 2026-06-30
 ---
 
 # BEAST-01 — Operations Runbook
@@ -51,6 +51,30 @@ DHCP renew, re-confirm it returns to `192.168.20.184` (that's what the reservati
 | `http://beast.local:5000` | **Control UI** (drive, FPV, arm, gimbal) | Use Google Chrome. Open in a normal browser — works fine. |
 | `http://beast.local:8888` | **JupyterLab** | Interactive lesson notebooks (302 → login). The programming on-ramp. |
 | `http://beast.local:5000/video_feed` | Raw MJPEG camera stream | `multipart/x-mixed-replace`. Pull frames directly without the UI. |
+
+### Video recovery note — OP-VIDEO-RELOCK
+
+On 2026-06-30 the control UI and telemetry were healthy, but `/video_feed` hung before
+sending HTTP headers. Root cause: the USB camera had re-enumerated after reboot/disconnect,
+while Waveshare `cv_ctrl.py` hardcoded `cv2.VideoCapture(0)`. The camera was readable at
+`/dev/video1` and also exposed a stable by-id path.
+
+Live Beast patch: `/home/ws/ugv_rpi/cv_ctrl.py` now selects the first readable USB camera
+from `/dev/v4l/by-id/*video-index0*`, then `/dev/video0..9`. Original backup:
+`/home/ws/ugv_rpi/cv_ctrl.py.bak-20260630-OP-VIDEO-RELOCK`.
+
+If video fails again:
+
+```bash
+curl -D - --max-time 3 -o /tmp/beast-video.bin http://beast.local:5000/video_feed
+ls -l /dev/video* /dev/v4l/by-id 2>/dev/null
+v4l2-ctl --list-devices
+tail -80 ~/ugv.log
+```
+
+Healthy verification from the dev workstation: `/video_feed` returns `HTTP 200` with
+`multipart/x-mixed-replace; boundary=frame`, JPEG bytes begin after `--frame`, and `/ctrl`
+telemetry reports `video_fps` around 32 fps.
 
 Driving from the dashboard: keyboard (WASD), the on-screen joystick, or a USB/Bluetooth
 **gamepad** read through the browser's Gamepad API on whatever machine has the page open.

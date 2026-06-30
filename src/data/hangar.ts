@@ -11,7 +11,7 @@ export const hangarData: HangarData = {
     title: 'THE HANGAR',
     operator: 'Patrick MacLyman',
     codename: 'FLEET COMMAND',
-    updated: '2026-05-31',
+    updated: '2026-06-30',
   },
 
   bays: [
@@ -258,7 +258,7 @@ export const hangarData: HangarData = {
       ],
       capabilities: ['teleop', 'crawlspace-ops'],
       missions: ['undercroft'],
-      insights: ['dust-backscatter', 'power-rail', 'watchdog', 'wifi-tail'],
+      insights: ['dust-backscatter', 'power-rail', 'watchdog', 'wifi-tail', 'video-device-path'],
       tags: ['rover', 'flagship', 'waveshare', 'roarm'],
       shortcuts: [
         { id: 'control-ui', label: 'Control UI', type: 'url', url: 'http://beast.local:5000', note: 'Drive / FPV / arm' },
@@ -760,6 +760,17 @@ export const hangarData: HangarData = {
       capturedAt: '2026-05-31',
     },
     {
+      id: 'video-device-path',
+      title: 'Camera device paths can move after reboot',
+      body: 'BEAST-01 video failed when the USB camera re-enumerated and Waveshare code kept opening hardcoded camera index 0. Use the stable /dev/v4l/by-id video-index0 path, or scan /dev/video* for the first readable capture device, then restart only the Flask app.',
+      tags: ['fpv', 'camera', 'operations'],
+      bay: 'robotics',
+      units: ['beast', 'pi5'],
+      missions: ['undercroft'],
+      confidence: 'high',
+      capturedAt: '2026-06-30',
+    },
+    {
       id: 'wifi-tail',
       title: 'WiFi 6 median is great; the tail is the enemy',
       body: 'Local 5GHz / WiFi 6 gives 2–10 ms round trips, low-tens under contention — fine even for tight loops. The danger is the occasional 200 ms stall or half-second gap from roaming, contention, or noise. Design for the worst packet in the window.',
@@ -844,6 +855,7 @@ export const hangarData: HangarData = {
   ],
 
   activity: [
+    { id: 'a6', at: '2026-06-30T22:51:00Z', kind: 'insight', text: 'Restored BEAST-01 FPV stream after USB camera re-enumeration; patched camera path selection.' },
     { id: 'a1', at: '2026-05-31T16:15:00Z', kind: 'mission', text: 'Mission: Undercroft opened — status Planning.' },
     { id: 'a2', at: '2026-05-31T16:10:00Z', kind: 'insight', text: 'Logged 4 insights on crawlspace lighting + offload.' },
     { id: 'a3', at: '2026-05-31T15:50:00Z', kind: 'researched', text: 'Jetson tiering mapped: Orin = Ampere, Thor = Blackwell.' },
