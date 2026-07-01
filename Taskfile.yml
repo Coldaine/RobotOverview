@@ -10,6 +10,11 @@ tasks:
     cmds:
       - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/install-tools.ps1
 
+  bootstrap:
+    desc: Install/verify local CLIs and npm dependencies for Hangar work.
+    cmds:
+      - task bootstrap:tools
+
   bootstrap:verify-tools:
     desc: Verify local CLIs used by Hangar agents and deploy-adjacent workflows.
     cmds:
