@@ -258,12 +258,19 @@ export const hangarData: HangarData = {
       ],
       capabilities: ['teleop', 'crawlspace-ops'],
       missions: ['undercroft'],
-      insights: ['dust-backscatter', 'power-rail', 'watchdog', 'wifi-tail', 'video-device-path'],
+      insights: [
+        'dust-backscatter',
+        'power-rail',
+        'watchdog',
+        'wifi-tail',
+        'video-device-path',
+        'beast-socket-control',
+      ],
       tags: ['rover', 'flagship', 'waveshare', 'roarm'],
       shortcuts: [
-        { id: 'control-ui', label: 'Control UI', type: 'url', url: 'http://beast.local:5000', note: 'Drive / FPV / arm' },
-        { id: 'jupyterlab', label: 'JupyterLab', type: 'url', url: 'http://beast.local:8888', note: 'Lessons / notebooks' },
-        { id: 'camera-stream', label: 'Camera stream', type: 'url', url: 'http://beast.local:5000/video_feed', note: 'Raw MJPEG feed' },
+        { id: 'control-ui', label: 'Control UI', type: 'url', url: 'http://192.168.20.184:5000', note: 'Drive / FPV / arm' },
+        { id: 'jupyterlab', label: 'JupyterLab', type: 'url', url: 'http://192.168.20.184:8888', note: 'Lessons / notebooks' },
+        { id: 'camera-stream', label: 'Camera stream', type: 'url', url: 'http://192.168.20.184:5000/video_feed', note: 'Raw MJPEG feed' },
         { id: 'ssh', label: 'SSH', type: 'command', command: 'ssh ws@192.168.20.184', note: 'Connection text' },
       ],
       links: [
@@ -547,8 +554,10 @@ export const hangarData: HangarData = {
         { label: 'Payload', value: 380, budget: 500, unit: 'g' },
         { label: 'Loadout Cost', value: 35, budget: 120, unit: '$' },
       ],
-      afterAction: [],
-      insights: ['dust-backscatter', 'power-rail', 'watchdog'],
+      afterAction: [
+        '2026-07-01 OP-BEAST-CONTACT: Pi web UI, JupyterLab, Socket.IO command channel, and telemetry verified at 192.168.20.184. beast.local did not resolve from icarus-laptop; use the fixed IP until DNS/mDNS is repaired. Sent zero-speed stop only; no drive nudge performed.',
+      ],
+      insights: ['dust-backscatter', 'power-rail', 'watchdog', 'beast-socket-control'],
     },
     {
       id: 'perimeter-mapping',
@@ -781,6 +790,18 @@ export const hangarData: HangarData = {
       capturedAt: '2026-06-30',
     },
     {
+      id: 'beast-socket-control',
+      title: 'Use Socket.IO and raw IP for BEAST control',
+      body: 'On 2026-07-01, BEAST-01 answered at 192.168.20.184 with the Waveshare web UI, JupyterLab, Socket.IO /json control, and /ctrl telemetry. beast.local did not resolve from icarus-laptop, and the older /js?json HTTP helper returned 404 on this Pi build. Use tools/beast-probe.mjs for the safe zero-speed control check; only use its nudge mode when physically with the robot.',
+      tags: ['beast', 'control', 'telemetry', 'network'],
+      bay: 'robotics',
+      units: ['beast', 'pi5'],
+      missions: ['undercroft'],
+      confidence: 'high',
+      source: 'Live BEAST-01 probe from icarus-laptop',
+      capturedAt: '2026-07-01',
+    },
+    {
       id: 'offload-split',
       title: 'Offload the latency-tolerant, keep the reflexes onboard',
       body: 'Yes: training, VLM/LLM reasoning, heavy perception. Risky: tight visual servoing. No: collision avoidance / e-stop / motor PID — those stay onboard so a dropout never blinds the robot mid-motion.',
@@ -865,6 +886,12 @@ export const hangarData: HangarData = {
   ],
 
   activity: [
+    {
+      id: 'a7',
+      at: '2026-07-01T18:32:19Z',
+      kind: 'mission',
+      text: 'OP-BEAST-CONTACT verified BEAST-01 web, Jupyter, Socket.IO control, and telemetry over 192.168.20.184.',
+    },
     {
       id: 'a-video-relock',
       at: '2026-06-30T22:51:00Z',

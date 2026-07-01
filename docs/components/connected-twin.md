@@ -2,7 +2,7 @@
 title: Connected Twin — Wiring Model
 audience: AI agents and operators extending the Hangar hardware model
 status: proposal — current direction
-last_updated: 2026-06-30
+last_updated: 2026-07-01
 ---
 
 # Connected Twin — Wiring Model
@@ -71,9 +71,9 @@ Do not build a parallel app, standalone HTML page, or second state system. The w
 The base harness is true with no Pi and no Orin. A host is a loadout choice that attaches at known terminals:
 
 - Raspberry Pi path: 40-pin header carries power plus UART/I2C.
-- Jetson Orin path: power comes from the 3S battery rail / barrel input, while UART still uses TX/RX/GND jumpers to the driver board header.
+- Jetson Orin path: power comes from the 3S battery rail / barrel input, while UART still uses TX/RX/GND jumpers to the driver board header. Before final wiring, refresh the citation against the current NVIDIA Orin Nano carrier-board specification; the current DC-input citation to check is 9-20V for the carrier board, not the older 9-19V shorthand.
 
-The UI should make that difference visible as a supervised build/diagnostic view, especially the 5V host-rail vs 9–19V Orin input issue.
+The UI should make that difference visible as a supervised build/diagnostic view, especially the 5V host-rail vs Orin barrel-input issue.
 
 ## What not to do
 

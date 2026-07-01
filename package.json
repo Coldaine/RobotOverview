@@ -11,6 +11,7 @@
     "test:run": "vitest run",
     "bootstrap:tools": "pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/install-tools.ps1",
     "bootstrap:verify-tools": "pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/verify-tools.ps1",
+    "beast:probe": "node tools/beast-probe.mjs",
     "check": "npm run lint && npm run test:run && npm run build",
     "postinstall": "node tools/postinstall-bootstrap.mjs"
   },
@@ -21,7 +22,8 @@
     "next": "16.2.9",
     "pg": "^8.22.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

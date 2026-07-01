@@ -3,7 +3,7 @@ title: BEAST-01 Operations Runbook
 date: 2026-06-25
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-06-30
+last_confirmed: 2026-07-01
 ---
 
 # BEAST-01 — Operations Runbook
@@ -35,22 +35,22 @@ Browser / HTTP client  ──HTTP/WebSocket──▶  Raspberry Pi 5 (upper comp
 
 | Fact | Value | Verified |
 |---|---|---|
-| Hostname | `beast.local` | ✅ resolves to the IP below |
-| IP | `192.168.20.184` | ✅ HTTP 200, ~8 ms ping |
-| Cross-VLAN reach | reachable from the dev workstation (different VLAN) | ✅ measured |
+| Hostname | `beast.local` | ⚠️ did not resolve from `icarus-laptop` on 2026-07-01 |
+| IP | `192.168.20.184` | ✅ HTTP 200, 8-14 ms ping |
+| Cross-VLAN reach | reachable from the dev workstation (different VLAN) | ✅ measured 2026-07-01 |
 | DHCP reservation | fixed IP held on the UDM | ⚠️ per setup — confirm on the UDM |
 | Source VLAN | CastleMooseGoose → robot VLAN (`192.168.20.x`) | ⚠️ per setup — confirm |
 
-If `beast.local` ever fails to resolve, fall back to the raw IP. After a Beast reboot or a
-DHCP renew, re-confirm it returns to `192.168.20.184` (that's what the reservation is for).
+Use the raw IP as the operator path until mDNS/DNS is fixed. After a Beast reboot or a DHCP
+renew, re-confirm it returns to `192.168.20.184` (that's what the reservation is for).
 
 ## Services & dashboards
 
 | URL | What | Notes |
 |---|---|---|
-| `http://beast.local:5000` | **Control UI** (drive, FPV, arm, gimbal) | Use Google Chrome. Open in a normal browser — works fine. |
-| `http://beast.local:8888` | **JupyterLab** | Interactive lesson notebooks (302 → login). The programming on-ramp. |
-| `http://beast.local:5000/video_feed` | Raw MJPEG camera stream | `multipart/x-mixed-replace`. Pull frames directly without the UI. |
+| `http://192.168.20.184:5000` | **Control UI** (drive, FPV, arm, gimbal) | Use Google Chrome. Open in a normal browser — works fine. |
+| `http://192.168.20.184:8888` | **JupyterLab** | Interactive lesson notebooks (302 → `/lab?`). The programming on-ramp. |
+| `http://192.168.20.184:5000/video_feed` | Raw MJPEG camera stream | Long-lived stream; inspect headers/frames with a client that can abort cleanly. |
 
 ### Video recovery note — OP-VIDEO-RELOCK
 
@@ -66,7 +66,7 @@ from `/dev/v4l/by-id/*video-index0*`, then `/dev/video0..9`. Original backup:
 If video fails again:
 
 ```bash
-curl -D - --max-time 3 -o /tmp/beast-video.bin http://beast.local:5000/video_feed
+curl -D - --max-time 3 -o /tmp/beast-video.bin http://192.168.20.184:5000/video_feed
 ls -l /dev/video* /dev/v4l/by-id 2>/dev/null
 v4l2-ctl --list-devices
 tail -80 ~/ugv.log
@@ -82,10 +82,12 @@ Driving from the dashboard: keyboard (WASD), the on-screen joystick, or a USB/Bl
 
 ## Control protocol (reverse-engineered from `control.js`)
 
-Commands are JSON sent to the ESP32 via the Pi. Two transports, same payloads:
+Commands are JSON sent to the ESP32 via the Pi. The current build exposes Socket.IO as the
+working control transport; the older HTTP helper route is no longer available.
 
-- **HTTP (simplest for scripting):** `GET http://beast.local:5000/js?json=<URL-encoded JSON>`
 - **Socket.IO:** namespace `/json`, event `json`, e.g. `socketJson.emit('json', {"T":1,"L":0,"R":0})`
+- **Legacy HTTP route:** `GET /js?json=...` returned HTTP 404 on 2026-07-01; do not use it
+  unless a future Pi build restores it.
 
 Key payloads:
 
@@ -100,22 +102,20 @@ Key payloads:
 arrives within its timeout, so a single nudge then silence is self-safing. Still: lift the
 tracks or ensure clear runway before any motion command, and send an explicit stop after.
 
-Example — gentle forward nudge then stop. The JSON is URL-encoded in the query string.
-
-**bash (Git Bash):**
-
-```bash
-curl -s 'http://beast.local:5000/js?json=%7B%22T%22%3A1%2C%22L%22%3A0.2%2C%22R%22%3A0.2%7D'  # {"T":1,"L":0.2,"R":0.2}
-sleep 0.5
-curl -s 'http://beast.local:5000/js?json=%7B%22T%22%3A1%2C%22L%22%3A0%2C%22R%22%3A0%7D'      # stop
-```
-
-**PowerShell:**
+Repeatable safe probe from this repo:
 
 ```powershell
-Invoke-RestMethod 'http://beast.local:5000/js?json=%7B%22T%22%3A1%2C%22L%22%3A0.2%2C%22R%22%3A0.2%7D'  # forward
-Start-Sleep -Milliseconds 500
-Invoke-RestMethod 'http://beast.local:5000/js?json=%7B%22T%22%3A1%2C%22L%22%3A0%2C%22R%22%3A0%7D'       # stop
+npm run beast:probe
+```
+
+The default probe loads the robot's bundled Socket.IO client, connects to `/json` and `/ctrl`,
+sends only `{"T":1,"L":0,"R":0}`, then prints decoded telemetry. It proves command-channel
+control without moving the tracks.
+
+Optional supervised nudge, only when physically with the robot and the runway is clear:
+
+```powershell
+npm run beast:probe -- --nudge --i-am-with-the-robot --clear-runway-confirmed
 ```
 
 ## Telemetry
@@ -124,13 +124,16 @@ Live feedback streams over Socket.IO namespace `/ctrl`: connect, emit `request_d
 then read `update` events. (`/jsfb` is **not** exposed on this build — use `/ctrl`.) The
 feed comes *from* the ESP32, so receiving it proves the lower controller and the Pi↔ESP32
 serial link are both alive. Fields arrive as numeric keys; decoded values observed
-2026-06-25 (verify the key→name map against the Pi's `config.yaml` before trusting labels):
+2026-07-01 from `/config` and `npm run beast:probe`:
 
 | Key | Reading | Value seen | Healthy? |
 |---|---|---|---|
-| `108` | Battery voltage | **11.7 V** | ✅ 3S Li-ion, ~60% (11.1 V nominal) |
-| `111` | Wi-Fi RSSI | **−37 dBm** | ✅ excellent |
-| `107` | CPU temp | ~53 °C | ✅ normal for Pi 5 |
+| `112` | Battery voltage | raw `1203` → **12.03 V** | ✅ 3S Li-ion |
+| `111` | Wi-Fi RSSI | **-60 dBm** | ✅ usable |
+| `107` | CPU temp | 54.3 °C | ✅ normal for Pi 5 |
+| `106` | CPU load | 0.1 | ✅ low |
+| `108` | RAM usage | 11.4 | ✅ normal |
+| `113` | Video FPS | 30.5 | ✅ camera pipeline alive |
 | `104` / `105` | Track speed L / R | 0.0 / 0.0 | stationary |
 | `114` | feedback-OK flag | `true` | ✅ |
 
@@ -139,10 +142,20 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 1. **Web app (`:5000`)** — teleop, FPV, arm/gimbal. Drive it manually. *(done — it drives)*
 2. **JupyterLab (`:8888`)** — official lesson notebooks: motion, camera/CV (face/object/line/
    gesture), arm kinematics. This is where you learn to program it.
-3. **JSON command API** — `/js?json=` or the `/json` socket. Script motion/arm; this is also
+3. **JSON command API** — `/json` Socket.IO. Script motion/arm; this is also
    the integration point if the Hangar ever gains a (supervised) command view.
 4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, even
    LLM-driven natural-language control. Bigger jump.
+
+## Jetson OS experimentation
+
+JetPack 7 dual-boot research is tracked outside this live ops page:
+
+- `docs/reference/beast-jetson-dualboot-evidence.md` — evidence and risk decision.
+- `docs/reference/beast-jetson-dualboot-runbook.md` — operator steps, recovery gate, and destructive restore path.
+
+JP6 remains the Beast-control default. Do not begin a JP7 install until the runbook's
+recovery gate is complete and a JP6 restore path has been tested.
 
 ## References
 

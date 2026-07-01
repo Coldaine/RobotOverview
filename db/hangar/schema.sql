@@ -182,6 +182,13 @@ CREATE TABLE mission_constraints (
   budget     NUMERIC NOT NULL CHECK (budget >= 0),
   unit       TEXT NOT NULL CHECK (unit IN ('W','g','$'))
 );
+CREATE TABLE mission_after_actions (
+  id          SERIAL PRIMARY KEY,
+  mission_id  TEXT NOT NULL REFERENCES missions(id) ON DELETE CASCADE,
+  position    INTEGER NOT NULL CHECK (position >= 0),
+  text        TEXT NOT NULL,
+  UNIQUE (mission_id, position)
+);
 
 -- ── CAPABILITIES (tech tree) ─────────────────────────────────────────────────
 CREATE TABLE capabilities (

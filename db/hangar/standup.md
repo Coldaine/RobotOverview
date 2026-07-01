@@ -3,7 +3,7 @@ title: Hangar DB — Master Inventory Standup
 date: 2026-06-26
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-06-30
+last_confirmed: 2026-07-01
 ---
 
 # Hangar DB — master-inventory Postgres standup
@@ -30,7 +30,7 @@ Do not stand up a RobotOverview-owned Postgres server for Hangar; add a logical 
 
 ## Files
 
-- `schema.sql` — the DDL (24 tables, 7 enums). The source of truth for the shape.
+- `schema.sql` — the DDL (25 tables, 7 enums). The source of truth for the shape.
 - `gen-seed.ts` — transforms `src/data/hangar.ts` → seed SQL (defensive: junctions filtered to resolvable refs).
 - `seed.sql` — generated output (committed so the DB rebuilds with `psql` alone).
 
@@ -54,7 +54,7 @@ Cluster deployment is different: reserve the logical DB/role in `coldaine-k8clus
 - **`assets`** — every possession in one table (single-table inheritance); `kind` discriminator; typed `power_*`/`mass_grams`/`price_*` columns (queryable for budgets); JSONB only for display-only leaves (`specs`/`links`/`limitations`/`sources`). Wishlist folds in via `lifecycle='wishlist'` + a 1:1 `wishlist_meta`.
 - **Grouping** — `tags`/`asset_tags` (flexible, namespaced: `tag`/`class`/`category`) and first-class **`groups`/`asset_groups`** (`bay`|`kit`|`location`|`project`). Bays are **rows in `groups` with `kind='bay'`** — not SQL views.
 - **Loadout** — `sockets` on a host, `interface_types` taxonomy, `socket_accepts` + `asset_interfaces` ⇒ candidacy, `loadout_assignments` ⇒ what's equipped with the proven compatible `interface_type_id`.
-- **`missions` · `capabilities` · `insights` · `activity_log`** — explicit junctions (`mission_requisitions`, `asset_capabilities`, `insight_assets`/`insight_missions`, …).
+- **`missions` · `capabilities` · `insights` · `activity_log`** — explicit mission child tables and junctions (`mission_requisitions`, `mission_after_actions`, `asset_capabilities`, `insight_assets`/`insight_missions`, …).
 
 ## Verification queries (the three proofs)
 
