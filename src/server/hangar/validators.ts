@@ -20,6 +20,8 @@ export function stringArray(value: unknown): string[] | undefined {
 }
 
 export function postgresTextArray(value: unknown, label: string): string[] {
+  if (value === null) return [];
+
   if (!Array.isArray(value)) {
     throw new Error(`Invalid ${label} from hangar DB: expected text array.`);
   }

@@ -229,6 +229,44 @@ describe('Hangar inventory Postgres read path', () => {
     ).toThrow('Invalid related units from hangar DB: expected text at index 1.');
   });
 
+  it('accepts null Postgres text arrays as empty relationship fields', () => {
+    const item = mapInventoryItemRow({
+      id: 'null-relations',
+      name: 'Null Relations',
+      manufacturer: null,
+      model: null,
+      bay_groups: ['network'],
+      category: null,
+      status: 'owned',
+      provenance: 'owner',
+      summary: null,
+      description: null,
+      planning_notes: null,
+      acquired: null,
+      horizon: null,
+      quantity: 1,
+      price_us: null,
+      price_import: null,
+      specs: [],
+      limitations: [],
+      sources: [],
+      tags: null,
+      related_units: null,
+      related_missions: null,
+      related_capabilities: null,
+      related_insights: null,
+    });
+
+    expect(item).toMatchObject({
+      id: 'null-relations',
+      tags: undefined,
+      relatedUnits: undefined,
+      relatedMissions: undefined,
+      relatedCapabilities: undefined,
+      relatedInsights: undefined,
+    });
+  });
+
   it('queries only peripheral assets with inventory item statuses', async () => {
     const calls: Array<{ sql: string; values?: unknown[] }> = [];
     const row = {
