@@ -15,6 +15,7 @@ import {
   mapInventoryItemRow,
   readInventoryItemsFromPostgres,
 } from '@/server/hangar/items';
+import { readWithStaticFallback } from '@/server/hangar/read-model';
 
 afterEach(async () => {
   await closeHangarPoolForTests();
@@ -23,6 +24,36 @@ afterEach(async () => {
 });
 
 describe('Hangar inventory Postgres read path', () => {
+  it('shared read helper falls back to static data when a configured Postgres read fails', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const staticData = [{ id: 'static-item' }];
+    const client = {
+      query: async <T,>(): Promise<{ rows: T[] }> => {
+        throw new Error('query failed');
+      },
+    };
+
+    const result = await readWithStaticFallback({
+      label: 'test records',
+      staticData,
+      getClient: async () => client,
+      readFromPostgres: async (queryable) => {
+        await queryable.query('SELECT explode');
+        return [{ id: 'postgres-item' }];
+      },
+    });
+
+    expect(result).toEqual({
+      source: 'static',
+      fallbackReason: 'postgres-error',
+      data: staticData,
+    });
+    expect(console.warn).toHaveBeenCalledWith(
+      'Hangar Postgres test records read failed; falling back to static spine.',
+      expect.any(Error),
+    );
+  });
+
   it('falls back to the static inventory spine when no database config is present', async () => {
     vi.stubEnv('HANGAR_DB_HOST', '');
     vi.stubEnv('HANGAR_DATABASE_URL', '');
@@ -115,6 +146,10 @@ describe('Hangar inventory Postgres read path', () => {
         },
       ],
       tags: ['kvm', 'usb-c'],
+      related_units: ['beast'],
+      related_missions: ['undercroft'],
+      related_capabilities: ['teleop'],
+      related_insights: ['beast-socket-control'],
     });
 
     expect(item).toMatchObject({
@@ -125,6 +160,10 @@ describe('Hangar inventory Postgres read path', () => {
       price: { us: 89, import: null },
       specs: [{ label: 'Video', value: '2K QHD @ 60 FPS' }],
       tags: ['kvm', 'usb-c'],
+      relatedUnits: ['beast'],
+      relatedMissions: ['undercroft'],
+      relatedCapabilities: ['teleop'],
+      relatedInsights: ['beast-socket-control'],
     });
   });
 
@@ -151,6 +190,10 @@ describe('Hangar inventory Postgres read path', () => {
       limitations: [],
       sources: [],
       tags: ['matter', 'thread'],
+      related_units: [],
+      related_missions: [],
+      related_capabilities: [],
+      related_insights: [],
     };
     const query = async <T,>(sql: string, values?: unknown[]) => {
       calls.push({ sql, values });
@@ -161,6 +204,10 @@ describe('Hangar inventory Postgres read path', () => {
 
     expect(calls).toHaveLength(1);
     expect(calls[0].sql).toContain("WHERE a.kind = 'peripheral'");
+    expect(calls[0].sql).toContain('related_units');
+    expect(calls[0].sql).toContain('related_missions');
+    expect(calls[0].sql).toContain('related_capabilities');
+    expect(calls[0].sql).toContain('related_insights');
     expect(calls[0].values).toEqual([[
       'owned',
       'on-order',

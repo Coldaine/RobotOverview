@@ -1,14 +1,11 @@
 import type { Pool, PoolConfig } from 'pg';
+import type { Queryable } from './queryable';
 
 let pool: Pool | null = null;
 let poolConfigKey: string | null = null;
 let poolLock: Promise<void> = Promise.resolve();
 
 type HangarPoolConfigSource = 'structured' | 'url';
-
-type Queryable = {
-  query: <T>(sql: string, values?: unknown[]) => Promise<{ rows: T[] }>;
-};
 
 export interface HangarPoolConfig {
   source: HangarPoolConfigSource;

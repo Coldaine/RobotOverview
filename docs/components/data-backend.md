@@ -2,7 +2,7 @@
 title: Data Backend — Master-Inventory Model
 audience: AI agents and operators working on the Hangar data layer
 status: living
-last_updated: 2026-06-30
+last_updated: 2026-07-01
 ---
 
 # Data Backend — Master-Inventory Model
@@ -41,7 +41,7 @@ These were crystallized in a deep-interview design session (2026-06-26) and real
 
 A graph database was evaluated and **rejected for now**: Postgres + junction tables + recursive CTEs cover the connected-model queries (loadout candidacy, capability dependency trees) without a second engine. If graph-specific needs emerge later, `coldaine-k8cluster` already has a separate `falkordb` target, but the Hangar master inventory currently belongs in Postgres.
 
-## Shape (~24 tables, 7 enums)
+## Shape (~25 tables, 7 enums)
 
 ```text
 ENUMS    asset_kind · asset_status · lifecycle · group_kind(bay|kit|location|project)
@@ -57,7 +57,8 @@ LOADOUT  hotspots ; sockets(host_asset_id, capacity, ...) ; interface_types
          asset_interfaces (asset exposes) ; socket_accepts (socket accepts)
          loadout_assignments(socket_id, asset_id→assets, equipped_at)
          -- candidacy ⇔ asset_interfaces ∩ socket_accepts ≠ ∅ ; equip = an assignment
-MISSIONS missions ; mission_requisitions ; mission_objectives ; mission_constraints
+MISSIONS missions ; mission_requisitions ; mission_objectives
+         ; mission_constraints ; mission_after_actions
 CAPS     capabilities ; capability_deps ; asset_capabilities
 KNOWLEDGE insights ; insight_assets ; insight_missions ; insight_tags ; activity_log
 ```
@@ -109,7 +110,8 @@ Do **not** create a new Postgres server for Hangar. Per `coldaine-k8cluster`, cu
 The current server boundary is intentionally small:
 
 - `src/server/hangar/db.ts` lazily creates a `pg` pool only after a request asks for DB-backed data. It prefers a structured `HANGAR_DB_*` connection object and keeps `HANGAR_DATABASE_URL`/`DATABASE_URL` only for compatibility.
-- `src/server/hangar/items.ts` maps the normalized `assets`/`groups`/`tags` shape back into the existing `InventoryItem` read model.
+- `src/server/hangar/queryable.ts`, `read-model.ts`, and `validators.ts` hold the shared repository contracts: the minimal query client shape, Postgres-with-static-fallback behavior, and row validation/coercion helpers. New DB-backed surfaces should reuse these instead of copying the inventory-item fallback pattern.
+- `src/server/hangar/items.ts` maps the normalized `assets`/`groups`/`tags`/junction shape back into the existing `InventoryItem` read model, including relationship arrays from loadout assignments, mission requisitions, asset capabilities, and insight references where present.
 - `src/app/api/hangar/items/route.ts` exposes a read-only smoke-test route with `{ source, fallbackReason, count, items }`.
 - `src/app/api/hangar/preflight/route.ts` exposes the no-fallback DB reachability gate. `GET /api/hangar/preflight` returns HTTP `200` only when the configured Hangar Postgres endpoint answers `SELECT 1`; otherwise it returns HTTP `503` with `not-configured`, `config-error`, or `unreachable`.
 - `src/app/layout.tsx` reads inventory items through the same server path at request time and passes
