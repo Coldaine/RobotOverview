@@ -2,7 +2,7 @@
 title: BEAST-01 Source Archive / Provenance Digest
 audience: AI agents preserving BEAST-01 hardware provenance
 status: reference
-last_updated: 2026-06-29
+last_updated: 2026-07-01
 ---
 
 # BEAST-01 Source Archive / Provenance Digest
