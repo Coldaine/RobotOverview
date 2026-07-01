@@ -2,7 +2,7 @@
 title: Connected Twin — Wiring Model
 audience: AI agents and operators extending the Hangar hardware model
 status: proposal — current direction
-last_updated: 2026-06-29
+last_updated: 2026-06-30
 ---
 
 # Connected Twin — Wiring Model
@@ -58,7 +58,7 @@ Source-document metadata should live in the Hangar schema. Large source binaries
 Smallest coherent implementation slice:
 
 1. Add `Terminal` and `Net` types beside the existing Hangar data types.
-2. Add a JSON seed source for BEAST-01 nets while `src/data/hangar.ts` remains the current bootstrap/runtime fallback.
+2. Add a JSON seed source for BEAST-01 nets while `src/data/hangar.ts` remains the bootstrap/fallback source for surfaces that have not moved to Postgres.
 3. Replace the hardcoded `WiringDiagram.tsx` splines with data-driven nets, keeping the same visual language.
 4. Add a board/terminal dossier panel using the existing drawer pattern.
 5. Add provenance chips that link to source documents once object storage URLs exist.

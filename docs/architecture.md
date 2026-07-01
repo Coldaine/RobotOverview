@@ -2,7 +2,7 @@
 title: Hangar Architecture
 audience: AI agents and operators working on RobotOverview
 status: living
-last_updated: 2026-06-29
+last_updated: 2026-06-30
 ---
 
 # Hangar — Architecture Approach
@@ -12,6 +12,8 @@ last_updated: 2026-06-29
 > has been built or a place for implementation detail — that lives in the component docs linked
 > from each decision below. If a section here grows code, schemas, or step-by-step procedure,
 > that content belongs in a component doc and should be moved there.
+> Live/current state should appear in its owning component or deploy doc first; this file keeps only
+> the durable architectural decision and a link.
 
 ## Grounding
 
@@ -36,18 +38,17 @@ Two pillars drive every choice that follows:
 A browser-only SPA (the original Vite bootstrap) cannot hold database credentials, so it dies the
 moment the inventory needs a real backend. Next.js fuses the UI to a secure server layer — Server
 Components query data server-side and never ship to the browser; Server Actions handle mutations.
-The app is built on Next.js 16 / React 19 / Tailwind 4 today. Inventory items now render from
-the server-backed Postgres path with a static fallback while the remaining surfaces finish moving
-off the bootstrap source below.
+The app is built on Next.js 16 / React 19 / Tailwind 4 today. The current server read-path status
+belongs in the web-app component doc, not here.
 → detail: [`docs/components/web-app.md`](components/web-app.md)
 
 ### 2. Source of truth: Postgres, bootstrapped by `hangar.ts`
 
 Per the pillar **"do not prescribe before populating,"** `src/data/hangar.ts` is the bootstrap
 dataset: it populated the model before the model was prescribed. The normalized Postgres
-**master-inventory** backend is now provisioned and seeded in the cluster, and inventory-item reads
-are the first browser-facing path served through it. Until the remaining surfaces and restore gate
-complete, `hangar.ts` remains the rollback/fallback spine.
+**master-inventory** backend is the target data spine; `hangar.ts` remains the bootstrap/fallback
+source until each app surface earns its cutover. Current provisioning, seed, parity, and rollback
+status belongs in the data-backend component doc.
 → detail: [`docs/components/data-backend.md`](components/data-backend.md)
 
 ### 3. One master inventory; bays are views, not silos

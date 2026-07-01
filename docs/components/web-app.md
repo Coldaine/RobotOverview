@@ -2,15 +2,17 @@
 title: Web App — Next.js Server Layer
 audience: AI agents and operators working on the Hangar frontend / server layer
 status: living
-last_updated: 2026-06-26
+last_updated: 2026-06-30
 ---
 
 # Web App — Next.js Server Layer
 
 > How the Hangar app is structured: the server/client split, mutations, caching, and secrets.
-> Where the data layer is concerned, this describes the **target** server-side pattern; today the
-> browser-facing app still reads the static `src/data/hangar.ts` (see [`data-backend.md`](data-backend.md)).
-> A narrow server-side inventory item read path now exists as the first DB wiring proof.
+> Where the data layer is concerned, inventory items now use the server-side Postgres read path with
+> `src/data/hangar.ts` fallback, while remaining surfaces still migrate one at a time (see
+> [`data-backend.md`](data-backend.md)).
+> This is the source of truth for app runtime and server-boundary current state. High-level docs
+> should link here rather than restating route/config status.
 
 ## Why Next.js (not a Vite SPA)
 
@@ -73,7 +75,8 @@ store with those records; if Postgres is not configured or reachable, the same b
 
 Next.js 16's caching (`use cache` / `unstable_cache`) covers expensive reads without an external
 Redis: cache the fleet list with a revalidate window + tags, and bust the tag from the Server Action
-that mutates it. Not load-bearing while reads come from the in-process `hangar.ts`.
+that mutates it. This is not yet load-bearing for the unconverted surfaces that still use the
+bootstrap/fallback data spine.
 
 ## Database Config And Secrets — Target State
 

@@ -2,20 +2,22 @@
 title: Data Backend — Master-Inventory Model
 audience: AI agents and operators working on the Hangar data layer
 status: living
-last_updated: 2026-06-29
+last_updated: 2026-06-30
 ---
 
 # Data Backend — Master-Inventory Model
 
-> The Hangar's data spine: the static bootstrap dataset it reads today, the normalized Postgres store intended to become authoritative after seed/parity/read-cutover gates, and the cluster target it will run on.
+> The Hangar's data spine: the static bootstrap/fallback dataset, the normalized Postgres store now serving the first inventory read path, and the cluster target it runs on.
 > The live SQL lives in `db/hangar/` (`schema.sql`, `seed.sql`, `standup.md`).
+> This is the source of truth for data-backend current state. High-level docs should summarize and
+> link here rather than duplicating cutover status.
 
 ## Current reality (read this first)
 
-- **`src/data/hangar.ts` is the current runtime source and bootstrap dataset.** The browser-facing Next.js app still reads it directly today.
-- The **Postgres `hangar` schema is the intended authoritative store** once the cluster DB is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked, and app reads are cut over. The local standup proves shape only; it is not the production target.
-- The first app read-path foundation now exists for inventory items: `GET /api/hangar/items` attempts a server-side Postgres read when structured `HANGAR_DB_*` config is present, and falls back to `src/data/hangar.ts` when it is not configured or the read fails. `HANGAR_DATABASE_URL`/`DATABASE_URL` remain compatibility paths, but the preferred contract is not a credential-bearing URL. This is the first proof lane toward Postgres authority, not the full UI cutover yet.
-- The **target deployment database is not decided inside RobotOverview.** It is a logical Hangar database in `C:\_projects\coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`databases/pg18.yaml` + `docs/connection-registry.md`). RobotOverview owns the app schema/migrations and app behavior; the cluster repo owns provisioning, roles/secrets, backups, and restore gates.
+- **`src/data/hangar.ts` is the bootstrap dataset and rollback/fallback spine.** Inventory items now come through the server-side Postgres read path when configured; remaining Hangar surfaces still use the bootstrap data while they migrate.
+- The **Postgres `hangar` schema is the authoritative target for the master-inventory spine.** The cluster DB is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked for inventory items, and serving the first browser-facing inventory read path. The local standup proves shape only; it is not the production target.
+- The first app read-path foundation is live for inventory items: `GET /api/hangar/items` attempts a server-side Postgres read when structured `HANGAR_DB_*` config is present, and falls back to `src/data/hangar.ts` when it is not configured or the read fails. `HANGAR_DATABASE_URL`/`DATABASE_URL` remain compatibility paths, but the preferred contract is not a credential-bearing URL. This is the first production read lane, not the full UI/data cutover yet.
+- The **target deployment database is not provisioned or governed inside RobotOverview.** It is a logical Hangar database in `C:\_projects\coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`databases/pg18.yaml` + `docs/connection-registry.md`). RobotOverview owns the app schema/migrations and app behavior; the cluster repo owns provisioning, roles/secrets, backups, and restore gates.
 - This staging is intentional, per the North Star pillar **"do not prescribe before populating"**: the relational shape was designed only after there was real content to fit it to.
 
 ## The model in one paragraph
@@ -78,9 +80,9 @@ There are two different “where” answers, and future work must not confuse th
 | Context | Location | Meaning |
 |---|---|---|
 | Local proof / development | A separate `hangar` database inside the existing local `techdeals-postgres18` container (`:54329`) | Historical/proof-only validation of `schema.sql` and `seed.sql`. Do not start local containers on `icarus-laptop`; use a remote proof host or the cluster path for new verification. Not the deployment target. |
-| Target deployment | A logical `hangar` database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`pg18-rw.data-platform.svc.cluster.local:5432`) | The real target. Must be declared in the cluster repo, added to the connection registry, wired through Doppler/ESO, backed up, and restore-tested before the app depends on it. |
+| Target deployment | A logical `hangar` database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`pg18-rw.data-platform.svc.cluster.local:5432`) | The real target. It is declared in the cluster repo, listed in the connection registry, wired through Doppler/ESO, and covered by the pg18/Garage backup and restore path. |
 
-The likely cluster contract is:
+The cluster contract is:
 
 ```text
 Logical database: hangar
@@ -98,7 +100,7 @@ App env:
   HANGAR_DB_PASSWORD=<runtime credential, from Doppler/ESO in phase 1>
 ```
 
-Do **not** create a new Postgres server for Hangar. Per `coldaine-k8cluster`, current app databases are logical databases inside `pg18`; `pg19` is future/PG19-specific and not for irreplaceable data yet; `falkordb` is for graph data.
+Do **not** create a new Postgres server for Hangar. Per `coldaine-k8cluster`, current app databases are logical databases inside `pg18`; `pg19` is a separate PG19-specific compatibility/lab target, not the Hangar target; `falkordb` is for graph data.
 
 `HANGAR_DB_HOST`, port, database name, role, and SSL mode are configuration, not secrets. Only the runtime credential carries authority. The app helper currently accepts `HANGAR_DB_SSLMODE=disable` or `require`; `require` encrypts without verifying the self-signed CNPG certificate chain, matching libpq `sslmode=require`. Future certificate-verified modes should add the real certificate/trust-bundle config instead of being treated as a generic on/off switch. Longer-term, that credential should become workload-identity backed (client certificate, Vault lease, or proxy-issued token) rather than a durable password; the app-side contract can stay structured either way.
 
@@ -122,6 +124,6 @@ This keeps `next build` safe without database secrets, gives the deployment path
 
 ## Deferred (by design)
 
-- **Cluster restore gate**: Hangar is now a `pg18` logical database with schema/seed loaded; restore testing remains the production authority gate.
+- **Remaining surface cutovers**: the pg18 cluster-level backup/restore gate is verified; each additional Hangar surface still needs its own seed/parity/rollback proof before it stops using `hangar.ts`.
 - **Broader app / ORM wiring**: the first direct `pg` read path exists, but an ORM choice remains deferred. If Drizzle is introduced, its schema must map to `db/hangar/schema.sql`, and the server-side data-access pattern is described in [`web-app.md`](web-app.md).
 - **Retiring `hangar.ts`** as the runtime source — only after every Hangar surface has moved through seed/parity/read-cutover gates and rollback is understood. Inventory items are only the first read surface.
