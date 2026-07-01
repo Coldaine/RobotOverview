@@ -1,0 +1,39 @@
+version: '3'
+
+tasks:
+  default:
+    cmds: [task --list]
+    silent: true
+
+  bootstrap:tools:
+    desc: Install/verify local CLIs and npm dependencies for Hangar work.
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/install-tools.ps1
+
+  bootstrap:verify-tools:
+    desc: Verify local CLIs used by Hangar agents and deploy-adjacent workflows.
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/verify-tools.ps1
+
+  dev:
+    desc: Start the Next.js development server.
+    cmds: [npm run dev]
+
+  lint:
+    desc: Run ESLint.
+    cmds: [npm run lint]
+
+  test:
+    desc: Run Vitest once.
+    cmds: [npm run test:run]
+
+  build:
+    desc: Build the production Next.js app.
+    cmds: [npm run build]
+
+  check:
+    desc: Run the standard Hangar app gate.
+    cmds:
+      - npm run lint
+      - npm run test:run
+      - npm run build
