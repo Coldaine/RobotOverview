@@ -23,6 +23,7 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 - **Storage/object-store pivot for archive-backed documents** -> `docs/deploy/storage-and-twin-pivot-plan.md`
 - **Operate / control the Beast (network, drive, telemetry, programming)** -> `docs/beast-ops.md`
 - **Source archive digest (no bulk binaries in git)** -> `docs/reference/ugv-beast-source-archive.md`
+- **Tooling bootstrap / command surface** -> `docs/components/bootstrap.md`
 - **Documentation ownership / source-of-truth workflow** -> `docs/documentation-workflow.md`
 - **Code implementation** -> `src/`
 - **Superseded / historical docs and prototypes** -> `docs/history/`
@@ -36,13 +37,13 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 ## Tech Stack & Commands
 
 - **Environment:** Node.js, Next.js, React, TypeScript, Tailwind CSS.
-- **Command surface:** `npm` owns app/package commands; `Taskfile.yml` is the agent/operator front door for workflows. `justfile` is optional sugar that delegates to Task.
+- **Command surface:** `npm` owns app/package commands; `Taskfile.yml` is the agent/operator front door for workflows; details live in `docs/components/bootstrap.md`.
 - **Boot:** `npm run dev`
 - **Build:** `npm run build`
 - **Lint:** `npm run lint`
 - **Test:** `npm run test:run`
 - **Workflow check:** `task check`
-- **Tooling bootstrap:** `task bootstrap:core` for core local setup, `task bootstrap:tools` for all profiles. `npm install` only verifies core tooling and advises; it does not install workstation tools implicitly.
+- **Tooling bootstrap:** `task bootstrap:core` for core local setup, `task bootstrap:tools` for all profiles.
 
 ## Working Rules
 
