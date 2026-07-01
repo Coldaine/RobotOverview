@@ -15,6 +15,7 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 ## Decision Tree
 
 - **Understand project intent** -> `docs/NORTH_STAR.md`
+- **Primary UI/user workflows to preserve** -> `docs/USABILITY_WORKFLOWS.md`
 - **How we've chosen to build it, and why** -> `docs/architecture.md` (approach + rationale; routes to the component docs)
 - **Data layer (master-inventory model, Postgres, `hangar.ts`)** -> `docs/components/data-backend.md`
 - **Connected twin / BEAST-01 wiring model** -> `docs/components/connected-twin.md`

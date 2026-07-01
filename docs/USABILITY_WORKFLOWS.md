@@ -3,12 +3,14 @@ title: Hangar Usability Workflows
 date: 2026-06-13
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-06-13
+last_confirmed: 2026-07-01
 ---
 
 # Usability Workflows
 
 These workflows describe the paths the Hangar UI should keep smooth as features grow.
+This document owns primary user journeys and usability regression expectations; implementation
+details belong in the app code or component docs.
 
 ## Fleet Triage
 
