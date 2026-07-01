@@ -19,6 +19,23 @@ export function stringArray(value: unknown): string[] | undefined {
   return strings.length ? strings : undefined;
 }
 
+export function postgresTextArray(value: unknown, label: string): string[] {
+  if (value === null) return [];
+
+  if (!Array.isArray(value)) {
+    throw new Error(`Invalid ${label} from hangar DB: expected text array.`);
+  }
+
+  const invalidIndex = value.findIndex((item) => typeof item !== 'string');
+  if (invalidIndex !== -1) {
+    throw new Error(
+      `Invalid ${label} from hangar DB: expected text at index ${invalidIndex}.`,
+    );
+  }
+
+  return value;
+}
+
 export function objectArray<T>(
   value: unknown,
   predicate: (row: unknown) => row is T,

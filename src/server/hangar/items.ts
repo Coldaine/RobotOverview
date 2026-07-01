@@ -9,7 +9,7 @@ import type {
 import type { Queryable } from './queryable';
 import type { HangarFallbackReason, HangarReadSource } from './read-model';
 import { readWithStaticFallback } from './read-model';
-import { enumValue, numberOrNull, objectArray, stringArray } from './validators';
+import { enumValue, numberOrNull, objectArray, postgresTextArray, stringArray } from './validators';
 
 type InventoryItemRow = {
   id: string;
@@ -198,11 +198,13 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
     specs: specRows(row.specs),
     price,
     quantity: row.quantity ?? undefined,
-    tags: stringArray(row.tags),
-    relatedUnits: stringArray(row.related_units),
-    relatedMissions: stringArray(row.related_missions),
-    relatedCapabilities: stringArray(row.related_capabilities),
-    relatedInsights: stringArray(row.related_insights),
+    tags: optionalArray(postgresTextArray(row.tags, 'inventory tags')),
+    relatedUnits: optionalArray(postgresTextArray(row.related_units, 'related units')),
+    relatedMissions: optionalArray(postgresTextArray(row.related_missions, 'related missions')),
+    relatedCapabilities: optionalArray(
+      postgresTextArray(row.related_capabilities, 'related capabilities'),
+    ),
+    relatedInsights: optionalArray(postgresTextArray(row.related_insights, 'related insights')),
     sources: sourceRecords(row.sources),
     limitations: stringArray(row.limitations),
     acquired: row.acquired ?? undefined,
@@ -212,6 +214,10 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
         ? row.provenance
         : undefined,
   };
+}
+
+function optionalArray<T>(value: T[]): T[] | undefined {
+  return value.length ? value : undefined;
 }
 
 export async function readInventoryItemsFromPostgres(client: Queryable) {

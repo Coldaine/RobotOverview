@@ -198,6 +198,75 @@ describe('Hangar inventory Postgres read path', () => {
     ).toThrow('Expected exactly one bay group for inventory item "ambiguous-item"; got network, robotics.');
   });
 
+  it('rejects malformed Postgres text arrays instead of dropping relationship ids', () => {
+    expect(() =>
+      mapInventoryItemRow({
+        id: 'malformed-relations',
+        name: 'Malformed Relations',
+        manufacturer: null,
+        model: null,
+        bay_groups: ['network'],
+        category: null,
+        status: 'owned',
+        provenance: 'owner',
+        summary: null,
+        description: null,
+        planning_notes: null,
+        acquired: null,
+        horizon: null,
+        quantity: 1,
+        price_us: null,
+        price_import: null,
+        specs: [],
+        limitations: [],
+        sources: [],
+        tags: [],
+        related_units: ['beast', 42],
+        related_missions: [],
+        related_capabilities: [],
+        related_insights: [],
+      }),
+    ).toThrow('Invalid related units from hangar DB: expected text at index 1.');
+  });
+
+  it('accepts null Postgres text arrays as empty relationship fields', () => {
+    const item = mapInventoryItemRow({
+      id: 'null-relations',
+      name: 'Null Relations',
+      manufacturer: null,
+      model: null,
+      bay_groups: ['network'],
+      category: null,
+      status: 'owned',
+      provenance: 'owner',
+      summary: null,
+      description: null,
+      planning_notes: null,
+      acquired: null,
+      horizon: null,
+      quantity: 1,
+      price_us: null,
+      price_import: null,
+      specs: [],
+      limitations: [],
+      sources: [],
+      tags: null,
+      related_units: null,
+      related_missions: null,
+      related_capabilities: null,
+      related_insights: null,
+    });
+
+    expect(item).toMatchObject({
+      id: 'null-relations',
+      tags: undefined,
+      relatedUnits: undefined,
+      relatedMissions: undefined,
+      relatedCapabilities: undefined,
+      relatedInsights: undefined,
+    });
+  });
+
   it('queries only peripheral assets with inventory item statuses', async () => {
     const calls: Array<{ sql: string; values?: unknown[] }> = [];
     const row = {
