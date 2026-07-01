@@ -4,7 +4,9 @@
 [CmdletBinding()]
 param(
     [switch]$VerifyOnly,
-    [switch]$SkipProjectDependencies
+    [switch]$SkipProjectDependencies,
+    [ValidateSet("core", "dev", "deploy", "all")]
+    [string]$Profile = "all"
 )
 
 $ErrorActionPreference = "Stop"
@@ -14,13 +16,27 @@ Update-BootstrapPath
 
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 
-$packages = @(
-    @{ Command = "git"; Id = "Git.Git" },
-    @{ Command = "gh"; Id = "GitHub.cli" },
-    @{ Command = "kubectl"; Id = "Kubernetes.kubectl" },
-    @{ Command = "task"; Id = "Task.Task" },
-    @{ Command = "gitleaks"; Id = "Gitleaks.Gitleaks" }
-)
+$packageProfiles = @{
+    core = @(
+        @{ Command = "git"; Id = "Git.Git" },
+        @{ Command = "task"; Id = "Task.Task" }
+    )
+    dev = @(
+        @{ Command = "gh"; Id = "GitHub.cli" },
+        @{ Command = "gitleaks"; Id = "Gitleaks.Gitleaks" }
+    )
+    deploy = @(
+        @{ Command = "kubectl"; Id = "Kubernetes.kubectl" }
+    )
+}
+
+function Get-ProfilePackages([string]$SelectedProfile) {
+    if ($SelectedProfile -eq "all") {
+        return @($packageProfiles.core + $packageProfiles.dev + $packageProfiles.deploy)
+    }
+
+    return @($packageProfiles[$SelectedProfile])
+}
 
 function Install-WingetPackageIfMissing([string]$Command, [string]$PackageId) {
     if (Get-Command $Command -ErrorAction SilentlyContinue) {
@@ -46,11 +62,12 @@ function Install-WingetPackageIfMissing([string]$Command, [string]$PackageId) {
 }
 
 if (-not $VerifyOnly) {
+    $packages = Get-ProfilePackages -SelectedProfile $Profile
     foreach ($pkg in $packages) {
         Install-WingetPackageIfMissing -Command $pkg.Command -PackageId $pkg.Id
     }
 
-    if (-not $SkipProjectDependencies) {
+    if (-not $SkipProjectDependencies -and ($Profile -eq "core" -or $Profile -eq "all")) {
         Push-Location $repoRoot
         try {
             if (-not (Test-Path "node_modules")) {
@@ -65,4 +82,4 @@ if (-not $VerifyOnly) {
     }
 }
 
-& (Join-Path $PSScriptRoot "verify-tools.ps1")
+& (Join-Path $PSScriptRoot "verify-tools.ps1") -Profile $Profile

@@ -36,10 +36,13 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 ## Tech Stack & Commands
 
 - **Environment:** Node.js, Next.js, React, TypeScript, Tailwind CSS.
+- **Command surface:** `npm` owns app/package commands; `Taskfile.yml` is the agent/operator front door for workflows. `justfile` is optional sugar that delegates to Task.
 - **Boot:** `npm run dev`
 - **Build:** `npm run build`
 - **Lint:** `npm run lint`
 - **Test:** `npm run test:run`
+- **Workflow check:** `task check`
+- **Tooling bootstrap:** `task bootstrap:core` for core local setup, `task bootstrap:tools` for all profiles. `npm install` only verifies core tooling and advises; it does not install workstation tools implicitly.
 
 ## Working Rules
 
