@@ -40,6 +40,7 @@ Use the full workflow before:
 |---|---|---|
 | `AGENTS.md` | Agent routing, hard working rules, command list, durable invariants | Detailed project status, implementation walkthroughs, historical evidence |
 | `docs/NORTH_STAR.md` | Intent, goals, anti-goals, product philosophy | Implementation progress, provider details, deployment mechanics |
+| `docs/USABILITY_WORKFLOWS.md` | Primary UI journeys, usability regression expectations, navigation workflow guardrails | Implementation details, feature backlog, runtime/deploy status |
 | `docs/architecture.md` | Durable approach, rationale, system boundaries | Current cutover status, command procedures, provider catalogs |
 | `docs/components/data-backend.md` | Data-model current state, `hangar.ts` fallback/cutover status, schema/seed, Hangar DB target summary | Next.js runtime behavior beyond the data boundary, cluster provisioning truth |
 | `docs/components/web-app.md` | Next.js server/runtime behavior, app-side DB config, credential boundaries, routes/actions/caching | Full schema shape, cluster ownership, deployment mechanism |
@@ -76,6 +77,7 @@ needed for this narrow change," but the decision must be explicit.
 | Change | Update here first | Only summarize/link from |
 |---|---|---|
 | DB schema, seed, `hangar.ts` fallback, or read-cutover status changes | `docs/components/data-backend.md`; `db/hangar/standup.md` if commands/proof changed | `AGENTS.md`, `docs/NORTH_STAR.md`, `docs/architecture.md` |
+| Primary navigation, workflow, or usability expectations change | `docs/USABILITY_WORKFLOWS.md`; component/page docs only if implementation details changed | `AGENTS.md`, `docs/architecture.md` |
 | Next.js route, Server Component, runtime config, or credential behavior changes | `docs/components/web-app.md` | `docs/architecture.md`, `docs/components/data-backend.md` |
 | Local command surface, bootstrap profile, postinstall, or workstation-tooling changes | `docs/components/bootstrap.md`; `AGENTS.md` only for short routing/command summaries | `docs/architecture.md`, `docs/deploy/deployment.md` |
 | Cluster provisioning, role/secret, connection registry, backup, or restore status changes | `coldaine-k8cluster`; summarize the app-facing impact in `docs/components/data-backend.md` or `docs/deploy/deployment.md` | `AGENTS.md`, `docs/NORTH_STAR.md`, `docs/architecture.md` |
