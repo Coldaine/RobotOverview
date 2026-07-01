@@ -5,20 +5,50 @@ tasks:
     cmds: [task --list]
     silent: true
 
-  bootstrap:tools:
-    desc: Install/verify local CLIs and npm dependencies for Hangar work.
+  bootstrap:core:
+    desc: Install/verify core CLI tools and npm dependencies.
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/install-tools.ps1
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/install-tools.ps1 -Profile core
+
+  bootstrap:dev:
+    desc: Install/verify development and review CLIs.
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/install-tools.ps1 -Profile dev -SkipProjectDependencies
+
+  bootstrap:deploy:
+    desc: Install/verify deploy-adjacent CLIs; does not run containers.
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/install-tools.ps1 -Profile deploy -SkipProjectDependencies
+
+  bootstrap:tools:
+    desc: Install/verify all Hangar local tooling profiles.
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/install-tools.ps1 -Profile all
 
   bootstrap:
-    desc: Install/verify local CLIs and npm dependencies for Hangar work.
+    desc: Install/verify the core Hangar profile.
     cmds:
-      - task bootstrap:tools
+      - task bootstrap:core
+
+  bootstrap:verify-core:
+    desc: Verify core app/agent tooling.
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/verify-tools.ps1 -Profile core
+
+  bootstrap:verify-dev:
+    desc: Verify development and review tooling.
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/verify-tools.ps1 -Profile dev
+
+  bootstrap:verify-deploy:
+    desc: Verify deploy-adjacent tooling.
+    cmds:
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/verify-tools.ps1 -Profile deploy
 
   bootstrap:verify-tools:
-    desc: Verify local CLIs used by Hangar agents and deploy-adjacent workflows.
+    desc: Verify every Hangar tooling profile.
     cmds:
-      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/verify-tools.ps1
+      - pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/verify-tools.ps1 -Profile all
 
   dev:
     desc: Start the Next.js development server.

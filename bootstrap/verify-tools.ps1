@@ -1,20 +1,32 @@
 # Verify local tooling expected by Hangar agents and deployment workflows.
 #Requires -Version 7.0
+[CmdletBinding()]
+param(
+    [ValidateSet("core", "dev", "deploy", "all")]
+    [string]$Profile = "all"
+)
+
 $ErrorActionPreference = "Stop"
 
 . (Join-Path $PSScriptRoot "refresh-windows-path.ps1")
 Update-BootstrapPath
 
-$requiredCommands = @(
-    "git",
-    "node",
-    "npm",
-    "pwsh",
-    "task",
-    "gh",
-    "kubectl",
-    "gitleaks"
-)
+$profileCommands = @{
+    core = @("git", "node", "npm", "pwsh", "task")
+    dev = @("gh", "gitleaks")
+    deploy = @("kubectl")
+}
+
+function Get-ProfileCommands([string]$SelectedProfile) {
+    if ($SelectedProfile -eq "all") {
+        return @($profileCommands.core + $profileCommands.dev + $profileCommands.deploy)
+    }
+
+    return @($profileCommands[$SelectedProfile])
+}
+
+$requiredCommands = Get-ProfileCommands -SelectedProfile $Profile
+Write-Host "Verifying Hangar tooling profile '$Profile'..." -ForegroundColor Cyan
 
 $missingCommands = @()
 foreach ($cmd in $requiredCommands) {

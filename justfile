@@ -1,13 +1,18 @@
 set shell := ["pwsh.exe", "-NoLogo", "-NoProfile", "-Command"]
 
+# Optional sugar only. Taskfile.yml is the canonical agent/operator command surface.
+
 default:
     task --list
 
 bootstrap:
-    pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/install-tools.ps1
+    task bootstrap:core
+
+bootstrap-tools:
+    task bootstrap:tools
 
 doctor:
-    pwsh -NoProfile -ExecutionPolicy Bypass -File bootstrap/verify-tools.ps1
+    task bootstrap:verify-tools
 
 check:
     task check

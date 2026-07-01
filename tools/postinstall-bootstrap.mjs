@@ -16,8 +16,9 @@ const result = spawnSync(
     '-ExecutionPolicy',
     'Bypass',
     '-File',
-    'bootstrap/install-tools.ps1',
-    '-SkipProjectDependencies',
+    'bootstrap/verify-tools.ps1',
+    '-Profile',
+    'core',
   ],
   {
     cwd: process.cwd(),
@@ -32,5 +33,5 @@ if (result.error) {
 }
 
 if (result.status !== 0) {
-  console.warn('[bootstrap] Tool bootstrap did not complete. Run `npm run bootstrap:tools` manually.');
+  console.warn('[bootstrap] Core tooling check found missing commands. Run `task bootstrap:core` or `npm run bootstrap:tools` to install/repair explicitly.');
 }
