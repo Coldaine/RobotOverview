@@ -22,7 +22,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${outfit.variable}`}>
       <body>
-        <HangarProvider initialItems={inventoryItems.items}>
+        <HangarProvider
+          initialItems={inventoryItems.items}
+          initialInventoryRead={{
+            source: inventoryItems.source,
+            fallbackReason: inventoryItems.fallbackReason,
+          }}
+        >
           <Shell>{children}</Shell>
         </HangarProvider>
         <div className="crt-overlay" aria-hidden />

@@ -10,7 +10,7 @@ last_confirmed: 2026-07-01
 
 The relational backend for the Hangar: **one master inventory of all gear**, with bays as first-class group rows, a video-game loadout, and the connected model (North Star AG1) preserved. Design provenance: `.omc/specs/deep-interview-hangar-master-inventory.md` (deep-interview session, 2026-06-26), which itself recovered + reconciled the deleted `docs/plans/postgres_schema.md`.
 
-> **Status:** DB shape stood up + seeded in the `coldaine-k8cluster` logical `hangar` database on `pg18`. `src/data/hangar.ts` remains the bootstrap dataset and rollback source; inventory items are the first browser-facing read cutover through the server read path after cluster seed, preflight, and parity checks. The pg18/Garage backup and restore path is verified at the cluster level. Broader Hangar data and app/ORM (Drizzle) wiring are still deferred.
+> **Status:** DB shape stood up + seeded in the `coldaine-k8cluster` logical `hangar` database on `pg18`. `src/data/hangar.ts` remains the bootstrap dataset and rollback source; inventory items are the first browser-facing read cutover through the server read path after cluster seed, preflight, and parity checks. Cluster backup and restore-test status is owned by `coldaine-k8cluster`; RobotOverview should reference that evidence rather than independently declaring the restore gate complete. Broader Hangar data and app/ORM (Drizzle) wiring are still deferred.
 
 ## Where it lives
 
@@ -24,7 +24,7 @@ This local database proves the schema and seed shape. It is not the production t
 
 ### Target deployment
 
-The target database belongs to `C:\_projects\coldaine-k8cluster`: a logical `hangar` database inside the `pg18` CloudNativePG cluster. Provisioning is cluster-repo work (`databases/pg18.yaml` plus `docs/connection-registry.md`), with a `hangar` role, structured `HANGAR_DB_*` app config, a runtime credential path, and the pg18/Garage backup and restore path.
+The target database belongs to `C:\_projects\coldaine-k8cluster`: a logical `hangar` database inside the `pg18` CloudNativePG cluster. Provisioning is cluster-repo work (`databases/pg18.yaml` plus `docs/connection-registry.md`), with a `hangar` role, structured `HANGAR_DB_*` app config, a runtime credential path, and cluster-owned backup/restore evidence.
 
 Do not stand up a RobotOverview-owned Postgres server for Hangar; add a logical DB to `pg18`.
 
@@ -47,12 +47,12 @@ npx tsx db/hangar/gen-seed.ts --out db/hangar/seed.sql    # regenerate after edi
 docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP=1 < db/hangar/seed.sql
 ```
 
-Cluster deployment is different: reserve the logical DB/role in `coldaine-k8cluster`, provide address config as `HANGAR_DB_HOST`/`HANGAR_DB_PORT`/`HANGAR_DB_NAME`/`HANGAR_DB_USER`, provide only the credential-bearing piece through the chosen runtime auth path, apply migrations/schema there, load seed data generated from `hangar.ts`, verify the pg18/Garage backup and restore path, verify `GET /api/hangar/preflight` can reach the DB, parity-check representative reads, then cut app reads over to Postgres. The inventory-item lane has passed those gates; repeat the app-level proof for each broader Hangar surface before moving it off `hangar.ts`.
+Cluster deployment is different: reserve the logical DB/role in `coldaine-k8cluster`, provide address config as `HANGAR_DB_HOST`/`HANGAR_DB_PORT`/`HANGAR_DB_NAME`/`HANGAR_DB_USER`, provide only the credential-bearing piece through the chosen runtime auth path, apply migrations/schema there, load seed data generated from `hangar.ts`, verify the cluster-owned backup/restore status, verify `GET /api/hangar/preflight` can reach the DB, parity-check representative reads, then cut app reads over to Postgres. The inventory-item lane has passed the app-level seed/preflight/parity/read gates; repeat that app-level proof for each broader Hangar surface before moving it off `hangar.ts`.
 
 ## Schema in one breath
 
 - **`assets`** — every possession in one table (single-table inheritance); `kind` discriminator; typed `power_*`/`mass_grams`/`price_*` columns (queryable for budgets); JSONB only for display-only leaves (`specs`/`links`/`limitations`/`sources`). Wishlist folds in via `lifecycle='wishlist'` + a 1:1 `wishlist_meta`.
-- **Grouping** — `tags`/`asset_tags` (flexible, namespaced: `tag`/`class`/`category`) and first-class **`groups`/`asset_groups`** (`bay`|`kit`|`location`|`project`). Bays are **rows in `groups` with `kind='bay'`** — not SQL views.
+- **Grouping** — `tags`/`asset_tags` (flexible, namespaced: `tag`/`class`/`category`) and first-class **`groups`/`asset_groups`** (`bay`|`kit`|`location`|`project`). Bays are **rows in `groups` with `kind='bay'`** — not SQL views. Current app-facing assets must have exactly one bay group; use non-bay groups or tags for additional membership until the UI model is explicitly multi-bay.
 - **Loadout** — `sockets` on a host, `interface_types` taxonomy, `socket_accepts` + `asset_interfaces` ⇒ candidacy, `loadout_assignments` ⇒ what's equipped with the proven compatible `interface_type_id`.
 - **`missions` · `capabilities` · `insights` · `activity_log`** — explicit mission child tables and junctions (`mission_requisitions`, `mission_after_actions`, `asset_capabilities`, `insight_assets`/`insight_missions`, …).
 
@@ -80,7 +80,7 @@ SELECT g.code, count(ag.asset_id) FROM groups g
 
 ## Known follow-ups (not blockers)
 
-- Restore discipline: pg18/Garage physical recovery is verified; keep repeating restore/parity proof when schema or seed changes materially.
+- Restore discipline: treat pg18/Garage backup and restore-test status as cluster-owned evidence; repeat app-level parity proof when schema or seed changes materially.
 - An **"onboard power"** view should filter mission power by location/tag — the raw requisition sum includes the offboard 5090 workstation.
 - `interface_types` is seeded with a demonstrative set (host-mount, serial-bus-servo, ups-bay, i2c-display); expand as real connectors are catalogued.
 - App migration: point the Next.js server/data layer at the DB, require a green `GET /api/hangar/preflight`, parity-check it against the `hangar.ts` bootstrap dataset, then move UI reads before introducing DB writes.

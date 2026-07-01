@@ -3,7 +3,7 @@ title: Storage + Twin Pivot Plan
 date: 2026-06-28
 author: Patrick MacLyman (drafted with assistant)
 status: proposal
-last_updated: 2026-06-30
+last_updated: 2026-07-01
 ---
 
 # Storage + Twin Pivot Plan
@@ -32,7 +32,7 @@ The Beast research and the wiring-twin work initially landed in the wrong shape:
   - `pg19`: PostgreSQL 19, CloudNativePG, live compatibility/lab target for PG19-specific needs; not the Hangar target.
   - `falkordb`: graph database, KubeBlocks.
 - Hangar targets `pg18` as a logical database (`hangar`) with a role (`hangar`) and structured app config (`HANGAR_DB_*`). In phase 1, only the runtime credential (`HANGAR_DB_PASSWORD`) comes from Doppler/ESO; longer-term auth can move to client certs, Vault leases, or a proxy-issued token without changing the address contract.
-- The pg18/Garage backup and physical restore path is verified at the cluster level. RobotOverview still owns app-level seed/parity/rollback proof for each Hangar surface it moves from `hangar.ts` to Postgres.
+- pg18/Garage backup and physical restore status is cluster-owned evidence. RobotOverview still owns app-level seed/parity/rollback proof for each Hangar surface it moves from `hangar.ts` to Postgres.
 - `coldaine-k8cluster` declares **Garage** for in-cluster S3: database backups plus light app object storage. Do not assume the default `kubeblocks-backups` bucket is the Hangar document bucket; choose a Hangar source-document bucket/key/policy deliberately.
 - App code should use an S3-compatible abstraction so the archive can move from interim storage to the final object-store path without changing the data model.
 
@@ -60,7 +60,7 @@ In `C:\_projects\coldaine-k8cluster`:
    - separate Garage instance only if the shared service is not appropriate,
    - or R2/offsite first.
 3. Record the bucket contract: bucket name, app role/secret names, access pattern, retention/offsite stance.
-4. **Done for pg18:** restore-test the DB backup path before any app depends on the cluster DB.
+4. Verify and record the DB backup/restore gate in `coldaine-k8cluster` before treating it as complete from RobotOverview.
 
 ### Phase 2 — Schema/app cutover
 
