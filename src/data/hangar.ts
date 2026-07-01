@@ -258,7 +258,7 @@ export const hangarData: HangarData = {
       ],
       capabilities: ['teleop', 'crawlspace-ops'],
       missions: ['undercroft'],
-      insights: ['dust-backscatter', 'power-rail', 'watchdog', 'wifi-tail'],
+      insights: ['dust-backscatter', 'power-rail', 'watchdog', 'wifi-tail', 'video-device-path'],
       tags: ['rover', 'flagship', 'waveshare', 'roarm'],
       shortcuts: [
         { id: 'control-ui', label: 'Control UI', type: 'url', url: 'http://beast.local:5000', note: 'Drive / FPV / arm' },
@@ -770,6 +770,17 @@ export const hangarData: HangarData = {
       capturedAt: '2026-05-31',
     },
     {
+      id: 'video-device-path',
+      title: 'Camera device paths can move after reboot',
+      body: 'BEAST-01 video failed when the USB camera re-enumerated and Waveshare code kept opening hardcoded camera index 0. Use the stable /dev/v4l/by-id video-index0 path, or scan /dev/video* for the first readable capture device, then restart only the Flask app.',
+      tags: ['fpv', 'camera', 'operations'],
+      bay: 'robotics',
+      units: ['beast', 'pi5'],
+      missions: ['undercroft'],
+      confidence: 'high',
+      capturedAt: '2026-06-30',
+    },
+    {
       id: 'offload-split',
       title: 'Offload the latency-tolerant, keep the reflexes onboard',
       body: 'Yes: training, VLM/LLM reasoning, heavy perception. Risky: tight visual servoing. No: collision avoidance / e-stop / motor PID — those stay onboard so a dropout never blinds the robot mid-motion.',
@@ -854,6 +865,12 @@ export const hangarData: HangarData = {
   ],
 
   activity: [
+    {
+      id: 'a-video-relock',
+      at: '2026-06-30T22:51:00Z',
+      kind: 'insight',
+      text: 'Restored BEAST-01 FPV stream after USB camera re-enumeration; patched camera path selection.',
+    },
     {
       id: 'a6',
       at: '2026-07-01T14:25:43Z',
