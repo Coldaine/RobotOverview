@@ -6,11 +6,10 @@ import type {
   SourceRecord,
   SpecRow,
 } from '@/data/types';
-import { getHangarPool } from './db';
-
-type Queryable = {
-  query: <T>(sql: string, values?: unknown[]) => Promise<{ rows: T[] }>;
-};
+import type { Queryable } from './queryable';
+import type { HangarFallbackReason, HangarReadSource } from './read-model';
+import { readWithStaticFallback } from './read-model';
+import { enumValue, numberOrNull, objectArray, stringArray } from './validators';
 
 type InventoryItemRow = {
   id: string;
@@ -33,10 +32,11 @@ type InventoryItemRow = {
   limitations: unknown;
   sources: unknown;
   tags: string[] | null;
+  related_units: string[] | null;
+  related_missions: string[] | null;
+  related_capabilities: string[] | null;
+  related_insights: string[] | null;
 };
-
-export type HangarReadSource = 'postgres' | 'static';
-export type HangarFallbackReason = 'not-configured' | 'postgres-error';
 
 export interface InventoryItemsRead {
   source: HangarReadSource;
@@ -79,7 +79,40 @@ const INVENTORY_ITEMS_SQL = `
     COALESCE(
       array_remove(array_agg(DISTINCT tag.name) FILTER (WHERE tag.namespace = 'tag'), NULL),
       ARRAY[]::text[]
-    ) AS tags
+    ) AS tags,
+    COALESCE(
+      (
+        SELECT array_agg(DISTINCT s.host_asset_id ORDER BY s.host_asset_id)
+        FROM loadout_assignments la
+        JOIN sockets s ON s.id = la.socket_id
+        WHERE la.asset_id = a.id
+      ),
+      ARRAY[]::text[]
+    ) AS related_units,
+    COALESCE(
+      (
+        SELECT array_agg(DISTINCT mr.mission_id ORDER BY mr.mission_id)
+        FROM mission_requisitions mr
+        WHERE mr.asset_id = a.id
+      ),
+      ARRAY[]::text[]
+    ) AS related_missions,
+    COALESCE(
+      (
+        SELECT array_agg(DISTINCT ac.capability_id ORDER BY ac.capability_id)
+        FROM asset_capabilities ac
+        WHERE ac.asset_id = a.id
+      ),
+      ARRAY[]::text[]
+    ) AS related_capabilities,
+    COALESCE(
+      (
+        SELECT array_agg(DISTINCT ia.insight_id ORDER BY ia.insight_id)
+        FROM insight_assets ia
+        WHERE ia.asset_id = a.id
+      ),
+      ARRAY[]::text[]
+    ) AS related_insights
   FROM assets a
   JOIN asset_groups ag ON ag.asset_id = a.id
   JOIN groups bay_group ON bay_group.id = ag.group_id AND bay_group.kind = 'bay'
@@ -102,23 +135,9 @@ const INVENTORY_ITEMS_SQL = `
   ORDER BY a.name;
 `;
 
-function isBayId(value: string): value is BayId {
-  return BAY_IDS.includes(value as BayId);
-}
-
-function isInventoryItemStatus(value: string): value is InventoryItemStatus {
-  return ITEM_STATUSES.includes(value as InventoryItemStatus);
-}
-
-function numberOrNull(value: string | number | null) {
-  if (value === null) return null;
-  const number = typeof value === 'number' ? value : Number(value);
-  return Number.isFinite(number) ? number : null;
-}
-
 function specRows(value: unknown): SpecRow[] {
-  if (!Array.isArray(value)) return [];
-  return value.filter(
+  return objectArray(
+    value,
     (row): row is SpecRow =>
       Boolean(row) &&
       typeof row === 'object' &&
@@ -127,16 +146,9 @@ function specRows(value: unknown): SpecRow[] {
   );
 }
 
-function stringArray(value: unknown): string[] | undefined {
-  if (!Array.isArray(value)) return undefined;
-  const strings = value.filter((item): item is string => typeof item === 'string');
-  return strings.length ? strings : undefined;
-}
-
 function sourceRecords(value: unknown): SourceRecord[] | undefined {
-  if (!Array.isArray(value)) return undefined;
-
-  const records = value.filter(
+  const records = objectArray(
+    value,
     (row): row is SourceRecord =>
       Boolean(row) &&
       typeof row === 'object' &&
@@ -152,10 +164,8 @@ function sourceRecords(value: unknown): SourceRecord[] | undefined {
 }
 
 export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
-  if (!isBayId(row.bay)) throw new Error(`Invalid bay id from hangar DB: ${row.bay}`);
-  if (!isInventoryItemStatus(row.status)) {
-    throw new Error(`Invalid inventory item status from hangar DB: ${row.status}`);
-  }
+  const bay = enumValue(row.bay, BAY_IDS, 'bay id');
+  const status = enumValue(row.status, ITEM_STATUSES, 'inventory item status');
 
   const priceUs = numberOrNull(row.price_us);
   const priceImport = numberOrNull(row.price_import);
@@ -169,9 +179,9 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
     name: row.name,
     manufacturer: row.manufacturer ?? undefined,
     model: row.model ?? undefined,
-    bay: row.bay,
+    bay,
     category: row.category ?? 'Uncategorized',
-    status: row.status,
+    status,
     summary: row.summary ?? '',
     description: row.description ?? '',
     planningNotes: row.planning_notes ?? undefined,
@@ -179,6 +189,10 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
     price,
     quantity: row.quantity ?? undefined,
     tags: stringArray(row.tags),
+    relatedUnits: stringArray(row.related_units),
+    relatedMissions: stringArray(row.related_missions),
+    relatedCapabilities: stringArray(row.related_capabilities),
+    relatedInsights: stringArray(row.related_insights),
     sources: sourceRecords(row.sources),
     limitations: stringArray(row.limitations),
     acquired: row.acquired ?? undefined,
@@ -196,26 +210,15 @@ export async function readInventoryItemsFromPostgres(client: Queryable) {
 }
 
 export async function getInventoryItems(): Promise<InventoryItemsRead> {
-  try {
-    const pool = await getHangarPool();
-    if (!pool) {
-      return {
-        source: 'static',
-        fallbackReason: 'not-configured',
-        items: hangarData.items,
-      };
-    }
+  const read = await readWithStaticFallback({
+    label: 'inventory items',
+    staticData: hangarData.items,
+    readFromPostgres: readInventoryItemsFromPostgres,
+  });
 
-    return {
-      source: 'postgres',
-      items: await readInventoryItemsFromPostgres(pool),
-    };
-  } catch (error) {
-    console.warn('Hangar Postgres read failed; falling back to static inventory spine.', error);
-    return {
-      source: 'static',
-      fallbackReason: 'postgres-error',
-      items: hangarData.items,
-    };
-  }
+  return {
+    source: read.source,
+    fallbackReason: read.fallbackReason,
+    items: read.data,
+  };
 }
