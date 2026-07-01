@@ -74,9 +74,18 @@ const THEME_LABELS: Record<string, string> = {
   topology: 'TOP',
 };
 
+const FALLBACK_LABELS: Record<string, string> = {
+  'not-configured': 'NOT CFG',
+  'postgres-error': 'PG ERR',
+};
+
 export function Shell({ children }: { readonly children: ReactNode }) {
-  const { data, theme, setTheme } = useHangar();
+  const { data, inventoryRead, theme, setTheme } = useHangar();
   const pathname = usePathname();
+  const inventoryStatus =
+    inventoryRead.source === 'postgres'
+      ? 'PG'
+      : `STATIC${inventoryRead.fallbackReason ? ` · ${FALLBACK_LABELS[inventoryRead.fallbackReason]}` : ''}`;
 
   return (
     <div className="relative flex min-h-screen overflow-x-hidden text-ink">
@@ -170,6 +179,15 @@ export function Shell({ children }: { readonly children: ReactNode }) {
           <div className="mt-2 flex items-center gap-1.5 font-mono text-[10px] text-ink-dim">
             <span className="h-1.5 w-1.5 animate-pulse-trace rounded-full bg-signal-ok" />
             SYNC · {data.meta.updated}
+          </div>
+          <div className="mt-1 flex items-center gap-1.5 font-mono text-[10px] text-ink-dim">
+            <span
+              className={clsx(
+                'h-1.5 w-1.5 rounded-full',
+                inventoryRead.source === 'postgres' ? 'bg-signal-ok' : 'bg-amber',
+              )}
+            />
+            DATA · {inventoryStatus}
           </div>
         </div>
       </aside>

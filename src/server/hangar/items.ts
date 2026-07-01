@@ -16,7 +16,7 @@ type InventoryItemRow = {
   name: string;
   manufacturer: string | null;
   model: string | null;
-  bay: string;
+  bay_groups: string[] | null;
   category: string | null;
   status: string;
   provenance: string | null;
@@ -61,7 +61,7 @@ const INVENTORY_ITEMS_SQL = `
     a.name,
     a.manufacturer,
     a.model,
-    ag.group_id AS bay,
+    bay_membership.bay_groups,
     category.name AS category,
     a.status::text AS status,
     a.provenance,
@@ -114,8 +114,12 @@ const INVENTORY_ITEMS_SQL = `
       ARRAY[]::text[]
     ) AS related_insights
   FROM assets a
-  JOIN asset_groups ag ON ag.asset_id = a.id
-  JOIN groups bay_group ON bay_group.id = ag.group_id AND bay_group.kind = 'bay'
+  JOIN LATERAL (
+    SELECT array_agg(DISTINCT bay_group.id ORDER BY bay_group.id) AS bay_groups
+    FROM asset_groups ag
+    JOIN groups bay_group ON bay_group.id = ag.group_id AND bay_group.kind = 'bay'
+    WHERE ag.asset_id = a.id
+  ) bay_membership ON true
   LEFT JOIN LATERAL (
     SELECT t.name
     FROM asset_tags item_category
@@ -130,7 +134,7 @@ const INVENTORY_ITEMS_SQL = `
     AND a.status::text = ANY($1)
   GROUP BY
     a.id,
-    ag.group_id,
+    bay_membership.bay_groups,
     category.name
   ORDER BY a.name;
 `;
@@ -164,7 +168,13 @@ function sourceRecords(value: unknown): SourceRecord[] | undefined {
 }
 
 export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
-  const bay = enumValue(row.bay, BAY_IDS, 'bay id');
+  const bayGroups = stringArray(row.bay_groups) ?? [];
+  if (bayGroups.length !== 1) {
+    const detail = bayGroups.length ? bayGroups.join(', ') : 'none';
+    throw new Error(`Expected exactly one bay group for inventory item "${row.id}"; got ${detail}.`);
+  }
+
+  const bay = enumValue(bayGroups[0], BAY_IDS, 'bay id');
   const status = enumValue(row.status, ITEM_STATUSES, 'inventory item status');
 
   const priceUs = numberOrNull(row.price_us);

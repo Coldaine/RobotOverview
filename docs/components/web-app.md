@@ -2,7 +2,7 @@
 title: Web App — Next.js Server Layer
 audience: AI agents and operators working on the Hangar frontend / server layer
 status: living
-last_updated: 2026-06-30
+last_updated: 2026-07-01
 ---
 
 # Web App — Next.js Server Layer
@@ -67,9 +67,10 @@ GET /api/hangar/preflight
 
 This proves server-only credentials, query shape, normalized-to-UI mapping, and fallback behavior.
 The root layout reads inventory items through this server boundary at request time and seeds the client
-store with those records; if Postgres is not configured or reachable, the same boundary falls back to
-`hangar.ts`. Broader UI/data migration should continue one surface at a time while keeping rollback to
-`hangar.ts` straightforward.
+store with those records plus the read source/fallback metadata; if Postgres is not configured or
+reachable, the same boundary falls back to `hangar.ts` and the Shell operator footer shows that static
+fallback state. Broader UI/data migration should continue one surface at a time while keeping rollback
+to `hangar.ts` straightforward.
 
 ## Caching
 

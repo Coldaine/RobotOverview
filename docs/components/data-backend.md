@@ -15,14 +15,14 @@ last_updated: 2026-07-01
 ## Current reality (read this first)
 
 - **`src/data/hangar.ts` is the bootstrap dataset and rollback/fallback spine.** Inventory items now come through the server-side Postgres read path when configured; remaining Hangar surfaces still use the bootstrap data while they migrate.
-- The **Postgres `hangar` schema is the authoritative target for the master-inventory spine.** The cluster DB is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked for inventory items, and serving the first browser-facing inventory read path. The local standup proves shape only; it is not the production target.
+- The **Postgres `hangar` schema is the authoritative target for the master-inventory spine.** The cluster DB is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked for inventory items, and serving the first browser-facing inventory read path. The local standup proves shape only; it is not the production target. Cluster-level backup objects and WAL archiving are owned by `coldaine-k8cluster`; do not claim the restore-test gate is complete here unless that repo records the restore proof.
 - The first app read-path foundation is live for inventory items: `GET /api/hangar/items` attempts a server-side Postgres read when structured `HANGAR_DB_*` config is present, and falls back to `src/data/hangar.ts` when it is not configured or the read fails. `HANGAR_DATABASE_URL`/`DATABASE_URL` remain compatibility paths, but the preferred contract is not a credential-bearing URL. This is the first production read lane, not the full UI/data cutover yet.
 - The **target deployment database is not provisioned or governed inside RobotOverview.** It is a logical Hangar database in `C:\_projects\coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`databases/pg18.yaml` + `docs/connection-registry.md`). RobotOverview owns the app schema/migrations and app behavior; the cluster repo owns provisioning, roles/secrets, backups, and restore gates.
 - This staging is intentional, per the North Star pillar **"do not prescribe before populating"**: the relational shape was designed only after there was real content to fit it to.
 
 ## The model in one paragraph
 
-One unified **`assets`** pool holds everything owned, distinguished by `kind`/`status`/`lifecycle` enums. Flexible **`groups`** (bay / kit / location / project) layer over the pool via the `asset_groups` junction, so **bays are group-views, not silos**. The base-builder spine is typed: assets expose **`interface_types`** via `asset_interfaces`; **`sockets`** accept interface types via `socket_accepts`; an asset is a candidate for a socket when those sets intersect; and equipping is a row in **`loadout_assignments`**. Power/mass/price are typed columns so mission budgets aggregate; JSONB is reserved for display-only leaves (`specs`, `links`, etc.).
+One unified **`assets`** pool holds everything owned, distinguished by `kind`/`status`/`lifecycle` enums. Flexible **`groups`** (bay / kit / location / project) layer over the pool via the `asset_groups` junction, so **bays are group-views, not silos**. The current app read model still treats `bay` as a single field: every browser-facing inventory asset must have exactly one `kind='bay'` group, while additional grouping should use `kit`, `location`, `project`, or tags until the UI model becomes explicitly multi-bay. The base-builder spine is typed: assets expose **`interface_types`** via `asset_interfaces`; **`sockets`** accept interface types via `socket_accepts`; an asset is a candidate for a socket when those sets intersect; and equipping is a row in **`loadout_assignments`**. Power/mass/price are typed columns so mission budgets aggregate; JSONB is reserved for display-only leaves (`specs`, `links`, etc.).
 
 ## Key design decisions
 
@@ -33,7 +33,7 @@ These were crystallized in a deep-interview design session (2026-06-26) and real
 | 1 | Asset modeling | One `assets` table (single-table inheritance) + JSONB leaves | Kinds share most fields; the dominant query is "the whole pool"; class-table joins are not worth it at personal scale. |
 | 2 | Power / mass / price | **Typed columns** | Mission budgets must `SUM`/aggregate these against `mission_constraints`. |
 | 3 | Specs / links | JSONB | Heterogeneous, display-only fields. |
-| 4 | Grouping | **First-class `groups`** (`bay`/`kit`/`location`/`project`) + `asset_groups` | Multi-membership, kit bundles, group metadata; bays fall out as views. |
+| 4 | Grouping | **First-class `groups`** (`bay`/`kit`/`location`/`project`) + `asset_groups` | Multi-membership for kits, locations, projects, and other grouping metadata; exactly one bay group per app-facing asset until the UI model is deliberately made multi-bay. |
 | 5 | Socket compatibility | **Dedicated `interface_types`** taxonomy | Physical mating is typed and finite; keep it separate from loose grouping tags. |
 | 6 | Typed vs tagged | kind/status/lifecycle = enums; tags = flexible | Integrity on single-valued dimensions, flexibility on multi-valued dimensions. |
 | 7 | Wishlist | Fold into `assets` (`lifecycle`) + 1:1 `wishlist_meta` | Graduation = a status flip; the want list shares the one pool. |
@@ -81,7 +81,7 @@ There are two different “where” answers, and future work must not confuse th
 | Context | Location | Meaning |
 |---|---|---|
 | Local proof / development | A separate `hangar` database inside the existing local `techdeals-postgres18` container (`:54329`) | Historical/proof-only validation of `schema.sql` and `seed.sql`. Do not start local containers on `icarus-laptop`; use a remote proof host or the cluster path for new verification. Not the deployment target. |
-| Target deployment | A logical `hangar` database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`pg18-rw.data-platform.svc.cluster.local:5432`) | The real target. It is declared in the cluster repo, listed in the connection registry, wired through Doppler/ESO, and covered by the pg18/Garage backup and restore path. |
+| Target deployment | A logical `hangar` database in `coldaine-k8cluster`'s `pg18` CloudNativePG cluster (`pg18-rw.data-platform.svc.cluster.local:5432`) | The real target. It is declared in the cluster repo, listed in the connection registry, wired through Doppler/ESO, and relies on the cluster-owned pg18/Garage backup and restore discipline. |
 
 The cluster contract is:
 
@@ -111,12 +111,13 @@ The current server boundary is intentionally small:
 
 - `src/server/hangar/db.ts` lazily creates a `pg` pool only after a request asks for DB-backed data. It prefers a structured `HANGAR_DB_*` connection object and keeps `HANGAR_DATABASE_URL`/`DATABASE_URL` only for compatibility.
 - `src/server/hangar/queryable.ts`, `read-model.ts`, and `validators.ts` hold the shared repository contracts: the minimal query client shape, Postgres-with-static-fallback behavior, and row validation/coercion helpers. New DB-backed surfaces should reuse these instead of copying the inventory-item fallback pattern.
-- `src/server/hangar/items.ts` maps the normalized `assets`/`groups`/`tags`/junction shape back into the existing `InventoryItem` read model, including relationship arrays from loadout assignments, mission requisitions, asset capabilities, and insight references where present.
+- `src/server/hangar/items.ts` maps the normalized `assets`/`groups`/`tags`/junction shape back into the existing `InventoryItem` read model, including relationship arrays from loadout assignments, mission requisitions, asset capabilities, and insight references where present. It also enforces the current app invariant that an inventory item has exactly one bay group; missing or duplicate bay groups fail the Postgres read and use the static fallback rather than rendering duplicated items.
 - `src/app/api/hangar/items/route.ts` exposes a read-only smoke-test route with `{ source, fallbackReason, count, items }`.
 - `src/app/api/hangar/preflight/route.ts` exposes the no-fallback DB reachability gate. `GET /api/hangar/preflight` returns HTTP `200` only when the configured Hangar Postgres endpoint answers `SELECT 1`; otherwise it returns HTTP `503` with `not-configured`, `config-error`, or `unreachable`.
 - `src/app/layout.tsx` reads inventory items through the same server path at request time and passes
-  them into the client store, so the browser-facing Items station can use Postgres-backed data while
-  retaining the static fallback if the DB is unavailable.
+  the records plus `{ source, fallbackReason }` into the client store, so the browser-facing Items
+  station can use Postgres-backed data while the Shell exposes static fallback state if the DB is
+  unavailable.
 
 This keeps `next build` safe without database secrets, gives the deployment path a simple verification target, and separates "can reach Postgres" from "can fall back to static data." Inventory items are the first browser-facing read cutover; broader Hangar data still comes from `hangar.ts` until each surface has its own seed/parity/rollback proof.
 
@@ -126,6 +127,6 @@ This keeps `next build` safe without database secrets, gives the deployment path
 
 ## Deferred (by design)
 
-- **Remaining surface cutovers**: the pg18 cluster-level backup/restore gate is verified; each additional Hangar surface still needs its own seed/parity/rollback proof before it stops using `hangar.ts`.
+- **Remaining surface cutovers**: each additional Hangar surface still needs its own seed/parity/rollback proof before it stops using `hangar.ts`. Treat cluster backup and restore-test status as cluster-owned evidence from `coldaine-k8cluster`, not as a RobotOverview-local assumption.
 - **Broader app / ORM wiring**: the first direct `pg` read path exists, but an ORM choice remains deferred. If Drizzle is introduced, its schema must map to `db/hangar/schema.sql`, and the server-side data-access pattern is described in [`web-app.md`](web-app.md).
 - **Retiring `hangar.ts`** as the runtime source — only after every Hangar surface has moved through seed/parity/read-cutover gates and rollback is understood. Inventory items are only the first read surface.

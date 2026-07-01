@@ -123,7 +123,7 @@ describe('Hangar inventory Postgres read path', () => {
       name: 'Comet Q',
       manufacturer: 'GL.iNet',
       model: 'GL-RMQ1',
-      bay: 'network',
+      bay_groups: ['network'],
       category: 'Remote KVM',
       status: 'on-order',
       provenance: 'owner',
@@ -167,6 +167,37 @@ describe('Hangar inventory Postgres read path', () => {
     });
   });
 
+  it('rejects inventory rows without exactly one bay group', () => {
+    expect(() =>
+      mapInventoryItemRow({
+        id: 'ambiguous-item',
+        name: 'Ambiguous Item',
+        manufacturer: null,
+        model: null,
+        bay_groups: ['network', 'robotics'],
+        category: null,
+        status: 'owned',
+        provenance: 'owner',
+        summary: null,
+        description: null,
+        planning_notes: null,
+        acquired: null,
+        horizon: null,
+        quantity: 1,
+        price_us: null,
+        price_import: null,
+        specs: [],
+        limitations: [],
+        sources: [],
+        tags: [],
+        related_units: [],
+        related_missions: [],
+        related_capabilities: [],
+        related_insights: [],
+      }),
+    ).toThrow('Expected exactly one bay group for inventory item "ambiguous-item"; got network, robotics.');
+  });
+
   it('queries only peripheral assets with inventory item statuses', async () => {
     const calls: Array<{ sql: string; values?: unknown[] }> = [];
     const row = {
@@ -174,7 +205,7 @@ describe('Hangar inventory Postgres read path', () => {
       name: 'LWR02 All-in-One Wireless Presence Sensor',
       manufacturer: 'GL.iNet / Lafaer',
       model: 'LWR02',
-      bay: 'home',
+      bay_groups: ['home'],
       category: 'Presence Sensor',
       status: 'on-order',
       provenance: 'owner',
@@ -204,6 +235,7 @@ describe('Hangar inventory Postgres read path', () => {
 
     expect(calls).toHaveLength(1);
     expect(calls[0].sql).toContain("WHERE a.kind = 'peripheral'");
+    expect(calls[0].sql).toContain('bay_membership.bay_groups');
     expect(calls[0].sql).toContain('related_units');
     expect(calls[0].sql).toContain('related_missions');
     expect(calls[0].sql).toContain('related_capabilities');

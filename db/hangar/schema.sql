@@ -1,6 +1,6 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 -- THE HANGAR — master-inventory relational schema  (PostgreSQL 18)
--- Database: hangar  (a separate DB inside the techdeals-postgres18 instance)
+-- Database: hangar  (logical DB in the pg18 cluster; local standup is proof-only)
 -- Source design: .omc/specs/deep-interview-hangar-master-inventory.md
 --
 -- Principles: one unified `assets` table (single-table inheritance); typed columns
@@ -89,7 +89,9 @@ CREATE TABLE asset_tags (
   PRIMARY KEY (asset_id, tag_id)
 );
 
--- first-class groups: bays/kits/locations/projects are all groups (revision #4)
+-- first-class groups: bays/kits/locations/projects are all groups (revision #4).
+-- App-facing assets currently require exactly one bay group; extra membership belongs in
+-- kit/location/project groups or tags until the UI read model becomes multi-bay.
 CREATE TABLE groups (
   id       TEXT PRIMARY KEY,
   kind     group_kind NOT NULL,

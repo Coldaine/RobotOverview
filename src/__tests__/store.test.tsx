@@ -212,15 +212,30 @@ describe('item() accessor', () => {
       name: 'DB-backed item',
     };
     const customWrapper = ({ children }: { children: React.ReactNode }) => (
-      <HangarProvider initialItems={[dbItem]}>{children}</HangarProvider>
+      <HangarProvider
+        initialItems={[dbItem]}
+        initialInventoryRead={{ source: 'postgres' }}
+      >
+        {children}
+      </HangarProvider>
     );
 
     const { result } = renderHook(() => useHangar(), { wrapper: customWrapper });
 
     expect(result.current.items).toEqual([dbItem]);
     expect(result.current.data.items).toEqual([dbItem]);
+    expect(result.current.inventoryRead).toEqual({ source: 'postgres' });
     expect(result.current.item('db-backed-item')?.name).toBe('DB-backed item');
     expect(result.current.item(hangarData.items[0].id)).toBeUndefined();
+  });
+
+  it('exposes static inventory fallback status when no server read status is supplied', () => {
+    const { result } = renderHook(() => useHangar(), { wrapper });
+
+    expect(result.current.inventoryRead).toEqual({
+      source: 'static',
+      fallbackReason: 'not-configured',
+    });
   });
 
   it('resolves a known item id to its record', () => {

@@ -41,6 +41,10 @@ const WISHLIST_STATUSES: WishlistItem['status'][] = [
   'rejected',
 ];
 export type WishlistStatus = WishlistItem['status'];
+export type InventoryReadStatus = {
+  source: 'postgres' | 'static';
+  fallbackReason?: 'not-configured' | 'postgres-error';
+};
 // User overrides layered over the static spine — keep hangarData immutable.
 type ObjectiveOverrides = Record<string, Record<number, boolean>>; // missionId -> objIdx -> done
 type WishStatusOverrides = Record<string, WishlistStatus>; // wishlist id -> status
@@ -216,6 +220,7 @@ interface HangarStore {
   data: HangarData;
   units: Unit[];
   items: InventoryItem[];
+  inventoryRead: InventoryReadStatus;
   // Active UI theme
   theme: ThemeMode;
   setTheme: (theme: ThemeMode) => void;
@@ -260,9 +265,11 @@ const Ctx = createContext<HangarStore | null>(null);
 export function HangarProvider({
   children,
   initialItems,
+  initialInventoryRead,
 }: {
   children: ReactNode;
   initialItems?: InventoryItem[];
+  initialInventoryRead?: InventoryReadStatus;
 }) {
   const [theme, setTheme] = useState<ThemeMode>(() => readStoredTheme());
   const [lensMissionId, setLensMissionId] = useState<string | null>(() => readStoredLensMissionId());
@@ -383,6 +390,10 @@ export function HangarProvider({
   };
 
   const value = useMemo<HangarStore>(() => {
+    const inventoryRead: InventoryReadStatus = initialInventoryRead ?? {
+      source: initialItems ? 'postgres' : 'static',
+      fallbackReason: initialItems ? undefined : 'not-configured',
+    };
     const data = { ...hangarData, items: initialItems ?? hangarData.items, units };
     const byId = <T extends { id: string }>(arr: T[]) => {
       const m = new Map<string, T>();
@@ -402,6 +413,7 @@ export function HangarProvider({
       data,
       units,
       items: data.items,
+      inventoryRead,
       theme,
       setTheme,
       lensMissionId,
@@ -441,7 +453,7 @@ export function HangarProvider({
       openDrawer,
       closeDrawer,
     };
-  }, [theme, lensMissionId, source, spotlightId, units, initialItems, objectiveOverrides, wishStatusOverrides, localInsights, drawerOpen, drawerSlotContext]);
+  }, [theme, lensMissionId, source, spotlightId, units, initialItems, initialInventoryRead, objectiveOverrides, wishStatusOverrides, localInsights, drawerOpen, drawerSlotContext]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
