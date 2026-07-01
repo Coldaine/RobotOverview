@@ -11,7 +11,7 @@ export const hangarData: HangarData = {
     title: 'THE HANGAR',
     operator: 'Patrick MacLyman',
     codename: 'FLEET COMMAND',
-    updated: '2026-05-31',
+    updated: '2026-07-01',
   },
 
   bays: [
@@ -841,9 +841,25 @@ export const hangarData: HangarData = {
       confidence: 'medium',
       capturedAt: '2026-05-31',
     },
+    {
+      id: 'ghcr-buildrun-noise',
+      title: 'Diagnose GHCR from live BuildRuns, not stale failures',
+      body: 'On 2026-07-01 the live ExternalSecret-backed GHCR push and pull secrets were synced and shaped correctly, and current Shipwright BuildRuns pushed immutable image digests. Old failed BuildRuns were Dockerfile path mistakes and cleanup noise, not evidence that the GHCR tokens were broken.',
+      tags: ['deployment', 'shipwright', 'ghcr', 'kubernetes'],
+      bay: 'compute',
+      confidence: 'high',
+      source: 'coldaine-k8cluster live kubectl inspection',
+      capturedAt: '2026-07-01',
+    },
   ],
 
   activity: [
+    {
+      id: 'a6',
+      at: '2026-07-01T14:25:43Z',
+      kind: 'insight',
+      text: 'Shipwright/GHCR live status captured; both repos now have bootstrap tooling entrypoints.',
+    },
     { id: 'a1', at: '2026-05-31T16:15:00Z', kind: 'mission', text: 'Mission: Undercroft opened — status Planning.' },
     { id: 'a2', at: '2026-05-31T16:10:00Z', kind: 'insight', text: 'Logged 4 insights on crawlspace lighting + offload.' },
     { id: 'a3', at: '2026-05-31T15:50:00Z', kind: 'researched', text: 'Jetson tiering mapped: Orin = Ampere, Thor = Blackwell.' },
