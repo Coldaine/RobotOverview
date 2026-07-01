@@ -2,7 +2,7 @@
 title: Hangar Documentation Workflow
 audience: AI agents and operators updating RobotOverview docs
 status: living
-last_updated: 2026-06-30
+last_updated: 2026-07-01
 ---
 
 # Hangar Documentation Workflow
@@ -15,9 +15,18 @@ last_updated: 2026-06-30
 Keep current state from spreading everywhere. A status change should update the one document that
 owns that status, then add only short summaries and links where another document needs context.
 
-## When To Use This
+RobotOverview does not currently have a central `STATUS.md` or `PROGRESS.md`. Status is distributed
+by subsystem owner: data state in `docs/components/data-backend.md`, deployment state in
+`docs/deploy/deployment.md`, schema/seed proof in `db/hangar/standup.md`, and active migration plans
+in their plan documents. Add a central status/progress doc only as an explicit project decision.
 
-Use this workflow before:
+## Mandatory Read
+
+Read this workflow before any documentation update, including small edits. For typo-only or formatting-only
+changes, the full workflow may reduce to "confirmed no ownership or status impact," but the role map still
+applies.
+
+Use the full workflow before:
 
 - moving or consolidating docs;
 - updating status after code, cluster, deploy, schema, seed, or runtime behavior changes;
@@ -52,6 +61,14 @@ Use this workflow before:
 5. **Resolve conflicts immediately.** If two docs disagree, nominate the owner, update it, and reduce the other doc to a summary/link or mark it historical.
 6. **Check for drift.** Search for repeated status phrases before finishing, especially `hangar.ts`, `pg18`, `Shipwright`, `superseded`, `current state`, and `source of truth`.
 7. **Validate the edit.** Run `git diff --check`. Run code checks only when code, generated data, or executable docs changed.
+
+## PR Template Purpose
+
+The pull request template is a behavioral checkpoint, not just a formatting artifact. Required
+questions make agents rehearse the work they are most likely to forget: reviewing the whole branch,
+considering whether the PR should be split, accounting for independent/subagent review, documenting
+docs updates, checking superseded guidance, and recording validation. A valid answer can be "not
+needed for this narrow change," but the decision must be explicit.
 
 ## Status Ownership Examples
 

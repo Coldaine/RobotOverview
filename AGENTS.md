@@ -3,7 +3,7 @@ title: Hangar AGENTS
 date: 2026-06-17
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-06-30
+last_confirmed: 2026-07-01
 ---
 
 # AGENTS.md
@@ -30,7 +30,7 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 ## Documentation Ownership
 
 - Do not spread live/current state across every doc. Put the full status in the one owning doc, then use a one-line summary and link elsewhere.
-- Use `docs/documentation-workflow.md` before moving, summarizing, or reconciling project docs.
+- Read `docs/documentation-workflow.md` before any documentation update. It owns the mandatory workflow for doc ownership, status placement, ambiguity handling, and drift checks.
 - `AGENTS.md` should stay as routing guidance plus durable invariants. Update it only when ownership, commands, or hard project rules change.
 
 ## Tech Stack & Commands
@@ -55,3 +55,4 @@ The Hangar is a high-fidelity command center for all physical tech and hobbies. 
 
 - Open development is a stacked PR chain. Do not put new work directly on `main` when the active stack is ahead.
 - For follow-on feature work, branch from the newest relevant stack tip unless the user explicitly chooses a different base.
+- Fill out the pull request template intentionally. Its checklist is a required behavioral checkpoint for branch scope, review, split rationale, docs, cleanup, and validation.
