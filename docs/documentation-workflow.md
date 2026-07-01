@@ -44,6 +44,7 @@ Use the full workflow before:
 | `docs/components/data-backend.md` | Data-model current state, `hangar.ts` fallback/cutover status, schema/seed, Hangar DB target summary | Next.js runtime behavior beyond the data boundary, cluster provisioning truth |
 | `docs/components/web-app.md` | Next.js server/runtime behavior, app-side DB config, credential boundaries, routes/actions/caching | Full schema shape, cluster ownership, deployment mechanism |
 | `docs/components/connected-twin.md` | BEAST twin/wiring model and how it extends the data spine | BEAST operating procedure, bulk archive contents, cluster provisioning |
+| `docs/components/bootstrap.md` | Local tooling setup, command-surface boundaries, bootstrap profiles, postinstall behavior | Product intent, deployment status, app runtime/data behavior |
 | `docs/deploy/deployment.md` | Live deployment status and current deployment direction | Service identity rationale, detailed app schema, old GitOps mechanics |
 | `docs/deploy/hangar-service-boundary.md` | Stable service boundary, subdomain choice, cross-repo ownership | Live deployment mechanism details, superseded pipeline steps |
 | `docs/deploy/storage-and-twin-pivot-plan.md` | Open migration plan for object storage and twin pivot | Normative architecture after the plan is complete |
@@ -76,6 +77,7 @@ needed for this narrow change," but the decision must be explicit.
 |---|---|---|
 | DB schema, seed, `hangar.ts` fallback, or read-cutover status changes | `docs/components/data-backend.md`; `db/hangar/standup.md` if commands/proof changed | `AGENTS.md`, `docs/NORTH_STAR.md`, `docs/architecture.md` |
 | Next.js route, Server Component, runtime config, or credential behavior changes | `docs/components/web-app.md` | `docs/architecture.md`, `docs/components/data-backend.md` |
+| Local command surface, bootstrap profile, postinstall, or workstation-tooling changes | `docs/components/bootstrap.md`; `AGENTS.md` only for short routing/command summaries | `docs/architecture.md`, `docs/deploy/deployment.md` |
 | Cluster provisioning, role/secret, connection registry, backup, or restore status changes | `coldaine-k8cluster`; summarize the app-facing impact in `docs/components/data-backend.md` or `docs/deploy/deployment.md` | `AGENTS.md`, `docs/NORTH_STAR.md`, `docs/architecture.md` |
 | Deployment pipeline direction or live deploy status changes | `docs/deploy/deployment.md` | `docs/architecture.md`, `docs/deploy/hangar-service-boundary.md` |
 | Stable service/subdomain/cross-repo boundary changes | `docs/deploy/hangar-service-boundary.md` | `docs/deploy/deployment.md` |
