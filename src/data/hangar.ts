@@ -11,7 +11,7 @@ export const hangarData: HangarData = {
     title: 'THE HANGAR',
     operator: 'Patrick MacLyman',
     codename: 'FLEET COMMAND',
-    updated: '2026-06-30',
+    updated: '2026-07-01',
   },
 
   bays: [
@@ -760,6 +760,16 @@ export const hangarData: HangarData = {
       capturedAt: '2026-05-31',
     },
     {
+      id: 'wifi-tail',
+      title: 'WiFi 6 median is great; the tail is the enemy',
+      body: 'Local 5GHz / WiFi 6 gives 2–10 ms round trips, low-tens under contention — fine even for tight loops. The danger is the occasional 200 ms stall or half-second gap from roaming, contention, or noise. Design for the worst packet in the window.',
+      tags: ['network', 'latency', 'offload'],
+      bay: 'network',
+      units: ['workstation', 'unifi-aps'],
+      confidence: 'high',
+      capturedAt: '2026-05-31',
+    },
+    {
       id: 'video-device-path',
       title: 'Camera device paths can move after reboot',
       body: 'BEAST-01 video failed when the USB camera re-enumerated and Waveshare code kept opening hardcoded camera index 0. Use the stable /dev/v4l/by-id video-index0 path, or scan /dev/video* for the first readable capture device, then restart only the Flask app.',
@@ -769,16 +779,6 @@ export const hangarData: HangarData = {
       missions: ['undercroft'],
       confidence: 'high',
       capturedAt: '2026-06-30',
-    },
-    {
-      id: 'wifi-tail',
-      title: 'WiFi 6 median is great; the tail is the enemy',
-      body: 'Local 5GHz / WiFi 6 gives 2–10 ms round trips, low-tens under contention — fine even for tight loops. The danger is the occasional 200 ms stall or half-second gap from roaming, contention, or noise. Design for the worst packet in the window.',
-      tags: ['network', 'latency', 'offload'],
-      bay: 'network',
-      units: ['workstation', 'unifi-aps'],
-      confidence: 'high',
-      capturedAt: '2026-05-31',
     },
     {
       id: 'offload-split',
@@ -852,10 +852,31 @@ export const hangarData: HangarData = {
       confidence: 'medium',
       capturedAt: '2026-05-31',
     },
+    {
+      id: 'ghcr-buildrun-noise',
+      title: 'Diagnose GHCR from live BuildRuns, not stale failures',
+      body: 'On 2026-07-01 the live ExternalSecret-backed GHCR push and pull secrets were synced and shaped correctly, and current Shipwright BuildRuns pushed immutable image digests. Old failed BuildRuns were Dockerfile path mistakes and cleanup noise, not evidence that the GHCR tokens were broken.',
+      tags: ['deployment', 'shipwright', 'ghcr', 'kubernetes'],
+      bay: 'compute',
+      confidence: 'high',
+      source: 'coldaine-k8cluster live kubectl inspection',
+      capturedAt: '2026-07-01',
+    },
   ],
 
   activity: [
-    { id: 'a6', at: '2026-06-30T22:51:00Z', kind: 'insight', text: 'Restored BEAST-01 FPV stream after USB camera re-enumeration; patched camera path selection.' },
+    {
+      id: 'a-video-relock',
+      at: '2026-06-30T22:51:00Z',
+      kind: 'insight',
+      text: 'Restored BEAST-01 FPV stream after USB camera re-enumeration; patched camera path selection.',
+    },
+    {
+      id: 'a6',
+      at: '2026-07-01T14:25:43Z',
+      kind: 'insight',
+      text: 'Shipwright/GHCR live status captured; both repos now have bootstrap tooling entrypoints.',
+    },
     { id: 'a1', at: '2026-05-31T16:15:00Z', kind: 'mission', text: 'Mission: Undercroft opened — status Planning.' },
     { id: 'a2', at: '2026-05-31T16:10:00Z', kind: 'insight', text: 'Logged 4 insights on crawlspace lighting + offload.' },
     { id: 'a3', at: '2026-05-31T15:50:00Z', kind: 'researched', text: 'Jetson tiering mapped: Orin = Ampere, Thor = Blackwell.' },

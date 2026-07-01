@@ -1,5 +1,5 @@
 'use client';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -40,10 +40,19 @@ function shortcutValue(shortcut: UnitShortcut) {
 
 export default function UnitDetail() {
   const [copiedShortcutId, setCopiedShortcutId] = useState<string | null>(null);
+  const copiedShortcutTimeoutRef = useRef<number | null>(null);
   const params = useParams();
   const id = params?.id as string | undefined;
   const { unit, mission, insight, capability, openDrawer, updateSlot, theme } = useHangar();
   const u = id ? unit(id) : undefined;
+  const clearCopiedShortcutTimeout = () => {
+    if (copiedShortcutTimeoutRef.current !== null) {
+      clearTimeout(copiedShortcutTimeoutRef.current);
+      copiedShortcutTimeoutRef.current = null;
+    }
+  };
+
+  useEffect(() => clearCopiedShortcutTimeout, []);
 
   if (!u) {
     return (
@@ -65,12 +74,15 @@ export default function UnitDetail() {
 
     try {
       await navigator.clipboard.writeText(shortcut.command);
+      clearCopiedShortcutTimeout();
       setCopiedShortcutId(shortcut.id);
-      window.setTimeout(() => {
+      copiedShortcutTimeoutRef.current = window.setTimeout(() => {
         setCopiedShortcutId((current) => (current === shortcut.id ? null : current));
+        copiedShortcutTimeoutRef.current = null;
       }, 1600);
     } catch {
       setCopiedShortcutId(null);
+      clearCopiedShortcutTimeout();
     }
   };
 
@@ -391,7 +403,7 @@ export default function UnitDetail() {
                           <a
                             href={shortcut.url}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             aria-label={`Open ${shortcut.label}`}
                             className="btn btn-ghost h-8 shrink-0 px-2 text-[10px] tracking-[0.12em]"
                           >

@@ -1,17 +1,19 @@
 ---
-title: BEAST-01 Source Archive Digest
+title: BEAST-01 Source Archive / Provenance Digest
 audience: AI agents preserving BEAST-01 hardware provenance
 status: reference
-last_updated: 2026-06-29
+last_updated: 2026-07-01
 ---
 
-# BEAST-01 Source Archive Digest
+# BEAST-01 Source Archive / Provenance Digest
 
-Patrick assembled an offline Waveshare UGV Beast source archive on 2026-06-27 from official Waveshare file-server downloads and wiki pages. The raw local folder is `UGV-Beast-Archive/`, but that folder is intentionally gitignored because it contains large PDFs, ZIPs, CAD, firmware, and raw staging copies. Those binaries belong in object storage and should be referenced from the app/database by URL, not embedded in this repository or Docker image.
+Terminology note: in this repo, "archive" means preserved authoritative source material and provenance, not deprecated or historical content. Superseded material belongs under `docs/history/`; this digest is an active reference for Hangar's BEAST-01 hardware model and future source-document storage.
 
-## What the archive contains
+Patrick assembled an offline Waveshare UGV Beast source bundle on 2026-06-27 from official Waveshare file-server downloads and wiki pages. The raw local folder is `UGV-Beast-Archive/`, but that folder is intentionally gitignored because it contains large PDFs, ZIPs, CAD, firmware, and raw staging copies. Those binaries belong in object storage and should be referenced from the app/database by URL, not embedded in this repository or Docker image.
 
-The curated archive digest reported:
+## What the source bundle contains
+
+The curated source bundle digest reported:
 
 - official schematics, CAD, and firmware for the Waveshare UGV Beast and subsystems;
 - 24 binary files plus 7 captured wiki pages;
@@ -28,7 +30,7 @@ Major folders:
 | Servos | ST3215 manual, protocol manual, control-circuit schematic, CAD, firmware. |
 | Chassis CAD | UGV Beast PI4B and PT AI Kit 3D/STEP models. |
 | Jetson Orin | Jetson Orin PT kit model/drawing for Orin mounting work. |
-| Code / firmware | CP210x driver, ROS driver demo, ESP32 base firmware, downloaded repo archives. |
+| Code / firmware | CP210x driver, ROS driver demo, ESP32 base firmware, downloaded repository snapshots. |
 | Wiki pages | Offline markdown/html copies for Beast, driver board, UPS, ST3215, Orin kit, and ROS2 pages. |
 
 ## Key hardware findings to preserve
@@ -43,7 +45,7 @@ Major folders:
 
 ## Storage boundary
 
-Until object storage exists, keep raw archive files local and ignored. Once an S3/RGW-compatible bucket exists, upload the binaries there and store source rows/URLs in the Hangar database. App code should consume object URLs and metadata, not local archive paths.
+Until object storage exists, keep raw source files local and ignored. Once an S3/RGW-compatible bucket exists, upload the binaries there and store source rows/URLs in the Hangar database. App code should consume object URLs and metadata, not local paths.
 
 Related docs:
 

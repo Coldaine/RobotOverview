@@ -6,6 +6,7 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY package.json package-lock.json ./
+COPY tools/postinstall-bootstrap.mjs ./tools/postinstall-bootstrap.mjs
 RUN npm ci
 
 FROM deps AS builder

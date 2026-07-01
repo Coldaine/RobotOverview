@@ -3,7 +3,7 @@ title: Hangar North Star
 date: 2026-05-31
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-06-29
+last_confirmed: 2026-06-30
 ---
 
 # Hangar North Star
@@ -44,7 +44,7 @@ Directional, not testable.
 
 ## Resolved Questions
 
-- **In what form is the content stored?** For the current alpha, `src/data/hangar.ts` remains the bootstrap dataset and rollback/fallback spine. The PostgreSQL master-inventory store is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked for inventory items, and now serves the first browser-facing inventory read path while the remaining surfaces finish moving over. The model keeps a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) while leaving room for flexible, localized metadata (power budgets, pricing, specs).
+- **In what form is the content stored?** In a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) with room for flexible, localized metadata (power budgets, pricing, specs). `src/data/hangar.ts` bootstraps that model, and the current Postgres cutover state belongs in `docs/components/data-backend.md`.
 - **What is the model for what I own and its state?** Inventory is tracked as `Units`. Assembly is modeled via grouped `Loadout Slots` (e.g. Chassis Mounts, Driver Board Interfaces), allowing any unit to act as a parent chassis that other units plug into, replicating a base-builder upgrade tree.
 
 ## Open Questions
