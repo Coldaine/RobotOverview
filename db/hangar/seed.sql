@@ -279,6 +279,7 @@ INSERT INTO mission_objectives(mission_id,text,done) VALUES ('undercroft','Execu
 INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES ('undercroft','Onboard Power',22,25,'W');
 INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES ('undercroft','Payload',380,500,'g');
 INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES ('undercroft','Loadout Cost',35,120,'$');
+INSERT INTO mission_after_actions(mission_id,position,text) VALUES ('undercroft',0,'2026-07-01 OP-BEAST-CONTACT: Pi web UI, JupyterLab, Socket.IO command channel, and telemetry verified at 192.168.20.184. beast.local did not resolve from icarus-laptop; use the fixed IP until DNS/mDNS is repaired. Sent zero-speed stop only; no drive nudge performed.') ON CONFLICT DO NOTHING;
 INSERT INTO missions(id,code,name,status,objective,environment) VALUES ('perimeter-mapping','MSN-02','Perimeter Mapping','standby','Build a fused map of the property perimeter for future autonomy.','Outdoor, variable light, longer range.');
 INSERT INTO mission_requisitions(mission_id,asset_id) VALUES ('perimeter-mapping','beast') ON CONFLICT DO NOTHING;
 INSERT INTO mission_objectives(mission_id,text,done) VALUES ('perimeter-mapping','Select sensing path (depth cam vs LiDAR)',false);

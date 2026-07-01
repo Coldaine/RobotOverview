@@ -201,6 +201,9 @@ for (const m of H.missions) {
     w(`INSERT INTO mission_objectives(mission_id,text,done) VALUES (${S(m.id)},${S(o.text)},${B(o.done)});`);
   for (const c of m.constraints ?? [])
     w(`INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES (${S(m.id)},${S(c.label)},${N(c.value)},${N(c.budget)},${S(c.unit)});`);
+  (m.afterAction ?? []).forEach((text, index) =>
+    w(`INSERT INTO mission_after_actions(mission_id,position,text) VALUES (${S(m.id)},${index},${S(text)}) ON CONFLICT DO NOTHING;`),
+  );
 }
 
 // ── CAPABILITIES ────────────────────────────────────────────────────────────

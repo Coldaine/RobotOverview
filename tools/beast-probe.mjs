@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { io as createSocketClient } from 'socket.io-client';
+
 const DEFAULT_HOST = 'http://192.168.20.184:5000';
 const DEFAULT_TIMEOUT_MS = 8000;
 const DEFAULT_NUDGE_MS = 400;
@@ -155,14 +157,7 @@ async function fetchText(url, timeoutMs) {
   }
 }
 
-async function loadSocketIo(host, timeoutMs) {
-  const socketCode = await fetchText(`${host}/socket.io.js`, timeoutMs);
-  const socketModule = { exports: {} };
-  Function('module', 'exports', 'require', socketCode)(socketModule, socketModule.exports, undefined);
-  return socketModule.exports;
-}
-
-function connectAndRead({ io, host, config, options }) {
+function connectAndRead({ createSocket, host, config, options }) {
   const movementCommand = config.cmd_config?.cmd_movition_ctrl ?? 1;
   const fb = config.fb ?? {};
   const telemetryKeys = {
@@ -178,8 +173,8 @@ function connectAndRead({ io, host, config, options }) {
     baseLight: fb.base_light ?? 115,
   };
 
-  const jsonSocket = io(`${host}/json`, { transports: ['websocket', 'polling'], timeout: options.timeoutMs });
-  const ctrlSocket = io(`${host}/ctrl`, { transports: ['websocket', 'polling'], timeout: options.timeoutMs });
+  const jsonSocket = createSocket(`${host}/json`, { transports: ['websocket', 'polling'], timeout: options.timeoutMs });
+  const ctrlSocket = createSocket(`${host}/ctrl`, { transports: ['websocket', 'polling'], timeout: options.timeoutMs });
 
   return new Promise((resolve, reject) => {
     const result = {
@@ -187,9 +182,11 @@ function connectAndRead({ io, host, config, options }) {
       ctrlConnected: false,
       stopSent: false,
       nudgeSent: false,
+      nudgeStopSent: false,
       telemetry: null,
       rawKeys: [],
     };
+    let settled = false;
 
     const timeout = setTimeout(() => {
       cleanup();
@@ -202,7 +199,20 @@ function connectAndRead({ io, host, config, options }) {
       ctrlSocket.close();
     };
 
+    const maybeResolve = () => {
+      if (settled) return;
+      const commandPathReady = result.jsonConnected && (!options.sendStop || result.stopSent);
+      const nudgeComplete = !options.nudge || result.nudgeStopSent;
+      if (result.telemetry && commandPathReady && nudgeComplete) {
+        settled = true;
+        cleanup();
+        resolve(result);
+      }
+    };
+
     const fail = (error) => {
+      if (settled) return;
+      settled = true;
       cleanup();
       reject(error);
     };
@@ -220,8 +230,11 @@ function connectAndRead({ io, host, config, options }) {
         setTimeout(() => {
           jsonSocket.emit('json', { T: movementCommand, L: 0, R: 0 });
           result.stopSent = true;
+          result.nudgeStopSent = true;
+          maybeResolve();
         }, options.nudgeDurationMs);
       }
+      maybeResolve();
     });
 
     ctrlSocket.on('connect', () => {
@@ -232,8 +245,7 @@ function connectAndRead({ io, host, config, options }) {
     ctrlSocket.on('update', (data) => {
       result.telemetry = decodeTelemetry(data, telemetryKeys);
       result.rawKeys = Object.keys(data).sort();
-      cleanup();
-      resolve(result);
+      maybeResolve();
     });
 
     jsonSocket.on('connect_error', fail);
@@ -266,8 +278,7 @@ async function main() {
   const server = indexResponse.headers.get('server');
   const configText = await fetchText(`${options.host}/config`, options.timeoutMs);
   const config = parseSimpleYaml(configText);
-  const io = await loadSocketIo(options.host, options.timeoutMs);
-  const socketResult = await connectAndRead({ io, host: options.host, config, options });
+  const socketResult = await connectAndRead({ createSocket: createSocketClient, host: options.host, config, options });
 
   console.log(JSON.stringify({
     host: options.host,
@@ -284,6 +295,7 @@ async function main() {
       ctrlConnected: socketResult.ctrlConnected,
       stopSent: socketResult.stopSent,
       nudgeSent: socketResult.nudgeSent,
+      nudgeStopSent: socketResult.nudgeStopSent,
       movementCommand: config.cmd_config?.cmd_movition_ctrl ?? 1,
     },
     telemetry: socketResult.telemetry,

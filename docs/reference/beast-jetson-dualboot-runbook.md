@@ -71,9 +71,12 @@ done | tee waveshare-repos.txt
 Preferred backup: full NVMe image to another machine or external drive with enough space.
 
 ```bash
+set -o pipefail
+backup_stamp="$(date +%Y%m%d)"
+backup_image="beast-jp6-nvme0n1-${backup_stamp}.img.zst"
 sudo sgdisk --backup=beast-jp6-nvme0n1.gpt /dev/nvme0n1
-sudo dd if=/dev/nvme0n1 bs=64M status=progress conv=fsync | zstd -T0 -19 -o beast-jp6-nvme0n1-$(date +%Y%m%d).img.zst
-sha256sum beast-jp6-nvme0n1.gpt beast-jp6-nvme0n1-*.img.zst | tee beast-jp6-backup.sha256
+sudo dd if=/dev/nvme0n1 bs=64M status=progress conv=fsync | zstd -T0 -19 -o "$backup_image"
+sha256sum beast-jp6-nvme0n1.gpt "$backup_image" | tee beast-jp6-backup.sha256
 ```
 
 Minimum backup if a full image is impossible:
@@ -85,9 +88,11 @@ sudo rsync -aHAX --numeric-ids / /mnt/beast-backup/rootfs/ \
 
 sudo rsync -aHAX /boot/ /mnt/beast-backup/boot/
 sudo rsync -aHAX /etc/ /mnt/beast-backup/etc/
+sudo rsync -aHAX /data/ /mnt/beast-backup/data/ 2>/dev/null || true
 sudo rsync -aHAX ~/ugv_jetson/ /mnt/beast-backup/ugv_jetson/ 2>/dev/null || true
 sudo rsync -aHAX ~/ugv_ws/ /mnt/beast-backup/ugv_ws/ 2>/dev/null || true
-sudo find /data -xdev -maxdepth 4 -type f -printf '%p\t%s\n' | tee /mnt/beast-backup/data-manifest.tsv
+sudo rsync -aHAX ~/ugv_base_general/ /mnt/beast-backup/ugv_base_general/ 2>/dev/null || true
+sudo find /data -xdev -maxdepth 4 -type f -printf '%p\t%s\n' 2>/dev/null | tee /mnt/beast-backup/data-manifest.tsv
 ```
 
 The minimum backup must include `/boot`, `/etc`, Waveshare configs, service files,
@@ -181,10 +186,10 @@ sudo efibootmgr -v
 lsblk -f
 ```
 
-10. Mount `/data` by UUID or label. Do not mount JP6 `/home` into JP7.
-11. Reboot to JP6 from UEFI Boot Manager.
-12. Set JP6 as the default boot target with UEFI Boot Maintenance Manager or
-    `efibootmgr`, then reboot and confirm JP6 starts without manual selection.
+1. Mount `/data` by UUID or label. Do not mount JP6 `/home` into JP7.
+2. Reboot to JP6 from UEFI Boot Manager.
+3. Set JP6 as the default boot target with UEFI Boot Maintenance Manager or
+   `efibootmgr`, then reboot and confirm JP6 starts without manual selection.
 
 ## JP6 default boot check
 
