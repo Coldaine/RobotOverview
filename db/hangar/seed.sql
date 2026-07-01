@@ -84,6 +84,7 @@ INSERT INTO tags(namespace,name,label) VALUES ('tag','control','control') ON CON
 INSERT INTO tags(namespace,name,label) VALUES ('tag','network','network') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','latency','latency') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','operations','operations') ON CONFLICT (namespace,name) DO NOTHING;
+INSERT INTO tags(namespace,name,label) VALUES ('tag','telemetry','telemetry') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','architecture','architecture') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','sensing','sensing') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','calibration','calibration') ON CONFLICT (namespace,name) DO NOTHING;
@@ -356,6 +357,14 @@ INSERT INTO insight_missions(insight_id,mission_id) VALUES ('video-device-path',
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'video-device-path',id FROM tags WHERE namespace='tag' AND name='fpv' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'video-device-path',id FROM tags WHERE namespace='tag' AND name='camera' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'video-device-path',id FROM tags WHERE namespace='tag' AND name='operations' ON CONFLICT DO NOTHING;
+INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('beast-socket-control','Use Socket.IO and raw IP for BEAST control','On 2026-07-01, BEAST-01 answered at 192.168.20.184 with the Waveshare web UI, JupyterLab, Socket.IO /json control, and /ctrl telemetry. beast.local did not resolve from icarus-laptop, and the older /js?json HTTP helper returned 404 on this Pi build. Use tools/beast-probe.mjs for the safe zero-speed control check; only use its nudge mode when physically with the robot.','high','Live BEAST-01 probe from icarus-laptop','2026-07-01');
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('beast-socket-control','beast') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('beast-socket-control','pi5') ON CONFLICT DO NOTHING;
+INSERT INTO insight_missions(insight_id,mission_id) VALUES ('beast-socket-control','undercroft') ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-socket-control',id FROM tags WHERE namespace='tag' AND name='beast' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-socket-control',id FROM tags WHERE namespace='tag' AND name='control' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-socket-control',id FROM tags WHERE namespace='tag' AND name='telemetry' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-socket-control',id FROM tags WHERE namespace='tag' AND name='network' ON CONFLICT DO NOTHING;
 INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('offload-split','Offload the latency-tolerant, keep the reflexes onboard','Yes: training, VLM/LLM reasoning, heavy perception. Risky: tight visual servoing. No: collision avoidance / e-stop / motor PID — those stay onboard so a dropout never blinds the robot mid-motion.','high',NULL,'2026-05-31');
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('offload-split','workstation') ON CONFLICT DO NOTHING;
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('offload-split','beast') ON CONFLICT DO NOTHING;
@@ -400,6 +409,7 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('wifi-tail','beast') ON CONFLICT DO NOTHING;
 
 -- activity_log
+INSERT INTO activity_log(id,at,kind,text) VALUES ('a7','2026-07-01T18:32:19Z','mission','OP-BEAST-CONTACT verified BEAST-01 web, Jupyter, Socket.IO control, and telemetry over 192.168.20.184.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-video-relock','2026-06-30T22:51:00Z','insight','Restored BEAST-01 FPV stream after USB camera re-enumeration; patched camera path selection.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a6','2026-07-01T14:25:43Z','insight','Shipwright/GHCR live status captured; both repos now have bootstrap tooling entrypoints.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a1','2026-05-31T16:15:00Z','mission','Mission: Undercroft opened — status Planning.');

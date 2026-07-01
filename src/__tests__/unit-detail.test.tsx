@@ -31,11 +31,11 @@ describe('Unit detail command shortcuts', () => {
 
     expect(screen.getByText('Command Shortcuts')).toBeInTheDocument();
     expect(screen.getByText('Control UI')).toBeInTheDocument();
-    expect(screen.getByText('http://beast.local:5000')).toBeInTheDocument();
+    expect(screen.getByText('http://192.168.20.184:5000')).toBeInTheDocument();
     expect(screen.getByText('JupyterLab')).toBeInTheDocument();
-    expect(screen.getByText('http://beast.local:8888')).toBeInTheDocument();
+    expect(screen.getByText('http://192.168.20.184:8888')).toBeInTheDocument();
     expect(screen.getByText('Camera stream')).toBeInTheDocument();
-    expect(screen.getByText('http://beast.local:5000/video_feed')).toBeInTheDocument();
+    expect(screen.getByText('http://192.168.20.184:5000/video_feed')).toBeInTheDocument();
     expect(screen.getByText('SSH')).toBeInTheDocument();
     expect(screen.getByText('ssh ws@192.168.20.184')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Open Control UI' })).toHaveAttribute('target', '_blank');
