@@ -120,6 +120,16 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, even
    LLM-driven natural-language control. Bigger jump.
 
+## Jetson OS experimentation
+
+JetPack 7 dual-boot research is tracked outside this live ops page:
+
+- `docs/reference/beast-jetson-dualboot-evidence.md` — evidence and risk decision.
+- `docs/reference/beast-jetson-dualboot-runbook.md` — operator steps, recovery gate, and destructive restore path.
+
+JP6 remains the Beast-control default. Do not begin a JP7 install until the runbook's
+recovery gate is complete and a JP6 restore path has been tested.
+
 ## References
 
 - Waveshare UGV Beast — https://www.waveshare.com/ugv-beast.htm
