@@ -5,11 +5,14 @@ import type {
   Bay,
   BayId,
   Capability,
+  DocumentRef,
   HangarData,
   Insight,
   InventoryItem,
   Mission,
   MissionObjective,
+  Net,
+  Terminal,
   Unit,
   WishlistItem,
 } from '../data/types';
@@ -220,6 +223,10 @@ interface HangarStore {
   data: HangarData;
   units: Unit[];
   items: InventoryItem[];
+  // Connected twin — physical connectors, wiring nets, and proving documents.
+  terminals: Terminal[];
+  nets: Net[];
+  documents: DocumentRef[];
   inventoryRead: InventoryReadStatus;
   // Active UI theme
   theme: ThemeMode;
@@ -413,6 +420,9 @@ export function HangarProvider({
       data,
       units,
       items: data.items,
+      terminals: data.terminals,
+      nets: data.nets,
+      documents: data.documents,
       inventoryRead,
       theme,
       setTheme,

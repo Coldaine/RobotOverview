@@ -1,0 +1,55 @@
+<!-- @dsCard group="Board" -->
+<!--
+  Wire treatments — the net conductors. Mirrors Wire.tsx.
+  Kinds: power (amber), data (cyan), mixed (cyan + amber strand).
+  States: active (flowing dash + glow + charge), idle, dimmed.
+-->
+<style>
+  :root {
+    --color-void: #05070d; --color-panel: #10151f; --color-rim: #1f2937;
+    --color-ink: #c7d3e3; --color-ink-dim: #7f8ea7;
+    --color-amber: #ffb020; --color-cyan: #36e0e0;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  .ds-wire { background: var(--color-void); color: var(--color-ink); font-family: var(--font-mono); padding: 24px; }
+  .ds-wire h4 { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-ink-dim); margin: 0 0 12px; }
+  .ds-wire .row { display: flex; gap: 20px; flex-wrap: wrap; }
+  .ds-wire figure { margin: 0; }
+  .ds-wire figcaption { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-ink-dim); margin-top: 6px; text-align: center; }
+  @keyframes ds-dash { to { stroke-dashoffset: -24; } }
+  .flow { animation: ds-dash 1s linear infinite; }
+</style>
+<div class="ds-wire">
+  <h4>Net conductors</h4>
+  <div class="row">
+    <figure>
+      <svg width="200" height="70" viewBox="0 0 200 70">
+        <path d="M 10 55 C 60 55 140 15 190 15" fill="none" stroke="var(--color-amber)" stroke-width="7" stroke-linecap="round" opacity="0.45" style="filter: blur(4px)"/>
+        <path class="flow" d="M 10 55 C 60 55 140 15 190 15" fill="none" stroke="var(--color-amber)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="7 6"/>
+        <circle r="4" fill="var(--color-amber)"><animateMotion dur="2.6s" repeatCount="indefinite" path="M 10 55 C 60 55 140 15 190 15"/></circle>
+      </svg>
+      <figcaption>power · active</figcaption>
+    </figure>
+    <figure>
+      <svg width="200" height="70" viewBox="0 0 200 70">
+        <path d="M 10 55 C 60 55 140 15 190 15" fill="none" stroke="var(--color-cyan)" stroke-width="7" stroke-linecap="round" opacity="0.45" style="filter: blur(4px)"/>
+        <path class="flow" d="M 10 55 C 60 55 140 15 190 15" fill="none" stroke="var(--color-cyan)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="7 6"/>
+        <circle r="4" fill="var(--color-cyan)"><animateMotion dur="2.6s" repeatCount="indefinite" path="M 10 55 C 60 55 140 15 190 15"/></circle>
+      </svg>
+      <figcaption>data · active</figcaption>
+    </figure>
+    <figure>
+      <svg width="200" height="70" viewBox="0 0 200 70">
+        <path class="flow" d="M 10 55 C 60 55 140 15 190 15" fill="none" stroke="var(--color-cyan)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="7 6"/>
+        <path class="flow" d="M 10 55 C 60 55 140 15 190 15" fill="none" stroke="var(--color-amber)" stroke-width="1" stroke-linecap="round" stroke-dasharray="2 10"/>
+      </svg>
+      <figcaption>mixed · active</figcaption>
+    </figure>
+    <figure>
+      <svg width="200" height="70" viewBox="0 0 200 70">
+        <path d="M 10 55 C 60 55 140 15 190 15" fill="none" stroke="var(--color-cyan)" stroke-width="2.2" stroke-linecap="round" opacity="0.14"/>
+      </svg>
+      <figcaption>dimmed</figcaption>
+    </figure>
+  </div>
+</div>
