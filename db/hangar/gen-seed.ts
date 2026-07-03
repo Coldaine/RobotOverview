@@ -272,12 +272,15 @@ for (const ev of H.activity ?? [])
   w(`INSERT INTO activity_log(id,at,kind,text) VALUES (${S(ev.id)},${S(ev.at)},${S(ev.kind)},${S(ev.text)});`);
 
 // ── CONNECTED TWIN: terminals + nets + documents ────────────────────────────
-const terminalIds = new Set((H.terminals ?? []).map((t) => t.id));
+// terminalIds holds only terminals actually emitted, so net_terminals junction
+// rows can never reference a terminal that was skipped for an unresolvable unit.
+const terminalIds = new Set<string>();
 const documentIds = new Set((H.documents ?? []).map((d) => d.id));
 
 w('\n-- terminals');
 for (const t of H.terminals ?? []) {
   if (!A(t.unitId)) continue;
+  terminalIds.add(t.id);
   w(`INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES (${S(t.id)},${S(t.unitId)},${S(t.name)},${S(t.connector)},${S(t.role)},${S(t.note)});`);
 }
 

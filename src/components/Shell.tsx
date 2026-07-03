@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useHangar } from '@/lib/store';
+import { useHangar, type InventoryReadStatus } from '@/lib/store';
 import { isNavActive } from '@/lib/nav';
 import { InventoryDrawer } from './InventoryDrawer';
 import { timeAgo } from '@/lib/format';
@@ -213,7 +213,10 @@ export function Shell({ children }: { readonly children: ReactNode }) {
   );
 }
 
-const FALLBACK_BANNER_DETAIL: Record<string, string> = {
+const FALLBACK_BANNER_DETAIL: Record<
+  NonNullable<InventoryReadStatus['fallbackReason']>,
+  string
+> = {
   'not-configured': 'Postgres is not configured — every read is coming from the hangar.ts spine.',
   'postgres-error': 'Postgres read FAILED — silently serving the hangar.ts spine instead.',
 };
@@ -221,15 +224,15 @@ const FALLBACK_BANNER_DETAIL: Record<string, string> = {
 function StaticDataBanner() {
   const { inventoryRead } = useHangar();
   if (inventoryRead.source === 'postgres') return null;
-  const detail = inventoryRead.fallbackReason
-    ? FALLBACK_BANNER_DETAIL[inventoryRead.fallbackReason]
-    : 'Serving the static hangar.ts spine.';
+  const detail =
+    (inventoryRead.fallbackReason && FALLBACK_BANNER_DETAIL[inventoryRead.fallbackReason]) ||
+    'Serving the static hangar.ts spine.';
   return (
     <div
       role="status"
       className="flex items-center gap-3 border-b border-amber/50 bg-amber/10 px-5 py-2 [background-image:repeating-linear-gradient(-45deg,transparent,transparent_10px,rgba(255,176,32,0.06)_10px,rgba(255,176,32,0.06)_20px)]"
     >
-      <span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-amber" />
+      <span aria-hidden="true" className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-amber" />
       <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-amber">
         STATIC DATA
       </span>

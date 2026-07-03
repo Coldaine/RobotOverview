@@ -186,8 +186,19 @@ INSERT INTO net_terminals(net_id,terminal_id) VALUES ('net-ups-telemetry','pi5-4
 INSERT INTO net_documents(net_id,document_id) VALUES ('net-ups-telemetry','doc-ups-wiki') ON CONFLICT DO NOTHING;
 INSERT INTO net_documents(net_id,document_id) VALUES ('net-ups-telemetry','doc-ups-code') ON CONFLICT DO NOTHING;
 
-COMMIT;
+-- enforce archive_path as the stable key (schema.sql declares it UNIQUE)
+ALTER TABLE documents ADD CONSTRAINT documents_archive_path_key UNIQUE (archive_path);
 
--- app-role grants (matches existing table grants for the hangar role)
-GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER
-  ON terminals, nets, net_terminals, documents, document_assets, net_documents TO hangar;
+-- app-role grants, inside the transaction so the migration is all-or-nothing.
+-- Scoped to what the app actually needs (no TRUNCATE/REFERENCES/TRIGGER);
+-- guarded so environments without the role still apply cleanly.
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'hangar') THEN
+    GRANT SELECT, INSERT, UPDATE, DELETE
+      ON terminals, nets, net_terminals, documents, document_assets, net_documents TO hangar;
+  END IF;
+END
+$$;
+
+COMMIT;

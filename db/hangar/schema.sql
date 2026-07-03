@@ -277,7 +277,7 @@ CREATE TABLE documents (
   id           TEXT PRIMARY KEY,
   title        TEXT NOT NULL,
   kind         TEXT NOT NULL CHECK (kind IN ('schematic','manual','cad','firmware','wiki','datasheet','image')),
-  archive_path TEXT NOT NULL,
+  archive_path TEXT NOT NULL UNIQUE,
   url          TEXT,
   note         TEXT
 );
