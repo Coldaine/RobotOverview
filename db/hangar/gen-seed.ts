@@ -271,6 +271,35 @@ w('\n-- activity_log');
 for (const ev of H.activity ?? [])
   w(`INSERT INTO activity_log(id,at,kind,text) VALUES (${S(ev.id)},${S(ev.at)},${S(ev.kind)},${S(ev.text)});`);
 
+// ── CONNECTED TWIN: terminals + nets + documents ────────────────────────────
+// terminalIds holds only terminals actually emitted, so net_terminals junction
+// rows can never reference a terminal that was skipped for an unresolvable unit.
+const terminalIds = new Set<string>();
+const documentIds = new Set((H.documents ?? []).map((d) => d.id));
+
+w('\n-- terminals');
+for (const t of H.terminals ?? []) {
+  if (!A(t.unitId)) continue;
+  terminalIds.add(t.id);
+  w(`INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES (${S(t.id)},${S(t.unitId)},${S(t.name)},${S(t.connector)},${S(t.role)},${S(t.note)});`);
+}
+
+w('\n-- documents + document_assets');
+for (const d of H.documents ?? []) {
+  w(`INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES (${S(d.id)},${S(d.title)},${S(d.kind)},${S(d.archivePath)},${S(d.url)},${S(d.note)});`);
+  for (const uid of d.units ?? [])
+    if (A(uid)) w(`INSERT INTO document_assets(document_id,asset_id) VALUES (${S(d.id)},${S(uid)}) ON CONFLICT DO NOTHING;`);
+}
+
+w('\n-- nets + net_terminals + net_documents');
+for (const n of H.nets ?? []) {
+  w(`INSERT INTO nets(id,name,kind,carries,note) VALUES (${S(n.id)},${S(n.name)},${S(n.kind)},${S(n.carries)},${S(n.note)});`);
+  for (const tid of n.terminals)
+    if (terminalIds.has(tid)) w(`INSERT INTO net_terminals(net_id,terminal_id) VALUES (${S(n.id)},${S(tid)}) ON CONFLICT DO NOTHING;`);
+  for (const did of n.documents ?? [])
+    if (documentIds.has(did)) w(`INSERT INTO net_documents(net_id,document_id) VALUES (${S(n.id)},${S(did)}) ON CONFLICT DO NOTHING;`);
+}
+
 w('\nCOMMIT;');
 const seedSql = out.join('\n') + '\n';
 const outIndex = process.argv.indexOf('--out');

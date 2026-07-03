@@ -11,7 +11,7 @@ export const hangarData: HangarData = {
     title: 'THE HANGAR',
     operator: 'Patrick MacLyman',
     codename: 'FLEET COMMAND',
-    updated: '2026-07-01',
+    updated: '2026-07-03',
   },
 
   bays: [
@@ -316,6 +316,28 @@ export const hangarData: HangarData = {
       ],
       power: { watts: null, volts: 11.1, rail: 'battery' },
       tags: ['power', 'ups', 'beast'],
+      acquired: 'included',
+    },
+    {
+      id: 'driver-board',
+      name: 'General Driver for Robots',
+      callsign: 'BEAST-CTL',
+      bay: 'robotics',
+      class: 'Robot Controller Board',
+      status: 'operational',
+      lifecycle: 'assembled',
+      provenance: 'owner',
+      summary:
+        'Waveshare ESP32-WROOM-32 driver board at the heart of BEAST-01: motor H-bridge, ST3215 servo bus, 5V host rail for the Pi, IMU, and battery telemetry on one 65×65mm PCB.',
+      specs: [
+        { label: 'MCU', value: 'ESP32-WROOM-32' },
+        { label: 'Power in', value: 'XH2.54 · DC 7–13V' },
+        { label: 'Motor driver', value: 'TB6612FNG dual H-bridge' },
+        { label: 'Servo bus', value: 'ST3215 TTL @ 1 Mbps (5A limit)' },
+        { label: 'Host rail', value: '5V buck (MP8759, ~5A) via 40-pin' },
+        { label: 'Telemetry', value: 'INA219 V/I sense · IMU · OLED I²C' },
+      ],
+      tags: ['controller', 'esp32', 'waveshare', 'beast'],
       acquired: 'included',
     },
     {
@@ -909,6 +931,146 @@ export const hangarData: HangarData = {
     { id: 'a3', at: '2026-05-31T15:50:00Z', kind: 'researched', text: 'Jetson tiering mapped: Orin = Ampere, Thor = Blackwell.' },
     { id: 'a4', at: '2026-05-31T15:30:00Z', kind: 'price-drop', text: 'Orin Nano Super MSRP confirmed at $249 (street ~$349).' },
     { id: 'a5', at: '2026-05-31T15:10:00Z', kind: 'acquired', text: 'BEAST-01 commissioned as flagship unit.' },
+  ],
+
+  // ── CONNECTED TWIN — BEAST-01 terminals + nets ─────────────────────────────
+  // Authored 2026-07-03 from the UGV-Beast-Archive (Waveshare wikis + schematics);
+  // each net lists the documents that prove it. Note: the stock Beast PT ships
+  // pan-tilt only — the RoArm-M2 on the servo bus is an operator addition.
+  terminals: [
+    // General Driver for Robots (ESP32 board)
+    { id: 'gdb-power-in', unitId: 'driver-board', name: 'Battery Input', connector: 'XH2.54', role: 'input', note: 'DC 7–13V from the UPS rail; feeds motors and the servo bus directly' },
+    { id: 'gdb-5v-host', unitId: 'driver-board', name: '5V Host Rail', connector: '40-pin header', role: 'output', note: 'MP8759 buck ~5A — powers the Raspberry Pi 5. The Orin cannot use this rail.' },
+    { id: 'gdb-host-uart', unitId: 'driver-board', name: 'Host UART', connector: '40-pin header', role: 'bidirectional', note: 'ESP32 ↔ host JSON command/telemetry link' },
+    { id: 'gdb-servo-bus', unitId: 'driver-board', name: 'ST3215 Serial Bus Servo Port', connector: 'TTL bus header', role: 'bidirectional', note: 'ESP32 GPIO18/19 @ 1 Mbps; switch-limited to 5A' },
+    { id: 'gdb-motor-a', unitId: 'driver-board', name: 'Motor Interface A', connector: 'PH2.0 6P', role: 'output', note: 'TB6612FNG channel + encoder feedback' },
+    { id: 'gdb-motor-b', unitId: 'driver-board', name: 'Motor Interface B', connector: 'PH2.0 6P', role: 'output', note: 'TB6612FNG channel + encoder feedback' },
+    { id: 'gdb-i2c', unitId: 'driver-board', name: 'I²C Peripheral Header', connector: 'pin header', role: 'bidirectional', note: 'OLED and I²C sensors, driven by the ESP32' },
+    { id: 'gdb-usb-esp32', unitId: 'driver-board', name: 'Type-C (ESP32 UART)', connector: 'USB-C', role: 'bidirectional', note: 'CP2102 bridge — flashing and debug serial @ 115200' },
+    { id: 'gdb-lidar-uart', unitId: 'driver-board', name: 'LiDAR UART Port', connector: 'UART + Type-C', role: 'bidirectional', note: 'Second CP2102 routes radar serial to USB' },
+    { id: 'gdb-12v-switched', unitId: 'driver-board', name: '12V Switched Outputs', connector: 'IO4 / IO5', role: 'output', note: 'ESP32-switched pack-voltage outputs for LEDs or payloads' },
+
+    // UPS Module 3S
+    { id: 'ups-rail-out', unitId: 'stock-ups', name: 'Battery Rail Out', connector: 'XH2.54', role: 'output', note: '3S pack, 9–12.6V @ 2A' },
+    { id: 'ups-charge-in', unitId: 'stock-ups', name: 'Charge Input', connector: 'DC5521', role: 'input', note: '12.6V / 2A charger; supports charge-while-discharge' },
+    { id: 'ups-telemetry', unitId: 'stock-ups', name: 'Telemetry Header', connector: 'pin header (5V/3V3/I²C)', role: 'output', note: 'INA219-style battery V/I telemetry over I²C' },
+
+    // Raspberry Pi 5 (current host)
+    { id: 'pi5-40pin', unitId: 'pi5', name: '40-Pin GPIO Header', connector: '40-pin header', role: 'bidirectional', note: 'Stacks on the driver board: takes 5V power + UART' },
+    { id: 'pi5-usb', unitId: 'pi5', name: 'USB Host Ports', connector: 'USB-A', role: 'bidirectional', note: 'Camera input' },
+
+    // Jetson Orin (swap-path host)
+    { id: 'orin-uart', unitId: 'orin-nano', name: '40-Pin Header (UART jumpers)', connector: 'jumper wires', role: 'bidirectional', note: 'TX/RX/GND only — the Orin does not stack and cannot draw header 5V' },
+    { id: 'orin-dc-in', unitId: 'orin-nano', name: 'DC Power Input', connector: 'barrel jack', role: 'input', note: '9–19V ~45W; fed from the battery rail, never the 5V host rail' },
+
+    // RoArm-M2 (operator-added manipulator)
+    { id: 'roarm-servo-in', unitId: 'roarm-m2', name: 'Servo Bus Chain', connector: 'TTL bus daisy-chain', role: 'bidirectional', note: 'ST3215/ST3235 joints on the shared serial bus' },
+
+    // BEAST-01 chassis-level hardware
+    { id: 'beast-motor-left', unitId: 'beast', name: 'Left Track Motor', connector: 'PH2.0 6P', role: 'input', note: 'DC gear motor with encoder' },
+    { id: 'beast-motor-right', unitId: 'beast', name: 'Right Track Motor', connector: 'PH2.0 6P', role: 'input', note: 'DC gear motor with encoder' },
+    { id: 'beast-pan-tilt', unitId: 'beast', name: 'Pan-Tilt (2× ST3215)', connector: 'TTL bus daisy-chain', role: 'bidirectional', note: 'Stock 2-DOF camera mount on the servo bus' },
+    { id: 'beast-camera', unitId: 'beast', name: 'USB Camera', connector: 'USB', role: 'output', note: '5MP, 160° FOV, rides the pan-tilt' },
+    { id: 'beast-oled', unitId: 'beast', name: 'OLED Display', connector: 'I²C', role: 'input', note: 'Voltage / IP telemetry readout' },
+  ],
+
+  nets: [
+    {
+      id: 'net-battery-rail',
+      name: 'Battery Rail',
+      kind: 'power',
+      carries: '3S pack · 9–12.6V',
+      terminals: ['ups-rail-out', 'gdb-power-in', 'orin-dc-in'],
+      documents: ['doc-ups-schematic', 'doc-gdb-schematic', 'doc-ups-wiki'],
+      note: 'UPS → driver board; feeds motors + servo bus directly. The Orin taps this rail in the Jetson swap (the 5V host rail cannot power it).',
+    },
+    {
+      id: 'net-5v-host',
+      name: '5V Host Rail',
+      kind: 'power',
+      carries: '5V ≈5A (MP8759 buck)',
+      terminals: ['gdb-5v-host', 'pi5-40pin'],
+      documents: ['doc-gdb-schematic', 'doc-gdb-wiki'],
+      note: 'Powers the Raspberry Pi 5 through the stacked 40-pin header.',
+    },
+    {
+      id: 'net-host-uart',
+      name: 'Host ↔ ESP32 UART',
+      kind: 'data',
+      carries: 'UART JSON commands + telemetry',
+      terminals: ['gdb-host-uart', 'pi5-40pin', 'orin-uart'],
+      documents: ['doc-gdb-wiki', 'doc-beast-product'],
+      note: 'The only Pi GPIO interface the robot occupies. Orin swap uses TX/RX/GND jumpers instead of stacking.',
+    },
+    {
+      id: 'net-servo-bus',
+      name: 'ST3215 Serial Servo Bus',
+      kind: 'mixed',
+      carries: 'TTL half-duplex @ 1 Mbps + pack voltage (5A limit)',
+      terminals: ['gdb-servo-bus', 'beast-pan-tilt', 'roarm-servo-in'],
+      documents: ['doc-st-protocol', 'doc-st-circuit', 'doc-st3215-manual'],
+      note: 'Daisy-chained, ID-addressed. Stock kit runs the pan-tilt only; the RoArm-M2 is an operator addition on the same bus.',
+    },
+    {
+      id: 'net-motor-left',
+      name: 'Left Track Drive',
+      kind: 'mixed',
+      carries: 'TB6612FNG PWM + encoder feedback',
+      terminals: ['gdb-motor-a', 'beast-motor-left'],
+      documents: ['doc-gdb-schematic', 'doc-gdb-wiki'],
+    },
+    {
+      id: 'net-motor-right',
+      name: 'Right Track Drive',
+      kind: 'mixed',
+      carries: 'TB6612FNG PWM + encoder feedback',
+      terminals: ['gdb-motor-b', 'beast-motor-right'],
+      documents: ['doc-gdb-schematic', 'doc-gdb-wiki'],
+    },
+    {
+      id: 'net-camera',
+      name: 'Camera Feed',
+      kind: 'data',
+      carries: 'USB video (MJPEG upstream)',
+      terminals: ['beast-camera', 'pi5-usb'],
+      documents: ['doc-beast-product'],
+    },
+    {
+      id: 'net-oled-i2c',
+      name: 'OLED Telemetry',
+      kind: 'data',
+      carries: 'I²C',
+      terminals: ['gdb-i2c', 'beast-oled'],
+      documents: ['doc-gdb-wiki'],
+    },
+    {
+      id: 'net-ups-telemetry',
+      name: 'UPS Battery Telemetry',
+      kind: 'data',
+      carries: 'I²C V/I readings',
+      terminals: ['ups-telemetry', 'pi5-40pin'],
+      documents: ['doc-ups-wiki', 'doc-ups-code'],
+      note: 'Per the UPS wiki RPi wiring table (SDA/SCL/5V/GND); optional hookup on the Beast.',
+    },
+  ],
+
+  documents: [
+    { id: 'doc-gdb-schematic', title: 'General Driver for Robots — Schematic', kind: 'schematic', archivePath: 'UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf', units: ['driver-board'] },
+    { id: 'doc-gdb-wiki', title: 'General Driver for Robots — Wiki', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/General-Driver-for-Robots_Wiki.md', units: ['driver-board'] },
+    { id: 'doc-gdb-step', title: 'General Driver for Robots — STEP CAD', kind: 'cad', archivePath: 'UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_STEP.zip', units: ['driver-board'] },
+    { id: 'doc-ups-schematic', title: 'UPS Module 3S — Schematic', kind: 'schematic', archivePath: 'UGV-Beast-Archive/03-Power-UPS/Ups01_Schematic.pdf', units: ['stock-ups'] },
+    { id: 'doc-ups-wiki', title: 'UPS Module 3S — Wiki', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UPS-Module-3S_Wiki.md', units: ['stock-ups'] },
+    { id: 'doc-ups-code', title: 'UPS Module 3S — INA219 Monitoring Code', kind: 'firmware', archivePath: 'UGV-Beast-Archive/03-Power-UPS/UPS_Module_3S_Code.zip', units: ['stock-ups'] },
+    { id: 'doc-st3215-manual', title: 'ST3215 Servo — User Manual', kind: 'manual', archivePath: 'UGV-Beast-Archive/04-Servos/ST3215_Servo_User_Manual.pdf', units: ['roarm-m2', 'beast'] },
+    { id: 'doc-st-protocol', title: 'ST Serial Bus Servo — Protocol Manual', kind: 'manual', archivePath: 'UGV-Beast-Archive/04-Servos/ST_Servo_Communication_Protocol_Manual.pdf', units: ['roarm-m2', 'beast'] },
+    { id: 'doc-st-circuit', title: 'ST Bus Servo — Control Circuit Schematic', kind: 'schematic', archivePath: 'UGV-Beast-Archive/04-Servos/ST_Bus_Servo_Control_Circuit.pdf', units: ['driver-board'] },
+    { id: 'doc-beast-wiki', title: 'UGV Beast — Wiki', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast_Wiki.md', units: ['beast'] },
+    { id: 'doc-beast-product', title: 'UGV Beast PT — Product Page', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast_Product-Page.md', units: ['beast'] },
+    { id: 'doc-beast-cad', title: 'UGV Beast PT AI Kit — STEP CAD', kind: 'cad', archivePath: 'UGV-Beast-Archive/05-Chassis-CAD/UGV_Beast_PT_AI_Kit_STEP.zip', units: ['beast'] },
+    { id: 'doc-orin-3d', title: 'UGV Beast PT Jetson Orin — 3D CAD', kind: 'cad', archivePath: 'UGV-Beast-Archive/06-Jetson-Orin/UGV_Beast_PT_Jetson_Orin_3D.zip', units: ['orin-nano', 'beast'] },
+    { id: 'doc-orin-wiki', title: 'UGV Beast PT Jetson Orin AI Kit — Wiki', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast-PT-Jetson-Orin-AI-Kit_Wiki.md', units: ['orin-nano'] },
+    { id: 'doc-esp32-firmware', title: 'UGV01 Base — ESP32 Firmware', kind: 'firmware', archivePath: 'UGV-Beast-Archive/07-Code-Firmware/UGV01_BASE_ESP32_Firmware.zip', units: ['driver-board'] },
+    { id: 'doc-cp210x-driver', title: 'CP210x USB-UART Driver', kind: 'firmware', archivePath: 'UGV-Beast-Archive/07-Code-Firmware/CP210x_USB_TO_UART_Driver.zip', units: ['driver-board'] },
   ],
 };
 

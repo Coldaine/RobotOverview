@@ -243,6 +243,57 @@ CREATE TABLE activity_log (
   asset_id TEXT REFERENCES assets(id) ON DELETE SET NULL
 );
 
+-- ── CONNECTED TWIN (terminals + nets) ────────────────────────────────────────
+-- A terminal is a physical connector on an asset; a net joins terminals that
+-- are wired together (power rail, UART link, servo daisy-chain). Documents are
+-- the downloaded source library (archive_path is the stable key; url filled
+-- once files move to object storage).
+CREATE TYPE net_kind AS ENUM ('power','data','mixed','mechanical');
+
+CREATE TABLE terminals (
+  id        TEXT PRIMARY KEY,
+  asset_id  TEXT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
+  name      TEXT NOT NULL,
+  connector TEXT,
+  role      TEXT CHECK (role IN ('input','output','bidirectional')),
+  note      TEXT
+);
+
+CREATE TABLE nets (
+  id      TEXT PRIMARY KEY,
+  name    TEXT NOT NULL,
+  kind    net_kind NOT NULL,
+  carries TEXT,
+  note    TEXT
+);
+
+CREATE TABLE net_terminals (
+  net_id      TEXT NOT NULL REFERENCES nets(id) ON DELETE CASCADE,
+  terminal_id TEXT NOT NULL REFERENCES terminals(id) ON DELETE CASCADE,
+  PRIMARY KEY (net_id, terminal_id)
+);
+
+CREATE TABLE documents (
+  id           TEXT PRIMARY KEY,
+  title        TEXT NOT NULL,
+  kind         TEXT NOT NULL CHECK (kind IN ('schematic','manual','cad','firmware','wiki','datasheet','image')),
+  archive_path TEXT NOT NULL UNIQUE,
+  url          TEXT,
+  note         TEXT
+);
+
+CREATE TABLE document_assets (
+  document_id TEXT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+  asset_id    TEXT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
+  PRIMARY KEY (document_id, asset_id)
+);
+
+CREATE TABLE net_documents (
+  net_id      TEXT NOT NULL REFERENCES nets(id) ON DELETE CASCADE,
+  document_id TEXT NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+  PRIMARY KEY (net_id, document_id)
+);
+
 -- deferred FKs on wishlist_meta (targets now exist)
 ALTER TABLE wishlist_meta
   ADD CONSTRAINT wishlist_meta_capability_fk
@@ -258,5 +309,8 @@ CREATE INDEX idx_asset_groups_group ON asset_groups(group_id);
 CREATE INDEX idx_asset_tags_tag     ON asset_tags(tag_id);
 CREATE INDEX idx_sockets_host       ON sockets(host_asset_id);
 CREATE INDEX idx_assignments_asset_iface ON loadout_assignments(asset_id, interface_type_id);
+CREATE INDEX idx_terminals_asset    ON terminals(asset_id);
+CREATE INDEX idx_net_terminals_term ON net_terminals(terminal_id);
+CREATE INDEX idx_document_assets_asset ON document_assets(asset_id);
 
 COMMIT;

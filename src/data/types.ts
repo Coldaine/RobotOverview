@@ -222,6 +222,47 @@ export interface ActivityEvent {
   text: string;
 }
 
+// ── Connected twin: terminals + nets ─────────────────────────────────────────
+// A Terminal is a physical connector/port on a unit (a driver-board socket, a
+// UPS output, a Pi header). A Net joins terminals that are electrically or
+// logically wired together (a power rail, a UART link, a servo daisy-chain).
+// This is the data the wiring view renders; documents prove each net.
+
+export type NetKind = 'power' | 'data' | 'mixed' | 'mechanical';
+
+export interface Terminal {
+  id: string; // e.g. 'gdb-servo-bus'
+  unitId: string; // unit that physically carries the connector
+  name: string; // 'Serial Bus Servo Port'
+  connector?: string; // 'XH2.54-2P' | 'PH2.0-6P' | '40-pin header' | 'USB-C' ...
+  role?: 'input' | 'output' | 'bidirectional';
+  note?: string;
+}
+
+export interface Net {
+  id: string; // e.g. 'net-servo-bus'
+  name: string; // 'ST3215 Serial Servo Bus'
+  kind: NetKind;
+  carries?: string; // '11.1V pack rail' | 'UART 115200 8N1' | 'I²C' ...
+  terminals: string[]; // terminal ids joined by this net (≥2)
+  documents?: string[]; // document ids that prove this wiring
+  note?: string;
+}
+
+// ── Documents: the downloaded source-of-truth library ────────────────────────
+// References into the UGV-Beast-Archive (and, later, object storage). The
+// archivePath is the stable key; url is filled once files live in storage.
+
+export interface DocumentRef {
+  id: string;
+  title: string;
+  kind: 'schematic' | 'manual' | 'cad' | 'firmware' | 'wiki' | 'datasheet' | 'image';
+  archivePath: string; // path under UGV-Beast-Archive/
+  url?: string; // public/object-storage URL once uploaded
+  units?: string[]; // related unit ids
+  note?: string;
+}
+
 export interface HangarData {
   meta: {
     title: string;
@@ -237,4 +278,7 @@ export interface HangarData {
   capabilities: Capability[];
   insights: Insight[];
   activity: ActivityEvent[];
+  terminals: Terminal[];
+  nets: Net[];
+  documents: DocumentRef[];
 }
