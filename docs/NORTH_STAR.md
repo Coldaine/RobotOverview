@@ -44,7 +44,7 @@ Directional, not testable.
 
 ## Resolved Questions
 
-- **In what form is the content stored?** In a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) with room for flexible, localized metadata (power budgets, pricing, specs). `src/data/hangar.ts` bootstraps that model, and the current Postgres cutover state belongs in `docs/components/data-backend.md`.
+- **In what form is the content stored?** In a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) with room for flexible, localized metadata (power budgets, pricing, specs). `src/data/hangar.ts` bootstraps that model and remains the authoring surface; Postgres follows it (current read-path truth lives in `src/server/hangar/`, deployment truth in `docs/deploy.md`).
 - **What is the model for what I own and its state?** Inventory is tracked as `Units`. Assembly is modeled via grouped `Loadout Slots` (e.g. Chassis Mounts, Driver Board Interfaces), allowing any unit to act as a parent chassis that other units plug into, replicating a base-builder upgrade tree.
 - **Where does it live (hosting)?** `hangar.moosegoose.xyz` on the personal Kubernetes cluster (`coldaine-k8cluster` owns runtime manifests; see `docs/deploy.md`). Content authored in this repo ships inside the image on every deploy.
 
