@@ -1,0 +1,57 @@
+# Deployment — verified facts
+
+Everything below was verified against the live cluster and `coldaine-k8cluster` origin/main
+on 2026-07-02. When this page and reality disagree, reality wins — check live state
+(`kubectl`, `curl`) before building on anything here. This repo owns the app code, the
+`Dockerfile`, and its content; `coldaine-k8cluster` owns every runtime manifest, secret,
+build definition, and database provision.
+
+## What runs today
+
+- **Workload:** Deployment `robot-overview` in namespace `apps`, running and Ready.
+  Image pinned by `@sha256` digest. Env from Secret `hangar-env`
+  (`HANGAR_DB_HOST/PORT/NAME/USER/PASSWORD/SSLMODE` → the shared `pg18` CloudNativePG cluster).
+  Readiness probe is `GET /api/hangar/preflight`, which requires DB reachability — a Ready pod
+  means the app is talking to Postgres.
+- **Build:** Shipwright `Build` `robot-overview` in namespace `builds` (buildkit strategy)
+  builds this repo's `main` from GitHub and pushes `ghcr.io/coldaine/robot-overview` with the
+  `ghcr-push` secret. GitHub Actions (`.github/workflows/image.yml`) also builds an image per
+  push/PR as a CI check; the cluster deploys the Shipwright-built digest, not the Actions one.
+- **Route:** HTTPRoute `robot-overview` (namespace `apps`) attaches hostname
+  `hangar.moosegoose.xyz` to the shared Gateway `main`. Public egress is via `cloudflared`
+  (token-managed tunnel — hostname mappings live in the Cloudflare Zero Trust dashboard,
+  not in cluster manifests).
+
+## Known gaps (as of 2026-07-02)
+
+- **`hangar.moosegoose.xyz` does not resolve** (NXDOMAIN). The in-cluster route exists; the
+  missing piece is Cloudflare-side: a public-hostname entry on the tunnel (which creates the
+  DNS record) pointing at the Gateway. Same gap affects `soil.moosegoose.xyz`.
+- **The apex `moosegoose.xyz` is currently served by a legacy Vercel deployment**, not the
+  cluster. Irrelevant to the Hangar — the subdomain does not depend on it.
+- **No automatic deploy.** The cluster model is deliberate apply (no GitOps reconciler; Argo CD
+  and Flux are gone). Shipping new code = trigger a BuildRun, pin the new digest in
+  `coldaine-k8cluster/apps/robot-overview/deployment.yaml`, apply. A push-triggered pipeline is
+  planned; it must end in those same deliberate steps.
+
+## Deploying by hand
+
+From a machine with the operator kubeconfig:
+
+```powershell
+kubectl create -n builds -f - # a BuildRun referencing Build/robot-overview
+# wait for completion, note the pushed digest, then in coldaine-k8cluster:
+# edit apps/robot-overview/deployment.yaml to the new @sha256 digest
+kubectl apply -f apps/robot-overview/deployment.yaml
+kubectl rollout status -n apps deploy/robot-overview
+```
+
+Never use a floating tag with `imagePullPolicy: IfNotPresent` — the node caches the first
+image forever. Always pin the digest.
+
+## Content ships in the image
+
+`src/data/hangar.ts` (and everything else agents ingest into this repo) is baked into the
+image at build time. Deploying is how authored content reaches the site. If a change also
+alters what is stored in Postgres, the change must include a migration that handles the data
+already in the database — never assume the DB is empty or disposable.

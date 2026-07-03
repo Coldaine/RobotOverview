@@ -1,21 +1,13 @@
----
-title: BEAST-01 Operations Runbook
-date: 2026-06-25
-author: Patrick MacLyman
-status: living
-last_confirmed: 2026-07-01
----
+# BEAST-01 — Operations
 
-# BEAST-01 — Operations Runbook
+Operating facts for the physical **UGV Beast** (`BEAST-01`) — how to reach it, drive it,
+read its telemetry, and program it. The catalog entry for the unit lives in
+`src/data/hangar.ts` (`id: 'beast'`). Facts below carry the date they were last verified;
+re-verify against the live robot before relying on anything stale.
 
-Operational knowledge for the physical **UGV Beast** (`BEAST-01`) — how to reach it,
-drive it, read its telemetry, and program it. This is the "don't lose it to a chat log"
-record the North Star asks for (G1, G5). The catalog entry for the unit lives in
-`src/data/hangar.ts` (`id: 'beast'`); this file is the *operating* counterpart.
-
-> Scope note: the Hangar app **catalogs and links out to** the Beast; it does not (yet)
-> operate it. See NORTH_STAR `AG2` — supervised teleop via the robot's own tools is fine;
-> unsupervised autonomous control is the line. The dashboard below is the control surface.
+> The Hangar is growing an in-app supervised portal to the Beast (telemetry, video, teleop —
+> North Star AG2, decided 2026-07-02). Until it ships, the robot's own dashboard below is the
+> control surface. Human-in-the-loop always; nothing operates the robot unattended.
 
 ## Hardware chain
 
@@ -149,10 +141,10 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 
 ## Jetson OS experimentation
 
-JetPack 7 dual-boot research is tracked outside this live ops page:
-
-- `docs/reference/beast-jetson-dualboot-evidence.md` — evidence and risk decision.
-- `docs/reference/beast-jetson-dualboot-runbook.md` — operator steps, recovery gate, and destructive restore path.
+JetPack 7 dual-boot research findings and the recovery procedure are archived in
+`docs/history/reference/beast-jetson-dualboot-evidence.md` and
+`docs/history/reference/beast-jetson-dualboot-runbook.md` (real research, kept for the
+facts — ignore the "evidence dossier" framing).
 
 JP6 remains the Beast-control default. Do not begin a JP7 install until the runbook's
 recovery gate is complete and a JP6 restore path has been tested.

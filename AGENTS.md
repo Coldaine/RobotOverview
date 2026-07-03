@@ -1,63 +1,52 @@
----
-title: Hangar AGENTS
-date: 2026-06-17
-author: Patrick MacLyman
-status: living
-last_confirmed: 2026-07-01
----
-
 # AGENTS.md
 
 ## Identity
 
-The Hangar is a high-fidelity command center for all physical tech and hobbies. It is a Next.js 16 / React 19 / Tailwind 4 app with a base-builder command-center feel.
+The Hangar is a video-game-grade command center for Patrick's physical tech — inventory,
+wiki, want list, and a live portal to the robots it catalogs, styled as a base-builder
+hangar ("Dark Engineering HUD": blueprint grids, cyan/amber accents). Next.js 16 / React 19 /
+Tailwind 4. The flagship unit is BEAST-01, a Waveshare UGV Beast.
 
-## Decision Tree
+**The UI is the product.** Prefer work that changes what's on screen. Plumbing, process, and
+docs exist to serve the visible experience, never the other way around.
 
-- **Understand project intent** -> `docs/NORTH_STAR.md`
-- **Primary UI/user workflows to preserve** -> `docs/USABILITY_WORKFLOWS.md`
-- **How we've chosen to build it, and why** -> `docs/architecture.md` (approach + rationale; routes to the component docs)
-- **Data layer (master-inventory model, Postgres, `hangar.ts`)** -> `docs/components/data-backend.md`
-- **Connected twin / BEAST-01 wiring model** -> `docs/components/connected-twin.md`
-- **Frontend / Next.js server layer** -> `docs/components/web-app.md`
-- **Deployment (current direction - in transition to Shipwright)** -> `docs/deploy/deployment.md`
-- **Storage/object-store pivot for archive-backed documents** -> `docs/deploy/storage-and-twin-pivot-plan.md`
-- **Operate / control the Beast (network, drive, telemetry, programming)** -> `docs/beast-ops.md`
-- **Source archive digest (no bulk binaries in git)** -> `docs/reference/ugv-beast-source-archive.md`
-- **Tooling bootstrap / command surface** -> `docs/components/bootstrap.md`
-- **Documentation ownership / source-of-truth workflow** -> `docs/documentation-workflow.md`
-- **Code implementation** -> `src/`
-- **Superseded / historical docs and prototypes** -> `docs/history/`
+## Truth rules
 
-## Documentation Ownership
+- **Code is truth. Docs describe; they never govern.** Verify any doc claim against `src/`,
+  `db/hangar/`, `.github/workflows/`, cluster manifests, or live state before building on it.
+  No doc may require reading another doc before making a change.
+- **Refetch before reading.** `git fetch --all --prune --tags` this repo and any sibling repo
+  (especially `coldaine-k8cluster`) before reasoning about it; read against `origin/<branch>`
+  if the local tree is stale or dirty.
+- **Cluster truth lives in `coldaine-k8cluster`** (manifests + live `kubectl`), not in prose.
+  This repo owns app code, `Dockerfile`, and content; the cluster repo owns runtime.
+- `docs/history/` is a graveyard, not guidance. Do not resurrect its process machinery
+  (evidence manifests, doc-ownership workflows, mandatory-read regimes).
 
-- Do not spread live/current state across every doc. Put the full status in the one owning doc, then use a one-line summary and link elsewhere.
-- Read `docs/documentation-workflow.md` before any documentation update. It owns the mandatory workflow for doc ownership, status placement, ambiguity handling, and drift checks.
-- `AGENTS.md` should stay as routing guidance plus durable invariants. Update it only when ownership, commands, or hard project rules change.
+## The four live docs
 
-## Tech Stack & Commands
+- `docs/NORTH_STAR.md` — intent, goals, anti-goals.
+- `docs/deploy.md` — verified deployment facts and gaps.
+- `docs/beast-ops.md` — BEAST-01 operating facts (network, protocol, telemetry, safety).
+- `AGENTS.md` — this file.
 
-- **Environment:** Node.js, Next.js, React, TypeScript, Tailwind CSS.
-- **Command surface:** `npm` owns app/package commands; `Taskfile.yml` is the agent/operator front door for workflows; details live in `docs/components/bootstrap.md`.
-- **Boot:** `npm run dev`
-- **Build:** `npm run build`
-- **Lint:** `npm run lint`
-- **Test:** `npm run test:run`
-- **Workflow check:** `task check`
-- **Tooling bootstrap:** `task bootstrap:core` for core local setup, `task bootstrap:tools` for all profiles.
+## Content workflow
 
-## Working Rules
+Agents ingest items, research, and unit data **directly into `src/data/hangar.ts`** (typed by
+`src/data/types.ts`; referential integrity enforced by `hangar-integrity.test.ts`). Content
+ships to production inside the Docker image — deploying the app is deploying the content.
+Postgres (`db/hangar/`) follows the TypeScript spine: when shapes change, regenerate
+schema/seed, and any live migration must handle data already stored in the database.
+If the app serves static-fallback data instead of Postgres, that state must be loudly
+visible, never silent.
 
-- The robot is the interface (flagship schematic focus).
-- `src/data/hangar.ts` remains the bootstrap and fallback seed source until a surface has moved through app-level seed/parity/rollback proof; the current cutover state lives in `docs/components/data-backend.md`.
-- The Postgres master-inventory schema/seed lives in `db/hangar/`; local standup proves shape only. The target DB summary lives in `docs/components/data-backend.md`, with cluster provisioning truth owned by `coldaine-k8cluster`.
-- Use the `HangarProvider` store for global state (lenses, sourcing).
-- Maintain "Dark Engineering HUD" aesthetics (blueprint grids, cyan/amber accents).
-- Do not commit bulk BEAST-01 archive binaries; store them in object storage and reference them from data/docs.
-- Do not treat Hangar as an autonomous robot control plane. Supervised links/views are fine; human-in-loop remains the boundary.
+## Commands
 
-## Branch Workflow
+- Dev: `npm run dev` · Build: `npm run build` · Lint: `npm run lint` · Test: `npm run test:run`
+- Full check: `task check` (lint + tests + build)
+- Robot probe (safe, zero-motion): `npm run beast:probe`
 
-- Open development is a stacked PR chain. Do not put new work directly on `main` when the active stack is ahead.
-- For follow-on feature work, branch from the newest relevant stack tip unless the user explicitly chooses a different base.
-- Fill out the pull request template intentionally. Its checklist is a required behavioral checkpoint for branch scope, review, split rationale, docs, cleanup, and validation.
+## Branch workflow
+
+Branch from `main` (or the newest relevant stack tip when stacking), open a PR, keep each PR
+scoped to one concern. Never mix repos in one commit.

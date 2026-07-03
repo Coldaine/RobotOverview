@@ -29,7 +29,7 @@ Directional, not testable.
 ## Anti-Goals
 
 - **AG1.** Not a flat inventory list. It refuses to be a catalog of disconnected possessions; the reason it exists is the connected model where units, missions, and lessons relate to one another.
-- **AG2.** Not an *autonomous* control plane. It may link out to a unit's own dashboard for supervised teleop and may one day host a *supervised* command view, but it does not autonomously operate the systems it catalogs or act on them unattended. The line is supervision: a human stays in the loop for any action it surfaces. Operating detail for a unit lives in its runbook (see `docs/beast-ops.md`), not here.
+- **AG2.** Not an *autonomous* system. The Hangar SHOULD host a live portal to a running unit — telemetry, video, and supervised teleop controls in the app itself (decided 2026-07-02) — but a human stays in the loop for every action it surfaces. It never operates the systems it catalogs unattended or autonomously. Operating detail for a unit lives in its runbook (see `docs/beast-ops.md`), not here.
 - **AG3.** Undercroft, and any mission, is content inside the system, never the system's identity.
 
 ## Pillars
@@ -44,11 +44,11 @@ Directional, not testable.
 
 ## Resolved Questions
 
-- **In what form is the content stored?** In a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) with room for flexible, localized metadata (power budgets, pricing, specs). `src/data/hangar.ts` bootstraps that model, and the current Postgres cutover state belongs in `docs/components/data-backend.md`.
+- **In what form is the content stored?** In a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) with room for flexible, localized metadata (power budgets, pricing, specs). `src/data/hangar.ts` bootstraps that model and remains the authoring surface; Postgres follows it (current read-path truth lives in `src/server/hangar/`, deployment truth in `docs/deploy.md`).
 - **What is the model for what I own and its state?** Inventory is tracked as `Units`. Assembly is modeled via grouped `Loadout Slots` (e.g. Chassis Mounts, Driver Board Interfaces), allowing any unit to act as a parent chassis that other units plug into, replicating a base-builder upgrade tree.
+- **Where does it live (hosting)?** `hangar.moosegoose.xyz` on the personal Kubernetes cluster (`coldaine-k8cluster` owns runtime manifests; see `docs/deploy.md`). Content authored in this repo ships inside the image on every deploy.
 
 ## Open Questions
 
-- Where does it live (hosting)?
 - How does population actually work, given it is mostly LLM-driven: what is the intake from a chat or a research run into an entry?
 - How do I add to the want list and turn it into an upgrade plan that says what to buy next?
