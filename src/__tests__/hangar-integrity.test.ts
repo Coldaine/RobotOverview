@@ -201,4 +201,53 @@ describe('hangar.ts data integrity', () => {
       });
     });
   });
+
+  // ── Connected twin: terminals + nets + documents ──────────────────────────
+  const terminalIds = new Set(hangarData.terminals.map((t) => t.id));
+  const documentIds = new Set(hangarData.documents.map((d) => d.id));
+
+  it('has no duplicate terminal, net, or document IDs', () => {
+    expect(hangarData.terminals.length).toBe(terminalIds.size);
+    const netIds = hangarData.nets.map((n) => n.id);
+    expect(netIds.length).toBe(new Set(netIds).size);
+    expect(hangarData.documents.length).toBe(documentIds.size);
+  });
+
+  it('all terminal.unitId values reference existing units', () => {
+    hangarData.terminals.forEach((t) => {
+      expect(unitIds.has(t.unitId), `terminal "${t.id}" references unknown unit "${t.unitId}"`).toBe(true);
+    });
+  });
+
+  it('every net joins at least two existing, distinct terminals', () => {
+    hangarData.nets.forEach((n) => {
+      expect(n.terminals.length, `net "${n.id}" must join ≥2 terminals`).toBeGreaterThanOrEqual(2);
+      expect(new Set(n.terminals).size, `net "${n.id}" lists a terminal twice`).toBe(n.terminals.length);
+      n.terminals.forEach((tid) => {
+        expect(terminalIds.has(tid), `net "${n.id}" references unknown terminal "${tid}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all net.documents IDs exist in the documents collection', () => {
+    hangarData.nets.forEach((n) => {
+      (n.documents ?? []).forEach((did) => {
+        expect(documentIds.has(did), `net "${n.id}" references unknown document "${did}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all document.units IDs exist in units', () => {
+    hangarData.documents.forEach((d) => {
+      (d.units ?? []).forEach((uid) => {
+        expect(unitIds.has(uid), `document "${d.id}" references unknown unit "${uid}"`).toBe(true);
+      });
+    });
+  });
+
+  it('every document has a stable archive path', () => {
+    hangarData.documents.forEach((d) => {
+      expect(d.archivePath.startsWith('UGV-Beast-Archive/'), `document "${d.id}" archivePath must live under UGV-Beast-Archive/`).toBe(true);
+    });
+  });
 });
