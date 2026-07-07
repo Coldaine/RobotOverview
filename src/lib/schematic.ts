@@ -1,6 +1,40 @@
 import type { LoadoutSlot } from '@/data/types';
 
-export type HotspotStatus = 'ok' | 'empty' | 'attention';
+export const HOTSPOT_STATUSES = ['ok', 'empty', 'attention'] as const;
+export type HotspotStatus = (typeof HOTSPOT_STATUSES)[number];
+
+export const HOTSPOT_STATUS_META: Record<
+  HotspotStatus,
+  {
+    label: string;
+    dotClass: string;
+    ringClass: string;
+    listDotClass: string;
+    chipClass: string;
+  }
+> = {
+  ok: {
+    label: 'NOMINAL',
+    dotClass: 'fill-signal-ok',
+    ringClass: 'stroke-signal-ok',
+    listDotClass: 'bg-signal-ok',
+    chipClass: 'border-signal-ok/40 bg-signal-ok/10 text-signal-ok',
+  },
+  empty: {
+    label: 'UNFILLED',
+    dotClass: 'fill-signal-warn',
+    ringClass: 'stroke-signal-warn',
+    listDotClass: 'bg-signal-warn',
+    chipClass: 'border-signal-warn/40 bg-signal-warn/10 text-signal-warn',
+  },
+  attention: {
+    label: 'REVIEW',
+    dotClass: 'fill-amber',
+    ringClass: 'stroke-amber',
+    listDotClass: 'bg-amber',
+    chipClass: 'border-amber/40 bg-amber/10 text-amber',
+  },
+};
 
 /**
  * Aggregate the fill state of every loadout slot mapped to a schematic hotspot.

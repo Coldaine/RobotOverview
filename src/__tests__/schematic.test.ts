@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hotspotStatus } from '@/lib/schematic';
+import { HOTSPOT_STATUSES, HOTSPOT_STATUS_META, hotspotStatus } from '@/lib/schematic';
 import type { LoadoutSlot } from '@/data/types';
 
 function slot(hotspotId: string, filledBy: string | null): LoadoutSlot {
@@ -31,5 +31,47 @@ describe('hotspotStatus()', () => {
     const loadout = [slot('power', 'ups'), slot('lighting', null)];
     expect(hotspotStatus(loadout, 'power')).toBe('ok');
     expect(hotspotStatus(loadout, 'lighting')).toBe('empty');
+  });
+});
+
+describe('HOTSPOT_STATUS_META', () => {
+  it('has presentation metadata for every hotspot status', () => {
+    expect(Object.keys(HOTSPOT_STATUS_META).sort()).toEqual([...HOTSPOT_STATUSES].sort());
+
+    HOTSPOT_STATUSES.forEach((status) => {
+      const meta = HOTSPOT_STATUS_META[status];
+      expect(meta.label.length).toBeGreaterThan(0);
+      expect(meta.dotClass.length).toBeGreaterThan(0);
+      expect(meta.ringClass.length).toBeGreaterThan(0);
+      expect(meta.listDotClass.length).toBeGreaterThan(0);
+      expect(meta.chipClass.length).toBeGreaterThan(0);
+    });
+  });
+
+  it('preserves operator-facing status labels', () => {
+    expect(HOTSPOT_STATUS_META.ok.label).toBe('NOMINAL');
+    expect(HOTSPOT_STATUS_META.empty.label).toBe('UNFILLED');
+    expect(HOTSPOT_STATUS_META.attention.label).toBe('REVIEW');
+  });
+
+  it('preserves the schematic status class mappings', () => {
+    expect(HOTSPOT_STATUS_META.ok).toMatchObject({
+      dotClass: 'fill-signal-ok',
+      ringClass: 'stroke-signal-ok',
+      listDotClass: 'bg-signal-ok',
+      chipClass: 'border-signal-ok/40 bg-signal-ok/10 text-signal-ok',
+    });
+    expect(HOTSPOT_STATUS_META.empty).toMatchObject({
+      dotClass: 'fill-signal-warn',
+      ringClass: 'stroke-signal-warn',
+      listDotClass: 'bg-signal-warn',
+      chipClass: 'border-signal-warn/40 bg-signal-warn/10 text-signal-warn',
+    });
+    expect(HOTSPOT_STATUS_META.attention).toMatchObject({
+      dotClass: 'fill-amber',
+      ringClass: 'stroke-amber',
+      listDotClass: 'bg-amber',
+      chipClass: 'border-amber/40 bg-amber/10 text-amber',
+    });
   });
 });
