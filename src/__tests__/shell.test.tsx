@@ -25,6 +25,7 @@ describe('Shell inventory fallback status', () => {
       'Postgres read FAILED — serving the hangar.ts spine with this visible warning.',
     );
     expect(banner).not.toHaveTextContent(/silently/i);
+    expect(screen.getByText(/DATA · STATIC · PG ERR/)).toBeInTheDocument();
   });
 
   it('does not show the static-data banner for Postgres-backed reads', () => {
