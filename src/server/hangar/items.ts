@@ -153,15 +153,34 @@ function sourceRecords(value: unknown): SourceRecord[] | undefined {
       if (!row || typeof row !== 'object') return false;
       const record = row as Partial<Record<keyof SourceRecord, unknown>>;
       return (
-        typeof record.label === 'string' &&
-        typeof record.url === 'string' &&
-        typeof record.accessedAt === 'string' &&
+        isTrimmedNonBlankString(record.label) &&
+        isTrimmedHttpUrl(record.url) &&
+        isTrimmedTimestamp(record.accessedAt) &&
         isSourceRecordKind(record.kind)
       );
     },
   );
 
   return records.length ? records : undefined;
+}
+
+function isTrimmedNonBlankString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim() !== '' && value === value.trim();
+}
+
+function isTrimmedHttpUrl(value: unknown): value is string {
+  if (!isTrimmedNonBlankString(value)) return false;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function isTrimmedTimestamp(value: unknown): value is string {
+  return isTrimmedNonBlankString(value) && Number.isFinite(new Date(value).getTime());
 }
 
 export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
