@@ -220,7 +220,7 @@ const FALLBACK_BANNER_DETAIL: Record<
   string
 > = {
   'not-configured': 'Postgres is not configured — every read is coming from the hangar.ts spine.',
-  'postgres-error': 'Postgres read FAILED — silently serving the hangar.ts spine instead.',
+  'postgres-error': 'Postgres read FAILED — serving the hangar.ts spine with this visible warning.',
 };
 
 function StaticDataBanner() {
