@@ -66,9 +66,14 @@ tasks:
     desc: Build the production Next.js app.
     cmds: [npm run build]
 
+  typecheck:
+    desc: Run TypeScript without emitting files.
+    cmds: [npm run typecheck]
+
   check:
     desc: Run the standard Hangar app gate.
     cmds:
       - npm run lint
+      - npm run typecheck
       - npm run test:run
       - npm run build
