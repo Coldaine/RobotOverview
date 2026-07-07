@@ -1,9 +1,11 @@
-import type {
-  InventoryItemStatus,
-  LifecycleState,
-  MissionStatus,
-  UnitStatus,
-  WishlistStatus,
+import {
+  ACTIVITY_KINDS,
+  type ActivityKind,
+  type InventoryItemStatus,
+  type LifecycleState,
+  type MissionStatus,
+  type UnitStatus,
+  type WishlistStatus,
 } from '../data/types';
 
 export function money(n: number | null | undefined): string {
@@ -62,6 +64,23 @@ export const WISHLIST_STATUS_META: Record<WishlistStatus, { label: string; cls: 
   received: { label: 'Received', cls: 'text-signal-ok border-signal-ok/40 bg-signal-ok/10' },
   rejected: { label: 'Rejected', cls: 'text-signal-crit border-signal-crit/40 bg-signal-crit/10' },
 };
+
+export const ACTIVITY_KIND_META: Record<ActivityKind, { label: string; dotClass: string }> = {
+  acquired: { label: 'ACQUIRED', dotClass: 'bg-signal-ok' },
+  'price-drop': { label: 'PRICE-DROP', dotClass: 'bg-amber' },
+  shipped: { label: 'SHIPPED', dotClass: 'bg-cyan' },
+  insight: { label: 'INSIGHT', dotClass: 'bg-cyan' },
+  mission: { label: 'MISSION', dotClass: 'bg-amber' },
+  researched: { label: 'RESEARCHED', dotClass: 'bg-ink-dim' },
+};
+
+export function activityKindMeta(kind: ActivityKind | string): { label: string; dotClass?: string } {
+  if ((ACTIVITY_KINDS as readonly string[]).includes(kind)) {
+    return ACTIVITY_KIND_META[kind as ActivityKind];
+  }
+
+  return { label: kind.toUpperCase() };
+}
 
 // The acquisition pipeline a user steps an item through; 'rejected' is set out-of-band.
 export const ACQUISITION_PIPELINE_STATUSES: readonly WishlistStatus[] = [
