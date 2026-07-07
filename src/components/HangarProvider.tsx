@@ -1,7 +1,7 @@
 'use client';
 import { HangarProvider as Provider } from '@/lib/store';
 import type { InventoryItem } from '@/data/types';
-import type { InventoryReadStatus } from '@/lib/store';
+import type { HangarReadStatus } from '@/lib/hangar-read-status';
 import type { ReactNode } from 'react';
 
 export function HangarProvider({
@@ -11,7 +11,7 @@ export function HangarProvider({
 }: {
   children: ReactNode;
   initialItems?: InventoryItem[];
-  initialInventoryRead?: InventoryReadStatus;
+  initialInventoryRead?: HangarReadStatus;
 }) {
   return (
     <Provider initialItems={initialItems} initialInventoryRead={initialInventoryRead}>

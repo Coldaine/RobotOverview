@@ -5,8 +5,8 @@ import type {
   SpecRow,
 } from '@/data/types';
 import { INVENTORY_ITEM_STATUSES, PROVENANCE_KINDS, isSourceRecordKind } from '@/data/types';
+import type { HangarFallbackReason, HangarReadSource } from '@/lib/hangar-read-status';
 import type { Queryable } from './queryable';
-import type { HangarFallbackReason, HangarReadSource } from './read-model';
 import { readWithStaticFallback } from './read-model';
 import { enumValue, numberOrNull, postgresTextArray, strictObjectArray } from './validators';
 

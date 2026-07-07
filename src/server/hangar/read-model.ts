@@ -1,8 +1,6 @@
 import { getHangarPool } from './db';
 import type { Queryable } from './queryable';
-
-export type HangarReadSource = 'postgres' | 'static';
-export type HangarFallbackReason = 'not-configured' | 'postgres-error';
+import type { HangarFallbackReason, HangarReadSource } from '@/lib/hangar-read-status';
 
 export interface HangarRead<T> {
   source: HangarReadSource;

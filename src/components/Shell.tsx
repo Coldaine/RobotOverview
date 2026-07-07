@@ -17,7 +17,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useHangar, type InventoryReadStatus } from '@/lib/store';
+import { useHangar } from '@/lib/store';
+import type { HangarFallbackReason } from '@/lib/hangar-read-status';
 import { isNavActive } from '@/lib/nav';
 import { InventoryDrawer } from './InventoryDrawer';
 import { timeAgo } from '@/lib/format';
@@ -76,7 +77,7 @@ const THEME_LABELS: Record<string, string> = {
   topology: 'TOP',
 };
 
-const FALLBACK_LABELS: Record<string, string> = {
+const FALLBACK_LABELS: Record<HangarFallbackReason, string> = {
   'not-configured': 'NOT CFG',
   'postgres-error': 'PG ERR',
 };
@@ -215,10 +216,7 @@ export function Shell({ children }: { readonly children: ReactNode }) {
   );
 }
 
-const FALLBACK_BANNER_DETAIL: Record<
-  NonNullable<InventoryReadStatus['fallbackReason']>,
-  string
-> = {
+const FALLBACK_BANNER_DETAIL: Record<HangarFallbackReason, string> = {
   'not-configured': 'Postgres is not configured — every read is coming from the hangar.ts spine.',
   'postgres-error': 'Postgres read FAILED — serving the hangar.ts spine with this visible warning.',
 };

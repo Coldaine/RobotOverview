@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { hangarData, isHangarBayId } from '../data/hangar';
 import { isInsightConfidence, isWishlistStatus } from '../data/types';
+import type { HangarReadStatus } from './hangar-read-status';
 import type {
   Bay,
   BayId,
@@ -36,10 +37,7 @@ const STORE_KEYS = {
 } as const;
 export const LOCAL_INSIGHT_PREFIX = 'local-';
 const SOURCES = ['us', 'import'] as const;
-export type InventoryReadStatus = {
-  source: 'postgres' | 'static';
-  fallbackReason?: 'not-configured' | 'postgres-error';
-};
+export type InventoryReadStatus = HangarReadStatus;
 // User overrides layered over the static spine — keep hangarData immutable.
 type ObjectiveOverrides = Record<string, Record<number, boolean>>; // missionId -> objIdx -> done
 type WishStatusOverrides = Record<string, WishlistStatus>; // wishlist id -> status
