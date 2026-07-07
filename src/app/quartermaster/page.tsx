@@ -5,23 +5,10 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { SectionTitle, StatReadout } from '@/components/ui/Primitives';
 import { useHangar } from '@/lib/store';
-import { money } from '@/lib/format';
+import { ACQUISITION_PIPELINE_STATUSES, money, WISHLIST_STATUS_META } from '@/lib/format';
 import { SOURCE_LABELS, SOURCE_PREFERENCES, type SourcePreference } from '@/lib/hangar-preferences';
 import clsx from 'clsx';
-import type { WishlistItem, WishlistStatus } from '@/data/types';
-
-const WSTATUS: Record<WishlistItem['status'], { label: string; cls: string }> = {
-  watching: { label: 'Watching', cls: 'text-ink-dim border-rim bg-panel-2/40' },
-  researching: { label: 'Researching', cls: 'text-cyan border-cyan/40 bg-cyan/10' },
-  planned: { label: 'Planned', cls: 'text-cyan border-cyan/40 bg-cyan/10' },
-  'buy-next': { label: 'Buy Next', cls: 'text-amber border-amber/40 bg-amber/10' },
-  'on-order': { label: 'On Order', cls: 'text-amber border-amber/40 bg-amber/10' },
-  received: { label: 'Received', cls: 'text-signal-ok border-signal-ok/40 bg-signal-ok/10' },
-  rejected: { label: 'Rejected', cls: 'text-signal-crit border-signal-crit/40 bg-signal-crit/10' },
-};
-
-// The acquisition pipeline a user steps an item through; 'rejected' is set out-of-band.
-const ACQ_ORDER: WishlistStatus[] = ['watching', 'researching', 'planned', 'buy-next', 'on-order', 'received'];
+import type { WishlistItem } from '@/data/types';
 
 const SOURCE_BUTTONS: Record<SourcePreference, { icon: typeof Home; activeClass: string }> = {
   us: { icon: Home, activeClass: 'bg-cyan/15 text-cyan shadow-hud-cyan' },
@@ -68,12 +55,12 @@ export default function Quartermaster() {
   const buyNextTotalImp = buyNextItems.reduce((s, w) => s + priceFor(w, 'import'), 0);
 
   function stepStatus(w: WishlistItem, dir: 1 | -1) {
-    const idx = ACQ_ORDER.indexOf(w.status);
+    const idx = ACQUISITION_PIPELINE_STATUSES.indexOf(w.status);
     // Out-of-band statuses (e.g. 'rejected') are not part of the pipeline — don't let
     // a stepper click silently reactivate them.
     if (idx === -1) return;
-    const next = Math.min(ACQ_ORDER.length - 1, Math.max(0, idx + dir));
-    setWishlistStatus(w.id, ACQ_ORDER[next]);
+    const next = Math.min(ACQUISITION_PIPELINE_STATUSES.length - 1, Math.max(0, idx + dir));
+    setWishlistStatus(w.id, ACQUISITION_PIPELINE_STATUSES[next]);
   }
 
   return (
@@ -140,8 +127,8 @@ export default function Quartermaster() {
       <SectionTitle code="QM"><span className="inline-flex items-center gap-2"><ShoppingCart className="h-3.5 w-3.5 text-amber" /> Requisition List</span></SectionTitle>
       <div className="space-y-3">
         {wishlist.map((w, i) => {
-          const st = WSTATUS[w.status];
-          const steppable = ACQ_ORDER.indexOf(w.status) !== -1;
+          const st = WISHLIST_STATUS_META[w.status];
+          const steppable = ACQUISITION_PIPELINE_STATUSES.indexOf(w.status) !== -1;
           const us = w.price.us;
           const imp = w.price.import;
           const active = source === 'us' ? us : imp ?? us;

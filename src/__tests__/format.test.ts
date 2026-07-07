@@ -1,10 +1,19 @@
 import { describe, it, expect } from 'vitest';
-import { money, timeAgo, STATUS_META, LIFECYCLE_META, ITEM_STATUS_META } from '@/lib/format';
+import {
+  ACQUISITION_PIPELINE_STATUSES,
+  money,
+  timeAgo,
+  STATUS_META,
+  LIFECYCLE_META,
+  ITEM_STATUS_META,
+  WISHLIST_STATUS_META,
+} from '@/lib/format';
 import {
   INVENTORY_ITEM_STATUSES,
   LIFECYCLE_STATES,
   MISSION_STATUSES,
   UNIT_STATUSES,
+  WISHLIST_STATUSES,
 } from '@/data/types';
 import { MISSION_STATUS_META } from '@/lib/format';
 
@@ -75,5 +84,25 @@ describe('MISSION_STATUS_META exhaustiveness', () => {
     expect(MISSION_STATUS_META[status]).toBeDefined();
     expect(MISSION_STATUS_META[status].label).toBeTruthy();
     expect(MISSION_STATUS_META[status].cls).toBeTruthy();
+  });
+});
+
+describe('WISHLIST_STATUS_META exhaustiveness', () => {
+  it.each(WISHLIST_STATUSES)('has an entry for wishlist status "%s"', (status) => {
+    expect(WISHLIST_STATUS_META[status]).toBeDefined();
+    expect(WISHLIST_STATUS_META[status].label).toBeTruthy();
+    expect(WISHLIST_STATUS_META[status].cls).toBeTruthy();
+  });
+
+  it('keeps rejected out of the acquisition stepper pipeline', () => {
+    expect(ACQUISITION_PIPELINE_STATUSES).toEqual([
+      'watching',
+      'researching',
+      'planned',
+      'buy-next',
+      'on-order',
+      'received',
+    ]);
+    expect(ACQUISITION_PIPELINE_STATUSES).not.toContain('rejected');
   });
 });

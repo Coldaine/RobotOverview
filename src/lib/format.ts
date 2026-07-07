@@ -3,6 +3,7 @@ import type {
   LifecycleState,
   MissionStatus,
   UnitStatus,
+  WishlistStatus,
 } from '../data/types';
 
 export function money(n: number | null | undefined): string {
@@ -51,6 +52,26 @@ export const MISSION_STATUS_META: Record<MissionStatus, { label: string; cls: st
   standby: { label: 'Standby', cls: 'text-ink-dim border-rim bg-panel-2/40' },
   complete: { label: 'Complete', cls: 'text-cyan border-cyan/40 bg-cyan/10' },
 };
+
+export const WISHLIST_STATUS_META: Record<WishlistStatus, { label: string; cls: string }> = {
+  watching: { label: 'Watching', cls: 'text-ink-dim border-rim bg-panel-2/40' },
+  researching: { label: 'Researching', cls: 'text-cyan border-cyan/40 bg-cyan/10' },
+  planned: { label: 'Planned', cls: 'text-cyan border-cyan/40 bg-cyan/10' },
+  'buy-next': { label: 'Buy Next', cls: 'text-amber border-amber/40 bg-amber/10' },
+  'on-order': { label: 'On Order', cls: 'text-amber border-amber/40 bg-amber/10' },
+  received: { label: 'Received', cls: 'text-signal-ok border-signal-ok/40 bg-signal-ok/10' },
+  rejected: { label: 'Rejected', cls: 'text-signal-crit border-signal-crit/40 bg-signal-crit/10' },
+};
+
+// The acquisition pipeline a user steps an item through; 'rejected' is set out-of-band.
+export const ACQUISITION_PIPELINE_STATUSES: readonly WishlistStatus[] = [
+  'watching',
+  'researching',
+  'planned',
+  'buy-next',
+  'on-order',
+  'received',
+] as const;
 
 export const TONE_CLASSES: Record<
   'ok' | 'warn' | 'crit' | 'cyan' | 'amber' | 'idle',
