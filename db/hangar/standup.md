@@ -14,13 +14,16 @@ The relational backend for the Hangar: **one master inventory of all gear**, wit
 
 ## Where it lives
 
-### Local proof / development
+### Proof / development paths
 
-- **Instance:** the existing local `techdeals-postgres18` container (Postgres 18, host `:54329`).
-- **Database:** `hangar` — a separate database in that instance. TechdealsHandoff data (`market_*`, `techdeals_work*`, `legacy_supabase`) is untouched.
-- **Creds (dev):** `techdeals` / `techdeals`.
+On `icarus-laptop`, do **not** start or rebuild local containers. Use the cluster-backed
+logical `hangar` database, a remote proof host, or another already-approved nonlocal proof
+environment for DB validation.
 
-This local database proves the schema and seed shape. It is not the production target and should not be treated as authoritative runtime state.
+Historical/non-icarus proof has used the existing `techdeals-postgres18` Postgres 18 container
+with a separate `hangar` database and `techdeals` / `techdeals` dev credentials. That proves
+schema and seed shape only; it is not the production target and must not be treated as
+authoritative runtime state.
 
 ### Target deployment
 
@@ -52,15 +55,15 @@ The first browser-facing read lane is intentionally small and reusable:
 
 ## Rebuild from scratch
 
-Local proof rebuild, for remote/existing proof environments only. Do not start or rebuild
-local containers on `icarus-laptop`; use the cluster path or a remote proof host instead.
+Remote or already-approved proof rebuild only. Do not start or rebuild local containers on
+`icarus-laptop`; use the cluster path or a remote proof host instead. Run the full rebuild
+only against a scratch proof database. For a live database with stored data, apply additive
+migrations instead.
 
 ```bash
-docker exec techdeals-postgres18 psql -U techdeals -d postgres \
-  -c "DROP DATABASE IF EXISTS hangar;" -c "CREATE DATABASE hangar;"
-docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP=1 < db/hangar/schema.sql
+psql "$HANGAR_DATABASE_URL" -v ON_ERROR_STOP=1 -f db/hangar/schema.sql
 npx tsx db/hangar/gen-seed.ts --out db/hangar/seed.sql    # regenerate after editing hangar.ts
-docker exec -i techdeals-postgres18 psql -U techdeals -d hangar -v ON_ERROR_STOP=1 < db/hangar/seed.sql
+psql "$HANGAR_DATABASE_URL" -v ON_ERROR_STOP=1 -f db/hangar/seed.sql
 ```
 
 Cluster deployment is different: reserve the logical DB/role in `coldaine-k8cluster`, provide address config as `HANGAR_DB_HOST`/`HANGAR_DB_PORT`/`HANGAR_DB_NAME`/`HANGAR_DB_USER`, provide only the credential-bearing piece through the chosen runtime auth path, apply migrations/schema there, load seed data generated from `hangar.ts`, verify the cluster-owned backup/restore status, verify `GET /api/hangar/preflight` can reach the DB, parity-check representative reads, then cut each app read lane over to Postgres. The inventory-item lane has passed the app-level seed/preflight/parity/read gates; repeat that app-level proof for each broader Hangar surface before moving it off `hangar.ts`.

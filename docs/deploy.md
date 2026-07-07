@@ -53,9 +53,11 @@ kubectl rollout status -n apps deploy/robot-overview
 Never use a floating tag with `imagePullPolicy: IfNotPresent` — the node caches the first
 image forever. Always pin the digest.
 
-## Content ships in the image
+## Content and data deploys
 
 `src/data/hangar.ts` (and everything else agents ingest into this repo) is baked into the
-image at build time. Deploying is how authored content reaches the site. If a change also
-alters what is stored in Postgres, the change must include a migration that handles the data
-already in the database — never assume the DB is empty or disposable.
+image at build time for static or not-yet-cutover surfaces. For Postgres-backed lanes,
+authored content reaches production only after the matching seed, migration, or data load is
+applied to the target database as well. If a change alters what is stored in Postgres, the
+change must include a migration that handles data already in the database — never assume the
+DB is empty or disposable.
