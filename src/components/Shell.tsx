@@ -201,7 +201,7 @@ export function Shell({ children }: { readonly children: ReactNode }) {
 function StaticDataBanner() {
   const { inventoryRead } = useHangar();
   if (inventoryRead.source === 'postgres') return null;
-  const detail = hangarFallbackDetail(inventoryRead.fallbackReason);
+  const detail = hangarFallbackDetail('inventory', inventoryRead.fallbackReason);
   return (
     <div
       role="status"
