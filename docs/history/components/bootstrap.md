@@ -7,9 +7,9 @@ last_updated: 2026-07-01
 
 # Bootstrap And Command Surface
 
-> This document owns RobotOverview local tooling setup, command surface boundaries, and
-> postinstall behavior. `AGENTS.md` should route here instead of carrying detailed bootstrap
-> policy.
+> Historical snapshot only. Current local tooling setup, command surface boundaries, and
+> postinstall behavior are owned by `AGENTS.md`, `Taskfile.yml`, `package.json`, `justfile`,
+> and `bootstrap/`. Use this page only as background after checking the live owner files.
 
 ## Command Ownership
 
@@ -66,4 +66,5 @@ about external CLIs, not package dependencies.
 - Keep `justfile` as thin aliases only.
 - Keep postinstall verify-only unless there is an explicit project decision to make installs
   automatic again.
-- Update this document when changing bootstrap profiles, postinstall behavior, or command ownership.
+- This archived rule is superseded: update the live owner files when changing bootstrap profiles,
+  postinstall behavior, or command ownership.
