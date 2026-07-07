@@ -9,17 +9,23 @@ export const SOURCE_META: Record<
     label: string;
     shortLabel: string;
     accent: 'cyan' | 'amber';
+    activeClass: string;
+    textClass: string;
   }
 > = {
   us: {
     label: 'US Distributor',
     shortLabel: 'US',
     accent: 'cyan',
+    activeClass: 'bg-cyan/15 text-cyan shadow-hud-cyan',
+    textClass: 'text-cyan',
   },
   import: {
     label: 'Import',
     shortLabel: 'IMP',
     accent: 'amber',
+    activeClass: 'bg-amber/15 text-amber shadow-hud-amber',
+    textClass: 'text-amber',
   },
 };
 

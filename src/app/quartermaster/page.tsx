@@ -16,9 +16,9 @@ import {
 import clsx from 'clsx';
 import type { WishlistItem } from '@/data/types';
 
-const SOURCE_BUTTONS: Record<SourcePreference, { icon: typeof Home; activeClass: string }> = {
-  us: { icon: Home, activeClass: 'bg-cyan/15 text-cyan shadow-hud-cyan' },
-  import: { icon: Globe, activeClass: 'bg-amber/15 text-amber shadow-hud-amber' },
+const SOURCE_BUTTON_ICONS: Record<SourcePreference, typeof Home> = {
+  us: Home,
+  import: Globe,
 };
 
 export default function Quartermaster() {
@@ -40,14 +40,14 @@ export default function Quartermaster() {
 
   // Upgrade-path: group buy-next items by their target mission (or "Unassigned").
   const upgradePath = useMemo(() => {
-    const groups = new Map<string, { key: string; label: string; items: WishlistItem[]; us: number; imp: number }>();
+    const groups = new Map<string, { key: string; label: string; items: WishlistItem[]; us: number; import: number }>();
     buyNextItems.forEach((w) => {
       const key = w.forMission ?? '—';
       const label = w.forMission ? mission(w.forMission)?.name ?? w.forMission : 'Unassigned';
-      const g = groups.get(key) ?? { key, label, items: [], us: 0, imp: 0 };
+      const g = groups.get(key) ?? { key, label, items: [], us: 0, import: 0 };
       g.items.push(w);
       g.us += sourcePriceOrZero(w.price, 'us');
-      g.imp += sourcePriceOrZero(w.price, 'import');
+      g.import += sourcePriceOrZero(w.price, 'import');
       groups.set(key, g);
     });
     return Array.from(groups.values()).sort((a, b) => b.us - a.us);
@@ -76,14 +76,14 @@ export default function Quartermaster() {
         {/* source toggle */}
         <div className="flex items-center gap-1 rounded-lg border border-rim bg-panel-2/40 p-1">
           {SOURCE_PREFERENCES.map((option) => {
-            const Icon = SOURCE_BUTTONS[option].icon;
+            const Icon = SOURCE_BUTTON_ICONS[option];
             return (
               <button
                 key={option}
                 onClick={() => setSource(option)}
                 className={clsx(
                   'flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-all',
-                  source === option ? SOURCE_BUTTONS[option].activeClass : 'text-ink-dim hover:text-ink',
+                  source === option ? SOURCE_META[option].activeClass : 'text-ink-dim hover:text-ink',
                 )}
               >
                 <Icon className="h-3 w-3" /> {SOURCE_META[option].label}
@@ -119,7 +119,9 @@ export default function Quartermaster() {
               <div key={g.key} className="panel-inset px-3 py-2">
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-[11px] uppercase tracking-wider text-ink">{g.label}</span>
-                  <span className="font-mono text-[10px] tabular-nums text-amber">{money(source === 'us' ? g.us : g.imp)}</span>
+                  <span className="font-mono text-[10px] tabular-nums text-amber">
+                    {money(g[source])}
+                  </span>
                 </div>
                 <div className="mt-1 font-mono text-[10px] text-ink-dim">
                   {g.items.map((it) => it.name).join(' · ')}
@@ -207,7 +209,7 @@ export default function Quartermaster() {
                   <div
                     className={clsx(
                       'font-mono text-xl tabular-nums',
-                      SOURCE_META[source].accent === 'cyan' ? 'text-cyan' : 'text-amber',
+                      SOURCE_META[source].textClass,
                     )}
                   >
                     {money(active)}
