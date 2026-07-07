@@ -97,6 +97,16 @@ describe('useHangar()', () => {
     expect(() => renderHook(() => useHangar())).toThrow('useHangar must be used within HangarProvider');
     spy.mockRestore();
   });
+
+  it('falls back from unsupported persisted theme and source preferences', () => {
+    localStorage.setItem('hangar:theme', 'sepia');
+    localStorage.setItem('hangar:source', 'warehouse');
+
+    const { result } = renderHook(() => useHangar(), { wrapper });
+
+    expect(result.current.theme).toBe('blueprint');
+    expect(result.current.source).toBe('us');
+  });
 });
 
 // ─── useCalculatedConstraints() ───────────────────────────────────────────────

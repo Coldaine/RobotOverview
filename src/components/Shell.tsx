@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useHangar } from '@/lib/store';
 import type { HangarFallbackReason } from '@/lib/hangar-read-status';
+import { THEME_LABELS, THEME_MODES } from '@/lib/hangar-preferences';
 import { isNavActive } from '@/lib/nav';
 import { InventoryDrawer } from './InventoryDrawer';
 import { timeAgo } from '@/lib/format';
@@ -70,12 +71,6 @@ function NavItem({
     </Link>
   );
 }
-
-const THEME_LABELS: Record<string, string> = {
-  blueprint: 'BLU',
-  industrial: 'IND',
-  topology: 'TOP',
-};
 
 const FALLBACK_LABELS: Record<HangarFallbackReason, string> = {
   'not-configured': 'NOT CFG',
@@ -159,7 +154,7 @@ export function Shell({ children }: { readonly children: ReactNode }) {
         <div className="border-t border-rim/70 px-4 py-3">
           <div className="hud-label px-1 pb-2">Paradigm</div>
           <div className="flex gap-1">
-            {(['blueprint', 'industrial', 'topology'] as const).map((t) => (
+            {THEME_MODES.map((t) => (
               <button
                 key={t}
                 onClick={() => setTheme(t)}

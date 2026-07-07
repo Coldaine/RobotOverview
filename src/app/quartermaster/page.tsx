@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { SectionTitle, StatReadout } from '@/components/ui/Primitives';
 import { useHangar } from '@/lib/store';
 import { money } from '@/lib/format';
+import { SOURCE_LABELS, SOURCE_PREFERENCES, type SourcePreference } from '@/lib/hangar-preferences';
 import clsx from 'clsx';
 import type { WishlistItem, WishlistStatus } from '@/data/types';
 
@@ -22,7 +23,12 @@ const WSTATUS: Record<WishlistItem['status'], { label: string; cls: string }> = 
 // The acquisition pipeline a user steps an item through; 'rejected' is set out-of-band.
 const ACQ_ORDER: WishlistStatus[] = ['watching', 'researching', 'planned', 'buy-next', 'on-order', 'received'];
 
-function priceFor(w: WishlistItem, source: 'us' | 'import'): number {
+const SOURCE_BUTTONS: Record<SourcePreference, { icon: typeof Home; activeClass: string }> = {
+  us: { icon: Home, activeClass: 'bg-cyan/15 text-cyan shadow-hud-cyan' },
+  import: { icon: Globe, activeClass: 'bg-amber/15 text-amber shadow-hud-amber' },
+};
+
+function priceFor(w: WishlistItem, source: SourcePreference): number {
   return (source === 'us' ? w.price.us : w.price.import ?? w.price.us) ?? 0;
 }
 
@@ -80,24 +86,21 @@ export default function Quartermaster() {
         </div>
         {/* source toggle */}
         <div className="flex items-center gap-1 rounded-lg border border-rim bg-panel-2/40 p-1">
-          <button
-            onClick={() => setSource('us')}
-            className={clsx(
-              'flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-all',
-              source === 'us' ? 'bg-cyan/15 text-cyan shadow-hud-cyan' : 'text-ink-dim hover:text-ink',
-            )}
-          >
-            <Home className="h-3 w-3" /> US Distributor
-          </button>
-          <button
-            onClick={() => setSource('import')}
-            className={clsx(
-              'flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-all',
-              source === 'import' ? 'bg-amber/15 text-amber shadow-hud-amber' : 'text-ink-dim hover:text-ink',
-            )}
-          >
-            <Globe className="h-3 w-3" /> Import
-          </button>
+          {SOURCE_PREFERENCES.map((option) => {
+            const Icon = SOURCE_BUTTONS[option].icon;
+            return (
+              <button
+                key={option}
+                onClick={() => setSource(option)}
+                className={clsx(
+                  'flex items-center gap-1.5 rounded-md px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-all',
+                  source === option ? SOURCE_BUTTONS[option].activeClass : 'text-ink-dim hover:text-ink',
+                )}
+              >
+                <Icon className="h-3 w-3" /> {SOURCE_LABELS[option]}
+              </button>
+            );
+          })}
         </div>
       </header>
 
