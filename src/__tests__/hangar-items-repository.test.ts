@@ -304,6 +304,28 @@ describe('Hangar inventory Postgres read path', () => {
     ).toThrow('Invalid inventory limitations from hangar DB: expected text at index 1.');
   });
 
+  it('rejects blank DB spec rows and limitations before rendering item details', () => {
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        specs: [{ label: ' ', value: '2K QHD @ 60 FPS' }],
+      })),
+    ).toThrow('Invalid inventory specs from hangar DB: expected valid object at index 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        specs: [{ label: 'Video', value: ' ' }],
+      })),
+    ).toThrow('Invalid inventory specs from hangar DB: expected valid object at index 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        limitations: ['valid limitation', ' '],
+      })),
+    ).toThrow(
+      'Invalid inventory limitations from hangar DB: expected non-blank trimmed text at index 1.',
+    );
+  });
+
   it('rejects malformed DB source record details before rendering external links', () => {
     expect(() =>
       mapInventoryItemRow(inventoryRow({
