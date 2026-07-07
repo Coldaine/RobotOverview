@@ -1,6 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { HangarProvider, useHangar, useCalculatedConstraints, selectedMissionWishes } from '@/lib/store';
+import {
+  HangarProvider,
+  finiteContribution,
+  selectedMissionWishes,
+  useCalculatedConstraints,
+  useHangar,
+} from '@/lib/store';
 import { hangarData } from '@/data/hangar';
 import type { WishlistItem } from '@/data/types';
 
@@ -95,6 +101,23 @@ describe('selectedMissionWishes()', () => {
     const result = selectedMissionWishes([watcher, buyer]);
     expect(result).toHaveLength(1);
     expect(result[0].id).toBe('buyer');
+  });
+});
+
+describe('finiteContribution()', () => {
+  it('keeps finite numeric contributions', () => {
+    expect(finiteContribution(12)).toBe(12);
+    expect(finiteContribution(0)).toBe(0);
+    expect(finiteContribution(-3)).toBe(-3);
+  });
+
+  it('treats non-finite and malformed contributions as zero', () => {
+    expect(finiteContribution(Number.NaN)).toBe(0);
+    expect(finiteContribution(Number.POSITIVE_INFINITY)).toBe(0);
+    expect(finiteContribution(Number.NEGATIVE_INFINITY)).toBe(0);
+    expect(finiteContribution(null)).toBe(0);
+    expect(finiteContribution(undefined)).toBe(0);
+    expect(finiteContribution('12')).toBe(0);
   });
 });
 
