@@ -33,21 +33,22 @@ export function Wire({
   const opacity = !layerOn ? 0.05 : dimmed ? WIRE.dimOpacity : active ? WIRE.activeOpacity : WIRE.idleOpacity;
   const flowing = lit && !reducedMotion;
   const showGlow = layerOn && lit && (emphasize || !reducedMotion);
+  const canInteract = interactive && layerOn;
 
   return (
     <g
-      className={clsx(interactive && 'cursor-pointer', 'outline-none transition-opacity duration-500')}
+      className={clsx(canInteract && 'cursor-pointer', 'outline-none transition-opacity duration-500')}
       style={{ opacity }}
-      tabIndex={interactive && layerOn ? 0 : undefined}
-      role={interactive ? 'button' : undefined}
-      aria-label={interactive ? `Trace ${wire.netId}` : undefined}
-      onMouseEnter={interactive ? () => onHover(wire.netId) : undefined}
-      onMouseLeave={interactive ? () => onHover(null) : undefined}
-      onFocus={interactive ? () => onHover(wire.netId) : undefined}
-      onBlur={interactive ? () => onHover(null) : undefined}
-      onClick={interactive ? () => onSelect(wire.netId) : undefined}
+      tabIndex={canInteract ? 0 : undefined}
+      role={canInteract ? 'button' : undefined}
+      aria-label={canInteract ? `Trace ${wire.netId}` : undefined}
+      onMouseEnter={canInteract ? () => onHover(wire.netId) : undefined}
+      onMouseLeave={canInteract ? () => onHover(null) : undefined}
+      onFocus={canInteract ? () => onHover(wire.netId) : undefined}
+      onBlur={canInteract ? () => onHover(null) : undefined}
+      onClick={canInteract ? () => onSelect(wire.netId) : undefined}
       onKeyDown={
-        interactive
+        canInteract
           ? (e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
