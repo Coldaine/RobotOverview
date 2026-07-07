@@ -11,8 +11,23 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import type { DocumentRef, Net, NetKind, Terminal, Unit } from '../data/types';
 
-export type ViewMode = 'board' | 'iso' | 'bus';
-export type ActiveHost = 'pi5' | 'orin';
+export const VIEW_MODES = ['board', 'iso', 'bus'] as const;
+export type ViewMode = (typeof VIEW_MODES)[number];
+
+export const VIEW_MODE_LABELS: Record<ViewMode, string> = {
+  board: 'Board',
+  iso: 'Cutaway',
+  bus: 'Bus',
+};
+
+export const ACTIVE_HOSTS = ['pi5', 'orin'] as const;
+export type ActiveHost = (typeof ACTIVE_HOSTS)[number];
+
+export const ACTIVE_HOST_LABELS: Record<ActiveHost, string> = {
+  pi5: 'Raspberry Pi 5',
+  orin: 'Jetson Orin',
+};
+
 export type Edge = 'top' | 'right' | 'bottom' | 'left';
 
 /** Semantic color key per net kind; the UI maps this to CSS vars. */
