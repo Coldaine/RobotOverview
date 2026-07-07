@@ -16,11 +16,9 @@ archived: 2026-06-26
 > kept for the design reasoning (pull-based, immutable digest pin, no inbound path) that may inform
 > the new pipeline. It was never fully activated — the GitOps App secrets were never configured.
 
-> (Original intent, now superseded) This described how the app was expected to ship to the cluster,
-> why that design was chosen, and how it would be operated.
->
-> For the product/service boundary with MooseGooseWebsite, read
-> [Hangar Service Boundary](../deploy/hangar-service-boundary.md).
+Original intent, now superseded: this described how the app was expected to ship to the cluster,
+why that design was chosen, and how it would be operated. Historical product/service boundary
+context lives in [Hangar Service Boundary](deploy/hangar-service-boundary.md).
 
 ## 1. What it is
 
