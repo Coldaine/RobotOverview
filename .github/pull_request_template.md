@@ -59,7 +59,7 @@
 <!-- Required: list commands/checks. If skipped, explain why. -->
 
 - Checks run:
-  <!-- e.g. task check, npm run lint, npm run test:run, git diff --check -->
+  <!-- e.g. task check, npm run typecheck, npm run test:run, git diff --check -->
 - Checks skipped:
   <!-- "None" or reason -->
 
