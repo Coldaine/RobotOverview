@@ -6,6 +6,7 @@ import { RoverSchematic } from '@/components/RoverSchematic';
 import { UnitCard } from '@/components/UnitCard';
 import { Gauge } from '@/components/ui/Gauge';
 import { SectionTitle, StatReadout } from '@/components/ui/Primitives';
+import { BAY_ACCENT_CLASSES } from '@/components/bay-icons';
 import { useHangar, useCalculatedConstraints } from '@/lib/store';
 import { money } from '@/lib/format';
 import clsx from 'clsx';
@@ -117,7 +118,7 @@ export default function HangarHub() {
           <section key={bay.id}>
             <div className="mb-3 flex items-center gap-3">
               <Link href={`/bay/${bay.id}`} className="group flex items-center gap-3">
-                <span className={clsx('font-mono text-[10px] tracking-[0.3em]', bay.accent === 'amber' ? 'text-amber/70' : 'text-cyan/70')}>
+                <span className={clsx('font-mono text-[10px] tracking-[0.3em]', BAY_ACCENT_CLASSES[bay.accent].textMuted)}>
                   {bay.code}
                 </span>
                 <h2 className="font-display text-sm uppercase tracking-[0.2em] text-ink group-hover:text-glow-cyan">{bay.name}</h2>
