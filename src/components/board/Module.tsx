@@ -1,15 +1,7 @@
 'use client';
-import { Bot, Cpu, Radio, Network, Headphones, type LucideIcon } from 'lucide-react';
 import type { Unit, UnitStatus } from '@/data/types';
 import type { ModuleBox, ViewMode } from '@/lib/twin';
-
-const BAY_ICON: Record<string, LucideIcon> = {
-  robotics: Bot,
-  compute: Cpu,
-  network: Radio,
-  home: Network,
-  audio: Headphones,
-};
+import { BAY_ICONS } from '@/components/bay-icons';
 
 const STATUS_COLOR: Record<UnitStatus, string> = {
   operational: 'var(--color-signal-ok)',
@@ -43,7 +35,7 @@ export function Module({
   interactive?: boolean;
   onHover: (unitId: string | null) => void;
 }) {
-  const Icon = BAY_ICON[unit?.bay ?? 'compute'] ?? Cpu;
+  const Icon = unit ? BAY_ICONS[unit.bay] : BAY_ICONS.compute;
   const accent = hovered || isCore ? 'var(--color-cyan)' : 'var(--color-rim)';
   const status = unit ? STATUS_COLOR[unit.status] : 'var(--color-ink-dim)';
   const isBus = mode === 'bus';

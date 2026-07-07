@@ -8,11 +8,8 @@ import {
   Hexagon,
   Network,
   Package,
-  Radio,
   ScrollText,
   Target,
-  Headphones,
-  Bot,
   Activity,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -22,6 +19,7 @@ import type { HangarFallbackReason } from '@/lib/hangar-read-status';
 import { THEME_LABELS, THEME_MODES } from '@/lib/hangar-preferences';
 import { isNavActive } from '@/lib/nav';
 import { InventoryDrawer } from './InventoryDrawer';
+import { BAY_ICONS } from './bay-icons';
 import { timeAgo } from '@/lib/format';
 import type { ReactNode } from 'react';
 
@@ -43,14 +41,6 @@ const NAV: NavStation[] = [
   { to: '/tech-tree', label: 'Tech Tree', code: 'CAP', icon: Network },
   { to: '/codex', label: 'Codex', code: 'WIKI', icon: ScrollText },
 ];
-
-const BAY_ICON: Record<string, typeof Cpu> = {
-  robotics: Bot,
-  compute: Cpu,
-  network: Radio,
-  home: Network,
-  audio: Headphones,
-};
 
 function NavItem({
   href,
@@ -129,7 +119,7 @@ export function Shell({ children }: { readonly children: ReactNode }) {
           <div className="hud-label px-2 pb-1">Bays</div>
           <div className="flex flex-col gap-0.5">
             {data.bays.map((b) => {
-              const Icon = BAY_ICON[b.id] ?? Cpu;
+              const Icon = BAY_ICONS[b.id];
               const count = data.units.filter((u) => u.bay === b.id).length;
               return (
                 <NavItem key={b.id} href={`/bay/${b.id}`}>
@@ -266,7 +256,7 @@ function MobileNav() {
           <div className="mx-1 h-10 w-px shrink-0 bg-rim/70" />
 
           {data.bays.map((b) => {
-            const Icon = BAY_ICON[b.id] ?? Cpu;
+            const Icon = BAY_ICONS[b.id];
             return (
               <NavItem key={b.id} href={`/bay/${b.id}`}>
                 {(isActive) => (
