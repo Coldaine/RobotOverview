@@ -252,6 +252,7 @@ for (const wi of H.wishlist) {
 // ── INSIGHTS ────────────────────────────────────────────────────────────────
 w('\n-- insights + junctions');
 const seenInsightAssets = new Set<string>();
+const seenInsightMissions = new Set<string>();
 for (const ins of H.insights) {
   w(`INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES (${S(ins.id)},${S(ins.title)},${S(ins.body)},${S(ins.confidence)},${S(ins.source)},${ins.capturedAt ? S(ins.capturedAt) : 'NULL'});`);
   for (const aid of ins.units ?? []) {
@@ -261,8 +262,13 @@ for (const ins of H.insights) {
       w(`INSERT INTO insight_assets(insight_id,asset_id) VALUES (${S(ins.id)},${S(aid)}) ON CONFLICT DO NOTHING;`);
     }
   }
-  for (const mid of ins.missions ?? [])
-    if (missionIds.has(mid)) w(`INSERT INTO insight_missions(insight_id,mission_id) VALUES (${S(ins.id)},${S(mid)}) ON CONFLICT DO NOTHING;`);
+  for (const mid of ins.missions ?? []) {
+    const key = `${ins.id}:${mid}`;
+    if (missionIds.has(mid) && !seenInsightMissions.has(key)) {
+      seenInsightMissions.add(key);
+      w(`INSERT INTO insight_missions(insight_id,mission_id) VALUES (${S(ins.id)},${S(mid)}) ON CONFLICT DO NOTHING;`);
+    }
+  }
   (ins.tags ?? []).forEach((t) => w(tagRef('tag', t, 'insight', ins.id)));
 }
 // reverse: unit.insights[]
@@ -272,6 +278,15 @@ for (const u of H.units)
     if (insightIds.has(iid) && !seenInsightAssets.has(key)) {
       seenInsightAssets.add(key);
       w(`INSERT INTO insight_assets(insight_id,asset_id) VALUES (${S(iid)},${S(u.id)}) ON CONFLICT DO NOTHING;`);
+    }
+  }
+// reverse: mission.insights[]
+for (const m of H.missions)
+  for (const iid of m.insights ?? []) {
+    const key = `${iid}:${m.id}`;
+    if (insightIds.has(iid) && !seenInsightMissions.has(key)) {
+      seenInsightMissions.add(key);
+      w(`INSERT INTO insight_missions(insight_id,mission_id) VALUES (${S(iid)},${S(m.id)}) ON CONFLICT DO NOTHING;`);
     }
   }
 
