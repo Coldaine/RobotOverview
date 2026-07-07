@@ -1,12 +1,10 @@
 import { getHangarPool } from './db';
 import type { Queryable } from './queryable';
-import type { HangarFallbackReason, HangarReadSource } from '@/lib/hangar-read-status';
+import type { HangarReadStatus } from '@/lib/hangar-read-status';
 
-export interface HangarRead<T> {
-  source: HangarReadSource;
-  fallbackReason?: HangarFallbackReason;
+export type HangarRead<T> = HangarReadStatus & {
   data: T;
-}
+};
 
 export async function readWithStaticFallback<T>({
   label,

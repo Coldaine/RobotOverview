@@ -182,10 +182,8 @@ function inventoryReadStatusFor(
   initialInventoryRead: InventoryReadStatus | undefined,
 ): InventoryReadStatus {
   if (!initialInventoryRead) {
-    return {
-      source: initialItems ? 'postgres' : 'static',
-      fallbackReason: initialItems ? undefined : 'not-configured',
-    };
+    if (initialItems) return { source: 'postgres' };
+    return { source: 'static', fallbackReason: 'not-configured' };
   }
 
   if (initialInventoryRead.source === 'postgres' && !initialItems) {

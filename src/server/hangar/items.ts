@@ -5,7 +5,7 @@ import type {
   SpecRow,
 } from '@/data/types';
 import { INVENTORY_ITEM_STATUSES, PROVENANCE_KINDS, isSourceRecordKind } from '@/data/types';
-import type { HangarFallbackReason, HangarReadSource } from '@/lib/hangar-read-status';
+import type { HangarReadStatus } from '@/lib/hangar-read-status';
 import type { Queryable } from './queryable';
 import { readWithStaticFallback } from './read-model';
 import {
@@ -47,11 +47,9 @@ type InventoryItemRow = {
   related_insights: string[] | null;
 };
 
-export interface InventoryItemsRead {
-  source: HangarReadSource;
-  fallbackReason?: HangarFallbackReason;
+export type InventoryItemsRead = HangarReadStatus & {
   items: InventoryItem[];
-}
+};
 
 const INVENTORY_ITEMS_SQL = `
   SELECT
@@ -235,8 +233,15 @@ export async function getInventoryItems(): Promise<InventoryItemsRead> {
     readFromPostgres: readInventoryItemsFromPostgres,
   });
 
+  if (read.source === 'postgres') {
+    return {
+      source: 'postgres',
+      items: read.data,
+    };
+  }
+
   return {
-    source: read.source,
+    source: 'static',
     fallbackReason: read.fallbackReason,
     items: read.data,
   };

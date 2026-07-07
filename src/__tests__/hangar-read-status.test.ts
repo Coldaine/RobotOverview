@@ -56,9 +56,6 @@ describe('hangar read status presentation', () => {
 
   it('formats compact read labels for the shell status line', () => {
     expect(hangarReadStatusLabel({ source: 'postgres' })).toBe('PG');
-    expect(hangarReadStatusLabel({ source: 'postgres', fallbackReason: 'postgres-error' })).toBe(
-      'PG',
-    );
     expect(hangarReadStatusLabel({ source: 'static' })).toBe('STATIC');
     expect(hangarReadStatusLabel({ source: 'static', fallbackReason: 'not-configured' })).toBe(
       'STATIC · NOT CFG',
