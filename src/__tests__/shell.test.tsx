@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { HangarProvider } from '@/lib/store';
 import { Shell } from '@/components/Shell';
+import { hangarData } from '@/data/hangar';
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/items',
@@ -28,7 +29,7 @@ describe('Shell inventory fallback status', () => {
 
   it('does not show the static-data banner for Postgres-backed reads', () => {
     render(
-      <HangarProvider initialInventoryRead={{ source: 'postgres' }}>
+      <HangarProvider initialItems={[hangarData.items[0]]} initialInventoryRead={{ source: 'postgres' }}>
         <Shell>
           <div>Items content</div>
         </Shell>
