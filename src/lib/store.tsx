@@ -212,6 +212,10 @@ export function selectedMissionWishes(wishes: WishlistItem[]): WishlistItem[] {
   return Array.from(selected.values());
 }
 
+export function finiteContribution(value: unknown): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+}
+
 interface HangarStore {
   data: HangarData;
   units: Unit[];
@@ -477,10 +481,10 @@ export function useCalculatedConstraints(missionId: string) {
     return m.constraints.map((c) => {
       let liveValue = c.value;
       if (c.unit === 'W') {
-        const selectedWatts = selectedWishes.reduce((sum, w) => sum + (w.power?.watts ?? 0), 0);
+        const selectedWatts = selectedWishes.reduce((sum, w) => sum + finiteContribution(w.power?.watts), 0);
         liveValue = c.value + selectedWatts;
       } else if (c.unit === 'g') {
-        const selectedMass = selectedWishes.reduce((sum, w) => sum + (w.massGrams ?? 0), 0);
+        const selectedMass = selectedWishes.reduce((sum, w) => sum + finiteContribution(w.massGrams), 0);
         liveValue = c.value + selectedMass;
       } else if (c.unit === '$') {
         const selectedCost = selectedWishes.reduce((sum, w) => {
