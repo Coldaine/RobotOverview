@@ -1,6 +1,5 @@
-import { hangarData } from '@/data/hangar';
+import { HANGAR_BAY_IDS, hangarData } from '@/data/hangar';
 import type {
-  BayId,
   InventoryItem,
   InventoryItemStatus,
   SourceRecord,
@@ -44,7 +43,6 @@ export interface InventoryItemsRead {
   items: InventoryItem[];
 }
 
-const BAY_IDS: BayId[] = ['robotics', 'compute', 'network', 'home', 'audio'];
 const ITEM_STATUSES: InventoryItemStatus[] = [
   'owned',
   'on-order',
@@ -176,7 +174,7 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
     throw new Error(`Expected exactly one bay group for inventory item "${row.id}"; got ${detail}.`);
   }
 
-  const bay = enumValue(bayGroups[0], BAY_IDS, 'bay id');
+  const bay = enumValue(bayGroups[0], HANGAR_BAY_IDS, 'bay id');
   const status = enumValue(row.status, ITEM_STATUSES, 'inventory item status');
 
   const priceUs = numberOrNull(row.price_us, 'inventory price_us');

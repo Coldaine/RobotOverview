@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { hangarData } from '../data/hangar';
+import { HANGAR_BAY_IDS, hangarData } from '../data/hangar';
 import type {
   Bay,
   BayId,
@@ -149,6 +149,10 @@ function readStoredWishStatus(): WishStatusOverrides {
   }
 }
 
+function isBayId(value: unknown): value is BayId {
+  return typeof value === 'string' && HANGAR_BAY_IDS.includes(value as BayId);
+}
+
 function readStoredLocalInsights(): Insight[] {
   if (typeof window === 'undefined') return [];
   try {
@@ -174,7 +178,7 @@ function readStoredLocalInsights(): Insight[] {
           title: x.title as string,
           body: x.body as string,
           tags: Array.isArray(x.tags) ? (x.tags as unknown[]).filter((t): t is string => typeof t === 'string') : [],
-          bay: typeof x.bay === 'string' ? (x.bay as BayId) : undefined,
+          bay: isBayId(x.bay) ? x.bay : undefined,
           confidence: conf === 'high' || conf === 'medium' || conf === 'low' ? conf : 'medium',
           capturedAt: typeof x.capturedAt === 'string' ? x.capturedAt : '',
         };

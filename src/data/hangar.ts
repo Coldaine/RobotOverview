@@ -1,4 +1,4 @@
-import type { HangarData } from './types';
+import type { BayId, HangarData } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SEED ROSTER — populated from the originating design conversation.
@@ -1075,3 +1075,5 @@ export const hangarData: HangarData = {
 };
 
 export default hangarData;
+
+export const HANGAR_BAY_IDS: BayId[] = hangarData.bays.map((bay) => bay.id);
