@@ -5,6 +5,7 @@ import { AlertTriangle, ChevronRight, Star } from 'lucide-react';
 import Link from 'next/link';
 import type { Mission, Unit, WishlistItem } from '@/data/types';
 import { money } from '@/lib/format';
+import { sourcePrice } from '@/lib/hangar-preferences';
 import { StatusBadge } from '@/components/ui/Badges';
 import { useHangar } from '@/lib/store';
 
@@ -138,7 +139,7 @@ export function UnitCard({
             )}
             {unit.price && (
               <span className="text-cyan">
-                {money(source === 'us' ? unit.price.us : unit.price.import ?? unit.price.us)}
+                {money(sourcePrice(unit.price, source))}
               </span>
             )}
           </div>

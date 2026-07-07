@@ -6,7 +6,13 @@ import Link from 'next/link';
 import { SectionTitle, StatReadout } from '@/components/ui/Primitives';
 import { useHangar } from '@/lib/store';
 import { ACQUISITION_PIPELINE_STATUSES, money, WISHLIST_STATUS_META } from '@/lib/format';
-import { SOURCE_LABELS, SOURCE_PREFERENCES, type SourcePreference } from '@/lib/hangar-preferences';
+import {
+  SOURCE_META,
+  SOURCE_PREFERENCES,
+  sourcePrice,
+  sourcePriceOrZero,
+  type SourcePreference,
+} from '@/lib/hangar-preferences';
 import clsx from 'clsx';
 import type { WishlistItem } from '@/data/types';
 
@@ -14,10 +20,6 @@ const SOURCE_BUTTONS: Record<SourcePreference, { icon: typeof Home; activeClass:
   us: { icon: Home, activeClass: 'bg-cyan/15 text-cyan shadow-hud-cyan' },
   import: { icon: Globe, activeClass: 'bg-amber/15 text-amber shadow-hud-amber' },
 };
-
-function priceFor(w: WishlistItem, source: SourcePreference): number {
-  return (source === 'us' ? w.price.us : w.price.import ?? w.price.us) ?? 0;
-}
 
 export default function Quartermaster() {
   const { data, unit, mission, capability, wish, setWishlistStatus, source, setSource } = useHangar();
@@ -29,7 +31,7 @@ export default function Quartermaster() {
   );
 
   const total = useMemo(
-    () => wishlist.reduce((sum, w) => sum + priceFor(w, source), 0),
+    () => wishlist.reduce((sum, w) => sum + sourcePriceOrZero(w.price, source), 0),
     [wishlist, source],
   );
 
@@ -44,15 +46,15 @@ export default function Quartermaster() {
       const label = w.forMission ? mission(w.forMission)?.name ?? w.forMission : 'Unassigned';
       const g = groups.get(key) ?? { key, label, items: [], us: 0, imp: 0 };
       g.items.push(w);
-      g.us += priceFor(w, 'us');
-      g.imp += priceFor(w, 'import');
+      g.us += sourcePriceOrZero(w.price, 'us');
+      g.imp += sourcePriceOrZero(w.price, 'import');
       groups.set(key, g);
     });
     return Array.from(groups.values()).sort((a, b) => b.us - a.us);
   }, [buyNextItems, mission]);
 
-  const buyNextTotalUs = buyNextItems.reduce((s, w) => s + priceFor(w, 'us'), 0);
-  const buyNextTotalImp = buyNextItems.reduce((s, w) => s + priceFor(w, 'import'), 0);
+  const buyNextTotalUs = buyNextItems.reduce((s, w) => s + sourcePriceOrZero(w.price, 'us'), 0);
+  const buyNextTotalImp = buyNextItems.reduce((s, w) => s + sourcePriceOrZero(w.price, 'import'), 0);
 
   function stepStatus(w: WishlistItem, dir: 1 | -1) {
     const idx = ACQUISITION_PIPELINE_STATUSES.indexOf(w.status);
@@ -84,7 +86,7 @@ export default function Quartermaster() {
                   source === option ? SOURCE_BUTTONS[option].activeClass : 'text-ink-dim hover:text-ink',
                 )}
               >
-                <Icon className="h-3 w-3" /> {SOURCE_LABELS[option]}
+                <Icon className="h-3 w-3" /> {SOURCE_META[option].label}
               </button>
             );
           })}
@@ -94,7 +96,11 @@ export default function Quartermaster() {
       <div className="grid grid-cols-3 gap-3">
         <StatReadout label="Items" value={wishlist.length} accent="cyan" />
         <StatReadout label="Buy Next" value={buyNext} accent="amber" />
-        <StatReadout label={`Tab (${source})`} value={money(total)} accent={source === 'us' ? 'cyan' : 'amber'} />
+        <StatReadout
+          label={`Tab (${SOURCE_META[source].shortLabel})`}
+          value={money(total)}
+          accent={SOURCE_META[source].accent}
+        />
       </div>
 
       {/* Upgrade path — what to buy next, grouped by mission, with the running cost */}
@@ -131,7 +137,7 @@ export default function Quartermaster() {
           const steppable = ACQUISITION_PIPELINE_STATUSES.indexOf(w.status) !== -1;
           const us = w.price.us;
           const imp = w.price.import;
-          const active = source === 'us' ? us : imp ?? us;
+          const active = sourcePrice(w.price, source);
           const delta = us != null && imp != null ? us - imp : null;
           const fu = w.forUnit ? unit(w.forUnit) : undefined;
           const cap = w.unlocks ? capability(w.unlocks) : undefined;
@@ -198,7 +204,12 @@ export default function Quartermaster() {
 
                 {/* price block */}
                 <div className="shrink-0 text-right">
-                  <div className={clsx('font-mono text-xl tabular-nums', source === 'us' ? 'text-cyan' : 'text-amber')}>
+                  <div
+                    className={clsx(
+                      'font-mono text-xl tabular-nums',
+                      SOURCE_META[source].accent === 'cyan' ? 'text-cyan' : 'text-amber',
+                    )}
+                  >
                     {money(active)}
                   </div>
                   <div className="mt-1 flex flex-col items-end gap-0.5 font-mono text-[10px] text-ink-dim">

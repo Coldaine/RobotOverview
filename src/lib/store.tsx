@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { hangarData, isHangarBayId } from '../data/hangar';
 import { isInsightConfidence, isWishlistStatus } from '../data/types';
 import type { HangarReadStatus } from './hangar-read-status';
-import { isSourcePreference, isThemeMode, THEME_MODES } from './hangar-preferences';
+import { isSourcePreference, isThemeMode, sourcePrice, THEME_MODES } from './hangar-preferences';
 import type { SourcePreference, ThemeMode } from './hangar-preferences';
 import { acquisitionStatusPriority, SELECTED_REQUISITION_STATUSES } from './format';
 import type {
@@ -484,7 +484,7 @@ export function useCalculatedConstraints(missionId: string) {
         liveValue = c.value + selectedMass;
       } else if (c.unit === '$') {
         const selectedCost = selectedWishes.reduce((sum, w) => {
-          const p = source === 'us' ? w.price.us : w.price.import ?? w.price.us;
+          const p = sourcePrice(w.price, source);
           return sum + (p ?? 0);
         }, 0);
         liveValue = c.value + selectedCost;
