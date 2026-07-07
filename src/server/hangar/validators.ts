@@ -7,16 +7,11 @@ export function enumValue<T extends string>(
   throw new Error(`Invalid ${label} from hangar DB: ${value}`);
 }
 
-export function numberOrNull(value: string | number | null) {
+export function numberOrNull(value: string | number | null, label = 'numeric value') {
   if (value === null) return null;
   const number = typeof value === 'number' ? value : Number(value);
-  return Number.isFinite(number) ? number : null;
-}
-
-export function stringArray(value: unknown): string[] | undefined {
-  if (!Array.isArray(value)) return undefined;
-  const strings = value.filter((item): item is string => typeof item === 'string');
-  return strings.length ? strings : undefined;
+  if (Number.isFinite(number)) return number;
+  throw new Error(`Invalid ${label} from hangar DB: ${value}`);
 }
 
 export function postgresTextArray(value: unknown, label: string): string[] {
@@ -36,10 +31,23 @@ export function postgresTextArray(value: unknown, label: string): string[] {
   return value;
 }
 
-export function objectArray<T>(
+export function strictObjectArray<T>(
   value: unknown,
+  label: string,
   predicate: (row: unknown) => row is T,
 ): T[] {
-  if (!Array.isArray(value)) return [];
-  return value.filter(predicate);
+  if (value === null) return [];
+
+  if (!Array.isArray(value)) {
+    throw new Error(`Invalid ${label} from hangar DB: expected object array.`);
+  }
+
+  const invalidIndex = value.findIndex((row) => !predicate(row));
+  if (invalidIndex !== -1) {
+    throw new Error(
+      `Invalid ${label} from hangar DB: expected valid object at index ${invalidIndex}.`,
+    );
+  }
+
+  return value;
 }

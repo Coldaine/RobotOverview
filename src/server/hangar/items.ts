@@ -9,7 +9,7 @@ import type {
 import type { Queryable } from './queryable';
 import type { HangarFallbackReason, HangarReadSource } from './read-model';
 import { readWithStaticFallback } from './read-model';
-import { enumValue, numberOrNull, objectArray, postgresTextArray, stringArray } from './validators';
+import { enumValue, numberOrNull, postgresTextArray, strictObjectArray } from './validators';
 
 type InventoryItemRow = {
   id: string;
@@ -140,8 +140,9 @@ const INVENTORY_ITEMS_SQL = `
 `;
 
 function specRows(value: unknown): SpecRow[] {
-  return objectArray(
+  return strictObjectArray(
     value,
+    'inventory specs',
     (row): row is SpecRow =>
       Boolean(row) &&
       typeof row === 'object' &&
@@ -151,8 +152,9 @@ function specRows(value: unknown): SpecRow[] {
 }
 
 function sourceRecords(value: unknown): SourceRecord[] | undefined {
-  const records = objectArray(
+  const records = strictObjectArray(
     value,
+    'inventory sources',
     (row): row is SourceRecord =>
       Boolean(row) &&
       typeof row === 'object' &&
@@ -168,7 +170,7 @@ function sourceRecords(value: unknown): SourceRecord[] | undefined {
 }
 
 export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
-  const bayGroups = stringArray(row.bay_groups) ?? [];
+  const bayGroups = postgresTextArray(row.bay_groups, 'bay groups');
   if (bayGroups.length !== 1) {
     const detail = bayGroups.length ? bayGroups.join(', ') : 'none';
     throw new Error(`Expected exactly one bay group for inventory item "${row.id}"; got ${detail}.`);
@@ -177,8 +179,8 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
   const bay = enumValue(bayGroups[0], BAY_IDS, 'bay id');
   const status = enumValue(row.status, ITEM_STATUSES, 'inventory item status');
 
-  const priceUs = numberOrNull(row.price_us);
-  const priceImport = numberOrNull(row.price_import);
+  const priceUs = numberOrNull(row.price_us, 'inventory price_us');
+  const priceImport = numberOrNull(row.price_import, 'inventory price_import');
   const price =
     priceUs !== null || priceImport !== null
       ? { us: priceUs, import: priceImport }
@@ -206,7 +208,7 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
     ),
     relatedInsights: optionalArray(postgresTextArray(row.related_insights, 'related insights')),
     sources: sourceRecords(row.sources),
-    limitations: stringArray(row.limitations),
+    limitations: optionalArray(postgresTextArray(row.limitations, 'inventory limitations')),
     acquired: row.acquired ?? undefined,
     horizon: row.horizon ?? undefined,
     provenance:
