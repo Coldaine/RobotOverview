@@ -229,6 +229,22 @@ describe('item() accessor', () => {
     expect(result.current.item(hangarData.items[0].id)).toBeUndefined();
   });
 
+  it('does not report Postgres inventory when no server items were provided', () => {
+    const customWrapper = ({ children }: { children: React.ReactNode }) => (
+      <HangarProvider initialInventoryRead={{ source: 'postgres' }}>
+        {children}
+      </HangarProvider>
+    );
+
+    const { result } = renderHook(() => useHangar(), { wrapper: customWrapper });
+
+    expect(result.current.items).toBe(hangarData.items);
+    expect(result.current.inventoryRead).toEqual({
+      source: 'static',
+      fallbackReason: 'not-configured',
+    });
+  });
+
   it('exposes static inventory fallback status when no server read status is supplied', () => {
     const { result } = renderHook(() => useHangar(), { wrapper });
 

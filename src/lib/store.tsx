@@ -202,6 +202,24 @@ function isWishlistItem(item: WishlistItem | undefined): item is WishlistItem {
   return Boolean(item);
 }
 
+function inventoryReadStatusFor(
+  initialItems: InventoryItem[] | undefined,
+  initialInventoryRead: InventoryReadStatus | undefined,
+): InventoryReadStatus {
+  if (!initialInventoryRead) {
+    return {
+      source: initialItems ? 'postgres' : 'static',
+      fallbackReason: initialItems ? undefined : 'not-configured',
+    };
+  }
+
+  if (initialInventoryRead.source === 'postgres' && !initialItems) {
+    return { source: 'static', fallbackReason: 'not-configured' };
+  }
+
+  return initialInventoryRead;
+}
+
 export function selectedMissionWishes(wishes: WishlistItem[]): WishlistItem[] {
   const selected = new Map<string, WishlistItem>();
 
@@ -397,10 +415,7 @@ export function HangarProvider({
   };
 
   const value = useMemo<HangarStore>(() => {
-    const inventoryRead: InventoryReadStatus = initialInventoryRead ?? {
-      source: initialItems ? 'postgres' : 'static',
-      fallbackReason: initialItems ? undefined : 'not-configured',
-    };
+    const inventoryRead = inventoryReadStatusFor(initialItems, initialInventoryRead);
     const data = { ...hangarData, items: initialItems ?? hangarData.items, units };
     const byId = <T extends { id: string }>(arr: T[]) => {
       const m = new Map<string, T>();
