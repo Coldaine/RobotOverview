@@ -35,11 +35,11 @@ export const HANGAR_FALLBACK_REASON_META: Record<
 > = {
   'not-configured': {
     label: 'NOT CFG',
-    detail: 'Postgres is not configured — every read is coming from the hangar.ts spine.',
+    detail: 'Inventory Postgres is not configured — items are coming from the hangar.ts spine.',
   },
   'postgres-error': {
     label: 'PG ERR',
-    detail: 'Postgres read FAILED — serving the hangar.ts spine with this visible warning.',
+    detail: 'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
   },
 };
 
@@ -57,5 +57,5 @@ export function hangarReadStatusLabel(status: HangarReadStatus): string {
 export function hangarFallbackDetail(fallbackReason?: HangarFallbackReason): string {
   return fallbackReason
     ? HANGAR_FALLBACK_REASON_META[fallbackReason].detail
-    : 'Serving the static hangar.ts spine.';
+    : 'Serving inventory items from the static hangar.ts spine.';
 }

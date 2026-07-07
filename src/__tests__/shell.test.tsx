@@ -20,9 +20,9 @@ describe('Shell inventory fallback status', () => {
 
     const banner = screen.getByRole('status');
 
-    expect(banner).toHaveTextContent('STATIC DATA');
+    expect(banner).toHaveTextContent('STATIC INVENTORY');
     expect(banner).toHaveTextContent(
-      'Postgres read FAILED — serving the hangar.ts spine with this visible warning.',
+      'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
     );
     expect(banner).not.toHaveTextContent(/silently/i);
     expect(screen.getByText(/DATA · STATIC · PG ERR/)).toBeInTheDocument();
