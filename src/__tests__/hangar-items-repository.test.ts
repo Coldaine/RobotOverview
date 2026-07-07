@@ -304,6 +304,47 @@ describe('Hangar inventory Postgres read path', () => {
     ).toThrow('Invalid inventory limitations from hangar DB: expected text at index 1.');
   });
 
+  it('rejects malformed DB source record details before rendering external links', () => {
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        sources: [
+          {
+            label: ' ',
+            url: 'https://example.com/source',
+            accessedAt: '2026-07-07',
+            kind: 'official',
+          },
+        ],
+      })),
+    ).toThrow('Invalid inventory sources from hangar DB: expected valid object at index 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        sources: [
+          {
+            label: 'Example source',
+            url: 'ftp://example.com/source',
+            accessedAt: '2026-07-07',
+            kind: 'official',
+          },
+        ],
+      })),
+    ).toThrow('Invalid inventory sources from hangar DB: expected valid object at index 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        sources: [
+          {
+            label: 'Example source',
+            url: 'https://example.com/source',
+            accessedAt: 'not-a-date',
+            kind: 'official',
+          },
+        ],
+      })),
+    ).toThrow('Invalid inventory sources from hangar DB: expected valid object at index 0.');
+  });
+
   it('accepts null Postgres text arrays as empty relationship fields', () => {
     const item = mapInventoryItemRow({
       id: 'null-relations',
