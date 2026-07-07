@@ -1,5 +1,8 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, it, expect } from 'vitest';
 import { HANGAR_BAY_IDS, hangarData } from '@/data/hangar';
+import { seedSql } from '../../db/hangar/gen-seed';
 import {
   ACTIVITY_KINDS,
   BAY_ACCENTS,
@@ -43,6 +46,16 @@ describe('hangar.ts data integrity', () => {
     expect(value, `${label} must not have surrounding whitespace`).toBe(value.trim());
     expect(Number.isFinite(timestamp), `${label} must parse as a timestamp`).toBe(true);
   }
+
+  function normalizeLineEndings(value: string) {
+    return value.replace(/\r\n/g, '\n');
+  }
+
+  it('committed Postgres seed SQL matches freshly generated hangar.ts output', () => {
+    const committedSeedSql = readFileSync(resolve(process.cwd(), 'db/hangar/seed.sql'), 'utf8');
+
+    expect(normalizeLineEndings(committedSeedSql)).toBe(seedSql);
+  });
 
   it('has no duplicate unit IDs', () => {
     const ids = hangarData.units.map((u) => u.id);

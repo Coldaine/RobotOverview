@@ -8,6 +8,8 @@
  * actually resolve to a seeded row, so the seed cannot violate a foreign key.
  */
 import { writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { hangarData as H } from '../../src/data/hangar';
 
 const out: string[] = [];
@@ -308,12 +310,25 @@ for (const n of H.nets ?? []) {
 }
 
 w('\nCOMMIT;');
-const seedSql = out.join('\n') + '\n';
-const outIndex = process.argv.indexOf('--out');
-if (outIndex === -1) {
-  process.stdout.write(seedSql);
-} else {
+export const seedSql = out.join('\n') + '\n';
+
+function isCliInvocation() {
+  const entrypoint = process.argv[1];
+  return Boolean(entrypoint) && resolve(entrypoint) === fileURLToPath(import.meta.url);
+}
+
+function writeSeedSqlFromCli() {
+  const outIndex = process.argv.indexOf('--out');
+  if (outIndex === -1) {
+    process.stdout.write(seedSql);
+    return;
+  }
+
   const outputPath = process.argv[outIndex + 1];
   if (!outputPath) throw new Error('--out requires a path');
   writeFileSync(outputPath, seedSql, 'utf8');
+}
+
+if (isCliInvocation()) {
+  writeSeedSqlFromCli();
 }
