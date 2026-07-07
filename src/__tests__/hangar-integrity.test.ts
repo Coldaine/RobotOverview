@@ -127,6 +127,47 @@ describe('hangar.ts data integrity', () => {
     });
   });
 
+  it('all unit specs, links, and shortcuts are usable display text', () => {
+    hangarData.units.forEach((u) => {
+      const specLabels = u.specs.map((spec) => spec.label);
+      expect(specLabels.length, `unit "${u.id}" spec labels must be unique`).toBe(new Set(specLabels).size);
+      u.specs.forEach((spec) => {
+        expect(spec.label.trim(), `unit "${u.id}" spec label must not be blank`).not.toBe('');
+        expect(spec.label, `unit "${u.id}" spec label must not have surrounding whitespace`).toBe(spec.label.trim());
+        expect(spec.value.trim(), `unit "${u.id}" spec "${spec.label}" value must not be blank`).not.toBe('');
+        expect(spec.value, `unit "${u.id}" spec "${spec.label}" value must not have surrounding whitespace`).toBe(spec.value.trim());
+      });
+
+      const linkUrls = (u.links ?? []).map((link) => link.url);
+      expect(linkUrls.length, `unit "${u.id}" link URLs must be unique`).toBe(new Set(linkUrls).size);
+      (u.links ?? []).forEach((link) => {
+        expect(link.label.trim(), `unit "${u.id}" link label must not be blank`).not.toBe('');
+        expect(link.label, `unit "${u.id}" link label must not have surrounding whitespace`).toBe(link.label.trim());
+        expectValidHttpUrl(link.url, `unit "${u.id}" link "${link.label}" url`);
+      });
+
+      const shortcutIds = (u.shortcuts ?? []).map((shortcut) => shortcut.id);
+      expect(shortcutIds.length, `unit "${u.id}" shortcut ids must be unique`).toBe(new Set(shortcutIds).size);
+      (u.shortcuts ?? []).forEach((shortcut) => {
+        expect(shortcut.id.trim(), `unit "${u.id}" shortcut id must not be blank`).not.toBe('');
+        expect(shortcut.id, `unit "${u.id}" shortcut id must not have surrounding whitespace`).toBe(shortcut.id.trim());
+        expect(shortcut.label.trim(), `unit "${u.id}" shortcut "${shortcut.id}" label must not be blank`).not.toBe('');
+        expect(shortcut.label, `unit "${u.id}" shortcut "${shortcut.id}" label must not have surrounding whitespace`).toBe(shortcut.label.trim());
+        if (shortcut.note) {
+          expect(shortcut.note.trim(), `unit "${u.id}" shortcut "${shortcut.id}" note must not be blank`).not.toBe('');
+          expect(shortcut.note, `unit "${u.id}" shortcut "${shortcut.id}" note must not have surrounding whitespace`).toBe(shortcut.note.trim());
+        }
+
+        if (shortcut.type === 'url') {
+          expectValidHttpUrl(shortcut.url, `unit "${u.id}" shortcut "${shortcut.id}" url`);
+        } else {
+          expect(shortcut.command.trim(), `unit "${u.id}" shortcut "${shortcut.id}" command must not be blank`).not.toBe('');
+          expect(shortcut.command, `unit "${u.id}" shortcut "${shortcut.id}" command must not have surrounding whitespace`).toBe(shortcut.command.trim());
+        }
+      });
+    });
+  });
+
   it('all mission.status values are valid MissionStatus values', () => {
     hangarData.missions.forEach((m) => {
       expect(MISSION_STATUSES, `mission "${m.id}" has invalid status "${m.status}"`).toContain(m.status);
