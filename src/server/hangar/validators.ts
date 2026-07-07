@@ -14,6 +14,18 @@ export function numberOrNull(value: string | number | null, label = 'numeric val
   throw new Error(`Invalid ${label} from hangar DB: ${value}`);
 }
 
+export function nonNegativeNumberOrNull(value: string | number | null, label = 'numeric value') {
+  const number = numberOrNull(value, label);
+  if (number === null || number >= 0) return number;
+  throw new Error(`Invalid ${label} from hangar DB: expected a non-negative number, got ${value}.`);
+}
+
+export function positiveIntegerOrNull(value: string | number | null, label = 'integer value') {
+  const number = numberOrNull(value, label);
+  if (number === null || (Number.isInteger(number) && number > 0)) return number;
+  throw new Error(`Invalid ${label} from hangar DB: expected a positive integer, got ${value}.`);
+}
+
 export function postgresTextArray(value: unknown, label: string): string[] {
   if (value === null) return [];
 

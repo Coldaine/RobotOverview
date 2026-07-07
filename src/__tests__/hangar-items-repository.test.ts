@@ -256,6 +256,26 @@ describe('Hangar inventory Postgres read path', () => {
     ).toThrow('Invalid inventory price_us from hangar DB: not-a-number');
   });
 
+  it('rejects numeric values that violate inventory schema invariants', () => {
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        price_us: '-1',
+      })),
+    ).toThrow('Invalid inventory price_us from hangar DB: expected a non-negative number, got -1.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        quantity: 0,
+      })),
+    ).toThrow('Invalid inventory quantity from hangar DB: expected a positive integer, got 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        quantity: '1.5',
+      })),
+    ).toThrow('Invalid inventory quantity from hangar DB: expected a positive integer, got 1.5.');
+  });
+
   it('rejects invalid provenance values instead of treating them as absent', () => {
     expect(() =>
       mapInventoryItemRow(inventoryRow({

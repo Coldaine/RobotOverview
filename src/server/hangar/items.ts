@@ -8,7 +8,13 @@ import { INVENTORY_ITEM_STATUSES, PROVENANCE_KINDS, isSourceRecordKind } from '@
 import type { HangarFallbackReason, HangarReadSource } from '@/lib/hangar-read-status';
 import type { Queryable } from './queryable';
 import { readWithStaticFallback } from './read-model';
-import { enumValue, numberOrNull, postgresTextArray, strictObjectArray } from './validators';
+import {
+  enumValue,
+  nonNegativeNumberOrNull,
+  positiveIntegerOrNull,
+  postgresTextArray,
+  strictObjectArray,
+} from './validators';
 
 type InventoryItemRow = {
   id: string;
@@ -24,7 +30,7 @@ type InventoryItemRow = {
   planning_notes: string | null;
   acquired: string | null;
   horizon: string | null;
-  quantity: number | null;
+  quantity: string | number | null;
   price_us: string | number | null;
   price_import: string | number | null;
   specs: unknown;
@@ -168,12 +174,13 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
   const bay = enumValue(bayGroups[0], HANGAR_BAY_IDS, 'bay id');
   const status = enumValue(row.status, INVENTORY_ITEM_STATUSES, 'inventory item status');
 
-  const priceUs = numberOrNull(row.price_us, 'inventory price_us');
-  const priceImport = numberOrNull(row.price_import, 'inventory price_import');
+  const priceUs = nonNegativeNumberOrNull(row.price_us, 'inventory price_us');
+  const priceImport = nonNegativeNumberOrNull(row.price_import, 'inventory price_import');
   const price =
     priceUs !== null || priceImport !== null
       ? { us: priceUs, import: priceImport }
       : undefined;
+  const quantity = positiveIntegerOrNull(row.quantity, 'inventory quantity');
 
   return {
     id: row.id,
@@ -188,7 +195,7 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
     planningNotes: row.planning_notes ?? undefined,
     specs: specRows(row.specs),
     price,
-    quantity: row.quantity ?? undefined,
+    quantity: quantity ?? undefined,
     tags: optionalArray(postgresTextArray(row.tags, 'inventory tags')),
     relatedUnits: optionalArray(postgresTextArray(row.related_units, 'related units')),
     relatedMissions: optionalArray(postgresTextArray(row.related_missions, 'related missions')),
