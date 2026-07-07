@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { money, timeAgo, STATUS_META, LIFECYCLE_META, ITEM_STATUS_META } from '@/lib/format';
-import type { UnitStatus, LifecycleState, InventoryItemStatus } from '@/data/types';
+import { INVENTORY_ITEM_STATUSES, LIFECYCLE_STATES, UNIT_STATUSES } from '@/data/types';
 
 describe('money()', () => {
   it('returns em-dash for null', () => expect(money(null)).toBe('—'));
@@ -42,18 +42,7 @@ describe('timeAgo()', () => {
 });
 
 describe('STATUS_META exhaustiveness', () => {
-  const ALL_UNIT_STATUSES: UnitStatus[] = [
-    'operational',
-    'needs-attention',
-    'blocked',
-    'in-mission',
-    'wishlist',
-    'on-order',
-    'researching',
-    'retired',
-  ];
-
-  it.each(ALL_UNIT_STATUSES)('has an entry for status "%s"', (status) => {
+  it.each(UNIT_STATUSES)('has an entry for status "%s"', (status) => {
     expect(STATUS_META[status]).toBeDefined();
     expect(STATUS_META[status].label).toBeTruthy();
     expect(STATUS_META[status].tone).toBeTruthy();
@@ -61,26 +50,14 @@ describe('STATUS_META exhaustiveness', () => {
 });
 
 describe('LIFECYCLE_META exhaustiveness', () => {
-  const ALL_LIFECYCLE_STATES: LifecycleState[] = ['inventory', 'assembled', 'deployed', 'wishlist', 'on-order'];
-
-  it.each(ALL_LIFECYCLE_STATES)('has an entry for lifecycle "%s"', (state) => {
+  it.each(LIFECYCLE_STATES)('has an entry for lifecycle "%s"', (state) => {
     expect(LIFECYCLE_META[state]).toBeDefined();
     expect(LIFECYCLE_META[state].label).toBeTruthy();
   });
 });
 
 describe('ITEM_STATUS_META exhaustiveness', () => {
-  const ALL_ITEM_STATUSES: InventoryItemStatus[] = [
-    'owned',
-    'on-order',
-    'wishlist',
-    'researching',
-    'deployed',
-    'retired',
-    'rejected',
-  ];
-
-  it.each(ALL_ITEM_STATUSES)('has an entry for item status "%s"', (status) => {
+  it.each(INVENTORY_ITEM_STATUSES)('has an entry for item status "%s"', (status) => {
     expect(ITEM_STATUS_META[status]).toBeDefined();
     expect(ITEM_STATUS_META[status].label).toBeTruthy();
     expect(ITEM_STATUS_META[status].tone).toBeTruthy();

@@ -1,26 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { HANGAR_BAY_IDS, hangarData } from '@/data/hangar';
-import type { InventoryItemStatus, UnitStatus } from '@/data/types';
-
-const VALID_UNIT_STATUSES: UnitStatus[] = [
-  'operational',
-  'needs-attention',
-  'blocked',
-  'in-mission',
-  'wishlist',
-  'on-order',
-  'researching',
-  'retired',
-];
-const VALID_ITEM_STATUSES: InventoryItemStatus[] = [
-  'owned',
-  'on-order',
-  'wishlist',
-  'researching',
-  'deployed',
-  'retired',
-  'rejected',
-];
+import { INVENTORY_ITEM_STATUSES, UNIT_STATUSES } from '@/data/types';
 
 describe('hangar.ts data integrity', () => {
   const unitIds = new Set(hangarData.units.map((u) => u.id));
@@ -57,7 +37,7 @@ describe('hangar.ts data integrity', () => {
 
   it('all unit.status values are valid UnitStatus values', () => {
     hangarData.units.forEach((u) => {
-      expect(VALID_UNIT_STATUSES, `unit "${u.id}" has invalid status "${u.status}"`).toContain(u.status);
+      expect(UNIT_STATUSES, `unit "${u.id}" has invalid status "${u.status}"`).toContain(u.status);
     });
   });
 
@@ -165,7 +145,7 @@ describe('hangar.ts data integrity', () => {
 
   it('all item.status values are valid InventoryItemStatus values', () => {
     hangarData.items.forEach((it) => {
-      expect(VALID_ITEM_STATUSES, `item "${it.id}" has invalid status "${it.status}"`).toContain(it.status);
+      expect(INVENTORY_ITEM_STATUSES, `item "${it.id}" has invalid status "${it.status}"`).toContain(it.status);
     });
   });
 

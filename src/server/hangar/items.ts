@@ -1,10 +1,10 @@
 import { HANGAR_BAY_IDS, hangarData } from '@/data/hangar';
 import type {
   InventoryItem,
-  InventoryItemStatus,
   SourceRecord,
   SpecRow,
 } from '@/data/types';
+import { INVENTORY_ITEM_STATUSES } from '@/data/types';
 import type { Queryable } from './queryable';
 import type { HangarFallbackReason, HangarReadSource } from './read-model';
 import { readWithStaticFallback } from './read-model';
@@ -42,16 +42,6 @@ export interface InventoryItemsRead {
   fallbackReason?: HangarFallbackReason;
   items: InventoryItem[];
 }
-
-const ITEM_STATUSES: InventoryItemStatus[] = [
-  'owned',
-  'on-order',
-  'wishlist',
-  'researching',
-  'deployed',
-  'retired',
-  'rejected',
-];
 
 const INVENTORY_ITEMS_SQL = `
   SELECT
@@ -175,7 +165,7 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
   }
 
   const bay = enumValue(bayGroups[0], HANGAR_BAY_IDS, 'bay id');
-  const status = enumValue(row.status, ITEM_STATUSES, 'inventory item status');
+  const status = enumValue(row.status, INVENTORY_ITEM_STATUSES, 'inventory item status');
 
   const priceUs = numberOrNull(row.price_us, 'inventory price_us');
   const priceImport = numberOrNull(row.price_import, 'inventory price_import');
@@ -221,7 +211,9 @@ function optionalArray<T>(value: T[]): T[] | undefined {
 }
 
 export async function readInventoryItemsFromPostgres(client: Queryable) {
-  const result = await client.query<InventoryItemRow>(INVENTORY_ITEMS_SQL, [ITEM_STATUSES]);
+  const result = await client.query<InventoryItemRow>(INVENTORY_ITEMS_SQL, [
+    INVENTORY_ITEM_STATUSES,
+  ]);
   return result.rows.map(mapInventoryItemRow);
 }
 
