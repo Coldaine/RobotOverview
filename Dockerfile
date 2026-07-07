@@ -13,7 +13,7 @@ FROM deps AS builder
 WORKDIR /app
 
 COPY . .
-RUN npm run build
+RUN npm run check
 
 FROM docker.io/library/node:24-alpine AS runner
 WORKDIR /app
