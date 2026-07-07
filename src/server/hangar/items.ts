@@ -4,7 +4,7 @@ import type {
   SourceRecord,
   SpecRow,
 } from '@/data/types';
-import { INVENTORY_ITEM_STATUSES, isSourceRecordKind } from '@/data/types';
+import { INVENTORY_ITEM_STATUSES, PROVENANCE_KINDS, isSourceRecordKind } from '@/data/types';
 import type { Queryable } from './queryable';
 import type { HangarFallbackReason, HangarReadSource } from './read-model';
 import { readWithStaticFallback } from './read-model';
@@ -200,10 +200,9 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
     limitations: optionalArray(postgresTextArray(row.limitations, 'inventory limitations')),
     acquired: row.acquired ?? undefined,
     horizon: row.horizon ?? undefined,
-    provenance:
-      row.provenance === 'owner' || row.provenance === 'inferred' || row.provenance === 'open'
-        ? row.provenance
-        : undefined,
+    provenance: row.provenance
+      ? enumValue(row.provenance, PROVENANCE_KINDS, 'inventory provenance')
+      : undefined,
   };
 }
 

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
 import { STATUS_META, TONE_CLASSES } from '@/lib/format';
-import type { UnitStatus } from '@/data/types';
+import type { ProvenanceKind, UnitStatus } from '@/data/types';
 
 export function StatusBadge({ status }: { status: UnitStatus }) {
   const meta = STATUS_META[status];
@@ -23,7 +23,7 @@ export function Tag({ children }: { children: ReactNode }) {
   );
 }
 
-export function ProvenanceTag({ provenance }: { provenance?: 'owner' | 'inferred' | 'open' }) {
+export function ProvenanceTag({ provenance }: { provenance?: ProvenanceKind }) {
   if (!provenance) return null;
   const map = {
     owner: { label: 'OWNER', cls: 'text-signal-ok border-signal-ok/30 bg-signal-ok/5' },

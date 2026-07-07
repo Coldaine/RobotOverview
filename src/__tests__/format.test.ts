@@ -1,6 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { money, timeAgo, STATUS_META, LIFECYCLE_META, ITEM_STATUS_META } from '@/lib/format';
-import { INVENTORY_ITEM_STATUSES, LIFECYCLE_STATES, UNIT_STATUSES } from '@/data/types';
+import {
+  INVENTORY_ITEM_STATUSES,
+  LIFECYCLE_STATES,
+  MISSION_STATUSES,
+  UNIT_STATUSES,
+} from '@/data/types';
+import { MISSION_STATUS_META } from '@/lib/format';
 
 describe('money()', () => {
   it('returns em-dash for null', () => expect(money(null)).toBe('—'));
@@ -61,5 +67,13 @@ describe('ITEM_STATUS_META exhaustiveness', () => {
     expect(ITEM_STATUS_META[status]).toBeDefined();
     expect(ITEM_STATUS_META[status].label).toBeTruthy();
     expect(ITEM_STATUS_META[status].tone).toBeTruthy();
+  });
+});
+
+describe('MISSION_STATUS_META exhaustiveness', () => {
+  it.each(MISSION_STATUSES)('has an entry for mission status "%s"', (status) => {
+    expect(MISSION_STATUS_META[status]).toBeDefined();
+    expect(MISSION_STATUS_META[status].label).toBeTruthy();
+    expect(MISSION_STATUS_META[status].cls).toBeTruthy();
   });
 });

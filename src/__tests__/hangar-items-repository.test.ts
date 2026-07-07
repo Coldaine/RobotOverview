@@ -256,6 +256,14 @@ describe('Hangar inventory Postgres read path', () => {
     ).toThrow('Invalid inventory price_us from hangar DB: not-a-number');
   });
 
+  it('rejects invalid provenance values instead of treating them as absent', () => {
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        provenance: 'mystery',
+      })),
+    ).toThrow('Invalid inventory provenance from hangar DB: mystery');
+  });
+
   it('rejects malformed JSON arrays instead of filtering bad nested records', () => {
     expect(() =>
       mapInventoryItemRow(inventoryRow({
