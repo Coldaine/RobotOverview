@@ -1,6 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { hangarData, isHangarBayId } from '../data/hangar';
+import { WISHLIST_STATUSES } from '../data/types';
 import type {
   Bay,
   BayId,
@@ -15,6 +16,7 @@ import type {
   Terminal,
   Unit,
   WishlistItem,
+  WishlistStatus,
 } from '../data/types';
 
 const SELECTED_WISHLIST_STATUSES = new Set<WishlistItem['status']>(['planned', 'buy-next', 'on-order', 'received']);
@@ -34,16 +36,6 @@ const STORE_KEYS = {
 } as const;
 export const LOCAL_INSIGHT_PREFIX = 'local-';
 const SOURCES = ['us', 'import'] as const;
-const WISHLIST_STATUSES: WishlistItem['status'][] = [
-  'watching',
-  'researching',
-  'planned',
-  'buy-next',
-  'on-order',
-  'received',
-  'rejected',
-];
-export type WishlistStatus = WishlistItem['status'];
 export type InventoryReadStatus = {
   source: 'postgres' | 'static';
   fallbackReason?: 'not-configured' | 'postgres-error';

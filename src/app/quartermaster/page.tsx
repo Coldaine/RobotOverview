@@ -4,10 +4,10 @@ import { AlertTriangle, ChevronLeft, ChevronRight, Globe, Home, Package, Shoppin
 import { useMemo } from 'react';
 import Link from 'next/link';
 import { SectionTitle, StatReadout } from '@/components/ui/Primitives';
-import { useHangar, type WishlistStatus } from '@/lib/store';
+import { useHangar } from '@/lib/store';
 import { money } from '@/lib/format';
 import clsx from 'clsx';
-import type { WishlistItem } from '@/data/types';
+import type { WishlistItem, WishlistStatus } from '@/data/types';
 
 const WSTATUS: Record<WishlistItem['status'], { label: string; cls: string }> = {
   watching: { label: 'Watching', cls: 'text-ink-dim border-rim bg-panel-2/40' },

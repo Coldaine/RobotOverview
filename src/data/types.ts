@@ -4,17 +4,20 @@
 // Everything scales by adding records, not screens.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type UnitStatus =
-  | 'operational'
-  | 'needs-attention'
-  | 'blocked'
-  | 'in-mission'
-  | 'wishlist'
-  | 'on-order'
-  | 'researching'
-  | 'retired';
+export const UNIT_STATUSES = [
+  'operational',
+  'needs-attention',
+  'blocked',
+  'in-mission',
+  'wishlist',
+  'on-order',
+  'researching',
+  'retired',
+] as const;
+export type UnitStatus = (typeof UNIT_STATUSES)[number];
 
-export type LifecycleState = 'inventory' | 'assembled' | 'deployed' | 'wishlist' | 'on-order';
+export const LIFECYCLE_STATES = ['inventory', 'assembled', 'deployed', 'wishlist', 'on-order'] as const;
+export type LifecycleState = (typeof LIFECYCLE_STATES)[number];
 
 export type BayId = 'robotics' | 'compute' | 'network' | 'home' | 'audio';
 
@@ -37,14 +40,16 @@ export interface SpecRow {
   value: string;
 }
 
-export type InventoryItemStatus =
-  | 'owned'
-  | 'on-order'
-  | 'wishlist'
-  | 'researching'
-  | 'deployed'
-  | 'retired'
-  | 'rejected';
+export const INVENTORY_ITEM_STATUSES = [
+  'owned',
+  'on-order',
+  'wishlist',
+  'researching',
+  'deployed',
+  'retired',
+  'rejected',
+] as const;
+export type InventoryItemStatus = (typeof INVENTORY_ITEM_STATUSES)[number];
 
 export interface SourceRecord {
   label: string;
@@ -185,12 +190,23 @@ export interface WishlistItem {
   price: Price;
   power?: PowerProfile;
   massGrams?: number | null;
-  status: 'watching' | 'researching' | 'planned' | 'buy-next' | 'on-order' | 'received' | 'rejected';
+  status: WishlistStatus;
   unlocks?: string; // capability id
   riskNote?: string; // import / counterfeit / warranty risk
   horizon?: string; // "next 6 months" etc.
   source?: string;
 }
+
+export const WISHLIST_STATUSES = [
+  'watching',
+  'researching',
+  'planned',
+  'buy-next',
+  'on-order',
+  'received',
+  'rejected',
+] as const;
+export type WishlistStatus = (typeof WISHLIST_STATUSES)[number];
 
 export interface Capability {
   id: string;
