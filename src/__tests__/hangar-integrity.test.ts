@@ -30,6 +30,12 @@ describe('hangar.ts data integrity', () => {
     expect(value, `${label} must be non-negative`).toBeGreaterThanOrEqual(0);
   }
 
+  function expectRequiredFiniteNonNegative(value: number | null | undefined, label: string) {
+    expect(value, `${label} is required`).not.toBeNull();
+    expect(value, `${label} is required`).not.toBeUndefined();
+    expectFiniteNonNegative(value, label);
+  }
+
   it('has no duplicate unit IDs', () => {
     const ids = hangarData.units.map((u) => u.id);
     expect(ids.length).toBe(new Set(ids).size);
@@ -168,6 +174,21 @@ describe('hangar.ts data integrity', () => {
       expectFiniteNonNegative(w.power?.watts, `wishlist item "${w.id}" power.watts`);
       expectFiniteNonNegative(w.power?.volts, `wishlist item "${w.id}" power.volts`);
       expectFiniteNonNegative(w.massGrams, `wishlist item "${w.id}" massGrams`);
+    });
+  });
+
+  it('all mission constraint numerics that seed Postgres typed columns are finite and non-negative', () => {
+    hangarData.missions.forEach((m) => {
+      m.constraints.forEach((constraint) => {
+        expectRequiredFiniteNonNegative(
+          constraint.value,
+          `mission "${m.id}" constraint "${constraint.label}" value`,
+        );
+        expectRequiredFiniteNonNegative(
+          constraint.budget,
+          `mission "${m.id}" constraint "${constraint.label}" budget`,
+        );
+      });
     });
   });
 

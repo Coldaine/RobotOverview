@@ -27,7 +27,14 @@ const sanitizeJson = (value: unknown): unknown => {
 };
 const S = (v: unknown) =>
   v === null || v === undefined ? 'NULL' : `'${stripNul(String(v)).replace(/'/g, "''")}'`;
-const N = (v: unknown) => (v === null || v === undefined || v === '' ? 'NULL' : Number(v));
+const N = (v: unknown) => {
+  if (v === null || v === undefined || v === '') return 'NULL';
+  const number = Number(v);
+  if (!Number.isFinite(number)) {
+    throw new Error(`Cannot emit non-finite numeric SQL literal from value: ${String(v)}`);
+  }
+  return String(number);
+};
 const B = (v: unknown) => (v ? 'true' : 'false');
 const J = (v: unknown) =>
   v === null || v === undefined ? 'NULL' : `'${JSON.stringify(sanitizeJson(v)).replace(/'/g, "''")}'::jsonb`;
