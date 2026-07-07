@@ -4,10 +4,11 @@ import { HangarProvider } from '@/lib/store';
 import { hangarData } from '@/data/hangar';
 import { ITEM_STATUS_META } from '@/lib/format';
 import Items from '@/app/items/page';
+import type { InventoryItem } from '@/data/types';
 
-function renderItems() {
+function renderItems(initialItems?: InventoryItem[]) {
   return render(
-    <HangarProvider>
+    <HangarProvider initialItems={initialItems}>
       <Items />
     </HangarProvider>,
   );
@@ -42,16 +43,18 @@ describe('Items station', () => {
   });
 
   it('links a related unit to its detail page', () => {
-    renderItems();
-    const itemWithUnit = hangarData.items.find((it) => (it.relatedUnits ?? []).length > 0);
-    if (!itemWithUnit) return; // no related units in seed data → nothing to assert
-    const unitId = itemWithUnit.relatedUnits![0];
-    const unitName = hangarData.units.find((u) => u.id === unitId)?.name;
-    if (!unitName) return;
-    const link = screen
-      .getAllByRole('link')
-      .find((a) => a.getAttribute('href') === `/unit/${unitId}`);
-    expect(link).toBeDefined();
+    const itemWithUnit: InventoryItem = {
+      ...hangarData.items[0],
+      id: 'db-related-item',
+      name: 'DB Related Item',
+      relatedUnits: ['beast'],
+    };
+
+    renderItems([itemWithUnit]);
+
+    const link = screen.getByRole('link', { name: /UGV Beast/ });
+
+    expect(link).toHaveAttribute('href', '/unit/beast');
   });
 
   it('opens external source links with tabnabbing protections', () => {
