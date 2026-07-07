@@ -2,7 +2,7 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { useHangar, useCalculatedConstraints } from '@/lib/store';
-import type { ConstraintGauge } from '@/data/types';
+import type { ConstraintGauge, MissionConstraintUnit } from '@/data/types';
 import { money } from '@/lib/format';
 
 function safePercent(value: number, budget: number): number {
@@ -14,7 +14,7 @@ function isOverBudget(value: number, budget: number): boolean {
   return Number.isFinite(value) && Number.isFinite(budget) && value > budget;
 }
 
-function formatGaugeValue(value: number, unit: string): string {
+function formatGaugeValue(value: number, unit: MissionConstraintUnit): string {
   if (!Number.isFinite(value)) return '—';
   if (unit === '$') return money(value);
   return `${value}${unit}`;
@@ -30,9 +30,12 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
   const activeMissionId = lensMissionId ?? primaryMission?.id ?? '';
   const allConstraints = useCalculatedConstraints(activeMissionId);
 
-  const massG = allConstraints.find(c => c.unit === 'g') || { value: 0, budget: 1, label: 'Mass' };
-  const powerG = allConstraints.find(c => c.unit === 'W') || { value: 0, budget: 1, label: 'Power' };
-  const costG = allConstraints.find(c => c.unit === '$') || { value: 0, budget: 1, label: 'Cost' };
+  const massG: ConstraintGauge =
+    allConstraints.find(c => c.unit === 'g') || { value: 0, budget: 1, label: 'Mass', unit: 'g' };
+  const powerG: ConstraintGauge =
+    allConstraints.find(c => c.unit === 'W') || { value: 0, budget: 1, label: 'Power', unit: 'W' };
+  const costG: ConstraintGauge =
+    allConstraints.find(c => c.unit === '$') || { value: 0, budget: 1, label: 'Cost', unit: '$' };
 
   // Blueprint: neon segmented cockpit HUD arcs with 85% amber threshold warning.
   if (theme === 'blueprint') {

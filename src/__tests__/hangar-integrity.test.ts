@@ -6,6 +6,7 @@ import {
   DOCUMENT_KINDS,
   INSIGHT_CONFIDENCE_LEVELS,
   INVENTORY_ITEM_STATUSES,
+  MISSION_CONSTRAINT_UNITS,
   MISSION_STATUSES,
   NET_KINDS,
   POWER_RAILS,
@@ -188,6 +189,10 @@ describe('hangar.ts data integrity', () => {
           constraint.budget,
           `mission "${m.id}" constraint "${constraint.label}" budget`,
         );
+        expect(
+          MISSION_CONSTRAINT_UNITS,
+          `mission "${m.id}" constraint "${constraint.label}" has invalid unit "${constraint.unit}"`,
+        ).toContain(constraint.unit);
       });
     });
   });

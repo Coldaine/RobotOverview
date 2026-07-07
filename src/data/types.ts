@@ -178,11 +178,14 @@ export interface MissionObjective {
   done: boolean;
 }
 
+export const MISSION_CONSTRAINT_UNITS = ['W', 'g', '$'] as const;
+export type MissionConstraintUnit = (typeof MISSION_CONSTRAINT_UNITS)[number];
+
 export interface ConstraintGauge {
   label: string;
   value: number;
   budget: number;
-  unit: string; // "W", "g", "$"
+  unit: MissionConstraintUnit;
 }
 
 export const MISSION_STATUSES = ['planning', 'active', 'standby', 'complete'] as const;
