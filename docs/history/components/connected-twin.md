@@ -1,11 +1,15 @@
 ---
 title: Connected Twin — Wiring Model
 audience: AI agents and operators extending the Hangar hardware model
-status: proposal — current direction
+status: historical proposal
 last_updated: 2026-07-01
 ---
 
 # Connected Twin — Wiring Model
+
+> Historical proposal. Current BEAST-01 operating facts belong in `docs/beast-ops.md`; current
+> data/backend shape belongs in `db/hangar/standup.md`. Use this page only as design evidence after
+> checking current code, schema, and owner docs.
 
 The connected twin is the Hangar's hardware/electrical layer for BEAST-01: components, terminals, nets, rail budgets, and provenance back to schematics. It is **not** a software/control twin and it does not operate the robot. That boundary preserves `NORTH_STAR.md` AG2: the Hangar may surface supervised knowledge and links, but it is not an autonomous control plane.
 
@@ -29,8 +33,9 @@ The twin layer fills that gap without replacing the loadout model.
   - `board-review.html`
   - `twin-model.json`
 - These prototypes are reference artifacts, not app code and not the current route surface.
-- The old `docs/twin/` silo was deliberately retired. Current guidance lives here and in the component/data docs.
-- Bulk BEAST-01 source files are intentionally **not tracked** in git. See `docs/reference/ugv-beast-source-archive.md` for the digest and object-storage boundary.
+- The old `docs/twin/` silo was deliberately retired before this page was archived.
+- Bulk BEAST-01 source files are intentionally **not tracked** in git. Historical digest and
+  object-storage notes are under `docs/history/reference/`.
 
 ## Model extension
 

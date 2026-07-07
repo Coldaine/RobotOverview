@@ -1,15 +1,17 @@
 ---
 title: BEAST-01 Source Archive / Provenance Digest
 audience: AI agents preserving BEAST-01 hardware provenance
-status: reference
+status: historical reference
 last_updated: 2026-07-01
 ---
 
 # BEAST-01 Source Archive / Provenance Digest
 
-Terminology note: in this repo, "archive" means preserved authoritative source material and provenance, not deprecated or historical content. Superseded material belongs under `docs/history/`; this digest is an active reference for Hangar's BEAST-01 hardware model and future source-document storage.
+Historical digest. Current BEAST-01 operating facts belong in `docs/beast-ops.md`; current
+data/backend shape belongs in `db/hangar/standup.md`. Use this page only as provenance evidence
+after checking current code, owner docs, local cache state, and upstream sources.
 
-Patrick assembled an offline Waveshare UGV Beast source bundle on 2026-06-27 from official Waveshare file-server downloads and wiki pages. The raw local folder is `UGV-Beast-Archive/` and remains the authoritative local cache, but that folder is intentionally gitignored because it contains large PDFs, ZIPs, CAD, firmware, and raw staging copies. Those binaries belong in object storage and should be referenced from the app/database by URL, not embedded in this repository or Docker image.
+Patrick assembled an offline Waveshare UGV Beast source bundle on 2026-06-27 from official Waveshare file-server downloads and wiki pages. The raw local folder was `UGV-Beast-Archive/`, intentionally gitignored because it contains large PDFs, ZIPs, CAD, firmware, and raw staging copies. Those binaries belong in object storage and should be referenced from the app/database by URL, not embedded in this repository or Docker image.
 
 ## What the source bundle contains
 
@@ -50,7 +52,8 @@ Until object storage exists, keep raw source files local and ignored. Once an S3
 Related docs:
 
 - `docs/beast-ops.md` — live/supervised operation runbook.
-- `docs/components/connected-twin.md` — how the wiring model should use source provenance.
-- `docs/deploy/storage-and-twin-pivot-plan.md` — storage/object-store migration plan.
-- `docs/reference/beast-source-evidence-manifest.md` — URL, local-path, byte-size, hash, and future object-key manifest for source payloads.
+- `db/hangar/standup.md` — current data/backend shape and source-document storage boundary.
+- `docs/history/components/connected-twin.md` — historical wiring-model proposal.
+- `docs/history/deploy/storage-and-twin-pivot-plan.md` — historical storage/object-store migration plan.
+- `docs/history/reference/beast-source-evidence-manifest.md` — historical URL, local-path, byte-size, hash, and future object-key manifest for source payloads.
 - NVIDIA Jetson Orin Nano Developer Kit Carrier Board Specification — https://developer.nvidia.com/downloads/assets/embedded/secure/jetson/orin_nano/docs/jetson_orin_nano_devkit_carrier_board_specification_sp.pdf

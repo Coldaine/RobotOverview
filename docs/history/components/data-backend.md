@@ -7,12 +7,14 @@ last_updated: 2026-07-01
 
 # Data Backend — Master-Inventory Model
 
-> The Hangar's data spine: the static bootstrap/fallback dataset, the normalized Postgres store now serving the first inventory read path, and the cluster target it runs on.
-> The live SQL lives in `db/hangar/` (`schema.sql`, `seed.sql`, `standup.md`).
-> This is the source of truth for data-backend current state. High-level docs should summarize and
-> link here rather than duplicating cutover status.
+> Historical snapshot only. Do not use this page as current guidance or source of truth.
+> Current data/backend shape, seed, migrations, and read-cutover status are owned by
+> `db/hangar/standup.md`; live DDL is `db/hangar/schema.sql`; live migrations are in
+> `db/hangar/migrations/`; generated rebuild seed data is `db/hangar/seed.sql`.
+> Use this page only as historical design evidence after checking the current code, schema, cluster
+> manifests, or live state.
 
-## Current reality (read this first)
+## Archived state, not current instructions
 
 - **`src/data/hangar.ts` is the bootstrap dataset and rollback/fallback spine.** Inventory items now come through the server-side Postgres read path when configured; remaining Hangar surfaces still use the bootstrap data while they migrate.
 - The **Postgres `hangar` schema is the authoritative target for the master-inventory spine.** The cluster DB is provisioned, seeded from `hangar.ts`, reachable through the app preflight, parity-checked for inventory items, and serving the first browser-facing inventory read path. The local standup proves shape only; it is not the production target. Cluster-level backup objects and WAL archiving are owned by `coldaine-k8cluster`; do not claim the restore-test gate is complete here unless that repo records the restore proof.
@@ -72,7 +74,7 @@ The BEAST-01 wiring/twin layer should extend this same relational spine rather t
 - `terminals` — named ports/pins/leads/headers on an asset.
 - `nets` — connections between terminals, with signal/medium and source provenance.
 
-This sits below loadout compatibility: sockets/interfaces say what can mount; terminals/nets say what is physically wired and where that claim came from. The current direction is documented in [`connected-twin.md`](connected-twin.md). Standalone prototypes live under `docs/history/twin-prototypes/`; they are reference artifacts, not app code.
+This sits below loadout compatibility: sockets/interfaces say what can mount; terminals/nets say what is physically wired and where that claim came from. The historical connected-twin proposal is [`connected-twin.md`](connected-twin.md). Standalone prototypes live under `docs/history/twin-prototypes/`; they are reference artifacts, not app code.
 
 ## Where it runs
 
