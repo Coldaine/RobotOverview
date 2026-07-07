@@ -73,6 +73,17 @@ export const ACQUISITION_PIPELINE_STATUSES: readonly WishlistStatus[] = [
   'received',
 ] as const;
 
+export const SELECTED_REQUISITION_STATUSES: readonly WishlistStatus[] = [
+  'planned',
+  'buy-next',
+  'on-order',
+  'received',
+] as const;
+
+export function acquisitionStatusPriority(status: WishlistStatus): number {
+  return ACQUISITION_PIPELINE_STATUSES.indexOf(status);
+}
+
 export const TONE_CLASSES: Record<
   'ok' | 'warn' | 'crit' | 'cyan' | 'amber' | 'idle',
   { text: string; border: string; bg: string; dot: string }

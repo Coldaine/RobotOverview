@@ -73,6 +73,15 @@ describe('selectedMissionWishes()', () => {
     expect(result[0].id).toBe('buynext-id');
   });
 
+  it('uses acquisition pipeline priority for later committed statuses', () => {
+    const buyNext = makeWish({ id: 'buynext-id', status: 'buy-next', category: 'Lighting' });
+    const onOrder = makeWish({ id: 'onorder-id', status: 'on-order', category: 'Lighting' });
+    const received = makeWish({ id: 'received-id', status: 'received', category: 'Lighting' });
+
+    expect(selectedMissionWishes([received, onOrder, buyNext])).toEqual([received]);
+    expect(selectedMissionWishes([buyNext, onOrder])).toEqual([onOrder]);
+  });
+
   it('keeps both items when categories differ', () => {
     const lighting = makeWish({ id: 'a', status: 'buy-next', category: 'Lighting' });
     const sensing = makeWish({ id: 'b', status: 'planned', category: 'Sensing' });
@@ -163,7 +172,7 @@ describe('useCalculatedConstraints()', () => {
   });
 
   it('does not alter constraints for a mission whose wishlist items are all "researching" (excluded status)', () => {
-    // perimeter-mapping wishlist: ['depth-cam'] — depth-cam is 'researching', not in SELECTED_WISHLIST_STATUSES
+    // perimeter-mapping wishlist: ['depth-cam'] — depth-cam is 'researching', not a committed requisition status.
     const { result } = renderHook(() => useCalculatedConstraints('perimeter-mapping'), { wrapper });
     const power = result.current.find((c) => c.unit === 'W');
     const perimeter = hangarData.missions.find((m) => m.id === 'perimeter-mapping')!;
