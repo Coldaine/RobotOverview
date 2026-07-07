@@ -69,8 +69,8 @@ require agents to read another process doc first.
 `Taskfile.yml` is the agent/operator front door. Keep `npm` scripts as app-local commands,
 and treat `justfile` as optional sugar only.
 
-- Dev: `npm run dev` · Build: `npm run build` · Lint: `npm run lint` · Test: `npm run test:run`
-- Full check: `task check` (lint + tests + build)
+- Dev: `npm run dev` · Build: `npm run build` · Lint: `npm run lint` · Typecheck: `npm run typecheck` · Test: `npm run test:run`
+- Full check: `task check` (lint + typecheck + tests + build)
 - Robot probe (safe, zero-motion): `npm run beast:probe`
 
 ## Branch workflow
