@@ -33,5 +33,5 @@ if (result.error) {
 }
 
 if (result.status !== 0) {
-  console.warn('[bootstrap] Core tooling check found missing commands. Run `task bootstrap:core` or `npm run bootstrap:tools` to install/repair explicitly.');
+  console.warn('[bootstrap] Core tooling check found missing commands. Run `task bootstrap:core` or `task bootstrap:tools` to install/repair explicitly.');
 }
