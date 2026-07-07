@@ -47,8 +47,14 @@ export function isSourcePreference(value: unknown): value is SourcePreference {
   return SOURCE_PREFERENCES.some((source) => source === value);
 }
 
+function finitePrice(value: number | null): number | null {
+  return value != null && Number.isFinite(value) ? value : null;
+}
+
 export function sourcePrice(price: Price, source: SourcePreference): number | null {
-  return source === 'us' ? price.us : price.import ?? price.us;
+  const us = finitePrice(price.us);
+  const imported = finitePrice(price.import);
+  return source === 'us' ? us : imported ?? us;
 }
 
 export function sourcePriceOrZero(price: Price, source: SourcePreference): number {
