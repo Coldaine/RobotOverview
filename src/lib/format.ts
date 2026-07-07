@@ -1,4 +1,9 @@
-import type { InventoryItemStatus, LifecycleState, Mission, UnitStatus } from '../data/types';
+import type {
+  InventoryItemStatus,
+  LifecycleState,
+  MissionStatus,
+  UnitStatus,
+} from '../data/types';
 
 export function money(n: number | null | undefined): string {
   if (n == null) return '—';
@@ -40,7 +45,7 @@ export const LIFECYCLE_META: Record<LifecycleState, { label: string }> = {
   'on-order': { label: 'On Order' },
 };
 
-export const MISSION_STATUS_META: Record<Mission['status'], { label: string; cls: string }> = {
+export const MISSION_STATUS_META: Record<MissionStatus, { label: string; cls: string }> = {
   planning: { label: 'Planning', cls: 'text-amber border-amber/40 bg-amber/10' },
   active: { label: 'Active', cls: 'text-signal-ok border-signal-ok/40 bg-signal-ok/10' },
   standby: { label: 'Standby', cls: 'text-ink-dim border-rim bg-panel-2/40' },

@@ -21,12 +21,15 @@ export type LifecycleState = (typeof LIFECYCLE_STATES)[number];
 
 export type BayId = 'robotics' | 'compute' | 'network' | 'home' | 'audio';
 
+export const BAY_ACCENTS = ['cyan', 'amber'] as const;
+export type BayAccent = (typeof BAY_ACCENTS)[number];
+
 export interface Bay {
   id: BayId;
   name: string;
   code: string; // short HUD code, e.g. "RBT"
   tagline: string;
-  accent: 'cyan' | 'amber';
+  accent: BayAccent;
 }
 
 export interface Price {
@@ -67,6 +70,9 @@ export interface SourceRecord {
   kind: SourceRecordKind;
 }
 
+export const PROVENANCE_KINDS = ['owner', 'inferred', 'open'] as const;
+export type ProvenanceKind = (typeof PROVENANCE_KINDS)[number];
+
 export interface InventoryItem {
   id: string;
   name: string;
@@ -90,7 +96,7 @@ export interface InventoryItem {
   sources?: SourceRecord[];
   acquired?: string;
   horizon?: string;
-  provenance?: 'owner' | 'inferred' | 'open';
+  provenance?: ProvenanceKind;
 }
 
 export interface LoadoutSlot {
@@ -101,10 +107,13 @@ export interface LoadoutSlot {
   hotspotId?: string; // Links this structural slot to a visual region on the schematic
 }
 
+export const POWER_RAILS = ['5V', '12V', 'battery', 'mains'] as const;
+export type PowerRail = (typeof POWER_RAILS)[number];
+
 export interface PowerProfile {
   watts: number | null;
   volts?: number | null;
-  rail?: '5V' | '12V' | 'battery' | 'mains' | null;
+  rail?: PowerRail | null;
 }
 
 export interface Hotspot {
@@ -115,18 +124,21 @@ export interface Hotspot {
   // detail and status are now derived dynamically from the LoadoutSlots mapped to this hotspotId!
 }
 
+export const UNIT_SHORTCUT_TYPES = ['url', 'command'] as const;
+export type UnitShortcutType = (typeof UNIT_SHORTCUT_TYPES)[number];
+
 export type UnitShortcut =
   | {
       id: string;
       label: string;
-      type: 'url';
+      type: Extract<UnitShortcutType, 'url'>;
       url: string;
       note?: string;
     }
   | {
       id: string;
       label: string;
-      type: 'command';
+      type: Extract<UnitShortcutType, 'command'>;
       command: string;
       note?: string;
     };
@@ -155,7 +167,7 @@ export interface Unit {
   links?: { label: string; url: string }[];
   acquired?: string; // ISO date or "—"
   horizon?: string; // for future items: when it's expected
-  provenance?: 'owner' | 'inferred' | 'open';
+  provenance?: ProvenanceKind;
   // External system this unit's live status is *referenced* from (e.g. "Home Assistant").
   // Catalog reference only — the Hangar never controls the system (North Star AG2).
   monitoredVia?: string;
@@ -173,11 +185,14 @@ export interface ConstraintGauge {
   unit: string; // "W", "g", "$"
 }
 
+export const MISSION_STATUSES = ['planning', 'active', 'standby', 'complete'] as const;
+export type MissionStatus = (typeof MISSION_STATUSES)[number];
+
 export interface Mission {
   id: string;
   code: string; // "MSN-01"
   name: string;
-  status: 'planning' | 'active' | 'standby' | 'complete';
+  status: MissionStatus;
   objective: string;
   environment?: string;
   requisitionedUnits: string[]; // unit ids
@@ -258,10 +273,20 @@ export function isSourceRecordKind(value: unknown): value is SourceRecordKind {
   return typeof value === 'string' && SOURCE_RECORD_KINDS.includes(value as SourceRecordKind);
 }
 
+export const ACTIVITY_KINDS = [
+  'acquired',
+  'price-drop',
+  'shipped',
+  'insight',
+  'mission',
+  'researched',
+] as const;
+export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
+
 export interface ActivityEvent {
   id: string;
   at: string; // ISO
-  kind: 'acquired' | 'price-drop' | 'shipped' | 'insight' | 'mission' | 'researched';
+  kind: ActivityKind;
   text: string;
 }
 
@@ -271,14 +296,18 @@ export interface ActivityEvent {
 // logically wired together (a power rail, a UART link, a servo daisy-chain).
 // This is the data the wiring view renders; documents prove each net.
 
-export type NetKind = 'power' | 'data' | 'mixed' | 'mechanical';
+export const NET_KINDS = ['power', 'data', 'mixed', 'mechanical'] as const;
+export type NetKind = (typeof NET_KINDS)[number];
+
+export const TERMINAL_ROLES = ['input', 'output', 'bidirectional'] as const;
+export type TerminalRole = (typeof TERMINAL_ROLES)[number];
 
 export interface Terminal {
   id: string; // e.g. 'gdb-servo-bus'
   unitId: string; // unit that physically carries the connector
   name: string; // 'Serial Bus Servo Port'
   connector?: string; // 'XH2.54-2P' | 'PH2.0-6P' | '40-pin header' | 'USB-C' ...
-  role?: 'input' | 'output' | 'bidirectional';
+  role?: TerminalRole;
   note?: string;
 }
 
@@ -296,10 +325,21 @@ export interface Net {
 // References into the UGV-Beast-Archive (and, later, object storage). The
 // archivePath is the stable key; url is filled once files live in storage.
 
+export const DOCUMENT_KINDS = [
+  'schematic',
+  'manual',
+  'cad',
+  'firmware',
+  'wiki',
+  'datasheet',
+  'image',
+] as const;
+export type DocumentKind = (typeof DOCUMENT_KINDS)[number];
+
 export interface DocumentRef {
   id: string;
   title: string;
-  kind: 'schematic' | 'manual' | 'cad' | 'firmware' | 'wiki' | 'datasheet' | 'image';
+  kind: DocumentKind;
   archivePath: string; // path under UGV-Beast-Archive/
   url?: string; // public/object-storage URL once uploaded
   units?: string[]; // related unit ids
