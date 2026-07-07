@@ -3,19 +3,8 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useHangar, useCalculatedConstraints } from '@/lib/store';
-import { hotspotStatus } from '@/lib/schematic';
+import { HOTSPOT_STATUS_META, hotspotStatus } from '@/lib/schematic';
 import { WiringDiagram } from './WiringDiagram';
-
-const DOT: Record<'ok' | 'empty' | 'attention', string> = {
-  ok: 'fill-signal-ok',
-  empty: 'fill-signal-warn',
-  attention: 'fill-amber',
-};
-const RING: Record<'ok' | 'empty' | 'attention', string> = {
-  ok: 'stroke-signal-ok',
-  empty: 'stroke-signal-warn',
-  attention: 'stroke-amber',
-};
 
 // Monospaced Hex code cascade overlay component
 function HexCascade() {
@@ -198,6 +187,7 @@ export function RoverSchematic() {
             {hotspots.map((h) => {
               const isActive = h.id === active;
               const status = getStatus(h.id);
+              const statusMeta = HOTSPOT_STATUS_META[status];
               const isEmpty = status === 'empty';
 
               return (
@@ -252,7 +242,7 @@ export function RoverSchematic() {
                     <>
                       {/* Active hotspot ripple */}
                       {isActive && (
-                        <circle cx={h.x} cy={h.y} r="4.5" className={clsx(RING[status], 'fill-none')} strokeWidth="0.4" strokeOpacity="0.6">
+                        <circle cx={h.x} cy={h.y} r="4.5" className={clsx(statusMeta.ringClass, 'fill-none')} strokeWidth="0.4" strokeOpacity="0.6">
                           <animate attributeName="r" values="3.2;5;3.2" dur="2s" repeatCount="indefinite" />
                         </circle>
                       )}
@@ -263,8 +253,8 @@ export function RoverSchematic() {
                           <animate attributeName="opacity" values="1;0;1" dur="1.2s" repeatCount="1" />
                         </circle>
                       )}
-                      <circle cx={h.x} cy={h.y} r={isActive ? 2 : 1.5} className={clsx(DOT[status])} />
-                      <circle cx={h.x} cy={h.y} r="3" className={clsx(RING[status], 'fill-none')} strokeWidth="0.3" strokeOpacity="0.5" />
+                      <circle cx={h.x} cy={h.y} r={isActive ? 2 : 1.5} className={clsx(statusMeta.dotClass)} />
+                      <circle cx={h.x} cy={h.y} r="3" className={clsx(statusMeta.ringClass, 'fill-none')} strokeWidth="0.3" strokeOpacity="0.5" />
                     </>
                   )}
                 </g>
@@ -279,6 +269,7 @@ export function RoverSchematic() {
           <div className="grid grid-cols-2 gap-1.5">
             {hotspots.map((h) => {
               const status = getStatus(h.id);
+              const statusMeta = HOTSPOT_STATUS_META[status];
               return (
                 <button
                   key={h.id}
@@ -293,9 +284,7 @@ export function RoverSchematic() {
                   <span
                     className={clsx(
                       'h-1.5 w-1.5 shrink-0 rounded-full',
-                      status === 'ok' && 'bg-signal-ok',
-                      status === 'empty' && 'bg-signal-warn',
-                      status === 'attention' && 'bg-amber',
+                      statusMeta.listDotClass,
                     )}
                   />
                   <span className="truncate">{h.label}</span>
@@ -317,15 +306,8 @@ export function RoverSchematic() {
 
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="min-w-0 font-display text-sm uppercase tracking-[0.12em] text-ink">{sel.label}</span>
-                <span
-                  className={clsx(
-                    'chip',
-                    selectedStatus === 'ok' && 'border-signal-ok/40 bg-signal-ok/10 text-signal-ok',
-                    selectedStatus === 'empty' && 'border-signal-warn/40 bg-signal-warn/10 text-signal-warn',
-                    selectedStatus === 'attention' && 'border-amber/40 bg-amber/10 text-amber',
-                  )}
-                >
-                  {selectedStatus === 'ok' ? 'NOMINAL' : selectedStatus === 'empty' ? 'UNFILLED' : 'REVIEW'}
+                <span className={clsx('chip', HOTSPOT_STATUS_META[selectedStatus].chipClass)}>
+                  {HOTSPOT_STATUS_META[selectedStatus].label}
                 </span>
               </div>
               <div className="mt-3">
