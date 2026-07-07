@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { hangarData } from '../data/hangar';
+import { HANGAR_BAY_IDS, hangarData } from '../data/hangar';
 import type {
   Bay,
   BayId,
@@ -43,7 +43,6 @@ const WISHLIST_STATUSES: WishlistItem['status'][] = [
   'received',
   'rejected',
 ];
-const BAY_IDS: BayId[] = hangarData.bays.map((bay) => bay.id);
 export type WishlistStatus = WishlistItem['status'];
 export type InventoryReadStatus = {
   source: 'postgres' | 'static';
@@ -151,7 +150,7 @@ function readStoredWishStatus(): WishStatusOverrides {
 }
 
 function isBayId(value: unknown): value is BayId {
-  return typeof value === 'string' && BAY_IDS.includes(value as BayId);
+  return typeof value === 'string' && HANGAR_BAY_IDS.includes(value as BayId);
 }
 
 function readStoredLocalInsights(): Insight[] {
