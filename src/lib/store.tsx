@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { hangarData, isHangarBayId } from '../data/hangar';
-import { WISHLIST_STATUSES } from '../data/types';
+import { isInsightConfidence, isWishlistStatus } from '../data/types';
 import type {
   Bay,
   BayId,
@@ -131,8 +131,8 @@ function readStoredWishStatus(): WishStatusOverrides {
     if (!parsed || typeof parsed !== 'object') return {};
     const out: WishStatusOverrides = {};
     for (const [id, status] of Object.entries(parsed as Record<string, unknown>)) {
-      if (typeof status === 'string' && WISHLIST_STATUSES.includes(status as WishlistStatus)) {
-        out[id] = status as WishlistStatus;
+      if (isWishlistStatus(status)) {
+        out[id] = status;
       }
     }
     return out;
@@ -167,7 +167,7 @@ function readStoredLocalInsights(): Insight[] {
           body: x.body as string,
           tags: Array.isArray(x.tags) ? (x.tags as unknown[]).filter((t): t is string => typeof t === 'string') : [],
           bay: isHangarBayId(x.bay) ? x.bay : undefined,
-          confidence: conf === 'high' || conf === 'medium' || conf === 'low' ? conf : 'medium',
+          confidence: isInsightConfidence(conf) ? conf : 'medium',
           capturedAt: typeof x.capturedAt === 'string' ? x.capturedAt : '',
         };
       });

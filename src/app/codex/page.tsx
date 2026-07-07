@@ -4,10 +4,11 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SectionTitle } from '@/components/ui/Primitives';
 import { isHangarBayId } from '@/data/hangar';
+import { INSIGHT_CONFIDENCE_LEVELS, isInsightConfidence, type InsightConfidence } from '@/data/types';
 import { useHangar, LOCAL_INSIGHT_PREFIX } from '@/lib/store';
 import clsx from 'clsx';
 
-type ConfidenceFilter = 'all' | 'high' | 'medium' | 'low';
+type ConfidenceFilter = 'all' | InsightConfidence;
 
 export default function Codex() {
   const { data, insights, unit, mission, addLocalInsight, removeLocalInsight } = useHangar();
@@ -23,8 +24,7 @@ export default function Codex() {
   const [draftTags, setDraftTags] = useState('');
 
   const onConfidenceChange = (value: string) => {
-    const allowed: ConfidenceFilter[] = ['all', 'high', 'medium', 'low'];
-    setConf(allowed.includes(value as ConfidenceFilter) ? (value as ConfidenceFilter) : 'all');
+    setConf(value === 'all' || isInsightConfidence(value) ? value : 'all');
   };
 
   const submitDraft = () => {
@@ -142,9 +142,11 @@ export default function Codex() {
             <SlidersHorizontal className="h-4 w-4 text-amber" />
             <select value={conf} onChange={(e) => onConfidenceChange(e.target.value)} className="w-full bg-transparent py-2 font-mono text-xs text-ink outline-none">
               <option value="all">All confidence</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
+              {INSIGHT_CONFIDENCE_LEVELS.map((level) => (
+                <option key={level} value={level}>
+                  {level[0].toUpperCase() + level.slice(1)}
+                </option>
+              ))}
             </select>
           </label>
         </div>

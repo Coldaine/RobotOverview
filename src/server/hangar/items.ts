@@ -4,7 +4,7 @@ import type {
   SourceRecord,
   SpecRow,
 } from '@/data/types';
-import { INVENTORY_ITEM_STATUSES } from '@/data/types';
+import { INVENTORY_ITEM_STATUSES, isSourceRecordKind } from '@/data/types';
 import type { Queryable } from './queryable';
 import type { HangarFallbackReason, HangarReadSource } from './read-model';
 import { readWithStaticFallback } from './read-model';
@@ -143,15 +143,16 @@ function sourceRecords(value: unknown): SourceRecord[] | undefined {
   const records = strictObjectArray(
     value,
     'inventory sources',
-    (row): row is SourceRecord =>
-      Boolean(row) &&
-      typeof row === 'object' &&
-      typeof (row as SourceRecord).label === 'string' &&
-      typeof (row as SourceRecord).url === 'string' &&
-      typeof (row as SourceRecord).accessedAt === 'string' &&
-      ['official', 'certification', 'review', 'community', 'research'].includes(
-        (row as SourceRecord).kind,
-      ),
+    (row): row is SourceRecord => {
+      if (!row || typeof row !== 'object') return false;
+      const record = row as Partial<Record<keyof SourceRecord, unknown>>;
+      return (
+        typeof record.label === 'string' &&
+        typeof record.url === 'string' &&
+        typeof record.accessedAt === 'string' &&
+        isSourceRecordKind(record.kind)
+      );
+    },
   );
 
   return records.length ? records : undefined;

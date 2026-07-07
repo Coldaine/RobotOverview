@@ -51,11 +51,20 @@ export const INVENTORY_ITEM_STATUSES = [
 ] as const;
 export type InventoryItemStatus = (typeof INVENTORY_ITEM_STATUSES)[number];
 
+export const SOURCE_RECORD_KINDS = [
+  'official',
+  'certification',
+  'review',
+  'community',
+  'research',
+] as const;
+export type SourceRecordKind = (typeof SOURCE_RECORD_KINDS)[number];
+
 export interface SourceRecord {
   label: string;
   url: string;
   accessedAt: string;
-  kind: 'official' | 'certification' | 'review' | 'community' | 'research';
+  kind: SourceRecordKind;
 }
 
 export interface InventoryItem {
@@ -208,6 +217,10 @@ export const WISHLIST_STATUSES = [
 ] as const;
 export type WishlistStatus = (typeof WISHLIST_STATUSES)[number];
 
+export function isWishlistStatus(value: unknown): value is WishlistStatus {
+  return typeof value === 'string' && WISHLIST_STATUSES.includes(value as WishlistStatus);
+}
+
 export interface Capability {
   id: string;
   name: string;
@@ -226,9 +239,23 @@ export interface Insight {
   bay?: BayId;
   units?: string[];
   missions?: string[];
-  confidence: 'high' | 'medium' | 'low';
+  confidence: InsightConfidence;
   source?: string;
   capturedAt: string;
+}
+
+export const INSIGHT_CONFIDENCE_LEVELS = ['high', 'medium', 'low'] as const;
+export type InsightConfidence = (typeof INSIGHT_CONFIDENCE_LEVELS)[number];
+
+export function isInsightConfidence(value: unknown): value is InsightConfidence {
+  return (
+    typeof value === 'string' &&
+    INSIGHT_CONFIDENCE_LEVELS.includes(value as InsightConfidence)
+  );
+}
+
+export function isSourceRecordKind(value: unknown): value is SourceRecordKind {
+  return typeof value === 'string' && SOURCE_RECORD_KINDS.includes(value as SourceRecordKind);
 }
 
 export interface ActivityEvent {
