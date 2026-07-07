@@ -1077,3 +1077,7 @@ export const hangarData: HangarData = {
 export default hangarData;
 
 export const HANGAR_BAY_IDS: BayId[] = hangarData.bays.map((bay) => bay.id);
+
+export function isHangarBayId(value: unknown): value is BayId {
+  return typeof value === 'string' && HANGAR_BAY_IDS.includes(value as BayId);
+}
