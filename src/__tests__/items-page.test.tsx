@@ -54,6 +54,19 @@ describe('Items station', () => {
     expect(link).toBeDefined();
   });
 
+  it('opens external source links with tabnabbing protections', () => {
+    renderItems();
+    const itemWithSource = hangarData.items.find((it) => (it.sources ?? []).length > 0);
+    if (!itemWithSource?.sources?.[0]) return;
+
+    const source = itemWithSource.sources[0];
+    const link = screen.getByRole('link', { name: source.label });
+
+    expect(link).toHaveAttribute('href', source.url);
+    expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
   it('shows an empty-state hint only when there are no items', () => {
     renderItems();
     // Seed data has items, so the empty-state copy must NOT be present.

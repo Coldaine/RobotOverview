@@ -138,7 +138,7 @@ export function NetInspector({
                         <div className="truncate font-mono text-[9px] text-ink-dim">{doc.archivePath}</div>
                       </div>
                       {doc.url ? (
-                        <a href={doc.url} target="_blank" rel="noreferrer" className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Open ${doc.title}`}>
+                        <a href={doc.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Open ${doc.title}`}>
                           <ArrowRight className="h-3.5 w-3.5" />
                         </a>
                       ) : (
