@@ -140,8 +140,8 @@ function specRows(value: unknown): SpecRow[] {
     (row): row is SpecRow =>
       Boolean(row) &&
       typeof row === 'object' &&
-      typeof (row as SpecRow).label === 'string' &&
-      typeof (row as SpecRow).value === 'string',
+      isTrimmedNonBlankString((row as SpecRow).label) &&
+      isTrimmedNonBlankString((row as SpecRow).value),
   );
 }
 
@@ -223,7 +223,7 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
     ),
     relatedInsights: optionalArray(postgresTextArray(row.related_insights, 'related insights')),
     sources: sourceRecords(row.sources),
-    limitations: optionalArray(postgresTextArray(row.limitations, 'inventory limitations')),
+    limitations: optionalArray(nonBlankTextArray(row.limitations, 'inventory limitations')),
     acquired: row.acquired ?? undefined,
     horizon: row.horizon ?? undefined,
     provenance: row.provenance
@@ -234,6 +234,16 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
 
 function optionalArray<T>(value: T[]): T[] | undefined {
   return value.length ? value : undefined;
+}
+
+function nonBlankTextArray(value: unknown, label: string): string[] {
+  const text = postgresTextArray(value, label);
+  const invalidIndex = text.findIndex((item) => !isTrimmedNonBlankString(item));
+  if (invalidIndex !== -1) {
+    throw new Error(`Invalid ${label} from hangar DB: expected non-blank trimmed text at index ${invalidIndex}.`);
+  }
+
+  return text;
 }
 
 export async function readInventoryItemsFromPostgres(client: Queryable) {

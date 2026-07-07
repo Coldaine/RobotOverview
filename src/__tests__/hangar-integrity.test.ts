@@ -361,6 +361,22 @@ describe('hangar.ts data integrity', () => {
     });
   });
 
+  it('all item specs and limitations are usable display text', () => {
+    hangarData.items.forEach((it) => {
+      it.specs.forEach((spec) => {
+        expect(spec.label.trim(), `item "${it.id}" spec label must not be blank`).not.toBe('');
+        expect(spec.label, `item "${it.id}" spec label must not have surrounding whitespace`).toBe(spec.label.trim());
+        expect(spec.value.trim(), `item "${it.id}" spec "${spec.label}" value must not be blank`).not.toBe('');
+        expect(spec.value, `item "${it.id}" spec "${spec.label}" value must not have surrounding whitespace`).toBe(spec.value.trim());
+      });
+
+      (it.limitations ?? []).forEach((limitation, index) => {
+        expect(limitation.trim(), `item "${it.id}" limitation ${index} must not be blank`).not.toBe('');
+        expect(limitation, `item "${it.id}" limitation ${index} must not have surrounding whitespace`).toBe(limitation.trim());
+      });
+    });
+  });
+
   it('all item source labels, URLs, and access dates are usable', () => {
     hangarData.items.forEach((it) => {
       (it.sources ?? []).forEach((source) => {
