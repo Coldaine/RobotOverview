@@ -40,7 +40,32 @@ schema/seed, and any live migration must handle data already stored in the datab
 If the app serves static-fallback data instead of Postgres, that state must be loudly
 visible, never silent.
 
+## Documentation workflow
+
+Nontrivial documentation changes must run this workflow before editing; typo-only edits may
+reduce it to "confirmed no ownership or status impact." This section is the workflow; do not
+require agents to read another process doc first.
+
+1. Classify the change: intent, deployment/runtime fact, BEAST operation, data/backend shape,
+   agent/process rule, or historical evidence.
+2. Verify against the real source first: `src/`, `db/hangar/`, `.github/workflows/`, cluster
+   manifests, or live state. Then update the owner doc:
+   - intent/goals/anti-goals -> `docs/NORTH_STAR.md`
+   - verified deploy/runtime facts and gaps -> `docs/deploy.md`
+   - BEAST operating facts -> `docs/beast-ops.md`
+   - data/backend shape, seed, migrations, and read-cutover status -> `db/hangar/standup.md`
+   - agent/process rules and command routing -> `AGENTS.md`
+3. Keep dependent docs light when another doc genuinely needs context: one-line summary plus
+   link. Do not copy the same current-state paragraph everywhere.
+4. Search for stale repeats before finishing when touching status-bearing docs. At minimum check
+   the changed phrase across `AGENTS.md`, `docs/`, `db/hangar/`, `.github/`, and `src/`.
+5. Leave `docs/history/` historical. Use it as evidence only after checking current code,
+   manifests, or live state; do not move its old process machinery back into the live docs.
+
 ## Commands
+
+`Taskfile.yml` is the agent/operator front door. Keep `npm` scripts as app-local commands,
+and treat `justfile` as optional sugar only.
 
 - Dev: `npm run dev` · Build: `npm run build` · Lint: `npm run lint` · Test: `npm run test:run`
 - Full check: `task check` (lint + tests + build)

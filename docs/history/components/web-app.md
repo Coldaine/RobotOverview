@@ -1,7 +1,7 @@
 ---
 title: Web App — Next.js Server Layer
 audience: AI agents and operators working on the Hangar frontend / server layer
-status: living
+status: historical
 last_updated: 2026-07-01
 ---
 

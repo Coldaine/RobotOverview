@@ -1,7 +1,7 @@
 ---
 title: Hangar Architecture
 audience: AI agents and operators working on RobotOverview
-status: living
+status: historical
 last_updated: 2026-06-30
 ---
 

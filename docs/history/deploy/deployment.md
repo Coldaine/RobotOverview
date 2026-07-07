@@ -1,7 +1,7 @@
 ---
 title: Hangar Deployment (current direction)
 audience: AI agents and operators working on RobotOverview deployment
-status: living — in transition
+status: historical
 last_updated: 2026-06-29
 ---
 

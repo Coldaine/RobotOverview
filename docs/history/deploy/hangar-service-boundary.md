@@ -1,7 +1,7 @@
 ---
 title: Hangar Service Boundary
 audience: AI agents and operators working across RobotOverview, MooseGooseWebsite, and coldaine-k8cluster
-status: living
+status: historical
 last_updated: 2026-06-25
 ---
 

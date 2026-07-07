@@ -1,14 +1,15 @@
 ---
 title: Hangar Documentation Workflow
 audience: AI agents and operators updating RobotOverview docs
-status: living
-last_updated: 2026-07-01
+status: historical
+last_updated: 2026-07-07
 ---
 
 # Hangar Documentation Workflow
 
-> This document owns the workflow for keeping RobotOverview docs clear and non-duplicative.
-> `AGENTS.md` routes agents here; this page explains what to do.
+> Historical/superseded. The current workflow lives directly in `AGENTS.md` under
+> "Documentation workflow." Keep this file only as evidence of the older, more detailed
+> documentation process.
 
 ## Goal
 
