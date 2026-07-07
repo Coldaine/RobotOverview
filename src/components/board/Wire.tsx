@@ -15,11 +15,13 @@ export interface WireState {
 export function Wire({
   wire,
   state,
+  interactive = true,
   onHover,
   onSelect,
 }: {
   wire: WirePath;
   state: WireState;
+  interactive?: boolean;
   onHover: (netId: string | null) => void;
   onSelect: (netId: string) => void;
 }) {
@@ -34,11 +36,26 @@ export function Wire({
 
   return (
     <g
-      className="cursor-pointer transition-opacity duration-500"
+      className={clsx(interactive && 'cursor-pointer', 'outline-none transition-opacity duration-500')}
       style={{ opacity }}
-      onMouseEnter={() => onHover(wire.netId)}
-      onMouseLeave={() => onHover(null)}
-      onClick={() => onSelect(wire.netId)}
+      tabIndex={interactive && layerOn ? 0 : undefined}
+      role={interactive ? 'button' : undefined}
+      aria-label={interactive ? `Trace ${wire.netId}` : undefined}
+      onMouseEnter={interactive ? () => onHover(wire.netId) : undefined}
+      onMouseLeave={interactive ? () => onHover(null) : undefined}
+      onFocus={interactive ? () => onHover(wire.netId) : undefined}
+      onBlur={interactive ? () => onHover(null) : undefined}
+      onClick={interactive ? () => onSelect(wire.netId) : undefined}
+      onKeyDown={
+        interactive
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onSelect(wire.netId);
+              }
+            }
+          : undefined
+      }
     >
       {/* fat invisible hit target */}
       <path d={wire.d} fill="none" stroke="transparent" strokeWidth={16} strokeLinecap="round" />

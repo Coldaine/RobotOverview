@@ -73,6 +73,10 @@ export function netKindColor(kind: NetKind): NetColorKey {
       return 'mixed';
     case 'mechanical':
       return 'idle';
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
   }
 }
 
@@ -199,8 +203,14 @@ function round(n: number): number {
  * shared rail/bus reads as one junction rather than a tangle.
  */
 function routeWire(net: Net, positions: Map<string, Anchor>, bow: number): WirePath | null {
-  const pts = net.terminals.map((id) => positions.get(id)).filter((p): p is Anchor => Boolean(p));
+  const pts = net.terminals
+    .map((id) => {
+      const anchor = positions.get(id);
+      return anchor ? { id, ...anchor } : null;
+    })
+    .filter((p): p is Anchor & { id: string } => Boolean(p));
   if (pts.length < 2) return null;
+  const terminalIds = pts.map((p) => p.id);
 
   if (pts.length === 2) {
     const [a, b] = pts;
@@ -212,7 +222,7 @@ function routeWire(net: Net, positions: Map<string, Anchor>, bow: number): WireP
     // Cubic midpoint at t=0.5.
     const midX = 0.125 * a.x + 0.375 * c0x + 0.375 * c1x + 0.125 * b.x;
     const midY = 0.125 * a.y + 0.375 * c0y + 0.375 * c1y + 0.125 * b.y;
-    return { netId: net.id, kind: net.kind, d, midX: round(midX), midY: round(midY), terminalIds: net.terminals };
+    return { netId: net.id, kind: net.kind, d, midX: round(midX), midY: round(midY), terminalIds };
   }
 
   const jx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
@@ -224,7 +234,7 @@ function routeWire(net: Net, positions: Map<string, Anchor>, bow: number): WireP
       return `M ${round(p.x)} ${round(p.y)} Q ${round(cx)} ${round(cy)} ${round(jx)} ${round(jy)}`;
     })
     .join(' ');
-  return { netId: net.id, kind: net.kind, d: legs, midX: round(jx), midY: round(jy), terminalIds: net.terminals };
+  return { netId: net.id, kind: net.kind, d: legs, midX: round(jx), midY: round(jy), terminalIds };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -279,13 +289,7 @@ export const BOARD_EDGES: Record<string, Edge> = {
 
 const BOARD_MODULE_ORDER = ['stock-ups', 'driver-board', 'pi5', 'orin-nano', 'roarm-m2', 'beast'];
 
-export function buildBoardLayout(units: Unit[], terminals: Terminal[], nets: Net[]): TwinLayout {
-  const wired = wiredUnitIds(terminals);
-  const modules: ModuleBox[] = BOARD_MODULE_ORDER.filter(
-    (id) => wired.has(id) && BOARD_MODULES[id],
-  ).map((id) => ({ unitId: id, ...BOARD_MODULES[id] }));
-  const moduleById = new Map(modules.map((m) => [m.unitId, m]));
-
+function buildEdgeGroupedPorts(terminals: Terminal[], moduleById: Map<string, ModuleBox>) {
   // Group each unit's terminals by the edge they exit, preserving spine order.
   const byUnitEdge = new Map<string, Terminal[]>();
   for (const t of terminals) {
@@ -308,6 +312,17 @@ export function buildBoardLayout(units: Unit[], terminals: Terminal[], nets: Net
       ports.push({ key: t.id, terminalId: t.id, x: round(a.x), y: round(a.y), nx: a.nx, ny: a.ny });
     });
   }
+
+  return { ports, positions };
+}
+
+export function buildBoardLayout(units: Unit[], terminals: Terminal[], nets: Net[]): TwinLayout {
+  const wired = wiredUnitIds(terminals);
+  const modules: ModuleBox[] = BOARD_MODULE_ORDER.filter(
+    (id) => wired.has(id) && BOARD_MODULES[id],
+  ).map((id) => ({ unitId: id, ...BOARD_MODULES[id] }));
+  const moduleById = new Map(modules.map((m) => [m.unitId, m]));
+  const { ports, positions } = buildEdgeGroupedPorts(terminals, moduleById);
 
   const wires = nets
     .map((n) => routeWire(n, positions, BOARD_WIRE_BOW))
@@ -363,29 +378,7 @@ export function buildIsoLayout(units: Unit[], terminals: Terminal[], nets: Net[]
     return { unitId: id, x: round(c.x - ISO_MODULE_W / 2), y: round(c.y - ISO_MODULE_H / 2), w: ISO_MODULE_W, h: ISO_MODULE_H };
   });
   const moduleById = new Map(modules.map((m) => [m.unitId, m]));
-
-  // Same edge grouping as board mode; the deck offset does the 2.5D work.
-  const byUnitEdge = new Map<string, Terminal[]>();
-  for (const t of terminals) {
-    if (!moduleById.has(t.unitId)) continue;
-    const edge = BOARD_EDGES[t.id] ?? 'top';
-    const key = `${t.unitId}|${edge}`;
-    const list = byUnitEdge.get(key);
-    if (list) list.push(t);
-    else byUnitEdge.set(key, [t]);
-  }
-
-  const ports: PortNode[] = [];
-  const positions = new Map<string, Anchor>();
-  for (const [key, ts] of byUnitEdge) {
-    const [unitId, edge] = key.split('|') as [string, Edge];
-    const m = moduleById.get(unitId)!;
-    ts.forEach((t, i) => {
-      const a = edgeAnchor(m, edge, i, ts.length);
-      positions.set(t.id, a);
-      ports.push({ key: t.id, terminalId: t.id, x: round(a.x), y: round(a.y), nx: a.nx, ny: a.ny });
-    });
-  }
+  const { ports, positions } = buildEdgeGroupedPorts(terminals, moduleById);
 
   const wires = nets
     .map((n) => routeWire(n, positions, ISO_WIRE_BOW))
@@ -469,7 +462,7 @@ export function buildBusLayout(units: Unit[], terminals: Terminal[], nets: Net[]
       d: `M ${round(minX)} ${rowY} L ${round(maxX)} ${rowY}`,
       midX: round((minX + maxX) / 2),
       midY: rowY,
-      terminalIds: net.terminals,
+      terminalIds: taps.map((t) => t.tid),
     });
   });
 
@@ -487,5 +480,9 @@ export function buildLayout(mode: ViewMode, units: Unit[], terminals: Terminal[]
       return buildIsoLayout(units, terminals, nets);
     case 'bus':
       return buildBusLayout(units, terminals, nets);
+    default: {
+      const _exhaustive: never = mode;
+      return _exhaustive;
+    }
   }
 }

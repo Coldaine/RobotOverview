@@ -17,6 +17,7 @@ export function ViewModeSwitch({ mode, onChange }: { mode: ViewMode; onChange: (
       {VIEW_MODES.map(({ mode: m, label, icon: Icon }) => (
         <button
           key={m}
+          type="button"
           role="tab"
           aria-selected={mode === m}
           onClick={() => onChange(m)}
@@ -46,6 +47,7 @@ export function HostSwitch({ host, onChange }: { host: ActiveHost; onChange: (h:
         {HOSTS.map(({ host: h, label }) => (
           <button
             key={h}
+            type="button"
             role="radio"
             aria-checked={host === h}
             onClick={() => onChange(h)}
@@ -77,6 +79,7 @@ export function LayerBar({
         return (
           <button
             key={kind}
+            type="button"
             aria-pressed={on}
             onClick={() => onToggle(kind)}
             className={clsx(

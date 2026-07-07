@@ -69,6 +69,7 @@ export default function UnitDetail() {
   const missions = (u.missions ?? []).map(mission).filter(Boolean);
   const insights = (u.insights ?? []).map(insight).filter(Boolean);
   const caps = (u.capabilities ?? []).map(capability).filter(Boolean);
+  const isFlagship = Boolean(u.flagship);
 
   const handleCopyShortcut = async (shortcut: UnitShortcut) => {
     if (shortcut.type !== 'command' || typeof navigator === 'undefined' || !navigator.clipboard) return;
@@ -121,7 +122,7 @@ export default function UnitDetail() {
       <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <div className="min-w-0 space-y-6">
           {/* schematic for the flagship rover */}
-          {u.id === 'beast' && (
+          {isFlagship && (
             <section>
               <SectionTitle code="EXPLODED">Subsystem Map</SectionTitle>
               <RoverSchematic />
@@ -129,7 +130,7 @@ export default function UnitDetail() {
           )}
 
           {/* interactive wiring twin — the full board lives at /board */}
-          {u.id === 'beast' && (
+          {isFlagship && (
             <section>
               <SectionTitle code="WIRING">Connected Twin</SectionTitle>
               <Link href="/board" className="group block" aria-label="Open the full wiring board">

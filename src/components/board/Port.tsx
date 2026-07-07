@@ -16,6 +16,8 @@ export function Port({
   terminal,
   state,
   showLabel,
+  interactionId = port.terminalId,
+  interactive = true,
   onHover,
   onSelect,
 }: {
@@ -23,6 +25,8 @@ export function Port({
   terminal: Terminal | undefined;
   state: PortState;
   showLabel: boolean;
+  interactionId?: string;
+  interactive?: boolean;
   onHover: (terminalId: string | null) => void;
   onSelect: (terminalId: string) => void;
 }) {
@@ -41,19 +45,20 @@ export function Port({
   return (
     <g
       style={{ opacity }}
-      className="cursor-pointer outline-none transition-opacity duration-500"
-      tabIndex={0}
-      role="button"
+      className={interactive ? 'cursor-pointer outline-none transition-opacity duration-500' : 'transition-opacity duration-500'}
+      tabIndex={interactive ? 0 : undefined}
+      role={interactive ? 'button' : undefined}
       aria-label={terminal ? `${terminal.name}${terminal.connector ? ` (${terminal.connector})` : ''}` : port.terminalId}
-      onMouseEnter={() => onHover(port.terminalId)}
-      onMouseLeave={() => onHover(null)}
-      onFocus={() => onHover(port.terminalId)}
-      onBlur={() => onHover(null)}
-      onClick={() => onSelect(port.terminalId)}
+      onMouseEnter={interactive ? () => onHover(interactionId) : undefined}
+      onMouseLeave={interactive ? () => onHover(null) : undefined}
+      onFocus={interactive ? () => onHover(interactionId) : undefined}
+      onBlur={interactive ? () => onHover(null) : undefined}
+      onClick={interactive ? () => onSelect(interactionId) : undefined}
       onKeyDown={(e) => {
+        if (!interactive) return;
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          onSelect(port.terminalId);
+          onSelect(interactionId);
         }
       }}
     >

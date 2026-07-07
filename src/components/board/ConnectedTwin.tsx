@@ -83,6 +83,7 @@ export function ConnectedTwin({ variant = 'full' }: { variant?: 'full' | 'previe
 
   const canvas = (
     <TwinCanvas
+      key={mode}
       layout={layout}
       mode={mode}
       units={units}

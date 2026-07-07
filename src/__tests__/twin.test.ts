@@ -140,6 +140,18 @@ describe.each(MODES)('layout builder: %s', (mode) => {
     }
   });
 
+  it('only references terminals rendered as ports in wires', () => {
+    for (const w of layout.wires) {
+      for (const tid of w.terminalIds) {
+        const hasPort =
+          mode === 'bus'
+            ? layout.ports.some((p) => p.netId === w.netId && p.terminalId === tid)
+            : layout.ports.some((p) => p.terminalId === tid);
+        expect(hasPort, `wire "${w.netId}" references unrendered terminal "${tid}"`).toBe(true);
+      }
+    }
+  });
+
   it('has only finite coordinates', () => {
     expect(everyCoordFinite(layout)).toBe(true);
   });

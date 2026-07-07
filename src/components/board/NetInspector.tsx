@@ -1,7 +1,7 @@
 'use client';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Copy, X, ArrowRight } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import type { DocumentRef, Net, Terminal, Unit } from '@/data/types';
 import { documentsForNet, netKindColor, type ActiveSet } from '@/lib/twin';
@@ -25,13 +25,24 @@ export function NetInspector({
   onHoverTerminal: (terminalId: string | null) => void;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
+  const copiedTimeout = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimeout.current !== null) window.clearTimeout(copiedTimeout.current);
+    };
+  }, []);
 
   const copy = async (doc: DocumentRef) => {
     const value = doc.url ?? doc.archivePath;
     try {
       await navigator.clipboard.writeText(value);
       setCopied(doc.id);
-      window.setTimeout(() => setCopied((c) => (c === doc.id ? null : c)), 1600);
+      if (copiedTimeout.current !== null) window.clearTimeout(copiedTimeout.current);
+      copiedTimeout.current = window.setTimeout(() => {
+        setCopied((c) => (c === doc.id ? null : c));
+        copiedTimeout.current = null;
+      }, 1600);
     } catch {
       /* clipboard blocked — no-op */
     }
@@ -71,7 +82,7 @@ export function NetInspector({
                 </span>
               </div>
             </div>
-            <button onClick={onClose} aria-label="Close inspector" className="btn btn-ghost shrink-0 !p-1.5">
+            <button type="button" onClick={onClose} aria-label="Close inspector" className="btn btn-ghost shrink-0 !p-1.5">
               <X className="h-3.5 w-3.5" />
             </button>
           </header>
@@ -131,7 +142,7 @@ export function NetInspector({
                           <ArrowRight className="h-3.5 w-3.5" />
                         </a>
                       ) : (
-                        <button onClick={() => copy(doc)} className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Copy archive path for ${doc.title}`}>
+                        <button type="button" onClick={() => copy(doc)} className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Copy archive path for ${doc.title}`}>
                           {copied === doc.id ? <Check className="h-3.5 w-3.5 text-signal-ok" /> : <Copy className="h-3.5 w-3.5" />}
                         </button>
                       )}

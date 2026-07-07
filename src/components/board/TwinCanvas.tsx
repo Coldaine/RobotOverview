@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Terminal, Unit, NetKind } from '@/data/types';
 import type { ActiveSet, TraceSet, TwinLayout, ViewMode } from '@/lib/twin';
 import { Module } from './Module';
@@ -33,12 +33,19 @@ export function TwinCanvas(props: CanvasProps) {
   const { layout, mode, units, terminals, active, highlight, dimOthers, selectedNetId, layerEnabled, hoveredModule, reducedMotion, interactive } = props;
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [t, setT] = useState({ x: 0, y: 0, k: 1 });
+  const [isDragging, setIsDragging] = useState(false);
   const drag = useRef<{ x: number; y: number; tx: number; ty: number } | null>(null);
 
-  // Reset the camera whenever the layout changes shape.
-  useEffect(() => {
-    setT({ x: 0, y: 0, k: 1 });
-  }, [mode]);
+  const terminalById = useMemo(() => new Map(terminals.map((term) => [term.id, term])), [terminals]);
+  const terminalIdsByUnit = useMemo(() => {
+    const byUnit = new Map<string, string[]>();
+    for (const term of terminals) {
+      const ids = byUnit.get(term.unitId);
+      if (ids) ids.push(term.id);
+      else byUnit.set(term.unitId, [term.id]);
+    }
+    return byUnit;
+  }, [terminals]);
 
   const viewScale = useCallback(() => {
     const rect = svgRef.current?.getBoundingClientRect();
@@ -61,23 +68,33 @@ export function TwinCanvas(props: CanvasProps) {
     [viewScale],
   );
 
-  const onWheel = (e: React.WheelEvent) => {
-    if (!interactive) return;
-    e.preventDefault();
-    const { vx, vy } = toView(e.clientX, e.clientY);
-    const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
-    setT((prev) => {
-      const k2 = Math.max(MIN_K, Math.min(MAX_K, prev.k * factor));
-      const wx = (vx - prev.x) / prev.k;
-      const wy = (vy - prev.y) / prev.k;
-      return { k: k2, x: vx - wx * k2, y: vy - wy * k2 };
-    });
-  };
+  useEffect(() => {
+    const node = svgRef.current;
+    if (!node || !interactive) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const { vx, vy } = toView(e.clientX, e.clientY);
+      const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+      setT((prev) => {
+        const k2 = Math.max(MIN_K, Math.min(MAX_K, prev.k * factor));
+        const wx = (vx - prev.x) / prev.k;
+        const wy = (vy - prev.y) / prev.k;
+        return { k: k2, x: vx - wx * k2, y: vy - wy * k2 };
+      });
+    };
+
+    node.addEventListener('wheel', handleWheel, { passive: false });
+    return () => node.removeEventListener('wheel', handleWheel);
+  }, [interactive, toView]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (!interactive) return;
-    if (e.target !== e.currentTarget) return; // only drag from the background
+    if (!(e.target instanceof Element) || e.target.getAttribute('data-drag-surface') !== 'true') {
+      return;
+    }
     drag.current = { x: e.clientX, y: e.clientY, tx: t.x, ty: t.y };
+    setIsDragging(true);
     (e.currentTarget as Element).setPointerCapture(e.pointerId);
   };
 
@@ -99,12 +116,13 @@ export function TwinCanvas(props: CanvasProps) {
         /* pointer already released */
       }
       drag.current = null;
+      setIsDragging(false);
     }
   };
 
   const moduleInTrace = (unitId: string): boolean => {
     if (!highlight) return false;
-    return terminals.some((term) => term.unitId === unitId && highlight.terminalIds.has(term.id));
+    return terminalIdsByUnit.get(unitId)?.some((id) => highlight.terminalIds.has(id)) ?? false;
   };
 
   // Visible world region for the minimap viewport box.
@@ -120,33 +138,33 @@ export function TwinCanvas(props: CanvasProps) {
         viewBox={`0 0 ${layout.width} ${layout.height}`}
         preserveAspectRatio="xMidYMid meet"
         className={interactive ? 'h-full w-full touch-none select-none' : 'pointer-events-none h-full w-full'}
-        style={{ cursor: interactive ? (drag.current ? 'grabbing' : 'grab') : 'default' }}
-        onWheel={onWheel}
+        style={{ cursor: interactive ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerLeave={endDrag}
       >
         {/* background drag surface */}
-        <rect x={0} y={0} width={layout.width} height={layout.height} fill="transparent" />
+        <rect x={0} y={0} width={layout.width} height={layout.height} fill="transparent" data-drag-surface="true" />
 
         <g transform={`translate(${t.x} ${t.y}) scale(${t.k})`}>
           {/* wires under the cards */}
           {layout.wires.map((w) => (
-            <Wire
-              key={w.netId}
-              wire={w}
-              state={{
+              <Wire
+                key={w.netId}
+                wire={w}
+                state={{
                 active: active.netIds.has(w.netId),
                 inTrace: highlight?.netIds.has(w.netId) ?? false,
                 dimmed: dimOthers && !(highlight?.netIds.has(w.netId) ?? false),
                 layerOn: layerEnabled.has(w.kind),
                 selected: selectedNetId === w.netId,
-                reducedMotion,
-              }}
-              onHover={props.onHoverNet}
-              onSelect={props.onSelectNet}
-            />
+                  reducedMotion,
+                }}
+                interactive={interactive}
+                onHover={props.onHoverNet}
+                onSelect={props.onSelectNet}
+              />
           ))}
 
           {/* module cards */}
@@ -160,28 +178,37 @@ export function TwinCanvas(props: CanvasProps) {
               dimmed={dimOthers && hoveredModule !== m.unitId && !moduleInTrace(m.unitId)}
               isCore={m.unitId === 'driver-board'}
               reducedMotion={reducedMotion}
+              interactive={interactive}
               onHover={props.onHoverModule}
             />
           ))}
 
           {/* ports on top */}
           {layout.ports.map((p) => {
-            const inTrace = highlight?.terminalIds.has(p.terminalId) ?? false;
+            const terminal = terminalById.get(p.terminalId);
+            const inTrace =
+              (highlight?.terminalIds.has(p.terminalId) ?? false) ||
+              (p.netId ? (highlight?.netIds.has(p.netId) ?? false) : false);
+            const hover = p.netId ? props.onHoverNet : props.onHoverTerminal;
+            const select = p.netId ? props.onSelectNet : props.onSelectTerminal;
+            const interactionId = p.netId ?? p.terminalId;
             return (
               <Port
                 key={p.key}
                 port={p}
-                terminal={terminals.find((term) => term.id === p.terminalId)}
+                terminal={terminal}
                 state={{
                   active: active.terminalIds.has(p.terminalId),
                   inTrace,
                   dimmed: dimOthers && !inTrace,
-                  selected: false,
+                  selected: p.netId ? selectedNetId === p.netId : false,
                   reducedMotion,
                 }}
-                showLabel={inTrace || hoveredModule === terminals.find((term) => term.id === p.terminalId)?.unitId}
-                onHover={props.onHoverTerminal}
-                onSelect={props.onSelectTerminal}
+                showLabel={inTrace || hoveredModule === terminal?.unitId}
+                interactionId={interactionId}
+                interactive={interactive}
+                onHover={hover}
+                onSelect={select}
               />
             );
           })}

@@ -30,6 +30,7 @@ export function Module({
   dimmed,
   isCore,
   reducedMotion,
+  interactive = true,
   onHover,
 }: {
   module: ModuleBox;
@@ -39,6 +40,7 @@ export function Module({
   dimmed: boolean;
   isCore: boolean;
   reducedMotion: boolean;
+  interactive?: boolean;
   onHover: (unitId: string | null) => void;
 }) {
   const Icon = BAY_ICON[unit?.bay ?? 'compute'] ?? Cpu;
@@ -49,9 +51,14 @@ export function Module({
   return (
     <g
       style={{ opacity: dimmed ? 0.4 : 1 }}
-      className="transition-opacity duration-500"
-      onMouseEnter={() => onHover(module.unitId)}
-      onMouseLeave={() => onHover(null)}
+      className="outline-none transition-opacity duration-500"
+      tabIndex={interactive ? 0 : undefined}
+      role={interactive ? 'group' : undefined}
+      aria-label={interactive ? (unit?.name ?? module.unitId) : undefined}
+      onMouseEnter={interactive ? () => onHover(module.unitId) : undefined}
+      onMouseLeave={interactive ? () => onHover(null) : undefined}
+      onFocus={interactive ? () => onHover(module.unitId) : undefined}
+      onBlur={interactive ? () => onHover(null) : undefined}
     >
       {isCore && !reducedMotion && (
         <rect
