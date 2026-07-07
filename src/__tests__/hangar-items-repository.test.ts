@@ -234,7 +234,7 @@ describe('Hangar inventory Postgres read path', () => {
     expect(() =>
       mapInventoryItemRow(inventoryRow({
         id: 'malformed-relations',
-        related_units: ['beast', 42],
+        related_units: ['beast', 42] as unknown as string[],
       })),
     ).toThrow('Invalid related units from hangar DB: expected text at index 1.');
   });
@@ -243,7 +243,7 @@ describe('Hangar inventory Postgres read path', () => {
     expect(() =>
       mapInventoryItemRow(inventoryRow({
         id: 'malformed-bay',
-        bay_groups: ['network', 42],
+        bay_groups: ['network', 42] as unknown as string[],
       })),
     ).toThrow('Invalid bay groups from hangar DB: expected text at index 1.');
   });
