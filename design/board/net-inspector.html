@@ -1,0 +1,45 @@
+<!-- @dsCard group="Board" -->
+<!-- Net inspector panel — carries, terminals, proving documents. Mirrors NetInspector.tsx. -->
+<style>
+  :root {
+    --color-void: #05070d; --color-hull: #0a0e17; --color-panel: #10151f; --color-rim: #1f2937;
+    --color-ink: #c7d3e3; --color-ink-dim: #7f8ea7; --color-cyan: #36e0e0; --color-amber: #ffb020;
+    --color-signal-ok: #34d399;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace; --font-display: "Orbitron", system-ui, sans-serif;
+  }
+  .ds-ni { background: var(--color-void); padding: 24px; font-family: var(--font-mono); }
+  .panel { width: 320px; border: 1px solid rgba(31,41,55,0.8); background: rgba(16,21,31,0.9); border-radius: 12px; overflow: hidden; box-shadow: 0 18px 50px -20px rgba(0,0,0,0.9); }
+  .panel header { display: flex; justify-content: space-between; padding: 16px; border-bottom: 1px solid rgba(31,41,55,0.7); }
+  .panel h3 { font-family: var(--font-display); font-size: 13px; letter-spacing: 1.3px; text-transform: uppercase; color: var(--color-ink); margin: 0; display: flex; align-items: center; gap: 8px; }
+  .body { padding: 16px; }
+  .label { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-ink-dim); margin-bottom: 4px; }
+  .val { font-size: 12px; color: var(--color-ink); }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid; border-radius: 9999px; padding: 2px 10px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .inset { border: 1px solid rgba(31,41,55,0.6); background: rgba(10,14,23,0.7); border-radius: 8px; padding: 8px 10px; margin-top: 6px; display: flex; align-items: center; gap: 8px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .t-name { font-size: 11px; color: var(--color-ink); }
+  .t-sub { font-size: 10px; color: var(--color-ink-dim); }
+</style>
+<div class="ds-ni">
+  <div class="panel">
+    <header>
+      <div>
+        <h3><span class="dot" style="width:10px;height:10px;background:var(--color-amber);box-shadow:0 0 8px var(--color-amber)"></span>Battery Rail</h3>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <span class="chip" style="border-color:rgba(255,176,32,0.4);color:var(--color-amber);background:rgba(255,176,32,0.12)">power</span>
+          <span class="chip" style="border-color:rgba(52,211,153,0.4);color:var(--color-signal-ok);background:rgba(52,211,153,0.1)">Energized</span>
+        </div>
+      </div>
+    </header>
+    <div class="body">
+      <div class="label">Carries</div>
+      <div class="val" style="margin-bottom:12px">3S pack · 9–12.6V</div>
+      <p style="font-size:11px;color:var(--color-ink-dim);line-height:1.5;margin:0 0 16px">UPS → driver board; feeds motors + servo bus directly. The Orin taps this rail in the Jetson swap.</p>
+      <div class="label">Terminals</div>
+      <div class="inset"><span class="dot" style="background:var(--color-signal-ok)"></span><div><div class="t-name">Battery Rail Out</div><div class="t-sub">BEAST-PWR · XH2.54</div></div></div>
+      <div class="inset"><span class="dot" style="background:var(--color-signal-ok)"></span><div><div class="t-name">Battery Input</div><div class="t-sub">BEAST-CTL · XH2.54</div></div></div>
+      <div class="label" style="margin-top:16px">Proving Documents</div>
+      <div class="inset"><span style="color:var(--color-cyan)">▤</span><div style="flex:1"><div class="t-name">UPS Module 3S — Schematic</div><div class="t-sub" style="font-size:9px">UGV-Beast-Archive/03-Power-UPS/Ups01_Schematic.pdf</div></div><span style="color:var(--color-ink-dim)">⧉</span></div>
+    </div>
+  </div>
+</div>

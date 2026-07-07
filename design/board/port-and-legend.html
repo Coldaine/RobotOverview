@@ -1,0 +1,40 @@
+<!-- @dsCard group="Board" -->
+<!-- Ports (connection nodes) + layer legend chips. Mirrors Port.tsx and Controls.tsx LayerBar. -->
+<style>
+  :root {
+    --color-void: #05070d; --color-panel: #10151f; --color-rim: #1f2937;
+    --color-ink: #c7d3e3; --color-ink-dim: #7f8ea7; --color-cyan: #36e0e0; --color-amber: #ffb020;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  .ds-pl { background: var(--color-void); color: var(--color-ink); font-family: var(--font-mono); padding: 24px; }
+  .ds-pl h4 { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-ink-dim); margin: 0 0 12px; }
+  .ds-pl .chips { display: flex; gap: 8px; margin-top: 20px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid; border-radius: 9999px; padding: 3px 12px; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  @keyframes ds-ring { 0%,100% { r: 9 } 50% { r: 12 } }
+</style>
+<div class="ds-pl">
+  <h4>Ports</h4>
+  <svg width="360" height="60" viewBox="0 0 360 60">
+    <!-- active -->
+    <circle cx="40" cy="30" r="5.5" fill="var(--color-cyan)" stroke="var(--color-cyan)" stroke-width="1.6"/>
+    <text x="40" y="52" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--color-ink-dim)">ACTIVE</text>
+    <!-- inactive/hollow -->
+    <circle cx="130" cy="30" r="5.5" fill="var(--color-void)" stroke="var(--color-ink-dim)" stroke-width="1.6"/>
+    <text x="130" y="52" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--color-ink-dim)">INACTIVE</text>
+    <!-- traced (ring) -->
+    <circle cx="220" cy="30" r="9" fill="none" stroke="var(--color-cyan)" stroke-width="1.4" opacity="0.8" style="animation: ds-ring 2s ease-in-out infinite"/>
+    <circle cx="220" cy="30" r="5.5" fill="var(--color-cyan)" stroke="var(--color-cyan)" stroke-width="1.6" style="filter: drop-shadow(0 0 6px var(--color-cyan))"/>
+    <text x="220" y="52" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--color-ink-dim)">TRACED</text>
+    <!-- dimmed -->
+    <circle cx="310" cy="30" r="5.5" fill="var(--color-void)" stroke="var(--color-ink-dim)" stroke-width="1.6" opacity="0.25"/>
+    <text x="310" y="52" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="var(--color-ink-dim)">DIMMED</text>
+  </svg>
+
+  <h4 style="margin-top: 20px">Layer legend</h4>
+  <div class="chips">
+    <span class="chip" style="border-color: rgba(255,176,32,0.45); background: rgba(255,176,32,0.12); color: var(--color-ink)"><span class="dot" style="background: var(--color-amber)"></span>Power</span>
+    <span class="chip" style="border-color: rgba(54,224,224,0.45); background: rgba(54,224,224,0.12); color: var(--color-ink)"><span class="dot" style="background: var(--color-cyan)"></span>Data</span>
+    <span class="chip" style="border-color: var(--color-rim); color: var(--color-ink-dim); opacity: .5"><span class="dot" style="background: var(--color-cyan)"></span>Mixed</span>
+  </div>
+</div>

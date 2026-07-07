@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import {
   Boxes,
+  CircuitBoard,
   Cpu,
   Hexagon,
   Network,
@@ -33,6 +34,7 @@ type NavStation = {
 
 const NAV: NavStation[] = [
   { to: '/', label: 'Hangar', code: 'HUB', icon: Boxes, end: true },
+  { to: '/board', label: 'The Board', code: 'WIRE', icon: CircuitBoard, activePrefixes: ['/board'] },
   { to: '/missions', label: 'Missions', code: 'MSN', icon: Target, activePrefixes: ['/mission'] },
   { to: '/items', label: 'Items', code: 'INV', icon: Package },
   { to: '/quartermaster', label: 'Quartermaster', code: 'QM', icon: Hexagon },
