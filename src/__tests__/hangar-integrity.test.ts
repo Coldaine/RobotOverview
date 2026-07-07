@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { hangarData } from '@/data/hangar';
-import type { BayId, InventoryItemStatus, UnitStatus } from '@/data/types';
+import { HANGAR_BAY_IDS, hangarData } from '@/data/hangar';
+import type { InventoryItemStatus, UnitStatus } from '@/data/types';
 
-const VALID_BAY_IDS: BayId[] = ['robotics', 'compute', 'network', 'home', 'audio'];
 const VALID_UNIT_STATUSES: UnitStatus[] = [
   'operational',
   'needs-attention',
@@ -52,7 +51,7 @@ describe('hangar.ts data integrity', () => {
 
   it('all unit.bay values are valid BayIds', () => {
     hangarData.units.forEach((u) => {
-      expect(VALID_BAY_IDS, `unit "${u.id}" has invalid bay "${u.bay}"`).toContain(u.bay);
+      expect(HANGAR_BAY_IDS, `unit "${u.id}" has invalid bay "${u.bay}"`).toContain(u.bay);
     });
   });
 
@@ -160,7 +159,7 @@ describe('hangar.ts data integrity', () => {
 
   it('all item.bay values are valid BayIds', () => {
     hangarData.items.forEach((it) => {
-      expect(VALID_BAY_IDS, `item "${it.id}" has invalid bay "${it.bay}"`).toContain(it.bay);
+      expect(HANGAR_BAY_IDS, `item "${it.id}" has invalid bay "${it.bay}"`).toContain(it.bay);
     });
   });
 

@@ -3,8 +3,8 @@ import { Plus, Search, SlidersHorizontal, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SectionTitle } from '@/components/ui/Primitives';
+import { isHangarBayId } from '@/data/hangar';
 import { useHangar, LOCAL_INSIGHT_PREFIX } from '@/lib/store';
-import type { BayId } from '@/data/types';
 import clsx from 'clsx';
 
 type ConfidenceFilter = 'all' | 'high' | 'medium' | 'low';
@@ -31,7 +31,7 @@ export default function Codex() {
     addLocalInsight({
       title: draftTitle,
       body: draftBody,
-      bay: draftBay ? (draftBay as BayId) : undefined,
+      bay: isHangarBayId(draftBay) ? draftBay : undefined,
       tags: draftTags.split(',').map((t) => t.trim()).filter(Boolean),
     });
     setDraftTitle('');
