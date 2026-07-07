@@ -5,6 +5,7 @@ import { isInsightConfidence, isWishlistStatus } from '../data/types';
 import type { HangarReadStatus } from './hangar-read-status';
 import { isSourcePreference, isThemeMode, THEME_MODES } from './hangar-preferences';
 import type { SourcePreference, ThemeMode } from './hangar-preferences';
+import { acquisitionStatusPriority, SELECTED_REQUISITION_STATUSES } from './format';
 import type {
   Bay,
   BayId,
@@ -22,13 +23,7 @@ import type {
   WishlistStatus,
 } from '../data/types';
 
-const SELECTED_WISHLIST_STATUSES = new Set<WishlistItem['status']>(['planned', 'buy-next', 'on-order', 'received']);
-const SELECTED_STATUS_PRIORITY: Partial<Record<WishlistItem['status'], number>> = {
-  planned: 1,
-  'buy-next': 2,
-  'on-order': 3,
-  received: 4,
-};
+const SELECTED_WISHLIST_STATUSES = new Set<WishlistItem['status']>(SELECTED_REQUISITION_STATUSES);
 const STORE_KEYS = {
   source: 'hangar:source',
   lensMissionId: 'hangar:lensMissionId',
@@ -209,8 +204,8 @@ export function selectedMissionWishes(wishes: WishlistItem[]): WishlistItem[] {
     // Treat matching categories in a mission wishlist as alternative choices
     // until there is a first-class loadout-selection model.
     const current = selected.get(w.category);
-    const currentPriority = current ? SELECTED_STATUS_PRIORITY[current.status] ?? 0 : 0;
-    const nextPriority = SELECTED_STATUS_PRIORITY[w.status] ?? 0;
+    const currentPriority = current ? acquisitionStatusPriority(current.status) : -1;
+    const nextPriority = acquisitionStatusPriority(w.status);
     if (!current || nextPriority > currentPriority) selected.set(w.category, w);
   });
 

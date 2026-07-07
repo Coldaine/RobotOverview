@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   ACQUISITION_PIPELINE_STATUSES,
+  acquisitionStatusPriority,
   money,
+  SELECTED_REQUISITION_STATUSES,
   timeAgo,
   STATUS_META,
   LIFECYCLE_META,
@@ -108,5 +110,19 @@ describe('WISHLIST_STATUS_META exhaustiveness', () => {
       'received',
     ]);
     expect(ACQUISITION_PIPELINE_STATUSES).not.toContain('rejected');
+  });
+
+  it('defines selected requisition statuses as the committed part of the acquisition pipeline', () => {
+    expect(SELECTED_REQUISITION_STATUSES).toEqual(['planned', 'buy-next', 'on-order', 'received']);
+    expect(SELECTED_REQUISITION_STATUSES.every((status) => ACQUISITION_PIPELINE_STATUSES.includes(status))).toBe(true);
+    expect(SELECTED_REQUISITION_STATUSES).not.toContain('watching');
+    expect(SELECTED_REQUISITION_STATUSES).not.toContain('researching');
+    expect(SELECTED_REQUISITION_STATUSES).not.toContain('rejected');
+  });
+
+  it('prioritizes statuses by acquisition pipeline order', () => {
+    expect(acquisitionStatusPriority('watching')).toBeLessThan(acquisitionStatusPriority('planned'));
+    expect(acquisitionStatusPriority('buy-next')).toBeLessThan(acquisitionStatusPriority('on-order'));
+    expect(acquisitionStatusPriority('on-order')).toBeLessThan(acquisitionStatusPriority('received'));
   });
 });
