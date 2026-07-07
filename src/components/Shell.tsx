@@ -23,7 +23,7 @@ import {
 import { THEME_LABELS, THEME_MODES } from '@/lib/hangar-preferences';
 import { isNavActive } from '@/lib/nav';
 import { InventoryDrawer } from './InventoryDrawer';
-import { BAY_ICONS } from './bay-icons';
+import { BAY_ACCENT_CLASSES, BAY_ICONS } from './bay-icons';
 import { activityKindMeta, timeAgo } from '@/lib/format';
 import type { ReactNode } from 'react';
 
@@ -116,6 +116,7 @@ export function Shell({ children }: { readonly children: ReactNode }) {
           <div className="flex flex-col gap-0.5">
             {data.bays.map((b) => {
               const Icon = BAY_ICONS[b.id];
+              const accentClasses = BAY_ACCENT_CLASSES[b.accent];
               const count = data.units.filter((u) => u.bay === b.id).length;
               return (
                 <NavItem key={b.id} href={`/bay/${b.id}`}>
@@ -126,7 +127,7 @@ export function Shell({ children }: { readonly children: ReactNode }) {
                         isActive ? 'bg-panel-2/60 text-ink' : 'text-ink-dim hover:bg-panel-2/40 hover:text-ink',
                       )}
                     >
-                      <Icon className={clsx('h-3.5 w-3.5', b.accent === 'amber' ? 'text-amber' : 'text-cyan')} />
+                      <Icon className={clsx('h-3.5 w-3.5', accentClasses.text)} />
                       <span className="flex-1 font-mono text-[11px]">{b.name}</span>
                       <span className="font-mono text-[10px] tabular-nums text-ink-dim/70">{count}</span>
                     </span>
@@ -246,20 +247,17 @@ function MobileNav() {
 
           {data.bays.map((b) => {
             const Icon = BAY_ICONS[b.id];
+            const accentClasses = BAY_ACCENT_CLASSES[b.accent];
             return (
               <NavItem key={b.id} href={`/bay/${b.id}`}>
                 {(isActive) => (
                   <span
                     className={clsx(
                       'flex h-14 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
-                      isActive
-                        ? b.accent === 'amber'
-                          ? 'border-amber/40 bg-amber/10 text-amber shadow-hud-amber'
-                          : 'border-cyan/40 bg-cyan/10 text-cyan shadow-hud-cyan'
-                        : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
+                      isActive ? accentClasses.activeNav : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
                     )}
                   >
-                    <Icon className={clsx('h-4 w-4', b.accent === 'amber' ? 'text-amber' : 'text-cyan')} />
+                    <Icon className={clsx('h-4 w-4', accentClasses.text)} />
                     <span className="max-w-full truncate px-1">{b.code}</span>
                   </span>
                 )}

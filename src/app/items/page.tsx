@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { useHangar } from '@/lib/store';
 import { SectionTitle, StatReadout } from '@/components/ui/Primitives';
 import { Tag, ProvenanceTag } from '@/components/ui/Badges';
+import { BAY_ACCENT_CLASSES } from '@/components/bay-icons';
 import { ITEM_STATUS_META, TONE_CLASSES, money } from '@/lib/format';
 import type { InventoryItem } from '@/data/types';
 
@@ -89,7 +90,7 @@ export default function Items() {
                       )}
                       <span className="chip border-rim bg-panel-2/40 text-ink-dim">{it.category}</span>
                       {b && (
-                        <span className={clsx('chip', b.accent === 'amber' ? 'text-amber border-amber/30 bg-amber/5' : 'text-cyan border-cyan/30 bg-cyan/5')}>
+                        <span className={clsx('chip', BAY_ACCENT_CLASSES[b.accent].chip)}>
                           {b.name}
                         </span>
                       )}
