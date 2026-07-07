@@ -159,4 +159,19 @@ describe('corrupt-localStorage resilience', () => {
     expect(recovered!.tags).toEqual([]);
     expect(recovered!.confidence).toBe('medium');
   });
+
+  it('drops stale stored local insight bay ids instead of treating them as model ids', () => {
+    localStorage.setItem(
+      'hangar:localInsights',
+      JSON.stringify([
+        { id: 'local-stale-bay', title: 'Stale bay', body: 'corrupt', tags: [], bay: 'warehouse' },
+        { id: 'local-valid-bay', title: 'Valid bay', body: 'ok', tags: [], bay: 'robotics' },
+      ]),
+    );
+
+    const { result } = renderHook(() => useHangar(), { wrapper });
+
+    expect(result.current.insight('local-stale-bay')?.bay).toBeUndefined();
+    expect(result.current.insight('local-valid-bay')?.bay).toBe('robotics');
+  });
 });

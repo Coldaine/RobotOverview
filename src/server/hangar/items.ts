@@ -44,7 +44,7 @@ export interface InventoryItemsRead {
   items: InventoryItem[];
 }
 
-const BAY_IDS: BayId[] = ['robotics', 'compute', 'network', 'home', 'audio'];
+const BAY_IDS: BayId[] = hangarData.bays.map((bay) => bay.id);
 const ITEM_STATUSES: InventoryItemStatus[] = [
   'owned',
   'on-order',

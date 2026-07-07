@@ -43,6 +43,7 @@ const WISHLIST_STATUSES: WishlistItem['status'][] = [
   'received',
   'rejected',
 ];
+const BAY_IDS: BayId[] = hangarData.bays.map((bay) => bay.id);
 export type WishlistStatus = WishlistItem['status'];
 export type InventoryReadStatus = {
   source: 'postgres' | 'static';
@@ -149,6 +150,10 @@ function readStoredWishStatus(): WishStatusOverrides {
   }
 }
 
+function isBayId(value: unknown): value is BayId {
+  return typeof value === 'string' && BAY_IDS.includes(value as BayId);
+}
+
 function readStoredLocalInsights(): Insight[] {
   if (typeof window === 'undefined') return [];
   try {
@@ -174,7 +179,7 @@ function readStoredLocalInsights(): Insight[] {
           title: x.title as string,
           body: x.body as string,
           tags: Array.isArray(x.tags) ? (x.tags as unknown[]).filter((t): t is string => typeof t === 'string') : [],
-          bay: typeof x.bay === 'string' ? (x.bay as BayId) : undefined,
+          bay: isBayId(x.bay) ? x.bay : undefined,
           confidence: conf === 'high' || conf === 'medium' || conf === 'low' ? conf : 'medium',
           capturedAt: typeof x.capturedAt === 'string' ? x.capturedAt : '',
         };
