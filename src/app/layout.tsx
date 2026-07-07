@@ -18,16 +18,20 @@ export const dynamic = 'force-dynamic';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const inventoryItems = await getInventoryItems();
+  const inventoryReadStatus =
+    inventoryItems.source === 'postgres'
+      ? { source: 'postgres' as const }
+      : {
+          source: 'static' as const,
+          fallbackReason: inventoryItems.fallbackReason,
+        };
 
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${outfit.variable}`}>
       <body>
         <HangarProvider
           initialItems={inventoryItems.items}
-          initialInventoryRead={{
-            source: inventoryItems.source,
-            fallbackReason: inventoryItems.fallbackReason,
-          }}
+          initialInventoryRead={inventoryReadStatus}
         >
           <Shell>{children}</Shell>
         </HangarProvider>

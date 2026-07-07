@@ -7,10 +7,15 @@ export type HangarFallbackReason = (typeof HANGAR_FALLBACK_REASONS)[number];
 export const HANGAR_READ_LANES = ['inventory'] as const;
 export type HangarReadLane = (typeof HANGAR_READ_LANES)[number];
 
-export interface HangarReadStatus {
-  source: HangarReadSource;
-  fallbackReason?: HangarFallbackReason;
-}
+export type HangarReadStatus =
+  | {
+      source: 'postgres';
+      fallbackReason?: undefined;
+    }
+  | {
+      source: 'static';
+      fallbackReason?: HangarFallbackReason;
+    };
 
 export const HANGAR_READ_SOURCE_META: Record<
   HangarReadSource,
