@@ -1,40 +1,46 @@
 'use client';
 import clsx from 'clsx';
 import { LayoutGrid, Boxes, Rows3, Cpu, CircuitBoard } from 'lucide-react';
-import type { ActiveHost, NetColorKey, ViewMode } from '@/lib/twin';
+import {
+  ACTIVE_HOST_LABELS,
+  ACTIVE_HOSTS,
+  VIEW_MODE_LABELS,
+  VIEW_MODES,
+  type ActiveHost,
+  type NetColorKey,
+  type ViewMode,
+} from '@/lib/twin';
 import { LAYERS, NET_STROKE } from './palette';
 import type { NetKind } from '@/data/types';
 
-const VIEW_MODES: { mode: ViewMode; label: string; icon: typeof Cpu }[] = [
-  { mode: 'board', label: 'Board', icon: LayoutGrid },
-  { mode: 'iso', label: 'Cutaway', icon: Boxes },
-  { mode: 'bus', label: 'Bus', icon: Rows3 },
-];
+const VIEW_MODE_ICONS: Record<ViewMode, typeof Cpu> = {
+  board: LayoutGrid,
+  iso: Boxes,
+  bus: Rows3,
+};
 
 export function ViewModeSwitch({ mode, onChange }: { mode: ViewMode; onChange: (m: ViewMode) => void }) {
   return (
     <div className="flex gap-1" role="tablist" aria-label="View mode">
-      {VIEW_MODES.map(({ mode: m, label, icon: Icon }) => (
-        <button
-          key={m}
-          type="button"
-          role="tab"
-          aria-selected={mode === m}
-          onClick={() => onChange(m)}
-          className={clsx('btn', mode === m ? 'btn-active' : 'btn-ghost')}
-        >
-          <Icon className="h-3.5 w-3.5" />
-          {label}
-        </button>
-      ))}
+      {VIEW_MODES.map((m) => {
+        const Icon = VIEW_MODE_ICONS[m];
+        return (
+          <button
+            key={m}
+            type="button"
+            role="tab"
+            aria-selected={mode === m}
+            onClick={() => onChange(m)}
+            className={clsx('btn', mode === m ? 'btn-active' : 'btn-ghost')}
+          >
+            <Icon className="h-3.5 w-3.5" />
+            {VIEW_MODE_LABELS[m]}
+          </button>
+        );
+      })}
     </div>
   );
 }
-
-const HOSTS: { host: ActiveHost; label: string }[] = [
-  { host: 'pi5', label: 'Raspberry Pi 5' },
-  { host: 'orin', label: 'Jetson Orin' },
-];
 
 export function HostSwitch({ host, onChange }: { host: ActiveHost; onChange: (h: ActiveHost) => void }) {
   return (
@@ -44,7 +50,7 @@ export function HostSwitch({ host, onChange }: { host: ActiveHost; onChange: (h:
         Host
       </span>
       <div className="flex gap-1" role="radiogroup" aria-label="Onboard host">
-        {HOSTS.map(({ host: h, label }) => (
+        {ACTIVE_HOSTS.map((h) => (
           <button
             key={h}
             type="button"
@@ -53,7 +59,7 @@ export function HostSwitch({ host, onChange }: { host: ActiveHost; onChange: (h:
             onClick={() => onChange(h)}
             className={clsx('btn', host === h ? 'btn-active' : 'btn-ghost')}
           >
-            {label}
+            {ACTIVE_HOST_LABELS[h]}
           </button>
         ))}
       </div>

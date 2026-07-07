@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { hangarData } from '@/data/hangar';
 import {
+  ACTIVE_HOST_LABELS,
+  ACTIVE_HOSTS,
   buildBoardLayout,
   buildBusLayout,
   buildIsoLayout,
@@ -11,8 +13,9 @@ import {
   resolveActive,
   traceFromNet,
   traceFromTerminal,
+  VIEW_MODE_LABELS,
+  VIEW_MODES,
   type TwinLayout,
-  type ViewMode,
 } from '@/lib/twin';
 
 const { units, terminals, nets, documents } = hangarData;
@@ -94,7 +97,7 @@ describe('resolveActive (host swap)', () => {
   });
 
   it('keeps host-agnostic subsystems live under either host', () => {
-    for (const host of ['pi5', 'orin'] as const) {
+    for (const host of ACTIVE_HOSTS) {
       const active = resolveActive(terminals, nets, host);
       expect(active.netIds.has('net-servo-bus')).toBe(true);
       expect(active.netIds.has('net-motor-left')).toBe(true);
@@ -104,7 +107,6 @@ describe('resolveActive (host swap)', () => {
   });
 });
 
-const MODES: ViewMode[] = ['board', 'iso', 'bus'];
 const wiredUnitCount = new Set(terminals.map((t) => t.unitId)).size;
 
 function everyCoordFinite(layout: TwinLayout): boolean {
@@ -118,7 +120,16 @@ function everyCoordFinite(layout: TwinLayout): boolean {
   return nums.every((n) => Number.isFinite(n));
 }
 
-describe.each(MODES)('layout builder: %s', (mode) => {
+describe('twin control vocabularies', () => {
+  it('labels every exported view mode and host option', () => {
+    expect(VIEW_MODES).toEqual(['board', 'iso', 'bus']);
+    expect(VIEW_MODES.map((mode) => VIEW_MODE_LABELS[mode])).toEqual(['Board', 'Cutaway', 'Bus']);
+    expect(ACTIVE_HOSTS).toEqual(['pi5', 'orin']);
+    expect(ACTIVE_HOSTS.map((host) => ACTIVE_HOST_LABELS[host])).toEqual(['Raspberry Pi 5', 'Jetson Orin']);
+  });
+});
+
+describe.each(VIEW_MODES)('layout builder: %s', (mode) => {
   const layout = buildLayout(mode, units, terminals, nets);
 
   it('emits a module for every wired unit', () => {
