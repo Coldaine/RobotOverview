@@ -45,6 +45,13 @@ describe('hangar preference vocabularies', () => {
     expect(sourcePriceOrZero({ us: null, import: null }, 'import')).toBe(0);
   });
 
+  it('treats non-finite runtime prices as absent values', () => {
+    expect(sourcePrice({ us: Number.NaN, import: null }, 'us')).toBeNull();
+    expect(sourcePrice({ us: 120, import: Number.POSITIVE_INFINITY }, 'import')).toBe(120);
+    expect(sourcePrice({ us: Number.NEGATIVE_INFINITY, import: Number.NaN }, 'import')).toBeNull();
+    expect(sourcePriceOrZero({ us: Number.NaN, import: Number.POSITIVE_INFINITY }, 'import')).toBe(0);
+  });
+
   it('accepts only supported theme modes and labels every mode', () => {
     expect(THEME_MODES).toEqual(['blueprint', 'industrial', 'topology']);
     expect(isThemeMode('blueprint')).toBe(true);
