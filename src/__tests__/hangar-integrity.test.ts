@@ -243,6 +243,22 @@ describe('hangar.ts data integrity', () => {
     });
   });
 
+  it('all insight.units IDs exist in units', () => {
+    hangarData.insights.forEach((insight) => {
+      (insight.units ?? []).forEach((uid) => {
+        expect(unitIds.has(uid), `insight "${insight.id}" references unknown unit "${uid}"`).toBe(true);
+      });
+    });
+  });
+
+  it('all insight.missions IDs exist in missions', () => {
+    hangarData.insights.forEach((insight) => {
+      (insight.missions ?? []).forEach((mid) => {
+        expect(missionIds.has(mid), `insight "${insight.id}" references unknown mission "${mid}"`).toBe(true);
+      });
+    });
+  });
+
   it('all insight timestamps that seed Postgres are parseable', () => {
     hangarData.insights.forEach((insight) => {
       expectValidTimestamp(insight.capturedAt, `insight "${insight.id}" capturedAt`);
