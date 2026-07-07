@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { SectionTitle } from '@/components/ui/Primitives';
 import { isHangarBayId } from '@/data/hangar';
 import { INSIGHT_CONFIDENCE_LEVELS, isInsightConfidence, type InsightConfidence } from '@/data/types';
+import { insightConfidenceMeta } from '@/lib/format';
 import { useHangar, LOCAL_INSIGHT_PREFIX } from '@/lib/store';
 import clsx from 'clsx';
 
@@ -144,7 +145,7 @@ export default function Codex() {
               <option value="all">All confidence</option>
               {INSIGHT_CONFIDENCE_LEVELS.map((level) => (
                 <option key={level} value={level}>
-                  {level[0].toUpperCase() + level.slice(1)}
+                  {insightConfidenceMeta(level).label}
                 </option>
               ))}
             </select>
@@ -156,18 +157,12 @@ export default function Codex() {
       <div className="space-y-3">
         {filtered.map((ins) => {
           const isLocal = ins.id.startsWith(LOCAL_INSIGHT_PREFIX);
+          const confidenceMeta = insightConfidenceMeta(ins.confidence);
           return (
           <article key={ins.id} className="panel p-4">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="font-display text-sm uppercase tracking-[0.08em] text-ink">{ins.title}</h2>
-              <span
-                className={clsx(
-                  'chip',
-                  ins.confidence === 'high' && 'border-signal-ok/40 bg-signal-ok/10 text-signal-ok',
-                  ins.confidence === 'medium' && 'border-amber/40 bg-amber/10 text-amber',
-                  ins.confidence === 'low' && 'border-signal-crit/40 bg-signal-crit/10 text-signal-crit',
-                )}
-              >
+              <span className={clsx('chip', confidenceMeta.cls)}>
                 {ins.confidence}
               </span>
               {ins.bay && (

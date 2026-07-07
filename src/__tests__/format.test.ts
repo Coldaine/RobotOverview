@@ -12,7 +12,9 @@ import {
   TONE_COLOR_VARS,
   WISHLIST_STATUS_META,
   PROVENANCE_META,
+  INSIGHT_CONFIDENCE_META,
   activityKindMeta,
+  insightConfidenceMeta,
   unitStatusColorVar,
 } from '@/lib/format';
 import {
@@ -20,6 +22,7 @@ import {
   LIFECYCLE_STATES,
   MISSION_STATUSES,
   ACTIVITY_KINDS,
+  INSIGHT_CONFIDENCE_LEVELS,
   PROVENANCE_KINDS,
   UNIT_STATUSES,
   WISHLIST_STATUSES,
@@ -95,6 +98,30 @@ describe('PROVENANCE_META exhaustiveness', () => {
       inferred: { label: 'INFERRED', cls: 'text-cyan border-cyan/30 bg-cyan/5' },
       open: { label: 'OPEN', cls: 'text-signal-warn border-signal-warn/30 bg-signal-warn/5' },
     });
+  });
+});
+
+describe('INSIGHT_CONFIDENCE_META exhaustiveness', () => {
+  it.each(INSIGHT_CONFIDENCE_LEVELS)('has an entry for insight confidence "%s"', (confidence) => {
+    expect(INSIGHT_CONFIDENCE_META[confidence]).toBeDefined();
+    expect(INSIGHT_CONFIDENCE_META[confidence].label).toBeTruthy();
+    expect(INSIGHT_CONFIDENCE_META[confidence].cls).toBeTruthy();
+  });
+
+  it('preserves insight confidence labels and classes', () => {
+    expect(INSIGHT_CONFIDENCE_META).toEqual({
+      high: { label: 'High', cls: 'border-signal-ok/40 bg-signal-ok/10 text-signal-ok' },
+      medium: { label: 'Medium', cls: 'border-amber/40 bg-amber/10 text-amber' },
+      low: { label: 'Low', cls: 'border-signal-crit/40 bg-signal-crit/10 text-signal-crit' },
+    });
+  });
+
+  it.each(INSIGHT_CONFIDENCE_LEVELS)('returns mapped metadata through insightConfidenceMeta for "%s"', (confidence) => {
+    expect(insightConfidenceMeta(confidence)).toBe(INSIGHT_CONFIDENCE_META[confidence]);
+  });
+
+  it('falls back to the previous unstyled title-case behavior for unknown confidence values', () => {
+    expect(insightConfidenceMeta('uncertain')).toEqual({ label: 'Uncertain' });
   });
 });
 
