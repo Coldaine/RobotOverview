@@ -2,7 +2,7 @@
 title: Inventory Intake — Staging
 date: 2026-06-25
 author: Patrick MacLyman
-status: living
+status: historical
 last_confirmed: 2026-06-25
 ---
 

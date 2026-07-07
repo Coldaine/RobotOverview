@@ -1,7 +1,7 @@
 ---
 title: Bootstrap And Command Surface
 audience: AI agents and operators setting up or running RobotOverview locally
-status: living
+status: historical
 last_updated: 2026-07-01
 ---
 

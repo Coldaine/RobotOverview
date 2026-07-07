@@ -2,7 +2,7 @@
 title: Hangar Usability Workflows
 date: 2026-06-13
 author: Patrick MacLyman
-status: living
+status: historical
 last_confirmed: 2026-07-01
 ---
 

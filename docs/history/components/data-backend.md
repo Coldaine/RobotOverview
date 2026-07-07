@@ -1,7 +1,7 @@
 ---
 title: Data Backend — Master-Inventory Model
 audience: AI agents and operators working on the Hangar data layer
-status: living
+status: historical
 last_updated: 2026-07-01
 ---
 
