@@ -15,7 +15,11 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useHangar } from '@/lib/store';
-import type { HangarFallbackReason } from '@/lib/hangar-read-status';
+import {
+  HANGAR_READ_SOURCE_META,
+  hangarFallbackDetail,
+  hangarReadStatusLabel,
+} from '@/lib/hangar-read-status';
 import { THEME_LABELS, THEME_MODES } from '@/lib/hangar-preferences';
 import { isNavActive } from '@/lib/nav';
 import { InventoryDrawer } from './InventoryDrawer';
@@ -62,18 +66,10 @@ function NavItem({
   );
 }
 
-const FALLBACK_LABELS: Record<HangarFallbackReason, string> = {
-  'not-configured': 'NOT CFG',
-  'postgres-error': 'PG ERR',
-};
-
 export function Shell({ children }: { readonly children: ReactNode }) {
   const { data, inventoryRead, theme, setTheme } = useHangar();
   const pathname = usePathname();
-  const inventoryStatus =
-    inventoryRead.source === 'postgres'
-      ? 'PG'
-      : `STATIC${inventoryRead.fallbackReason ? ` · ${FALLBACK_LABELS[inventoryRead.fallbackReason]}` : ''}`;
+  const inventoryStatus = hangarReadStatusLabel(inventoryRead);
 
   return (
     <div className="relative flex min-h-screen overflow-x-hidden text-ink">
@@ -172,7 +168,7 @@ export function Shell({ children }: { readonly children: ReactNode }) {
             <span
               className={clsx(
                 'h-1.5 w-1.5 rounded-full',
-                inventoryRead.source === 'postgres' ? 'bg-signal-ok' : 'bg-amber',
+                HANGAR_READ_SOURCE_META[inventoryRead.source].dotClass,
               )}
             />
             DATA · {inventoryStatus}
@@ -201,17 +197,10 @@ export function Shell({ children }: { readonly children: ReactNode }) {
   );
 }
 
-const FALLBACK_BANNER_DETAIL: Record<HangarFallbackReason, string> = {
-  'not-configured': 'Postgres is not configured — every read is coming from the hangar.ts spine.',
-  'postgres-error': 'Postgres read FAILED — serving the hangar.ts spine with this visible warning.',
-};
-
 function StaticDataBanner() {
   const { inventoryRead } = useHangar();
   if (inventoryRead.source === 'postgres') return null;
-  const detail =
-    (inventoryRead.fallbackReason && FALLBACK_BANNER_DETAIL[inventoryRead.fallbackReason]) ||
-    'Serving the static hangar.ts spine.';
+  const detail = hangarFallbackDetail(inventoryRead.fallbackReason);
   return (
     <div
       role="status"

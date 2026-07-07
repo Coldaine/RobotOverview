@@ -8,3 +8,54 @@ export interface HangarReadStatus {
   source: HangarReadSource;
   fallbackReason?: HangarFallbackReason;
 }
+
+export const HANGAR_READ_SOURCE_META: Record<
+  HangarReadSource,
+  {
+    label: string;
+    dotClass: string;
+  }
+> = {
+  postgres: {
+    label: 'PG',
+    dotClass: 'bg-signal-ok',
+  },
+  static: {
+    label: 'STATIC',
+    dotClass: 'bg-amber',
+  },
+};
+
+export const HANGAR_FALLBACK_REASON_META: Record<
+  HangarFallbackReason,
+  {
+    label: string;
+    detail: string;
+  }
+> = {
+  'not-configured': {
+    label: 'NOT CFG',
+    detail: 'Postgres is not configured — every read is coming from the hangar.ts spine.',
+  },
+  'postgres-error': {
+    label: 'PG ERR',
+    detail: 'Postgres read FAILED — serving the hangar.ts spine with this visible warning.',
+  },
+};
+
+export function hangarReadStatusLabel(status: HangarReadStatus): string {
+  const sourceLabel = HANGAR_READ_SOURCE_META[status.source].label;
+  if (status.source === 'postgres') return sourceLabel;
+
+  const fallbackLabel = status.fallbackReason
+    ? HANGAR_FALLBACK_REASON_META[status.fallbackReason].label
+    : null;
+
+  return fallbackLabel ? `${sourceLabel} · ${fallbackLabel}` : sourceLabel;
+}
+
+export function hangarFallbackDetail(fallbackReason?: HangarFallbackReason): string {
+  return fallbackReason
+    ? HANGAR_FALLBACK_REASON_META[fallbackReason].detail
+    : 'Serving the static hangar.ts spine.';
+}
