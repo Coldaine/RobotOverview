@@ -15,8 +15,9 @@ build definition, and database provision.
   means the app is talking to Postgres.
 - **Build:** Shipwright `Build` `robot-overview` in namespace `builds` (buildkit strategy)
   builds this repo's `main` from GitHub and pushes `ghcr.io/coldaine/robot-overview` with the
-  `ghcr-push` secret. GitHub Actions (`.github/workflows/image.yml`) also builds an image per
-  push/PR as a CI check; the cluster deploys the Shipwright-built digest, not the Actions one.
+  `ghcr-push` secret. GitHub Actions (`.github/workflows/image.yml`) also builds images for
+  main pushes and PRs, and publishes same-repo refs to GHCR for CI/package proof; production still
+  deploys the Shipwright-built digest pinned in `coldaine-k8cluster`.
 - **Route:** HTTPRoute `robot-overview` (namespace `apps`) attaches hostname
   `hangar.moosegoose.xyz` to the shared Gateway `main`; the route is Accepted and has
   ResolvedRefs. DNS resolves the hostname to the Gateway/LAN path, and
@@ -31,10 +32,11 @@ build definition, and database provision.
   is accepted or replaced with a public/managed certificate.
 - **The apex `moosegoose.xyz` is currently served by a legacy Vercel deployment**, not the
   cluster. Irrelevant to the Hangar — the subdomain does not depend on it.
-- **No automatic deploy.** The cluster model is deliberate apply (no GitOps reconciler; Argo CD
-  and Flux are gone). Shipping new code = trigger a BuildRun, pin the new digest in
-  `coldaine-k8cluster/apps/robot-overview/deployment.yaml`, apply. A push-triggered pipeline is
-  planned; it must end in those same deliberate steps.
+- **No automatic cluster rollout.** The cluster model is deliberate apply (no GitOps reconciler;
+  Argo CD and Flux are gone). A GitHub push may build/publish an image, but shipping new code to
+  production = trigger a BuildRun, pin the new Shipwright digest in
+  `coldaine-k8cluster/apps/robot-overview/deployment.yaml`, apply. Any future push-triggered
+  pipeline must still end in an explicit digest pin plus deliberate cluster apply.
 
 ## Deploying by hand
 
