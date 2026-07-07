@@ -4,6 +4,9 @@ export type HangarReadSource = (typeof HANGAR_READ_SOURCES)[number];
 export const HANGAR_FALLBACK_REASONS = ['not-configured', 'postgres-error'] as const;
 export type HangarFallbackReason = (typeof HANGAR_FALLBACK_REASONS)[number];
 
+export const HANGAR_READ_LANES = ['inventory'] as const;
+export type HangarReadLane = (typeof HANGAR_READ_LANES)[number];
+
 export interface HangarReadStatus {
   source: HangarReadSource;
   fallbackReason?: HangarFallbackReason;
@@ -30,16 +33,31 @@ export const HANGAR_FALLBACK_REASON_META: Record<
   HangarFallbackReason,
   {
     label: string;
-    detail: string;
   }
 > = {
   'not-configured': {
     label: 'NOT CFG',
-    detail: 'Inventory Postgres is not configured — items are coming from the hangar.ts spine.',
   },
   'postgres-error': {
     label: 'PG ERR',
-    detail: 'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
+  },
+};
+
+export const HANGAR_READ_LANE_META: Record<
+  HangarReadLane,
+  {
+    fallbackDetail: string;
+    fallbackReasonDetails: Record<HangarFallbackReason, string>;
+  }
+> = {
+  inventory: {
+    fallbackDetail: 'Serving inventory items from the static hangar.ts spine.',
+    fallbackReasonDetails: {
+      'not-configured':
+        'Inventory Postgres is not configured — items are coming from the hangar.ts spine.',
+      'postgres-error':
+        'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
+    },
   },
 };
 
@@ -54,8 +72,12 @@ export function hangarReadStatusLabel(status: HangarReadStatus): string {
   return fallbackLabel ? `${sourceLabel} · ${fallbackLabel}` : sourceLabel;
 }
 
-export function hangarFallbackDetail(fallbackReason?: HangarFallbackReason): string {
+export function hangarFallbackDetail(
+  lane: HangarReadLane,
+  fallbackReason?: HangarFallbackReason,
+): string {
+  const laneMeta = HANGAR_READ_LANE_META[lane];
   return fallbackReason
-    ? HANGAR_FALLBACK_REASON_META[fallbackReason].detail
-    : 'Serving inventory items from the static hangar.ts spine.';
+    ? laneMeta.fallbackReasonDetails[fallbackReason]
+    : laneMeta.fallbackDetail;
 }

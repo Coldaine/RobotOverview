@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   HANGAR_FALLBACK_REASON_META,
   HANGAR_FALLBACK_REASONS,
+  HANGAR_READ_LANE_META,
+  HANGAR_READ_LANES,
   HANGAR_READ_SOURCE_META,
   HANGAR_READ_SOURCES,
   hangarFallbackDetail,
@@ -27,11 +29,28 @@ describe('hangar read status presentation', () => {
     );
     expect(HANGAR_FALLBACK_REASON_META['not-configured']).toEqual({
       label: 'NOT CFG',
-      detail: 'Inventory Postgres is not configured — items are coming from the hangar.ts spine.',
     });
     expect(HANGAR_FALLBACK_REASON_META['postgres-error']).toEqual({
       label: 'PG ERR',
-      detail: 'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
+    });
+  });
+
+  it('has lane-specific fallback copy for every fallback reason', () => {
+    expect(Object.keys(HANGAR_READ_LANE_META).sort()).toEqual([...HANGAR_READ_LANES].sort());
+    expect(HANGAR_READ_LANE_META.inventory).toEqual({
+      fallbackDetail: 'Serving inventory items from the static hangar.ts spine.',
+      fallbackReasonDetails: {
+        'not-configured':
+          'Inventory Postgres is not configured — items are coming from the hangar.ts spine.',
+        'postgres-error':
+          'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
+      },
+    });
+
+    HANGAR_READ_LANES.forEach((lane) => {
+      expect(Object.keys(HANGAR_READ_LANE_META[lane].fallbackReasonDetails).sort()).toEqual(
+        [...HANGAR_FALLBACK_REASONS].sort(),
+      );
     });
   });
 
@@ -50,12 +69,14 @@ describe('hangar read status presentation', () => {
   });
 
   it('returns banner detail for fallback and unknown-static cases', () => {
-    expect(hangarFallbackDetail('not-configured')).toBe(
+    expect(hangarFallbackDetail('inventory', 'not-configured')).toBe(
       'Inventory Postgres is not configured — items are coming from the hangar.ts spine.',
     );
-    expect(hangarFallbackDetail('postgres-error')).toBe(
+    expect(hangarFallbackDetail('inventory', 'postgres-error')).toBe(
       'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
     );
-    expect(hangarFallbackDetail()).toBe('Serving inventory items from the static hangar.ts spine.');
+    expect(hangarFallbackDetail('inventory')).toBe(
+      'Serving inventory items from the static hangar.ts spine.',
+    );
   });
 });
