@@ -4,14 +4,17 @@ import {
   ACTIVITY_KINDS,
   BAY_ACCENTS,
   DOCUMENT_KINDS,
+  INSIGHT_CONFIDENCE_LEVELS,
   INVENTORY_ITEM_STATUSES,
   MISSION_STATUSES,
   NET_KINDS,
   POWER_RAILS,
   PROVENANCE_KINDS,
+  SOURCE_RECORD_KINDS,
   TERMINAL_ROLES,
   UNIT_SHORTCUT_TYPES,
   UNIT_STATUSES,
+  WISHLIST_STATUSES,
 } from '@/data/types';
 
 describe('hangar.ts data integrity', () => {
@@ -122,6 +125,12 @@ describe('hangar.ts data integrity', () => {
     });
   });
 
+  it('all wishlist.status values are valid WishlistStatus values', () => {
+    hangarData.wishlist.forEach((w) => {
+      expect(WISHLIST_STATUSES, `wishlist item "${w.id}" has invalid status "${w.status}"`).toContain(w.status);
+    });
+  });
+
   it('all wishlist power rails are valid PowerRail values', () => {
     hangarData.wishlist.forEach((w) => {
       if (!w.power?.rail) return;
@@ -159,6 +168,12 @@ describe('hangar.ts data integrity', () => {
       (m.insights ?? []).forEach((iid) => {
         expect(insightIds.has(iid), `mission "${m.id}" references unknown insight "${iid}"`).toBe(true);
       });
+    });
+  });
+
+  it('all insight.confidence values are valid InsightConfidence values', () => {
+    hangarData.insights.forEach((insight) => {
+      expect(INSIGHT_CONFIDENCE_LEVELS, `insight "${insight.id}" has invalid confidence "${insight.confidence}"`).toContain(insight.confidence);
     });
   });
 
@@ -209,6 +224,14 @@ describe('hangar.ts data integrity', () => {
     hangarData.items.forEach((it) => {
       if (!it.provenance) return;
       expect(PROVENANCE_KINDS, `item "${it.id}" has invalid provenance "${it.provenance}"`).toContain(it.provenance);
+    });
+  });
+
+  it('all item source kinds are valid SourceRecordKind values', () => {
+    hangarData.items.forEach((it) => {
+      (it.sources ?? []).forEach((source) => {
+        expect(SOURCE_RECORD_KINDS, `item "${it.id}" source "${source.label}" has invalid kind "${source.kind}"`).toContain(source.kind);
+      });
     });
   });
 
