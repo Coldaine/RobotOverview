@@ -164,6 +164,17 @@ describe('hangar.ts data integrity', () => {
     });
   });
 
+  it('all wishlist.unlocks IDs exist in capabilities', () => {
+    hangarData.wishlist.forEach((w) => {
+      if (w.unlocks) {
+        expect(
+          capabilityIds.has(w.unlocks),
+          `wishlist item "${w.id}" references unknown unlock capability "${w.unlocks}"`,
+        ).toBe(true);
+      }
+    });
+  });
+
   it('all wishlist power rails are valid PowerRail values', () => {
     hangarData.wishlist.forEach((w) => {
       if (!w.power?.rail) return;
@@ -231,6 +242,13 @@ describe('hangar.ts data integrity', () => {
       (cap.dependsOn ?? []).forEach((id) => {
         expect(capabilityIds.has(id), `capability "${cap.id}" dependsOn references unknown capability "${id}"`).toBe(true);
       });
+    });
+  });
+
+  it('all capability.bay values are valid BayIds', () => {
+    hangarData.capabilities.forEach((cap) => {
+      if (!cap.bay) return;
+      expect(HANGAR_BAY_IDS, `capability "${cap.id}" has invalid bay "${cap.bay}"`).toContain(cap.bay);
     });
   });
 
