@@ -10,8 +10,12 @@ import type { Queryable } from './queryable';
 import { readWithStaticFallback } from './read-model';
 import {
   enumValue,
+  isTrimmedHttpUrl,
+  isTrimmedNonBlankString,
+  isTrimmedTimestamp,
   nonNegativeNumberOrNull,
   positiveIntegerOrNull,
+  postgresNonBlankTextArray,
   postgresTextArray,
   strictObjectArray,
 } from './validators';
@@ -164,25 +168,6 @@ function sourceRecords(value: unknown): SourceRecord[] | undefined {
   return records.length ? records : undefined;
 }
 
-function isTrimmedNonBlankString(value: unknown): value is string {
-  return typeof value === 'string' && value.trim() !== '' && value === value.trim();
-}
-
-function isTrimmedHttpUrl(value: unknown): value is string {
-  if (!isTrimmedNonBlankString(value)) return false;
-
-  try {
-    const url = new URL(value);
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
-
-function isTrimmedTimestamp(value: unknown): value is string {
-  return isTrimmedNonBlankString(value) && Number.isFinite(new Date(value).getTime());
-}
-
 export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
   const bayGroups = postgresTextArray(row.bay_groups, 'bay groups');
   if (bayGroups.length !== 1) {
@@ -223,7 +208,7 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
     ),
     relatedInsights: optionalArray(postgresTextArray(row.related_insights, 'related insights')),
     sources: sourceRecords(row.sources),
-    limitations: optionalArray(nonBlankTextArray(row.limitations, 'inventory limitations')),
+    limitations: optionalArray(postgresNonBlankTextArray(row.limitations, 'inventory limitations')),
     acquired: row.acquired ?? undefined,
     horizon: row.horizon ?? undefined,
     provenance: row.provenance
@@ -234,16 +219,6 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
 
 function optionalArray<T>(value: T[]): T[] | undefined {
   return value.length ? value : undefined;
-}
-
-function nonBlankTextArray(value: unknown, label: string): string[] {
-  const text = postgresTextArray(value, label);
-  const invalidIndex = text.findIndex((item) => !isTrimmedNonBlankString(item));
-  if (invalidIndex !== -1) {
-    throw new Error(`Invalid ${label} from hangar DB: expected non-blank trimmed text at index ${invalidIndex}.`);
-  }
-
-  return text;
 }
 
 export async function readInventoryItemsFromPostgres(client: Queryable) {

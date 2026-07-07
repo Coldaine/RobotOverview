@@ -43,6 +43,37 @@ export function postgresTextArray(value: unknown, label: string): string[] {
   return value;
 }
 
+export function isTrimmedNonBlankString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim() !== '' && value === value.trim();
+}
+
+export function isTrimmedHttpUrl(value: unknown): value is string {
+  if (!isTrimmedNonBlankString(value)) return false;
+
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+export function isTrimmedTimestamp(value: unknown): value is string {
+  return isTrimmedNonBlankString(value) && Number.isFinite(new Date(value).getTime());
+}
+
+export function postgresNonBlankTextArray(value: unknown, label: string): string[] {
+  const text = postgresTextArray(value, label);
+  const invalidIndex = text.findIndex((item) => !isTrimmedNonBlankString(item));
+  if (invalidIndex !== -1) {
+    throw new Error(
+      `Invalid ${label} from hangar DB: expected non-blank trimmed text at index ${invalidIndex}.`,
+    );
+  }
+
+  return text;
+}
+
 export function strictObjectArray<T>(
   value: unknown,
   label: string,
