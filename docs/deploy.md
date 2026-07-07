@@ -1,7 +1,7 @@
 # Deployment — verified facts
 
 Everything below was verified against the live cluster and `coldaine-k8cluster` origin/main
-on 2026-07-02. When this page and reality disagree, reality wins — check live state
+on 2026-07-07. When this page and reality disagree, reality wins — check live state
 (`kubectl`, `curl`) before building on anything here. This repo owns the app code, the
 `Dockerfile`, and its content; `coldaine-k8cluster` owns every runtime manifest, secret,
 build definition, and database provision.
@@ -18,15 +18,17 @@ build definition, and database provision.
   `ghcr-push` secret. GitHub Actions (`.github/workflows/image.yml`) also builds an image per
   push/PR as a CI check; the cluster deploys the Shipwright-built digest, not the Actions one.
 - **Route:** HTTPRoute `robot-overview` (namespace `apps`) attaches hostname
-  `hangar.moosegoose.xyz` to the shared Gateway `main`. Public egress is via `cloudflared`
-  (token-managed tunnel — hostname mappings live in the Cloudflare Zero Trust dashboard,
-  not in cluster manifests).
+  `hangar.moosegoose.xyz` to the shared Gateway `main`; the route is Accepted and has
+  ResolvedRefs. DNS resolves the hostname to the Gateway/LAN path, and
+  `GET /api/hangar/preflight` returns OK through the Gateway. Public egress is via
+  `cloudflared` (token-managed tunnel — hostname mappings live in the Cloudflare Zero
+  Trust dashboard, not in cluster manifests).
 
-## Known gaps (as of 2026-07-02)
+## Known gaps (as of 2026-07-07)
 
-- **`hangar.moosegoose.xyz` does not resolve** (NXDOMAIN). The in-cluster route exists; the
-  missing piece is Cloudflare-side: a public-hostname entry on the tunnel (which creates the
-  DNS record) pointing at the Gateway. Same gap affects `soil.moosegoose.xyz`.
+- **Gateway TLS is still using the cluster self-signed path.** The route and preflight are
+  healthy, but normal clients may reject `https://hangar.moosegoose.xyz` unless that trust path
+  is accepted or replaced with a public/managed certificate.
 - **The apex `moosegoose.xyz` is currently served by a legacy Vercel deployment**, not the
   cluster. Irrelevant to the Hangar — the subdomain does not depend on it.
 - **No automatic deploy.** The cluster model is deliberate apply (no GitOps reconciler; Argo CD
