@@ -24,6 +24,12 @@ describe('hangar.ts data integrity', () => {
   const capabilityIds = new Set(hangarData.capabilities.map((c) => c.id));
   const insightIds = new Set(hangarData.insights.map((i) => i.id));
 
+  function expectFiniteNonNegative(value: number | null | undefined, label: string) {
+    if (value == null) return;
+    expect(Number.isFinite(value), `${label} must be finite`).toBe(true);
+    expect(value, `${label} must be non-negative`).toBeGreaterThanOrEqual(0);
+  }
+
   it('has no duplicate unit IDs', () => {
     const ids = hangarData.units.map((u) => u.id);
     expect(ids.length).toBe(new Set(ids).size);
@@ -135,6 +141,33 @@ describe('hangar.ts data integrity', () => {
     hangarData.wishlist.forEach((w) => {
       if (!w.power?.rail) return;
       expect(POWER_RAILS, `wishlist item "${w.id}" has invalid power rail "${w.power.rail}"`).toContain(w.power.rail);
+    });
+  });
+
+  it('all asset numerics that seed Postgres typed columns are finite and non-negative', () => {
+    hangarData.units.forEach((u) => {
+      expectFiniteNonNegative(u.price?.us, `unit "${u.id}" price.us`);
+      expectFiniteNonNegative(u.price?.import, `unit "${u.id}" price.import`);
+      expectFiniteNonNegative(u.power?.watts, `unit "${u.id}" power.watts`);
+      expectFiniteNonNegative(u.power?.volts, `unit "${u.id}" power.volts`);
+      expectFiniteNonNegative(u.massGrams, `unit "${u.id}" massGrams`);
+    });
+
+    hangarData.items.forEach((it) => {
+      expectFiniteNonNegative(it.price?.us, `item "${it.id}" price.us`);
+      expectFiniteNonNegative(it.price?.import, `item "${it.id}" price.import`);
+      if (it.quantity !== undefined) {
+        expect(Number.isInteger(it.quantity), `item "${it.id}" quantity must be an integer`).toBe(true);
+        expect(it.quantity, `item "${it.id}" quantity must be positive`).toBeGreaterThan(0);
+      }
+    });
+
+    hangarData.wishlist.forEach((w) => {
+      expectFiniteNonNegative(w.price.us, `wishlist item "${w.id}" price.us`);
+      expectFiniteNonNegative(w.price.import, `wishlist item "${w.id}" price.import`);
+      expectFiniteNonNegative(w.power?.watts, `wishlist item "${w.id}" power.watts`);
+      expectFiniteNonNegative(w.power?.volts, `wishlist item "${w.id}" power.volts`);
+      expectFiniteNonNegative(w.massGrams, `wishlist item "${w.id}" massGrams`);
     });
   });
 
