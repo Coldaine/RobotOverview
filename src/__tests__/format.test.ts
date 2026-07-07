@@ -32,6 +32,11 @@ import { MISSION_STATUS_META } from '@/lib/format';
 describe('money()', () => {
   it('returns em-dash for null', () => expect(money(null)).toBe('—'));
   it('returns em-dash for undefined', () => expect(money(undefined)).toBe('—'));
+  it('returns em-dash for non-finite runtime values', () => {
+    expect(money(Number.NaN)).toBe('—');
+    expect(money(Number.POSITIVE_INFINITY)).toBe('—');
+    expect(money(Number.NEGATIVE_INFINITY)).toBe('—');
+  });
   it('formats zero as $0', () => expect(money(0)).toBe(`$${(0).toLocaleString('en-US')}`));
   it('formats 1234 with locale grouping', () => expect(money(1234)).toBe(`$${(1234).toLocaleString('en-US')}`));
   it('formats 999999 with locale grouping', () => expect(money(999999)).toBe(`$${(999999).toLocaleString('en-US')}`));

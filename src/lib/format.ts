@@ -13,6 +13,7 @@ import {
 
 export function money(n: number | null | undefined): string {
   if (n == null) return '—';
+  if (!Number.isFinite(n)) return '—';
   return `$${n.toLocaleString('en-US')}`;
 }
 
