@@ -6,16 +6,19 @@ import {
   SELECTED_REQUISITION_STATUSES,
   timeAgo,
   STATUS_META,
+  ACTIVITY_KIND_META,
   LIFECYCLE_META,
   ITEM_STATUS_META,
   TONE_COLOR_VARS,
   WISHLIST_STATUS_META,
+  activityKindMeta,
   unitStatusColorVar,
 } from '@/lib/format';
 import {
   INVENTORY_ITEM_STATUSES,
   LIFECYCLE_STATES,
   MISSION_STATUSES,
+  ACTIVITY_KINDS,
   UNIT_STATUSES,
   WISHLIST_STATUSES,
 } from '@/data/types';
@@ -124,5 +127,32 @@ describe('WISHLIST_STATUS_META exhaustiveness', () => {
     expect(acquisitionStatusPriority('watching')).toBeLessThan(acquisitionStatusPriority('planned'));
     expect(acquisitionStatusPriority('buy-next')).toBeLessThan(acquisitionStatusPriority('on-order'));
     expect(acquisitionStatusPriority('on-order')).toBeLessThan(acquisitionStatusPriority('received'));
+  });
+});
+
+describe('ACTIVITY_KIND_META exhaustiveness', () => {
+  it.each(ACTIVITY_KINDS)('has an entry for activity kind "%s"', (kind) => {
+    expect(ACTIVITY_KIND_META[kind]).toBeDefined();
+    expect(ACTIVITY_KIND_META[kind].label).toBeTruthy();
+    expect(ACTIVITY_KIND_META[kind].dotClass).toBeTruthy();
+  });
+
+  it('preserves activity ticker labels and dot classes', () => {
+    expect(ACTIVITY_KIND_META).toEqual({
+      acquired: { label: 'ACQUIRED', dotClass: 'bg-signal-ok' },
+      'price-drop': { label: 'PRICE-DROP', dotClass: 'bg-amber' },
+      shipped: { label: 'SHIPPED', dotClass: 'bg-cyan' },
+      insight: { label: 'INSIGHT', dotClass: 'bg-cyan' },
+      mission: { label: 'MISSION', dotClass: 'bg-amber' },
+      researched: { label: 'RESEARCHED', dotClass: 'bg-ink-dim' },
+    });
+  });
+
+  it.each(ACTIVITY_KINDS)('returns mapped metadata through activityKindMeta for "%s"', (kind) => {
+    expect(activityKindMeta(kind)).toBe(ACTIVITY_KIND_META[kind]);
+  });
+
+  it('falls back to the previous unstyled uppercase behavior for unknown activity kinds', () => {
+    expect(activityKindMeta('custom-event')).toEqual({ label: 'CUSTOM-EVENT' });
   });
 });

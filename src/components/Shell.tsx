@@ -24,7 +24,7 @@ import { THEME_LABELS, THEME_MODES } from '@/lib/hangar-preferences';
 import { isNavActive } from '@/lib/nav';
 import { InventoryDrawer } from './InventoryDrawer';
 import { BAY_ICONS } from './bay-icons';
-import { timeAgo } from '@/lib/format';
+import { activityKindMeta, timeAgo } from '@/lib/format';
 import type { ReactNode } from 'react';
 
 type NavStation = {
@@ -287,24 +287,17 @@ function ActivityTicker() {
           animate={{ x: ['0%', '-50%'] }}
           transition={{ duration: 38, ease: 'linear', repeat: Infinity }}
         >
-          {items.map((ev, i) => (
-            <span key={`${ev.id}-${i}`} className="flex items-center gap-2 font-mono text-[11px] text-ink-dim">
-              <span
-                className={clsx(
-                  'h-1.5 w-1.5 rounded-full',
-                  ev.kind === 'acquired' && 'bg-signal-ok',
-                  ev.kind === 'price-drop' && 'bg-amber',
-                  ev.kind === 'shipped' && 'bg-cyan',
-                  ev.kind === 'insight' && 'bg-cyan',
-                  ev.kind === 'mission' && 'bg-amber',
-                  ev.kind === 'researched' && 'bg-ink-dim',
-                )}
-              />
-              <span className="text-cyan/70">{ev.kind.toUpperCase()}</span>
-              {ev.text}
-              <span className="text-ink-dim/50">· {timeAgo(ev.at)}</span>
-            </span>
-          ))}
+          {items.map((ev, i) => {
+            const kindMeta = activityKindMeta(ev.kind);
+            return (
+              <span key={`${ev.id}-${i}`} className="flex items-center gap-2 font-mono text-[11px] text-ink-dim">
+                <span className={clsx('h-1.5 w-1.5 rounded-full', kindMeta.dotClass)} />
+                <span className="text-cyan/70">{kindMeta.label}</span>
+                {ev.text}
+                <span className="text-ink-dim/50">· {timeAgo(ev.at)}</span>
+              </span>
+            );
+          })}
         </motion.div>
       </div>
     </div>
