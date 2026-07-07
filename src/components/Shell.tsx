@@ -209,7 +209,7 @@ function StaticDataBanner() {
     >
       <span aria-hidden="true" className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-amber" />
       <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-amber">
-        STATIC DATA
+        STATIC INVENTORY
       </span>
       <span className="min-w-0 truncate font-mono text-[11px] text-ink-dim">{detail}</span>
     </div>

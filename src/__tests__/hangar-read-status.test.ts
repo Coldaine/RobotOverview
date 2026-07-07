@@ -27,11 +27,11 @@ describe('hangar read status presentation', () => {
     );
     expect(HANGAR_FALLBACK_REASON_META['not-configured']).toEqual({
       label: 'NOT CFG',
-      detail: 'Postgres is not configured — every read is coming from the hangar.ts spine.',
+      detail: 'Inventory Postgres is not configured — items are coming from the hangar.ts spine.',
     });
     expect(HANGAR_FALLBACK_REASON_META['postgres-error']).toEqual({
       label: 'PG ERR',
-      detail: 'Postgres read FAILED — serving the hangar.ts spine with this visible warning.',
+      detail: 'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
     });
   });
 
@@ -51,11 +51,11 @@ describe('hangar read status presentation', () => {
 
   it('returns banner detail for fallback and unknown-static cases', () => {
     expect(hangarFallbackDetail('not-configured')).toBe(
-      'Postgres is not configured — every read is coming from the hangar.ts spine.',
+      'Inventory Postgres is not configured — items are coming from the hangar.ts spine.',
     );
     expect(hangarFallbackDetail('postgres-error')).toBe(
-      'Postgres read FAILED — serving the hangar.ts spine with this visible warning.',
+      'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
     );
-    expect(hangarFallbackDetail()).toBe('Serving the static hangar.ts spine.');
+    expect(hangarFallbackDetail()).toBe('Serving inventory items from the static hangar.ts spine.');
   });
 });
