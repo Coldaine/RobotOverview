@@ -20,8 +20,20 @@ describe('hangar preference vocabularies', () => {
     expect(isSourcePreference(null)).toBe(false);
     expect(SOURCE_PREFERENCES.map((source) => SOURCE_LABELS[source])).toEqual(['US Distributor', 'Import']);
     expect(SOURCE_META).toEqual({
-      us: { label: 'US Distributor', shortLabel: 'US', accent: 'cyan' },
-      import: { label: 'Import', shortLabel: 'IMP', accent: 'amber' },
+      us: {
+        label: 'US Distributor',
+        shortLabel: 'US',
+        accent: 'cyan',
+        activeClass: 'bg-cyan/15 text-cyan shadow-hud-cyan',
+        textClass: 'text-cyan',
+      },
+      import: {
+        label: 'Import',
+        shortLabel: 'IMP',
+        accent: 'amber',
+        activeClass: 'bg-amber/15 text-amber shadow-hud-amber',
+        textClass: 'text-amber',
+      },
     });
   });
 
