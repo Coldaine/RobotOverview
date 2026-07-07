@@ -1,18 +1,8 @@
 'use client';
-import type { Unit, UnitStatus } from '@/data/types';
+import type { Unit } from '@/data/types';
+import { unitStatusColorVar } from '@/lib/format';
 import type { ModuleBox, ViewMode } from '@/lib/twin';
 import { BAY_ICONS } from '@/components/bay-icons';
-
-const STATUS_COLOR: Record<UnitStatus, string> = {
-  operational: 'var(--color-signal-ok)',
-  'needs-attention': 'var(--color-amber)',
-  blocked: 'var(--color-signal-crit)',
-  'in-mission': 'var(--color-cyan)',
-  wishlist: 'var(--color-ink-dim)',
-  'on-order': 'var(--color-cyan)',
-  researching: 'var(--color-cyan)',
-  retired: 'var(--color-signal-idle)',
-};
 
 export function Module({
   module,
@@ -37,7 +27,7 @@ export function Module({
 }) {
   const Icon = unit ? BAY_ICONS[unit.bay] : BAY_ICONS.compute;
   const accent = hovered || isCore ? 'var(--color-cyan)' : 'var(--color-rim)';
-  const status = unit ? STATUS_COLOR[unit.status] : 'var(--color-ink-dim)';
+  const status = unit ? unitStatusColorVar(unit.status) : 'var(--color-ink-dim)';
   const isBus = mode === 'bus';
 
   return (

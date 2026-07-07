@@ -85,6 +85,19 @@ export const TONE_CLASSES: Record<
   idle: { text: 'text-ink-dim', border: 'border-rim', bg: 'bg-panel-2/50', dot: 'bg-ink-dim' },
 };
 
+export const TONE_COLOR_VARS: Record<keyof typeof TONE_CLASSES, string> = {
+  ok: 'var(--color-signal-ok)',
+  warn: 'var(--color-signal-warn)',
+  crit: 'var(--color-signal-crit)',
+  cyan: 'var(--color-cyan)',
+  amber: 'var(--color-amber)',
+  idle: 'var(--color-ink-dim)',
+};
+
+export function unitStatusColorVar(status: UnitStatus): string {
+  return TONE_COLOR_VARS[STATUS_META[status].tone];
+}
+
 export function timeAgo(iso: string): string {
   const then = new Date(iso).getTime();
   if (!Number.isFinite(then)) return 'unknown';

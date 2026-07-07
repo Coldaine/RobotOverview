@@ -6,7 +6,9 @@ import {
   STATUS_META,
   LIFECYCLE_META,
   ITEM_STATUS_META,
+  TONE_COLOR_VARS,
   WISHLIST_STATUS_META,
+  unitStatusColorVar,
 } from '@/lib/format';
 import {
   INVENTORY_ITEM_STATUSES,
@@ -61,6 +63,8 @@ describe('STATUS_META exhaustiveness', () => {
     expect(STATUS_META[status]).toBeDefined();
     expect(STATUS_META[status].label).toBeTruthy();
     expect(STATUS_META[status].tone).toBeTruthy();
+    expect(TONE_COLOR_VARS[STATUS_META[status].tone]).toBeTruthy();
+    expect(unitStatusColorVar(status)).toBe(TONE_COLOR_VARS[STATUS_META[status].tone]);
   });
 });
 
