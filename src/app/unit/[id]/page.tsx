@@ -536,7 +536,7 @@ export default function UnitDetail() {
               {u.links && u.links.length > 0 && (
                 <div className="mt-3 space-y-1">
                   {u.links.map((l) => (
-                    <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 font-mono text-[11px] text-cyan hover:underline">
+                    <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 font-mono text-[11px] text-cyan hover:underline">
                       <ExternalLink className="h-3 w-3" /> {l.label}
                     </a>
                   ))}
