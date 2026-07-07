@@ -1,7 +1,9 @@
 import {
   ACTIVITY_KINDS,
+  INSIGHT_CONFIDENCE_LEVELS,
   type ActivityKind,
   type InventoryItemStatus,
+  type InsightConfidence,
   type LifecycleState,
   type MissionStatus,
   type ProvenanceKind,
@@ -54,6 +56,20 @@ export const PROVENANCE_META: Record<ProvenanceKind, { label: string; cls: strin
   inferred: { label: 'INFERRED', cls: 'text-cyan border-cyan/30 bg-cyan/5' },
   open: { label: 'OPEN', cls: 'text-signal-warn border-signal-warn/30 bg-signal-warn/5' },
 };
+
+export const INSIGHT_CONFIDENCE_META: Record<InsightConfidence, { label: string; cls: string }> = {
+  high: { label: 'High', cls: 'border-signal-ok/40 bg-signal-ok/10 text-signal-ok' },
+  medium: { label: 'Medium', cls: 'border-amber/40 bg-amber/10 text-amber' },
+  low: { label: 'Low', cls: 'border-signal-crit/40 bg-signal-crit/10 text-signal-crit' },
+};
+
+export function insightConfidenceMeta(confidence: InsightConfidence | string): { label: string; cls?: string } {
+  if ((INSIGHT_CONFIDENCE_LEVELS as readonly string[]).includes(confidence)) {
+    return INSIGHT_CONFIDENCE_META[confidence as InsightConfidence];
+  }
+
+  return { label: confidence ? confidence[0].toUpperCase() + confidence.slice(1) : '' };
+}
 
 export const MISSION_STATUS_META: Record<MissionStatus, { label: string; cls: string }> = {
   planning: { label: 'Planning', cls: 'text-amber border-amber/40 bg-amber/10' },
