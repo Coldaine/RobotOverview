@@ -2,11 +2,15 @@
 title: Storage + Twin Pivot Plan
 date: 2026-06-28
 author: Patrick MacLyman (drafted with assistant)
-status: proposal
+status: historical proposal
 last_updated: 2026-07-01
 ---
 
 # Storage + Twin Pivot Plan
+
+> Historical proposal. Current deployment facts belong in `docs/deploy.md`; current data/backend
+> shape belongs in `db/hangar/standup.md`; current BEAST-01 operating facts belong in
+> `docs/beast-ops.md`. Use this only as design evidence after checking current owner docs and code.
 
 ## Why pivot
 

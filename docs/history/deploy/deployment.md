@@ -1,5 +1,5 @@
 ---
-title: Hangar Deployment (current direction)
+title: Hangar Deployment (historical direction)
 audience: AI agents and operators working on RobotOverview deployment
 status: historical
 last_updated: 2026-06-29
@@ -7,10 +7,10 @@ last_updated: 2026-06-29
 
 # Hangar Deployment
 
-> **Status: the deployment mechanism is being redesigned. It is paused, not broken.**
-> This is the source of truth for *where deployment stands and where it's going*. The previous
-> GitHub-Actions → GitOps → Argo CD pipeline is **superseded** and archived under
-> [`docs/history/`](../history/) — do not treat it as current.
+> Historical snapshot. The current deployment owner doc is `docs/deploy.md`; verify against
+> `coldaine-k8cluster` manifests and live cluster state before relying on anything here.
+> The previous GitHub-Actions -> GitOps -> Argo CD pipeline is superseded and should not be treated
+> as current guidance.
 
 ## Where it stands today
 

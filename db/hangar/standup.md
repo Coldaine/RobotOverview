@@ -27,6 +27,10 @@ This local database proves the schema and seed shape. It is not the production t
 The target database belongs to `C:\_projects\coldaine-k8cluster`: a logical `hangar` database inside the `pg18` CloudNativePG cluster. Provisioning is cluster-repo work (`databases/pg18.yaml` plus `docs/connection-registry.md`), with a `hangar` role, structured `HANGAR_DB_*` app config, a runtime credential path, and cluster-owned backup/restore evidence.
 
 Do not stand up a RobotOverview-owned Postgres server for Hangar; add a logical DB to `pg18`.
+`HANGAR_DB_HOST`, port, name, user, and SSL mode are non-secret config; only
+`HANGAR_DB_PASSWORD` is credential-bearing. The app currently accepts `HANGAR_DB_SSLMODE=disable`
+or `require`; `require` encrypts without authenticating the self-signed CNPG certificate chain.
+Future certificate-verified modes need an explicit trust-bundle/certificate contract.
 
 ## Files
 
@@ -34,6 +38,17 @@ Do not stand up a RobotOverview-owned Postgres server for Hangar; add a logical 
 - `migrations/` — additive live migrations for databases that already contain stored data.
 - `gen-seed.ts` — transforms `src/data/hangar.ts` → seed SQL (defensive: junctions filtered to resolvable refs).
 - `seed.sql` — generated output (committed so the DB rebuilds with `psql` alone).
+
+## App read path foundation
+
+The first browser-facing read lane is intentionally small and reusable:
+
+- `src/server/hangar/db.ts` lazily creates a `pg` pool only when a request asks for DB-backed data. It prefers structured `HANGAR_DB_*` config and keeps `HANGAR_DATABASE_URL`/`DATABASE_URL` only as compatibility paths.
+- `src/server/hangar/queryable.ts`, `read-model.ts`, and `validators.ts` hold the shared repository contracts: the minimal query client shape, Postgres-with-static-fallback behavior, and row validation/coercion helpers. New DB-backed surfaces should reuse these instead of copying the inventory fallback pattern.
+- `src/server/hangar/items.ts` maps normalized assets, groups, tags, and junctions back into the existing `InventoryItem` read model, including unit, mission, capability, and insight relationship arrays where present.
+- `src/app/api/hangar/items/route.ts` exposes the read-only smoke-test route with `{ source, fallbackReason, count, items }`.
+- `src/app/api/hangar/preflight/route.ts` exposes the no-fallback DB reachability gate.
+- `src/app/layout.tsx` reads inventory through the same server path at request time and passes `{ source, fallbackReason }` into the client store so the Shell can expose static fallback state.
 
 ## Rebuild from scratch
 
@@ -56,6 +71,11 @@ Cluster deployment is different: reserve the logical DB/role in `coldaine-k8clus
 - **Grouping** — `tags`/`asset_tags` (flexible, namespaced: `tag`/`class`/`category`) and first-class **`groups`/`asset_groups`** (`bay`|`kit`|`location`|`project`). Bays are **rows in `groups` with `kind='bay'`** — not SQL views. Current app-facing assets must have exactly one bay group; use non-bay groups or tags for additional membership until the UI model is explicitly multi-bay.
 - **Loadout** — `sockets` on a host, `interface_types` taxonomy, `socket_accepts` + `asset_interfaces` ⇒ candidacy, `loadout_assignments` ⇒ what's equipped with the proven compatible `interface_type_id`.
 - **`missions` · `capabilities` · `insights` · `activity_log`** — explicit mission child tables and junctions (`mission_requisitions`, `mission_after_actions`, `asset_capabilities`, `insight_assets`/`insight_missions`, …).
+
+A separate graph database is not the Hangar inventory target. Postgres plus junction tables and,
+when needed, recursive CTEs cover the current connected-model queries; the cluster's `falkordb`
+service is for graph-specific consumers, not for this master-inventory spine unless a future
+decision explicitly moves a graph-shaped workload there.
 
 ## Verification queries (the three proofs)
 

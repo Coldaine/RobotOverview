@@ -2,7 +2,7 @@
 title: RobotOverview Auto-Deploy Pipeline (SUPERSEDED)
 audience: historical — AI agents and operators working on RobotOverview or coldaine-k8cluster
 status: superseded
-superseded_by: docs/deploy/deployment.md
+superseded_by: docs/deploy.md
 last_updated: 2026-06-18
 archived: 2026-06-26
 ---
@@ -11,13 +11,13 @@ archived: 2026-06-26
 
 > **⚠️ SUPERSEDED — historical record only.** The deployment mechanism described here
 > (GitHub Actions build → write digest to the GitOps repo → Argo CD reconcile) is **no longer the
-> plan.** Deployment is being redesigned around Shipwright. See
-> [`docs/deploy/deployment.md`](../deploy/deployment.md) for the current direction. This document is
+> plan.** See
+> [`docs/deploy.md`](../deploy.md) for current verified deployment facts. This document is
 > kept for the design reasoning (pull-based, immutable digest pin, no inbound path) that may inform
 > the new pipeline. It was never fully activated — the GitOps App secrets were never configured.
 
-> (Original intent) Read this before touching deploys for RobotOverview. It is the source of truth
-> for how the app ships to the cluster, why it's built this way, and how to operate it.
+> (Original intent, now superseded) This described how the app was expected to ship to the cluster,
+> why that design was chosen, and how it would be operated.
 >
 > For the product/service boundary with MooseGooseWebsite, read
 > [Hangar Service Boundary](../deploy/hangar-service-boundary.md).
@@ -37,7 +37,7 @@ Two repos are involved:
 - **`Coldaine/RobotOverview`** (this repo) — the Next.js app + the CI that builds and deploys it.
 - **`Coldaine/coldaine-k8cluster`** — the GitOps repo Argo CD watches; the cluster's desired state.
 
-Current reality, as last checked on 2026-06-25:
+Historical state, as last checked on 2026-06-25:
 
 - Image builds on RobotOverview `main` are succeeding.
 - The GitOps write-back job is still skipping its real work when the GitHub App secrets are not

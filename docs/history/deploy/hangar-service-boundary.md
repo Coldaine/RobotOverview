@@ -7,10 +7,9 @@ last_updated: 2026-06-25
 
 # Hangar Service Boundary
 
-> **Note:** the *service boundary, subdomain, and cross-repo ownership* below are current. The
-> deployment **mechanism** described in **GitOps Write-Back** (GitHub Actions → GitOps → Argo CD) is
-> **superseded** — deployment is moving to Shipwright. See
-> [`deployment.md`](deployment.md) for the current direction.
+> Historical snapshot. Current deployment and service-boundary facts belong in `docs/deploy.md`
+> and must be verified against `coldaine-k8cluster` manifests and live cluster state. The GitOps
+> write-back mechanism below is superseded.
 
 RobotOverview, also called **The Hangar**, should be treated as a self-contained service in the
 MooseGoose web estate. It is not currently code that lives inside `MooseGooseWebsite`, and it does
@@ -84,7 +83,7 @@ RobotOverview main changes
 
 Argo CD only follows the GitOps repo. It does not choose the newest app image on its own.
 
-Current reality: the image build succeeds, but the write-back job no-ops when the required
+Historical state: the image build succeeded, but the write-back job no-oped when the required
 `GITOPS_APP_CLIENT_ID` and `GITOPS_APP_KEY` secrets are not configured in RobotOverview. Until those
 exist and the GitHub App can push to `coldaine-k8cluster`, the app image must be bumped manually in
 the cluster repo.

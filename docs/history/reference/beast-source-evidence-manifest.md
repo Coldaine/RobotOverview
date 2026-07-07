@@ -1,19 +1,18 @@
 ---
 title: BEAST-01 Source Evidence Manifest
 audience: AI agents and operators migrating BEAST source evidence to object storage
-status: reference
+status: historical reference
 last_updated: 2026-07-01
 ---
 
 # BEAST-01 Source Evidence Manifest
 
-This manifest records the authoritative local BEAST-01 source evidence currently
-cached under the ignored `UGV-Beast-Archive/` directory. The files must stay out of
-git. When the Hangar source archive bucket exists, upload these payloads and store
-the metadata rows in the database or object manifest.
+This historical manifest records BEAST-01 source evidence that was cached under the ignored
+`UGV-Beast-Archive/` directory on 2026-07-01. The files must stay out of git. Before migrating or
+relying on these payloads, verify the current local cache, upstream sources, and owner docs.
 
 The hashes below were computed locally on 2026-07-01 with SHA256. Local paths use
-the ignored cache path as the operator-visible source of truth for now.
+the ignored cache path that existed at the time of this snapshot.
 
 ## Manifest
 
@@ -67,8 +66,8 @@ current upstream:
 
 ## Notes
 
-- `UGV-Beast-Archive/` is the authoritative local cache until the source archive moves
-  to S3-compatible object storage.
+- `UGV-Beast-Archive/` was the local cache for this snapshot; verify it still exists and matches
+  before treating it as evidence for current work.
 - The local cache also contains human-authored index/summary files. Those are useful
   operator notes, but the manifest above tracks payloads that should become object-store
   objects.
