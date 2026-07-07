@@ -3,6 +3,8 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import { hangarData, isHangarBayId } from '../data/hangar';
 import { isInsightConfidence, isWishlistStatus } from '../data/types';
 import type { HangarReadStatus } from './hangar-read-status';
+import { isSourcePreference, isThemeMode, THEME_MODES } from './hangar-preferences';
+import type { SourcePreference, ThemeMode } from './hangar-preferences';
 import type {
   Bay,
   BayId,
@@ -36,8 +38,8 @@ const STORE_KEYS = {
   localInsights: 'hangar:localInsights',
 } as const;
 export const LOCAL_INSIGHT_PREFIX = 'local-';
-const SOURCES = ['us', 'import'] as const;
 export type InventoryReadStatus = HangarReadStatus;
+export type { SourcePreference, ThemeMode } from './hangar-preferences';
 // User overrides layered over the static spine — keep hangarData immutable.
 type ObjectiveOverrides = Record<string, Record<number, boolean>>; // missionId -> objIdx -> done
 type WishStatusOverrides = Record<string, WishlistStatus>; // wishlist id -> status
@@ -48,14 +50,6 @@ export interface NewInsightInput {
   tags?: string[];
   confidence?: Insight['confidence'];
 }
-const THEMES = ['blueprint', 'industrial', 'topology'] as const;
-export type ThemeMode = (typeof THEMES)[number];
-
-type SourcePreference = (typeof SOURCES)[number];
-
-function isThemeMode(value: string | null): value is ThemeMode {
-  return THEMES.some((t) => t === value);
-}
 
 function readStoredTheme(): ThemeMode {
   if (typeof window === 'undefined') return 'blueprint';
@@ -65,10 +59,6 @@ function readStoredTheme(): ThemeMode {
   } catch {
     return 'blueprint';
   }
-}
-
-function isSourcePreference(value: string | null): value is SourcePreference {
-  return SOURCES.some((source) => source === value);
 }
 
 function readStoredSource(): SourcePreference {
@@ -300,7 +290,7 @@ export function HangarProvider({
   useEffect(() => {
     writeStorageValue(STORE_KEYS.theme, theme);
     const body = document.body;
-    THEMES.forEach((t) => body.classList.remove(`theme-${t}`));
+    THEME_MODES.forEach((t) => body.classList.remove(`theme-${t}`));
     body.classList.add(`theme-${theme}`);
   }, [theme]);
 
