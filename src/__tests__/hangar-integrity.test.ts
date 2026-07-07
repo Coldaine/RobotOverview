@@ -47,6 +47,13 @@ describe('hangar.ts data integrity', () => {
     expect(Number.isFinite(timestamp), `${label} must parse as a timestamp`).toBe(true);
   }
 
+  function expectValidHttpUrl(value: string, label: string) {
+    expect(value.trim(), `${label} must not be blank`).not.toBe('');
+    expect(value, `${label} must not have surrounding whitespace`).toBe(value.trim());
+    const url = new URL(value);
+    expect(['http:', 'https:'], `${label} must use http(s)`).toContain(url.protocol);
+  }
+
   function normalizeLineEndings(value: string) {
     return value.replace(/\r\n/g, '\n');
   }
@@ -350,6 +357,17 @@ describe('hangar.ts data integrity', () => {
     hangarData.items.forEach((it) => {
       (it.sources ?? []).forEach((source) => {
         expect(SOURCE_RECORD_KINDS, `item "${it.id}" source "${source.label}" has invalid kind "${source.kind}"`).toContain(source.kind);
+      });
+    });
+  });
+
+  it('all item source labels, URLs, and access dates are usable', () => {
+    hangarData.items.forEach((it) => {
+      (it.sources ?? []).forEach((source) => {
+        expect(source.label.trim(), `item "${it.id}" source label must not be blank`).not.toBe('');
+        expect(source.label, `item "${it.id}" source label must not have surrounding whitespace`).toBe(source.label.trim());
+        expectValidHttpUrl(source.url, `item "${it.id}" source "${source.label}" url`);
+        expectValidTimestamp(source.accessedAt, `item "${it.id}" source "${source.label}" accessedAt`);
       });
     });
   });
