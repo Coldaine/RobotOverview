@@ -24,9 +24,36 @@ describe('Gauge (blueprint default theme)', () => {
   });
 
   it('does not divide by zero when budget is 0 (no NaN)', () => {
-    renderGauge({ label: 'Power', value: 5, budget: 0, unit: 'W' });
+    const { container } = renderGauge({ label: 'Power', value: 5, budget: 0, unit: 'W' });
     expect(screen.getByText('0%')).toBeInTheDocument();
     expect(screen.queryByText(/NaN/)).not.toBeInTheDocument();
+    expect(container.innerHTML).not.toMatch(/NaN|Infinity/);
+  });
+
+  it.each(['blueprint', 'industrial', 'topology'])(
+    'renders non-finite values as unknown without leaking invalid SVG numbers in %s theme',
+    (theme) => {
+      localStorage.setItem('hangar:theme', theme);
+
+      const { container } = renderGauge({
+        label: 'Power',
+        value: Number.NaN,
+        budget: Number.POSITIVE_INFINITY,
+        unit: 'W',
+      });
+
+      expect(screen.getByText('—')).toBeInTheDocument();
+      expect(screen.getByText(/(?:BUDGET|LIMIT): —/)).toBeInTheDocument();
+      expect(screen.getByText('0%')).toBeInTheDocument();
+      expect(container.innerHTML).not.toMatch(/NaN|Infinity/);
+    },
+  );
+
+  it('clamps negative progress to 0%', () => {
+    const { container } = renderGauge({ label: 'Power', value: -5, budget: 100, unit: 'W' });
+
+    expect(screen.getByText('0%')).toBeInTheDocument();
+    expect(container.innerHTML).not.toMatch(/stroke-dasharray="-|strokeDasharray&quot;:&quot;-/);
   });
 
   it('flags a warning above the 85% threshold', () => {

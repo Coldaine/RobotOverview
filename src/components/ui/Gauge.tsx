@@ -5,11 +5,26 @@ import { useHangar, useCalculatedConstraints } from '@/lib/store';
 import type { ConstraintGauge } from '@/data/types';
 import { money } from '@/lib/format';
 
+function safePercent(value: number, budget: number): number {
+  if (!Number.isFinite(value) || !Number.isFinite(budget) || budget <= 0) return 0;
+  return Math.max(0, (value / budget) * 100);
+}
+
+function isOverBudget(value: number, budget: number): boolean {
+  return Number.isFinite(value) && Number.isFinite(budget) && value > budget;
+}
+
+function formatGaugeValue(value: number, unit: string): string {
+  if (!Number.isFinite(value)) return '—';
+  if (unit === '$') return money(value);
+  return `${value}${unit}`;
+}
+
 export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: number }) {
   const { theme, data, lensMissionId } = useHangar();
   
-  const pct = gauge.budget > 0 ? (gauge.value / gauge.budget) * 100 : 0;
-  const over = gauge.value > gauge.budget;
+  const pct = safePercent(gauge.value, gauge.budget);
+  const over = isOverBudget(gauge.value, gauge.budget);
   
   const primaryMission = data.missions.find((m) => m.status === 'active') ?? data.missions[0];
   const activeMissionId = lensMissionId ?? primaryMission?.id ?? '';
@@ -18,11 +33,6 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
   const massG = allConstraints.find(c => c.unit === 'g') || { value: 0, budget: 1, label: 'Mass' };
   const powerG = allConstraints.find(c => c.unit === 'W') || { value: 0, budget: 1, label: 'Power' };
   const costG = allConstraints.find(c => c.unit === '$') || { value: 0, budget: 1, label: 'Cost' };
-
-  const formatVal = (val: number, unit: string) => {
-    if (unit === '$') return money(val);
-    return `${val}${unit}`;
-  };
 
   // Blueprint: neon segmented cockpit HUD arcs with 85% amber threshold warning.
   if (theme === 'blueprint') {
@@ -43,7 +53,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
         <div className="w-full flex items-baseline justify-between gap-2 mb-2">
           <span className="hud-label truncate">{gauge.label}</span>
           <span className={clsx("font-mono text-xs tabular-nums", over ? "text-signal-crit" : pct > 85 ? "text-signal-warn" : "text-cyan")}>
-            {formatVal(gauge.value, gauge.unit)}
+            {formatGaugeValue(gauge.value, gauge.unit)}
           </span>
         </div>
         <div className="relative w-28 h-28 flex items-center justify-center">
@@ -100,7 +110,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
           </div>
         </div>
         <div className="w-full text-center mt-1">
-          <span className="font-mono text-[9px] text-ink-dim">BUDGET: {formatVal(gauge.budget, gauge.unit)}</span>
+          <span className="font-mono text-[9px] text-ink-dim">BUDGET: {formatGaugeValue(gauge.budget, gauge.unit)}</span>
         </div>
       </div>
     );
@@ -130,7 +140,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
         <div className="mb-2 flex items-baseline justify-between gap-2">
           <span className="hud-label font-bold text-gray-700">{gauge.label}</span>
           <span className={clsx("font-mono text-xs font-bold tabular-nums", over ? "text-signal-crit" : "text-gray-900")}>
-            {formatVal(gauge.value, gauge.unit)}
+            {formatGaugeValue(gauge.value, gauge.unit)}
           </span>
         </div>
         <div className="relative w-full h-16 flex items-center justify-center">
@@ -180,7 +190,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
         </div>
         <div className="mt-1 flex justify-between font-mono text-[9px] text-gray-500 font-bold uppercase tracking-wider">
           <span>0%</span>
-          <span>LIMIT: {formatVal(gauge.budget, gauge.unit)}</span>
+          <span>LIMIT: {formatGaugeValue(gauge.budget, gauge.unit)}</span>
           <span>120%</span>
         </div>
       </div>
@@ -192,9 +202,9 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
   const isPower = gauge.unit === 'W';
   const isCost = gauge.unit === '$' || gauge.label.toLowerCase().includes('cost');
 
-  const massPct = massG.budget > 0 ? (massG.value / massG.budget) * 100 : 0;
-  const powerPct = powerG.budget > 0 ? (powerG.value / powerG.budget) * 100 : 0;
-  const costPct = costG.budget > 0 ? (costG.value / costG.budget) * 100 : 0;
+  const massPct = safePercent(massG.value, massG.budget);
+  const powerPct = safePercent(powerG.value, powerG.budget);
+  const costPct = safePercent(costG.value, costG.budget);
 
   const rMass = 38;
   const rPower = 28;
@@ -209,13 +219,13 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
       <div className="w-full flex items-baseline justify-between mb-2">
         <span className="hud-label font-bold text-violet-300">{gauge.label}</span>
         <span className="font-mono text-xs text-glow-cyan text-cyan font-bold tabular-nums">
-          {formatVal(gauge.value, gauge.unit)}
+          {formatGaugeValue(gauge.value, gauge.unit)}
         </span>
       </div>
       <div className="relative w-28 h-28 flex items-center justify-center">
         <svg viewBox="0 0 100 100" className="w-full h-full">
           {/* Bleeding concentric waves if overloaded and active */}
-          {isMass && massG.value > massG.budget && (
+          {isMass && isOverBudget(massG.value, massG.budget) && (
             <>
               <circle cx="50" cy="50" r={rMass} fill="none" stroke="var(--color-signal-crit)" strokeWidth="0.5">
                 <animate attributeName="r" values={`${rMass};${rMass + 14};${rMass}`} dur="2s" repeatCount="indefinite" />
@@ -223,7 +233,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
               </circle>
             </>
           )}
-          {isPower && powerG.value > powerG.budget && (
+          {isPower && isOverBudget(powerG.value, powerG.budget) && (
             <>
               <circle cx="50" cy="50" r={rPower} fill="none" stroke="var(--color-signal-crit)" strokeWidth="0.5">
                 <animate attributeName="r" values={`${rPower};${rPower + 12};${rPower}`} dur="2s" repeatCount="indefinite" />
@@ -231,7 +241,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
               </circle>
             </>
           )}
-          {isCost && costG.value > costG.budget && (
+          {isCost && isOverBudget(costG.value, costG.budget) && (
             <>
               <circle cx="50" cy="50" r={rCost} fill="none" stroke="var(--color-signal-crit)" strokeWidth="0.5">
                 <animate attributeName="r" values={`${rCost};${rCost + 10};${rCost}`} dur="2s" repeatCount="indefinite" />
@@ -255,7 +265,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
             cy="50"
             r={rMass}
             fill="none"
-            stroke={massG.value > massG.budget ? "var(--color-signal-crit)" : "var(--color-cyan)"}
+            stroke={isOverBudget(massG.value, massG.budget) ? "var(--color-signal-crit)" : "var(--color-cyan)"}
             strokeWidth="3.2"
             strokeLinecap="round"
             transform="rotate(-90 50 50)"
@@ -280,7 +290,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
             cy="50"
             r={rPower}
             fill="none"
-            stroke={powerG.value > powerG.budget ? "var(--color-signal-crit)" : "var(--color-cyan)"}
+            stroke={isOverBudget(powerG.value, powerG.budget) ? "var(--color-signal-crit)" : "var(--color-cyan)"}
             strokeWidth="3.2"
             strokeLinecap="round"
             transform="rotate(-90 50 50)"
@@ -305,7 +315,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
             cy="50"
             r={rCost}
             fill="none"
-            stroke={costG.value > costG.budget ? "var(--color-signal-crit)" : "var(--color-cyan)"}
+            stroke={isOverBudget(costG.value, costG.budget) ? "var(--color-signal-crit)" : "var(--color-cyan)"}
             strokeWidth="3.2"
             strokeLinecap="round"
             transform="rotate(-90 50 50)"
@@ -326,7 +336,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
         </div>
       </div>
       <div className="w-full text-center mt-1">
-        <span className="font-mono text-[9px] text-ink-dim">LIMIT: {formatVal(gauge.budget, gauge.unit)}</span>
+        <span className="font-mono text-[9px] text-ink-dim">LIMIT: {formatGaugeValue(gauge.budget, gauge.unit)}</span>
       </div>
     </div>
   );
