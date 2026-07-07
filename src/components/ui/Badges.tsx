@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
-import { STATUS_META, TONE_CLASSES } from '@/lib/format';
+import { PROVENANCE_META, STATUS_META, TONE_CLASSES } from '@/lib/format';
 import type { ProvenanceKind, UnitStatus } from '@/data/types';
 
 export function StatusBadge({ status }: { status: UnitStatus }) {
@@ -25,11 +25,6 @@ export function Tag({ children }: { children: ReactNode }) {
 
 export function ProvenanceTag({ provenance }: { provenance?: ProvenanceKind }) {
   if (!provenance) return null;
-  const map = {
-    owner: { label: 'OWNER', cls: 'text-signal-ok border-signal-ok/30 bg-signal-ok/5' },
-    inferred: { label: 'INFERRED', cls: 'text-cyan border-cyan/30 bg-cyan/5' },
-    open: { label: 'OPEN', cls: 'text-signal-warn border-signal-warn/30 bg-signal-warn/5' },
-  } as const;
-  const m = map[provenance];
+  const m = PROVENANCE_META[provenance];
   return <span className={clsx('chip', m.cls)}>{m.label}</span>;
 }

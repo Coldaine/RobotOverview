@@ -4,6 +4,7 @@ import {
   type InventoryItemStatus,
   type LifecycleState,
   type MissionStatus,
+  type ProvenanceKind,
   type UnitStatus,
   type WishlistStatus,
 } from '../data/types';
@@ -46,6 +47,12 @@ export const LIFECYCLE_META: Record<LifecycleState, { label: string }> = {
   deployed: { label: 'Deployed' },
   wishlist: { label: 'Wishlist' },
   'on-order': { label: 'On Order' },
+};
+
+export const PROVENANCE_META: Record<ProvenanceKind, { label: string; cls: string }> = {
+  owner: { label: 'OWNER', cls: 'text-signal-ok border-signal-ok/30 bg-signal-ok/5' },
+  inferred: { label: 'INFERRED', cls: 'text-cyan border-cyan/30 bg-cyan/5' },
+  open: { label: 'OPEN', cls: 'text-signal-warn border-signal-warn/30 bg-signal-warn/5' },
 };
 
 export const MISSION_STATUS_META: Record<MissionStatus, { label: string; cls: string }> = {

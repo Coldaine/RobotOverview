@@ -11,6 +11,7 @@ import {
   ITEM_STATUS_META,
   TONE_COLOR_VARS,
   WISHLIST_STATUS_META,
+  PROVENANCE_META,
   activityKindMeta,
   unitStatusColorVar,
 } from '@/lib/format';
@@ -19,6 +20,7 @@ import {
   LIFECYCLE_STATES,
   MISSION_STATUSES,
   ACTIVITY_KINDS,
+  PROVENANCE_KINDS,
   UNIT_STATUSES,
   WISHLIST_STATUSES,
 } from '@/data/types';
@@ -77,6 +79,22 @@ describe('LIFECYCLE_META exhaustiveness', () => {
   it.each(LIFECYCLE_STATES)('has an entry for lifecycle "%s"', (state) => {
     expect(LIFECYCLE_META[state]).toBeDefined();
     expect(LIFECYCLE_META[state].label).toBeTruthy();
+  });
+});
+
+describe('PROVENANCE_META exhaustiveness', () => {
+  it.each(PROVENANCE_KINDS)('has an entry for provenance "%s"', (provenance) => {
+    expect(PROVENANCE_META[provenance]).toBeDefined();
+    expect(PROVENANCE_META[provenance].label).toBeTruthy();
+    expect(PROVENANCE_META[provenance].cls).toBeTruthy();
+  });
+
+  it('preserves provenance tag labels and classes', () => {
+    expect(PROVENANCE_META).toEqual({
+      owner: { label: 'OWNER', cls: 'text-signal-ok border-signal-ok/30 bg-signal-ok/5' },
+      inferred: { label: 'INFERRED', cls: 'text-cyan border-cyan/30 bg-cyan/5' },
+      open: { label: 'OPEN', cls: 'text-signal-warn border-signal-warn/30 bg-signal-warn/5' },
+    });
   });
 });
 
