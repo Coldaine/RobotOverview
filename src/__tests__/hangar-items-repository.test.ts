@@ -24,6 +24,38 @@ afterEach(async () => {
 });
 
 describe('Hangar inventory Postgres read path', () => {
+  function inventoryRow(
+    overrides: Partial<Parameters<typeof mapInventoryItemRow>[0]> = {},
+  ): Parameters<typeof mapInventoryItemRow>[0] {
+    return {
+      id: 'strict-row',
+      name: 'Strict Row',
+      manufacturer: null,
+      model: null,
+      bay_groups: ['network'],
+      category: null,
+      status: 'owned',
+      provenance: 'owner',
+      summary: null,
+      description: null,
+      planning_notes: null,
+      acquired: null,
+      horizon: null,
+      quantity: 1,
+      price_us: null,
+      price_import: null,
+      specs: [],
+      limitations: [],
+      sources: [],
+      tags: [],
+      related_units: [],
+      related_missions: [],
+      related_capabilities: [],
+      related_insights: [],
+      ...overrides,
+    };
+  }
+
   it('shared read helper falls back to static data when a configured Postgres read fails', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     const staticData = [{ id: 'static-item' }];
@@ -200,33 +232,48 @@ describe('Hangar inventory Postgres read path', () => {
 
   it('rejects malformed Postgres text arrays instead of dropping relationship ids', () => {
     expect(() =>
-      mapInventoryItemRow({
+      mapInventoryItemRow(inventoryRow({
         id: 'malformed-relations',
-        name: 'Malformed Relations',
-        manufacturer: null,
-        model: null,
-        bay_groups: ['network'],
-        category: null,
-        status: 'owned',
-        provenance: 'owner',
-        summary: null,
-        description: null,
-        planning_notes: null,
-        acquired: null,
-        horizon: null,
-        quantity: 1,
-        price_us: null,
-        price_import: null,
-        specs: [],
-        limitations: [],
-        sources: [],
-        tags: [],
         related_units: ['beast', 42],
-        related_missions: [],
-        related_capabilities: [],
-        related_insights: [],
-      }),
+      })),
     ).toThrow('Invalid related units from hangar DB: expected text at index 1.');
+  });
+
+  it('rejects malformed bay arrays instead of dropping bad bay entries', () => {
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        id: 'malformed-bay',
+        bay_groups: ['network', 42],
+      })),
+    ).toThrow('Invalid bay groups from hangar DB: expected text at index 1.');
+  });
+
+  it('rejects malformed numeric values instead of treating them as absent prices', () => {
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        price_us: 'not-a-number',
+      })),
+    ).toThrow('Invalid inventory price_us from hangar DB: not-a-number');
+  });
+
+  it('rejects malformed JSON arrays instead of filtering bad nested records', () => {
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        specs: [{ label: 'Video' }],
+      })),
+    ).toThrow('Invalid inventory specs from hangar DB: expected valid object at index 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        sources: [{ label: 'Missing URL', accessedAt: '2026-07-07', kind: 'official' }],
+      })),
+    ).toThrow('Invalid inventory sources from hangar DB: expected valid object at index 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        limitations: ['valid limitation', 42],
+      })),
+    ).toThrow('Invalid inventory limitations from hangar DB: expected text at index 1.');
   });
 
   it('accepts null Postgres text arrays as empty relationship fields', () => {
