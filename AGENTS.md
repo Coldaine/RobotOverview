@@ -35,7 +35,8 @@ docs exist to serve the visible experience, never the other way around.
 
 Agents ingest items, research, and unit data **directly into `src/data/hangar.ts`** (typed by
 `src/data/types.ts`; referential integrity enforced by `hangar-integrity.test.ts`). Content
-ships to production inside the Docker image — deploying the app is deploying the content.
+for static or not-yet-cutover surfaces ships inside the Docker image. Postgres-backed lanes
+need the matching seed/migration/data application in addition to an app deploy.
 Postgres (`db/hangar/`) follows the TypeScript spine: when shapes change, regenerate
 schema/seed, and any live migration must handle data already stored in the database.
 If the app serves static-fallback data instead of Postgres, that state must be loudly
