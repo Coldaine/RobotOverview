@@ -25,7 +25,7 @@
 
 ## Independent Review
 
-<!-- Required: give agents an honest out; the point is to remember the review step, not to get stuck. -->
+<!-- Required: answer one path. Broad/risky changes should call a subagent or independent reviewer; narrow/mechanical changes may record why not. -->
 
 - [ ] I called a subagent or independent reviewer and incorporated or recorded the result.
 - [ ] Not called because this change was narrow/mechanical, no suitable reviewer was available, or this branch already received equivalent review.
@@ -34,21 +34,21 @@
 
 ## Documentation
 
-<!-- Required for every PR. Use "None required" only with a reason. -->
+<!-- Required for every PR. Use "None required" only with a reason; run the AGENTS.md Documentation workflow for documentation changes. -->
 
 - Documentation updates made:
   <!-- files and why -->
 - Documentation considered but not changed:
   <!-- owner docs checked and why no edit was needed -->
 - Documentation workflow:
-  <!-- Confirm AGENTS.md Documentation workflow was followed, or N/A with reason. -->
+  <!-- Confirm AGENTS.md Documentation workflow was followed for doc changes, or N/A with reason. -->
 
 ## Superseded Docs / Cleanup
 
-<!-- Required: describe cleanup review even when no cleanup was needed. -->
+<!-- Required for documentation changes; for non-doc changes write "None required" with a reason. Consult docs/history only when the current owner docs or change scope point there. -->
 
-- Superseded or historical docs reviewed:
-  <!-- docs/history, old plans, related README/AGENTS guidance, etc. -->
+- Current or superseded docs reviewed:
+  <!-- owner docs, related README/AGENTS guidance, old plans, or docs/history only when relevant -->
 - Cleanup performed:
   <!-- updated, summarized, moved, marked historical, or "None" -->
 - Wording/change rationale:

@@ -23,11 +23,12 @@ docs exist to serve the visible experience, never the other way around.
 - `docs/history/` is a graveyard, not guidance. Do not resurrect its process machinery
   (evidence manifests, doc-ownership workflows, mandatory-read regimes).
 
-## The four live docs
+## Live owner docs
 
 - `docs/NORTH_STAR.md` — intent, goals, anti-goals.
 - `docs/deploy.md` — verified deployment facts and gaps.
 - `docs/beast-ops.md` — BEAST-01 operating facts (network, protocol, telemetry, safety).
+- `db/hangar/standup.md` — data/backend shape, seed, migrations, and read-cutover status.
 - `AGENTS.md` — this file.
 
 ## Content workflow
