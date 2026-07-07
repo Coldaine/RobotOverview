@@ -37,6 +37,13 @@ describe('hangar.ts data integrity', () => {
     expectFiniteNonNegative(value, label);
   }
 
+  function expectValidTimestamp(value: string, label: string) {
+    const timestamp = new Date(value).getTime();
+    expect(value.trim(), `${label} must not be blank`).not.toBe('');
+    expect(value, `${label} must not have surrounding whitespace`).toBe(value.trim());
+    expect(Number.isFinite(timestamp), `${label} must parse as a timestamp`).toBe(true);
+  }
+
   it('has no duplicate unit IDs', () => {
     const ids = hangarData.units.map((u) => u.id);
     expect(ids.length).toBe(new Set(ids).size);
@@ -236,6 +243,12 @@ describe('hangar.ts data integrity', () => {
     });
   });
 
+  it('all insight timestamps that seed Postgres are parseable', () => {
+    hangarData.insights.forEach((insight) => {
+      expectValidTimestamp(insight.capturedAt, `insight "${insight.id}" capturedAt`);
+    });
+  });
+
   it('all loadout.hotspotId values reference a hotspot on the same unit', () => {
     hangarData.units.forEach((u) => {
       if (!u.loadout || !u.hotspots) return;
@@ -397,6 +410,12 @@ describe('hangar.ts data integrity', () => {
   it('all activity.kind values are valid ActivityKind values', () => {
     hangarData.activity.forEach((event) => {
       expect(ACTIVITY_KINDS, `activity "${event.id}" has invalid kind "${event.kind}"`).toContain(event.kind);
+    });
+  });
+
+  it('all activity timestamps that seed Postgres are parseable', () => {
+    hangarData.activity.forEach((event) => {
+      expectValidTimestamp(event.at, `activity "${event.id}" at`);
     });
   });
 });
