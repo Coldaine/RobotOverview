@@ -25,18 +25,20 @@ import { StatusBadge, Tag, ProvenanceTag } from '@/components/ui/Badges';
 import { SectionTitle } from '@/components/ui/Primitives';
 import { useHangar } from '@/lib/store';
 import { LIFECYCLE_META, money } from '@/lib/format';
+import {
+  unitShortcutIconKind,
+  unitShortcutKindLabel,
+  unitShortcutValue,
+} from '@/lib/unit-shortcuts';
 import type { UnitShortcut } from '@/data/types';
 import clsx from 'clsx';
 
 function ShortcutIcon({ shortcut }: { shortcut: UnitShortcut }) {
-  if (shortcut.type === 'command') return <Terminal className="h-3.5 w-3.5" />;
-  if (shortcut.id === 'jupyterlab') return <BookOpen className="h-3.5 w-3.5" />;
-  if (shortcut.id === 'camera-stream') return <Camera className="h-3.5 w-3.5" />;
+  const iconKind = unitShortcutIconKind(shortcut);
+  if (iconKind === 'terminal') return <Terminal className="h-3.5 w-3.5" />;
+  if (iconKind === 'book') return <BookOpen className="h-3.5 w-3.5" />;
+  if (iconKind === 'camera') return <Camera className="h-3.5 w-3.5" />;
   return <Monitor className="h-3.5 w-3.5" />;
-}
-
-function shortcutValue(shortcut: UnitShortcut) {
-  return shortcut.type === 'url' ? shortcut.url : shortcut.command;
 }
 
 export default function UnitDetail() {
@@ -407,12 +409,12 @@ export default function UnitDetail() {
                       </div>
 
                       <code className="block min-h-8 break-all rounded border border-rim/50 bg-void/45 px-2 py-1.5 font-mono text-[10px] leading-relaxed text-cyan/90">
-                        {shortcutValue(shortcut)}
+                        {unitShortcutValue(shortcut)}
                       </code>
 
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-ink-dim">
-                          {shortcut.type === 'url' ? 'External' : 'Command'}
+                          {unitShortcutKindLabel(shortcut)}
                         </span>
                         {shortcut.type === 'url' ? (
                           <a
