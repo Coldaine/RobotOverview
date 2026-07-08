@@ -274,6 +274,12 @@ describe('Hangar inventory Postgres read path', () => {
         quantity: '1.5',
       })),
     ).toThrow('Invalid inventory quantity from hangar DB: expected a positive integer, got 1.5.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        quantity: null,
+      })),
+    ).toThrow('Invalid inventory quantity from hangar DB: expected a positive integer, got null.');
   });
 
   it('rejects invalid provenance values instead of treating them as absent', () => {
@@ -319,7 +325,21 @@ describe('Hangar inventory Postgres read path', () => {
 
     expect(() =>
       mapInventoryItemRow(inventoryRow({
+        specs: [{ label: 'Video ', value: '2K QHD @ 60 FPS' }],
+      })),
+    ).toThrow('Invalid inventory specs from hangar DB: expected valid object at index 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
         limitations: ['valid limitation', ' '],
+      })),
+    ).toThrow(
+      'Invalid inventory limitations from hangar DB: expected non-blank trimmed text at index 1.',
+    );
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        limitations: ['valid limitation', ' valid limitation'],
       })),
     ).toThrow(
       'Invalid inventory limitations from hangar DB: expected non-blank trimmed text at index 1.',
@@ -357,9 +377,48 @@ describe('Hangar inventory Postgres read path', () => {
       mapInventoryItemRow(inventoryRow({
         sources: [
           {
+            label: 'Example source ',
+            url: 'https://example.com/source',
+            accessedAt: '2026-07-07',
+            kind: 'official',
+          },
+        ],
+      })),
+    ).toThrow('Invalid inventory sources from hangar DB: expected valid object at index 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        sources: [
+          {
+            label: 'Example source',
+            url: ' https://example.com/source',
+            accessedAt: '2026-07-07',
+            kind: 'official',
+          },
+        ],
+      })),
+    ).toThrow('Invalid inventory sources from hangar DB: expected valid object at index 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        sources: [
+          {
             label: 'Example source',
             url: 'https://example.com/source',
             accessedAt: 'not-a-date',
+            kind: 'official',
+          },
+        ],
+      })),
+    ).toThrow('Invalid inventory sources from hangar DB: expected valid object at index 0.');
+
+    expect(() =>
+      mapInventoryItemRow(inventoryRow({
+        sources: [
+          {
+            label: 'Example source',
+            url: 'https://example.com/source',
+            accessedAt: '2026',
             kind: 'official',
           },
         ],

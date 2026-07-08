@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { describe, it, expect } from 'vitest';
 import { HANGAR_BAY_IDS, hangarData } from '@/data/hangar';
 import { seedSql } from '../../db/hangar/gen-seed';
+import { isTrimmedTimestamp } from '@/server/hangar/validators';
 import {
   ACTIVITY_KINDS,
   BAY_ACCENTS,
@@ -41,10 +42,7 @@ describe('hangar.ts data integrity', () => {
   }
 
   function expectValidTimestamp(value: string, label: string) {
-    const timestamp = new Date(value).getTime();
-    expect(value.trim(), `${label} must not be blank`).not.toBe('');
-    expect(value, `${label} must not have surrounding whitespace`).toBe(value.trim());
-    expect(Number.isFinite(timestamp), `${label} must parse as a timestamp`).toBe(true);
+    expect(isTrimmedTimestamp(value), `${label} must be a trimmed ISO date or timestamp`).toBe(true);
   }
 
   function expectValidHttpUrl(value: string, label: string) {
@@ -60,8 +58,12 @@ describe('hangar.ts data integrity', () => {
 
   it('committed Postgres seed SQL matches freshly generated hangar.ts output', () => {
     const committedSeedSql = readFileSync(resolve(process.cwd(), 'db/hangar/seed.sql'), 'utf8');
+    const generatedSeedSql = normalizeLineEndings(seedSql);
 
-    expect(normalizeLineEndings(committedSeedSql)).toBe(seedSql);
+    expect(
+      normalizeLineEndings(committedSeedSql) === generatedSeedSql,
+      'db/hangar/seed.sql is stale; regenerate it from db/hangar/gen-seed.ts.',
+    ).toBe(true);
   });
 
   it('has no duplicate unit IDs', () => {
@@ -153,7 +155,7 @@ describe('hangar.ts data integrity', () => {
         expect(shortcut.id, `unit "${u.id}" shortcut id must not have surrounding whitespace`).toBe(shortcut.id.trim());
         expect(shortcut.label.trim(), `unit "${u.id}" shortcut "${shortcut.id}" label must not be blank`).not.toBe('');
         expect(shortcut.label, `unit "${u.id}" shortcut "${shortcut.id}" label must not have surrounding whitespace`).toBe(shortcut.label.trim());
-        if (shortcut.note) {
+        if (shortcut.note !== undefined) {
           expect(shortcut.note.trim(), `unit "${u.id}" shortcut "${shortcut.id}" note must not be blank`).not.toBe('');
           expect(shortcut.note, `unit "${u.id}" shortcut "${shortcut.id}" note must not have surrounding whitespace`).toBe(shortcut.note.trim());
         }
@@ -214,7 +216,7 @@ describe('hangar.ts data integrity', () => {
 
   it('all wishlist.unlocks IDs exist in capabilities', () => {
     hangarData.wishlist.forEach((w) => {
-      if (w.unlocks) {
+      if (w.unlocks !== undefined) {
         expect(
           capabilityIds.has(w.unlocks),
           `wishlist item "${w.id}" references unknown unlock capability "${w.unlocks}"`,
@@ -295,7 +297,7 @@ describe('hangar.ts data integrity', () => {
 
   it('all capability.bay values are valid BayIds', () => {
     hangarData.capabilities.forEach((cap) => {
-      if (!cap.bay) return;
+      if (cap.bay === undefined) return;
       expect(HANGAR_BAY_IDS, `capability "${cap.id}" has invalid bay "${cap.bay}"`).toContain(cap.bay);
     });
   });

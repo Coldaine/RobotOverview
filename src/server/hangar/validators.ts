@@ -58,8 +58,28 @@ export function isTrimmedHttpUrl(value: unknown): value is string {
   }
 }
 
+const ISO_DATE_OR_TIMESTAMP_PATTERN =
+  /^(\d{4})-(\d{2})-(\d{2})(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?)?$/;
+
+function hasValidIsoDateParts(value: string): boolean {
+  const match = ISO_DATE_OR_TIMESTAMP_PATTERN.exec(value);
+  if (!match) return false;
+
+  const [, year, month, day] = match;
+  const parsed = new Date(`${year}-${month}-${day}T00:00:00Z`);
+  return (
+    parsed.getUTCFullYear() === Number(year) &&
+    parsed.getUTCMonth() + 1 === Number(month) &&
+    parsed.getUTCDate() === Number(day)
+  );
+}
+
 export function isTrimmedTimestamp(value: unknown): value is string {
-  return isTrimmedNonBlankString(value) && Number.isFinite(new Date(value).getTime());
+  return (
+    isTrimmedNonBlankString(value) &&
+    hasValidIsoDateParts(value) &&
+    Number.isFinite(new Date(value).getTime())
+  );
 }
 
 export function postgresNonBlankTextArray(value: unknown, label: string): string[] {

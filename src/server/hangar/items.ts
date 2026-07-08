@@ -183,6 +183,9 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
       ? { us: priceUs, import: priceImport }
       : undefined;
   const quantity = positiveIntegerOrNull(row.quantity, 'inventory quantity');
+  if (quantity === null) {
+    throw new Error('Invalid inventory quantity from hangar DB: expected a positive integer, got null.');
+  }
 
   return {
     id: row.id,
@@ -197,7 +200,7 @@ export function mapInventoryItemRow(row: InventoryItemRow): InventoryItem {
     planningNotes: row.planning_notes ?? undefined,
     specs: specRows(row.specs),
     price,
-    quantity: quantity ?? undefined,
+    quantity,
     tags: optionalArray(postgresTextArray(row.tags, 'inventory tags')),
     relatedUnits: optionalArray(postgresTextArray(row.related_units, 'related units')),
     relatedMissions: optionalArray(postgresTextArray(row.related_missions, 'related missions')),

@@ -4,7 +4,7 @@ import { hangarData } from '@/data/hangar';
 import Quartermaster from '@/app/quartermaster/page';
 import { HangarProvider } from '@/lib/store';
 import { money } from '@/lib/format';
-import type { SourcePreference } from '@/lib/hangar-preferences';
+import { sourcePriceOrZero, type SourcePreference } from '@/lib/hangar-preferences';
 
 function renderQuartermaster() {
   return render(
@@ -16,8 +16,7 @@ function renderQuartermaster() {
 
 function sourceTotal(source: SourcePreference) {
   return hangarData.wishlist.reduce((sum, wish) => {
-    const price = source === 'us' ? wish.price.us : wish.price.import ?? wish.price.us;
-    return sum + (price ?? 0);
+    return sum + sourcePriceOrZero(wish.price, source);
   }, 0);
 }
 
