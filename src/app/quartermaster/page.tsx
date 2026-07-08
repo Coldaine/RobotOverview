@@ -136,7 +136,9 @@ export default function Quartermaster() {
       <div className="space-y-3">
         {wishlist.map((w, i) => {
           const st = WISHLIST_STATUS_META[w.status];
-          const steppable = ACQUISITION_PIPELINE_STATUSES.indexOf(w.status) !== -1;
+          const pipelineIndex = ACQUISITION_PIPELINE_STATUSES.indexOf(w.status);
+          const canStepBack = pipelineIndex > 0;
+          const canStepForward = pipelineIndex !== -1 && pipelineIndex < ACQUISITION_PIPELINE_STATUSES.length - 1;
           const us = w.price.us;
           const imp = w.price.import;
           const active = sourcePrice(w.price, source);
@@ -163,7 +165,7 @@ export default function Quartermaster() {
                         type="button"
                         aria-label={`Move ${w.name} back a stage`}
                         onClick={() => stepStatus(w, -1)}
-                        disabled={!steppable}
+                        disabled={!canStepBack}
                         className="grid h-5 w-5 place-items-center rounded border border-rim/60 bg-panel-2/40 text-ink-dim hover:border-cyan/40 hover:text-cyan cursor-pointer disabled:cursor-not-allowed disabled:opacity-30"
                       >
                         <ChevronLeft className="h-3 w-3" />
@@ -173,7 +175,7 @@ export default function Quartermaster() {
                         type="button"
                         aria-label={`Advance ${w.name} a stage`}
                         onClick={() => stepStatus(w, 1)}
-                        disabled={!steppable}
+                        disabled={!canStepForward}
                         className="grid h-5 w-5 place-items-center rounded border border-rim/60 bg-panel-2/40 text-ink-dim hover:border-amber/40 hover:text-amber cursor-pointer disabled:cursor-not-allowed disabled:opacity-30"
                       >
                         <ChevronRight className="h-3 w-3" />

@@ -297,9 +297,11 @@ INSERT INTO mission_objectives(mission_id,text,done) VALUES ('perimeter-mapping'
 INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES ('perimeter-mapping','Onboard Power',0,25,'W');
 INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES ('perimeter-mapping','Payload',0,500,'g');
 INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES ('perimeter-mapping','Loadout Cost',0,600,'$');
-INSERT INTO missions(id,code,name,status,objective,environment) VALUES ('pool-deck-patrol','MSN-03','Pool Deck Patrol','standby','Placeholder patrol/automation mission around the pool deck.',NULL);
+INSERT INTO missions(id,code,name,status,objective,environment) VALUES ('pool-deck-patrol','MSN-03','Pool Deck Patrol','standby','Map safe, supervised rover lanes around the pool deck before any patrol or automation loop is trusted near water.',NULL);
 INSERT INTO mission_requisitions(mission_id,asset_id) VALUES ('pool-deck-patrol','beast') ON CONFLICT DO NOTHING;
-INSERT INTO mission_objectives(mission_id,text,done) VALUES ('pool-deck-patrol','Scope the job',false);
+INSERT INTO mission_objectives(mission_id,text,done) VALUES ('pool-deck-patrol','Mark pool-edge exclusion zones and patio pinch points',false);
+INSERT INTO mission_objectives(mission_id,text,done) VALUES ('pool-deck-patrol','Verify low-speed teleop path with manual stop coverage',false);
+INSERT INTO mission_objectives(mission_id,text,done) VALUES ('pool-deck-patrol','Capture deck lighting, glare, and WiFi notes for camera placement',false);
 INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES ('pool-deck-patrol','Onboard Power',0,25,'W');
 INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES ('pool-deck-patrol','Payload',0,500,'g');
 INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES ('pool-deck-patrol','Loadout Cost',0,300,'$');

@@ -607,11 +607,16 @@ export const hangarData: HangarData = {
       code: 'MSN-03',
       name: 'Pool Deck Patrol',
       status: 'standby',
-      objective: 'Placeholder patrol/automation mission around the pool deck.',
+      objective:
+        'Map safe, supervised rover lanes around the pool deck before any patrol or automation loop is trusted near water.',
       requisitionedUnits: ['beast'],
-      requiredLoadout: ['TBD'],
+      requiredLoadout: ['Pool-edge standoff markers', 'Low-speed teleop profile', 'Outdoor camera coverage'],
       wishlist: [],
-      objectives: [{ text: 'Scope the job', done: false }],
+      objectives: [
+        { text: 'Mark pool-edge exclusion zones and patio pinch points', done: false },
+        { text: 'Verify low-speed teleop path with manual stop coverage', done: false },
+        { text: 'Capture deck lighting, glare, and WiFi notes for camera placement', done: false },
+      ],
       constraints: [
         { label: 'Onboard Power', value: 0, budget: 25, unit: 'W' },
         { label: 'Payload', value: 0, budget: 500, unit: 'g' },

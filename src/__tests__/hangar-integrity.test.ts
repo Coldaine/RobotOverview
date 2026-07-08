@@ -52,6 +52,12 @@ describe('hangar.ts data integrity', () => {
     expect(['http:', 'https:'], `${label} must use http(s)`).toContain(url.protocol);
   }
 
+  function expectConcreteDisplayText(value: string, label: string) {
+    expect(value.trim(), `${label} must not be blank`).not.toBe('');
+    expect(value, `${label} must not have surrounding whitespace`).toBe(value.trim());
+    expect(value, `${label} must not contain placeholder copy`).not.toMatch(/\b(?:placeholder|tbd)\b/i);
+  }
+
   function normalizeLineEndings(value: string) {
     return value.replace(/\r\n/g, '\n');
   }
@@ -173,6 +179,21 @@ describe('hangar.ts data integrity', () => {
   it('all mission.status values are valid MissionStatus values', () => {
     hangarData.missions.forEach((m) => {
       expect(MISSION_STATUSES, `mission "${m.id}" has invalid status "${m.status}"`).toContain(m.status);
+    });
+  });
+
+  it('all mission display text is concrete enough to publish', () => {
+    hangarData.missions.forEach((m) => {
+      expectConcreteDisplayText(m.objective, `mission "${m.id}" objective`);
+      m.requiredLoadout.forEach((item, index) => {
+        expectConcreteDisplayText(item, `mission "${m.id}" requiredLoadout ${index}`);
+      });
+      m.objectives.forEach((objective, index) => {
+        expectConcreteDisplayText(objective.text, `mission "${m.id}" objective ${index}`);
+      });
+      (m.afterAction ?? []).forEach((entry, index) => {
+        expectConcreteDisplayText(entry, `mission "${m.id}" afterAction ${index}`);
+      });
     });
   });
 

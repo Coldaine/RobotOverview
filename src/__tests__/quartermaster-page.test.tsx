@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { hangarData } from '@/data/hangar';
 import Quartermaster from '@/app/quartermaster/page';
 import { HangarProvider } from '@/lib/store';
-import { money } from '@/lib/format';
+import { ACQUISITION_PIPELINE_STATUSES, money } from '@/lib/format';
 import { sourcePriceOrZero, type SourcePreference } from '@/lib/hangar-preferences';
 
 function renderQuartermaster() {
@@ -42,5 +42,23 @@ describe('Quartermaster source preference', () => {
     const tab = screen.getByText('Tab (IMP)').parentElement;
     expect(tab).toHaveTextContent(money(sourceTotal('import')));
     expect(importButton).toHaveClass('bg-amber/15', 'text-amber', 'shadow-hud-amber');
+  });
+});
+
+describe('Quartermaster acquisition stepper', () => {
+  it('disables stepper buttons at the ends of the acquisition pipeline', () => {
+    const first = hangarData.wishlist.find((wish) => wish.status === ACQUISITION_PIPELINE_STATUSES[0]);
+    const last = hangarData.wishlist.find((wish) => wish.id !== first?.id);
+    expect(first, 'fixture needs a first pipeline item').toBeDefined();
+    expect(last, 'fixture needs a second item for the received override').toBeDefined();
+
+    localStorage.setItem('hangar:wishStatus', JSON.stringify({ [last!.id]: 'received' }));
+
+    renderQuartermaster();
+
+    expect(screen.getByRole('button', { name: `Move ${first!.name} back a stage` })).toBeDisabled();
+    expect(screen.getByRole('button', { name: `Advance ${first!.name} a stage` })).toBeEnabled();
+    expect(screen.getByRole('button', { name: `Move ${last!.name} back a stage` })).toBeEnabled();
+    expect(screen.getByRole('button', { name: `Advance ${last!.name} a stage` })).toBeDisabled();
   });
 });
