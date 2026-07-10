@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # encoding: utf-8
+import atexit
+import signal
 import sys
 import select
 import termios
@@ -23,9 +25,8 @@ q/z : increase/decrease max speeds by 10%
 w/x : increase/decrease only linear speed by 10%
 e/c : increase/decrease only angular speed by 10%
 t/T : x and y speed switch
-s/S : stop keyboard control
-space key, k : force stop
-unknown keys : stop smoothly (after several in one poll)
+s/S : stop keyboard control (publishes zero while off)
+space key, k : stop motion (zero velocity)
 
 Control Your Pt!
 ---------------------------
@@ -34,8 +35,8 @@ Control Your Pt!
 2 : Increase Joint2 (Y)
 r : Reverse direction
 
-SSH: tune drive_idle_timeout if it stops while you still hold a key
-     (larger = safer hold, slower stop after real release).
+Drive keys latch until Space/k stops.
+No auto-stop on key release.
 
 CTRL-C to quit
 """
@@ -75,6 +76,27 @@ speedBindings = {
 LOOP_PERIOD = 0.02
 
 
+class _TerminalSettings:
+    """Save/restore TTY attributes so the shell keeps echo after exit."""
+
+    def __init__(self, fd):
+        self._fd = fd
+        self._saved = termios.tcgetattr(fd)
+        self._restored = False
+
+    def set_cbreak(self):
+        tty.setcbreak(self._fd)
+
+    def restore(self):
+        if self._restored:
+            return
+        try:
+            termios.tcsetattr(self._fd, termios.TCSAFLUSH, self._saved)
+        except termios.error:
+            pass
+        self._restored = True
+
+
 class UgvKeyboard(Node):
     def __init__(self, name):
         super().__init__(name)
@@ -85,7 +107,6 @@ class UgvKeyboard(Node):
 
         self.declare_parameter("linear_speed_limit", 1.0)
         self.declare_parameter("angular_speed_limit", 1.0)
-        self.declare_parameter("drive_idle_timeout", 1.2)
 
         self.linear_speed_limit = (
             self.get_parameter("linear_speed_limit").get_parameter_value().double_value
@@ -93,29 +114,20 @@ class UgvKeyboard(Node):
         self.angular_speed_limit = (
             self.get_parameter("angular_speed_limit").get_parameter_value().double_value
         )
-        self.drive_idle_timeout = (
-            self.get_parameter("drive_idle_timeout").get_parameter_value().double_value
-        )
-
-        self.settings = termios.tcgetattr(sys.stdin)
 
         self.pt_pose_x = 0.0
         self.pt_pose_y = 0.0
         self.pt_reverse = False
 
     def drain_keys(self):
-        tty.setraw(sys.stdin.fileno())
         buf = []
-        try:
-            while True:
-                rlist, _, _ = select.select([sys.stdin], [], [], 0)
-                if not rlist:
-                    break
-                c = sys.stdin.read(1)
-                if c:
-                    buf.append(c)
-        finally:
-            termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.settings)
+        while True:
+            rlist, _, _ = select.select([sys.stdin], [], [], 0)
+            if not rlist:
+                break
+            c = sys.stdin.read(1)
+            if c:
+                buf.append(c)
         return "".join(buf)
 
     def vels(self, speed, turn):
@@ -123,31 +135,42 @@ class UgvKeyboard(Node):
 
 
 def main():
+    if not sys.stdin.isatty():
+        print(
+            "keyboard_ctrl needs an interactive terminal (stdin must be a TTY).\n"
+            "Use a desktop terminal with docker exec -it (ros2.sh → Enter container)."
+        )
+        return 1
+
+    tty_fd = sys.stdin.fileno()
+    term = _TerminalSettings(tty_fd)
+    atexit.register(term.restore)
+
     rclpy.init()
     node = UgvKeyboard("keyboard_ctrl")
+
+    def _exit_signal_handler(signum, _frame):
+        term.restore()
+        raise SystemExit(128 + signum)
+
+    signal.signal(signal.SIGINT, _exit_signal_handler)
+    signal.signal(signal.SIGTERM, _exit_signal_handler)
 
     xspeed_switch = True
     speed, turn = 0.2, 0.5
     x, th = 0, 0
     status = 0
     stop = False
-    count = 0
     twist = Twist()
     quit_requested = False
 
-    last_move_cmd_ts = time.monotonic()
-
     try:
+        term.set_cbreak()
         print(msg)
         print(node.vels(speed, turn))
 
-        while True:
-            node.drive_idle_timeout = (
-                node.get_parameter("drive_idle_timeout").get_parameter_value().double_value
-            )
-
+        while rclpy.ok():
             chunk = node.drain_keys()
-            now = time.monotonic()
 
             if "\x03" in chunk:
                 quit_requested = True
@@ -161,12 +184,9 @@ def main():
                 elif key in moveBindings:
                     x = moveBindings[key][0]
                     th = moveBindings[key][1]
-                    count = 0
-                    last_move_cmd_ts = now
                 elif key in speedBindings:
                     speed *= speedBindings[key][0]
                     turn *= speedBindings[key][1]
-                    count = 0
                     if speed > node.linear_speed_limit:
                         speed = node.linear_speed_limit
                         print("Linear speed limit reached!")
@@ -179,8 +199,6 @@ def main():
                     status = (status + 1) % 15
                 elif key == " " or key == "k":
                     x, th = 0, 0
-                    count = 0
-                    last_move_cmd_ts = now
                 elif key in {"r", "0", "1", "2"}:
                     if key == "r":
                         node.pt_reverse = not node.pt_reverse
@@ -202,15 +220,6 @@ def main():
                     pt_msg = Float64MultiArray()
                     pt_msg.data = [node.pt_pose_x, node.pt_pose_y]
                     node.pub_pt_joint.publish(pt_msg)
-                else:
-                    count += 1
-                    if count > 4:
-                        x, th = 0, 0
-                        last_move_cmd_ts = now
-
-            if (x, th) != (0, 0) and (now - last_move_cmd_ts) > node.drive_idle_timeout:
-                x, th = 0, 0
-                count = 0
 
             if xspeed_switch:
                 twist.linear.x = float(speed * x)
@@ -230,10 +239,21 @@ def main():
 
             time.sleep(LOOP_PERIOD)
 
+    except (KeyboardInterrupt, SystemExit):
+        pass
     except Exception as e:
         print(e)
     finally:
-        node.pub.publish(Twist())
-        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, node.settings)
-        node.destroy_node()
-        rclpy.shutdown()
+        term.restore()
+        try:
+            node.pub.publish(Twist())
+        except Exception:
+            pass
+        try:
+            node.destroy_node()
+        except Exception:
+            pass
+        if rclpy.ok():
+            rclpy.shutdown()
+
+    return 0

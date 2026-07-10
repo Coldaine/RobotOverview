@@ -192,6 +192,9 @@ class ugv_bringup(Node):
     def publish_voltage(self):
         voltage_data = self.base_controller.base_data
         msg = BatteryState()
+        msg.header = Header()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = "base_link"
         msg.voltage = float(voltage_data["v"] / 100)
         msg.percentage = float(voltage_data["v"] / 1260)
         msg.present = True

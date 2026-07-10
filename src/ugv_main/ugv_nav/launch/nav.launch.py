@@ -109,6 +109,8 @@ def launch_setup(context, *args, **kwargs):
             'use_sim_time': use_sim_time,
             'use_localization': use_localization,
             'use_slam': use_slam,
+            'use_keepout_zones': LaunchConfiguration('use_keepout_zones'),
+            'keepout_mask': LaunchConfiguration('keepout_mask'),
         }.items(),
     )
     
@@ -138,12 +140,19 @@ def launch_setup(context, *args, **kwargs):
 # Function to generate the launch description
 def generate_launch_description():
     # Return the launch description
+    ugv_nav_dir = get_package_share_directory('ugv_nav')
+
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time',default_value='false',description='Use simulation/Gazebo clock'),
         DeclareLaunchArgument('use_slam',default_value='false',description='Whether run a SLAM'),
         DeclareLaunchArgument('use_rviz', default_value='false',description='Whether to launch RViz2'),
         DeclareLaunchArgument('use_localplan', default_value='teb', description='Choose which localplan to use: dwa,teb,rpp,mppi'),
         DeclareLaunchArgument('use_localization', default_value='amcl', description='Choose which localization to use: amcl,emcl,cartographer,slam_toolbox,rtabmap'),
+        DeclareLaunchArgument('use_keepout_zones', default_value='false', description='Enable Nav2 keepout zones'),
+        DeclareLaunchArgument(
+            'keepout_mask',
+            default_value=os.path.join(ugv_nav_dir, 'maps', 'mask.yaml'),
+            description='Path to keepout mask yaml'),
         OpaqueFunction(function=launch_setup)
     ])
 

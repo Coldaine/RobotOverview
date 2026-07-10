@@ -1,0 +1,50 @@
+site_name: ugv_ws Documentation
+site_description: ROS 2 Humble colcon workspace (ugv_ws) for WaveShare UGV ROS2 Kit robots
+site_url: https://waveshareteam.github.io/ugv_ws
+
+repo_name: ugv_ws
+repo_url: https://github.com/waveshareteam/ugv_ws
+edit_uri: edit/ros2-humble-develop-251125/docs/
+
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: readthedocs
+  highlightjs: true
+
+nav:
+  - ugv_ws Documentation: index.md
+  - Getting Started:
+    - ROS2 Basics: ros2_basics.md
+    - UGV Basics: ugv_basics.md
+    - Installation: installation.md
+  - Tutorials:
+    - Robot Description: description.md
+    - Hardware Driver: bringup.md
+    - Keyboard & Gamepad Control: teleoperation.md
+    - LiDAR Interaction: lidar.md
+    - Vision: vision.md
+    - Mapping: mapping.md
+    - Web App: web_app.md
+    - Navigation: navigation.md
+    - Experimental: experimental.md
+    - Gazebo: gazebo.md
+
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/copy-button.js
+  - javascripts/image-lightbox.js

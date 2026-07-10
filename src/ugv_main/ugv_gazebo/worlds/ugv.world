@@ -32,9 +32,9 @@
             </plane>
           </geometry>
           <material>
-            <ambient>0.8 0.8 0.8 1</ambient>
-            <diffuse>0.8 0.8 0.8 1</diffuse>
-            <specular>0.8 0.8 0.8 1</specular>
+              <ambient>0.4 0.4 0.4 1</ambient>
+              <diffuse>0.5 0.5 0.5 1</diffuse>
+              <specular>0.05 0.05 0.05 1</specular>
           </material>
         </visual>
       </link>
@@ -85,6 +85,7 @@
           <contact_surface_layer>0.01000</contact_surface_layer>
         </constraints>
       </ode>
+      <gravity>0 0 -9.8</gravity>
     </physics>
 
     <model name="room">
