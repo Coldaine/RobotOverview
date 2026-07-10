@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { describe, it, expect } from 'vitest';
 import { HANGAR_BAY_IDS, hangarData } from '@/data/hangar';
 import { seedSql } from '../../db/hangar/gen-seed';
+import { isTrimmedTimestamp } from '@/server/hangar/validators';
 import {
   ACTIVITY_KINDS,
   BAY_ACCENTS,
@@ -41,10 +42,7 @@ describe('hangar.ts data integrity', () => {
   }
 
   function expectValidTimestamp(value: string, label: string) {
-    const timestamp = new Date(value).getTime();
-    expect(value.trim(), `${label} must not be blank`).not.toBe('');
-    expect(value, `${label} must not have surrounding whitespace`).toBe(value.trim());
-    expect(Number.isFinite(timestamp), `${label} must parse as a timestamp`).toBe(true);
+    expect(isTrimmedTimestamp(value), `${label} must be a trimmed ISO date or timestamp`).toBe(true);
   }
 
   function expectValidHttpUrl(value: string, label: string) {
@@ -54,14 +52,24 @@ describe('hangar.ts data integrity', () => {
     expect(['http:', 'https:'], `${label} must use http(s)`).toContain(url.protocol);
   }
 
+  function expectConcreteDisplayText(value: string, label: string) {
+    expect(value.trim(), `${label} must not be blank`).not.toBe('');
+    expect(value, `${label} must not have surrounding whitespace`).toBe(value.trim());
+    expect(value, `${label} must not contain placeholder copy`).not.toMatch(/\b(?:placeholder|tbd)\b/i);
+  }
+
   function normalizeLineEndings(value: string) {
     return value.replace(/\r\n/g, '\n');
   }
 
   it('committed Postgres seed SQL matches freshly generated hangar.ts output', () => {
     const committedSeedSql = readFileSync(resolve(process.cwd(), 'db/hangar/seed.sql'), 'utf8');
+    const generatedSeedSql = normalizeLineEndings(seedSql);
 
-    expect(normalizeLineEndings(committedSeedSql)).toBe(seedSql);
+    expect(
+      normalizeLineEndings(committedSeedSql) === generatedSeedSql,
+      'db/hangar/seed.sql is stale; regenerate it from db/hangar/gen-seed.ts.',
+    ).toBe(true);
   });
 
   it('has no duplicate unit IDs', () => {
@@ -127,9 +135,65 @@ describe('hangar.ts data integrity', () => {
     });
   });
 
+  it('all unit specs, links, and shortcuts are usable display text', () => {
+    hangarData.units.forEach((u) => {
+      const specLabels = u.specs.map((spec) => spec.label);
+      expect(specLabels.length, `unit "${u.id}" spec labels must be unique`).toBe(new Set(specLabels).size);
+      u.specs.forEach((spec) => {
+        expect(spec.label.trim(), `unit "${u.id}" spec label must not be blank`).not.toBe('');
+        expect(spec.label, `unit "${u.id}" spec label must not have surrounding whitespace`).toBe(spec.label.trim());
+        expect(spec.value.trim(), `unit "${u.id}" spec "${spec.label}" value must not be blank`).not.toBe('');
+        expect(spec.value, `unit "${u.id}" spec "${spec.label}" value must not have surrounding whitespace`).toBe(spec.value.trim());
+      });
+
+      const linkUrls = (u.links ?? []).map((link) => link.url);
+      expect(linkUrls.length, `unit "${u.id}" link URLs must be unique`).toBe(new Set(linkUrls).size);
+      (u.links ?? []).forEach((link) => {
+        expect(link.label.trim(), `unit "${u.id}" link label must not be blank`).not.toBe('');
+        expect(link.label, `unit "${u.id}" link label must not have surrounding whitespace`).toBe(link.label.trim());
+        expectValidHttpUrl(link.url, `unit "${u.id}" link "${link.label}" url`);
+      });
+
+      const shortcutIds = (u.shortcuts ?? []).map((shortcut) => shortcut.id);
+      expect(shortcutIds.length, `unit "${u.id}" shortcut ids must be unique`).toBe(new Set(shortcutIds).size);
+      (u.shortcuts ?? []).forEach((shortcut) => {
+        expect(shortcut.id.trim(), `unit "${u.id}" shortcut id must not be blank`).not.toBe('');
+        expect(shortcut.id, `unit "${u.id}" shortcut id must not have surrounding whitespace`).toBe(shortcut.id.trim());
+        expect(shortcut.label.trim(), `unit "${u.id}" shortcut "${shortcut.id}" label must not be blank`).not.toBe('');
+        expect(shortcut.label, `unit "${u.id}" shortcut "${shortcut.id}" label must not have surrounding whitespace`).toBe(shortcut.label.trim());
+        if (shortcut.note !== undefined) {
+          expect(shortcut.note.trim(), `unit "${u.id}" shortcut "${shortcut.id}" note must not be blank`).not.toBe('');
+          expect(shortcut.note, `unit "${u.id}" shortcut "${shortcut.id}" note must not have surrounding whitespace`).toBe(shortcut.note.trim());
+        }
+
+        if (shortcut.type === 'url') {
+          expectValidHttpUrl(shortcut.url, `unit "${u.id}" shortcut "${shortcut.id}" url`);
+        } else {
+          expect(shortcut.command.trim(), `unit "${u.id}" shortcut "${shortcut.id}" command must not be blank`).not.toBe('');
+          expect(shortcut.command, `unit "${u.id}" shortcut "${shortcut.id}" command must not have surrounding whitespace`).toBe(shortcut.command.trim());
+        }
+      });
+    });
+  });
+
   it('all mission.status values are valid MissionStatus values', () => {
     hangarData.missions.forEach((m) => {
       expect(MISSION_STATUSES, `mission "${m.id}" has invalid status "${m.status}"`).toContain(m.status);
+    });
+  });
+
+  it('all mission display text is concrete enough to publish', () => {
+    hangarData.missions.forEach((m) => {
+      expectConcreteDisplayText(m.objective, `mission "${m.id}" objective`);
+      m.requiredLoadout.forEach((item, index) => {
+        expectConcreteDisplayText(item, `mission "${m.id}" requiredLoadout ${index}`);
+      });
+      m.objectives.forEach((objective, index) => {
+        expectConcreteDisplayText(objective.text, `mission "${m.id}" objective ${index}`);
+      });
+      (m.afterAction ?? []).forEach((entry, index) => {
+        expectConcreteDisplayText(entry, `mission "${m.id}" afterAction ${index}`);
+      });
     });
   });
 
@@ -173,7 +237,7 @@ describe('hangar.ts data integrity', () => {
 
   it('all wishlist.unlocks IDs exist in capabilities', () => {
     hangarData.wishlist.forEach((w) => {
-      if (w.unlocks) {
+      if (w.unlocks !== undefined) {
         expect(
           capabilityIds.has(w.unlocks),
           `wishlist item "${w.id}" references unknown unlock capability "${w.unlocks}"`,
@@ -254,7 +318,7 @@ describe('hangar.ts data integrity', () => {
 
   it('all capability.bay values are valid BayIds', () => {
     hangarData.capabilities.forEach((cap) => {
-      if (!cap.bay) return;
+      if (cap.bay === undefined) return;
       expect(HANGAR_BAY_IDS, `capability "${cap.id}" has invalid bay "${cap.bay}"`).toContain(cap.bay);
     });
   });

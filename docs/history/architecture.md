@@ -40,7 +40,7 @@ moment the inventory needs a real backend. Next.js fuses the UI to a secure serv
 Components query data server-side and never ship to the browser; Server Actions handle mutations.
 The app is built on Next.js 16 / React 19 / Tailwind 4 today. The current server read-path status
 belongs in the web-app component doc, not here.
-→ detail: [`docs/components/web-app.md`](components/web-app.md)
+→ detail: [`docs/history/components/web-app.md`](components/web-app.md)
 
 ### 2. Source of truth: Postgres, bootstrapped by `hangar.ts`
 
@@ -49,7 +49,7 @@ dataset: it populated the model before the model was prescribed. The normalized 
 **master-inventory** backend is the target data spine; `hangar.ts` remains the bootstrap/fallback
 source until each app surface earns its cutover. Current provisioning, seed, parity, and rollback
 status belongs in the data-backend component doc.
-→ detail: [`docs/components/data-backend.md`](components/data-backend.md)
+→ detail: [`docs/history/components/data-backend.md`](components/data-backend.md)
 
 ### 3. One master inventory; bays are views, not silos
 
@@ -57,7 +57,7 @@ One pool of **everything owned** (compute, network, robotics, home, audio, plus 
 accessories/tooling), with flexible grouping (bay / kit / location / project) layered *over* the
 relational spine. **Bays are group-views over the one pool, never separate silos** — this is what
 keeps AG1's connected model intact instead of fragmenting into per-bay catalogs.
-→ detail: [`docs/components/data-backend.md`](components/data-backend.md)
+→ detail: [`docs/history/components/data-backend.md`](components/data-backend.md)
 
 ### 4. The base-builder loadout spine
 
@@ -65,14 +65,14 @@ Assets expose **typed interfaces**; sockets **accept** interface types; an asset
 for a socket when their interfaces intersect, and equipping is an **assignment**. This typed
 mating model is the upgrade tree (G3/G4): it makes maintenance feel like a loadout screen and lets
 the system surface what to acquire next and why.
-→ detail: [`docs/components/data-backend.md`](components/data-backend.md)
+→ detail: [`docs/history/components/data-backend.md`](components/data-backend.md)
 
 ### 4.5. Connected twin as a data layer, not a second app
 
 The Beast wiring/twin work belongs under the same data spine: terminals and nets extend assets/sockets/interfaces so the Hangar can show what is physically wired, what rail or signal a connection carries, and which schematic proves it. The standalone HTML prototypes are historical review artifacts; the product path is an in-app data-driven wiring view that reuses the existing shell, store, themes, loadout compatibility, and source provenance.
 
 Bulk source PDFs/CAD/firmware stay out of git and out of the container image. They should live in object storage and be referenced from the database/app by URL.
-→ detail: [`docs/components/connected-twin.md`](components/connected-twin.md), [`docs/reference/ugv-beast-source-archive.md`](reference/ugv-beast-source-archive.md)
+→ detail: [`docs/history/components/connected-twin.md`](components/connected-twin.md), [`docs/history/reference/ugv-beast-source-archive.md`](reference/ugv-beast-source-archive.md)
 
 ### 5. Deployment: a separate service at `hangar.moosegoose.xyz`
 
@@ -80,7 +80,7 @@ The Hangar behaves like a full-screen app that owns `/`, so it stays a **separat
 service** in the MooseGoose estate — its own image, pod, probes, and resource budget — reached at a
 **subdomain**, not a path under the main site.
 **The deployment *mechanism* is being redesigned (moving to Shipwright); it is paused, not broken.**
-→ detail: [`docs/deploy/deployment.md`](deploy/deployment.md), [`docs/deploy/hangar-service-boundary.md`](deploy/hangar-service-boundary.md)
+→ detail: [`docs/history/deploy/deployment.md`](deploy/deployment.md), [`docs/history/deploy/hangar-service-boundary.md`](deploy/hangar-service-boundary.md)
 
 ### 6. Database authority lives in runtime identity, not URLs
 
@@ -90,7 +90,7 @@ for address material (host, port, database, role) plus a runtime credential supp
 Phase 1 may use a Doppler/ESO password; later phases can replace that with workload identity,
 client certificate auth, a Vault lease, or a proxy-issued token without changing the browser-facing
 app.
-→ detail: [`docs/components/web-app.md`](components/web-app.md)
+→ detail: [`docs/history/components/web-app.md`](components/web-app.md)
 
 ## What this is not (anti-goals)
 

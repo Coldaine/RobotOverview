@@ -24,6 +24,9 @@ describe('Hangar shared DB validators', () => {
   it('accepts only trimmed parseable timestamps', () => {
     expect(isTrimmedTimestamp('2026-07-07')).toBe(true);
     expect(isTrimmedTimestamp('2026-07-07T22:00:00Z')).toBe(true);
+    expect(isTrimmedTimestamp('42')).toBe(false);
+    expect(isTrimmedTimestamp('2026')).toBe(false);
+    expect(isTrimmedTimestamp('2026-02-31')).toBe(false);
     expect(isTrimmedTimestamp('not-a-date')).toBe(false);
     expect(isTrimmedTimestamp(' 2026-07-07')).toBe(false);
   });

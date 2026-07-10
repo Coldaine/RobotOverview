@@ -6,16 +6,21 @@ import type { ConstraintGauge, MissionConstraintUnit } from '@/data/types';
 import { money } from '@/lib/format';
 
 function safePercent(value: number, budget: number): number {
-  if (!Number.isFinite(value) || !Number.isFinite(budget) || budget <= 0) return 0;
-  return Math.max(0, (value / budget) * 100);
+  if (!Number.isFinite(value) || !Number.isFinite(budget) || value < 0 || budget <= 0) return 0;
+  const percent = (value / budget) * 100;
+  return Number.isFinite(percent) ? Math.max(0, percent) : 0;
 }
 
 function isOverBudget(value: number, budget: number): boolean {
-  return Number.isFinite(value) && Number.isFinite(budget) && value > budget;
+  return Number.isFinite(value) && Number.isFinite(budget) && value >= 0 && budget > 0 && value > budget;
 }
 
-function formatGaugeValue(value: number, unit: MissionConstraintUnit): string {
-  if (!Number.isFinite(value)) return '—';
+function formatGaugeValue(
+  value: number,
+  unit: MissionConstraintUnit,
+  { allowZero = true }: { allowZero?: boolean } = {},
+): string {
+  if (!Number.isFinite(value) || value < 0 || (!allowZero && value <= 0)) return '—';
   if (unit === '$') return money(value);
   return `${value}${unit}`;
 }
@@ -113,7 +118,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
           </div>
         </div>
         <div className="w-full text-center mt-1">
-          <span className="font-mono text-[9px] text-ink-dim">BUDGET: {formatGaugeValue(gauge.budget, gauge.unit)}</span>
+          <span className="font-mono text-[9px] text-ink-dim">BUDGET: {formatGaugeValue(gauge.budget, gauge.unit, { allowZero: false })}</span>
         </div>
       </div>
     );
@@ -193,7 +198,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
         </div>
         <div className="mt-1 flex justify-between font-mono text-[9px] text-gray-500 font-bold uppercase tracking-wider">
           <span>0%</span>
-          <span>LIMIT: {formatGaugeValue(gauge.budget, gauge.unit)}</span>
+          <span>LIMIT: {formatGaugeValue(gauge.budget, gauge.unit, { allowZero: false })}</span>
           <span>120%</span>
         </div>
       </div>
@@ -339,7 +344,7 @@ export function Gauge({ gauge, delay = 0 }: { gauge: ConstraintGauge; delay?: nu
         </div>
       </div>
       <div className="w-full text-center mt-1">
-        <span className="font-mono text-[9px] text-ink-dim">LIMIT: {formatGaugeValue(gauge.budget, gauge.unit)}</span>
+        <span className="font-mono text-[9px] text-ink-dim">LIMIT: {formatGaugeValue(gauge.budget, gauge.unit, { allowZero: false })}</span>
       </div>
     </div>
   );

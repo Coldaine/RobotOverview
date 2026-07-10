@@ -26,7 +26,21 @@ describe('Gauge (blueprint default theme)', () => {
   it('does not divide by zero when budget is 0 (no NaN)', () => {
     const { container } = renderGauge({ label: 'Power', value: 5, budget: 0, unit: 'W' });
     expect(screen.getByText('0%')).toBeInTheDocument();
+    expect(screen.getByText('BUDGET: —')).toBeInTheDocument();
+    expect(screen.queryByText('[SYS_OVR]')).not.toBeInTheDocument();
     expect(screen.queryByText(/NaN/)).not.toBeInTheDocument();
+    expect(container.innerHTML).not.toMatch(/NaN|Infinity/);
+  });
+
+  it('keeps overflowed finite math out of rendered gauge output', () => {
+    const { container } = renderGauge({
+      label: 'Power',
+      value: Number.MAX_VALUE,
+      budget: Number.MIN_VALUE,
+      unit: 'W',
+    });
+
+    expect(screen.getByText('0%')).toBeInTheDocument();
     expect(container.innerHTML).not.toMatch(/NaN|Infinity/);
   });
 
@@ -53,6 +67,9 @@ describe('Gauge (blueprint default theme)', () => {
     const { container } = renderGauge({ label: 'Power', value: -5, budget: 100, unit: 'W' });
 
     expect(screen.getByText('0%')).toBeInTheDocument();
+    expect(screen.getByText('—')).toBeInTheDocument();
+    expect(screen.getByText('BUDGET: 100W')).toBeInTheDocument();
+    expect(screen.queryByText('[SYS_OVR]')).not.toBeInTheDocument();
     expect(container.innerHTML).not.toMatch(/stroke-dasharray="-|strokeDasharray&quot;:&quot;-/);
   });
 

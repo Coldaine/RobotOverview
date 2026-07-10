@@ -1,10 +1,18 @@
 import { getHangarPool } from './db';
 import type { Queryable } from './queryable';
-import type { HangarReadStatus } from '@/lib/hangar-read-status';
+import type { HangarFallbackReason } from '@/lib/hangar-read-status';
 
-export type HangarRead<T> = HangarReadStatus & {
-  data: T;
-};
+export type HangarRead<T> =
+  | {
+      source: 'postgres';
+      fallbackReason?: undefined;
+      data: T;
+    }
+  | {
+      source: 'static';
+      fallbackReason: HangarFallbackReason;
+      data: T;
+    };
 
 export async function readWithStaticFallback<T>({
   label,

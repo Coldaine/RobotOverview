@@ -59,4 +59,12 @@ describe('Unit detail command shortcuts', () => {
     expect(screen.queryByText('Control UI')).not.toBeInTheDocument();
     expect(screen.queryByText('ssh ws@192.168.20.184')).not.toBeInTheDocument();
   });
+
+  it('does not render BEAST-only system surfaces for other flagship units', () => {
+    renderUnitDetail('workstation');
+
+    expect(screen.getByRole('heading', { name: 'Threadripper / RTX 5090' })).toBeInTheDocument();
+    expect(screen.queryByText('Subsystem Map')).not.toBeInTheDocument();
+    expect(screen.queryByText('Connected Twin')).not.toBeInTheDocument();
+  });
 });
