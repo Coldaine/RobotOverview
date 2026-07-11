@@ -12,7 +12,6 @@
   <depend>rviz2</depend>
   <depend>joint_state_publisher_gui</depend>
   <depend>joint_state_publisher</depend>
-  <depend>gazebo_ros</depend>
   <depend>depthai_descriptions</depend>
   <depend>xacro</depend>
   <export>

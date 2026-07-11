@@ -10,7 +10,8 @@
   <depend>joint_state_broadcaster</depend>
   <depend>robot_state_publisher</depend>
   <depend>rviz2</depend>
-  <depend>gazebo_ros</depend>
+  <depend>ros_gz_bridge</depend>
+  <depend>ros_gz_sim</depend>
   <export>
     <architecture_independent />
     <build_type>ament_cmake</build_type>
