@@ -217,8 +217,8 @@ class OakYoloNode(Node):
             y2 = int(roi.bottomRight().y)
 
             try:
-                label = labelMap[t.label]
-            except:
+                label = self.labelMap[t.label]
+            except (IndexError, TypeError):
                 label = t.label
 
             cv2.putText(frame, str(label), (x1 + 10, y1 + 20), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)

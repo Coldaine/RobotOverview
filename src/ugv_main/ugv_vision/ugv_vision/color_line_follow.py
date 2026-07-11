@@ -21,6 +21,8 @@ from pathlib import Path
 _MODULE_DIR = Path(__file__).resolve().parent
 CONFIG_DIR = _MODULE_DIR.parent / "config"
 CONFIG_PATH = CONFIG_DIR / "lab_tool_colors.json"
+_DEFAULT_LOWER = [0, 100, 187]
+_DEFAULT_UPPER = [255, 255, 255]
 
 curpath = os.path.realpath(__file__)
 thisPath = os.path.dirname(curpath)
