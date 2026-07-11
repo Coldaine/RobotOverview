@@ -580,7 +580,8 @@ identified, relaunch with `use_lidar:=true` and its stable `lidar_port`. Then co
 `/cmd_vel` publisher, send a deliberately low-speed pulse, and send an explicit zero:
 
 ```bash
-ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
+  '{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}' --once
 ```
 
 Finally terminate the only command publisher while moving at the lowest safe speed and confirm
