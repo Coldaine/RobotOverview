@@ -139,15 +139,583 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, even
    LLM-driven natural-language control. Bigger jump.
 
-## Jetson OS experimentation
+## Jetson migration and flash runbook — OP-JETSON-FLASH
 
-JetPack 7 dual-boot research findings and the recovery procedure are archived in
-`docs/history/reference/beast-jetson-dualboot-evidence.md` and
-`docs/history/reference/beast-jetson-dualboot-runbook.md` (real research, kept for the
-facts — ignore the "evidence dossier" framing).
+> **Status: UNVALIDATED — pipeline audited 2026-07-11.** This is the next-attempt runbook, not a
+> record of a successful flash. BEAST-01 still runs the Raspberry Pi 5 stack described above.
+> The audit corrected the module SKU, FAB, host architecture, and NVMe flash command, but
+> none of those corrections becomes an operating fact until the Jetson boots and passes bench
+> validation.
 
-JP6 remains the Beast-control default. Do not begin a JP7 install until the runbook's
-recovery gate is complete and a JP6 restore path has been tested.
+### Target and non-goals
+
+- Flash **JetPack 6.2.2 / Jetson Linux 36.5** to the Jetson Orin Nano developer kit's NVMe.
+  The prepared release must report `R36, REVISION: 5.0` and an Ubuntu 22.04 root filesystem.
+- The directly sold NVIDIA developer kit contains the development module **P3767-0005**, not the
+  production P3767-0003 module. Use `BOARDID=3767`, `BOARDSKU=0005`, and `FAB=300` if a manual
+  identity override is required.
+- Use the supported `jetson-orin-nano-devkit-super` configuration so the finished system has the
+  Super power profiles available; select a conservative power mode during stationary bench work.
+- Flash QSPI/UEFI boot firmware and the NVMe root filesystem together from one clean BSP tree.
+- Continue directly through JetPack compute, Docker/NVIDIA Container Runtime, ROS 2 Humble, and
+  the official Waveshare workspace. The migration is not minimally viable at "Ubuntu boots."
+- Do **not** install JetPack 7. JP7 remains out of scope until the JP6 Beast path is working,
+  backed up, and deliberately reopened for experimentation.
+- Do **not** burn fuses to enable USB 3 recovery, modify EEPROM contents, enable Secure Boot, or
+  add rootfs A/B or encryption during this recovery. Those are separate, irreversible or
+  complexity-increasing changes.
+- Do **not** use the current Pi/Flask service as proof that the Jetson path works. The cutover is
+  complete only after the ROS workspace, zero-motion telemetry, and physical stop behavior pass.
+
+### What the audit established
+
+- Recovery mode is proven: the host has repeatedly enumerated `0955:7523 NVIDIA Corp. APX`.
+- The module reports T234 chip SKU `D5` and RAM code `2`, consistent with an 8 GB Orin Nano.
+- NVIDIA's automatic detector received a 256-byte EEPROM response but parsed no board ID, FAB,
+  SKU, or revision. That proves a parsing/read problem, not yet that every EEPROM byte is blank.
+- The downloaded `Jetson_Linux_R36.5.0_aarch64.tbz2` and
+  `Tegra_Linux_Sample-Root-Filesystem_R36.5.0_aarch64.tbz2` match NVIDIA's published SHA-1 hashes.
+- A generated package from the failed path selected the production-module kernel DTB
+  `p3767-0003`; that was wrong for this NVIDIA developer kit. No package from that tree is reusable.
+- The formatted override `RAMCODE_ID=00:00:00:02` caused a local Python conversion failure.
+  More importantly, overriding RAM code was unnecessary because the chip supplied numeric `2`.
+- NVIDIA's R36.5 Quick Start ends the Orin Nano Super NVMe command in `internal`, while the
+  general flashing guide shows `external`. The bundled R36.5 tooling explicitly supports both
+  with `--external-device` and generates an external-storage PARTUUID in either case. This runbook
+  follows the board-specific Quick Start command exactly and verifies the generated UUID artifacts.
+- The Podman image contained the correct NVIDIA user-space packages, but still used Nobara's
+  kernel USB stack, device namespace, network interfaces, and NFS facilities. Container NFS and
+  the raw USB `-110` timeout therefore do not implicate the downloaded JetPack release.
+- No prior attempt reached a QSPI or NVMe partition write. The observed failures occurred while
+  building images, starting container NFS, sending an RCM blob, or querying target storage.
+
+The `USBDEVFS_CONTROL ... -110` timeout is not assigned one cause. It may have been USB transport,
+the wrong generated board package, or target hardware. The corrected attempt observes each
+boundary separately instead of assuming Nobara, the cable, or the Jetson is at fault.
+
+### Flash-host architecture — Proxmox with the whole xHCI controller
+
+Use a disposable native Ubuntu 22.04 x86_64 VM on Proxmox. Pass an entire physical USB xHCI
+controller to the VM as a PCI device with VFIO. Do **not** configure `usb0: host=0955:7523`, USB
+vendor/product filters, SPICE USB redirection, an LXC, Docker, or Podman.
+
+This distinction matters: the VM's Ubuntu kernel must own the controller and every transition
+from APX to the L4T initrd composite device and USB network interface. Individual USB forwarding
+asks QEMU or Proxmox to reacquire each new USB identity; whole-controller PCI passthrough does not.
+
+On the Proxmox host, verify IOMMU and inventory the controllers:
+
+```bash
+dmesg | grep -Ei 'DMAR|IOMMU|AMD-Vi|interrupt remapping'
+find /sys/kernel/iommu_groups -type l
+lspci -nnk | sed -n '/USB controller/,+3p'
+lsusb -t
+```
+
+Map the physical port to its PCI controller and inspect the complete IOMMU group. The selected
+controller must not carry the Proxmox boot disk, management NIC, keyboard, UPS, or other required
+USB devices. If no onboard controller is isolated, install a dedicated PCIe USB controller; do
+not use ACS override to manufacture unsafe isolation.
+
+Create the temporary VM with these minimums:
+
+```text
+Ubuntu 22.04 x86_64
+q35 machine
+4-8 vCPUs
+8 GiB RAM or more
+120 GiB or larger ext4 guest filesystem
+VirtIO network with internet access
+the complete xHCI PCI function as hostpci
+```
+
+Attach the verified controller, substituting the real VM ID and PCI address:
+
+```bash
+qm set <vmid> --machine q35
+qm set <vmid> --hostpci0 0000:<bus:device.function>,pcie=1
+```
+
+With the VM running, the Proxmox host must show that PCI function bound to `vfio-pci`, while the
+Ubuntu guest must show the same controller using `xhci_hcd`:
+
+```bash
+lspci -nnk -s <bus:device.function>
+lsusb -t
+```
+
+### Prepare the Ubuntu guest
+
+Do not install or run Docker in the flashing VM. Install the complete Ubuntu kernel modules and
+the BSP's own prerequisite list, then verify the services that initrd flashing actually uses:
+
+```bash
+sudo apt update
+sudo apt install -y linux-modules-extra-"$(uname -r)" rpcbind nfs-kernel-server
+sudo modprobe rndis_host
+sudo modprobe cdc_ether
+sudo modprobe cdc_ncm
+sudo modprobe cdc_subset
+
+sudo systemctl enable --now rpcbind nfs-kernel-server
+test "$(sysctl -n net.ipv6.conf.all.disable_ipv6)" = 0
+systemctl is-active rpcbind nfs-kernel-server
+rpcinfo -p localhost
+```
+
+Temporarily disable the guest firewall and any guest VPN during the flash, or explicitly allow
+the initrd IPv6, SSH, and NFS traffic. Apply the proven USB timeout mitigations **inside the
+Ubuntu guest**, because that guest now owns the USB kernel stack:
+
+```bash
+sudo ufw disable
+echo 2048 | sudo tee /sys/module/usbcore/parameters/usbfs_memory_mb
+echo -1 | sudo tee /sys/module/usbcore/parameters/autosuspend
+for control in /sys/bus/usb/devices/*/power/control; do
+  echo on | sudo tee "$control"
+done
+```
+
+The 2048 MB USBFS value is a successful community workaround for the same large-blob timeout,
+not an NVIDIA release requirement. Keep it because the failed host logged `-110` during RCM.
+This VM is a dedicated flash appliance: keep it only for retries within the same attended flash
+session, then destroy it when the session succeeds or is abandoned. Do not reuse it for general
+workloads or save it as a template with its firewall disabled and USB power policy altered.
+
+### Build one clean R36.5 BSP
+
+Transfer only the two verified NVIDIA archives into `~/jetson-r36.5-clean` in the VM. Do not copy
+the old extracted tree, `system.img`, `tools/kernel_flash/images`, SDK Manager containers, or
+generated flash packages.
+
+Verify the official SHA-1 values inside the VM:
+
+```bash
+mkdir -p ~/jetson-r36.5-clean
+cd ~/jetson-r36.5-clean
+sha1sum -c <<'SHA1SUMS'
+96e691a6d2d618e22dd6cb0630ee17faaa4733e9  Jetson_Linux_R36.5.0_aarch64.tbz2
+7844cfc00ef92eeb85d699d17bcb787a1560d486  Tegra_Linux_Sample-Root-Filesystem_R36.5.0_aarch64.tbz2
+SHA1SUMS
+```
+
+Extract and stage the BSP:
+
+```bash
+tar -xpf Jetson_Linux_R36.5.0_aarch64.tbz2
+sudo tar -xpf Tegra_Linux_Sample-Root-Filesystem_R36.5.0_aarch64.tbz2 \
+  -C Linux_for_Tegra/rootfs
+cd Linux_for_Tegra
+sudo ./tools/l4t_flash_prerequisites.sh
+sudo ./apply_binaries.sh
+head -1 rootfs/etc/nv_tegra_release
+```
+
+The release line must contain `R36` and `REVISION: 5.0`. Pre-create the headless account without
+putting a password in the runbook or shell history:
+
+```bash
+read -rsp 'Temporary BEAST-01 password: ' BEAST_TEMP_PASSWORD; echo
+sudo ./tools/l4t_create_default_user.sh \
+  -u beast -p "$BEAST_TEMP_PASSWORD" -n beast-01 --accept-license
+unset BEAST_TEMP_PASSWORD
+```
+
+This bypasses interactive OEM setup. First boot must still verify that the APP partition expanded
+to the NVMe's usable capacity. NVIDIA's script has no stdin or file-based password option: while
+it runs, another local user or process in the flash VM can read the temporary password from its
+command line. Use a unique one-time password in this dedicated VM, change it immediately after
+first login with `passwd`, and destroy the VM after the attended flash session.
+
+Before connecting the recovery session, record:
+
+```text
+Developer-kit product/order number:
+Module/carrier markings visible without disassembly:
+NVMe manufacturer and model:
+Proxmox node, xHCI PCI address, and physical USB port:
+VM ID and Ubuntu kernel version:
+USB cable or hub used:
+```
+
+### Enter Force Recovery
+
+J14 is the small 2x6 button header, not the 40-pin GPIO header. Pin 9 is ground; pin 10 is
+`FORCE_RECOVERY`.
+
+1. Connect a known-good USB-C data cable between the Jetson recovery port and host.
+2. Disconnect barrel power and wait 10 seconds.
+3. Short J14 pins 9 and 10.
+4. Reconnect barrel power while the pins remain shorted.
+5. Wait 2-3 seconds, then remove the jumper.
+6. Expect the power LED but no normal display or fan behavior; the host USB result is the proof.
+7. Verify on the host:
+
+```bash
+lsusb -d 0955:7523
+```
+
+Expected: `NVIDIA Corp. APX`. If APX is absent, do not run a flash command. If the kit is already
+powered, hold 9-10, momentarily short J14 reset pins 7-8, release 7-8, wait 2-3 seconds, then
+release 9-10.
+
+### Read identity before generating images
+
+Use the official read-info path; do not infer "blank EEPROM" from SDK Manager's summary. Generate
+the read-only command using the known developer-kit package identity. The terminal `internal`
+argument below belongs only to `flash.sh` command generation and does not configure NVMe boot:
+
+```bash
+sudo env BOARDID=3767 BOARDSKU=0005 FAB=300 \
+  ./flash.sh --read-info --no-flash jetson-orin-nano-devkit-super internal
+```
+
+Run the generated probe three times, preserving each raw CVM dump. Wait for APX to return between
+runs instead of sleeping for an assumed duration:
+
+```bash
+cd bootloader
+set -euo pipefail
+sudo rm -f cvm.bin
+rm -f ../cvm-{1,2,3}.bin ../read-info-{1,2,3}.log ../chkbdinfo-*.log
+
+for attempt in 1 2 3; do
+  sudo rm -f cvm.bin
+  sudo bash readinfocmd.txt 2>&1 | tee "../read-info-${attempt}.log"
+  sudo test -s cvm.bin || { echo 'read-info did not create a fresh cvm.bin'; exit 1; }
+  sudo cp cvm.bin "../cvm-${attempt}.bin"
+  sudo test -s "../cvm-${attempt}.bin"
+  timeout 30 bash -c 'until lsusb -d 0955:7523 >/dev/null; do sleep 1; done' || {
+    echo 'APX did not return after read-info'; exit 1;
+  }
+done
+sha256sum ../cvm-*.bin
+cmp -s ../cvm-1.bin ../cvm-2.bin && cmp -s ../cvm-1.bin ../cvm-3.bin || {
+  echo 'EEPROM dumps are not stable'; exit 1;
+}
+
+parse_failed=0
+for dump in ../cvm-{1,2,3}.bin; do
+  for mode in i f k r; do
+    if ! sudo ./chkbdinfo "-${mode}" "$dump" 2>&1 | \
+      tee "../chkbdinfo-$(basename "$dump" .bin)-${mode}.log"; then
+      parse_failed=1
+    fi
+  done
+done
+echo "chkbdinfo parse_failed=${parse_failed}"
+cd ..
+```
+
+Interpret the result narrowly:
+
+- Different dumps or read timeouts mean the USB path is not yet trustworthy; do not override it.
+- Stable dumps that parse as `3767 / 300 / 0005` need no manual EEPROM override.
+- Stable dumps with missing identity fields support a bounded software override using the known
+  NVIDIA developer-kit identity. Preserve the dumps for NVIDIA support; do not write the EEPROM.
+- Chip SKU D5 and RAM code 2 are read independently from the chip. Do not force either value in
+  the primary command while those reads continue to succeed.
+
+### Generate the exact QSPI plus NVMe package
+
+If the CVM parser remains malformed, generate with only the necessary identity override:
+
+```bash
+sudo env \
+  SKIP_EEPROM_CHECK=1 \
+  BOARDID=3767 \
+  BOARDSKU=0005 \
+  FAB=300 \
+  ./tools/kernel_flash/l4t_initrd_flash.sh \
+    --no-flash \
+    --external-device nvme0n1p1 \
+    -p "-c ./bootloader/generic/cfg/flash_t234_qspi.xml" \
+    -c ./tools/kernel_flash/flash_l4t_t234_nvme.xml \
+    --showlogs \
+    --network usb0 \
+    --erase-all \
+    jetson-orin-nano-devkit-super \
+    internal
+```
+
+If all EEPROM fields parse correctly, run the same command without the four `env` assignments.
+Require a clean generation and verify all of the following before any write:
+
+- Board ID `3767`, FAB `300`, SKU `0005`, chip SKU D5, and RAM code 2.
+- Kernel/UEFI DTB `tegra234-p3768-0000+p3767-0005-nv-super.dtb`.
+- QSPI layout `bootloader/generic/cfg/flash_t234_qspi.xml`.
+- External layout `tools/kernel_flash/flash_l4t_t234_nvme.xml` and `nvme0n1p1`.
+- The external image uses the UUID in `bootloader/l4t-rootfs-uuid.txt_ext` and a
+  `root=PARTUUID=...` command line that resolves to the NVMe APP partition.
+
+The P3767-0005 configuration intentionally reuses a P3767-0003 **BPMP** DTB. That one BPMP name
+is expected; a P3767-0003 kernel/UEFI DTB is not.
+
+Return the board to APX if necessary, verify only one recovery device is attached, and flash the
+already generated package:
+
+```bash
+lsusb -d 0955:7523
+sudo ./tools/kernel_flash/l4t_initrd_flash.sh \
+  --flash-only --showlogs --network usb0
+```
+
+In separate guest terminals, monitor `dmesg -wH`, `udevadm monitor --kernel --udev`, `lsusb`, and
+`ip -6 -br addr`. The expected transition is APX `0955:7523`, then L4T initrd `0955:7035`, then a
+USB network interface and SSH/NFS over IPv6, followed by QSPI and NVMe writes. Keep barrel power
+and USB connected until completion. The recovery jumper must already be absent.
+
+### Stop conditions and fault isolation
+
+Use the transition point to choose the next investigation; do not stack unrelated workarounds:
+
+| Last proven boundary | Investigate next |
+|---|---|
+| APX never appears in Ubuntu | recovery sequence, physical port, cable, VFIO assignment |
+| EEPROM dumps differ | controller/cable/USB transport; do not conclude EEPROM corruption |
+| Blob timeout; UART shows BPMP/DRAM fatal | generated identity/config or target hardware |
+| APX disappears; `0955:7035` never appears | initrd boot or USB gadget failure |
+| `0955:7035` appears; no network interface | Ubuntu RNDIS/CDC modules |
+| USB network exists; SSH fails | guest IPv6/interface configuration |
+| SSH works; NFS fails | guest NFS service, firewall, VPN, or exports created by the tool |
+| Initrd runs; `nvme0n1` is absent | NVMe seating, slot, model compatibility, or target PCIe |
+
+Stop immediately if generation names P3767-0003 as the kernel DTB, the external image does not
+use the external PARTUUID, a write target is not QSPI plus `nvme0n1p1`, or any fuse command
+appears. If the corrected package still times out before initrd, capture the Jetson debug UART at
+115200 8N1 on the next attempt;
+that distinguishes a host USB timeout from target-side BPMP/DRAM failure.
+
+### First-boot acceptance
+
+After a successful flash and normal power cycle without the recovery jumper:
+
+```bash
+set -euo pipefail
+passwd
+mkdir -p ~/beast-acceptance
+head -1 /etc/nv_tegra_release | tee ~/beast-acceptance/nv-tegra-release.txt
+findmnt -no SOURCE,TARGET / | tee ~/beast-acceptance/root-mount.txt
+findmnt -no SOURCE / | grep -q nvme
+lsblk -o NAME,MODEL,SIZE,FSTYPE,MOUNTPOINTS | tee ~/beast-acceptance/lsblk.txt
+grep '^TNSPEC ' /etc/nv_boot_control.conf | tee ~/beast-acceptance/tnspec.txt
+grep -q '3767-300-0005' ~/beast-acceptance/tnspec.txt
+sudo nvbootctrl dump-slots-info | tee ~/beast-acceptance/nvbootctrl.txt
+dpkg --audit
+sudo apt update
+sudo apt-get check
+sudo apt install nvidia-jetpack
+dpkg --audit
+sudo apt-get check
+
+dpkg-query -W nvidia-jetpack 'cuda-*' 'libnvinfer*' 'libcudnn*' 'libnvvpi*' \
+  | tee ~/beast-acceptance/jetpack-packages.txt
+nvcc --version | tee ~/beast-acceptance/cuda.txt
+python3 -c 'import tensorrt as trt; print(trt.__version__)' \
+  | tee ~/beast-acceptance/tensorrt.txt
+sudo nvpmodel -q --verbose | tee ~/beast-acceptance/nvpmodel.txt
+set +e
+sudo timeout --signal=INT 5 tegrastats --interval 1000 \
+  | tee ~/beast-acceptance/tegrastats.txt
+tegrastats_status=${PIPESTATUS[0]}
+set -e
+test "$tegrastats_status" -eq 0 || test "$tegrastats_status" -eq 124
+test -s ~/beast-acceptance/tegrastats.txt
+```
+
+Acceptance requires:
+
+- Jetson Linux reports `R36, REVISION: 5.0`.
+- `/` is mounted from the NVMe and the APP filesystem has expanded to the expected capacity.
+- `TNSPEC` contains `3767-300-0005`, with no empty identity fields or P3767-0003.
+- QSPI/UEFI boots repeatedly without APX or a manual boot override.
+- `apt-get check`, `dpkg --audit`, and `nvidia-jetpack` complete successfully before any blanket
+  `apt upgrade` or `apt full-upgrade`.
+- The package capture contains installed CUDA, TensorRT (`libnvinfer`), cuDNN, and VPI packages;
+  `nvcc` and the TensorRT Python import print versions without errors.
+- `nvpmodel` prints the selected profile, and at least three `tegrastats` samples show live CPU,
+  memory, temperature, and GPU fields.
+- The later zero-motion ESP32 probe captures voltage, IMU, and raw odometry before any motion test.
+
+Install Docker Engine and NVIDIA Container Toolkit only **after** the native JetPack package state
+is healthy. Use Docker's Ubuntu repository rather than Ubuntu's older `docker.io` package, then
+install NVIDIA Container Toolkit from NVIDIA's repository. After those repositories are
+configured according to their linked vendor instructions, install and prove the runtime:
+
+```bash
+sudo apt install docker-ce docker-ce-cli containerd.io \
+  docker-buildx-plugin docker-compose-plugin nvidia-container-toolkit
+sudo nvidia-ctk runtime configure --runtime=docker
+sudo systemctl restart docker
+docker info --format '{{json .Runtimes}}'
+sudo docker run --rm --runtime=nvidia ubuntu:22.04 \
+  bash -lc 'cat /etc/nv_tegra_release && ls /dev/nvhost* >/dev/null'
+```
+
+Do not use `nvidia-smi` as the acceptance test: Jetson's integrated GPU is not managed like a
+desktop PCIe card. Add a matching L4T CUDA container and run `deviceQuery` before GPU workloads.
+
+### Jetson UART gate and Beast software
+
+The current Waveshare architecture already puts wheel control, encoders, IMU, battery telemetry,
+servo handling, and the motor stop on the ESP32 lower computer. Do not port Raspberry Pi GPIO,
+I2C, PWM, or motor-control code that the Beast does not use. The Jetson replaces the Pi as the ROS
+upper computer and talks to the same ESP32 at 115200 baud.
+
+On the NVIDIA carrier board's **40-pin expansion header**, pin 8 is UART TX, pin 10 is UART RX,
+and pin 6 is ground. These are unrelated to J14 recovery pins 9-10. The Linux device is
+`/dev/ttyTHS1`, not the Pi workspace's `/dev/ttyAMA0`. Before connecting the Beast:
+
+```bash
+sudo systemctl disable --now nvgetty.service
+sudo usermod -aG dialout "$USER"
+# Log out and back in before the following checks.
+ls -l /dev/ttyTHS1
+```
+
+With the Jetson powered off, loop pin 8 to pin 10, boot, and run a 115200-baud transmit/receive
+loopback. Remove the loop only after powering off. R36.5 has a reported Orin Nano/NX DMA regression
+on `serial@3100000`: if bytes do not loop back, first test the community-confirmed PIO workaround
+that removes `dmas` and `dma-names` from that node. The narrower NVIDIA-proposed fix adds the
+missing GPCDMA IOMMU property. Preserve the stock DTB and record which fix is necessary before
+deploying either one. Do not lower the ESP32 protocol baud or invent a USB-UART replacement until
+this test determines whether the onboard UART is actually affected.
+
+Install ROS 2 Humble from the official Jammy ARM64 apt repository, including
+`ros-humble-ros-base`, `python3-rosdep`, and `python3-colcon-common-extensions`. Initialize `rosdep`
+once, then use the prepared Jetson adaptation branch instead of Waveshare's unmodified Pi defaults:
+
+```bash
+set -euo pipefail
+sudo apt update
+sudo apt install -y git ros-humble-ros-base python3-rosdep \
+  python3-colcon-common-extensions
+
+mkdir -p ~/beast
+cd ~/beast
+UGV_WS_COMMIT=a1a1d9cb882974de46905e17a2496cf4ab70089b
+git clone --no-checkout https://github.com/Coldaine/ugv_ws.git
+cd ugv_ws
+git fetch origin "$UGV_WS_COMMIT"
+git checkout --detach "$UGV_WS_COMMIT"
+test "$(git rev-parse HEAD)" = "$UGV_WS_COMMIT"
+
+source /opt/ros/humble/setup.bash
+if [[ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]]; then
+  sudo rosdep init
+fi
+rosdep update
+rosdep install --from-paths src --ignore-src --rosdistro humble -r -y
+colcon build --symlink-install
+```
+
+That branch is based on Waveshare `ros2-humble-develop-251125` at `037dfca`, makes the ESP32 and
+LiDAR ports launch arguments, permits LiDAR-free base bring-up, and corrects `rclcpy` to `rclpy`.
+It deliberately preserves Pi defaults for upstream compatibility. Do not blindly run
+`build_first.sh` on the Jetson: it installs wildcard desktop, simulation, vision, and debug-symbol
+packages and hard-codes its build path. Add those lanes only when the corresponding hardware test
+reaches them.
+
+Set `UGV_MODEL=ugv_beast`. Do not set `LDLIDAR_MODEL` until the fitted LiDAR label identifies
+`ld06`, `ld19`, or `stl27l`. Use a stable `/dev/serial/by-id/...` path for USB LiDAR once observed.
+Keep the vendor `ugv_jetson` Flask service disabled while ROS is running because both attempt to
+own `/dev/ttyTHS1` and camera devices.
+
+For the first hardware session, lift and secure the tracks, leave LiDAR and autonomous nodes off,
+and start only base bring-up:
+
+```bash
+export UGV_MODEL=ugv_beast
+source /opt/ros/humble/setup.bash
+source ~/beast/ugv_ws/install/setup.bash
+ros2 launch ugv_bringup bringup_lidar.launch.py \
+  serial_port:=/dev/ttyTHS1 use_lidar:=false use_rviz:=false
+```
+
+With no `/cmd_vel` publisher running, capture one message from each zero-motion telemetry lane:
+
+```bash
+set -euo pipefail
+mkdir -p ~/beast-acceptance/ros
+rm -f ~/beast-acceptance/ros/*.txt
+ros2 topic info /cmd_vel --verbose | tee ~/beast-acceptance/ros/cmd-vel-info.txt
+grep -q '^Publisher count: 0$' ~/beast-acceptance/ros/cmd-vel-info.txt
+timeout 15 ros2 topic echo /ugv/voltage --once \
+  | tee ~/beast-acceptance/ros/voltage.txt
+timeout 15 ros2 topic echo /imu/raw --once \
+  | tee ~/beast-acceptance/ros/imu-raw.txt
+timeout 15 ros2 topic echo /odom/odom_raw --once \
+  | tee ~/beast-acceptance/ros/odom-raw.txt
+test -s ~/beast-acceptance/ros/voltage.txt
+test -s ~/beast-acceptance/ros/imu-raw.txt
+test -s ~/beast-acceptance/ros/odom-raw.txt
+```
+
+The voltage must be finite and plausible for the connected Beast battery; IMU and odometry arrays
+must be populated and update when the chassis is moved by hand. Stop if any lane times out or the
+`/cmd_vel` topic already has an unexpected publisher.
+
+Once the fitted LiDAR is identified, relaunch with `use_lidar:=true` and its stable `lidar_port`.
+For the heartbeat test, keep the tracks lifted and clear, start exactly one publisher in a second
+terminal, and begin at 0.02 m/s. Increase only enough to overcome motor deadband, never above
+0.05 m/s during this test:
+
+```bash
+ros2 topic pub --rate 5 /cmd_vel geometry_msgs/msg/Twist \
+  '{linear: {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}'
+```
+
+While the lifted tracks are turning steadily, press Ctrl+C in that publisher terminal and start a
+timer. With no other publisher and without sending zero first, the ESP32 must stop the tracks
+within its configured three-second heartbeat interval. After observing and recording that stop,
+send an explicit zero with a subscriber wait:
+
+```bash
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
+  '{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}' \
+  --once -w 1
+```
+
+The lower-level failsafe exists in current `ugv_base_general`; it still requires this physical
+validation. Camera, LiDAR, SLAM/Nav2, web control, and RoArm follow only after the chassis gate.
+
+### Required post-success update
+
+Immediately after success, replace the `UNVALIDATED` banner with a verification date and record:
+
+- Proxmox node, VM version, passed xHCI PCI address, and Ubuntu guest kernel.
+- Developer-kit product number, EEPROM dump hashes, selected identity, and NVMe model.
+- Exact successful command and any environment overrides.
+- USB cable/port/hub and USBFS/power settings.
+- Flash duration and the final success lines from the log.
+- R36 release line, root mount source, and first-boot package state.
+- Any step that was unnecessary, misleading, or missing.
+- The ROS 2 Humble / `ugv_ws` provisioning and physical safety-validation result.
+
+Until that amendment lands, this section remains a proposed recovery sequence, not an operating
+claim.
+
+### Research references
+
+- NVIDIA JetPack 6.2.2 — https://developer.nvidia.com/embedded/jetpack-sdk-622
+- NVIDIA Jetson Linux 36.5 release — https://developer.nvidia.com/embedded/jetson-linux-r365
+- NVIDIA Jetson Linux 36.5 flashing support — https://docs.nvidia.com/jetson/archives/r36.5/DeveloperGuide/SD/FlashingSupport.html
+- NVIDIA R36.5 Quick Start (Orin Nano Super NVMe command) — https://docs.nvidia.com/jetson/archives/r36.5/DeveloperGuide/IN/QuickStart.html
+- NVIDIA R36.5 supported modules — https://docs.nvidia.com/jetson/archives/r36.5/DeveloperGuide/index.html
+- NVIDIA EEPROM layout — https://docs.nvidia.com/jetson/archives/r35.6.2/DeveloperGuide/HR/JetsonEepromLayout.html
+- Proxmox PCI passthrough administration — https://pve.proxmox.com/pve-docs/pve-admin-guide.pdf
+- Successful Orin Nano Proxmox whole-controller flash — https://git.ericxliu.me/eric/ericxliu-me/src/commit/3b723ecfad7d7f64f02d2e496c97fb79b29c8b61/content/posts/flashing-jetson-orin-nano-in-virtualized-environments.md
+- NVIDIA forum: containerized external-storage flash limitations — https://forums.developer.nvidia.com/t/flashing-orin-from-inside-docker-container/352106
+- NVIDIA forum: EEPROM override recovery — https://forums.developer.nvidia.com/t/cannot-flash-jetson-nano-orin-devkit-eeprom-error/278033
+- NVIDIA forum: USBFS timeout workaround — https://forums.developer.nvidia.com/t/fix-for-error-might-be-timeout-in-usb-write-increase-usbfs-memory-mb-to-2048/360581
+- NVIDIA forum: R36.5 Orin Nano/NX UART DMA fixes — https://forums.developer.nvidia.com/t/solved-uart-serial-port-not-working-after-upgradint-to-jetpack-6-2-2-orin-nano-nx/363837
+- NVIDIA Container Toolkit install guide — https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+- Docker Engine on Ubuntu — https://docs.docker.com/engine/install/ubuntu/
+- ROS 2 Humble Ubuntu packages — https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
+- Waveshare UGV Beast Jetson Orin ROS 2 — https://www.waveshare.com/wiki/UGV_Beast_Jetson_Orin_ROS2
+- Prepared Jetson `ugv_ws` branch — https://github.com/Coldaine/ugv_ws/tree/beast/jetson-orin-nano-adaptation
+- Reddit: recovery-mode jumper and cable lessons — https://www.reddit.com/r/JetsonNano/comments/1lqzjhu
+- Reddit: NVMe model compatibility report — https://www.reddit.com/r/JetsonNano/comments/1hth1vo/booting_jetson_orin_nano_super_from_ssd/
 
 ## References
 
