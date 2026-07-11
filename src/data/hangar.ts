@@ -895,8 +895,8 @@ export const hangarData: HangarData = {
     },
     {
       id: 'jetson-flash-bct-boundary',
-      title: 'Jetson flash is blocked before any storage write',
-      body: 'OP-JETSON-FLASH proved the clean R36.5 BSP and captured the same signed 8,192-byte first recovery BCT failing with zero bytes transferred through the EVO AMD xHCI path in Ubuntu 5.15, Ubuntu 6.8, and directly on the Proxmox 7.0 host. Docker, QEMU, VFIO, the guest kernel, EEPROM retrieval, initrd boot, QSPI, and NVMe are outside the remaining fault boundary. The exact read-only control is staged on an Intel Raptor Lake workstation; success there implicates EVO USB, while the same failure makes the physical cable/receptacle or Jetson target the leading suspects.',
+      title: 'Intel USB unblocked the Jetson R36.5 flash',
+      body: 'OP-JETSON-FLASH proved the EVO AMD Strix Halo USB path caused the first-BCT timeout: the same signed transfer completed on the Intel workstation, which then flashed QSPI and the 2 TB Micron NVMe successfully. First boot verified beast-01 on Jetson Linux R36.5 with a 1.9 TiB NVMe root and key-based USB SSH. Later read-info probes can clobber bootloader RCM artifacts in a generated BSP tree, so regenerate and hash-check the RCM BCT against the package index before flash-only. Provisioning remains blocked only on repairing the intentionally discarded sudo credential, after which JetPack, Docker, ROS 2, ugv_ws, and Beast bench validation continue.',
       tags: ['jetson', 'flash', 'operations', 'usb'],
       bay: 'robotics',
       units: ['beast', 'orin-nano'],
@@ -948,9 +948,9 @@ export const hangarData: HangarData = {
   activity: [
     {
       id: 'a-jetson-flash-bct',
-      at: '2026-07-11T18:40:00Z',
+      at: '2026-07-11T20:51:47Z',
       kind: 'insight',
-      text: 'OP-JETSON-FLASH reproduced the first signed recovery-BCT failure natively on EVO, exonerating its VM/VFIO path; the Intel control is staged and no QSPI or NVMe write occurred.',
+      text: 'OP-JETSON-FLASH flashed R36.5 to BEAST-JETSON QSPI and its 2 TB NVMe over Intel USB; first boot passed and sudo repair is the remaining provisioning blocker.',
     },
     {
       id: 'a7',

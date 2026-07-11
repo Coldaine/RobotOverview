@@ -140,11 +140,12 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
-> **Status: BLOCKED BEFORE FLASH — attempted 2026-07-11.** The clean EVO VM and a direct native
-> Proxmox control both reach APX and read the ECID, but transfer zero bytes of the same signed first
-> recovery BCT through the EVO AMD xHCI path. No QSPI or NVMe write has occurred. The exact Intel
-> host control is staged next. BEAST-01 still runs the Raspberry Pi 5 stack described above; the
-> migration does not become an operating fact until the Jetson boots and passes bench validation.
+> **Status: R36.5 FLASHED; PROVISIONING IN PROGRESS — verified 2026-07-11.** The Intel Raptor Lake
+> host successfully flashed QSPI and the 2 TB NVMe, and `beast-01` booted Jetson Linux R36.5 from
+> `/dev/nvme0n1p1`. Key-based SSH works over the normal L4T USB gadget. JetPack compute, Docker,
+> ROS 2, the Waveshare workspace, and Beast bench validation remain incomplete because the staged
+> `beast` account needs one recovery-mode sudo credential repair. BEAST-01 still physically runs
+> the Raspberry Pi 5 stack until those gates pass and the Jetson is installed.
 
 ### Target and non-goals
 
@@ -263,16 +264,54 @@ boundaries here as evidence; do not summarize them later as a successful flash.
     control; an earlier standalone `tegrarcm_v2` test that sent a zero-filled BCT was incomplete and
     is not evidence. No storage write occurred in either native test.
 
-Current conclusion: the clean BSP, Ubuntu 5.15 and 6.8 guest kernels, whole-controller VFIO, and
-native Proxmox 7.0 all fail on the same signed first bulk transfer through the EVO's AMD Strix Halo
-`1022:158b` controller. Docker, QEMU, VFIO, the guest kernel, EEPROM retrieval, initrd boot, QSPI,
-and NVMe are outside the remaining fault boundary. The remaining candidates are the EVO AMD xHCI
-and physical USB path, or a Jetson BootROM/USB target fault. The exact read-only environment is now
-staged on the Intel Raptor Lake Nobara workstation. Move the same recovery cable from EVO to that
-workstation and repeat this one transfer natively before any flash write. Success there assigns the
-fault to the EVO controller path; the same zero-byte failure on Intel makes the cable/receptacle or
-Jetson target the leading suspects and triggers one cable/topology change plus debug UART before an
-RMA decision.
+The Intel control below closed this diagnosis: the same signed BCT completed immediately on Intel,
+so the Jetson, cable, recovery sequence, and payload were not the cause of the EVO timeout. Do not
+reuse the EVO Strix Halo controller for Jetson recovery flashing unless a later firmware or kernel
+change passes the read-only BCT control first.
+
+### Successful local Intel flash — 2026-07-11
+
+1. Moved the same cable and recovery-mode Jetson to the Nobara workstation. APX enumerated on the
+   Intel Alder Lake PCH xHCI controller `8086:51ed` at PCI `00:14.0`, USB path `3-2`, using Nobara
+   kernel `7.1.3-200.nobara.fc44.x86_64`.
+2. Ran the exact signed read-only environment. The first 8,192-byte BCT beginning
+   `42435442 f76f0ad8 ee33a8f2` completed `8192/8192`, followed by MB1, PSC, MB2, fuse, and EEPROM
+   operations. This assigns the EVO failures to its AMD Strix Halo USB path rather than the Jetson.
+3. Streamed the prepared Ubuntu-generated R36.5 tree locally, preserving the rootfs and generated
+   QSPI/NVMe images while excluding only obsolete large intermediate images. Reverified external
+   `system.img` SHA-1 `15cda47639be08efa6e214c7d59fb6129dc343c3`, the R36.5 release line, and
+   the `jetson-orin-nano-devkit-super` `nvme0n1p1` parameters.
+4. Adapted Nobara's service name at runtime from NVIDIA's expected `nfs-kernel-server` to Fedora's
+   `nfs-server`; NFS, rpcbind, IPv6, and host firewall restoration passed preflight. The firewall
+   was stopped only for the attended flash and restored afterward; NVIDIA's temporary exports were
+   removed.
+5. The first two write attempts stopped before storage access. `usbmon` proved the copied
+   `bootloader/br_bct_BR.bct` had been reset to a zero template by later `--read-info` probes even
+   though the immutable internal QSPI BCT remained valid. The Jetson accepted the 8 KiB transfer,
+   reset, and cancelled MB1 with `-108`. This was a generated-tree lifecycle error, not USB loss.
+6. Regenerated only the RCM-boot artifacts with `BOARDID=3767`, `BOARDSKU=0005`, `FAB=300`,
+   `CHIP_SKU=00:00:00:D5`, and `RAMCODE_ID=2`. Nobara OpenSSH no longer supports NVIDIA's legacy
+   DSA host-key generation, so the local recovery-ramdisk script skipped only that obsolete key and
+   retained RSA, ECDSA, and Ed25519. The regenerated boot BCT SHA-1
+   `063ef50bfb883fd1bb8daece5ac01e9302f778a0` then matched `images/internal/flash.idx` exactly.
+7. Ran `l4t_initrd_flash.sh --flash-only --showlogs --network usb0`. RCM boot reported
+   `last_boot_error: 0`, sent the 104.6 MB blob, exposed `0955:7035`, brought SSH up at
+   `fc00:1:1:0::2`, and identified the target as a 2 TB Micron 2400 NVMe.
+8. NVIDIA reported `Successfully flashed the external device`, `Successfully flashed the QSPI`,
+   `Flashing success`, and `Flash is successful` after 4 minutes 15 seconds. Every programmed QSPI
+   payload reported a matching SHA-1. The host firewall returned active and the NFS export list
+   returned empty after cleanup.
+9. Normal boot enumerated `0955:7020 NVIDIA L4T`, and key-based SSH reached `beast@192.168.55.1`.
+   Verified hostname `beast-01`, Jetson Linux `R36, REVISION: 5.0`, root filesystem
+   `/dev/nvme0n1p1` as ext4, APP PARTUUID `a08cd0ca-4707-4e72-bc04-8691205bb435`, and APP expanded
+   to 1.9 TiB.
+
+Remaining blocker: the earlier discarded random password hash left `beast` in the `sudo` group but
+without a usable sudo credential, and root-key SSH is disabled. Re-enter recovery once, RCM-boot the
+validated initrd without invoking any flash command, mount the NVMe rootfs, install a narrowly
+owned passwordless-sudo rule for the SSH-key-only `beast` account, unmount, and reboot normally.
+Then continue immediately with JetPack compute, Docker, ROS 2 Humble, `ugv_ws`, and bench safety
+validation. Do not reflash storage for this credential repair.
 
 ### Flash-host architecture — Proxmox with the whole xHCI controller
 
@@ -765,21 +804,15 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
 The lower-level failsafe exists in current `ugv_base_general`; it still requires this physical
 validation. Camera, LiDAR, SLAM/Nav2, and web control follow only after the chassis gate.
 
-### Required post-success update
+### Remaining post-flash completion record
 
-Immediately after success, replace the `BLOCKED BEFORE FLASH` banner with a verification date and record:
+The flash facts above are verified. Before declaring the Jetson migration complete, add:
 
-- Proxmox node, VM version, passed xHCI PCI address, and Ubuntu guest kernel.
-- Developer-kit product number, EEPROM dump hashes, selected identity, and NVMe model.
-- Exact successful command and any environment overrides.
-- USB cable/port/hub and USBFS/power settings.
-- Flash duration and the final success lines from the log.
-- R36 release line, root mount source, and first-boot package state.
-- Any step that was unnecessary, misleading, or missing.
-- The ROS 2 Humble / `ugv_ws` provisioning and physical safety-validation result.
+- The completed sudo repair and post-repair `apt-get check` / `dpkg --audit` result.
+- Installed JetPack, CUDA, TensorRT, cuDNN, VPI, Docker, and NVIDIA runtime package versions.
+- ROS 2 Humble / `ugv_ws` build, launch, and physical safety-validation results.
 
-Until that amendment lands, this section remains a proposed recovery sequence, not an operating
-claim.
+Until those gates pass, R36.5-on-NVMe is an operating fact but the Beast compute cutover is not.
 
 ### Research references
 
