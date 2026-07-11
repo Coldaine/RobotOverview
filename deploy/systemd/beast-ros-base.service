@@ -1,0 +1,23 @@
+[Unit]
+Description=BEAST-01 ROS 2 base bring-up (zero-motion staging)
+Wants=network-online.target
+After=network-online.target docker.service
+ConditionPathExists=/home/beast/beast/ugv_ws/install/setup.bash
+
+[Service]
+Type=simple
+User=beast
+Group=beast
+SupplementaryGroups=dialout video render
+WorkingDirectory=/home/beast/beast/ugv_ws
+EnvironmentFile=/etc/beast/ugv.env
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/bin/bash -lc 'source /opt/ros/humble/setup.bash && source /home/beast/beast/ugv_ws/install/setup.bash && exec ros2 launch ugv_bringup bringup_lidar.launch.py use_lidar:=false use_rviz:=false allow_motion:=false'
+KillSignal=SIGINT
+TimeoutStopSec=15
+Restart=on-failure
+RestartSec=5
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target
