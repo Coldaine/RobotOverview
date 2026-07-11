@@ -140,11 +140,11 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
-> **Status: BLOCKED BEFORE FLASH — attempted 2026-07-11.** The clean EVO whole-controller path
-> reaches APX and reads the ECID but times out sending the first read-only recovery BCT. No QSPI or
-> NVMe write has occurred. BEAST-01 still runs the Raspberry Pi 5 stack described above. The module
-> SKU, FAB, host architecture, and NVMe command are corrected, but the migration does not become an
-> operating fact until the Jetson boots and passes bench validation.
+> **Status: BLOCKED BEFORE FLASH — attempted 2026-07-11.** The clean EVO VM and a direct native
+> Proxmox control both reach APX and read the ECID, but transfer zero bytes of the same signed first
+> recovery BCT through the EVO AMD xHCI path. No QSPI or NVMe write has occurred. The exact Intel
+> host control is staged next. BEAST-01 still runs the Raspberry Pi 5 stack described above; the
+> migration does not become an operating fact until the Jetson boots and passes bench validation.
 
 ### Target and non-goals
 
@@ -188,9 +188,10 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 - No prior attempt reached a QSPI or NVMe partition write. The observed failures occurred while
   building images, starting container NFS, sending an RCM blob, or querying target storage.
 
-The `USBDEVFS_CONTROL ... -110` timeout is not assigned one cause. It may have been USB transport,
-the wrong generated board package, or target hardware. The corrected attempt observes each
-boundary separately instead of assuming Nobara, the cable, or the Jetson is at fault.
+The original `USBDEVFS_CONTROL ... -110` symptom was ambiguous. The corrected signed-payload
+captures now assign it below Docker, QEMU, VFIO, and the guest kernel, but do not yet distinguish the
+EVO AMD controller/physical path from the Jetson BootROM endpoint. The Intel control below changes
+exactly that boundary rather than assuming the cable or Jetson is at fault.
 
 ### Attempt ledger — 2026-07-11 EVO whole-controller run
 
@@ -248,16 +249,30 @@ boundaries here as evidence; do not summarize them later as a successful flash.
     in `jetson-orin-nano-devkit-super internal`. A scan of the saved command and generated package
     found no fuse-burn command. Exactly one APX device remained attached. The package is ready for
     `--flash-only` after the physical transport variable and recovery state are changed.
+11. Upgraded VM 900 from Ubuntu's 5.15 GA kernel to the 6.8 HWE kernel and repeated the read-only
+    probe. It read the same ECID and failed at the same first `bct_br` transfer, so the result is not
+    specific to the older guest kernel.
+12. Captured the failed VM transaction with `usbmon`. Descriptor reads completed, then
+    `tegrarcm_v2` submitted one 8,192-byte bulk OUT transfer beginning
+    `42435442 f76f0ad8 ee33a8f2`. After about ten seconds it completed as `-2` with actual length
+    zero: userspace cancelled an URB for which the host stack had reported no transferred bytes.
+13. Removed VM and VFIO from the transaction. Stopped VM 900, rebound `c8:00.4` to the Proxmox
+    7.0 host's `xhci_hcd`, and ran the complete generated NVIDIA read-info environment directly on
+    `pve-evo-x2`. The host generated and submitted the same signed 8,192-byte payload, including the
+    same leading bytes, and again completed zero bytes before cancellation. This is a valid native
+    control; an earlier standalone `tegrarcm_v2` test that sent a zero-filled BCT was incomplete and
+    is not evidence. No storage write occurred in either native test.
 
-Current conclusion: the clean BSP, native Ubuntu userspace, whole-controller ownership, VM USB
-re-enumeration, archive integrity, and all known host USB power/buffer mitigations have been
-exercised. The failure still precedes EEPROM retrieval, initrd boot, QSPI access, and NVMe access.
-The next retry must change a real remaining variable: use another known-good data cable and a
-different physical EVO USB port/controller, then perform a fresh recovery power cycle. If that
-repeats, capture debug UART and compare against a bare-metal Ubuntu host before assigning the fault
-to the Jetson. Whole-controller VFIO removes Proxmox's per-device reacquisition problem, but it
-does not prove that this AMD xHCI controller/VM combination is electrically or behaviorally
-identical to the bare-metal control.
+Current conclusion: the clean BSP, Ubuntu 5.15 and 6.8 guest kernels, whole-controller VFIO, and
+native Proxmox 7.0 all fail on the same signed first bulk transfer through the EVO's AMD Strix Halo
+`1022:158b` controller. Docker, QEMU, VFIO, the guest kernel, EEPROM retrieval, initrd boot, QSPI,
+and NVMe are outside the remaining fault boundary. The remaining candidates are the EVO AMD xHCI
+and physical USB path, or a Jetson BootROM/USB target fault. The exact read-only environment is now
+staged on the Intel Raptor Lake Nobara workstation. Move the same recovery cable from EVO to that
+workstation and repeat this one transfer natively before any flash write. Success there assigns the
+fault to the EVO controller path; the same zero-byte failure on Intel makes the cable/receptacle or
+Jetson target the leading suspects and triggers one cable/topology change plus debug UART before an
+RMA decision.
 
 ### Flash-host architecture — Proxmox with the whole xHCI controller
 
@@ -268,6 +283,11 @@ vendor/product filters, SPICE USB redirection, an LXC, Docker, or Podman.
 This distinction matters: the VM's Ubuntu kernel must own the controller and every transition
 from APX to the L4T initrd composite device and USB network interface. Individual USB forwarding
 asks QEMU or Proxmox to reacquire each new USB identity; whole-controller PCI passthrough does not.
+
+This architecture is valid in general, but the 2026-07-11 native-host control proves that rebuilding
+VM 900 cannot resolve the current EVO failure: the same transfer fails below the VM boundary on the
+same AMD controller. Resume this architecture only on a controller that first passes the read-only
+`bct_br` control.
 
 On the Proxmox host, verify IOMMU and inventory the controllers:
 
@@ -774,6 +794,8 @@ claim.
 - NVIDIA forum: containerized external-storage flash limitations — https://forums.developer.nvidia.com/t/flashing-orin-from-inside-docker-container/352106
 - NVIDIA forum: EEPROM override recovery — https://forums.developer.nvidia.com/t/cannot-flash-jetson-nano-orin-devkit-eeprom-error/278033
 - NVIDIA forum: USBFS timeout workaround — https://forums.developer.nvidia.com/t/fix-for-error-might-be-timeout-in-usb-write-increase-usbfs-memory-mb-to-2048/360581
+- NVIDIA forum: matching AMD-controller timeout resolved on Intel — https://forums.developer.nvidia.com/t/jetson-agx-orin-64gb-usb-timeout-on-flash-gui-broken-after-flash-sh-sdk-manager-no-sdks-on-windows/363988
+- Linux usbmon documentation — https://docs.kernel.org/usb/usbmon.html
 - NVIDIA forum: R36.5 Orin Nano/NX UART DMA fixes — https://forums.developer.nvidia.com/t/solved-uart-serial-port-not-working-after-upgradint-to-jetpack-6-2-2-orin-nano-nx/363837
 - NVIDIA Container Toolkit install guide — https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
 - Docker Engine on Ubuntu — https://docs.docker.com/engine/install/ubuntu/

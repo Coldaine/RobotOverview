@@ -896,7 +896,7 @@ export const hangarData: HangarData = {
     {
       id: 'jetson-flash-bct-boundary',
       title: 'Jetson flash is blocked before any storage write',
-      body: 'OP-JETSON-FLASH proved the clean Ubuntu 22.04 VM, whole-controller VFIO path, APX enumeration, official R36.5 archive hashes, and every known USB buffer/power mitigation. Two read-only probes read the same ECID but timed out sending the first recovery BCT, before EEPROM retrieval, initrd boot, QSPI access, or NVMe access. The next retry must change a physical cable/port/controller and repeat a fresh recovery cycle; debug UART plus a bare-metal Ubuntu control is the escalation if that boundary repeats.',
+      body: 'OP-JETSON-FLASH proved the clean R36.5 BSP and captured the same signed 8,192-byte first recovery BCT failing with zero bytes transferred through the EVO AMD xHCI path in Ubuntu 5.15, Ubuntu 6.8, and directly on the Proxmox 7.0 host. Docker, QEMU, VFIO, the guest kernel, EEPROM retrieval, initrd boot, QSPI, and NVMe are outside the remaining fault boundary. The exact read-only control is staged on an Intel Raptor Lake workstation; success there implicates EVO USB, while the same failure makes the physical cable/receptacle or Jetson target the leading suspects.',
       tags: ['jetson', 'flash', 'operations', 'usb'],
       bay: 'robotics',
       units: ['beast', 'orin-nano'],
@@ -950,7 +950,7 @@ export const hangarData: HangarData = {
       id: 'a-jetson-flash-bct',
       at: '2026-07-11T18:40:00Z',
       kind: 'insight',
-      text: 'OP-JETSON-FLASH built the EVO whole-controller flasher and isolated the current failure to the first read-only recovery BCT; no QSPI or NVMe write occurred.',
+      text: 'OP-JETSON-FLASH reproduced the first signed recovery-BCT failure natively on EVO, exonerating its VM/VFIO path; the Intel control is staged and no QSPI or NVMe write occurred.',
     },
     {
       id: 'a7',
