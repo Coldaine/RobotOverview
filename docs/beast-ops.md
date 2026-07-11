@@ -226,6 +226,9 @@ boundaries here as evidence; do not summarize them later as a successful flash.
    rootfs. NVIDIA's helper printed its generated temporary password to the terminal; that password
    was immediately replaced with a new discarded random credential. Key-based SSH is the intended
    first-boot path and the printed credential is invalid.
+   **This is historical failure evidence, not a reusable instruction.** The mandatory credential
+   gate below now prohibits package generation until the staged password matches Doppler and the
+   staged operator key fingerprint matches the persisted public key.
 8. Generated `bootloader/readinfocmd.txt` using the known NVIDIA developer-kit package identity
    `BOARDID=3767`, `BOARDSKU=0005`, and `FAB=300`. The first read-only probe read ECID
    `0x80012344705E021D2C00000003008240`, then timed out while sending `bct_br`. It created no fresh
@@ -308,9 +311,9 @@ change passes the read-only BCT control first.
 
 Remaining blocker: the earlier discarded random password hash left `beast` in the `sudo` group but
 without a usable sudo credential, and root-key SSH is disabled. Re-enter recovery once, RCM-boot the
-validated initrd without invoking any flash command, and mount the NVMe rootfs. Generate a strong
-admin password directly into Doppler as `BEAST_JETSON_ADMIN_PASSWORD`, set the target hash without
-printing or logging the value, retain key-only SSH, unmount, and reboot normally. Do not grant
+validated initrd without invoking any flash command, and mount the NVMe rootfs. The strong
+`BEAST_JETSON_ADMIN_PASSWORD` now exists in Doppler; set that exact value as the target hash without
+printing or logging it, retain key-only SSH, unmount, and reboot normally. Do not grant
 blanket `NOPASSWD:ALL`; if later robot automation genuinely needs passwordless privilege, allowlist
 only the required commands in a separate sudoers rule. Then continue immediately with JetPack
 compute, Docker, ROS 2 Humble, `ugv_ws`, and bench safety validation. Do not reflash storage for
@@ -322,15 +325,18 @@ Audited after the successful flash on 2026-07-11:
 
 - `beast` accepts the local `laptop-extra@coldaine-fleet` Ed25519 key with fingerprint
   `SHA256:6DUbgRuhTmZ/uTVXpLN/VPf2gPoiFIy2WPBXfaBRp4k`. This is **not** the
-  `SSH_PUBKEY_PATRICK_DESKTOP` key currently stored in Doppler. The working private key remains on
-  the local workstation; neither it nor a Jetson-specific replacement key was written to Doppler.
+  `SSH_PUBKEY_PATRICK_DESKTOP` key. Its public half is now persisted in Doppler as
+  `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`; the working private key remains only on the local
+  workstation.
 - The freshly flashed Jetson's ED25519 SSH host-key fingerprint is
   `SHA256:xqnMRWqv19+w7zFdzrYI4BlPP/Wfq9VcJ02qmSjUbNA`. Verify it when reconnecting over USB or the
   eventual LAN address; the temporary host-side `known_hosts` file under `/tmp` is not durable.
-- Doppler `secrets_managment/dev` has no `BEAST_*` or `JETSON_*` administrator credential. The
-  existing `PVE_EVO_X2_ROOT_PASSWORD` enabled the Proxmox work, and the existing
+- Doppler `secrets_managment/dev` now contains `BEAST_JETSON_ADMIN_PASSWORD` and
+  `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`. The administrator value has not yet been applied to the
+  already-flashed NVMe, which is why the one recovery repair remains. The existing
+  `PVE_EVO_X2_ROOT_PASSWORD` enabled the Proxmox work, and the existing
   `UDM_WIFI_MOOSEGOOSEIOT` / `UDM_WIFI_CASTLEMOOSEGOOSE` PSKs are available for later network
-  configuration, but no secret value belongs in this runbook.
+  configuration. No secret value belongs in this runbook, logs, shell history, or process output.
 - The normal L4T USB gadget is reachable at `192.168.55.1`; onboard Ethernet `enP8p1s0` and Wi-Fi
   `wlP1p1s0` are down. The current network-map identity `beast` / `192.168.20.184` still belongs to
   the Pi-hosted BEAST-01 and must not silently move to the Jetson before physical cutover and a live
@@ -479,21 +485,110 @@ sudo ./apply_binaries.sh
 head -1 rootfs/etc/nv_tegra_release
 ```
 
-The release line must contain `R36` and `REVISION: 5.0`. Pre-create the headless account without
-putting a password in the runbook or shell history:
+The release line must contain `R36` and `REVISION: 5.0`.
+
+#### Mandatory credential gate — before generating or flashing any package
+
+The administrator credential and operator public key must be durable **before** the headless user
+is created. Never flash a generated/discarded password and plan to change it after boot: key-only
+SSH does not satisfy `sudo`, and that mistake requires an otherwise unnecessary recovery boot.
+
+From the authenticated operator shell, preserve an existing administrator credential or create it
+once, then record the exact public key that will be installed. The project slug below is the live,
+intentionally misspelled Doppler slug:
 
 ```bash
-read -rsp 'Temporary BEAST-01 password: ' BEAST_TEMP_PASSWORD; echo
-sudo ./tools/l4t_create_default_user.sh \
-  -u beast -p "$BEAST_TEMP_PASSWORD" -n beast-01 --accept-license
-unset BEAST_TEMP_PASSWORD
+set -euo pipefail
+export DOPPLER_PROJECT=secrets_managment
+export DOPPLER_CONFIG=dev
+export BEAST_OPERATOR_PUBLIC_KEY="$HOME/.ssh/id_ed25519.pub"
+
+test -s "$BEAST_OPERATOR_PUBLIC_KEY"
+if ! doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain >/dev/null 2>&1; then
+  openssl rand -hex 32 | doppler secrets set BEAST_JETSON_ADMIN_PASSWORD \
+    --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" \
+    --no-interactive --silent
+fi
+doppler secrets set BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" \
+  --no-interactive --silent < "$BEAST_OPERATOR_PUBLIC_KEY"
+
+test "$(doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+  | tr -d '\r\n' | wc -c)" -ge 32
 ```
 
-This bypasses interactive OEM setup. First boot must still verify that the APP partition expanded
-to the NVMe's usable capacity. NVIDIA's script has no stdin or file-based password option: while
-it runs, another local user or process in the flash VM can read the temporary password from its
-command line. Use a unique one-time password in this dedicated VM, change it immediately after
-first login with `passwd`, and destroy the VM after the attended flash session.
+NVIDIA's helper accepts its password only as a command-line argument. Give it a disposable random
+bootstrap value, then overwrite the staged rootfs immediately from Doppler over stdin; the
+disposable value must never be the password that is flashed:
+
+```bash
+set -euo pipefail
+BEAST_BOOTSTRAP_PASSWORD="$(openssl rand -hex 32)"
+sudo ./tools/l4t_create_default_user.sh \
+  -u beast -p "$BEAST_BOOTSTRAP_PASSWORD" -n beast-01 --accept-license
+unset BEAST_BOOTSTRAP_PASSWORD
+
+{
+  printf 'beast:'
+  doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+    --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+    | tr -d '\r\n'
+  printf '\n'
+} | sudo chpasswd --root "$PWD/rootfs"
+
+beast_uid="$(sudo awk -F: '$1 == "beast" { print $3 }' rootfs/etc/passwd)"
+beast_gid="$(sudo awk -F: '$1 == "beast" { print $4 }' rootfs/etc/passwd)"
+sudo install -d -m 0700 -o "$beast_uid" -g "$beast_gid" rootfs/home/beast/.ssh
+doppler secrets get BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+  | sudo tee rootfs/home/beast/.ssh/authorized_keys >/dev/null
+sudo chown "$beast_uid:$beast_gid" rootfs/home/beast/.ssh/authorized_keys
+sudo chmod 0600 rootfs/home/beast/.ssh/authorized_keys
+```
+
+Verify the staged password against Doppler without printing either the password or hash, verify
+`beast` is a sudo member, and compare the staged and persisted public-key fingerprints:
+
+```bash
+set -euo pipefail
+stored_hash="$(sudo awk -F: '$1 == "beast" { print $2 }' rootfs/etc/shadow)"
+test -n "$stored_hash"
+case "$stored_hash" in
+  '!'*|'*'*) exit 1 ;;
+esac
+doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+  | perl -e '
+      my $hash = shift;
+      chomp(my $password = <STDIN>);
+      exit(crypt($password, $hash) eq $hash ? 0 : 1);
+    ' "$stored_hash"
+unset stored_hash
+
+sudo awk -F: '
+  $1 == "sudo" && $4 ~ /(^|,)beast(,|$)/ { found = 1 }
+  END { exit(found ? 0 : 1) }
+' rootfs/etc/group
+
+doppler_key_fingerprint="$(
+  doppler secrets get BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY \
+    --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+    | ssh-keygen -lf - | awk '{ print $2 }'
+)"
+staged_key_fingerprint="$(
+  sudo ssh-keygen -lf rootfs/home/beast/.ssh/authorized_keys | awk '{ print $2 }'
+)"
+test "$doppler_key_fingerprint" = "$staged_key_fingerprint"
+unset doppler_key_fingerprint staged_key_fingerprint beast_uid beast_gid
+```
+
+Any failure above is a hard stop: do not generate a flash package and do not put the Jetson into
+recovery. This bypasses interactive OEM setup while leaving a known, durable sudo credential and
+key-only SSH on the image. The disposable helper password is briefly visible to other local
+processes, so use a dedicated flash host/VM and overwrite it before package generation. First boot
+must still verify that the APP partition expanded to the NVMe's usable capacity.
 
 Before connecting the recovery session, record:
 
@@ -656,11 +751,35 @@ that distinguishes a host USB timeout from target-side BPMP/DRAM failure.
 
 ### First-boot acceptance
 
-After a successful flash and normal power cycle without the recovery jumper:
+After a successful flash and normal power cycle without the recovery jumper, prove both key SSH
+and the persisted sudo credential from the authenticated operator workstation **before** package
+installation. Verify the SSH host-key fingerprint against the staged/recorded fingerprint first;
+do not bypass host-key checking:
 
 ```bash
 set -euo pipefail
-passwd
+export DOPPLER_PROJECT=secrets_managment
+export DOPPLER_CONFIG=dev
+export JETSON_USB_HOST=192.168.55.1
+export BEAST_SSH_IDENTITY="$HOME/.ssh/id_ed25519"
+
+ssh -o BatchMode=yes -o StrictHostKeyChecking=yes \
+  -i "$BEAST_SSH_IDENTITY" "beast@$JETSON_USB_HOST" true
+doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+  | ssh -T -o BatchMode=yes -o StrictHostKeyChecking=yes \
+      -i "$BEAST_SSH_IDENTITY" "beast@$JETSON_USB_HOST" \
+      'sudo -S -k -p "" true && sudo -k'
+```
+
+If either command fails, provisioning stops. Do not install packages, add blanket passwordless
+sudo, or declare first boot accepted. Repair the staged credential before flashing when possible;
+for an already-flashed target, use the non-destructive recovery repair described above.
+
+Then run on the Jetson:
+
+```bash
+set -euo pipefail
 mkdir -p ~/beast-acceptance
 head -1 /etc/nv_tegra_release | tee ~/beast-acceptance/nv-tegra-release.txt
 findmnt -no SOURCE,TARGET / | tee ~/beast-acceptance/root-mount.txt
@@ -693,6 +812,9 @@ test -s ~/beast-acceptance/tegrastats.txt
 
 Acceptance requires:
 
+- The operator key succeeds with strict host-key checking and the Doppler administrator credential
+  successfully authenticates sudo after invalidating any cached credential, without exposing its
+  value.
 - Jetson Linux reports `R36, REVISION: 5.0`.
 - `/` is mounted from the NVMe and the APP filesystem has expanded to the expected capacity.
 - `TNSPEC` contains `3767-300-0005`, with no empty identity fields or P3767-0003.
