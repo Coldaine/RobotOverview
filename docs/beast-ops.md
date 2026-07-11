@@ -321,6 +321,9 @@ Audited after the successful flash on 2026-07-11:
   `SHA256:6DUbgRuhTmZ/uTVXpLN/VPf2gPoiFIy2WPBXfaBRp4k`. This is **not** the
   `SSH_PUBKEY_PATRICK_DESKTOP` key currently stored in Doppler. The working private key remains on
   the local workstation; neither it nor a Jetson-specific replacement key was written to Doppler.
+- The freshly flashed Jetson's ED25519 SSH host-key fingerprint is
+  `SHA256:xqnMRWqv19+w7zFdzrYI4BlPP/Wfq9VcJ02qmSjUbNA`. Verify it when reconnecting over USB or the
+  eventual LAN address; the temporary host-side `known_hosts` file under `/tmp` is not durable.
 - Doppler `secrets_managment/dev` has no `BEAST_*` or `JETSON_*` administrator credential. The
   existing `PVE_EVO_X2_ROOT_PASSWORD` enabled the Proxmox work, and the existing
   `UDM_WIFI_MOOSEGOOSEIOT` / `UDM_WIFI_CASTLEMOOSEGOOSE` PSKs are available for later network
