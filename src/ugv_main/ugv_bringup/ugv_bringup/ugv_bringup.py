@@ -25,6 +25,35 @@ def get_all_ips():
             ip_dict[iface] = inet[0]['addr']
     return ip_dict
 
+
+def select_interface_ip(ip_map, configured_name, interface_kind):
+    if configured_name:
+        return ip_map.get(configured_name, "N/A")
+
+    if interface_kind == 'wifi':
+        candidates = [
+            name for name in ip_map
+            if name.startswith('wl')
+            or os.path.isdir(f'/sys/class/net/{name}/wireless')
+        ]
+    else:
+        candidates = [
+            name for name in ip_map
+            if name == 'eth0' or name.startswith('en')
+        ]
+
+    return ip_map[sorted(candidates)[0]] if candidates else "N/A"
+
+
+def default_serial_port():
+    configured = os.getenv('UGV_SERIAL_PORT')
+    if configured:
+        return configured
+    if os.path.exists('/etc/nv_tegra_release'):
+        return '/dev/ttyTHS1'
+    return '/dev/ttyAMA0'
+
+
 # ROS node class for bringing up the UGV system and publishing sensor data
 class ugv_bringup(Node):
     def __init__(self):
@@ -50,15 +79,24 @@ class ugv_bringup(Node):
         
         self.pt_steady_ctrl_sub = self.create_subscription(Float32MultiArray, 'ugv/pt_steady_ctrl', self.pt_steady_ctrl_callback, 20)
         
-        self.declare_parameter('serial_port', '/dev/ttyAMA0')
+        self.declare_parameter('serial_port', default_serial_port())
         self.declare_parameter('baud_rate', 115200)
+        self.declare_parameter('wifi_interface', '')
+        self.declare_parameter('ethernet_interface', '')
+        self.declare_parameter('allow_motion', False)
         serial_port_name = self.get_parameter('serial_port').value
         baud_rate = self.get_parameter('baud_rate').value
+        self.wifi_interface = self.get_parameter('wifi_interface').value
+        self.ethernet_interface = self.get_parameter('ethernet_interface').value
+        self.allow_motion = self.get_parameter('allow_motion').value
+        self._motion_reject_warned = False
                         
         # Initialize the base controller with the UART port and baud rate
         self.base_controller = BaseController(serial_port_name, baud_rate)
         request_data = json.dumps({"T":131,"cmd":1}) + "\n"
-        self.base_controller.send_command(request_data.encode())        
+        self.base_controller.send_command(request_data.encode())
+        if not self.allow_motion:
+            self.send_stop_command()
         # Timer to periodically execute the feedback loop
         self.feedback_thread = threading.Thread(target=self.feedback_loop_thread, daemon=True)
         self.feedback_thread.start()
@@ -107,8 +145,8 @@ class ugv_bringup(Node):
 
         while rclpy.ok():
             ip_map = get_all_ips()
-            wlan_ip = ip_map.get("wlan0", "N/A")
-            eth_ip = ip_map.get("eth0", "N/A")
+            wlan_ip = select_interface_ip(ip_map, self.wifi_interface, 'wifi')
+            eth_ip = select_interface_ip(ip_map, self.ethernet_interface, 'ethernet')
 
             if wlan_ip != last_wlan_ip:
                 last_wlan_ip = wlan_ip
@@ -206,6 +244,16 @@ class ugv_bringup(Node):
         linear_velocity = msg.linear.x
         angular_velocity = msg.angular.z
 
+        if not self.allow_motion:
+            if linear_velocity != 0.0 or angular_velocity != 0.0:
+                if not self._motion_reject_warned:
+                    self.get_logger().warning(
+                        'Rejected non-zero cmd_vel while allow_motion is false'
+                    )
+                    self._motion_reject_warned = True
+                self.send_stop_command()
+            return
+
         if linear_velocity == 0.0 and angular_velocity == 0.0:
             self.zero_vel_count += 1
             if self.zero_vel_count > self.zero_vel_limit:
@@ -222,6 +270,10 @@ class ugv_bringup(Node):
 
         # Send the velocity data to the UGV as a JSON string
         data = json.dumps({'T': '13', 'X': linear_velocity, 'Z': angular_velocity}) + "\n"
+        self.base_controller.send_command(data.encode())
+
+    def send_stop_command(self):
+        data = json.dumps({'T': '13', 'X': 0.0, 'Z': 0.0}) + "\n"
         self.base_controller.send_command(data.encode())
 
     def joint_states_callback(self, msg):

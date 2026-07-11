@@ -3,7 +3,12 @@ from launch_ros.substitutions import FindPackageShare
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import Command, LaunchConfiguration, PythonExpression
+from launch.substitutions import (
+    Command,
+    EnvironmentVariable,
+    LaunchConfiguration,
+    PythonExpression,
+)
 
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
@@ -36,13 +41,42 @@ def generate_launch_description():
     )
 
     serial_port_arg = DeclareLaunchArgument(
-        'serial_port', default_value='/dev/ttyAMA0',
+        'serial_port',
+        default_value=EnvironmentVariable(
+            'UGV_SERIAL_PORT', default_value='/dev/ttyTHS1'
+        ),
         description='Serial port connected to the UGV ESP32 controller'
     )
 
     lidar_port_arg = DeclareLaunchArgument(
-        'lidar_port', default_value='/dev/ttyACM0',
+        'lidar_port',
+        default_value=EnvironmentVariable(
+            'UGV_LIDAR_PORT', default_value='/dev/ttyACM0'
+        ),
         description='Serial port connected to the LiDAR'
+    )
+
+    wifi_interface_arg = DeclareLaunchArgument(
+        'wifi_interface',
+        default_value=EnvironmentVariable('UGV_WIFI_INTERFACE', default_value=''),
+        description='Wi-Fi interface shown on the UGV OLED; empty enables auto-detection'
+    )
+
+    ethernet_interface_arg = DeclareLaunchArgument(
+        'ethernet_interface',
+        default_value=EnvironmentVariable('UGV_ETHERNET_INTERFACE', default_value=''),
+        description=(
+            'Ethernet interface shown on the UGV OLED; empty enables '
+            'auto-detection'
+        )
+    )
+
+    allow_motion_arg = DeclareLaunchArgument(
+        'allow_motion', default_value='false',
+        description=(
+            'Permit non-zero cmd_vel commands; keep false until physical '
+            'safety validation passes'
+        )
     )
 
     use_lidar_arg = DeclareLaunchArgument(
@@ -92,7 +126,12 @@ def generate_launch_description():
         executable='ugv_bringup',
         parameters=[{
             'serial_port': LaunchConfiguration('serial_port'),
-            'baud_rate': 115200
+            'baud_rate': 115200,
+            'wifi_interface': LaunchConfiguration('wifi_interface'),
+            'ethernet_interface': LaunchConfiguration('ethernet_interface'),
+            'allow_motion': ParameterValue(
+                LaunchConfiguration('allow_motion'), value_type=bool
+            ),
         }]
     )
     # Define the nodes to be launched
@@ -124,6 +163,9 @@ def generate_launch_description():
         rviz_config_arg,
         serial_port_arg,
         lidar_port_arg,
+        wifi_interface_arg,
+        ethernet_interface_arg,
+        allow_motion_arg,
         use_lidar_arg,
         robot_state_launch,
         laser_bringup_launch,
