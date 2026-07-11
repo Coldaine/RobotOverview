@@ -308,10 +308,13 @@ change passes the read-only BCT control first.
 
 Remaining blocker: the earlier discarded random password hash left `beast` in the `sudo` group but
 without a usable sudo credential, and root-key SSH is disabled. Re-enter recovery once, RCM-boot the
-validated initrd without invoking any flash command, mount the NVMe rootfs, install a narrowly
-owned passwordless-sudo rule for the SSH-key-only `beast` account, unmount, and reboot normally.
-Then continue immediately with JetPack compute, Docker, ROS 2 Humble, `ugv_ws`, and bench safety
-validation. Do not reflash storage for this credential repair.
+validated initrd without invoking any flash command, and mount the NVMe rootfs. Generate a strong
+admin password directly into Doppler as `BEAST_JETSON_ADMIN_PASSWORD`, set the target hash without
+printing or logging the value, retain key-only SSH, unmount, and reboot normally. Do not grant
+blanket `NOPASSWD:ALL`; if later robot automation genuinely needs passwordless privilege, allowlist
+only the required commands in a separate sudoers rule. Then continue immediately with JetPack
+compute, Docker, ROS 2 Humble, `ugv_ws`, and bench safety validation. Do not reflash storage for
+this credential repair.
 
 ### First-boot configuration and persistence inventory
 
