@@ -35,6 +35,16 @@ def generate_launch_description():
         description='Choose which rviz configuration to use'
     )
 
+    serial_port_arg = DeclareLaunchArgument(
+        'serial_port', default_value='/dev/ttyAMA0',
+        description='Serial port connected to the UGV ESP32 controller'
+    )
+
+    lidar_port_arg = DeclareLaunchArgument(
+        'lidar_port', default_value='/dev/ttyACM0',
+        description='Serial port connected to the LiDAR'
+    )
+
     ekf_config = os.path.join(              
         get_package_share_directory('ugv_bringup'),
         'config',
@@ -58,7 +68,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'use_rviz': "false",
-            'port_name': "/dev/ttyACM0",
+            'port_name': LaunchConfiguration('lidar_port'),
         }.items(),
     )
     rf2o_laser_odometry_launch = IncludeLaunchDescription(
@@ -72,7 +82,7 @@ def generate_launch_description():
         package='ugv_bringup',
         executable='ugv_bringup',
         parameters=[{
-            'serial_port': '/dev/ttyAMA0',
+            'serial_port': LaunchConfiguration('serial_port'),
             'baud_rate': 115200
         }]
     )
@@ -103,6 +113,8 @@ def generate_launch_description():
         use_ekf_arg,
         use_rviz_arg,
         rviz_config_arg,
+        serial_port_arg,
+        lidar_port_arg,
         robot_state_launch,
         laser_bringup_launch,
         rf2o_laser_odometry_launch,
@@ -110,4 +122,3 @@ def generate_launch_description():
         base_node,
         ekf_node,        
     ])
-
