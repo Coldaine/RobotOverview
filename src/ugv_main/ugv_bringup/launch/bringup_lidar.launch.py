@@ -3,7 +3,7 @@ from launch_ros.substitutions import FindPackageShare
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition, UnlessCondition
-from launch.substitutions import Command, LaunchConfiguration
+from launch.substitutions import Command, LaunchConfiguration, PythonExpression
 
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
@@ -45,6 +45,11 @@ def generate_launch_description():
         description='Serial port connected to the LiDAR'
     )
 
+    use_lidar_arg = DeclareLaunchArgument(
+        'use_lidar', default_value='true',
+        description='Whether to launch the LiDAR and laser odometry nodes'
+    )
+
     ekf_config = os.path.join(              
         get_package_share_directory('ugv_bringup'),
         'config',
@@ -70,12 +75,16 @@ def generate_launch_description():
             'use_rviz': "false",
             'port_name': LaunchConfiguration('lidar_port'),
         }.items(),
+        condition=IfCondition(LaunchConfiguration('use_lidar')),
     )
     rf2o_laser_odometry_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('rf2o_laser_odometry'), 'launch', 'rf2o_laser_odometry.launch.py')
         ),
-        condition=IfCondition(LaunchConfiguration('use_ekf')),
+        condition=IfCondition(PythonExpression([
+            "'", LaunchConfiguration('use_lidar'), "' == 'true' and '",
+            LaunchConfiguration('use_ekf'), "' == 'true'",
+        ])),
     )
     # Define the nodes to be launched                                     
     bringup_node = Node(
@@ -115,6 +124,7 @@ def generate_launch_description():
         rviz_config_arg,
         serial_port_arg,
         lidar_port_arg,
+        use_lidar_arg,
         robot_state_launch,
         laser_bringup_launch,
         rf2o_laser_odometry_launch,
