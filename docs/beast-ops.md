@@ -141,8 +141,9 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
 > **Status: SOFTWARE PROVISIONING COMPLETE; PHYSICAL BEAST INTEGRATION PENDING — verified
-> 2026-07-11.** The Intel Raptor Lake host flashed QSPI and the 2 TB NVMe; a credential-safe
-> external-image restore then produced the current `beast-01` system on Jetson Linux R36.5.
+> 2026-07-11.** The initial Intel Raptor Lake run flashed QSPI and the 2 TB NVMe. The later
+> credential-safe external-only restore rewrote the NVMe but deliberately left the already-valid
+> QSPI untouched; that restored image is the current `beast-01` system on Jetson Linux R36.5.
 > Key-based SSH and Doppler-backed sudo both pass. JetPack 6.2.2 and the NVIDIA Docker runtime are
 > installed and verified. ROS 2 Humble and all 29 packages in the Jetson-adapted Waveshare
 > workspace build on the Orin; its zero-motion systemd unit is installed but disabled. Physical
@@ -747,8 +748,10 @@ Interpret the result narrowly:
 - Stable dumps that parse as `3767 / 300 / 0005` need no manual EEPROM override.
 - Stable dumps with missing identity fields support a bounded software override using the known
   NVIDIA developer-kit identity. Preserve the dumps for NVIDIA support; do not write the EEPROM.
-- Chip SKU D5 and RAM code 2 are read independently from the chip. Do not force either value in
-  the primary command while those reads continue to succeed.
+- Chip SKU D5 and RAM code 2 are read independently from the chip. Let an online generation read
+  them when that path succeeds. For offline regeneration after those values have been captured,
+  pass the exact observed `CHIP_SKU=00:00:00:D5` and numeric `RAMCODE_ID=2`; never infer either
+  value from another module.
 
 ### Generate the exact QSPI plus NVMe package
 
@@ -760,6 +763,8 @@ sudo env \
   BOARDID=3767 \
   BOARDSKU=0005 \
   FAB=300 \
+  CHIP_SKU=00:00:00:D5 \
+  RAMCODE_ID=2 \
   ./tools/kernel_flash/l4t_initrd_flash.sh \
     --no-flash \
     --external-device nvme0n1p1 \
@@ -807,7 +812,8 @@ Only the erase-free package may be used for an inspection boot such as
 `l4t_initrd_flash.sh --flash-only --initrd`. Keep destructive and recovery trees separate, record
 their image hashes, and re-run this inspection after every regeneration.
 
-If all EEPROM fields parse correctly, run the same command without the four `env` assignments.
+If all EEPROM fields parse correctly and the connected target supplies chip information during
+generation, run the same command without the six `env` assignments.
 Require a clean generation and verify all of the following before any write:
 
 - Board ID `3767`, FAB `300`, SKU `0005`, chip SKU D5, and RAM code 2.
@@ -862,7 +868,7 @@ and the persisted sudo credential from the authenticated operator workstation **
 installation. For the current image, require the recorded fingerprint above. On the first boot of
 a deliberately reflashed image, OpenSSH generates a new host key; establish trust only across the
 physically controlled point-to-point USB link, record that fingerprint immediately, and require
-strict checking on every subsequent connection:
+strict checking on every subsequent connection. Set the common operator variables first:
 
 ```bash
 set -euo pipefail
@@ -870,7 +876,36 @@ export DOPPLER_PROJECT=secrets_managment
 export DOPPLER_CONFIG=dev
 export JETSON_USB_HOST=192.168.55.1
 export BEAST_SSH_IDENTITY="$HOME/.ssh/id_ed25519"
+```
 
+For a deliberately reflashed image only, bootstrap its newly generated Ed25519 host key now over
+the physically controlled, point-to-point USB cable. Do not use
+`StrictHostKeyChecking=no` or silently accept a LAN key. Capture the scan, print and record its
+fingerprint in this runbook, then set `EXPECTED_JETSON_HOST_FINGERPRINT` to that recorded value
+before installing the key:
+
+```bash
+set -euo pipefail
+scan_file="$(mktemp)"
+trap 'rm -f "$scan_file"' EXIT
+ssh-keyscan -T 5 -t ed25519 "$JETSON_USB_HOST" 2>/dev/null >"$scan_file"
+test "$(wc -l <"$scan_file")" -eq 1
+scanned_fingerprint="$(ssh-keygen -lf "$scan_file" | awk '{ print $2 }')"
+printf 'Record Jetson USB Ed25519 fingerprint: %s\n' "$scanned_fingerprint"
+: "${EXPECTED_JETSON_HOST_FINGERPRINT:?record the printed fingerprint, then export it}"
+test "$scanned_fingerprint" = "$EXPECTED_JETSON_HOST_FINGERPRINT"
+
+install -d -m 0700 "$HOME/.ssh"
+ssh-keygen -R "$JETSON_USB_HOST" -f "$HOME/.ssh/known_hosts" >/dev/null 2>&1 || true
+tee -a "$HOME/.ssh/known_hosts" <"$scan_file" >/dev/null
+chmod 0600 "$HOME/.ssh/known_hosts"
+unset scanned_fingerprint EXPECTED_JETSON_HOST_FINGERPRINT
+```
+
+For the current image, skip that bootstrap and require the fingerprint already recorded above.
+Then prove key login and the Doppler-backed sudo credential with strict checking:
+
+```bash
 ssh -o BatchMode=yes -o StrictHostKeyChecking=yes \
   -i "$BEAST_SSH_IDENTITY" "beast@$JETSON_USB_HOST" true
 doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
@@ -901,7 +936,7 @@ sudo nvbootctrl dump-slots-info | tee ~/beast-acceptance/nvbootctrl.txt
 dpkg --audit
 sudo apt update
 sudo apt-get check
-sudo apt install nvidia-jetpack
+sudo apt install nvidia-jetpack=6.2.2+b24
 dpkg --audit
 sudo apt-get check
 
