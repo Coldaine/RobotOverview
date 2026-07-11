@@ -263,9 +263,10 @@ export const BOARD_WIRE_BOW = 48;
 export const BOARD_MODULES: Record<string, Omit<ModuleBox, 'unitId'>> = {
   'driver-board': { x: 390, y: 250, w: 260, h: 190 },
   'stock-ups': { x: 60, y: 70, w: 210, h: 130 },
+  'oak-d-lite': { x: 70, y: 280, w: 210, h: 120 },
+  'd500-lidar': { x: 80, y: 470, w: 200, h: 120 },
   pi5: { x: 790, y: 80, w: 190, h: 120 },
   'orin-nano': { x: 810, y: 300, w: 190, h: 120 },
-  'roarm-m2': { x: 80, y: 470, w: 200, h: 120 },
   beast: { x: 350, y: 500, w: 350, h: 140 },
 };
 
@@ -292,8 +293,10 @@ export const BOARD_EDGES: Record<string, Edge> = {
   // Orin (right)
   'orin-uart': 'left',
   'orin-dc-in': 'left',
-  // RoArm (bottom-left)
-  'roarm-servo-in': 'top',
+  'orin-usb': 'left',
+  // ACCE sensing payload (left)
+  'oak-usb': 'right',
+  'd500-uart': 'right',
   // Beast chassis (bottom-center) — all face the hub above
   'beast-motor-left': 'top',
   'beast-motor-right': 'top',
@@ -302,7 +305,7 @@ export const BOARD_EDGES: Record<string, Edge> = {
   'beast-oled': 'top',
 };
 
-const BOARD_MODULE_ORDER = ['stock-ups', 'driver-board', 'pi5', 'orin-nano', 'roarm-m2', 'beast'];
+const BOARD_MODULE_ORDER = ['stock-ups', 'oak-d-lite', 'd500-lidar', 'driver-board', 'pi5', 'orin-nano', 'beast'];
 
 function buildEdgeGroupedPorts(terminals: Terminal[], moduleById: Map<string, ModuleBox>) {
   // Group each unit's terminals by the edge they exit, preserving spine order.
@@ -367,12 +370,13 @@ export const ISO_PLACEMENT: Record<string, { col: number; row: number; deck: num
   'stock-ups': { col: 0, row: 0, deck: 0 },
   beast: { col: 1, row: 1, deck: 0 },
   'driver-board': { col: 1, row: 0, deck: 1 },
-  'roarm-m2': { col: 0, row: 1, deck: 1 },
+  'oak-d-lite': { col: 0, row: 1, deck: 2 },
+  'd500-lidar': { col: 1, row: 1, deck: 2 },
   pi5: { col: 2, row: 0, deck: 2 },
   'orin-nano': { col: 2, row: 1, deck: 2 },
 };
 
-const ISO_MODULE_ORDER = ['stock-ups', 'beast', 'driver-board', 'roarm-m2', 'pi5', 'orin-nano'];
+const ISO_MODULE_ORDER = ['stock-ups', 'beast', 'driver-board', 'oak-d-lite', 'd500-lidar', 'pi5', 'orin-nano'];
 
 function isoProject(col: number, row: number, deck: number): { x: number; y: number } {
   const gx = col * ISO_UNIT;
@@ -417,7 +421,7 @@ const BUS_ROW_GAP = 52;
 const BUS_TOP = 70;
 const BUS_BOTTOM = 630;
 
-export const BUS_COLUMN_ORDER = ['stock-ups', 'driver-board', 'pi5', 'orin-nano', 'beast', 'roarm-m2'];
+export const BUS_COLUMN_ORDER = ['stock-ups', 'driver-board', 'pi5', 'orin-nano', 'oak-d-lite', 'd500-lidar', 'beast'];
 export const BUS_ROW_ORDER = [
   'net-battery-rail',
   'net-5v-host',
@@ -426,6 +430,8 @@ export const BUS_ROW_ORDER = [
   'net-ups-telemetry',
   'net-oled-i2c',
   'net-camera',
+  'net-oak-camera',
+  'net-d500-lidar',
   'net-motor-left',
   'net-motor-right',
 ];

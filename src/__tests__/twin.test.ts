@@ -56,7 +56,7 @@ describe('twin graph helpers', () => {
     const trace = traceFromTerminal(nets, 'gdb-servo-bus');
     expect(trace.netIds.has('net-servo-bus')).toBe(true);
     expect(trace.terminalIds.has('beast-pan-tilt')).toBe(true);
-    expect(trace.terminalIds.has('roarm-servo-in')).toBe(true);
+    expect(trace.terminalIds.size).toBe(2);
     // Not on the servo bus.
     expect(trace.terminalIds.has('pi5-40pin')).toBe(false);
   });
@@ -87,10 +87,13 @@ describe('resolveActive (host swap)', () => {
     expect(active.terminalIds.has('orin-uart')).toBe(true);
     expect(active.terminalIds.has('orin-dc-in')).toBe(true);
     expect(active.terminalIds.has('pi5-40pin')).toBe(false);
-    // Orin can't draw header 5V, and Pi-bound telemetry/camera go dark.
+    // Orin can't draw header 5V and the optional Pi-bound UPS telemetry goes dark.
+    // The camera and ACCE sensors move to the Orin USB host at cutover.
     expect(active.netIds.has('net-5v-host')).toBe(false);
     expect(active.netIds.has('net-ups-telemetry')).toBe(false);
-    expect(active.netIds.has('net-camera')).toBe(false);
+    expect(active.netIds.has('net-camera')).toBe(true);
+    expect(active.netIds.has('net-oak-camera')).toBe(true);
+    expect(active.netIds.has('net-d500-lidar')).toBe(true);
     // UART stays live via TX/RX/GND jumpers; battery rail still energized.
     expect(active.netIds.has('net-host-uart')).toBe(true);
     expect(active.netIds.has('net-battery-rail')).toBe(true);

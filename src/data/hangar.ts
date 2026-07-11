@@ -193,18 +193,20 @@ export const hangarData: HangarData = {
       name: 'UGV Beast',
       callsign: 'BEAST-01',
       bay: 'robotics',
-      class: 'Tracked Rover + Arm',
+      class: 'Tracked ROS2 Rover',
       status: 'needs-attention',
       lifecycle: 'assembled',
       flagship: true,
       provenance: 'owner',
       summary:
-        'Waveshare tracked UGV with a RoArm-M2 manipulator. First unit of the fleet. Near-term role is remote-piloted utility work; the maiden job is hauling Cat6 ends through the crawlspace.',
+        'Waveshare UGV Beast ACCE ROS2 kit with the stock pan-tilt 5MP camera, OAK-D Lite depth camera, and D500 LiDAR. First unit of the fleet; the current upper computer is a Raspberry Pi 5 pending the owned Jetson Orin Nano cutover.',
       specs: [
         { label: 'Chassis', value: 'Tracked, all-terrain' },
-        { label: 'Arm', value: 'RoArm-M2 · 4-DOF' },
         { label: 'Onboard host', value: 'Raspberry Pi 5' },
         { label: 'Motor control', value: 'ESP32 (PID)' },
+        { label: 'Pan-tilt camera', value: '5MP · 160° · USB' },
+        { label: 'Depth camera', value: 'OAK-D Lite · USB' },
+        { label: 'LiDAR', value: 'D500 / STL-19P · 360° · 230400 baud' },
         { label: 'Pack', value: '3S Li-ion (~11.1V)' },
         { label: 'Control', value: 'Remote teleop (FPV)' },
       ],
@@ -212,19 +214,19 @@ export const hangarData: HangarData = {
       massGrams: 3200,
       loadout: [
         { group: 'Chassis Mounts', slot: 'Host Controller Mount', filledBy: 'pi5', note: 'Currently holds Pi 5; Orin is future path', hotspotId: 'compute' },
-        { group: 'Chassis Mounts', slot: '21mm Picatinny Rail', filledBy: null, note: 'Top deck. Accepts OAK-D Lite, D435, or LED spots', hotspotId: 'lighting' },
-        { group: 'Chassis Mounts', slot: 'Middle Deck', filledBy: null, note: 'Pre-drilled. Accepts D500 ToF LiDAR or STL-27L', hotspotId: 'compute' },
+        { group: 'Chassis Mounts', slot: '21mm Picatinny Rail', filledBy: 'oak-d-lite', note: 'OAK-D Lite from the ACCE ROS2 kit', hotspotId: 'lighting' },
+        { group: 'Chassis Mounts', slot: 'Middle Deck', filledBy: 'd500-lidar', note: 'D500 360° LiDAR from the ACCE ROS2 kit', hotspotId: 'compute' },
         { group: 'Chassis Mounts', slot: '1020 Aluminum Rails', filledBy: null, note: 'Sides. Accepts T-slot nuts for batteries, arms, brackets', hotspotId: 'power' },
         { group: 'Chassis Mounts', slot: 'Undercarriage Bay', filledBy: 'stock-ups', note: 'Holds 3x 18650 UPS. Fits 3S LiPo packs', hotspotId: 'power' },
 
         { group: 'Driver Board Interfaces', slot: 'XH2.54 Battery Input', filledBy: null, note: 'Wire in larger external 3S packs to bypass UPS', hotspotId: 'power' },
         { group: 'Driver Board Interfaces', slot: 'Aux Interface (IO4/5)', filledBy: null, note: 'High-current MOSFET switched for LEDs or payloads', hotspotId: 'driver' },
-        { group: 'Driver Board Interfaces', slot: 'Serial Bus Servo', filledBy: 'roarm-m2', note: 'Daisy-chains ST3215/ST3235 magnetic encoder servos', hotspotId: 'arm' },
+        { group: 'Driver Board Interfaces', slot: 'Serial Bus Servo', filledBy: null, note: 'Stock ST3215 pan-tilt uses the servo bus; no manipulator arm is installed', hotspotId: 'arm' },
         { group: 'Driver Board Interfaces', slot: 'PWM Output Pins', filledBy: null, note: 'Drives standard hobby servos or external motor controllers', hotspotId: 'driver' },
         { group: 'Driver Board Interfaces', slot: '40-Pin GPIO Header', filledBy: null, note: 'Re-exposes unused Pi/Jetson pins for external HATs', hotspotId: 'driver' },
         { group: 'Driver Board Interfaces', slot: 'USB HUB / Type-C', filledBy: null, note: 'Accepts 4G/5G modems, receivers, or host-slave bypass', hotspotId: 'compute' },
         { group: 'Driver Board Interfaces', slot: 'Audio Expansion', filledBy: null, note: '3.5mm AUX, dual speaker/mic headers for TTS/spatial audio', hotspotId: 'driver' },
-        { group: 'Driver Board Interfaces', slot: 'LiDAR UART Port', filledBy: null, note: 'Direct serial-to-USB routing for 360° mapping sensors', hotspotId: 'driver' },
+        { group: 'Driver Board Interfaces', slot: 'LiDAR UART Port', filledBy: 'd500-lidar', note: 'D500/STL-19P UART routed to the host over USB', hotspotId: 'driver' },
         { group: 'Driver Board Interfaces', slot: 'TF (MicroSD) Slot', filledBy: null, note: 'Standalone data logging directly to ESP32 sub-controller', hotspotId: 'driver' },
         { group: 'Driver Board Interfaces', slot: 'Display Header', filledBy: null, note: 'Drives 0.91"/0.96" OLED for voltage/IP telemetry', hotspotId: 'driver' },
         { group: 'Driver Board Interfaces', slot: 'Power Output Pins', filledBy: null, note: 'Raw 5V/3.3V out for independent MCUs or sensors', hotspotId: 'driver' },
@@ -266,9 +268,9 @@ export const hangarData: HangarData = {
         'video-device-path',
         'beast-socket-control',
       ],
-      tags: ['rover', 'flagship', 'waveshare', 'roarm'],
+      tags: ['rover', 'flagship', 'waveshare', 'acce', 'ros2'],
       shortcuts: [
-        { id: 'control-ui', label: 'Control UI', type: 'url', url: 'http://192.168.20.184:5000', note: 'Drive / FPV / arm' },
+        { id: 'control-ui', label: 'Control UI', type: 'url', url: 'http://192.168.20.184:5000', note: 'Drive / FPV / pan-tilt' },
         { id: 'jupyterlab', label: 'JupyterLab', type: 'url', url: 'http://192.168.20.184:8888', note: 'Lessons / notebooks' },
         { id: 'camera-stream', label: 'Camera stream', type: 'url', url: 'http://192.168.20.184:5000/video_feed', note: 'Raw MJPEG feed' },
         { id: 'ssh', label: 'SSH', type: 'command', command: 'ssh ws@192.168.20.184', note: 'Connection text' },
@@ -280,23 +282,43 @@ export const hangarData: HangarData = {
       acquired: '2026',
     },
     {
-      id: 'roarm-m2',
-      name: 'Waveshare RoArm-M2',
-      callsign: 'ARM-M2',
+      id: 'oak-d-lite',
+      name: 'Luxonis OAK-D Lite',
+      callsign: 'BEAST-RGBD',
       bay: 'robotics',
-      class: 'Manipulator Arm',
+      class: 'RGB-D Camera',
       status: 'operational',
       lifecycle: 'assembled',
       provenance: 'owner',
-      summary:
-        '4-DOF manipulator mounted on BEAST-01 and driven through the serial bus servo chain.',
+      summary: 'OAK-D Lite depth and AI camera installed as part of the BEAST-01 ACCE ROS2 kit.',
       specs: [
-        { label: 'Form', value: '4-DOF arm' },
-        { label: 'Drive', value: 'ST3215/ST3235 serial bus servos' },
-        { label: 'Host slot', value: 'BEAST-01 Serial Bus Servo' },
+        { label: 'Role', value: 'Stereo depth · RGB · onboard vision' },
+        { label: 'Interface', value: 'USB' },
+        { label: 'ROS', value: 'depthai_ros_driver' },
       ],
-      tags: ['arm', 'roarm', 'beast'],
-      acquired: 'owned',
+      tags: ['camera', 'depth', 'oak', 'beast', 'acce'],
+      acquired: 'included',
+    },
+    {
+      id: 'd500-lidar',
+      name: 'Waveshare D500 LiDAR',
+      callsign: 'BEAST-LIDAR',
+      bay: 'robotics',
+      class: '2D LiDAR',
+      status: 'operational',
+      lifecycle: 'assembled',
+      provenance: 'owner',
+      summary: 'D500 360° DTOF LiDAR installed as part of the BEAST-01 ACCE ROS2 kit; the sensor core is STL-19P/LDS19.',
+      specs: [
+        { label: 'Sensor', value: 'STL-19P / LDS19' },
+        { label: 'Range', value: '0.03–12 m' },
+        { label: 'Scan', value: '360° · 10 Hz · 5000 samples/s' },
+        { label: 'Interface', value: 'UART · 230400 baud · USB bridge to host' },
+        { label: 'ROS model', value: 'LDLIDAR_MODEL=ld19' },
+      ],
+      power: { watts: 1.45, volts: 5, rail: '5V' },
+      tags: ['lidar', 'dtof', 'mapping', 'beast', 'acce'],
+      acquired: 'included',
     },
     {
       id: 'stock-ups',
@@ -406,14 +428,14 @@ export const hangarData: HangarData = {
     {
       id: 'orin-nano',
       name: 'Jetson Orin Nano Super',
-      callsign: 'ORIN-NX?',
+      callsign: 'BEAST-JETSON',
       bay: 'compute',
       class: 'Edge AI Module',
-      status: 'researching',
-      lifecycle: 'wishlist',
-      provenance: 'inferred',
+      status: 'needs-attention',
+      lifecycle: 'inventory',
+      provenance: 'owner',
       summary:
-        'Candidate onboard CUDA brain for dropout-proof, in-motion autonomy, and the affordable ($249) edge generative-AI tier — runs vision transformers, LLMs, and VLMs. Ampere GPU + 6-core Arm CPU; the "Super" boost (up to 67 TOPS, ~1.7× the original Orin Nano) ships as a software upgrade to existing kits. Reference carrier accepts all Orin Nano + Orin NX modules and up to 2× 4-lane MIPI CSI cameras, and runs the NVIDIA stack incl. Isaac ROS for robotics. Only needed once the WiFi-offload path is outgrown.',
+        'Owned NVIDIA Jetson Orin Nano 8GB developer kit with NVMe, staged to replace BEAST-01’s Raspberry Pi 5 after the JetPack 6.2.2 flash and ACCE hardware validation.',
       specs: [
         { label: 'AI perf', value: 'up to 67 TOPS (Super); ~1.7× prior' },
         { label: 'Arch', value: 'Ampere GPU + 6-core Arm' },
@@ -430,7 +452,7 @@ export const hangarData: HangarData = {
       insights: ['orin-tier', 'blackwell-gap'],
       tags: ['jetson', 'orin', 'ampere', 'edge-ai'],
       links: [{ label: 'NVIDIA Jetson Orin', url: 'https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/' }],
-      horizon: 'buy when autonomy needed',
+      acquired: 'owned',
     },
     {
       id: 'jetson-thor',
@@ -872,6 +894,17 @@ export const hangarData: HangarData = {
       capturedAt: '2026-05-31',
     },
     {
+      id: 'jetson-flash-bct-boundary',
+      title: 'Jetson flash is blocked before any storage write',
+      body: 'OP-JETSON-FLASH proved the clean Ubuntu 22.04 VM, whole-controller VFIO path, APX enumeration, official R36.5 archive hashes, and every known USB buffer/power mitigation. Two read-only probes read the same ECID but timed out sending the first recovery BCT, before EEPROM retrieval, initrd boot, QSPI access, or NVMe access. The next retry must change a physical cable/port/controller and repeat a fresh recovery cycle; debug UART plus a bare-metal Ubuntu control is the escalation if that boundary repeats.',
+      tags: ['jetson', 'flash', 'operations', 'usb'],
+      bay: 'robotics',
+      units: ['beast', 'orin-nano'],
+      confidence: 'high',
+      source: 'OP-JETSON-FLASH EVO whole-controller attempt ledger, 2026-07-11',
+      capturedAt: '2026-07-11',
+    },
+    {
       id: 'blackwell-gap',
       title: 'No Blackwell Nano exists — yet',
       body: 'Blackwell in Jetson is top-end only (Thor T4000/T5000). The Nano/NX tiers are still Ampere. The genuinely Blackwell option you already own is the 5090 — which is exactly why offload-over-WiFi is worth taking seriously.',
@@ -914,6 +947,12 @@ export const hangarData: HangarData = {
 
   activity: [
     {
+      id: 'a-jetson-flash-bct',
+      at: '2026-07-11T18:40:00Z',
+      kind: 'insight',
+      text: 'OP-JETSON-FLASH built the EVO whole-controller flasher and isolated the current failure to the first read-only recovery BCT; no QSPI or NVMe write occurred.',
+    },
+    {
       id: 'a7',
       at: '2026-07-01T18:32:19Z',
       kind: 'mission',
@@ -940,8 +979,8 @@ export const hangarData: HangarData = {
 
   // ── CONNECTED TWIN — BEAST-01 terminals + nets ─────────────────────────────
   // Authored 2026-07-03 from the UGV-Beast-Archive (Waveshare wikis + schematics);
-  // each net lists the documents that prove it. Note: the stock Beast PT ships
-  // pan-tilt only — the RoArm-M2 on the servo bus is an operator addition.
+  // each net lists the documents that prove it. BEAST-01 is the ACCE ROS2 kit:
+  // stock pan-tilt camera, OAK-D Lite, and D500 LiDAR; no manipulator arm.
   terminals: [
     // General Driver for Robots (ESP32 board)
     { id: 'gdb-power-in', unitId: 'driver-board', name: 'Battery Input', connector: 'XH2.54', role: 'input', note: 'DC 7–13V from the UPS rail; feeds motors and the servo bus directly' },
@@ -967,9 +1006,11 @@ export const hangarData: HangarData = {
     // Jetson Orin (swap-path host)
     { id: 'orin-uart', unitId: 'orin-nano', name: '40-Pin Header (UART jumpers)', connector: 'jumper wires', role: 'bidirectional', note: 'TX/RX/GND only — the Orin does not stack and cannot draw header 5V' },
     { id: 'orin-dc-in', unitId: 'orin-nano', name: 'DC Power Input', connector: 'barrel jack', role: 'input', note: '9–19V ~45W; fed from the battery rail, never the 5V host rail' },
+    { id: 'orin-usb', unitId: 'orin-nano', name: 'USB Host Ports', connector: 'USB-A', role: 'bidirectional', note: 'Future ACCE camera and LiDAR host after cutover' },
 
-    // RoArm-M2 (operator-added manipulator)
-    { id: 'roarm-servo-in', unitId: 'roarm-m2', name: 'Servo Bus Chain', connector: 'TTL bus daisy-chain', role: 'bidirectional', note: 'ST3215/ST3235 joints on the shared serial bus' },
+    // ACCE ROS2 sensing payload
+    { id: 'oak-usb', unitId: 'oak-d-lite', name: 'OAK-D Lite USB', connector: 'USB', role: 'output', note: 'RGB, stereo depth, and onboard vision data' },
+    { id: 'd500-uart', unitId: 'd500-lidar', name: 'D500 UART', connector: 'ZH1.5T-4P', role: 'output', note: 'STL-19P/LDS19 scan data at 230400 baud' },
 
     // BEAST-01 chassis-level hardware
     { id: 'beast-motor-left', unitId: 'beast', name: 'Left Track Motor', connector: 'PH2.0 6P', role: 'input', note: 'DC gear motor with encoder' },
@@ -1012,9 +1053,9 @@ export const hangarData: HangarData = {
       name: 'ST3215 Serial Servo Bus',
       kind: 'mixed',
       carries: 'TTL half-duplex @ 1 Mbps + pack voltage (5A limit)',
-      terminals: ['gdb-servo-bus', 'beast-pan-tilt', 'roarm-servo-in'],
+      terminals: ['gdb-servo-bus', 'beast-pan-tilt'],
       documents: ['doc-st-protocol', 'doc-st-circuit', 'doc-st3215-manual'],
-      note: 'Daisy-chained, ID-addressed. Stock kit runs the pan-tilt only; the RoArm-M2 is an operator addition on the same bus.',
+      note: 'Daisy-chained, ID-addressed. BEAST-01 uses the stock two-servo pan-tilt only.',
     },
     {
       id: 'net-motor-left',
@@ -1037,8 +1078,26 @@ export const hangarData: HangarData = {
       name: 'Camera Feed',
       kind: 'data',
       carries: 'USB video (MJPEG upstream)',
-      terminals: ['beast-camera', 'pi5-usb'],
+      terminals: ['beast-camera', 'pi5-usb', 'orin-usb'],
       documents: ['doc-beast-product'],
+    },
+    {
+      id: 'net-oak-camera',
+      name: 'OAK-D Lite RGB-D',
+      kind: 'data',
+      carries: 'USB RGB + stereo depth + device inference',
+      terminals: ['oak-usb', 'pi5-usb', 'orin-usb'],
+      documents: ['doc-beast-product'],
+      note: 'Pi 5 is the current host; the Jetson becomes the host after cutover.',
+    },
+    {
+      id: 'net-d500-lidar',
+      name: 'D500 LiDAR Scan',
+      kind: 'data',
+      carries: 'STL-19P/LDS19 UART @ 230400 baud via USB bridge',
+      terminals: ['d500-uart', 'gdb-lidar-uart', 'pi5-usb', 'orin-usb'],
+      documents: ['doc-beast-product'],
+      note: 'ROS 2 uses LDLIDAR_MODEL=ld19; Pi 5 is the current host and Jetson is the cutover target.',
     },
     {
       id: 'net-oled-i2c',
@@ -1066,8 +1125,8 @@ export const hangarData: HangarData = {
     { id: 'doc-ups-schematic', title: 'UPS Module 3S — Schematic', kind: 'schematic', archivePath: 'UGV-Beast-Archive/03-Power-UPS/Ups01_Schematic.pdf', units: ['stock-ups'] },
     { id: 'doc-ups-wiki', title: 'UPS Module 3S — Wiki', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UPS-Module-3S_Wiki.md', units: ['stock-ups'] },
     { id: 'doc-ups-code', title: 'UPS Module 3S — INA219 Monitoring Code', kind: 'firmware', archivePath: 'UGV-Beast-Archive/03-Power-UPS/UPS_Module_3S_Code.zip', units: ['stock-ups'] },
-    { id: 'doc-st3215-manual', title: 'ST3215 Servo — User Manual', kind: 'manual', archivePath: 'UGV-Beast-Archive/04-Servos/ST3215_Servo_User_Manual.pdf', units: ['roarm-m2', 'beast'] },
-    { id: 'doc-st-protocol', title: 'ST Serial Bus Servo — Protocol Manual', kind: 'manual', archivePath: 'UGV-Beast-Archive/04-Servos/ST_Servo_Communication_Protocol_Manual.pdf', units: ['roarm-m2', 'beast'] },
+    { id: 'doc-st3215-manual', title: 'ST3215 Servo — User Manual', kind: 'manual', archivePath: 'UGV-Beast-Archive/04-Servos/ST3215_Servo_User_Manual.pdf', units: ['beast'] },
+    { id: 'doc-st-protocol', title: 'ST Serial Bus Servo — Protocol Manual', kind: 'manual', archivePath: 'UGV-Beast-Archive/04-Servos/ST_Servo_Communication_Protocol_Manual.pdf', units: ['beast'] },
     { id: 'doc-st-circuit', title: 'ST Bus Servo — Control Circuit Schematic', kind: 'schematic', archivePath: 'UGV-Beast-Archive/04-Servos/ST_Bus_Servo_Control_Circuit.pdf', units: ['driver-board'] },
     { id: 'doc-beast-wiki', title: 'UGV Beast — Wiki', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast_Wiki.md', units: ['beast'] },
     { id: 'doc-beast-product', title: 'UGV Beast PT — Product Page', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast_Product-Page.md', units: ['beast'] },

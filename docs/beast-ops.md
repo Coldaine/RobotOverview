@@ -20,7 +20,7 @@ Browser / HTTP client  ──HTTP/WebSocket──▶  Raspberry Pi 5 (upper comp
 
 - **Upper computer:** Raspberry Pi 5 — vision, web UI, command relay. No CUDA; learned-policy
   inference lives offboard.
-- **Lower computer:** ESP32 — motion (PID), servo bus (RoArm-M2), sensor feedback.
+- **Lower computer:** ESP32 — motion (PID), stock pan-tilt servo bus, sensor feedback.
 - **Software stack:** Waveshare `ugv_rpi` (standard, not ROS2). Server is Werkzeug / Python 3.11.
 
 ## Network
@@ -40,7 +40,7 @@ renew, re-confirm it returns to `192.168.20.184` (that's what the reservation is
 
 | URL | What | Notes |
 |---|---|---|
-| `http://192.168.20.184:5000` | **Control UI** (drive, FPV, arm, gimbal) | Use Google Chrome. Open in a normal browser — works fine. |
+| `http://192.168.20.184:5000` | **Control UI** (drive, FPV, gimbal) | Use Google Chrome. Open in a normal browser — works fine. |
 | `http://192.168.20.184:8888` | **JupyterLab** | Interactive lesson notebooks (302 → `/lab?`). The programming on-ramp. |
 | `http://192.168.20.184:5000/video_feed` | Raw MJPEG camera stream | Long-lived stream; inspect headers/frames with a client that can abort cleanly. |
 
@@ -87,7 +87,6 @@ Key payloads:
 |---|---|---|
 | Drive (differential) | `{"T":1,"L":<left>,"R":<right>}` | `L`/`R` = track speeds. **Magnitude scaling not yet characterized** — start small (≤0.2) and increase once measured. Capped server-side by `max_speed`/`slow_speed` in the Pi's `config.yaml`. |
 | Stop | `{"T":1,"L":0,"R":0}` | App fires this on load. |
-| Arm (RoArm-M2) | `{"T":<cmd_arm_ctrl_ui>,"E":..,"Z":..,"R":..}` | T-code from `config.yaml`. |
 | Gimbal | `{"T":<cmd_gimbal_ctrl>,"X":..,"Y":..,"SPD":0,"ACC":128}` | T-code from `config.yaml`. |
 
 **Safety:** a stale-command watchdog on the Beast auto-stops the tracks if no command
@@ -131,21 +130,21 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 
 ## Operating progression (Waveshare's recommended on-ramp)
 
-1. **Web app (`:5000`)** — teleop, FPV, arm/gimbal. Drive it manually. *(done — it drives)*
+1. **Web app (`:5000`)** — teleop, FPV, and pan-tilt gimbal. Drive it manually. *(done — it drives)*
 2. **JupyterLab (`:8888`)** — official lesson notebooks: motion, camera/CV (face/object/line/
-   gesture), arm kinematics. This is where you learn to program it.
-3. **JSON command API** — `/json` Socket.IO. Script motion/arm; this is also
+   gesture), and gimbal control. This is where you learn to program it.
+3. **JSON command API** — `/json` Socket.IO. Script motion and gimbal control; this is also
    the integration point if the Hangar ever gains a (supervised) command view.
 4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, even
    LLM-driven natural-language control. Bigger jump.
 
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
-> **Status: UNVALIDATED — pipeline audited 2026-07-11.** This is the next-attempt runbook, not a
-> record of a successful flash. BEAST-01 still runs the Raspberry Pi 5 stack described above.
-> The audit corrected the module SKU, FAB, host architecture, and NVMe flash command, but
-> none of those corrections becomes an operating fact until the Jetson boots and passes bench
-> validation.
+> **Status: BLOCKED BEFORE FLASH — attempted 2026-07-11.** The clean EVO whole-controller path
+> reaches APX and reads the ECID but times out sending the first read-only recovery BCT. No QSPI or
+> NVMe write has occurred. BEAST-01 still runs the Raspberry Pi 5 stack described above. The module
+> SKU, FAB, host architecture, and NVMe command are corrected, but the migration does not become an
+> operating fact until the Jetson boots and passes bench validation.
 
 ### Target and non-goals
 
@@ -192,6 +191,73 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 The `USBDEVFS_CONTROL ... -110` timeout is not assigned one cause. It may have been USB transport,
 the wrong generated board package, or target hardware. The corrected attempt observes each
 boundary separately instead of assuming Nobara, the cable, or the Jetson is at fault.
+
+### Attempt ledger — 2026-07-11 EVO whole-controller run
+
+This is the chronological record of the first run against the native Ubuntu VM. Keep failed
+boundaries here as evidence; do not summarize them later as a successful flash.
+
+1. Refetched and read the live `coldaine-k8cluster` configuration, then connected to
+   `pve-evo-x2` and gathered host facts before allocation. The host reported Proxmox VE 9.2.2,
+   kernel `7.0.2-6-pve`, 32 CPU threads, 30 GiB host-visible RAM, and active guests 112, 113,
+   and 1202. The reduced host-visible RAM is the EVO iGPU carve-out, not missing DIMMs.
+2. Confirmed exactly one recovery device: `0955:7523 NVIDIA Corp. APX`. Sysfs mapped it to PCI
+   function `c8:00.4`, an AMD Strix Halo xHCI controller isolated by itself in IOMMU group 31.
+   An earlier in-session statement called this group 32; the sysfs recheck corrected it to 31.
+   The controller carried no Proxmox management NIC, storage, or other USB device.
+3. Left the EVO control plane (VM 113) and observability guest (CT 1202) running. Gracefully
+   stopped the EVO Talos worker (VM 112) to free physical memory for the attended flash window.
+4. Downloaded the current Ubuntu 22.04 release cloud image from Ubuntu and created temporary VM
+   900, `evo-jetson-flasher-r365`: q35/OVMF, host CPU, 8 vCPU, 12 GiB fixed RAM, 140 GiB disk on
+   `vmdata`, VLAN 30 VirtIO networking, and `hostpci0=0000:c8:00.4,pcie=1`. The Proxmox host then
+   showed `c8:00.4` bound to `vfio-pci`; Ubuntu 22.04.5 with kernel `5.15.0-185-generic` showed
+   the same controller at guest PCI `01:00.0` using `xhci_hcd` and APX on guest USB bus 9.
+5. Installed the BSP prerequisites, complete kernel modules, QEMU guest agent, RNDIS/CDC modules,
+   rpcbind, and the NFS server. Disabled the guest firewall for the attended session, enabled
+   IPv6, set USBFS memory to 2048 MiB, and disabled global USB autosuspend.
+6. Copied only the two R36.5 archives into the clean VM. Their SHA-1 values matched NVIDIA:
+   `96e691a6d2d618e22dd6cb0630ee17faaa4733e9` for the BSP and
+   `7844cfc00ef92eeb85d699d17bcb787a1560d486` for the sample root filesystem. Extracted a new
+   `Linux_for_Tegra`, ran `l4t_flash_prerequisites.sh` and `apply_binaries.sh`, and verified the
+   staged target reports `R36, REVISION: 5.0`.
+7. Pre-created headless user `beast`, hostname `beast-01`, and an SSH authorized key in the staged
+   rootfs. NVIDIA's helper printed its generated temporary password to the terminal; that password
+   was immediately replaced with a new discarded random credential. Key-based SSH is the intended
+   first-boot path and the printed credential is invalid.
+8. Generated `bootloader/readinfocmd.txt` using the known NVIDIA developer-kit package identity
+   `BOARDID=3767`, `BOARDSKU=0005`, and `FAB=300`. The first read-only probe read ECID
+   `0x80012344705E021D2C00000003008240`, then timed out while sending `bct_br`. It created no fresh
+   `cvm.bin`; therefore no three-dump stability claim can be made. No QSPI or NVMe write occurred.
+9. Applied the complete community mitigation rather than only its global half: fully stopped and
+   restarted VM 900 to reset the passed controller, restored USBFS 2048 MiB and global autosuspend
+   `-1`, set every USB device and root hub `power/control` to `on`, and set every
+   `autosuspend_delay_ms` to `-1`. APX re-enumerated normally. The second read-only probe read the
+   same ECID and failed at the same `Sending bct_br` boundary. It again created no `cvm.bin` and
+   wrote nothing to QSPI or NVMe.
+10. Started offline package generation with the bounded known identity plus the independently
+    established chip values `CHIP_SKU=00:00:00:D5` and numeric `RAMCODE_ID=2`. The first offline
+    invocation omitted those chip values and correctly stopped at chip-info parsing; its output
+    was discarded. The corrected invocation selected kernel/UEFI DTB
+    `tegra234-p3768-0000+p3767-0005-nv-super.dtb`, the expected P3767-0003 BPMP DTB, QSPI layout
+    `flash_t234_qspi.xml`, NVMe layout `flash_l4t_t234_nvme.xml`, and external APP UUID generation.
+    It exited successfully with `Finish generating flash package`. Inspection confirmed a 2.4 GiB
+    external package, 11 MiB internal QSPI package, 2,282,183,740-byte sparse `system.img`, and
+    matching image SHA-1 `15cda47639be08efa6e214c7d59fb6129dc343c3`. `abootimg` showed the
+    external boot command line uses `root=PARTUUID=a08cd0ca-4707-4e72-bc04-8691205bb435`, exactly
+    matching `bootloader/l4t-rootfs-uuid.txt_ext`; the saved parameters target `nvme0n1p1` and end
+    in `jetson-orin-nano-devkit-super internal`. A scan of the saved command and generated package
+    found no fuse-burn command. Exactly one APX device remained attached. The package is ready for
+    `--flash-only` after the physical transport variable and recovery state are changed.
+
+Current conclusion: the clean BSP, native Ubuntu userspace, whole-controller ownership, VM USB
+re-enumeration, archive integrity, and all known host USB power/buffer mitigations have been
+exercised. The failure still precedes EEPROM retrieval, initrd boot, QSPI access, and NVMe access.
+The next retry must change a real remaining variable: use another known-good data cable and a
+different physical EVO USB port/controller, then perform a fresh recovery power cycle. If that
+repeats, capture debug UART and compare against a bare-metal Ubuntu host before assigning the fault
+to the Jetson. Whole-controller VFIO removes Proxmox's per-device reacquisition problem, but it
+does not prove that this AMD xHCI controller/VM combination is electrically or behaviorally
+identical to the bare-metal control.
 
 ### Flash-host architecture — Proxmox with the whole xHCI controller
 
@@ -677,11 +743,11 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
 ```
 
 The lower-level failsafe exists in current `ugv_base_general`; it still requires this physical
-validation. Camera, LiDAR, SLAM/Nav2, web control, and RoArm follow only after the chassis gate.
+validation. Camera, LiDAR, SLAM/Nav2, and web control follow only after the chassis gate.
 
 ### Required post-success update
 
-Immediately after success, replace the `UNVALIDATED` banner with a verification date and record:
+Immediately after success, replace the `BLOCKED BEFORE FLASH` banner with a verification date and record:
 
 - Proxmox node, VM version, passed xHCI PCI address, and Ubuntu guest kernel.
 - Developer-kit product number, EEPROM dump hashes, selected identity, and NVMe model.
