@@ -251,14 +251,12 @@ the BSP's own prerequisite list, then verify the services that initrd flashing a
 
 ```bash
 sudo apt update
-sudo apt install -y linux-modules-extra-"$(uname -r)"
+sudo apt install -y linux-modules-extra-"$(uname -r)" rpcbind nfs-kernel-server
 sudo modprobe rndis_host
 sudo modprobe cdc_ether
 sudo modprobe cdc_ncm
 sudo modprobe cdc_subset
 
-cd Linux_for_Tegra
-sudo ./tools/l4t_flash_prerequisites.sh
 sudo systemctl enable --now rpcbind nfs-kernel-server
 test "$(sysctl -n net.ipv6.conf.all.disable_ipv6)" = 0
 systemctl is-active rpcbind nfs-kernel-server
@@ -280,24 +278,30 @@ done
 
 The 2048 MB USBFS value is a successful community workaround for the same large-blob timeout,
 not an NVIDIA release requirement. Keep it because the failed host logged `-110` during RCM.
+This VM is a dedicated flash appliance: keep it only for retries within the same attended flash
+session, then destroy it when the session succeeds or is abandoned. Do not reuse it for general
+workloads or save it as a template with its firewall disabled and USB power policy altered.
 
 ### Build one clean R36.5 BSP
 
-Transfer only the two verified NVIDIA archives into the VM. Do not copy the old extracted tree,
-`system.img`, `tools/kernel_flash/images`, SDK Manager containers, or generated flash packages.
+Transfer only the two verified NVIDIA archives into `~/jetson-r36.5-clean` in the VM. Do not copy
+the old extracted tree, `system.img`, `tools/kernel_flash/images`, SDK Manager containers, or
+generated flash packages.
 
 Verify the official SHA-1 values inside the VM:
 
-```text
+```bash
+mkdir -p ~/jetson-r36.5-clean
+cd ~/jetson-r36.5-clean
+sha1sum -c <<'SHA1SUMS'
 96e691a6d2d618e22dd6cb0630ee17faaa4733e9  Jetson_Linux_R36.5.0_aarch64.tbz2
 7844cfc00ef92eeb85d699d17bcb787a1560d486  Tegra_Linux_Sample-Root-Filesystem_R36.5.0_aarch64.tbz2
+SHA1SUMS
 ```
 
 Extract and stage the BSP:
 
 ```bash
-mkdir -p ~/jetson-r36.5-clean
-cd ~/jetson-r36.5-clean
 tar -xpf Jetson_Linux_R36.5.0_aarch64.tbz2
 sudo tar -xpf Tegra_Linux_Sample-Root-Filesystem_R36.5.0_aarch64.tbz2 \
   -C Linux_for_Tegra/rootfs
@@ -318,7 +322,10 @@ unset BEAST_TEMP_PASSWORD
 ```
 
 This bypasses interactive OEM setup. First boot must still verify that the APP partition expanded
-to the NVMe's usable capacity.
+to the NVMe's usable capacity. NVIDIA's script has no stdin or file-based password option: while
+it runs, another local user or process in the flash VM can read the temporary password from its
+command line. Use a unique one-time password in this dedicated VM, change it immediately after
+first login with `passwd`, and destroy the VM after the attended flash session.
 
 Before connecting the recovery session, record:
 
@@ -368,18 +375,35 @@ runs instead of sleeping for an assumed duration:
 
 ```bash
 cd bootloader
+set -euo pipefail
+sudo rm -f cvm.bin
+rm -f ../cvm-{1,2,3}.bin ../read-info-{1,2,3}.log ../chkbdinfo-*.log
+
 for attempt in 1 2 3; do
-  sudo bash readinfocmd.txt | tee "../read-info-${attempt}.log"
+  sudo rm -f cvm.bin
+  sudo bash readinfocmd.txt 2>&1 | tee "../read-info-${attempt}.log"
+  sudo test -s cvm.bin || { echo 'read-info did not create a fresh cvm.bin'; exit 1; }
   sudo cp cvm.bin "../cvm-${attempt}.bin"
+  sudo test -s "../cvm-${attempt}.bin"
   timeout 30 bash -c 'until lsusb -d 0955:7523 >/dev/null; do sleep 1; done' || {
     echo 'APX did not return after read-info'; exit 1;
   }
 done
 sha256sum ../cvm-*.bin
-./chkbdinfo -i ../cvm-1.bin
-./chkbdinfo -f ../cvm-1.bin
-./chkbdinfo -k ../cvm-1.bin
-./chkbdinfo -r ../cvm-1.bin
+cmp -s ../cvm-1.bin ../cvm-2.bin && cmp -s ../cvm-1.bin ../cvm-3.bin || {
+  echo 'EEPROM dumps are not stable'; exit 1;
+}
+
+parse_failed=0
+for dump in ../cvm-{1,2,3}.bin; do
+  for mode in i f k r; do
+    if ! sudo ./chkbdinfo "-${mode}" "$dump" 2>&1 | \
+      tee "../chkbdinfo-$(basename "$dump" .bin)-${mode}.log"; then
+      parse_failed=1
+    fi
+  done
+done
+echo "chkbdinfo parse_failed=${parse_failed}"
 cd ..
 ```
 
@@ -467,27 +491,51 @@ that distinguishes a host USB timeout from target-side BPMP/DRAM failure.
 After a successful flash and normal power cycle without the recovery jumper:
 
 ```bash
-head -1 /etc/nv_tegra_release
-findmnt -no SOURCE,TARGET /
-lsblk -o NAME,MODEL,SIZE,FSTYPE,MOUNTPOINTS
-cat /etc/nv_boot_control.conf
-sudo nvbootctrl dump-slots-info
+set -euo pipefail
+passwd
+mkdir -p ~/beast-acceptance
+head -1 /etc/nv_tegra_release | tee ~/beast-acceptance/nv-tegra-release.txt
+findmnt -no SOURCE,TARGET / | tee ~/beast-acceptance/root-mount.txt
+findmnt -no SOURCE / | grep -q nvme
+lsblk -o NAME,MODEL,SIZE,FSTYPE,MOUNTPOINTS | tee ~/beast-acceptance/lsblk.txt
+grep '^TNSPEC ' /etc/nv_boot_control.conf | tee ~/beast-acceptance/tnspec.txt
+grep -q '3767-300-0005' ~/beast-acceptance/tnspec.txt
+sudo nvbootctrl dump-slots-info | tee ~/beast-acceptance/nvbootctrl.txt
 dpkg --audit
 sudo apt update
 sudo apt-get check
 sudo apt install nvidia-jetpack
+dpkg --audit
+sudo apt-get check
+
+dpkg-query -W nvidia-jetpack 'cuda-*' 'libnvinfer*' 'libcudnn*' 'libnvvpi*' \
+  | tee ~/beast-acceptance/jetpack-packages.txt
+nvcc --version | tee ~/beast-acceptance/cuda.txt
+python3 -c 'import tensorrt as trt; print(trt.__version__)' \
+  | tee ~/beast-acceptance/tensorrt.txt
+sudo nvpmodel -q --verbose | tee ~/beast-acceptance/nvpmodel.txt
+set +e
+sudo timeout --signal=INT 5 tegrastats --interval 1000 \
+  | tee ~/beast-acceptance/tegrastats.txt
+tegrastats_status=${PIPESTATUS[0]}
+set -e
+test "$tegrastats_status" -eq 0 || test "$tegrastats_status" -eq 124
+test -s ~/beast-acceptance/tegrastats.txt
 ```
 
 Acceptance requires:
 
-- Jetson Linux reports R36.5.
+- Jetson Linux reports `R36, REVISION: 5.0`.
 - `/` is mounted from the NVMe and the APP filesystem has expanded to the expected capacity.
-- `TNSPEC` identifies P3767-0005 rather than containing empty fields or P3767-0003.
+- `TNSPEC` contains `3767-300-0005`, with no empty identity fields or P3767-0003.
 - QSPI/UEFI boots repeatedly without APX or a manual boot override.
 - `apt-get check`, `dpkg --audit`, and `nvidia-jetpack` complete successfully before any blanket
   `apt upgrade` or `apt full-upgrade`.
-- CUDA, TensorRT, cuDNN, VPI, `tegrastats`, and the selected `nvpmodel` profile are observable.
-- A zero-motion ESP32 serial/telemetry probe succeeds before any ROS motion test.
+- The package capture contains installed CUDA, TensorRT (`libnvinfer`), cuDNN, and VPI packages;
+  `nvcc` and the TensorRT Python import print versions without errors.
+- `nvpmodel` prints the selected profile, and at least three `tegrastats` samples show live CPU,
+  memory, temperature, and GPU fields.
+- The later zero-motion ESP32 probe captures voltage, IMU, and raw odometry before any motion test.
 
 Install Docker Engine and NVIDIA Container Toolkit only **after** the native JetPack package state
 is healthy. Use Docker's Ubuntu repository rather than Ubuntu's older `docker.io` package, then
@@ -538,15 +586,24 @@ Install ROS 2 Humble from the official Jammy ARM64 apt repository, including
 once, then use the prepared Jetson adaptation branch instead of Waveshare's unmodified Pi defaults:
 
 ```bash
+set -euo pipefail
+sudo apt update
+sudo apt install -y git ros-humble-ros-base python3-rosdep \
+  python3-colcon-common-extensions
+
 mkdir -p ~/beast
 cd ~/beast
-git clone --branch beast/jetson-orin-nano-adaptation \
-  https://github.com/Coldaine/ugv_ws.git
+UGV_WS_COMMIT=a1a1d9cb882974de46905e17a2496cf4ab70089b
+git clone --no-checkout https://github.com/Coldaine/ugv_ws.git
 cd ugv_ws
-git checkout a1a1d9c
+git fetch origin "$UGV_WS_COMMIT"
+git checkout --detach "$UGV_WS_COMMIT"
+test "$(git rev-parse HEAD)" = "$UGV_WS_COMMIT"
 
 source /opt/ros/humble/setup.bash
-sudo rosdep init || true
+if [[ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]]; then
+  sudo rosdep init
+fi
 rosdep update
 rosdep install --from-paths src --ignore-src --rosdistro humble -r -y
 colcon build --symlink-install
@@ -575,19 +632,52 @@ ros2 launch ugv_bringup bringup_lidar.launch.py \
   serial_port:=/dev/ttyTHS1 use_lidar:=false use_rviz:=false
 ```
 
-Prove battery, IMU, and odometry topics with zero velocity first. Once the fitted LiDAR is
-identified, relaunch with `use_lidar:=true` and its stable `lidar_port`. Then connect exactly one
-`/cmd_vel` publisher, send a deliberately low-speed pulse, and send an explicit zero:
+With no `/cmd_vel` publisher running, capture one message from each zero-motion telemetry lane:
+
+```bash
+set -euo pipefail
+mkdir -p ~/beast-acceptance/ros
+rm -f ~/beast-acceptance/ros/*.txt
+ros2 topic info /cmd_vel --verbose | tee ~/beast-acceptance/ros/cmd-vel-info.txt
+grep -q '^Publisher count: 0$' ~/beast-acceptance/ros/cmd-vel-info.txt
+timeout 15 ros2 topic echo /ugv/voltage --once \
+  | tee ~/beast-acceptance/ros/voltage.txt
+timeout 15 ros2 topic echo /imu/raw --once \
+  | tee ~/beast-acceptance/ros/imu-raw.txt
+timeout 15 ros2 topic echo /odom/odom_raw --once \
+  | tee ~/beast-acceptance/ros/odom-raw.txt
+test -s ~/beast-acceptance/ros/voltage.txt
+test -s ~/beast-acceptance/ros/imu-raw.txt
+test -s ~/beast-acceptance/ros/odom-raw.txt
+```
+
+The voltage must be finite and plausible for the connected Beast battery; IMU and odometry arrays
+must be populated and update when the chassis is moved by hand. Stop if any lane times out or the
+`/cmd_vel` topic already has an unexpected publisher.
+
+Once the fitted LiDAR is identified, relaunch with `use_lidar:=true` and its stable `lidar_port`.
+For the heartbeat test, keep the tracks lifted and clear, start exactly one publisher in a second
+terminal, and begin at 0.02 m/s. Increase only enough to overcome motor deadband, never above
+0.05 m/s during this test:
+
+```bash
+ros2 topic pub --rate 5 /cmd_vel geometry_msgs/msg/Twist \
+  '{linear: {x: 0.02, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}'
+```
+
+While the lifted tracks are turning steadily, press Ctrl+C in that publisher terminal and start a
+timer. With no other publisher and without sending zero first, the ESP32 must stop the tracks
+within its configured three-second heartbeat interval. After observing and recording that stop,
+send an explicit zero with a subscriber wait:
 
 ```bash
 ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
-  '{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}' --once
+  '{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}' \
+  --once -w 1
 ```
 
-Finally terminate the only command publisher while moving at the lowest safe speed and confirm
-the ESP32 stops the tracks within its configured three-second heartbeat interval. That lower-level
-failsafe exists in current `ugv_base_general`; it still requires physical validation. Camera,
-LiDAR, SLAM/Nav2, web control, and RoArm follow only after this chassis safety gate.
+The lower-level failsafe exists in current `ugv_base_general`; it still requires this physical
+validation. Camera, LiDAR, SLAM/Nav2, web control, and RoArm follow only after the chassis gate.
 
 ### Required post-success update
 
