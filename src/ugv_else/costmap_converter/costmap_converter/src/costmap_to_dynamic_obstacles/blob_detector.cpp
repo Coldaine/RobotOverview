@@ -189,5 +189,15 @@ void BlobDetector::findBlobs(const cv::Mat& image, const cv::Mat& binary_image, 
 
 void BlobDetector::updateParameters(const Params& parameters)
 {
+  setParams(parameters);
+}
+
+void BlobDetector::setParams(const Params& parameters)
+{
   params_ = parameters;
+}
+
+BlobDetector::Params BlobDetector::getParams() const
+{
+  return params_;
 }

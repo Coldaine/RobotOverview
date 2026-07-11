@@ -92,6 +92,10 @@ public:
   //! Update internal parameters
   void updateParameters(const cv::SimpleBlobDetector::Params& parameters);
 
+  //! OpenCV 4.8+ parameter accessors; harmless compatibility methods on older OpenCV.
+  void setParams(const cv::SimpleBlobDetector::Params& parameters);
+  cv::SimpleBlobDetector::Params getParams() const;
+
 protected:
   struct Center
   {
