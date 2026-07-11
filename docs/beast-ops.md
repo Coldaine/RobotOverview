@@ -419,8 +419,8 @@ Audited after the successful flash on 2026-07-11:
 - The local Nobara-only DSA compatibility edit lives inside the local BSP tree, and the temporary
   service-name wrapper lives under `/tmp/jetson-flash-bin`; neither is a reusable repository tool.
   Their required behavior is recorded in the successful-flash ledger above.
-- Durable source documentation and the corrected ACCE inventory model are on PR #117. They are not
-  on `main` until that PR is reviewed and merged.
+- Durable source documentation and the corrected ACCE inventory model merged to `main` in
+  RobotOverview PR #117 (`d832d26484104b497163934b473117c004b1181e`).
 
 ### Flash-host architecture — prove the physical controller first
 
@@ -1212,7 +1212,7 @@ service and move the `beast` DHCP/DNS identity away from the disconnected Pi.
 - Docker Engine on Ubuntu — https://docs.docker.com/engine/install/ubuntu/
 - ROS 2 Humble Ubuntu packages — https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
 - Waveshare UGV Beast Jetson Orin ROS 2 — https://www.waveshare.com/wiki/UGV_Beast_Jetson_Orin_ROS2
-- Prepared Jetson `ugv_ws` branch — https://github.com/Coldaine/ugv_ws/tree/beast/jetson-orin-nano-adaptation
+- Prepared Jetson `ugv_ws` PR — https://github.com/Coldaine/ugv_ws/pull/1
 - Reddit: recovery-mode jumper and cable lessons — https://www.reddit.com/r/JetsonNano/comments/1lqzjhu
 - Reddit: NVMe model compatibility report — https://www.reddit.com/r/JetsonNano/comments/1hth1vo/booting_jetson_orin_nano_super_from_ssd/
 
