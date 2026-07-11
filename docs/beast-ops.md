@@ -313,6 +313,43 @@ owned passwordless-sudo rule for the SSH-key-only `beast` account, unmount, and 
 Then continue immediately with JetPack compute, Docker, ROS 2 Humble, `ugv_ws`, and bench safety
 validation. Do not reflash storage for this credential repair.
 
+### First-boot configuration and persistence inventory
+
+Audited after the successful flash on 2026-07-11:
+
+- `beast` accepts the local `laptop-extra@coldaine-fleet` Ed25519 key with fingerprint
+  `SHA256:6DUbgRuhTmZ/uTVXpLN/VPf2gPoiFIy2WPBXfaBRp4k`. This is **not** the
+  `SSH_PUBKEY_PATRICK_DESKTOP` key currently stored in Doppler. The working private key remains on
+  the local workstation; neither it nor a Jetson-specific replacement key was written to Doppler.
+- Doppler `secrets_managment/dev` has no `BEAST_*` or `JETSON_*` administrator credential. The
+  existing `PVE_EVO_X2_ROOT_PASSWORD` enabled the Proxmox work, and the existing
+  `UDM_WIFI_MOOSEGOOSEIOT` / `UDM_WIFI_CASTLEMOOSEGOOSE` PSKs are available for later network
+  configuration, but no secret value belongs in this runbook.
+- The normal L4T USB gadget is reachable at `192.168.55.1`; onboard Ethernet `enP8p1s0` and Wi-Fi
+  `wlP1p1s0` are down. The current network-map identity `beast` / `192.168.20.184` still belongs to
+  the Pi-hosted BEAST-01 and must not silently move to the Jetson before physical cutover and a live
+  UniFi/DHCP check.
+- Timezone is `Etc/UTC` and NTP is not synchronized while the Jetson has no upstream network.
+- `nvpmodel` reports the 25 W mode. Select and record a conservative stationary bench mode only
+  after sudo repair; do not guess a mode number from another Jetson release.
+- Base `nvidia-l4t-*` R36.5 packages are installed, but the `nvidia-jetpack` meta-package, Docker,
+  ROS 2 Humble, and `ugv_ws` are not yet installed. This is why the state is “provisioning in
+  progress,” not Beast-ready.
+- The validated local flash tree and logs are under `/home/coldaine/jetson-r365-flash` (about
+  11 GiB). The successful host log is `local-flash3.log`; the external image still hashes to
+  `15cda47639be08efa6e214c7d59fb6129dc343c3`. These files are persistent on the workstation but
+  are not a backup.
+- A second generated tree remains on stopped Proxmox VM 900 at
+  `/home/ubuntu/jetson-flash/Linux_for_Tegra` (about 24 GiB), with the same external image hash and
+  internal BCT index. VM 900 is stopped, EVO's `c8:00.4` controller is returned to `xhci_hcd`, and
+  Talos worker VM 112 is running. A VM disk on the same fleet is a second copy, not an independent
+  backup.
+- The local Nobara-only DSA compatibility edit lives inside the local BSP tree, and the temporary
+  service-name wrapper lives under `/tmp/jetson-flash-bin`; neither is a reusable repository tool.
+  Their required behavior is recorded in the successful-flash ledger above.
+- Durable source documentation and Hangar content are pushed on PR #117. They are not on `main`
+  until that PR is reviewed and merged.
+
 ### Flash-host architecture — Proxmox with the whole xHCI controller
 
 Use a disposable native Ubuntu 22.04 x86_64 VM on Proxmox. Pass an entire physical USB xHCI
