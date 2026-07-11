@@ -72,8 +72,10 @@ describe('resolveActive (host swap)', () => {
   it('lights the Pi stack path and dims the Orin under pi5', () => {
     const active = resolveActive(terminals, nets, 'pi5');
     expect(active.terminalIds.has('pi5-40pin')).toBe(true);
+    expect(active.terminalIds.has('pi5-usb')).toBe(true);
     expect(active.terminalIds.has('orin-uart')).toBe(false);
     expect(active.terminalIds.has('orin-dc-in')).toBe(false);
+    expect(active.terminalIds.has('orin-usb')).toBe(false);
     // The 5V host rail powers the Pi; UPS telemetry and camera reach the Pi.
     expect(active.netIds.has('net-5v-host')).toBe(true);
     expect(active.netIds.has('net-ups-telemetry')).toBe(true);
@@ -86,7 +88,9 @@ describe('resolveActive (host swap)', () => {
     const active = resolveActive(terminals, nets, 'orin');
     expect(active.terminalIds.has('orin-uart')).toBe(true);
     expect(active.terminalIds.has('orin-dc-in')).toBe(true);
+    expect(active.terminalIds.has('orin-usb')).toBe(true);
     expect(active.terminalIds.has('pi5-40pin')).toBe(false);
+    expect(active.terminalIds.has('pi5-usb')).toBe(false);
     // Orin can't draw header 5V and the optional Pi-bound UPS telemetry goes dark.
     // The camera and ACCE sensors move to the Orin USB host at cutover.
     expect(active.netIds.has('net-5v-host')).toBe(false);

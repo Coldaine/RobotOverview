@@ -157,6 +157,7 @@ const HOST_TERMINALS: Record<string, ActiveHost> = {
   'pi5-usb': 'pi5',
   'orin-uart': 'orin',
   'orin-dc-in': 'orin',
+  'orin-usb': 'orin',
 };
 
 export interface ActiveSet {

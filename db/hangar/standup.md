@@ -3,7 +3,7 @@ title: Hangar DB — Master Inventory Standup
 date: 2026-06-26
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-07-07
+last_confirmed: 2026-07-11
 ---
 
 # Hangar DB — master-inventory Postgres standup
@@ -39,6 +39,10 @@ Future certificate-verified modes need an explicit trust-bundle/certificate cont
 
 - `schema.sql` — the full rebuild DDL. The source of truth for the current shape.
 - `migrations/` — additive live migrations for databases that already contain stored data.
+  `2026-07-11-beast-acce-hardware-truth.sql` removes the disproven RoArm record and reconciles the
+  owned OAK-D Lite, D500 LiDAR, Jetson state, loadout, interfaces, terminals, and nets. It applies
+  cleanly twice and its 93 affected semantic projections match a clean current-schema/current-seed
+  rebuild in an ephemeral PostgreSQL 18.3 scratch cluster.
 - `gen-seed.ts` — transforms `src/data/hangar.ts` → seed SQL (defensive: junctions filtered to resolvable refs).
 - `seed.sql` — generated output (committed so the DB rebuilds with `psql` alone).
 

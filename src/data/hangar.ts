@@ -435,7 +435,7 @@ export const hangarData: HangarData = {
       lifecycle: 'inventory',
       provenance: 'owner',
       summary:
-        'Owned NVIDIA Jetson Orin Nano 8GB developer kit with NVMe, staged to replace BEAST-01’s Raspberry Pi 5 after the JetPack 6.2.2 flash and ACCE hardware validation.',
+        'Owned NVIDIA Jetson Orin Nano 8GB developer kit running JetPack 6.2.2 / R36.5 from NVMe with ROS 2 Humble and the Jetson-adapted Waveshare workspace built; staged to replace BEAST-01’s Raspberry Pi 5 after physical ACCE safety validation.',
       specs: [
         { label: 'AI perf', value: 'up to 67 TOPS (Super); ~1.7× prior' },
         { label: 'Arch', value: 'Ampere GPU + 6-core Arm' },
@@ -894,17 +894,6 @@ export const hangarData: HangarData = {
       capturedAt: '2026-05-31',
     },
     {
-      id: 'jetson-flash-bct-boundary',
-      title: 'Intel USB unblocked the Jetson R36.5 flash',
-      body: 'OP-JETSON-FLASH proved the EVO AMD Strix Halo USB path caused the first-BCT timeout: the same signed transfer completed on the Intel workstation, which then flashed QSPI and the 2 TB Micron NVMe successfully. First boot verified beast-01 on Jetson Linux R36.5 with a 1.9 TiB NVMe root and key-based USB SSH. Later read-info probes can clobber bootloader RCM artifacts in a generated BSP tree, so regenerate and hash-check the RCM BCT against the package index before flash-only. Provisioning remains blocked only on repairing the intentionally discarded sudo credential, after which JetPack, Docker, ROS 2, ugv_ws, and Beast bench validation continue.',
-      tags: ['jetson', 'flash', 'operations', 'usb'],
-      bay: 'robotics',
-      units: ['beast', 'orin-nano'],
-      confidence: 'high',
-      source: 'OP-JETSON-FLASH EVO whole-controller attempt ledger, 2026-07-11',
-      capturedAt: '2026-07-11',
-    },
-    {
       id: 'blackwell-gap',
       title: 'No Blackwell Nano exists — yet',
       body: 'Blackwell in Jetson is top-end only (Thor T4000/T5000). The Nano/NX tiers are still Ampere. The genuinely Blackwell option you already own is the 5090 — which is exactly why offload-over-WiFi is worth taking seriously.',
@@ -946,12 +935,6 @@ export const hangarData: HangarData = {
   ],
 
   activity: [
-    {
-      id: 'a-jetson-flash-bct',
-      at: '2026-07-11T20:51:47Z',
-      kind: 'insight',
-      text: 'OP-JETSON-FLASH flashed R36.5 to BEAST-JETSON QSPI and its 2 TB NVMe over Intel USB; first boot passed and sudo repair is the remaining provisioning blocker.',
-    },
     {
       id: 'a7',
       at: '2026-07-01T18:32:19Z',
