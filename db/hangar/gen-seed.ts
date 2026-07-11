@@ -151,6 +151,9 @@ const ifaces: [string, string, string, string][] = [
   ['serial-bus-servo', 'Serial Bus Servo', 'data', 'ST3215/ST3235 daisy-chain'],
   ['ups-bay', 'Undercarriage UPS Bay', 'power', '3x18650 / 3S pack bay'],
   ['i2c-display', 'I²C Display Header', 'data', '0.91/0.96in OLED'],
+  ['sensor-rail', 'Sensor Rail Mount', 'mechanical', 'Top-deck accessory rail'],
+  ['sensor-deck', 'Sensor Deck Mount', 'mechanical', 'Middle-deck sensor plate'],
+  ['lidar-uart', 'LiDAR UART', 'data', 'LiDAR UART routed to host USB'],
 ];
 for (const [id, name, kind, note] of ifaces)
   w(`INSERT INTO interface_types(id,name,kind,note) VALUES (${S(id)},${S(name)},${S(kind)},${S(note)});`);
@@ -170,6 +173,9 @@ accept('beast', 'Host Controller Mount', 'host-mount');
 accept('beast', 'Serial Bus Servo', 'serial-bus-servo');
 accept('beast', 'Undercarriage Bay', 'ups-bay');
 accept('beast', 'Display Header', 'i2c-display');
+accept('beast', '21mm Picatinny Rail', 'sensor-rail');
+accept('beast', 'Middle Deck', 'sensor-deck');
+accept('beast', 'LiDAR UART Port', 'lidar-uart');
 const expose = (asset: string, iface: string) => {
   if (A(asset)) {
     addToSetMap(assetInterfaceIds, asset, iface);
@@ -178,8 +184,10 @@ const expose = (asset: string, iface: string) => {
 };
 expose('pi5', 'host-mount');
 expose('orin-nano', 'host-mount'); // the upgrade-path candidate for the same socket
-expose('roarm-m2', 'serial-bus-servo');
 expose('stock-ups', 'ups-bay');
+expose('oak-d-lite', 'sensor-rail');
+expose('d500-lidar', 'sensor-deck');
+expose('d500-lidar', 'lidar-uart');
 
 const compatibleInterface = (host: string, slot: string, asset: string) => {
   const socketInterfaces = socketInterfaceIds.get(socketKey(host, slot)) ?? new Set<string>();

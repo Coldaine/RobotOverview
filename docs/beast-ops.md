@@ -20,7 +20,7 @@ Browser / HTTP client  ──HTTP/WebSocket──▶  Raspberry Pi 5 (upper comp
 
 - **Upper computer:** Raspberry Pi 5 — vision, web UI, command relay. No CUDA; learned-policy
   inference lives offboard.
-- **Lower computer:** ESP32 — motion (PID), servo bus (RoArm-M2), sensor feedback.
+- **Lower computer:** ESP32 — motion (PID), stock pan-tilt servo bus, sensor feedback.
 - **Software stack:** Waveshare `ugv_rpi` (standard, not ROS2). Server is Werkzeug / Python 3.11.
 
 ## Network
@@ -40,7 +40,7 @@ renew, re-confirm it returns to `192.168.20.184` (that's what the reservation is
 
 | URL | What | Notes |
 |---|---|---|
-| `http://192.168.20.184:5000` | **Control UI** (drive, FPV, arm, gimbal) | Use Google Chrome. Open in a normal browser — works fine. |
+| `http://192.168.20.184:5000` | **Control UI** (drive, FPV, gimbal) | Use Google Chrome. Open in a normal browser — works fine. |
 | `http://192.168.20.184:8888` | **JupyterLab** | Interactive lesson notebooks (302 → `/lab?`). The programming on-ramp. |
 | `http://192.168.20.184:5000/video_feed` | Raw MJPEG camera stream | Long-lived stream; inspect headers/frames with a client that can abort cleanly. |
 
@@ -87,7 +87,6 @@ Key payloads:
 |---|---|---|
 | Drive (differential) | `{"T":1,"L":<left>,"R":<right>}` | `L`/`R` = track speeds. **Magnitude scaling not yet characterized** — start small (≤0.2) and increase once measured. Capped server-side by `max_speed`/`slow_speed` in the Pi's `config.yaml`. |
 | Stop | `{"T":1,"L":0,"R":0}` | App fires this on load. |
-| Arm (RoArm-M2) | `{"T":<cmd_arm_ctrl_ui>,"E":..,"Z":..,"R":..}` | T-code from `config.yaml`. |
 | Gimbal | `{"T":<cmd_gimbal_ctrl>,"X":..,"Y":..,"SPD":0,"ACC":128}` | T-code from `config.yaml`. |
 
 **Safety:** a stale-command watchdog on the Beast auto-stops the tracks if no command
@@ -131,21 +130,25 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 
 ## Operating progression (Waveshare's recommended on-ramp)
 
-1. **Web app (`:5000`)** — teleop, FPV, arm/gimbal. Drive it manually. *(done — it drives)*
+1. **Web app (`:5000`)** — teleop, FPV, and pan-tilt gimbal. Drive it manually. *(done — it drives)*
 2. **JupyterLab (`:8888`)** — official lesson notebooks: motion, camera/CV (face/object/line/
-   gesture), arm kinematics. This is where you learn to program it.
-3. **JSON command API** — `/json` Socket.IO. Script motion/arm; this is also
+   gesture), and gimbal control. This is where you learn to program it.
+3. **JSON command API** — `/json` Socket.IO. Script motion and gimbal control; this is also
    the integration point if the Hangar ever gains a (supervised) command view.
 4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, even
    LLM-driven natural-language control. Bigger jump.
 
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
-> **Status: UNVALIDATED — pipeline audited 2026-07-11.** This is the next-attempt runbook, not a
-> record of a successful flash. BEAST-01 still runs the Raspberry Pi 5 stack described above.
-> The audit corrected the module SKU, FAB, host architecture, and NVMe flash command, but
-> none of those corrections becomes an operating fact until the Jetson boots and passes bench
-> validation.
+> **Status: SOFTWARE PROVISIONING COMPLETE; PHYSICAL BEAST INTEGRATION PENDING — verified
+> 2026-07-11.** The initial Intel Raptor Lake run flashed QSPI and the 2 TB NVMe. The later
+> credential-safe external-only restore rewrote the NVMe but deliberately left the already-valid
+> QSPI untouched; that restored image is the current `beast-01` system on Jetson Linux R36.5.
+> Key-based SSH and Doppler-backed sudo both pass. JetPack 6.2.2 and the NVIDIA Docker runtime are
+> installed and verified. ROS 2 Humble and all 29 packages in the Jetson-adapted Waveshare
+> workspace build on the Orin; its zero-motion systemd unit is installed but disabled. Physical
+> UART, telemetry, camera, LiDAR, and stop-behavior validation are the remaining gates. BEAST-01
+> still physically runs the Raspberry Pi 5 stack until those gates pass and the Jetson is installed.
 
 ### Target and non-goals
 
@@ -186,22 +189,259 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 - The Podman image contained the correct NVIDIA user-space packages, but still used Nobara's
   kernel USB stack, device namespace, network interfaces, and NFS facilities. Container NFS and
   the raw USB `-110` timeout therefore do not implicate the downloaded JetPack release.
-- No prior attempt reached a QSPI or NVMe partition write. The observed failures occurred while
-  building images, starting container NFS, sending an RCM blob, or querying target storage.
+- Before the successful Intel flash, no failed attempt had reached a QSPI or NVMe partition write;
+  those failures stopped while building images, starting container NFS, sending an RCM blob, or
+  querying target storage. The later successful flash and credential-safe external restore are
+  recorded separately below.
 
-The `USBDEVFS_CONTROL ... -110` timeout is not assigned one cause. It may have been USB transport,
-the wrong generated board package, or target hardware. The corrected attempt observes each
-boundary separately instead of assuming Nobara, the cable, or the Jetson is at fault.
+The original `USBDEVFS_CONTROL ... -110` symptom was ambiguous. The corrected signed-payload
+captures assigned it below Docker, QEMU, VFIO, and the guest kernel; the later Intel control closed
+the remaining boundary by transferring the same payload successfully. That evidence identifies the
+EVO AMD controller/physical path, not the cable or Jetson, as the failed transport.
 
-### Flash-host architecture — Proxmox with the whole xHCI controller
+### Attempt ledger — 2026-07-11 EVO whole-controller run
 
-Use a disposable native Ubuntu 22.04 x86_64 VM on Proxmox. Pass an entire physical USB xHCI
-controller to the VM as a PCI device with VFIO. Do **not** configure `usb0: host=0955:7523`, USB
+This is the chronological record of the first run against the native Ubuntu VM. Keep failed
+boundaries here as evidence; do not summarize them later as a successful flash.
+
+1. Refetched and read the live `coldaine-k8cluster` configuration, then connected to
+   `pve-evo-x2` and gathered host facts before allocation. The host reported Proxmox VE 9.2.2,
+   kernel `7.0.2-6-pve`, 32 CPU threads, 30 GiB host-visible RAM, and active guests 112, 113,
+   and 1202. The reduced host-visible RAM is the EVO iGPU carve-out, not missing DIMMs.
+2. Confirmed exactly one recovery device: `0955:7523 NVIDIA Corp. APX`. Sysfs mapped it to PCI
+   function `c8:00.4`, an AMD Strix Halo xHCI controller isolated by itself in IOMMU group 31.
+   An earlier in-session statement called this group 32; the sysfs recheck corrected it to 31.
+   The controller carried no Proxmox management NIC, storage, or other USB device.
+3. Left the EVO control plane (VM 113) and observability guest (CT 1202) running. Gracefully
+   stopped the EVO Talos worker (VM 112) to free physical memory for the attended flash window.
+4. Downloaded the current Ubuntu 22.04 release cloud image from Ubuntu and created temporary VM
+   900, `evo-jetson-flasher-r365`: q35/OVMF, host CPU, 8 vCPU, 12 GiB fixed RAM, 140 GiB disk on
+   `vmdata`, VLAN 30 VirtIO networking, and `hostpci0=0000:c8:00.4,pcie=1`. The Proxmox host then
+   showed `c8:00.4` bound to `vfio-pci`; Ubuntu 22.04.5 with kernel `5.15.0-185-generic` showed
+   the same controller at guest PCI `01:00.0` using `xhci_hcd` and APX on guest USB bus 9.
+5. Installed the BSP prerequisites, complete kernel modules, QEMU guest agent, RNDIS/CDC modules,
+   rpcbind, and the NFS server. Disabled the guest firewall for the attended session, enabled
+   IPv6, set USBFS memory to 2048 MiB, and disabled global USB autosuspend.
+6. Copied only the two R36.5 archives into the clean VM. Their SHA-1 values matched NVIDIA:
+   `96e691a6d2d618e22dd6cb0630ee17faaa4733e9` for the BSP and
+   `7844cfc00ef92eeb85d699d17bcb787a1560d486` for the sample root filesystem. Extracted a new
+   `Linux_for_Tegra`, ran `l4t_flash_prerequisites.sh` and `apply_binaries.sh`, and verified the
+   staged target reports `R36, REVISION: 5.0`.
+7. Pre-created headless user `beast`, hostname `beast-01`, and an SSH authorized key in the staged
+   rootfs. NVIDIA's helper printed its generated temporary password to the terminal; that password
+   was immediately replaced with a new discarded random credential. Key-based SSH is the intended
+   first-boot path and the printed credential is invalid.
+   **This is historical failure evidence, not a reusable instruction.** The mandatory credential
+   gate below now prohibits package generation until the staged password matches Doppler and the
+   staged operator key fingerprint matches the persisted public key.
+8. Generated `bootloader/readinfocmd.txt` using the known NVIDIA developer-kit package identity
+   `BOARDID=3767`, `BOARDSKU=0005`, and `FAB=300`. The first read-only probe read ECID
+   `0x80012344705E021D2C00000003008240`, then timed out while sending `bct_br`. It created no fresh
+   `cvm.bin`; therefore no three-dump stability claim can be made. No QSPI or NVMe write occurred.
+9. Applied the complete community mitigation rather than only its global half: fully stopped and
+   restarted VM 900 to reset the passed controller, restored USBFS 2048 MiB and global autosuspend
+   `-1`, set every USB device and root hub `power/control` to `on`, and set every
+   `autosuspend_delay_ms` to `-1`. APX re-enumerated normally. The second read-only probe read the
+   same ECID and failed at the same `Sending bct_br` boundary. It again created no `cvm.bin` and
+   wrote nothing to QSPI or NVMe.
+10. Started offline package generation with the bounded known identity plus the independently
+    established chip values `CHIP_SKU=00:00:00:D5` and numeric `RAMCODE_ID=2`. The first offline
+    invocation omitted those chip values and correctly stopped at chip-info parsing; its output
+    was discarded. The corrected invocation selected kernel/UEFI DTB
+    `tegra234-p3768-0000+p3767-0005-nv-super.dtb`, the expected P3767-0003 BPMP DTB, QSPI layout
+    `flash_t234_qspi.xml`, NVMe layout `flash_l4t_t234_nvme.xml`, and external APP UUID generation.
+    It exited successfully with `Finish generating flash package`. Inspection confirmed a 2.4 GiB
+    external package, 11 MiB internal QSPI package, 2,282,183,740-byte sparse `system.img`, and
+    matching image SHA-1 `15cda47639be08efa6e214c7d59fb6129dc343c3`. `abootimg` showed the
+    external boot command line uses `root=PARTUUID=a08cd0ca-4707-4e72-bc04-8691205bb435`, exactly
+    matching `bootloader/l4t-rootfs-uuid.txt_ext`; the saved parameters target `nvme0n1p1` and end
+    in `jetson-orin-nano-devkit-super internal`. A scan of the saved command and generated package
+    found no fuse-burn command. Exactly one APX device remained attached. The package is ready for
+    `--flash-only` after the physical transport variable and recovery state are changed.
+11. Upgraded VM 900 from Ubuntu's 5.15 GA kernel to the 6.8 HWE kernel and repeated the read-only
+    probe. It read the same ECID and failed at the same first `bct_br` transfer, so the result is not
+    specific to the older guest kernel.
+12. Captured the failed VM transaction with `usbmon`. Descriptor reads completed, then
+    `tegrarcm_v2` submitted one 8,192-byte bulk OUT transfer beginning
+    `42435442 f76f0ad8 ee33a8f2`. After about ten seconds it completed as `-2` with actual length
+    zero: userspace cancelled an URB for which the host stack had reported no transferred bytes.
+13. Removed VM and VFIO from the transaction. Stopped VM 900, rebound `c8:00.4` to the Proxmox
+    7.0 host's `xhci_hcd`, and ran the complete generated NVIDIA read-info environment directly on
+    `pve-evo-x2`. The host generated and submitted the same signed 8,192-byte payload, including the
+    same leading bytes, and again completed zero bytes before cancellation. This is a valid native
+    control; an earlier standalone `tegrarcm_v2` test that sent a zero-filled BCT was incomplete and
+    is not evidence. No storage write occurred in either native test.
+
+The Intel control below closed this diagnosis: the same signed BCT completed immediately on Intel,
+so the Jetson, cable, recovery sequence, and payload were not the cause of the EVO timeout. Do not
+reuse the EVO Strix Halo controller for Jetson recovery flashing unless a later firmware or kernel
+change passes the read-only BCT control first.
+
+### Successful local Intel flash — 2026-07-11
+
+1. Moved the same cable and recovery-mode Jetson to the Nobara workstation. APX enumerated on the
+   Intel Alder Lake PCH xHCI controller `8086:51ed` at PCI `00:14.0`, USB path `3-2`, using Nobara
+   kernel `7.1.3-200.nobara.fc44.x86_64`.
+2. Ran the exact signed read-only environment. The first 8,192-byte BCT beginning
+   `42435442 f76f0ad8 ee33a8f2` completed `8192/8192`, followed by MB1, PSC, MB2, fuse, and EEPROM
+   operations. This assigns the EVO failures to its AMD Strix Halo USB path rather than the Jetson.
+3. Streamed the prepared Ubuntu-generated R36.5 tree locally, preserving the rootfs and generated
+   QSPI/NVMe images while excluding only obsolete large intermediate images. Reverified external
+   `system.img` SHA-1 `15cda47639be08efa6e214c7d59fb6129dc343c3`, the R36.5 release line, and
+   the `jetson-orin-nano-devkit-super` `nvme0n1p1` parameters.
+4. Adapted Nobara's service name at runtime from NVIDIA's expected `nfs-kernel-server` to Fedora's
+   `nfs-server`; NFS, rpcbind, IPv6, and host firewall restoration passed preflight. The firewall
+   was stopped only for the attended flash and restored afterward; NVIDIA's temporary exports were
+   removed.
+5. The first two write attempts stopped before storage access. `usbmon` proved the copied
+   `bootloader/br_bct_BR.bct` had been reset to a zero template by later `--read-info` probes even
+   though the immutable internal QSPI BCT remained valid. The Jetson accepted the 8 KiB transfer,
+   reset, and cancelled MB1 with `-108`. This was a generated-tree lifecycle error, not USB loss.
+6. Regenerated only the RCM-boot artifacts with `BOARDID=3767`, `BOARDSKU=0005`, `FAB=300`,
+   `CHIP_SKU=00:00:00:D5`, and `RAMCODE_ID=2`. Nobara OpenSSH no longer supports NVIDIA's legacy
+   DSA host-key generation, so the local recovery-ramdisk script skipped only that obsolete key and
+   retained RSA, ECDSA, and Ed25519. The regenerated boot BCT SHA-1
+   `063ef50bfb883fd1bb8daece5ac01e9302f778a0` then matched `images/internal/flash.idx` exactly.
+7. Ran `l4t_initrd_flash.sh --flash-only --showlogs --network usb0`. RCM boot reported
+   `last_boot_error: 0`, sent the 104.6 MB blob, exposed `0955:7035`, brought SSH up at
+   `fc00:1:1:0::2`, and identified the target as a 2 TB Micron 2400 NVMe.
+8. NVIDIA reported `Successfully flashed the external device`, `Successfully flashed the QSPI`,
+   `Flashing success`, and `Flash is successful` after 4 minutes 15 seconds. Every programmed QSPI
+   payload reported a matching SHA-1. The host firewall returned active and the NFS export list
+   returned empty after cleanup.
+9. Normal boot enumerated `0955:7020 NVIDIA L4T`, and key-based SSH reached `beast@192.168.55.1`.
+   Verified hostname `beast-01`, Jetson Linux `R36, REVISION: 5.0`, root filesystem
+   `/dev/nvme0n1p1` as ext4, APP PARTUUID `a08cd0ca-4707-4e72-bc04-8691205bb435`, and APP expanded
+   to 1.9 TiB.
+
+### Credential-recovery incident and external restore — 2026-07-11
+
+The first image contained the intended key and `sudo` membership but an intentionally discarded
+random password. That was the sole reason another recovery boot was required. The correction and
+its unexpected storage boundary were handled as follows:
+
+1. Verified APX `0955:7523` on the Intel USB path and the signed RCM BCT SHA-1
+   `063ef50bfb883fd1bb8daece5ac01e9302f778a0` before booting the retained initrd package.
+2. Booted that package with `l4t_initrd_flash.sh --flash-only --initrd`, expecting a recovery shell.
+   The initrd reached SSH, but the NVMe GPT and APP filesystem read as zeroes. Kernel accounting
+   showed 477 discard operations covering 4,000,797,360 sectors and no block writes.
+3. Inspected the running target rather than guessing: `/initrd_flash.cfg` contained `erase_all=1`,
+   and `/bin/nv_enable_remote.sh` runs `blkdiscard -f "${external_device}"` during startup. The
+   retained package had originally been generated with `--erase-all`; the discard therefore
+   happened before recovery SSH. This is the destructive-initrd rule recorded above.
+4. Started retained flasher VM 900 and attempted plaintext `chpasswd --root`. It failed safely with
+   `pam_chauthtok() failed: Module is unknown` because x86 PAM cannot load the ARM64 target modules.
+   No password change was accepted.
+5. Generated a salted SHA-512 crypt value from `BEAST_JETSON_ADMIN_PASSWORD` over stdin, applied it
+   with `chpasswd --encrypted --root`, and independently verified `crypt(password, shadow_hash)`,
+   `passwd -S`, `sudo` membership, and the Doppler operator-key fingerprint.
+6. Regenerated the external package without `--erase-all`. The external `system.img` SHA-1 is
+   `92fcc7e6960e4daf38dad61d1048de670db628c0`; `boot0.img` is
+   `5105f75ccc1dbb4553282d7ad53df807fa081d37`; the signed BCT remained
+   `063ef50bfb883fd1bb8daece5ac01e9302f778a0`. Extraction of `boot0.img` proved no
+   `erase_all` assignment in `/initrd_flash.cfg`.
+7. Mounted the generated APP image read-only and reverified R36.5, the encrypted Doppler password,
+   `sudo` membership, and operator key. Synced that verified package into the local flash tree.
+8. Used the still-running recovery environment to mount the host images read-only, independently
+   verified the same external-image hash from the target, and ran
+   `nv_flash_from_network.sh --external-only`. It reported `Successfully flashed the external
+   device`, `Flashing success`, and `Flash is successful`; QSPI was not rewritten.
+9. Mounted the restored APP read-only before reboot and repeated the credential/key checks. Normal
+   boot then verified `beast-01`, R36.5, ext4 on `/dev/nvme0n1p1`, APP PARTUUID
+   `d83cba59-4f9d-4b41-88cc-8beb1ba40a48`, and 1.8 TiB usable root capacity.
+10. The restored system generated a new SSH host key and machine ID. The recorded Ed25519
+    fingerprint is `SHA256:S5qCj4JsuBRSxfXgB//sAyNmDKWNSIOJtA6vUcu1XkI`; machine ID is
+    `6d5535d5455a47f19012d4f62a13d9ac`. A fresh SSH session successfully authenticated
+    `sudo -S -k` with the Doppler value, and both `dpkg --audit` and `apt-get check` were clean.
+
+The credential repair is complete; another recovery boot is not expected. Never grant blanket
+`NOPASSWD:ALL`. If robot automation later needs privilege, allowlist only the required commands in
+a separate sudoers rule.
+
+### First-boot configuration and persistence inventory
+
+Audited after the successful flash on 2026-07-11:
+
+- `beast` accepts the local `laptop-extra@coldaine-fleet` Ed25519 key with fingerprint
+  `SHA256:6DUbgRuhTmZ/uTVXpLN/VPf2gPoiFIy2WPBXfaBRp4k`. This is **not** the
+  `SSH_PUBKEY_PATRICK_DESKTOP` key. Its public half is now persisted in Doppler as
+  `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`; the working private key remains only on the local
+  workstation.
+- The current Jetson's ED25519 SSH host-key fingerprint is
+  `SHA256:S5qCj4JsuBRSxfXgB//sAyNmDKWNSIOJtA6vUcu1XkI`; machine ID is
+  `6d5535d5455a47f19012d4f62a13d9ac`. A reflash or restored root filesystem can legitimately
+  regenerate both. Accept a changed key only over the physically controlled point-to-point USB
+  link, then immediately persist the new fingerprint in `known_hosts` and this runbook.
+- Doppler `secrets_managment/dev` now contains `BEAST_JETSON_ADMIN_PASSWORD` and
+  `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`. The encrypted administrator value is applied to the
+  restored NVMe and a fresh `sudo -S -k` proof passed. The existing
+  `PVE_EVO_X2_ROOT_PASSWORD` enabled the Proxmox work, and the existing
+  `UDM_WIFI_MOOSEGOOSEIOT` credential configured the staging WLAN. No secret value belongs in this
+  runbook, logs, shell history, or process output.
+- The normal L4T USB gadget is reachable at `192.168.55.1`; onboard Ethernet `enP8p1s0` and Wi-Fi
+  `wlP1p1s0` is connected to `MooseGooseIOT` by DHCP at staging address `192.168.20.251`; Ethernet
+  `enP8p1s0` is down. The network-map identity `beast` / `192.168.20.184` still belongs to the
+  Pi-hosted BEAST-01. At cutover, move the DHCP reservation/DNS identity to the selected Jetson MAC;
+  never configure `.184` on both hosts.
+- Timezone is `America/Chicago`, NTP is active, and `System clock synchronized` reports `yes` after
+  reboot.
+- R36.5's local `/etc/nvpmodel.conf` proves mode 0 is `15W`, mode 1 is `25W`, and mode 2 is
+  `MAXN_SUPER`. Stationary staging uses mode 0, and reboot verification still reports `15W`.
+- `nvidia-jetpack` 6.2.2+b24, CUDA 12.6, TensorRT 10.3.0, cuDNN 9.3.0, VPI 3.2.4, Docker Engine
+  29.6.1, and NVIDIA Container Toolkit 1.16.2 are installed. Native package health, reboot, Docker's
+  default `nvidia` runtime, and an NGC `l4t-cuda:12.6.11-runtime` CUDA probe all pass; the container
+  reports one device named `Orin`.
+- ROS 2 Humble is installed and `rosdep check` reports every workspace dependency satisfied.
+  `ugv_ws` commit `ad274d6371195da7181df406e4ca19660eb522fc` builds all 29 packages on the
+  Orin. Four Jetson interface/motion-gate tests and five costmap tests pass. The selected vendor
+  `colcon test` set reports 16 tests, zero errors, and four inherited copyright/formatting failures;
+  all undefined-name findings that could crash the camera demos were repaired and the remaining
+  failures are non-runtime vendor lint debt. The launch graph parses with `ros2 launch --show-args`.
+- `/etc/systemd/system/beast-ros-base.service` and `/etc/beast/ugv.env` are installed from that
+  commit, root-owned, syntax-verified, disabled, and inactive. The unit hard-codes
+  `allow_motion:=false`, `use_lidar:=false`, and `use_rviz:=false`; no process currently owns
+  `/dev/ttyTHS1`.
+- The validated local flash tree and logs are under `/home/coldaine/jetson-r365-flash` (about
+  11 GiB). The credential-safe external image SHA-1 is
+  `92fcc7e6960e4daf38dad61d1048de670db628c0`; restore log is
+  `local-restore-credential.log`.
+- An independent sparse-preserving archive is stored at
+  `gdrive:backups/beast-01/jetson-r365-flash-r36.5-2026-07-11/jetson-r365-flash-r36.5-2026-07-11.tar.zst`.
+  Size is 5,568,536,046 bytes; stream and Google Drive MD5 both equal
+  `8fd3cc081a5fd076cc06f58def885a9c`, and SHA-256 is
+  `4267e2c0bc2ce826acd6cd21e7b14e718035d591b9e57dd20cfe968111c6dc32`. Sidecar checksum files
+  are stored beside the archive.
+- A second generated tree remains on Proxmox VM 900 at
+  `/home/ubuntu/jetson-flash/Linux_for_Tegra` (about 24 GiB), with the same external image hash and
+  internal BCT index. VM 900 is stopped with its 142 GB virtual disk retained; VM 112 remains
+  running, and the passed `c8:00.4` controller is rebound to host driver `xhci_hcd` with no driver
+  override. A VM disk on the same fleet is a useful working copy, not the independent backup above.
+- The local Nobara-only DSA compatibility edit lives inside the local BSP tree, and the temporary
+  service-name wrapper lives under `/tmp/jetson-flash-bin`; neither is a reusable repository tool.
+  Their required behavior is recorded in the successful-flash ledger above.
+- Durable source documentation and the corrected ACCE inventory model are on PR #117. They are not
+  on `main` until that PR is reviewed and merged.
+
+### Flash-host architecture — prove the physical controller first
+
+The successful path was a native x86_64 Linux host on an Intel Raptor Lake xHCI controller. A
+native Ubuntu 22.04 host remains the least surprising supported choice; the successful Nobara host
+proves that distribution identity was not the failed boundary. The controller must first complete
+the read-only `bct_br` transfer. Do not start an image write on a controller that fails it.
+
+A disposable Ubuntu 22.04 x86_64 VM on Proxmox is also valid when the **entire** physical xHCI
+controller is passed as a PCI device with VFIO. Do **not** configure `usb0: host=0955:7523`, USB
 vendor/product filters, SPICE USB redirection, an LXC, Docker, or Podman.
 
 This distinction matters: the VM's Ubuntu kernel must own the controller and every transition
 from APX to the L4T initrd composite device and USB network interface. Individual USB forwarding
 asks QEMU or Proxmox to reacquire each new USB identity; whole-controller PCI passthrough does not.
+
+Whole-controller passthrough removes USB identity handoff from QEMU, but it cannot repair the
+physical controller. The 2026-07-11 native-host control proved that rebuilding VM 900 could not
+resolve the EVO AMD Strix Halo failure: the same transfer failed below the VM boundary on that
+controller. Do not use EVO function `c8:00.4` for another Jetson flash unless a later kernel or
+firmware change first passes the read-only control.
 
 On the Proxmox host, verify IOMMU and inventory the controllers:
 
@@ -278,9 +518,10 @@ done
 
 The 2048 MB USBFS value is a successful community workaround for the same large-blob timeout,
 not an NVIDIA release requirement. Keep it because the failed host logged `-110` during RCM.
-This VM is a dedicated flash appliance: keep it only for retries within the same attended flash
-session, then destroy it when the session succeeds or is abandoned. Do not reuse it for general
-workloads or save it as a template with its firewall disabled and USB power policy altered.
+This VM is a dedicated flash appliance: stop it after the attended session and return its controller
+to the host. Retain its disk only when it contains a deliberately preserved working tree or evidence;
+otherwise destroy it. Never reuse it for general workloads or save it as a template with its
+firewall disabled and USB power policy altered.
 
 ### Build one clean R36.5 BSP
 
@@ -311,21 +552,115 @@ sudo ./apply_binaries.sh
 head -1 rootfs/etc/nv_tegra_release
 ```
 
-The release line must contain `R36` and `REVISION: 5.0`. Pre-create the headless account without
-putting a password in the runbook or shell history:
+The release line must contain `R36` and `REVISION: 5.0`.
+
+#### Mandatory credential gate — before generating or flashing any package
+
+The administrator credential and operator public key must be durable **before** the headless user
+is created. Never flash a generated/discarded password and plan to change it after boot: key-only
+SSH does not satisfy `sudo`, and that mistake requires an otherwise unnecessary recovery boot.
+
+From the authenticated operator shell, preserve an existing administrator credential or create it
+once, then record the exact public key that will be installed. The project slug below is the live,
+intentionally misspelled Doppler slug:
 
 ```bash
-read -rsp 'Temporary BEAST-01 password: ' BEAST_TEMP_PASSWORD; echo
-sudo ./tools/l4t_create_default_user.sh \
-  -u beast -p "$BEAST_TEMP_PASSWORD" -n beast-01 --accept-license
-unset BEAST_TEMP_PASSWORD
+set -euo pipefail
+export DOPPLER_PROJECT=secrets_managment
+export DOPPLER_CONFIG=dev
+export BEAST_OPERATOR_PUBLIC_KEY="$HOME/.ssh/id_ed25519.pub"
+
+test -s "$BEAST_OPERATOR_PUBLIC_KEY"
+if ! doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain >/dev/null 2>&1; then
+  openssl rand -hex 32 | doppler secrets set BEAST_JETSON_ADMIN_PASSWORD \
+    --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" \
+    --no-interactive --silent
+fi
+doppler secrets set BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" \
+  --no-interactive --silent < "$BEAST_OPERATOR_PUBLIC_KEY"
+
+test "$(doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+  | tr -d '\r\n' | wc -c)" -ge 32
 ```
 
-This bypasses interactive OEM setup. First boot must still verify that the APP partition expanded
-to the NVMe's usable capacity. NVIDIA's script has no stdin or file-based password option: while
-it runs, another local user or process in the flash VM can read the temporary password from its
-command line. Use a unique one-time password in this dedicated VM, change it immediately after
-first login with `passwd`, and destroy the VM after the attended flash session.
+NVIDIA's helper accepts its password only as a command-line argument. Give it a disposable random
+bootstrap value, then overwrite the staged rootfs immediately from Doppler over stdin; the
+disposable value must never be the password that is flashed:
+
+```bash
+set -euo pipefail
+BEAST_BOOTSTRAP_PASSWORD="$(openssl rand -hex 32)"
+sudo ./tools/l4t_create_default_user.sh \
+  -u beast -p "$BEAST_BOOTSTRAP_PASSWORD" -n beast-01 --accept-license
+unset BEAST_BOOTSTRAP_PASSWORD
+
+{
+  printf 'beast:'
+  doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+    --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+    | openssl passwd -6 -stdin
+} | sudo chpasswd --encrypted --root "$PWD/rootfs"
+
+beast_uid="$(sudo awk -F: '$1 == "beast" { print $3 }' rootfs/etc/passwd)"
+beast_gid="$(sudo awk -F: '$1 == "beast" { print $4 }' rootfs/etc/passwd)"
+sudo install -d -m 0700 -o "$beast_uid" -g "$beast_gid" rootfs/home/beast/.ssh
+doppler secrets get BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+  | sudo tee rootfs/home/beast/.ssh/authorized_keys >/dev/null
+sudo chown "$beast_uid:$beast_gid" rootfs/home/beast/.ssh/authorized_keys
+sudo chmod 0600 rootfs/home/beast/.ssh/authorized_keys
+```
+
+Verify the staged password against Doppler without printing either the password or hash, verify
+`beast` is a sudo member, and compare the staged and persisted public-key fingerprints:
+
+```bash
+set -euo pipefail
+stored_hash="$(sudo awk -F: '$1 == "beast" { print $2 }' rootfs/etc/shadow)"
+test -n "$stored_hash"
+case "$stored_hash" in
+  '!'*|'*'*) exit 1 ;;
+esac
+doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+  | perl -e '
+      my $hash = shift;
+      chomp(my $password = <STDIN>);
+      exit(crypt($password, $hash) eq $hash ? 0 : 1);
+    ' "$stored_hash"
+unset stored_hash
+
+sudo awk -F: '
+  $1 == "sudo" && $4 ~ /(^|,)beast(,|$)/ { found = 1 }
+  END { exit(found ? 0 : 1) }
+' rootfs/etc/group
+
+doppler_key_fingerprint="$(
+  doppler secrets get BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY \
+    --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+    | ssh-keygen -lf - | awk '{ print $2 }'
+)"
+staged_key_fingerprint="$(
+  sudo ssh-keygen -lf rootfs/home/beast/.ssh/authorized_keys | awk '{ print $2 }'
+)"
+test "$doppler_key_fingerprint" = "$staged_key_fingerprint"
+unset doppler_key_fingerprint staged_key_fingerprint beast_uid beast_gid
+```
+
+Any failure above is a hard stop: do not generate a flash package and do not put the Jetson into
+recovery. This bypasses interactive OEM setup while leaving a known, durable sudo credential and
+key-only SSH on the image. The disposable helper password is briefly visible to other local
+processes, so use a dedicated flash host/VM and overwrite it before package generation. First boot
+must still verify that the APP partition expanded to the NVMe's usable capacity.
+
+Do not replace the encrypted pipeline with plaintext `chpasswd --root`. The Ubuntu x86 flash host
+cannot load the ARM64 target's PAM modules, and the observed result was
+`pam_chauthtok() failed: Module is unknown`. Hashing from stdin on the host and using
+`chpasswd --encrypted --root` avoids target PAM while still verifying the resulting shadow entry
+cryptographically against the Doppler value.
 
 Before connecting the recovery session, record:
 
@@ -413,8 +748,10 @@ Interpret the result narrowly:
 - Stable dumps that parse as `3767 / 300 / 0005` need no manual EEPROM override.
 - Stable dumps with missing identity fields support a bounded software override using the known
   NVIDIA developer-kit identity. Preserve the dumps for NVIDIA support; do not write the EEPROM.
-- Chip SKU D5 and RAM code 2 are read independently from the chip. Do not force either value in
-  the primary command while those reads continue to succeed.
+- Chip SKU D5 and RAM code 2 are read independently from the chip. Let an online generation read
+  them when that path succeeds. For offline regeneration after those values have been captured,
+  pass the exact observed `CHIP_SKU=00:00:00:D5` and numeric `RAMCODE_ID=2`; never infer either
+  value from another module.
 
 ### Generate the exact QSPI plus NVMe package
 
@@ -426,6 +763,8 @@ sudo env \
   BOARDID=3767 \
   BOARDSKU=0005 \
   FAB=300 \
+  CHIP_SKU=00:00:00:D5 \
+  RAMCODE_ID=2 \
   ./tools/kernel_flash/l4t_initrd_flash.sh \
     --no-flash \
     --external-device nvme0n1p1 \
@@ -438,7 +777,43 @@ sudo env \
     internal
 ```
 
-If all EEPROM fields parse correctly, run the same command without the four `env` assignments.
+#### Destructive initrd boundary — verify before every recovery boot
+
+`--erase-all` is not merely a later flash option. Package generation writes `erase_all=1` into
+the recovery ramdisk's `/initrd_flash.cfg`; when that ramdisk starts,
+`/bin/nv_enable_remote.sh` executes `blkdiscard -f` against the external device before host SSH is
+available. Consequently, booting an erase-all package with `--initrd` can discard the entire NVMe
+even when no host-side flash command follows. This happened once on 2026-07-11 and required an
+external-image restore.
+
+Treat an initrd generated with `--erase-all` as a single-purpose destructive flasher. Boot it only
+when erasing the selected target is the explicit operation. `--initrd` does **not** mean read-only.
+
+For inspection or credential recovery, build a separate clean package with the same command but
+without `--erase-all`, then inspect the ramdisk before attaching the target:
+
+```bash
+set -euo pipefail
+boot0="$PWD/bootloader/boot0.img"
+inspect_dir="$(mktemp -d)"
+trap 'rm -rf "$inspect_dir"' EXIT
+cd "$inspect_dir"
+abootimg -x "$boot0" >/dev/null
+mkdir root
+unmkinitramfs initrd.img root
+test -f root/initrd_flash.cfg
+if grep -Rqs '^erase_all=' root; then
+  echo 'Refusing to boot destructive recovery initrd' >&2
+  exit 1
+fi
+```
+
+Only the erase-free package may be used for an inspection boot such as
+`l4t_initrd_flash.sh --flash-only --initrd`. Keep destructive and recovery trees separate, record
+their image hashes, and re-run this inspection after every regeneration.
+
+If all EEPROM fields parse correctly and the connected target supplies chip information during
+generation, run the same command without the six `env` assignments.
 Require a clean generation and verify all of the following before any write:
 
 - Board ID `3767`, FAB `300`, SKU `0005`, chip SKU D5, and RAM code 2.
@@ -488,23 +863,80 @@ that distinguishes a host USB timeout from target-side BPMP/DRAM failure.
 
 ### First-boot acceptance
 
-After a successful flash and normal power cycle without the recovery jumper:
+After a successful flash and normal power cycle without the recovery jumper, prove both key SSH
+and the persisted sudo credential from the authenticated operator workstation **before** package
+installation. For the current image, require the recorded fingerprint above. On the first boot of
+a deliberately reflashed image, OpenSSH generates a new host key; establish trust only across the
+physically controlled point-to-point USB link, record that fingerprint immediately, and require
+strict checking on every subsequent connection. Set the common operator variables first:
 
 ```bash
 set -euo pipefail
-passwd
+export DOPPLER_PROJECT=secrets_managment
+export DOPPLER_CONFIG=dev
+export JETSON_USB_HOST=192.168.55.1
+export BEAST_SSH_IDENTITY="$HOME/.ssh/id_ed25519"
+```
+
+For a deliberately reflashed image only, bootstrap its newly generated Ed25519 host key now over
+the physically controlled, point-to-point USB cable. Do not use
+`StrictHostKeyChecking=no` or silently accept a LAN key. Capture the scan, print and record its
+fingerprint in this runbook, then set `EXPECTED_JETSON_HOST_FINGERPRINT` to that recorded value
+before installing the key:
+
+```bash
+set -euo pipefail
+scan_file="$(mktemp)"
+trap 'rm -f "$scan_file"' EXIT
+ssh-keyscan -T 5 -t ed25519 "$JETSON_USB_HOST" 2>/dev/null >"$scan_file"
+test "$(wc -l <"$scan_file")" -eq 1
+scanned_fingerprint="$(ssh-keygen -lf "$scan_file" | awk '{ print $2 }')"
+printf 'Record Jetson USB Ed25519 fingerprint: %s\n' "$scanned_fingerprint"
+: "${EXPECTED_JETSON_HOST_FINGERPRINT:?record the printed fingerprint, then export it}"
+test "$scanned_fingerprint" = "$EXPECTED_JETSON_HOST_FINGERPRINT"
+
+install -d -m 0700 "$HOME/.ssh"
+ssh-keygen -R "$JETSON_USB_HOST" -f "$HOME/.ssh/known_hosts" >/dev/null 2>&1 || true
+tee -a "$HOME/.ssh/known_hosts" <"$scan_file" >/dev/null
+chmod 0600 "$HOME/.ssh/known_hosts"
+unset scanned_fingerprint EXPECTED_JETSON_HOST_FINGERPRINT
+```
+
+For the current image, skip that bootstrap and require the fingerprint already recorded above.
+Then prove key login and the Doppler-backed sudo credential with strict checking:
+
+```bash
+ssh -o BatchMode=yes -o StrictHostKeyChecking=yes \
+  -i "$BEAST_SSH_IDENTITY" "beast@$JETSON_USB_HOST" true
+doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+  --project "$DOPPLER_PROJECT" --config "$DOPPLER_CONFIG" --plain \
+  | ssh -T -o BatchMode=yes -o StrictHostKeyChecking=yes \
+      -i "$BEAST_SSH_IDENTITY" "beast@$JETSON_USB_HOST" \
+      'sudo -S -k -p "" true && sudo -k'
+```
+
+If either command fails, provisioning stops. Do not install packages, add blanket passwordless
+sudo, or declare first boot accepted. Repair the staged credential before flashing when possible;
+for an already-flashed target, use the non-destructive recovery repair described above.
+
+Then run on the Jetson:
+
+```bash
+set -euo pipefail
 mkdir -p ~/beast-acceptance
 head -1 /etc/nv_tegra_release | tee ~/beast-acceptance/nv-tegra-release.txt
 findmnt -no SOURCE,TARGET / | tee ~/beast-acceptance/root-mount.txt
 findmnt -no SOURCE / | grep -q nvme
 lsblk -o NAME,MODEL,SIZE,FSTYPE,MOUNTPOINTS | tee ~/beast-acceptance/lsblk.txt
 grep '^TNSPEC ' /etc/nv_boot_control.conf | tee ~/beast-acceptance/tnspec.txt
-grep -q '3767-300-0005' ~/beast-acceptance/tnspec.txt
+tr -d '\0' </proc/device-tree/compatible \
+  | tee ~/beast-acceptance/device-tree-compatible.txt
+grep -q 'p3767-0005-super' ~/beast-acceptance/device-tree-compatible.txt
 sudo nvbootctrl dump-slots-info | tee ~/beast-acceptance/nvbootctrl.txt
 dpkg --audit
 sudo apt update
 sudo apt-get check
-sudo apt install nvidia-jetpack
+sudo apt install nvidia-jetpack=6.2.2+b24
 dpkg --audit
 sudo apt-get check
 
@@ -525,12 +957,20 @@ test -s ~/beast-acceptance/tegrastats.txt
 
 Acceptance requires:
 
+- The operator key succeeds with strict host-key checking and the Doppler administrator credential
+  successfully authenticates sudo after invalidating any cached credential, without exposing its
+  value.
 - Jetson Linux reports `R36, REVISION: 5.0`.
 - `/` is mounted from the NVMe and the APP filesystem has expanded to the expected capacity.
-- `TNSPEC` contains `3767-300-0005`, with no empty identity fields or P3767-0003.
+- The live device-tree compatibility string contains `p3767-0005-super`. This unit's current
+  `TNSPEC` is `----1-0-jetson-orin-nano-devkit-super-` because NVIDIA's EEPROM parser did not
+  populate board ID/FAB/SKU; that known metadata gap is recorded, not treated as a boot failure.
+  Package-generation logs, selected kernel DTB, and the live device tree must all agree on
+  P3767-0005. Do not write EEPROM merely to make `TNSPEC` prettier.
 - QSPI/UEFI boots repeatedly without APX or a manual boot override.
-- `apt-get check`, `dpkg --audit`, and `nvidia-jetpack` complete successfully before any blanket
-  `apt upgrade` or `apt full-upgrade`.
+- `apt-get check`, `dpkg --audit`, the regular Jammy upgrade, and the pinned
+  `nvidia-jetpack=6.2.2+b24` install complete successfully. Do not run `do-release-upgrade`, switch
+  the NVIDIA source away from R36.5, or use an unreviewed `full-upgrade`.
 - The package capture contains installed CUDA, TensorRT (`libnvinfer`), cuDNN, and VPI packages;
   `nvcc` and the TensorRT Python import print versions without errors.
 - `nvpmodel` prints the selected profile, and at least three `tegrastats` samples show live CPU,
@@ -539,21 +979,41 @@ Acceptance requires:
 
 Install Docker Engine and NVIDIA Container Toolkit only **after** the native JetPack package state
 is healthy. Use Docker's Ubuntu repository rather than Ubuntu's older `docker.io` package, then
-install NVIDIA Container Toolkit from NVIDIA's repository. After those repositories are
-configured according to their linked vendor instructions, install and prove the runtime:
+use the `nvidia-container-toolkit` supplied by the pinned R36.5 JetPack repository. Do not add a
+second generic NVIDIA toolkit repository unless the JetPack package is genuinely unavailable.
+After Docker's vendor repository is configured, install and prove the runtime:
 
 ```bash
 sudo apt install docker-ce docker-ce-cli containerd.io \
-  docker-buildx-plugin docker-compose-plugin nvidia-container-toolkit
+  docker-buildx-plugin docker-compose-plugin
 sudo nvidia-ctk runtime configure --runtime=docker
+sudo apt install -y jq
+sudo jq '. + {"default-runtime": "nvidia"}' /etc/docker/daemon.json \
+  | sudo tee /etc/docker/daemon.json.tmp >/dev/null
+sudo mv /etc/docker/daemon.json.tmp /etc/docker/daemon.json
+sudo systemctl daemon-reload
 sudo systemctl restart docker
-docker info --format '{{json .Runtimes}}'
-sudo docker run --rm --runtime=nvidia ubuntu:22.04 \
-  bash -lc 'cat /etc/nv_tegra_release && ls /dev/nvhost* >/dev/null'
+docker info --format '{{.DefaultRuntime}} {{json .Runtimes}}'
 ```
 
 Do not use `nvidia-smi` as the acceptance test: Jetson's integrated GPU is not managed like a
-desktop PCIe card. Add a matching L4T CUDA container and run `deviceQuery` before GPU workloads.
+desktop PCIe card. A generic `ubuntu:22.04` image also does not carry the L4T metadata that activates
+Jetson's CSV device mounts, so absence of `/dev/nvhost-*` there is not a runtime verdict. Use
+NVIDIA's matching L4T CUDA image and execute a CUDA Runtime API probe. The validated image and
+result are:
+
+```bash
+docker pull nvcr.io/nvidia/l4t-cuda:12.6.11-runtime
+docker run --rm --runtime=nvidia \
+  -v /var/lib/beast/container-smoke/cuda-smoke:/cuda-smoke:ro \
+  nvcr.io/nvidia/l4t-cuda:12.6.11-runtime /cuda-smoke
+# CUDA_DEVICE_COUNT=1
+# CUDA_DEVICE_0=Orin
+```
+
+The tiny `cudaGetDeviceCount`/`cudaGetDeviceProperties` source and host-compiled binary are retained
+at `/var/lib/beast/container-smoke/`. Rebuild the binary with `/usr/local/cuda/bin/nvcc` after a
+CUDA major-version change rather than copying it from another architecture.
 
 ### Jetson UART gate and Beast software
 
@@ -587,13 +1047,25 @@ once, then use the prepared Jetson adaptation branch instead of Waveshare's unmo
 
 ```bash
 set -euo pipefail
+ROS_APT_SOURCE_VERSION=1.2.0
+curl -fsSL \
+  "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.jammy_all.deb" \
+  -o /tmp/ros2-apt-source.deb
+sudo apt install -y /tmp/ros2-apt-source.deb
+
+# The 2026 Humble ARM64 index carries Ignition Gazebo 6.18 but an older
+# sensors binary; the official OSRF stable repository supplies compatible 6.8.1.
+curl -fsSL https://packages.osrfoundation.org/gazebo.gpg \
+  | sudo tee /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg >/dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] https://packages.osrfoundation.org/gazebo/ubuntu-stable jammy main" \
+  | sudo tee /etc/apt/sources.list.d/gazebo-stable.list >/dev/null
 sudo apt update
-sudo apt install -y git ros-humble-ros-base python3-rosdep \
-  python3-colcon-common-extensions
+sudo apt install -y git git-lfs ros-humble-ros-base ros-dev-tools \
+  python3-rosdep python3-colcon-common-extensions python3-vcstool
 
 mkdir -p ~/beast
 cd ~/beast
-UGV_WS_COMMIT=a1a1d9cb882974de46905e17a2496cf4ab70089b
+UGV_WS_COMMIT=ad274d6371195da7181df406e4ca19660eb522fc
 git clone --no-checkout https://github.com/Coldaine/ugv_ws.git
 cd ugv_ws
 git fetch origin "$UGV_WS_COMMIT"
@@ -601,35 +1073,63 @@ git checkout --detach "$UGV_WS_COMMIT"
 test "$(git rev-parse HEAD)" = "$UGV_WS_COMMIT"
 
 source /opt/ros/humble/setup.bash
+export GZ_VERSION=fortress
 if [[ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]]; then
   sudo rosdep init
 fi
 rosdep update
 rosdep install --from-paths src --ignore-src --rosdistro humble -r -y
-colcon build --symlink-install
+colcon build --symlink-install --parallel-workers 2
 ```
 
-That branch is based on Waveshare `ros2-humble-develop-251125` at `037dfca`, makes the ESP32 and
-LiDAR ports launch arguments, permits LiDAR-free base bring-up, and corrects `rclcpy` to `rclpy`.
-It deliberately preserves Pi defaults for upstream compatibility. Do not blindly run
-`build_first.sh` on the Jetson: it installs wildcard desktop, simulation, vision, and debug-symbol
-packages and hard-codes its build path. Add those lanes only when the corresponding hardware test
-reaches them.
+That branch is based on Waveshare `ros2-humble-develop-251125` at `037dfca`. It makes the ESP32 and
+LiDAR ports launch arguments, permits LiDAR-free base bring-up, corrects `rclcpy` to `rclpy`, uses
+`/dev/ttyTHS1` on Jetson, discovers predictable Wi-Fi/Ethernet interface names, removes the stale
+ROS 1 `cmake_modules` dependency, declares OAK-D Lite and V4L2 runtime dependencies, and defaults
+`allow_motion` to false. It also carries the JetPack OpenCV 4.8 compatibility methods required by
+the vendored costmap converter, fixes invalid fallback names in the vision demos, and supplies a
+disabled zero-motion systemd unit. Do not blindly run `build_first.sh` on the Jetson: it installs wildcard
+desktop, simulation, vision, and debug-symbol packages, pins conflicting Python wheels, and
+hard-codes its build path. `rosdep` plus declared hardware dependencies is the reproducible path.
 
-Set `UGV_MODEL=ugv_beast`. Do not set `LDLIDAR_MODEL` until the fitted LiDAR label identifies
-`ld06`, `ld19`, or `stl27l`. Use a stable `/dev/serial/by-id/...` path for USB LiDAR once observed.
-Keep the vendor `ugv_jetson` Flask service disabled while ROS is running because both attempt to
-own `/dev/ttyTHS1` and camera devices.
+For this Humble build, `GZ_VERSION=fortress` selects the installed Ignition Gazebo 6 ABI. The full
+workspace compilation does not validate Waveshare's optional Harmonic simulation launch, which is
+not part of the physical Beast cutover. Do not install a second simulator stack merely to turn that
+optional demo into an acceptance gate.
+
+Set `UGV_MODEL=ugv_beast` and `LDLIDAR_MODEL=ld19`; the ACCE D500 uses the STL-19P/LDS19 protocol
+at 230400 baud. Use a stable `/dev/serial/by-id/...` path for USB LiDAR once the fitted device is
+attached and observed. Keep the vendor `ugv_jetson` Flask service disabled while ROS is running
+because both attempt to own `/dev/ttyTHS1` and camera devices.
+
+No RoArm is fitted. The vendor workspace contains optional RoArm programs because it supports other
+Waveshare configurations, but no RoArm node or service belongs in BEAST-01's launch path. The
+physical kit is the ACCE base, stock pan-tilt 5 MP camera, OAK-D Lite, and D500 LiDAR only.
+
+The staged service is intentionally inert until the hardware session:
+
+```bash
+sudo install -d -m 0755 /etc/beast
+sudo install -m 0644 deploy/systemd/ugv.env.example /etc/beast/ugv.env
+sudo install -m 0644 deploy/systemd/beast-ros-base.service \
+  /etc/systemd/system/beast-ros-base.service
+sudo systemctl daemon-reload
+sudo systemctl disable --now beast-ros-base.service
+systemd-analyze verify /etc/systemd/system/beast-ros-base.service
+systemctl is-enabled beast-ros-base.service  # disabled
+systemctl is-active beast-ros-base.service   # inactive
+```
 
 For the first hardware session, lift and secure the tracks, leave LiDAR and autonomous nodes off,
 and start only base bring-up:
 
 ```bash
 export UGV_MODEL=ugv_beast
+export LDLIDAR_MODEL=ld19
 source /opt/ros/humble/setup.bash
 source ~/beast/ugv_ws/install/setup.bash
 ros2 launch ugv_bringup bringup_lidar.launch.py \
-  serial_port:=/dev/ttyTHS1 use_lidar:=false use_rviz:=false
+  serial_port:=/dev/ttyTHS1 use_lidar:=false use_rviz:=false allow_motion:=false
 ```
 
 With no `/cmd_vel` publisher running, capture one message from each zero-motion telemetry lane:
@@ -657,8 +1157,9 @@ must be populated and update when the chassis is moved by hand. Stop if any lane
 
 Once the fitted LiDAR is identified, relaunch with `use_lidar:=true` and its stable `lidar_port`.
 For the heartbeat test, keep the tracks lifted and clear, start exactly one publisher in a second
-terminal, and begin at 0.02 m/s. Increase only enough to overcome motor deadband, never above
-0.05 m/s during this test:
+terminal, explicitly relaunch with `allow_motion:=true`, and begin at 0.02 m/s. Enabling motion is
+for this physically supervised gate only. Increase only enough to overcome motor deadband, never
+above 0.05 m/s during this test:
 
 ```bash
 ros2 topic pub --rate 5 /cmd_vel geometry_msgs/msg/Twist \
@@ -677,23 +1178,19 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
 ```
 
 The lower-level failsafe exists in current `ugv_base_general`; it still requires this physical
-validation. Camera, LiDAR, SLAM/Nav2, web control, and RoArm follow only after the chassis gate.
+validation. Camera, LiDAR, SLAM/Nav2, and web control follow only after the chassis gate.
 
-### Required post-success update
+### Remaining physical cutover record
 
-Immediately after success, replace the `UNVALIDATED` banner with a verification date and record:
+Credentials, native packages, JetPack, Docker/CUDA, ROS 2, the 29-package build, and the disabled
+zero-motion service are complete. The current USB inventory contains only the carrier's hubs and
+Bluetooth radio, so do not infer camera or LiDAR behavior from this detached bench state.
 
-- Proxmox node, VM version, passed xHCI PCI address, and Ubuntu guest kernel.
-- Developer-kit product number, EEPROM dump hashes, selected identity, and NVMe model.
-- Exact successful command and any environment overrides.
-- USB cable/port/hub and USBFS/power settings.
-- Flash duration and the final success lines from the log.
-- R36 release line, root mount source, and first-boot package state.
-- Any step that was unnecessary, misleading, or missing.
-- The ROS 2 Humble / `ugv_ws` provisioning and physical safety-validation result.
-
-Until that amendment lands, this section remains a proposed recovery sequence, not an operating
-claim.
+Before declaring the Beast compute cutover complete, record the onboard UART loopback result, then
+connect the ACCE hardware with power removed and capture zero-motion voltage, IMU, and odometry.
+Identify the D500's stable `/dev/serial/by-id` path, verify one frame stream from the 5 MP camera and
+OAK-D Lite, and complete the lifted-track heartbeat-stop test above. Only then enable the staged
+service and move the `beast` DHCP/DNS identity away from the disconnected Pi.
 
 ### Research references
 
@@ -708,6 +1205,8 @@ claim.
 - NVIDIA forum: containerized external-storage flash limitations — https://forums.developer.nvidia.com/t/flashing-orin-from-inside-docker-container/352106
 - NVIDIA forum: EEPROM override recovery — https://forums.developer.nvidia.com/t/cannot-flash-jetson-nano-orin-devkit-eeprom-error/278033
 - NVIDIA forum: USBFS timeout workaround — https://forums.developer.nvidia.com/t/fix-for-error-might-be-timeout-in-usb-write-increase-usbfs-memory-mb-to-2048/360581
+- NVIDIA forum: matching AMD-controller timeout resolved on Intel — https://forums.developer.nvidia.com/t/jetson-agx-orin-64gb-usb-timeout-on-flash-gui-broken-after-flash-sh-sdk-manager-no-sdks-on-windows/363988
+- Linux usbmon documentation — https://docs.kernel.org/usb/usbmon.html
 - NVIDIA forum: R36.5 Orin Nano/NX UART DMA fixes — https://forums.developer.nvidia.com/t/solved-uart-serial-port-not-working-after-upgradint-to-jetpack-6-2-2-orin-nano-nx/363837
 - NVIDIA Container Toolkit install guide — https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
 - Docker Engine on Ubuntu — https://docs.docker.com/engine/install/ubuntu/
