@@ -115,6 +115,15 @@ class StorageTests(unittest.TestCase):
         self.assertEqual(storage.smart_health(warning, {"unsafe_shutdowns": 62, "error_log_entries": 91})["state"], "warning")
         self.assertEqual(storage.smart_health(critical, {"media_errors": 0})["state"], "critical")
 
+    def test_nvme_cli_smart_shape_is_normalized(self):
+        report = json.dumps({"critical_warning": 0, "temperature": 316, "avail_spare": 100,
+                             "percent_used": 1, "media_errors": 0, "unsafe_shutdowns": 62,
+                             "num_err_log_entries": 91})
+        health = storage.smart_health(report, {"unsafe_shutdowns": 62, "error_log_entries": 91,
+                                               "media_errors": 0})
+        self.assertEqual(health["state"], "healthy")
+        self.assertEqual(health["temperature_c"], 43)
+
     def test_recorder_command_is_dependency_free_and_handles_sigint(self):
         source = (Path(__file__).parents[1] / "beast_record").read_text(encoding="utf8")
         self.assertNotIn("rclpy", source)

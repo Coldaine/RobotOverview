@@ -225,9 +225,10 @@ def smart_health(raw: Optional[str], baseline: Dict[str, int], config: Optional[
         report = json.loads(raw) if raw else None
         if not isinstance(report, dict):
             raise ValueError
-        temperature = int(report["temperature"]["current"])
-        used = int(report["percentage_used"])
-        spare = int(report["available_spare"])
+        raw_temperature = report["temperature"]
+        temperature = int(raw_temperature["current"]) if isinstance(raw_temperature, dict) else int(raw_temperature) - 273
+        used = int(report["percentage_used"] if "percentage_used" in report else report["percent_used"])
+        spare = int(report["available_spare"] if "available_spare" in report else report["avail_spare"])
         media = int(report["media_errors"])
         unsafe = int(report["unsafe_shutdowns"])
         errors = int(report["num_err_log_entries"])
@@ -249,11 +250,14 @@ def smart_health(raw: Optional[str], baseline: Dict[str, int], config: Optional[
 
 
 def read_smart() -> Optional[str]:
-    try:
-        return subprocess.run(["smartctl", "-j", "/dev/nvme0"], check=False, capture_output=True,
-                              text=True, timeout=15).stdout
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return None
+    for command in (["smartctl", "-j", "/dev/nvme0"], ["nvme", "smart-log", "-o", "json", "/dev/nvme0"]):
+        try:
+            result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=15)
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            continue
+        if result.returncode == 0 and result.stdout.strip():
+            return result.stdout
+    return None
 
 
 def write_status_atomic(config: Config, status: Dict[str, object]) -> Path:
