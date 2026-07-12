@@ -77,4 +77,4 @@ rollback; consumers must continue to use the stable interface.
   retention unsolved. The directory-level policy has a smaller blast radius.
 
 See the command-level [implementation plan](2026-07-11-beast-nvme-storage-implementation.md) and
-the interactive [storage dossier](/design/beast-storage/index.html).
+the interactive [storage dossier](../../design/beast-storage/index.html).
