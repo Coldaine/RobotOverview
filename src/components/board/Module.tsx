@@ -1,11 +1,13 @@
 'use client';
 import type { Unit } from '@/data/types';
+import type { SchematicNode } from '@/data/schematic-types';
 import { unitStatusColorVar } from '@/lib/format';
 import type { ModuleBox, ViewMode } from '@/lib/twin';
 import { BAY_ICONS } from '@/components/bay-icons';
 
 export function Module({
   module,
+  node,
   unit,
   mode,
   hovered,
@@ -16,6 +18,7 @@ export function Module({
   onHover,
 }: {
   module: ModuleBox;
+  node: SchematicNode | undefined;
   unit: Unit | undefined;
   mode: ViewMode;
   hovered: boolean;
@@ -25,18 +28,19 @@ export function Module({
   interactive?: boolean;
   onHover: (unitId: string | null) => void;
 }) {
-  const Icon = unit ? BAY_ICONS[unit.bay] : BAY_ICONS.compute;
+  const Icon = BAY_ICONS[node?.bay ?? unit?.bay ?? 'compute'];
+  const preview = node?.state === 'preview';
   const accent = hovered || isCore ? 'var(--color-cyan)' : 'var(--color-rim)';
   const status = unit ? unitStatusColorVar(unit.status) : 'var(--color-ink-dim)';
   const isBus = mode === 'bus';
 
   return (
     <g
-      style={{ opacity: dimmed ? 0.4 : 1 }}
+      style={{ opacity: dimmed ? 0.4 : preview ? 0.72 : 1 }}
       className="outline-none transition-opacity duration-500"
       tabIndex={interactive ? 0 : undefined}
       role={interactive ? 'group' : undefined}
-      aria-label={interactive ? (unit?.name ?? module.unitId) : undefined}
+      aria-label={interactive ? (node?.label ?? unit?.name ?? module.unitId) : undefined}
       onMouseEnter={interactive ? () => onHover(module.unitId) : undefined}
       onMouseLeave={interactive ? () => onHover(null) : undefined}
       onFocus={interactive ? () => onHover(module.unitId) : undefined}
@@ -67,6 +71,7 @@ export function Module({
         fillOpacity={isBus ? 0.35 : 0.82}
         stroke={accent}
         strokeWidth={hovered || isCore ? 1.6 : 1}
+        strokeDasharray={preview ? '8 6' : undefined}
         style={hovered || isCore ? { filter: `drop-shadow(0 0 14px color-mix(in srgb, ${accent} 40%, transparent))` } : undefined}
       />
 
@@ -89,12 +94,12 @@ export function Module({
         fontSize={13}
         style={{ letterSpacing: '0.08em', textTransform: 'uppercase' }}
       >
-        {(unit?.callsign ?? unit?.name ?? module.unitId).slice(0, isBus ? 12 : 22)}
+        {(node?.callsign ?? unit?.callsign ?? node?.label ?? unit?.name ?? module.unitId).slice(0, isBus ? 12 : 22)}
       </text>
 
       {!isBus && (
         <text x={module.x + 34} y={module.y + 38} className="font-mono" fill="var(--color-ink-dim)" fontSize={10} style={{ letterSpacing: '0.1em' }}>
-          {(unit?.class ?? '').toUpperCase().slice(0, 28)}
+          {(preview ? 'PREVIEW · NOT INSTALLED' : (node?.className ?? unit?.class ?? '')).toUpperCase().slice(0, 28)}
         </text>
       )}
 

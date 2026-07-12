@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, it, expect } from 'vitest';
 import { HANGAR_BAY_IDS, hangarData } from '@/data/hangar';
+import { beastSchematicDefinition } from '@/data/schematics/beast';
 import { seedSql } from '../../db/hangar/gen-seed';
 import { isTrimmedTimestamp } from '@/server/hangar/validators';
 import {
@@ -373,10 +374,10 @@ describe('hangar.ts data integrity', () => {
     });
   });
 
-  it('all loadout.hotspotId values reference a hotspot on the same unit', () => {
+  it('all BEAST loadout.hotspotId values reference the schematic definition', () => {
+    const hotspotIds = new Set(beastSchematicDefinition.hotspots.map((hotspot) => hotspot.id));
     hangarData.units.forEach((u) => {
-      if (!u.loadout || !u.hotspots) return;
-      const hotspotIds = new Set(u.hotspots.map((h) => h.id));
+      if (!u.loadout || u.id !== 'beast') return;
       u.loadout.forEach((slot) => {
         if (slot.hotspotId) {
           expect(

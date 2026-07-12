@@ -1,6 +1,7 @@
 'use client';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Terminal, Unit, NetKind } from '@/data/types';
+import type { SchematicNode } from '@/data/schematic-types';
 import type { ActiveSet, TraceSet, TwinLayout, ViewMode } from '@/lib/twin';
 import { Module } from './Module';
 import { Port } from './Port';
@@ -10,6 +11,7 @@ interface CanvasProps {
   layout: TwinLayout;
   mode: ViewMode;
   units: Unit[];
+  nodes: SchematicNode[];
   terminals: Terminal[];
   active: ActiveSet;
   highlight: TraceSet | null;
@@ -19,6 +21,7 @@ interface CanvasProps {
   hoveredModule: string | null;
   reducedMotion: boolean;
   interactive: boolean;
+  coreNodeId?: string;
   onHoverTerminal: (id: string | null) => void;
   onHoverNet: (id: string | null) => void;
   onHoverModule: (id: string | null) => void;
@@ -30,7 +33,7 @@ const MIN_K = 0.6;
 const MAX_K = 4;
 
 export function TwinCanvas(props: CanvasProps) {
-  const { layout, mode, units, terminals, active, highlight, dimOthers, selectedNetId, layerEnabled, hoveredModule, reducedMotion, interactive } = props;
+  const { layout, mode, units, nodes, terminals, active, highlight, dimOthers, selectedNetId, layerEnabled, hoveredModule, reducedMotion, interactive, coreNodeId } = props;
   const svgRef = useRef<SVGSVGElement | null>(null);
   const [t, setT] = useState({ x: 0, y: 0, k: 1 });
   const [isDragging, setIsDragging] = useState(false);
@@ -172,11 +175,12 @@ export function TwinCanvas(props: CanvasProps) {
             <Module
               key={m.unitId}
               module={m}
+              node={nodes.find((node) => node.id === m.unitId)}
               unit={units.find((u) => u.id === m.unitId)}
               mode={mode}
               hovered={hoveredModule === m.unitId || moduleInTrace(m.unitId)}
               dimmed={dimOthers && hoveredModule !== m.unitId && !moduleInTrace(m.unitId)}
-              isCore={m.unitId === 'driver-board'}
+              isCore={m.unitId === coreNodeId}
               reducedMotion={reducedMotion}
               interactive={interactive}
               onHover={props.onHoverModule}

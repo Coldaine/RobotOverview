@@ -2,16 +2,54 @@
 import clsx from 'clsx';
 import { LayoutGrid, Boxes, Rows3, Cpu, CircuitBoard } from 'lucide-react';
 import {
-  ACTIVE_HOST_LABELS,
-  ACTIVE_HOSTS,
   VIEW_MODE_LABELS,
   VIEW_MODES,
-  type ActiveHost,
   type NetColorKey,
   type ViewMode,
 } from '@/lib/twin';
 import { LAYERS, NET_STROKE } from './palette';
 import type { NetKind } from '@/data/types';
+import type { SchematicConfiguration, SchematicHost } from '@/data/schematic-types';
+
+export function SchematicConfigurationSwitch({
+  configurations,
+  configuration,
+  onChange,
+  compact = false,
+}: {
+  configurations: SchematicConfiguration[];
+  configuration: string;
+  onChange: (configuration: string) => void;
+  compact?: boolean;
+}) {
+  const active = configurations.find((candidate) => candidate.id === configuration);
+  return (
+    <div className="flex min-w-0 flex-wrap items-center gap-2">
+      <span className="hud-label">Configuration</span>
+      <div className="flex gap-1" role="radiogroup" aria-label="Configuration">
+        {configurations.map((candidate) => (
+          <button
+            key={candidate.id}
+            type="button"
+            role="radio"
+            aria-checked={configuration === candidate.id}
+            onClick={() => onChange(candidate.id)}
+            className={clsx(
+              'btn whitespace-nowrap',
+              compact && '!px-2 !py-1 text-[9px]',
+              configuration === candidate.id ? 'btn-active' : 'btn-ghost',
+            )}
+          >
+            {candidate.label}
+          </button>
+        ))}
+      </div>
+      {active?.badge ? (
+        <span className="chip border-amber/50 bg-amber/10 text-amber">{active.badge}</span>
+      ) : null}
+    </div>
+  );
+}
 
 const VIEW_MODE_ICONS: Record<ViewMode, typeof Cpu> = {
   board: LayoutGrid,
@@ -42,7 +80,7 @@ export function ViewModeSwitch({ mode, onChange }: { mode: ViewMode; onChange: (
   );
 }
 
-export function HostSwitch({ host, onChange }: { host: ActiveHost; onChange: (h: ActiveHost) => void }) {
+export function HostSwitch({ hosts, host, onChange }: { hosts: SchematicHost[]; host: string; onChange: (host: string) => void }) {
   return (
     <div className="flex items-center gap-2">
       <span className="hud-label flex items-center gap-1.5">
@@ -50,16 +88,16 @@ export function HostSwitch({ host, onChange }: { host: ActiveHost; onChange: (h:
         Host
       </span>
       <div className="flex gap-1" role="radiogroup" aria-label="Onboard host">
-        {ACTIVE_HOSTS.map((h) => (
+        {hosts.map((candidate) => (
           <button
-            key={h}
+            key={candidate.id}
             type="button"
             role="radio"
-            aria-checked={host === h}
-            onClick={() => onChange(h)}
-            className={clsx('btn', host === h ? 'btn-active' : 'btn-ghost')}
+            aria-checked={host === candidate.id}
+            onClick={() => onChange(candidate.id)}
+            className={clsx('btn', host === candidate.id ? 'btn-active' : 'btn-ghost')}
           >
-            {ACTIVE_HOST_LABELS[h]}
+            {candidate.label}
           </button>
         ))}
       </div>

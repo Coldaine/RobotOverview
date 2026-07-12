@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { hangarData } from '@/data/hangar';
+import { beastSchematicDefinition } from '@/data/schematics/beast';
+import { materializeSchematic } from '@/lib/schematic-definition';
 import {
   ACTIVE_HOST_LABELS,
   ACTIVE_HOSTS,
@@ -18,7 +20,8 @@ import {
   type TwinLayout,
 } from '@/lib/twin';
 
-const { units, terminals, nets, documents } = hangarData;
+const { terminals, nets, documents } = hangarData;
+const graph = materializeSchematic(beastSchematicDefinition, 'installed');
 const terminalIds = new Set(terminals.map((t) => t.id));
 
 describe('twin graph helpers', () => {
@@ -70,7 +73,7 @@ describe('twin graph helpers', () => {
 
 describe('resolveActive (host swap)', () => {
   it('lights the Pi stack path and dims the Orin under pi5', () => {
-    const active = resolveActive(terminals, nets, 'pi5');
+    const active = resolveActive(terminals, nets, 'pi5', beastSchematicDefinition.hosts);
     expect(active.terminalIds.has('pi5-40pin')).toBe(true);
     expect(active.terminalIds.has('pi5-usb')).toBe(true);
     expect(active.terminalIds.has('orin-uart')).toBe(false);
@@ -85,7 +88,7 @@ describe('resolveActive (host swap)', () => {
   });
 
   it('lights the Orin jumpers and drops the 5V rail under orin', () => {
-    const active = resolveActive(terminals, nets, 'orin');
+    const active = resolveActive(terminals, nets, 'orin', beastSchematicDefinition.hosts);
     expect(active.terminalIds.has('orin-uart')).toBe(true);
     expect(active.terminalIds.has('orin-dc-in')).toBe(true);
     expect(active.terminalIds.has('orin-usb')).toBe(true);
@@ -105,7 +108,7 @@ describe('resolveActive (host swap)', () => {
 
   it('keeps host-agnostic subsystems live under either host', () => {
     for (const host of ACTIVE_HOSTS) {
-      const active = resolveActive(terminals, nets, host);
+      const active = resolveActive(terminals, nets, host, beastSchematicDefinition.hosts);
       expect(active.netIds.has('net-servo-bus')).toBe(true);
       expect(active.netIds.has('net-motor-left')).toBe(true);
       expect(active.netIds.has('net-motor-right')).toBe(true);
@@ -137,7 +140,7 @@ describe('twin control vocabularies', () => {
 });
 
 describe.each(VIEW_MODES)('layout builder: %s', (mode) => {
-  const layout = buildLayout(mode, units, terminals, nets);
+  const layout = buildLayout(mode, graph, beastSchematicDefinition.views[mode]);
 
   it('emits a module for every wired unit', () => {
     expect(layout.modules.length).toBe(wiredUnitCount);
@@ -175,17 +178,17 @@ describe.each(VIEW_MODES)('layout builder: %s', (mode) => {
   });
 
   it('is deterministic', () => {
-    const again = buildLayout(mode, units, terminals, nets);
+    const again = buildLayout(mode, graph, beastSchematicDefinition.views[mode]);
     expect(again).toEqual(layout);
   });
 });
 
 describe('board & iso place every terminal', () => {
   it.each([
-    ['board', buildBoardLayout],
-    ['iso', buildIsoLayout],
-  ] as const)('%s has a port for each terminal exactly once', (_mode, build) => {
-    const layout = build(units, terminals, nets);
+    ['board', buildBoardLayout, beastSchematicDefinition.views.board],
+    ['iso', buildIsoLayout, beastSchematicDefinition.views.iso],
+  ] as const)('%s has a port for each terminal exactly once', (_mode, build, view) => {
+    const layout = build(graph, view);
     const portTerminals = layout.ports.map((p) => p.terminalId);
     expect(new Set(portTerminals).size).toBe(terminals.length);
     expect(portTerminals.length).toBe(terminals.length);
@@ -194,7 +197,7 @@ describe('board & iso place every terminal', () => {
 
 describe('bus taps each net terminal on its row', () => {
   it('gives every net at least two tap nodes', () => {
-    const layout = buildBusLayout(units, terminals, nets);
+    const layout = buildBusLayout(graph, beastSchematicDefinition.views.bus);
     for (const net of nets) {
       const taps = layout.ports.filter((p) => p.netId === net.id);
       expect(taps.length, `net "${net.id}" should tap ≥2 columns`).toBeGreaterThanOrEqual(2);
@@ -202,7 +205,7 @@ describe('bus taps each net terminal on its row', () => {
   });
 
   it('lets the super-hub terminal tap multiple rows', () => {
-    const layout = buildBusLayout(units, terminals, nets);
+    const layout = buildBusLayout(graph, beastSchematicDefinition.views.bus);
     const taps = layout.ports.filter((p) => p.terminalId === 'pi5-40pin');
     expect(taps.length).toBe(3);
     expect(new Set(taps.map((p) => p.netId)).size).toBe(3);

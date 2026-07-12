@@ -230,33 +230,6 @@ export const hangarData: HangarData = {
         { group: 'Driver Board Interfaces', slot: 'Display Header', filledBy: null, note: 'Drives 0.91"/0.96" OLED for voltage/IP telemetry', hotspotId: 'driver' },
         { group: 'Driver Board Interfaces', slot: 'Power Output Pins', filledBy: null, note: 'Raw 5V/3.3V out for independent MCUs or sensors', hotspotId: 'driver' },
       ],
-      hotspots: [
-        {
-          id: 'lighting',
-          label: 'Top Deck / Sensor Mast',
-          x: 30, y: 19
-        },
-        {
-          id: 'compute',
-          label: 'Host Controller Board',
-          x: 50, y: 54
-        },
-        {
-          id: 'power',
-          label: 'Undercarriage Bay',
-          x: 50, y: 79
-        },
-        {
-          id: 'arm',
-          label: 'Manipulator Arm Base',
-          x: 64, y: 40
-        },
-        {
-          id: 'driver',
-          label: 'Driver Board I/O',
-          x: 40, y: 48
-        }
-      ],
       capabilities: ['teleop', 'crawlspace-ops'],
       missions: ['undercroft'],
       insights: [

@@ -2,9 +2,19 @@
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef, useMemo } from 'react';
+import type { ReactNode } from 'react';
 import { useHangar, useCalculatedConstraints } from '@/lib/store';
 import { HOTSPOT_STATUS_META, hotspotStatus } from '@/lib/schematic';
 import { WiringDiagram } from './WiringDiagram';
+import { beastSchematicDefinition } from '@/data/schematics/beast';
+import { SchematicProvider, useSchematic } from './schematic/SchematicProvider';
+import {
+  SchematicConfigurationSwitch,
+  SchematicConnectionLayer,
+  SchematicHotspotLayer,
+  SchematicReadout,
+} from './schematic/SchematicPrimitives';
+import type { ThemeMode } from '@/lib/hangar-preferences';
 
 // Monospaced Hex code cascade overlay component
 function HexCascade() {
@@ -35,14 +45,93 @@ function HexCascade() {
   );
 }
 
+function BlueprintBeastBody() {
+  return (
+    <g stroke="var(--color-rim)" strokeWidth="0.4" fill="var(--color-panel)">
+      <rect x="22" y="72" width="56" height="14" rx="3" fill="var(--color-void)" />
+      <rect x="24" y="74" width="52" height="10" rx="2" fill="var(--color-hull)" stroke="var(--color-cyan)" strokeOpacity="0.25" />
+      {[28, 38, 48, 58, 68].map((cx) => <circle key={cx} cx={cx} cy="79" r="2.6" fill="var(--color-void)" stroke="var(--color-rim)" />)}
+      <rect x="30" y="40" width="40" height="30" rx="2.5" fill="var(--color-panel)" />
+      <rect x="34" y="44" width="32" height="22" rx="1.5" fill="var(--color-hull)" stroke="var(--color-cyan)" strokeOpacity="0.2" />
+      <rect x="40" y="48" width="20" height="12" rx="1" fill="var(--color-panel)" stroke="var(--color-amber)" strokeOpacity="0.3" />
+      <rect x="27" y="20" width="6" height="20" rx="1" fill="var(--color-panel)" />
+      <rect x="25" y="16" width="10" height="6" rx="1" fill="var(--color-panel)" stroke="var(--color-amber)" strokeOpacity="0.3" />
+      <circle cx="64" cy="40" r="3" fill="var(--color-panel)" stroke="var(--color-cyan)" strokeOpacity="0.3" />
+      <line x1="64" y1="40" x2="70" y2="28" stroke="var(--color-rim)" strokeWidth="1.4" />
+      <line x1="70" y1="28" x2="78" y2="24" stroke="var(--color-rim)" strokeWidth="1.2" />
+      <circle cx="70" cy="28" r="1.4" fill="var(--color-void)" stroke="var(--color-cyan)" strokeOpacity="0.4" />
+      <circle cx="78" cy="24" r="1.6" fill="var(--color-void)" stroke="var(--color-amber)" strokeOpacity="0.4" />
+    </g>
+  );
+}
+
+function IndustrialBeastBody() {
+  return (
+    <g stroke="none" fill="var(--color-panel)">
+      <rect x="22" y="72" width="56" height="14" rx="3" fill="#111" />
+      <rect x="24" y="74" width="52" height="10" rx="2" fill="#222" />
+      {[28, 38, 48, 58, 68].map((cx) => <circle key={cx} cx={cx} cy="79" r="2.6" fill="#000" />)}
+      <rect x="30" y="40" width="40" height="30" rx="2.5" fill="#333" />
+      <rect x="34" y="44" width="32" height="22" rx="1.5" fill="#1f2937" />
+      <rect x="40" y="48" width="20" height="12" rx="1" fill="#4b5563" />
+      <rect x="27" y="20" width="6" height="20" rx="1" fill="#333" />
+      <rect x="25" y="16" width="10" height="6" rx="1" fill="#1f2937" />
+      <circle cx="64" cy="40" r="3" fill="#333" />
+      <line x1="64" y1="40" x2="70" y2="28" stroke="#555" strokeWidth="1.8" />
+      <line x1="70" y1="28" x2="78" y2="24" stroke="#555" strokeWidth="1.4" />
+      <circle cx="70" cy="28" r="1.4" fill="#222" />
+      <circle cx="78" cy="24" r="1.6" fill="#111" />
+    </g>
+  );
+}
+
+function TopologyBeastBody() {
+  return (
+    <g stroke="var(--color-cyan)" strokeWidth="0.2" fill="none" opacity="0.6">
+      <circle cx="50" cy="50" r="30" stroke="var(--color-rim)" strokeWidth="0.1" strokeDasharray="0.5 2" />
+      <circle cx="50" cy="50" r="20" stroke="var(--color-rim)" strokeWidth="0.1" strokeDasharray="0.5 2" />
+      <circle cx="50" cy="50" r="10" stroke="var(--color-rim)" strokeWidth="0.1" strokeDasharray="0.5 2" />
+    </g>
+  );
+}
+
+function BeastChassisBody({ theme }: { theme: ThemeMode }) {
+  if (theme === 'blueprint') return <BlueprintBeastBody />;
+  if (theme === 'industrial') return <IndustrialBeastBody />;
+  return <TopologyBeastBody />;
+}
+
+function BlueprintLoadoutInspector({ children }: { children: ReactNode }) {
+  return <div className="space-y-2 font-mono text-[10px]">{children}</div>;
+}
+
+function IndustrialLoadoutInspector({ children }: { children: ReactNode }) {
+  return <div className="space-y-1 overflow-hidden rounded-sm border border-rim/40 font-mono text-[11px]">{children}</div>;
+}
+
+function TopologyLoadoutInspector({ children }: { children: ReactNode }) {
+  return <div className="space-y-2">{children}</div>;
+}
+
 export function RoverSchematic() {
+  return (
+    <SchematicProvider definition={beastSchematicDefinition}>
+      <BeastPhysicalSchematic />
+    </SchematicProvider>
+  );
+}
+
+function BeastPhysicalSchematic() {
   const { unit, theme, openDrawer, updateSlot, data, lensMissionId } = useHangar();
+  const { state, actions, meta } = useSchematic();
   const beast = unit('beast');
-  const hotspots = useMemo(() => beast?.hotspots ?? [], [beast?.hotspots]);
+  const hotspots = meta.definition.hotspots;
   const loadout = useMemo(() => beast?.loadout ?? [], [beast?.loadout]);
 
-  const [active, setActive] = useState<string | null>('lighting');
+  const active = state.selectedHotspotId;
+  const setActive = actions.selectHotspot;
   const sel = hotspots.find((h) => h.id === active) ?? null;
+  const isRoArmPreview = state.configuration === 'roarm-preview';
 
   // Equip animations states
   const [showEquipAnimation, setShowEquipAnimation] = useState(false);
@@ -92,6 +181,15 @@ export function RoverSchematic() {
       {/* scanning sweep */}
       <div className="pointer-events-none absolute inset-0 animate-sweep [mask:linear-gradient(180deg,transparent,transparent_70%,rgba(54,224,224,0.25))]" />
 
+      <div className="relative z-10 flex flex-wrap items-center justify-end gap-2 px-4 pt-4 sm:px-5">
+        <SchematicConfigurationSwitch
+          configurations={meta.definition.configurations}
+          configuration={state.configuration}
+          onChange={actions.setConfiguration}
+          compact
+        />
+      </div>
+
       <div className="relative grid min-w-0 gap-4 p-4 sm:p-5 md:grid-cols-[1.4fr_1fr]">
         {/* SVG schematic */}
         <div className="relative min-w-0 aspect-[4/3] md:min-h-[320px]">
@@ -116,58 +214,22 @@ export function RoverSchematic() {
               CORE-PRIME
             </text>
 
-            {/* chassis body — rendered per active theme */}
-            {theme === 'blueprint' && (
-              <g stroke="var(--color-rim)" strokeWidth="0.4" fill="var(--color-panel)">
-                <rect x="22" y="72" width="56" height="14" rx="3" fill="var(--color-void)" />
-                <rect x="24" y="74" width="52" height="10" rx="2" fill="var(--color-hull)" stroke="var(--color-cyan)" strokeOpacity="0.25" />
-                {[28, 38, 48, 58, 68].map((cx) => (
-                  <circle key={cx} cx={cx} cy="79" r="2.6" fill="var(--color-void)" stroke="var(--color-rim)" />
-                ))}
-                <rect x="30" y="40" width="40" height="30" rx="2.5" fill="var(--color-panel)" />
-                <rect x="34" y="44" width="32" height="22" rx="1.5" fill="var(--color-hull)" stroke="var(--color-cyan)" strokeOpacity="0.2" />
-                <rect x="40" y="48" width="20" height="12" rx="1" fill="var(--color-panel)" stroke="var(--color-amber)" strokeOpacity="0.3" />
-                <rect x="27" y="20" width="6" height="20" rx="1" fill="var(--color-panel)" />
-                <rect x="25" y="16" width="10" height="6" rx="1" fill="var(--color-panel)" stroke="var(--color-amber)" strokeOpacity="0.3" />
-                <circle cx="64" cy="40" r="3" fill="var(--color-panel)" stroke="var(--color-cyan)" strokeOpacity="0.3" />
-                <line x1="64" y1="40" x2="70" y2="28" stroke="var(--color-rim)" strokeWidth="1.4" />
-                <line x1="70" y1="28" x2="78" y2="24" stroke="var(--color-rim)" strokeWidth="1.2" />
-                <circle cx="70" cy="28" r="1.4" fill="var(--color-void)" stroke="var(--color-cyan)" strokeOpacity="0.4" />
-                <circle cx="78" cy="24" r="1.6" fill="var(--color-void)" stroke="var(--color-amber)" strokeOpacity="0.4" />
-              </g>
-            )}
+            {/* BEAST-specific chassis body, selected as an explicit visual variant. */}
+            <BeastChassisBody theme={theme} />
 
-            {theme === 'industrial' && (
-              <g stroke="none" fill="var(--color-panel)">
-                <rect x="22" y="72" width="56" height="14" rx="3" fill="#111" />
-                <rect x="24" y="74" width="52" height="10" rx="2" fill="#222" />
-                {[28, 38, 48, 58, 68].map((cx) => (
-                  <circle key={cx} cx={cx} cy="79" r="2.6" fill="#000" />
-                ))}
-                <rect x="30" y="40" width="40" height="30" rx="2.5" fill="#333" />
-                <rect x="34" y="44" width="32" height="22" rx="1.5" fill="#1f2937" />
-                <rect x="40" y="48" width="20" height="12" rx="1" fill="#4b5563" />
-                <rect x="27" y="20" width="6" height="20" rx="1" fill="#333" />
-                <rect x="25" y="16" width="10" height="6" rx="1" fill="#1f2937" />
-                <circle cx="64" cy="40" r="3" fill="#333" />
-                <line x1="64" y1="40" x2="70" y2="28" stroke="#555" strokeWidth="1.8" />
-                <line x1="70" y1="28" x2="78" y2="24" stroke="#555" strokeWidth="1.4" />
-                <circle cx="70" cy="28" r="1.4" fill="#222" />
-                <circle cx="78" cy="24" r="1.6" fill="#111" />
+            {isRoArmPreview ? (
+              <g role="img" aria-label="RoArm preview overlay" opacity="0.72">
+                <circle cx="64" cy="40" r="4" fill="var(--color-panel)" stroke="var(--color-amber)" strokeWidth="0.7" strokeDasharray="2 1" />
+                <path d="M 64 40 L 70 28 L 80 20 L 87 11" fill="none" stroke="var(--color-amber)" strokeWidth="2.2" strokeDasharray="3 2" />
+                <circle cx="70" cy="28" r="2" fill="var(--color-void)" stroke="var(--color-amber)" strokeWidth="0.6" />
+                <circle cx="80" cy="20" r="2" fill="var(--color-void)" stroke="var(--color-amber)" strokeWidth="0.6" />
+                <path d="M 84 8 L 87 11 L 91 8 M 87 11 L 88 15" fill="none" stroke="var(--color-amber)" strokeWidth="0.8" />
+                <text x="88" y="18" textAnchor="end" className="fill-amber font-mono" fontSize="2.2">ROARM PREVIEW</text>
               </g>
-            )}
-
-            {theme === 'topology' && (
-              <g stroke="var(--color-cyan)" strokeWidth="0.2" fill="none" opacity="0.6">
-                {/* Abstract radar/topology rings */}
-                <circle cx="50" cy="50" r="30" stroke="var(--color-rim)" strokeWidth="0.1" strokeDasharray="0.5 2" />
-                <circle cx="50" cy="50" r="20" stroke="var(--color-rim)" strokeWidth="0.1" strokeDasharray="0.5 2" />
-                <circle cx="50" cy="50" r="10" stroke="var(--color-rim)" strokeWidth="0.1" strokeDasharray="0.5 2" />
-              </g>
-            )}
+            ) : null}
 
             {/* Programmatically drawn splines connecting the modules */}
-            <WiringDiagram />
+            <SchematicConnectionLayer><WiringDiagram /></SchematicConnectionLayer>
 
             {/* Bleeding concentric wave rings on topology overloaded central node */}
             {theme === 'topology' && isOverloaded && (
@@ -184,7 +246,7 @@ export function RoverSchematic() {
             )}
 
             {/* hotspots */}
-            {hotspots.map((h) => {
+            <SchematicHotspotLayer>{hotspots.map((h) => {
               const isActive = h.id === active;
               const status = getStatus(h.id);
               const statusMeta = HOTSPOT_STATUS_META[status];
@@ -259,12 +321,12 @@ export function RoverSchematic() {
                   )}
                 </g>
               );
-            })}
+            })}</SchematicHotspotLayer>
           </svg>
         </div>
 
         {/* readout panel */}
-        <div className="flex min-w-0 flex-col gap-3 relative">
+        <SchematicReadout className="flex min-w-0 flex-col gap-3 relative">
           <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-cyan/70">Exploded View</div>
           <div className="grid grid-cols-2 gap-1.5">
             {hotspots.map((h) => {
@@ -314,7 +376,7 @@ export function RoverSchematic() {
                 {selectedSlots.length > 0 ? (
                   <>
                     {theme === 'blueprint' && (
-                      <div className="space-y-2 font-mono text-[10px]">
+                      <BlueprintLoadoutInspector>
                         {selectedSlots.map((s, idx) => (
                           <div key={s.slot} className="flex items-center justify-between border-b border-rim/20 pb-1">
                             <span className="text-ink-dim">0x{idx.toString(16).toUpperCase().padStart(2, '0')}</span>
@@ -339,11 +401,11 @@ export function RoverSchematic() {
                             )}
                           </div>
                         ))}
-                      </div>
+                      </BlueprintLoadoutInspector>
                     )}
 
                     {theme === 'industrial' && (
-                      <div className="space-y-1 font-mono text-[11px] border border-rim/40 rounded-sm overflow-hidden">
+                      <IndustrialLoadoutInspector>
                         {selectedSlots.map((s, idx) => (
                           <div
                             key={s.slot}
@@ -373,11 +435,11 @@ export function RoverSchematic() {
                             )}
                           </div>
                         ))}
-                      </div>
+                      </IndustrialLoadoutInspector>
                     )}
 
                     {theme === 'topology' && (
-                      <div className="space-y-2">
+                      <TopologyLoadoutInspector>
                         {selectedSlots.map((s) => (
                           <div
                             key={s.slot}
@@ -406,7 +468,7 @@ export function RoverSchematic() {
                             )}
                           </div>
                         ))}
-                      </div>
+                      </TopologyLoadoutInspector>
                     )}
                   </>
                 ) : (
@@ -415,7 +477,7 @@ export function RoverSchematic() {
               </div>
             </motion.div>
           )}
-        </div>
+        </SchematicReadout>
       </div>
     </motion.div>
   );

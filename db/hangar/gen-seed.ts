@@ -11,6 +11,7 @@ import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hangarData as H } from '../../src/data/hangar';
+import { beastSchematicDefinition } from '../../src/data/schematics/beast';
 
 const out: string[] = [];
 const w = (s: string) => out.push(s);
@@ -131,7 +132,8 @@ for (const wi of H.wishlist) if (wi.category) w(tagRef('category', wi.category, 
 const pendingAssignments: { host: string; slot: string; asset: string }[] = [];
 w('\n-- hotspots + sockets');
 for (const u of H.units) {
-  for (const h of u.hotspots ?? [])
+  const hotspots = u.id === 'beast' ? beastSchematicDefinition.hotspots : [];
+  for (const h of hotspots)
     w(`INSERT INTO hotspots(host_asset_id,code,label,x,y) VALUES (${S(u.id)},${S(h.id)},${S(h.label)},${N(h.x)},${N(h.y)});`);
   for (const sl of u.loadout ?? []) {
     const hs = sl.hotspotId

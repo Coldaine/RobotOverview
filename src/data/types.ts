@@ -114,14 +114,6 @@ export interface PowerProfile {
   rail?: PowerRail | null;
 }
 
-export interface Hotspot {
-  id: string;
-  label: string;
-  x: number; // % of viewBox 0-100
-  y: number;
-  // detail and status are now derived dynamically from the LoadoutSlots mapped to this hotspotId!
-}
-
 export const UNIT_SHORTCUT_TYPES = ['url', 'command'] as const;
 export type UnitShortcutType = (typeof UNIT_SHORTCUT_TYPES)[number];
 
@@ -155,7 +147,6 @@ export interface Unit {
   power?: PowerProfile;
   massGrams?: number | null;
   loadout?: LoadoutSlot[];
-  hotspots?: Hotspot[];
   capabilities?: string[]; // capability ids this unit grants/enables
   missions?: string[]; // mission ids
   insights?: string[]; // insight ids

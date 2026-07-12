@@ -20,7 +20,7 @@ import {
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { RoverSchematic } from '@/components/RoverSchematic';
-import { ConnectedTwin } from '@/components/board/ConnectedTwin';
+import { BeastBoardPreview } from '@/components/board/BeastBoard';
 import { StatusBadge, Tag, ProvenanceTag } from '@/components/ui/Badges';
 import { SectionTitle } from '@/components/ui/Primitives';
 import { useHangar } from '@/lib/store';
@@ -135,7 +135,7 @@ export default function UnitDetail() {
             <section>
               <SectionTitle code="WIRING">Connected Twin</SectionTitle>
               <Link href="/board" className="group block" aria-label="Open the full wiring board">
-                <ConnectedTwin variant="preview" />
+                <BeastBoardPreview />
                 <div className="mt-2 flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.18em] text-ink-dim transition-colors group-hover:text-cyan">
                   <Layers className="h-3.5 w-3.5" /> Open the Board <ExternalLink className="h-3 w-3" />
                 </div>

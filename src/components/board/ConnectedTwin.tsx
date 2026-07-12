@@ -1,140 +1,128 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+
+import { useEffect, useMemo } from 'react';
 import clsx from 'clsx';
-import type { NetKind } from '@/data/types';
 import { useHangar } from '@/lib/store';
 import {
-  buildLayout,
   resolveActive,
   traceFromNet,
   traceFromTerminal,
-  type ActiveHost,
   type TraceSet,
-  type ViewMode,
 } from '@/lib/twin';
-import { LAYERS } from './palette';
+import { useSchematic } from '@/components/schematic/SchematicProvider';
+import {
+  SchematicCanvas,
+  SchematicConfigurationSwitch,
+  SchematicFrame,
+  SchematicInspector,
+  SchematicToolbar,
+} from '@/components/schematic/SchematicPrimitives';
 import { ViewModeSwitch, HostSwitch, LayerBar } from './Controls';
 import { TwinCanvas } from './TwinCanvas';
 import { NetInspector } from './NetInspector';
 
-function useReducedMotion(): boolean {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
-    if (typeof window.matchMedia !== 'function') return;
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => setReduced(mq.matches);
-    sync();
-    mq.addEventListener('change', sync);
-    return () => mq.removeEventListener('change', sync);
-  }, []);
-  return reduced;
-}
+export function ConnectedTwin() {
+  const { units, documents } = useHangar();
+  const { state, actions, meta } = useSchematic();
+  const { graph, layout, definition, interactive, reducedMotion } = meta;
+  const { terminals, nets } = graph;
 
-const ALL_KINDS = new Set<NetKind>(LAYERS.map((l) => l.kind));
-
-export function ConnectedTwin({ variant = 'full' }: { variant?: 'full' | 'preview' }) {
-  const { units, terminals, nets, documents } = useHangar();
-  const reducedMotion = useReducedMotion();
-
-  const [mode, setMode] = useState<ViewMode>('board');
-  const [host, setHost] = useState<ActiveHost>('pi5');
-  const [layers, setLayers] = useState<Set<NetKind>>(new Set(ALL_KINDS));
-  const [hoveredTerminal, setHoveredTerminal] = useState<string | null>(null);
-  const [hoveredNet, setHoveredNet] = useState<string | null>(null);
-  const [hoveredModule, setHoveredModule] = useState<string | null>(null);
-  const [selectedNetId, setSelectedNetId] = useState<string | null>(null);
-
-  const interactive = variant === 'full';
-
-  const layout = useMemo(() => buildLayout(mode, units, terminals, nets), [mode, units, terminals, nets]);
-  const active = useMemo(() => resolveActive(terminals, nets, host), [terminals, nets, host]);
-
+  const active = useMemo(
+    () => resolveActive(terminals, nets, state.host, definition.hosts),
+    [definition.hosts, nets, state.host, terminals],
+  );
   const highlight = useMemo<TraceSet | null>(() => {
-    if (hoveredNet) return traceFromNet(nets, hoveredNet);
-    if (hoveredTerminal) return traceFromTerminal(nets, hoveredTerminal);
-    if (selectedNetId) return traceFromNet(nets, selectedNetId);
+    if (state.hoveredNetId) return traceFromNet(nets, state.hoveredNetId);
+    if (state.hoveredTerminalId) return traceFromTerminal(nets, state.hoveredTerminalId);
+    if (state.selectedNetId) return traceFromNet(nets, state.selectedNetId);
     return null;
-  }, [hoveredNet, hoveredTerminal, selectedNetId, nets]);
-
-  const selectedNet = useMemo(() => nets.find((n) => n.id === selectedNetId) ?? null, [nets, selectedNetId]);
+  }, [nets, state.hoveredNetId, state.hoveredTerminalId, state.selectedNetId]);
+  const selectedNet = useMemo(
+    () => nets.find((net) => net.id === state.selectedNetId) ?? null,
+    [nets, state.selectedNetId],
+  );
 
   useEffect(() => {
     if (!interactive) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSelectedNetId(null);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        actions.selectNet(null);
+        actions.selectTerminal(null);
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [interactive]);
-
-  const selectTerminal = (terminalId: string) => {
-    const net = nets.find((n) => n.terminals.includes(terminalId));
-    if (net) setSelectedNetId(net.id);
-  };
-
-  const toggleLayer = (kind: NetKind) => {
-    setLayers((prev) => {
-      const next = new Set(prev);
-      if (next.has(kind)) next.delete(kind);
-      else next.add(kind);
-      return next;
-    });
-  };
+  }, [actions, interactive]);
 
   const canvas = (
-    <TwinCanvas
-      key={mode}
-      layout={layout}
-      mode={mode}
-      units={units}
-      terminals={terminals}
-      active={active}
-      highlight={highlight}
-      dimOthers={Boolean(highlight)}
-      selectedNetId={selectedNetId}
-      layerEnabled={layers}
-      hoveredModule={hoveredModule}
-      reducedMotion={reducedMotion}
-      interactive={interactive}
-      onHoverTerminal={setHoveredTerminal}
-      onHoverNet={setHoveredNet}
-      onHoverModule={setHoveredModule}
-      onSelectNet={setSelectedNetId}
-      onSelectTerminal={selectTerminal}
-    />
+    <SchematicCanvas>
+      <TwinCanvas
+        key={state.view}
+        layout={layout}
+        mode={state.view}
+        units={units}
+        nodes={graph.nodes}
+        terminals={terminals}
+        active={active}
+        highlight={highlight}
+        dimOthers={Boolean(highlight)}
+        selectedNetId={state.selectedNetId}
+        layerEnabled={state.layers}
+        hoveredModule={state.hoveredNodeId}
+        reducedMotion={reducedMotion}
+        interactive={interactive}
+        coreNodeId={definition.coreNodeId}
+        onHoverTerminal={actions.hoverTerminal}
+        onHoverNet={actions.hoverNet}
+        onHoverModule={actions.hoverNode}
+        onSelectNet={actions.selectNet}
+        onSelectTerminal={actions.selectTerminal}
+      />
+    </SchematicCanvas>
   );
 
   if (!interactive) {
     return (
-      <div className="panel corner-bracket blueprint-grid relative h-64 overflow-hidden">
+      <SchematicFrame className="h-64">
         {canvas}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void/70 via-transparent to-transparent" />
         <div className="pointer-events-none absolute bottom-3 left-4 font-mono text-[10px] uppercase tracking-[0.2em] text-cyan">
           Connected Twin · {terminals.length} terminals · {nets.length} nets
         </div>
-      </div>
+      </SchematicFrame>
     );
   }
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <ViewModeSwitch mode={mode} onChange={setMode} />
-        <LayerBar enabled={layers} onToggle={toggleLayer} />
-        <HostSwitch host={host} onChange={setHost} />
-      </div>
+      <SchematicToolbar>
+        <ViewModeSwitch mode={state.view} onChange={actions.setView} />
+        <LayerBar enabled={state.layers} onToggle={actions.toggleLayer} />
+        <HostSwitch hosts={definition.hosts} host={state.host} onChange={actions.setHost} />
+      </SchematicToolbar>
+      <SchematicConfigurationSwitch
+        configurations={definition.configurations}
+        configuration={state.configuration}
+        onChange={actions.setConfiguration}
+        compact
+      />
 
-      <div className="panel corner-bracket blueprint-grid relative h-[74vh] min-h-[520px] overflow-hidden">
+      <SchematicFrame className="h-[74vh] min-h-[520px]">
         {canvas}
-        <NetInspector
-          net={selectedNet}
-          units={units}
-          terminals={terminals}
-          documents={documents}
-          active={active}
-          onClose={() => setSelectedNetId(null)}
-          onHoverTerminal={setHoveredTerminal}
-        />
+        <SchematicInspector>
+          <NetInspector
+            net={selectedNet}
+            units={units}
+            terminals={terminals}
+            documents={documents}
+            active={active}
+            onClose={() => {
+              actions.selectNet(null);
+              actions.selectTerminal(null);
+            }}
+            onHoverTerminal={actions.hoverTerminal}
+          />
+        </SchematicInspector>
         <div
           className={clsx(
             'pointer-events-none absolute bottom-3 left-4 font-mono text-[10px] uppercase tracking-[0.18em] text-ink-dim transition-opacity',
@@ -143,7 +131,7 @@ export function ConnectedTwin({ variant = 'full' }: { variant?: 'full' | 'previe
         >
           Hover a port to trace its net · click to open · scroll to zoom · drag to pan
         </div>
-      </div>
+      </SchematicFrame>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 import { CircuitBoard } from 'lucide-react';
-import { ConnectedTwin } from '@/components/board/ConnectedTwin';
+import { BeastBoardSchematic } from '@/components/board/BeastBoard';
 
 export default function BoardPage() {
   return (
@@ -17,7 +17,7 @@ export default function BoardPage() {
           </p>
         </div>
       </header>
-      <ConnectedTwin variant="full" />
+      <BeastBoardSchematic />
     </div>
   );
 }

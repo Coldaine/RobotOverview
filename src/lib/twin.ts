@@ -10,9 +10,18 @@
 // single-value edit here, not a component rewrite.
 // ─────────────────────────────────────────────────────────────────────────────
 import type { DocumentRef, Net, NetKind, Terminal, Unit } from '../data/types';
+import type {
+  SchematicBusLayout,
+  SchematicEdge,
+  SchematicFreeformLayout,
+  SchematicGraph,
+  SchematicHost,
+  SchematicView,
+  SchematicViewLayouts,
+} from '../data/schematic-types';
 
-export const VIEW_MODES = ['board', 'iso', 'bus'] as const;
-export type ViewMode = (typeof VIEW_MODES)[number];
+export const VIEW_MODES = ['board', 'iso', 'bus'] as const satisfies readonly SchematicView[];
+export type ViewMode = SchematicView;
 
 export const VIEW_MODE_LABELS: Record<ViewMode, string> = {
   board: 'Board',
@@ -28,7 +37,7 @@ export const ACTIVE_HOST_LABELS: Record<ActiveHost, string> = {
   orin: 'Jetson Orin',
 };
 
-export type Edge = 'top' | 'right' | 'bottom' | 'left';
+export type Edge = SchematicEdge;
 
 /** Semantic color key per net kind; the UI maps this to CSS vars. */
 export type NetColorKey = 'amber' | 'cyan' | 'mixed' | 'idle';
@@ -152,23 +161,24 @@ export function traceFromNet(nets: Net[], netId: string): TraceSet {
 //   • battery rail   → Orin taps the barrel jack (extra live terminal)
 //   • UPS telemetry / Pi-USB camera → follow the Pi, dark on Orin
 // ─────────────────────────────────────────────────────────────────────────────
-const HOST_TERMINALS: Record<string, ActiveHost> = {
-  'pi5-40pin': 'pi5',
-  'pi5-usb': 'pi5',
-  'orin-uart': 'orin',
-  'orin-dc-in': 'orin',
-  'orin-usb': 'orin',
-};
-
 export interface ActiveSet {
   terminalIds: Set<string>;
   netIds: Set<string>;
 }
 
-export function resolveActive(terminals: Terminal[], nets: Net[], host: ActiveHost): ActiveSet {
+export function resolveActive(
+  terminals: Terminal[],
+  nets: Net[],
+  host: string,
+  hosts: SchematicHost[],
+): ActiveSet {
+  const terminalOwners = new Map<string, string>();
+  for (const candidate of hosts) {
+    for (const terminalId of candidate.terminalIds) terminalOwners.set(terminalId, candidate.id);
+  }
   const terminalIds = new Set<string>();
   for (const t of terminals) {
-    const owner = HOST_TERMINALS[t.id];
+    const owner = terminalOwners.get(t.id);
     if (!owner || owner === host) terminalIds.add(t.id);
   }
   const netIds = new Set<string>();
@@ -253,67 +263,17 @@ function routeWire(net: Net, positions: Map<string, Anchor>, bow: number): WireP
   return { netId: net.id, kind: net.kind, d: legs, midX: round(jx), midY: round(jy), terminalIds };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Board layout — driver-board (ESP32) as the central hub, satellites around it.
-// ─────────────────────────────────────────────────────────────────────────────
-export const BOARD_W = 1040;
-export const BOARD_H = 680;
-export const BOARD_WIRE_BOW = 48;
-
-/** Fixed hub-and-satellite anchors, in board space. */
-export const BOARD_MODULES: Record<string, Omit<ModuleBox, 'unitId'>> = {
-  'driver-board': { x: 390, y: 250, w: 260, h: 190 },
-  'stock-ups': { x: 60, y: 70, w: 210, h: 130 },
-  'oak-d-lite': { x: 70, y: 280, w: 210, h: 120 },
-  'd500-lidar': { x: 80, y: 470, w: 200, h: 120 },
-  pi5: { x: 790, y: 80, w: 190, h: 120 },
-  'orin-nano': { x: 810, y: 300, w: 190, h: 120 },
-  beast: { x: 350, y: 500, w: 350, h: 140 },
-};
-
-/** Which edge each terminal exits, chosen so wires flow toward their partners. */
-export const BOARD_EDGES: Record<string, Edge> = {
-  // driver-board hub
-  'gdb-power-in': 'left',
-  'gdb-12v-switched': 'left',
-  'gdb-5v-host': 'top',
-  'gdb-usb-esp32': 'top',
-  'gdb-lidar-uart': 'top',
-  'gdb-host-uart': 'right',
-  'gdb-servo-bus': 'bottom',
-  'gdb-motor-a': 'bottom',
-  'gdb-motor-b': 'bottom',
-  'gdb-i2c': 'bottom',
-  // UPS (top-left)
-  'ups-rail-out': 'bottom',
-  'ups-telemetry': 'right',
-  'ups-charge-in': 'top',
-  // Pi 5 (top-right)
-  'pi5-40pin': 'left',
-  'pi5-usb': 'bottom',
-  // Orin (right)
-  'orin-uart': 'left',
-  'orin-dc-in': 'left',
-  'orin-usb': 'left',
-  // ACCE sensing payload (left)
-  'oak-usb': 'right',
-  'd500-uart': 'right',
-  // Beast chassis (bottom-center) — all face the hub above
-  'beast-motor-left': 'top',
-  'beast-motor-right': 'top',
-  'beast-pan-tilt': 'top',
-  'beast-camera': 'top',
-  'beast-oled': 'top',
-};
-
-const BOARD_MODULE_ORDER = ['stock-ups', 'oak-d-lite', 'd500-lidar', 'driver-board', 'pi5', 'orin-nano', 'beast'];
-
-function buildEdgeGroupedPorts(terminals: Terminal[], moduleById: Map<string, ModuleBox>) {
+function buildEdgeGroupedPorts(
+  terminals: Terminal[],
+  moduleById: Map<string, ModuleBox>,
+  terminalEdges: Record<string, Edge>,
+) {
   // Group each unit's terminals by the edge they exit, preserving spine order.
   const byUnitEdge = new Map<string, Terminal[]>();
   for (const t of terminals) {
     if (!moduleById.has(t.unitId)) continue;
-    const edge = BOARD_EDGES[t.id] ?? 'top';
+    const edge = terminalEdges[t.id];
+    if (!edge) throw new Error(`Missing terminal edge for "${t.id}"`);
     const key = `${t.unitId}|${edge}`;
     const list = byUnitEdge.get(key);
     if (list) list.push(t);
@@ -335,133 +295,55 @@ function buildEdgeGroupedPorts(terminals: Terminal[], moduleById: Map<string, Mo
   return { ports, positions };
 }
 
-export function buildBoardLayout(units: Unit[], terminals: Terminal[], nets: Net[]): TwinLayout {
-  const wired = wiredUnitIds(terminals);
-  const modules: ModuleBox[] = BOARD_MODULE_ORDER.filter(
-    (id) => wired.has(id) && BOARD_MODULES[id],
-  ).map((id) => ({ unitId: id, ...BOARD_MODULES[id] }));
-  const moduleById = new Map(modules.map((m) => [m.unitId, m]));
-  const { ports, positions } = buildEdgeGroupedPorts(terminals, moduleById);
-
-  const wires = nets
-    .map((n) => routeWire(n, positions, BOARD_WIRE_BOW))
-    .filter((w): w is WirePath => Boolean(w));
-
-  return { width: BOARD_W, height: BOARD_H, modules, ports, wires };
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Iso layout — units stacked on decks, projected to a 2.5D cutaway.
-// ─────────────────────────────────────────────────────────────────────────────
-export const ISO_W = 1040;
-export const ISO_H = 680;
-export const ISO_WIRE_BOW = 90;
-export const ISO_MODULE_W = 210;
-export const ISO_MODULE_H = 120;
-
-const ISO_ORIGIN_X = 250;
-const ISO_ORIGIN_Y = 250;
-const ISO_UNIT = 210; // ground grid spacing
-const ISO_SCALE_X = 0.92;
-const ISO_SCALE_Y = 0.5;
-const ISO_DECK_H = 150;
-
-/** Ground grid cell (col,row) + vertical deck for each unit. */
-export const ISO_PLACEMENT: Record<string, { col: number; row: number; deck: number }> = {
-  'stock-ups': { col: 0, row: 0, deck: 0 },
-  beast: { col: 1, row: 1, deck: 0 },
-  'driver-board': { col: 1, row: 0, deck: 1 },
-  'oak-d-lite': { col: 0, row: 1, deck: 2 },
-  'd500-lidar': { col: 1, row: 1, deck: 2 },
-  pi5: { col: 2, row: 0, deck: 2 },
-  'orin-nano': { col: 2, row: 1, deck: 2 },
-};
-
-const ISO_MODULE_ORDER = ['stock-ups', 'beast', 'driver-board', 'oak-d-lite', 'd500-lidar', 'pi5', 'orin-nano'];
-
-function isoProject(col: number, row: number, deck: number): { x: number; y: number } {
-  const gx = col * ISO_UNIT;
-  const gy = row * ISO_UNIT;
-  return {
-    x: ISO_ORIGIN_X + (gx - gy) * ISO_SCALE_X,
-    y: ISO_ORIGIN_Y + (gx + gy) * ISO_SCALE_Y - deck * ISO_DECK_H,
-  };
-}
-
-export function buildIsoLayout(units: Unit[], terminals: Terminal[], nets: Net[]): TwinLayout {
-  const wired = wiredUnitIds(terminals);
-  const modules: ModuleBox[] = ISO_MODULE_ORDER.filter(
-    (id) => wired.has(id) && ISO_PLACEMENT[id],
-  ).map((id) => {
-    const p = ISO_PLACEMENT[id];
-    const c = isoProject(p.col, p.row, p.deck);
-    return { unitId: id, x: round(c.x - ISO_MODULE_W / 2), y: round(c.y - ISO_MODULE_H / 2), w: ISO_MODULE_W, h: ISO_MODULE_H };
+export function buildBoardLayout(graph: SchematicGraph, definition: SchematicFreeformLayout): TwinLayout {
+  const wired = wiredUnitIds(graph.terminals);
+  const modules: ModuleBox[] = definition.moduleOrder.filter((id) => wired.has(id)).map((id) => {
+    const placement = definition.modules[id];
+    if (!placement) throw new Error(`Missing ${definition.kind} placement for "${id}"`);
+    return { unitId: id, ...placement };
   });
   const moduleById = new Map(modules.map((m) => [m.unitId, m]));
-  const { ports, positions } = buildEdgeGroupedPorts(terminals, moduleById);
+  const { ports, positions } = buildEdgeGroupedPorts(graph.terminals, moduleById, definition.terminalEdges);
 
-  const wires = nets
-    .map((n) => routeWire(n, positions, ISO_WIRE_BOW))
+  const wires = graph.nets
+    .map((n) => routeWire(n, positions, definition.wireBow))
     .filter((w): w is WirePath => Boolean(w));
 
-  return { width: ISO_W, height: ISO_H, modules, ports, wires };
+  return { width: definition.width, height: definition.height, modules, ports, wires };
+}
+export function buildIsoLayout(graph: SchematicGraph, definition: SchematicFreeformLayout): TwinLayout {
+  return buildBoardLayout(graph, definition);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Bus layout — nets become horizontal spines; units are columns that tap in.
 // A terminal on N nets taps N rows in its column (the metro-map read).
 // ─────────────────────────────────────────────────────────────────────────────
-export const BUS_W = 1040;
-export const BUS_H = 680;
-export const BUS_MODULE_W = 150;
-
-const BUS_X0 = 150;
-const BUS_COL_GAP = 165;
-const BUS_Y0 = 150;
-const BUS_ROW_GAP = 52;
-const BUS_TOP = 70;
-const BUS_BOTTOM = 630;
-
-export const BUS_COLUMN_ORDER = ['stock-ups', 'driver-board', 'pi5', 'orin-nano', 'oak-d-lite', 'd500-lidar', 'beast'];
-export const BUS_ROW_ORDER = [
-  'net-battery-rail',
-  'net-5v-host',
-  'net-host-uart',
-  'net-servo-bus',
-  'net-ups-telemetry',
-  'net-oled-i2c',
-  'net-camera',
-  'net-oak-camera',
-  'net-d500-lidar',
-  'net-motor-left',
-  'net-motor-right',
-];
-
-export function buildBusLayout(units: Unit[], terminals: Terminal[], nets: Net[]): TwinLayout {
-  const wired = wiredUnitIds(terminals);
-  const columns = BUS_COLUMN_ORDER.filter((id) => wired.has(id));
-  const colX = new Map(columns.map((id, i) => [id, BUS_X0 + i * BUS_COL_GAP]));
+export function buildBusLayout(graph: SchematicGraph, definition: SchematicBusLayout): TwinLayout {
+  const wired = wiredUnitIds(graph.terminals);
+  const columns = definition.columnOrder.filter((id) => wired.has(id));
+  const colX = new Map(columns.map((id, i) => [id, definition.x0 + i * definition.columnGap]));
 
   const modules: ModuleBox[] = columns.map((id) => ({
     unitId: id,
-    x: round((colX.get(id) as number) - BUS_MODULE_W / 2),
-    y: BUS_TOP,
-    w: BUS_MODULE_W,
-    h: BUS_BOTTOM - BUS_TOP,
+    x: round((colX.get(id) as number) - definition.moduleWidth / 2),
+    y: definition.top,
+    w: definition.moduleWidth,
+    h: definition.bottom - definition.top,
   }));
 
-  const termUnit = new Map(terminals.map((t) => [t.id, t.unitId]));
-  const orderedNets = BUS_ROW_ORDER.map((id) => nets.find((n) => n.id === id)).filter(
+  const termUnit = new Map(graph.terminals.map((t) => [t.id, t.unitId]));
+  const orderedNets = definition.rowOrder.map((id) => graph.nets.find((n) => n.id === id)).filter(
     (n): n is Net => Boolean(n),
   );
   // Any net not in the explicit order still gets a row appended.
-  for (const n of nets) if (!BUS_ROW_ORDER.includes(n.id)) orderedNets.push(n);
+  for (const n of graph.nets) if (!definition.rowOrder.includes(n.id)) orderedNets.push(n);
 
   const ports: PortNode[] = [];
   const wires: WirePath[] = [];
 
   orderedNets.forEach((net, rowIdx) => {
-    const rowY = BUS_Y0 + rowIdx * BUS_ROW_GAP;
+    const rowY = definition.y0 + rowIdx * definition.rowGap;
     const taps = net.terminals
       .map((tid) => {
         const unitId = termUnit.get(tid);
@@ -488,20 +370,24 @@ export function buildBusLayout(units: Unit[], terminals: Terminal[], nets: Net[]
     });
   });
 
-  return { width: BUS_W, height: BUS_H, modules, ports, wires };
+  return { width: definition.width, height: definition.height, modules, ports, wires };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Dispatcher
 // ─────────────────────────────────────────────────────────────────────────────
-export function buildLayout(mode: ViewMode, units: Unit[], terminals: Terminal[], nets: Net[]): TwinLayout {
+export function buildLayout(
+  mode: ViewMode,
+  graph: SchematicGraph,
+  definition: SchematicViewLayouts[ViewMode],
+): TwinLayout {
   switch (mode) {
     case 'board':
-      return buildBoardLayout(units, terminals, nets);
+      return buildBoardLayout(graph, definition as SchematicFreeformLayout);
     case 'iso':
-      return buildIsoLayout(units, terminals, nets);
+      return buildIsoLayout(graph, definition as SchematicFreeformLayout);
     case 'bus':
-      return buildBusLayout(units, terminals, nets);
+      return buildBusLayout(graph, definition as SchematicBusLayout);
     default: {
       const _exhaustive: never = mode;
       return _exhaustive;
