@@ -92,9 +92,24 @@ def _mkdir(path: Path, mode: int) -> None:
     path.chmod(mode)
 
 
+def assert_managed_path_has_no_symlinks(root: Path, relative: Path) -> None:
+    current = root
+    if current.is_symlink():
+        raise PathSafetyError("managed storage root must not be a symlink")
+    for part in relative.parts:
+        current /= part
+        if current.is_symlink():
+            raise PathSafetyError("managed storage paths must not contain symlinks")
+
+
 def prepare(config: Config, apply_ownership: bool = False) -> None:
-    for part in ("recordings", "recordings/blackbox", "recordings/missions", "datasets", "maps",
-                 "models", "recovery-staging"):
+    parts = ("recordings", "recordings/blackbox", "recordings/missions", "datasets", "maps",
+             "models", "recovery-staging")
+    for part in parts:
+        assert_managed_path_has_no_symlinks(config.data_root, Path(part))
+    if config.state_dir.is_symlink():
+        raise PathSafetyError("storage state directory must not be a symlink")
+    for part in parts:
         _mkdir(config.data_root / part, 0o750)
     _mkdir(config.state_dir, 0o750)
     if apply_ownership:
@@ -108,7 +123,17 @@ def prepare(config: Config, apply_ownership: bool = False) -> None:
 def recording_root(data_root: Path, category: str) -> Path:
     if category not in RECORDING_CATEGORIES:
         raise PathSafetyError("unknown recording category")
-    return (data_root / "recordings" / category).resolve()
+    root = data_root.resolve()
+    recordings = root / "recordings"
+    category_root = recordings / category
+    if recordings.is_symlink() or category_root.is_symlink():
+        raise PathSafetyError("recording category roots must not be symlinks")
+    resolved = category_root.resolve(strict=False)
+    try:
+        resolved.relative_to(root)
+    except ValueError as error:
+        raise PathSafetyError("recording category escapes the data root") from error
+    return category_root
 
 
 def safe_recording_path(data_root: Path, category: str, name: str) -> Path:
@@ -139,8 +164,12 @@ def directory_size(path: Path) -> int:
     return total
 
 
+def active_lock_path(path: Path) -> Path:
+    return path.parent / (".%s.active.lock" % path.name)
+
+
 def lock_is_active(path: Path) -> bool:
-    lock_path = path / ".active.lock"
+    lock_path = active_lock_path(path)
     if not lock_path.exists() or lock_path.is_symlink():
         return False
     handle = lock_path.open("a+")
@@ -226,7 +255,8 @@ def smart_health(raw: Optional[str], baseline: Dict[str, int], config: Optional[
         if not isinstance(report, dict):
             raise ValueError
         raw_temperature = report["temperature"]
-        temperature = int(raw_temperature["current"]) if isinstance(raw_temperature, dict) else int(raw_temperature) - 273
+        temperature = (float(raw_temperature["current"]) if isinstance(raw_temperature, dict)
+                       else float(raw_temperature) - 273.15)
         used = int(report["percentage_used"] if "percentage_used" in report else report["percent_used"])
         spare = int(report["available_spare"] if "available_spare" in report else report["avail_spare"])
         media = int(report["media_errors"])
@@ -255,8 +285,12 @@ def read_smart() -> Optional[str]:
             result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=15)
         except (FileNotFoundError, subprocess.TimeoutExpired):
             continue
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout
+        if result.stdout.strip():
+            try:
+                if isinstance(json.loads(result.stdout), dict):
+                    return result.stdout
+            except json.JSONDecodeError:
+                continue
     return None
 
 
@@ -282,8 +316,10 @@ def write_status_atomic(config: Config, status: Dict[str, object]) -> Path:
     return destination
 
 
-def status(config: Config, dry_run: bool = True) -> Dict[str, object]:
-    maintenance = maintain(config, dry_run=dry_run)
+def status(config: Config, dry_run: bool = True,
+           maintenance: Optional[Dict[str, object]] = None) -> Dict[str, object]:
+    if maintenance is None:
+        maintenance = maintain(config, dry_run=dry_run)
     stats = os.statvfs(config.data_root)
     baseline = {"unsafe_shutdowns": 62, "error_log_entries": 91, "media_errors": 0}
     smart = smart_health(read_smart(), baseline, config)
@@ -314,8 +350,7 @@ def main() -> int:
             prepare(config, apply_ownership=True); return 0
         if args.command == "maintain":
             maintenance = maintain(config, dry_run=args.dry_run)
-            result = status(config, dry_run=True)
-            result["last_maintenance"] = maintenance
+            result = status(config, maintenance=maintenance)
             write_status_atomic(config, result)
         else:
             result = status(config, dry_run=True)
