@@ -15,8 +15,7 @@ from typing import Dict, Iterable, List, Optional
 
 GIB = 1024 ** 3
 DEFAULTS = {
-    "BLACKBOX_MAX_GIB": 150, "MISSIONS_MAX_GIB": 900, "MIN_FREE_GIB": 300,
-    "TARGET_FREE_GIB": 350, "BLACKBOX_SESSION_SECONDS": 900,
+    "MIN_FREE_GIB": 300, "TARGET_FREE_GIB": 350, "BLACKBOX_SESSION_SECONDS": 900,
     "MISSION_SPLIT_SECONDS": 900, "MISSION_SPLIT_GIB": 4,
     "NVME_WARN_TEMP_C": 65, "NVME_CRITICAL_TEMP_C": 70,
     "NVME_WARN_PERCENT_USED": 80,
@@ -36,8 +35,6 @@ class PathSafetyError(ValueError):
 class Config:
     data_root: Path = Path("/data/beast")
     state_dir: Path = Path("/var/lib/beast/storage")
-    blackbox_max_gib: int = 150
-    missions_max_gib: int = 900
     min_free_gib: int = 300
     target_free_gib: int = 350
     blackbox_session_seconds: int = 900
@@ -76,8 +73,7 @@ def parse_env_file(path: Path, data_root: Path = Path("/data/beast"),
             seen.add(key)
             values[key] = int(value)
     return Config(data_root=Path(data_root), state_dir=Path(state_dir),
-                  blackbox_max_gib=values["BLACKBOX_MAX_GIB"],
-                  missions_max_gib=values["MISSIONS_MAX_GIB"], min_free_gib=values["MIN_FREE_GIB"],
+                  min_free_gib=values["MIN_FREE_GIB"],
                   target_free_gib=values["TARGET_FREE_GIB"],
                   blackbox_session_seconds=values["BLACKBOX_SESSION_SECONDS"],
                   mission_split_seconds=values["MISSION_SPLIT_SECONDS"],
@@ -231,30 +227,28 @@ def maintain(config: Config, free_bytes: Optional[int] = None, dry_run: bool = T
     free = filesystem_free_bytes(config.data_root) if free_bytes is None else free_bytes
     deleted: List[str] = []
     deleted_bytes = 0
-    limits = {"blackbox": config.blackbox_max_gib * GIB, "missions": config.missions_max_gib * GIB}
     sizes = {category: sum(directory_size(entry) for entry in category_entries(config.data_root, category))
              for category in RECORDING_CATEGORIES}
 
-    def prune(category: str, required: int = 0) -> None:
+    def prune_blackbox(required: int) -> None:
         nonlocal free, deleted_bytes
-        for entry in eligible_entries(config.data_root, category):
-            if sizes[category] <= limits[category] and free >= required:
+        for entry in eligible_entries(config.data_root, "blackbox"):
+            if free >= required:
                 break
             size = _delete(entry, dry_run)
-            sizes[category] -= size
+            sizes["blackbox"] -= size
             free += size
             deleted_bytes += size
             deleted.append(str(entry))
 
-    for category in RECORDING_CATEGORIES:
-        prune(category)
-    if free < config.min_free_gib * GIB:
-        prune("blackbox", config.target_free_gib * GIB)
-        if free < config.target_free_gib * GIB:
-            prune("missions", config.target_free_gib * GIB)
+    emergency = free < config.min_free_gib * GIB
+    if emergency:
+        prune_blackbox(config.target_free_gib * GIB)
+    recording_allowed = free >= config.min_free_gib * GIB and (
+        not emergency or free >= config.target_free_gib * GIB)
     return {"dry_run": dry_run, "deleted": deleted, "deleted_bytes": deleted_bytes,
             "free_after_bytes": free, "category_sizes": sizes,
-            "recording_allowed": free >= config.min_free_gib * GIB}
+            "recording_allowed": recording_allowed}
 
 
 def smart_health(raw: Optional[str], baseline: Dict[str, int], config: Optional[Config] = None) -> Dict[str, object]:

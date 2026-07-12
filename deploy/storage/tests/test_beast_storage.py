@@ -32,8 +32,8 @@ class StorageTests(unittest.TestCase):
         self.state = Path(self.temp.name) / "state"
         for category in ("blackbox", "missions"):
             (self.root / "recordings" / category).mkdir(parents=True)
-        self.config = storage.Config(data_root=self.root, state_dir=self.state, blackbox_max_gib=1,
-                                     missions_max_gib=1, min_free_gib=3, target_free_gib=4)
+        self.config = storage.Config(data_root=self.root, state_dir=self.state, min_free_gib=3,
+                                     target_free_gib=4)
 
     def tearDown(self):
         self.temp.cleanup()
@@ -59,13 +59,15 @@ class StorageTests(unittest.TestCase):
         self.assertTrue((self.root / "models").is_dir())
         self.assertEqual((self.root / "recordings").stat().st_mode & 0o777, 0o750)
 
-    def test_prunes_oldest_closed_session_before_newer_session(self):
-        old = self.recording("blackbox", "2026-01-01T00-00-00", 700 * 1024 ** 2)
-        new = self.recording("blackbox", "2026-01-02T00-00-00", 700 * 1024 ** 2)
+    def test_does_not_prune_blackbox_above_the_emergency_floor(self):
+        self.config = storage.Config(data_root=self.root, state_dir=self.state, min_free_gib=3,
+                                     target_free_gib=4)
+        old = self.recording("blackbox", "2026-01-01T00-00-00", 2 * storage.GIB)
+        new = self.recording("blackbox", "2026-01-02T00-00-00", 2 * storage.GIB)
         os.utime(old, (10, 10)); os.utime(new, (20, 20))
         result = storage.maintain(self.config, free_bytes=10 * storage.GIB, dry_run=False)
-        self.assertIn(str(old), result["deleted"])
-        self.assertFalse(old.exists())
+        self.assertEqual(result["deleted"], [])
+        self.assertTrue(old.exists())
         self.assertTrue(new.exists())
 
     def test_keep_file_and_advisory_lock_protect_recordings(self):
@@ -82,14 +84,26 @@ class StorageTests(unittest.TestCase):
         self.assertTrue(active.exists())
 
     def test_free_space_hysteresis_prunes_blackbox_before_missions(self):
-        self.config = storage.Config(data_root=self.root, state_dir=self.state, blackbox_max_gib=3,
-                                     missions_max_gib=3, min_free_gib=3, target_free_gib=4)
+        self.config = storage.Config(data_root=self.root, state_dir=self.state, min_free_gib=3,
+                                     target_free_gib=4)
         blackbox = self.recording("blackbox", "blackbox", 2 * storage.GIB + 10)
         mission = self.recording("missions", "mission", 2 * storage.GIB + 10)
         result = storage.maintain(self.config, free_bytes=2 * storage.GIB, dry_run=False)
         self.assertEqual(result["deleted"][0], str(blackbox))
         self.assertTrue(mission.exists())
         self.assertGreaterEqual(result["free_after_bytes"], 4 * storage.GIB)
+
+    def test_never_prunes_missions_when_blackbox_cannot_restore_the_recovery_target(self):
+        self.config = storage.Config(data_root=self.root, state_dir=self.state, min_free_gib=3,
+                                     target_free_gib=4)
+        blackbox = self.recording("blackbox", "blackbox", storage.GIB)
+        mission = self.recording("missions", "mission", 4 * storage.GIB)
+
+        result = storage.maintain(self.config, free_bytes=2 * storage.GIB, dry_run=False)
+
+        self.assertEqual(result["deleted"], [str(blackbox)])
+        self.assertTrue(mission.exists())
+        self.assertFalse(result["recording_allowed"])
 
     def test_rejects_traversal_and_never_counts_symlink_recordings(self):
         outside = Path(self.temp.name) / "outside"
