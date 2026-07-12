@@ -24,7 +24,7 @@ import { ConnectedTwin } from '@/components/board/ConnectedTwin';
 import { StatusBadge, Tag, ProvenanceTag } from '@/components/ui/Badges';
 import { SectionTitle } from '@/components/ui/Primitives';
 import { useHangar } from '@/lib/store';
-import { LIFECYCLE_META, money } from '@/lib/format';
+import { money } from '@/lib/format';
 import {
   unitShortcutIconKind,
   unitShortcutKindLabel,
@@ -108,7 +108,6 @@ export default function UnitDetail() {
           <div className="flex flex-col items-end gap-2">
             <StatusBadge status={u.status} />
             <ProvenanceTag provenance={u.provenance} />
-            <span className="chip border-rim bg-panel-2/40 text-ink-dim">{LIFECYCLE_META[u.lifecycle].label}</span>
             {u.monitoredVia && (
               <span
                 className="chip border-cyan/30 bg-cyan/5 text-cyan"

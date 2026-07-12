@@ -5,19 +5,17 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const UNIT_STATUSES = [
+  'researching',
+  'planned',
+  'on-order',
+  'inventory',
+  'integrating',
   'operational',
   'needs-attention',
   'blocked',
-  'in-mission',
-  'wishlist',
-  'on-order',
-  'researching',
   'retired',
 ] as const;
 export type UnitStatus = (typeof UNIT_STATUSES)[number];
-
-export const LIFECYCLE_STATES = ['inventory', 'assembled', 'deployed', 'wishlist', 'on-order'] as const;
-export type LifecycleState = (typeof LIFECYCLE_STATES)[number];
 
 export type BayId = 'robotics' | 'compute' | 'network' | 'home' | 'audio';
 
@@ -150,7 +148,6 @@ export interface Unit {
   bay: BayId;
   class: string; // e.g. "Tracked Rover", "Workstation", "Gateway"
   status: UnitStatus;
-  lifecycle: LifecycleState;
   flagship?: boolean;
   summary: string;
   specs: SpecRow[];
