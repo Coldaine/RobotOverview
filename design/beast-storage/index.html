@@ -21,7 +21,7 @@
 <p>Keep the 2 TB NVMe and leave APP untouched. `/data/beast` is the stable data interface; a future mount may replace its backing storage without changing consumers. The reserve floor protects the robot from the recorder becoming a full-disk incident.</p>
 <div class="callout">62 unsafe shutdowns and 91 NVMe error-log entries are comparison baselines, not a repair action. Weekly TRIM is already active. <span class="tag">MEASURED 2026-07-11</span>
 </div></article><article class="card"><h2>Guardrails</h2>
-<p>150 GiB black box<br>900 GiB missions<br>300 GiB minimum free<br>350 GiB target free</p>
+<p>No category caps<br>300 GiB minimum free<br>350 GiB recovery target<br>Missions are never auto-deleted</p>
 <span class="tag">PROPOSED</span></article></section><p class="footer">Onboard recovery staging is not an independent backup. See <a href="../../docs/plans/2026-07-11-beast-nvme-storage-design.md">design policy</a>.</p></main><script src="dossier.js"></script>
 </body>
 </html>

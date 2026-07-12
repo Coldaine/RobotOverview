@@ -16,8 +16,7 @@
 <p><code>/data/beast/recordings/blackbox</code> and <code>/data/beast/recordings/missions</code> are retention roots. Active advisory locks and `.keep` are protected. Symlinks and paths outside those two roots are rejected.</p></article><article class="card"><h2>Deletion order</h2>
 <ol>
 <li>Closed black-box sessions</li>
-<li>Closed, unpinned missions</li>
-<li>Reject/stop capture if the floor remains unreachable</li>
+<li>Reject/stop capture if black-box cleanup cannot recover the target</li>
 </ol></article></section><p class="footer">Topic aliases require physical graph reconciliation before activation. <span class="tag">PROPOSED</span></p></main><script src="dossier.js"></script>
 </body>
 </html>

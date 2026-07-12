@@ -32,11 +32,9 @@ critical.
 
 ## Why the capacity is useful
 
-The space supports a rolling black box plus deliberate missions and still leaves a substantial
-floor for package updates and operator work. Illustrative rates are planning examples, not physical
-measurements: a telemetry/LiDAR black box at 1–5 GiB/hour consumes 150 GiB in roughly 30–150 hours;
-a full camera/depth mission at 30–100 GiB/hour consumes the 900 GiB mission budget in roughly
-9–30 hours. Actual GiB/hour and CPU load must be measured after the physical topic graph is known.
+The space supports a rolling black box plus deliberate missions while leaving a substantial floor
+for package updates and operator work. Actual GiB/hour and CPU load must be measured after the
+physical topic graph is known; until then, category budgets would be arbitrary rather than useful.
 
 ## Data layout and policy
 
@@ -48,12 +46,11 @@ a full camera/depth mission at 30–100 GiB/hour consumes the 900 GiB mission bu
 └── recovery-staging/           recovery transfer area, not a backup
 ```
 
-The proposed budgets are 150 GiB black box, 900 GiB missions, 300 GiB minimum free, and 350 GiB
-target free. Maintenance first skips active advisory locks and `.keep` recordings, never follows
-symlinks, caps black box then missions oldest-first, and below the floor restores the target by
-pruning black box before missions. If protected or eligible data cannot restore the floor,
-recording stops or is rejected. Datasets, maps, models, recovery staging, Docker, and unrelated
-paths are never automatic-delete targets.
+There are no category budgets. Maintenance first skips active advisory locks and `.keep`
+recordings and never follows symlinks. When free space falls below the 300 GiB minimum, it prunes
+oldest eligible black-box sessions until 350 GiB is free. Missions are never automatically deleted.
+If black-box data cannot restore the target, recording is rejected. Datasets, maps, models,
+recovery staging, Docker, and unrelated paths are never automatic-delete targets.
 
 SMART is `unknown` when absent or malformed. It is `warning` at 65 °C, 80% lifetime used, 10% or
 less spare, or a counter increase; it is `critical` for a critical-warning bit, 70 °C, 100%

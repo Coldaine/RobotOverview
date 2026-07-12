@@ -138,7 +138,7 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, even
    LLM-driven natural-language control. Bigger jump.
 
-## NVMe storage policy — PLANNED, NOT APPLIED
+## NVMe storage policy — UPDATE PENDING DEPLOYMENT
 
 **Measured 2026-07-11:** the installed Micron 2400 has a 1.9 TiB ext4 `APP` partition with 28 GB
 used and approximately 1.8 TiB available. SMART reported 44 °C, 1% lifetime used, 100% available
@@ -146,11 +146,16 @@ spare, and zero media errors. The existing unsafe-shutdown (62) and error-log (9
 comparison baselines; weekly TRIM is already enabled.
 
 Keep the 2 TB drive and leave the partition, Docker, journald, mount options, and filesystem
-unchanged. `/data/beast` will be the stable data interface for recordings, datasets, maps, models,
-and recovery staging. Proposed recording budgets are 150 GiB black-box, 900 GiB missions, a 300 GiB
-minimum free floor, and 350 GiB target free. Automated retention is limited to eligible closed
-recordings and never deletes datasets, maps, models, recovery staging, Docker data, or unrelated
-paths. Onboard recovery staging is not an independent backup.
+unchanged. `/data/beast` is the stable data interface for recordings, datasets, maps, models, and
+recovery staging. There are no category size caps: recording rates have not yet been measured.
+When free space falls below 300 GiB, maintenance may prune only eligible closed black-box sessions
+until 350 GiB is free. Missions are never automatically deleted; if black-box cleanup cannot restore
+the target, recording is rejected. Datasets, maps, models, recovery staging, Docker data, and
+unrelated paths are never automatic-delete targets. Onboard recovery staging is not an independent
+backup.
+
+The deployed Jetson still runs the earlier capped storage revision; install the reviewed workspace
+commit before relying on this simplified policy.
 
 Do not provision or enable storage units from this section yet. Follow the [storage design](plans/2026-07-11-beast-nvme-storage-design.md) and [command-level implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md). Once that implementation plan is approved and its dry-run checks pass, only `beast-storage-maintenance.timer` may be enabled. Keep black-box, mission, and motion storage units disabled until the documentation PR is merged, the stacked workspace change is reviewed, and physical recording/replay validation succeeds.
 

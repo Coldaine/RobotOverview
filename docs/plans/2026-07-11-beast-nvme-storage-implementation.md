@@ -24,10 +24,12 @@ Install the following exact shape:
 /etc/beast/storage.env and /etc/beast/recording/*.topics                      root:root 0644
 ```
 
-Defaults are `BLACKBOX_MAX_GIB=150`, `MISSIONS_MAX_GIB=900`, `MIN_FREE_GIB=300`,
-`TARGET_FREE_GIB=350`, `BLACKBOX_SESSION_SECONDS=900`, `MISSION_SPLIT_SECONDS=900`,
-`MISSION_SPLIT_GIB=4`, `NVME_WARN_TEMP_C=65`, `NVME_CRITICAL_TEMP_C=70`, and
-`NVME_WARN_PERCENT_USED=80`.
+Defaults are `MIN_FREE_GIB=300`, `TARGET_FREE_GIB=350`,
+`BLACKBOX_SESSION_SECONDS=900`, `MISSION_SPLIT_SECONDS=900`, `MISSION_SPLIT_GIB=4`,
+`NVME_WARN_TEMP_C=65`, `NVME_CRITICAL_TEMP_C=70`, and `NVME_WARN_PERCENT_USED=80`.
+There are no category-size caps. Below the minimum, prune only eligible closed black-box sessions
+until the target is reached; do not automatically delete missions. If black-box cleanup cannot
+recover the target, report recording unavailable.
 
 ## Exact implementation work
 
@@ -61,7 +63,7 @@ dry-run behavior with disposable recording trees, then enable only
 Capture status JSON, unit state, disk use, SMART state, and logs; reboot and repeat. Following
 physical attachment, capture the topic graph, reconcile documented aliases, record/replay short
 black-box and full-sensor missions, measure GiB/hour and CPU, and enable black box only after replay
-and space guards pass. Initial budgets do not change without a reviewed measurement.
+and space guards pass. Do not introduce category budgets without a reviewed measurement.
 
 Rollback: stop and disable storage units, remove installed executables and managed configuration,
 run `systemctl daemon-reload`, and preserve `/data/beast` and every recording. A later RobotOverview

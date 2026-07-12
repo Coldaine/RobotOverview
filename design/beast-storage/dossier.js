@@ -2,7 +2,7 @@ const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matc
 const details = {
   sensor: "Sensors publish deliberately selected ROS topics. Physical aliases stay uncommitted until observed on BEAST-01.",
   recorder: "Black-box sessions roll every 15 minutes; missions split at 4 GiB or 15 minutes. Both write under /data/beast.",
-  retention: "Maintenance skips live locks and .keep. It prunes oldest eligible black-box data before missions, never other categories.",
+  retention: "Maintenance skips live locks and .keep. Below the emergency floor it prunes eligible black-box data only; missions and other categories are never automatic-delete targets.",
   replay: "Replay validates the recording before operators enable continuous capture. Offload selected missions separately."
 };
 document.querySelectorAll(".node").forEach((node) => node.addEventListener("click", () => {
