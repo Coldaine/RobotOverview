@@ -64,7 +64,7 @@ class StorageTests(unittest.TestCase):
     def test_keep_file_and_advisory_lock_protect_recordings(self):
         kept = self.recording("blackbox", "kept", 2 * storage.GIB, keep=True)
         active = self.recording("blackbox", "active", 2 * storage.GIB)
-        lock = (active.parent / ".active.active.lock").open("w")
+        lock = storage.active_lock_path(active).open("w")
         fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         try:
             result = storage.maintain(self.config, free_bytes=10 * storage.GIB, dry_run=False)
