@@ -1,0 +1,20 @@
+[Unit]
+Description=BEAST mission rosbag recorder (%i)
+Requires=beast-storage-prepare.service
+After=beast-storage-prepare.service
+
+[Service]
+Type=simple
+User=beast
+Group=beast
+UMask=0027
+ExecStart=/usr/bin/python3 /usr/local/lib/beast-storage/beast_record mission %i
+KillSignal=SIGINT
+TimeoutStopSec=45s
+ProtectSystem=strict
+ReadWritePaths=/data/beast
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

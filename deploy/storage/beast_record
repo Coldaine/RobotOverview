@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+"""Start a guarded BEAST rosbag recorder and relay SIGINT to ros2 bag."""
+import argparse
+import fcntl
+from pathlib import Path
+import signal
+import subprocess
+import sys
+from datetime import datetime, timezone
+
+from beast_storage import GIB, parse_env_file, safe_recording_path, sanitize_label, filesystem_free_bytes
+
+
+def topics(path: Path):
+    return [line.strip() for line in path.read_text(encoding="utf8").splitlines()
+            if line.strip() and not line.lstrip().startswith("#")]
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("kind", choices=("blackbox", "mission"))
+    parser.add_argument("label", nargs="?", default="mission")
+    parser.add_argument("--env", type=Path, default=Path("/etc/beast/storage.env"))
+    parser.add_argument("--topics-dir", type=Path, default=Path("/etc/beast/recording"))
+    parser.add_argument("--data-root", type=Path, default=Path("/data/beast"))
+    parser.add_argument("--state-dir", type=Path, default=Path("/var/lib/beast/storage"))
+    args = parser.parse_args()
+    process = None
+    interrupted = False
+
+    def stop(_signal, _frame):
+        nonlocal interrupted
+        interrupted = True
+        if process is not None and process.poll() is None:
+            process.send_signal(signal.SIGINT)
+
+    signal.signal(signal.SIGINT, stop)
+    signal.signal(signal.SIGTERM, stop)
+    config = parse_env_file(args.env, args.data_root, args.state_dir)
+    if filesystem_free_bytes(config.data_root) < config.min_free_gib * GIB:
+        parser.error("recording rejected: less than MIN_FREE_GIB remains")
+    category = "blackbox" if args.kind == "blackbox" else "missions"
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    name = stamp if args.kind == "blackbox" else "%s-%s" % (stamp, sanitize_label(args.label))
+    output = safe_recording_path(config.data_root, category, name)
+    output.mkdir(mode=0o750)
+    lock = (output / ".active.lock").open("w")
+    fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    topic_file = args.topics_dir / ("blackbox.topics" if args.kind == "blackbox" else "mission.topics")
+    command = ["ros2", "bag", "record", "--storage", "sqlite3", "--output", str(output),
+               "--max-bag-duration", str(config.blackbox_session_seconds if args.kind == "blackbox" else config.mission_split_seconds)]
+    if args.kind == "blackbox":
+        command += ["--compression-mode", "message", "--compression-format", "zstd", "--compression-threads", "2"]
+    else:
+        command += ["--max-bag-size", str(config.mission_split_gib * GIB)]
+    try:
+        if interrupted:
+            return 0
+        process = subprocess.Popen(command + topics(topic_file))
+        if interrupted and process.poll() is None:
+            process.send_signal(signal.SIGINT)
+        return process.wait()
+    finally:
+        lock.close()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
