@@ -19,7 +19,8 @@ install_file() {
 }
 echo "$mode: create /data/beast, /var/lib/beast/storage, /etc/beast/recording, /usr/local/lib/beast-storage"
 if $apply; then
-  install -d -o beast -g beast -m 0750 /data/beast/{recordings/{blackbox,missions},datasets,maps,models,recovery-staging}
+  install -d -o root -g root -m 0711 /data
+  install -d -o beast -g beast -m 0750 /data/beast /data/beast/recordings /data/beast/recordings/blackbox /data/beast/recordings/missions /data/beast/datasets /data/beast/maps /data/beast/models /data/beast/recovery-staging
   install -d -o root -g beast -m 0750 /var/lib/beast/storage
   install -d -o root -g root -m 0755 /etc/beast/recording /usr/local/lib/beast-storage
 fi

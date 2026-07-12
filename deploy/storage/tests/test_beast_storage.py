@@ -152,6 +152,11 @@ class StorageTests(unittest.TestCase):
         result = subprocess.run(["bash", str(installer)], text=True, capture_output=True, check=True)
         self.assertIn("DRY-RUN", result.stdout)
 
+    def test_installer_makes_the_data_parent_traversable_and_owns_every_storage_directory(self):
+        source = (Path(__file__).parents[1] / "install.sh").read_text(encoding="utf8")
+        self.assertIn("install -d -o root -g root -m 0711 /data", source)
+        self.assertIn("/data/beast /data/beast/recordings /data/beast/recordings/blackbox", source)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
