@@ -1,5 +1,6 @@
 import fcntl
 import importlib.util
+from importlib.machinery import SourceFileLoader
 import json
 import os
 from pathlib import Path
@@ -16,6 +17,12 @@ MODULE = Path(__file__).parents[1] / "beast_storage.py"
 SPEC = importlib.util.spec_from_file_location("beast_storage", MODULE)
 storage = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(storage)
+sys.modules["beast_storage"] = storage
+RECORDER_MODULE = Path(__file__).parents[1] / "beast_record"
+RECORDER_SPEC = importlib.util.spec_from_loader(
+    "beast_record_test", SourceFileLoader("beast_record_test", str(RECORDER_MODULE)))
+recorder = importlib.util.module_from_spec(RECORDER_SPEC)
+RECORDER_SPEC.loader.exec_module(recorder)
 
 
 class StorageTests(unittest.TestCase):
@@ -103,6 +110,20 @@ class StorageTests(unittest.TestCase):
         with self.assertRaises(storage.PathSafetyError):
             storage.category_entries(self.root, "blackbox")
 
+    def test_rejects_a_symlinked_data_root(self):
+        root_link = Path(self.temp.name) / "data-link"
+        root_link.symlink_to(self.root, target_is_directory=True)
+
+        with self.assertRaises(storage.PathSafetyError):
+            storage.safe_recording_path(root_link, "blackbox", "session")
+
+    def test_rejects_a_symlinked_data_root_ancestor(self):
+        parent_link = Path(self.temp.name) / "parent-link"
+        parent_link.symlink_to(Path(self.temp.name), target_is_directory=True)
+
+        with self.assertRaises(storage.PathSafetyError):
+            storage.safe_recording_path(parent_link / "data", "blackbox", "session")
+
     def test_prepare_rejects_a_symlinked_storage_directory_without_chmodding_its_target(self):
         category_root = self.root / "recordings" / "blackbox"
         category_root.rmdir()
@@ -134,6 +155,39 @@ class StorageTests(unittest.TestCase):
 
         maintain.assert_not_called()
         self.assertIs(result["last_maintenance"], maintenance)
+
+    def test_status_prepares_storage_before_using_a_supplied_maintenance_result(self):
+        maintenance = {"dry_run": False, "deleted": [], "deleted_bytes": 0,
+                       "free_after_bytes": 10 * storage.GIB, "category_sizes": {},
+                       "recording_allowed": True}
+        with mock.patch.object(storage, "prepare") as prepare, \
+                mock.patch.object(storage, "read_smart", return_value=None):
+            storage.status(self.config, maintenance=maintenance)
+
+        prepare.assert_called_once_with(self.config)
+
+    def test_unreadable_active_lock_fails_closed(self):
+        active = self.recording("blackbox", "active")
+        storage.active_lock_path(active).mkdir()
+
+        self.assertTrue(storage.lock_is_active(active))
+
+    def test_open_lock_rejects_symlink_target(self):
+        target = Path(self.temp.name) / "target"
+        target.touch()
+        lock_path = Path(self.temp.name) / "lock"
+        lock_path.symlink_to(target)
+
+        with self.assertRaises(OSError):
+            recorder.open_lock(lock_path)
+
+    def test_release_lock_ignores_unlink_errors(self):
+        lock_path = Path(self.temp.name) / "lock"
+        lock_path.mkdir()
+
+        recorder.release_lock(lock_path)
+
+        self.assertTrue(lock_path.is_dir())
 
     def test_missing_and_malformed_smart_are_unknown(self):
         self.assertEqual(storage.smart_health(None, {} )["state"], "unknown")

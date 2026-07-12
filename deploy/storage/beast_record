@@ -2,19 +2,32 @@
 """Start a guarded BEAST rosbag recorder and relay SIGINT to ros2 bag."""
 import argparse
 import fcntl
+import os
 from pathlib import Path
 import signal
 import subprocess
 import sys
 from datetime import datetime, timezone
 
-from beast_storage import (GIB, PathSafetyError, active_lock_path, filesystem_free_bytes,
+from beast_storage import (GIB, active_lock_path, filesystem_free_bytes,
                            parse_env_file, safe_recording_path, sanitize_label)
 
 
 def topics(path: Path):
     return [line.strip() for line in path.read_text(encoding="utf8").splitlines()
             if line.strip() and not line.lstrip().startswith("#")]
+
+
+def open_lock(path: Path):
+    descriptor = os.open(path, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o640)
+    return os.fdopen(descriptor, "a+")
+
+
+def release_lock(path: Path) -> None:
+    try:
+        path.unlink()
+    except OSError:
+        pass
 
 
 def main() -> int:
@@ -47,9 +60,10 @@ def main() -> int:
     if output.exists():
         parser.error("recording rejected: output already exists")
     lock_path = active_lock_path(output)
-    if lock_path.is_symlink():
-        raise PathSafetyError("recording lock must not be a symlink")
-    lock = lock_path.open("a+")
+    try:
+        lock = open_lock(lock_path)
+    except OSError as error:
+        parser.error("recording rejected: cannot reserve output (%s)" % error)
     try:
         fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
     except BlockingIOError:
@@ -71,10 +85,7 @@ def main() -> int:
         return process.wait()
     finally:
         lock.close()
-        try:
-            lock_path.unlink()
-        except FileNotFoundError:
-            pass
+        release_lock(lock_path)
 
 
 if __name__ == "__main__":

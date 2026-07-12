@@ -93,9 +93,12 @@ def _mkdir(path: Path, mode: int) -> None:
 
 
 def assert_managed_path_has_no_symlinks(root: Path, relative: Path) -> None:
-    current = root
-    if current.is_symlink():
-        raise PathSafetyError("managed storage root must not be a symlink")
+    absolute_root = root if root.is_absolute() else Path.cwd() / root
+    current = Path(absolute_root.anchor)
+    for part in absolute_root.parts[1:]:
+        current /= part
+        if current.is_symlink():
+            raise PathSafetyError("managed storage root must not contain symlinks")
     for part in relative.parts:
         current /= part
         if current.is_symlink():
@@ -107,8 +110,7 @@ def prepare(config: Config, apply_ownership: bool = False) -> None:
              "models", "recovery-staging")
     for part in parts:
         assert_managed_path_has_no_symlinks(config.data_root, Path(part))
-    if config.state_dir.is_symlink():
-        raise PathSafetyError("storage state directory must not be a symlink")
+    assert_managed_path_has_no_symlinks(config.state_dir, Path())
     for part in parts:
         _mkdir(config.data_root / part, 0o750)
     _mkdir(config.state_dir, 0o750)
@@ -123,6 +125,7 @@ def prepare(config: Config, apply_ownership: bool = False) -> None:
 def recording_root(data_root: Path, category: str) -> Path:
     if category not in RECORDING_CATEGORIES:
         raise PathSafetyError("unknown recording category")
+    assert_managed_path_has_no_symlinks(data_root, Path("recordings") / category)
     root = data_root.resolve()
     recordings = root / "recordings"
     category_root = recordings / category
@@ -172,15 +175,21 @@ def lock_is_active(path: Path) -> bool:
     lock_path = active_lock_path(path)
     if not lock_path.exists() or lock_path.is_symlink():
         return False
-    handle = lock_path.open("a+")
     try:
-        fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except BlockingIOError:
-        handle.close()
+        handle = lock_path.open("a+")
+    except OSError:
         return True
-    fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
-    handle.close()
-    return False
+    try:
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            return True
+        except OSError:
+            return True
+        fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        return False
+    finally:
+        handle.close()
 
 
 def category_entries(data_root: Path, category: str) -> List[Path]:
@@ -320,6 +329,8 @@ def status(config: Config, dry_run: bool = True,
            maintenance: Optional[Dict[str, object]] = None) -> Dict[str, object]:
     if maintenance is None:
         maintenance = maintain(config, dry_run=dry_run)
+    else:
+        prepare(config)
     stats = os.statvfs(config.data_root)
     baseline = {"unsafe_shutdowns": 62, "error_log_entries": 91, "media_errors": 0}
     smart = smart_health(read_smart(), baseline, config)
