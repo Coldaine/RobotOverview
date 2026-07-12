@@ -1,1 +1,23 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BEAST-01 Storage Lifecycle</title><link rel="stylesheet" href="styles.css"></head><body><main class="shell"><header class="mast"><p class="eyebrow">HANGAR / RECORDING LIFECYCLE</p><h1>From sensor to recovery</h1><span class="tag">PROPOSED</span></header><nav class="tabs" role="tablist" aria-label="Dossier views"><a class="tab" role="tab" href="index.html">Overview</a><a class="tab" aria-current="page" role="tab" href="flow.html">Lifecycle flow</a><a class="tab" role="tab" href="dashboard.html">Operator dashboard</a><a class="tab" role="tab" href="story.html">Decision story</a></nav><p>Choose a stage for its operating constraint.</p><section class="flow" aria-label="Sensor recording lifecycle"><button class="node" data-node="sensor" aria-pressed="false">01<br><strong>Sensors → ROS topics</strong></button><span class="arrow" aria-hidden="true">→</span><button class="node" data-node="recorder" aria-pressed="false">02<br><strong>Recorder</strong></button><span class="arrow" aria-hidden="true">→</span><button class="node" data-node="retention" aria-pressed="false">03<br><strong>Retention</strong></button><span class="arrow" aria-hidden="true">→</span><button class="node" data-node="replay" aria-pressed="false">04<br><strong>Replay / offload</strong></button></section><div class="detail" id="node-detail" aria-live="polite">Select a lifecycle stage.</div><section class="grid"><article class="card wide"><h2>Allowed paths only</h2><p><code>/data/beast/recordings/blackbox</code> and <code>/data/beast/recordings/missions</code> are retention roots. Active advisory locks and `.keep` are protected. Symlinks and paths outside those two roots are rejected.</p></article><article class="card"><h2>Deletion order</h2><ol><li>Closed black-box sessions</li><li>Closed, unpinned missions</li><li>Reject/stop capture if the floor remains unreachable</li></ol></article></section><p class="footer">Topic aliases require physical graph reconciliation before activation. <span class="tag">PROPOSED</span></p></main><script src="dossier.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BEAST-01 Storage Lifecycle</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="shell"><header class="mast"><p class="eyebrow">HANGAR / RECORDING LIFECYCLE</p>
+<h1>From sensor to recovery</h1>
+<span class="tag">PROPOSED</span></header><nav class="tabs" aria-label="Dossier views"><a class="tab" href="index.html">Overview</a><a class="tab" aria-current="page" href="flow.html">Lifecycle flow</a><a class="tab" href="dashboard.html">Operator dashboard</a><a class="tab" href="story.html">Decision story</a></nav><p>Choose a stage for its operating constraint.</p>
+<section class="flow" aria-label="Sensor recording lifecycle"><button class="node" data-node="sensor" aria-pressed="false" type="button">01<br><strong>Sensors &rarr; ROS topics</strong></button><span class="arrow" aria-hidden="true">&rarr;</span><button class="node" data-node="recorder" aria-pressed="false" type="button">02<br><strong>Recorder</strong></button><span class="arrow" aria-hidden="true">&rarr;</span><button class="node" data-node="retention" aria-pressed="false" type="button">03<br><strong>Retention</strong></button><span class="arrow" aria-hidden="true">&rarr;</span><button class="node" data-node="replay" aria-pressed="false" type="button">04<br><strong>Replay / offload</strong></button></section><div class="detail" id="node-detail" aria-live="polite">Select a lifecycle stage.</div>
+<section class="grid"><article class="card wide"><h2>Allowed paths only</h2>
+<p><code>/data/beast/recordings/blackbox</code> and <code>/data/beast/recordings/missions</code> are retention roots. Active advisory locks and `.keep` are protected. Symlinks and paths outside those two roots are rejected.</p></article><article class="card"><h2>Deletion order</h2>
+<ol>
+<li>Closed black-box sessions</li>
+<li>Closed, unpinned missions</li>
+<li>Reject/stop capture if the floor remains unreachable</li>
+</ol></article></section><p class="footer">Topic aliases require physical graph reconciliation before activation. <span class="tag">PROPOSED</span></p></main><script src="dossier.js"></script>
+</body>
+</html>

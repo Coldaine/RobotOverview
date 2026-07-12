@@ -152,8 +152,7 @@ minimum free floor, and 350 GiB target free. Automated retention is limited to e
 recordings and never deletes datasets, maps, models, recovery staging, Docker data, or unrelated
 paths. Onboard recovery staging is not an independent backup.
 
-Do not provision or enable storage units from this section yet. Follow the [storage design](plans/2026-07-11-beast-nvme-storage-design.md) and [command-level implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md); activate only after the documentation PR is merged, the
-stacked workspace change is reviewed, and physical recording/replay validation succeeds.
+Do not provision or enable storage units from this section yet. Follow the [storage design](plans/2026-07-11-beast-nvme-storage-design.md) and [command-level implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md). Once that implementation plan is approved and its dry-run checks pass, only `beast-storage-maintenance.timer` may be enabled. Keep black-box, mission, and motion storage units disabled until the documentation PR is merged, the stacked workspace change is reviewed, and physical recording/replay validation succeeds.
 
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 

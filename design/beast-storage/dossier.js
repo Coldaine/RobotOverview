@@ -20,16 +20,6 @@ document.querySelectorAll(".story-control").forEach((button) => button.addEventL
   document.querySelector("#story-track").scrollBy({ left: button.dataset.direction === "next" ? 420 : -420, behavior: reducedMotion ? "auto" : "smooth" });
 }));
 document.addEventListener("keydown", (event) => {
-  const tablist = event.target.closest("[role=tablist]");
-  if (tablist && ["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) {
-    const tabs = [...tablist.querySelectorAll("[role=tab]")];
-    const current = tabs.indexOf(event.target);
-    const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 :
-      (current + (event.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length;
-    event.preventDefault();
-    tabs[next].focus();
-    return;
-  }
   if (!event.target.closest("#story-track")) return;
   if (event.key === "ArrowRight" || event.key === "ArrowLeft") event.target.closest("#story-track").scrollBy({ left: event.key === "ArrowRight" ? 420 : -420, behavior: reducedMotion ? "auto" : "smooth" });
 });
