@@ -138,6 +138,22 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, even
    LLM-driven natural-language control. Bigger jump.
 
+## NVMe storage policy — PLANNED, NOT APPLIED
+
+**Measured 2026-07-11:** the installed Micron 2400 has a 1.9 TiB ext4 `APP` partition with 28 GB
+used and approximately 1.8 TiB available. SMART reported 44 °C, 1% lifetime used, 100% available
+spare, and zero media errors. The existing unsafe-shutdown (62) and error-log (91) counters are
+comparison baselines; weekly TRIM is already enabled.
+
+Keep the 2 TB drive and leave the partition, Docker, journald, mount options, and filesystem
+unchanged. `/data/beast` will be the stable data interface for recordings, datasets, maps, models,
+and recovery staging. Proposed recording budgets are 150 GiB black-box, 900 GiB missions, a 300 GiB
+minimum free floor, and 350 GiB target free. Automated retention is limited to eligible closed
+recordings and never deletes datasets, maps, models, recovery staging, Docker data, or unrelated
+paths. Onboard recovery staging is not an independent backup.
+
+Do not provision or enable storage units from this section yet. Follow the [storage design](plans/2026-07-11-beast-nvme-storage-design.md) and [command-level implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md). Once that implementation plan is approved and its dry-run checks pass, only `beast-storage-maintenance.timer` may be enabled. Keep black-box, mission, and motion storage units disabled until the documentation PR is merged, the stacked workspace change is reviewed, and physical recording/replay validation succeeds.
+
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
 > **Status: SOFTWARE PROVISIONING COMPLETE; PHYSICAL BEAST INTEGRATION PENDING — verified
