@@ -11,13 +11,13 @@ echo "$mode: no recorder unit will be enabled."
 
 show_file() { diff -u "$2" "$1" 2>/dev/null || true; }
 install_file() {
-  local source=$1 target=$2 mode=$3
+  local source=$1 target=$2 file_mode=$3
   echo "$mode: $source -> $target"
   [[ -e "$target" ]] && show_file "$source" "$target"
   $apply || return 0
-  install -D -m "$mode" "$source" "$target"
+  install -D -m "$file_mode" "$source" "$target"
 }
-echo "$mode: create /data/beast, /var/lib/beast/storage, /etc/beast/recording, /usr/local/lib/beast-storage"
+echo "$mode: create /data and /data/beast, /var/lib/beast/storage, /etc/beast/recording, /usr/local/lib/beast-storage"
 if $apply; then
   install -d -o root -g root -m 0711 /data
   install -d -o beast -g beast -m 0750 /data/beast /data/beast/recordings /data/beast/recordings/blackbox /data/beast/recordings/missions /data/beast/datasets /data/beast/maps /data/beast/models /data/beast/recovery-staging
