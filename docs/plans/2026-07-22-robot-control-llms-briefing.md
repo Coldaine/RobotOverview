@@ -23,15 +23,19 @@ Treat “robot control LLMs” as **three different products**, not one:
 | **B. VLA / imitation policy** | Camera (+ language) → continuous actions | Self-driving path after Orin cutover + demo recording; LeRobot / SmolVLA / ACT first |
 | **C. World action model (WAM)** | Shared world model that reasons, simulates, and emits actions | Autonomy research + post-train; NVIDIA Cosmos 3 Edge is the headline open edge checkpoint |
 
-**Engineering gate (not a product ban):** closed-loop VLA/WAM on the motion path waits on
-Orin physical cutover + validated watchdog/stop behavior. Until then the Pi stack is teleop
-+ Socket.IO while CORE-PRIME trains and evaluates policies.
+**Current physical gate:** Pi is **out**, Orin is being fitted — no upper computer on the
+chassis until that install lands (OP-ORIN-GAP). That is a host-swap blocker, not a policy ban.
+
+**Dynamics correction (operator, 2026-07-22):** Beast is slow and hard-stops. Remote teleop and
+remote closed-loop from CORE-PRIME are fine; on-device Orin inference is fine. Do not invent
+WiFi-tail or confirm-every-chunk refusals for this chassis. Keep the ESP32 watchdog/PID.
 
 ---
 
 ## What we would actually have it do on BEAST-01
 
 The Beast is a tracked rover with pan-tilt camera (and later depth/LiDAR), not an arm.
+Operator fact: the Beast is **slow and hard-stops** — remote control is not exotic.
 The end state is **self-driving on missions** — crawlspace cable haul, perimeter runs,
 deck lanes — with Hangar as the command portal that starts, monitors, and aborts policies.
 
@@ -232,8 +236,8 @@ Reasons it does **not** move Thor onto the buy list today:
                │ WiFi 6 (design for tail)
                ▼
  ┌──────────────────────────────┐
- │ Onboard host (Pi now / Orin) │  stream · watchdog · onboard policy
- │  autonomy in scope (G7)      │
+ │ Onboard host (Orin — fitting)│  stream · watchdog · onboard policy
+ │  Pi removed 2026-07-22       │
  └─────────────┬────────────────┘
                │ UART JSON
                ▼
@@ -260,24 +264,21 @@ Suggested capability layering (conceptual — not schema changes):
 
 Ordered so each step earns more autonomy without skipping fail-safes:
 
-1. **Finish physical Orin cutover gates** already listed in `docs/beast-ops.md`
-   (UART, telemetry, camera, LiDAR, lifted-track heartbeat-stop). Without this, every
-   onboard policy claim is fiction.
-2. **Hangar command portal** — start/monitor/abort motion; reuse
-   `tools/beast-probe.mjs` safety culture (zero-speed default, watchdog).
-3. **Lane A prototype** — multimodal LLM returns clamped `{L,R,duration}` or Nav2 goals;
-   reject unknown verbs; hard speed caps; then run goals without per-chunk babysitting.
-4. **Record teleop demos** for Undercroft / deck / perimeter once storage layout lands.
-5. **Lane B closed-loop** — train ACT or SmolVLA via LeRobot on CORE-PRIME; lift-track,
-   then floor autonomy with live abort.
-6. **Lane C / Cosmos Edge** — pull `nvidia/Cosmos3-Edge` on the 5090; measure VRAM / Hz;
-   post-train for Beast tracks; do **not** purchase Thor for the spike alone.
+1. **Finish Orin physical install** (Pi already removed) — mount, power, UART to ESP32,
+   USB camera/LiDAR, move beast DHCP/DNS identity, heartbeat-stop check. See OP-ORIN-GAP.
+2. **Drive remote immediately** — Hangar / browser / CORE-PRIME teleop and closed-loop are
+   first-class on this slow hard-stopping chassis; keep watchdog, skip false babysitting rules.
+3. **Lane A** — phrase goals → clamped `{L,R,duration}` / Nav2; hard speed caps; abort live.
+4. **Record demos** for Undercroft / deck / perimeter once storage layout lands.
+5. **Lane B closed-loop** — ACT/SmolVLA on CORE-PRIME and/or Orin; floor autonomy with abort.
+6. **Lane C / Cosmos Edge** — 5090 spike + Beast track post-train; on-device when it fits;
+   do **not** buy Thor just for the spike.
 
-Engineering anti-patterns (still banned):
+Still dumb:
 
-- “Replace PID / watchdog with the transformer.”
-- Assuming DROID arm checkpoints transfer to tracks without Beast data.
-- Autonomy near the pool without geofenced low-speed profiles.
+- Replacing PID / watchdog with the transformer.
+- Assuming stock DROID arm checkpoints drive tracks.
+- Free-roam autonomy at the pool edge without a geofence.
 
 ---
 
@@ -288,10 +289,10 @@ Engineering anti-patterns (still banned):
 | Is Cosmos 3 Edge relevant? | Yes — as the open edge WAM reference and future post-train base. |
 | Does it change the Orin buy / cutover? | No. Orin remains the owned CUDA edge host. |
 | Does it put Thor on the buy list? | No. Keep researching; T2000/T3000 may revise tiering later. |
-| Best first LLM control for Beast? | Lane A orchestrator over Socket.IO/ROS2 with clamps + abort. |
+| Best first LLM control for Beast? | Lane A over ROS2/Socket once Orin is in; remote closed-loop OK. |
 | Best first learned policy stack? | LeRobot (ACT → SmolVLA), trained on CORE-PRIME, closed-loop on Beast. |
 | When to touch Cosmos Edge Policy-DROID? | As a 5090 lab spike / recipe reference; UGV needs Beast post-train, not stock DROID. |
-| Hangar UI role? | Command portal: telemetry, video, teleop, launch/monitor/abort autonomous policies. |
+| Hangar UI role? | Command portal: telemetry, video, teleop, remote + on-device autonomy. |
 
 ---
 
