@@ -26,9 +26,11 @@ Treat “robot control LLMs” as **three different products**, not one:
 **Current physical gate:** Pi is **out**, Orin is being fitted — no upper computer on the
 chassis until that install lands (OP-ORIN-GAP). That is a host-swap blocker, not a policy ban.
 
-**Dynamics correction (operator, 2026-07-22):** Beast is slow and hard-stops. Remote teleop and
-remote closed-loop from CORE-PRIME are fine; on-device Orin inference is fine. Do not invent
-WiFi-tail or confirm-every-chunk refusals for this chassis. Keep the ESP32 watchdog/PID.
+**Dynamics correction (operator, 2026-07-22):** Beast is slow, hard-stops, and **stops in
+time** for terrain/obstacle reactions. Remote closed-loop from CORE-PRIME is fine.
+Lightweight on-device Orin inference for **terrain alignment / avoidance** is fine.
+Rejected: "won't stop in time," "avoidance must stay classical-only," WiFi-tail vetoes.
+Keep ESP32 PID + watchdog.
 
 ---
 
@@ -47,10 +49,11 @@ Build in stages so autonomy is earned, not wished:
 | --- | --- | --- | --- |
 | 1 | **Phrase driving** for Undercroft | A | “Creep forward under the duct”, “nudge left past the pillar”, “spin 90°”, “stop” → clamped `{L,R,duration}` / `/cmd_vel`. Hard speed caps; unknown verbs rejected. First autonomy-shaped interface. |
 | 2 | **Look-where-I-mean** gimbal | A (+ VLM) | “Look at the cable end”, “tilt up at the joists”, “scan left for the orange conduit” → pan-tilt setpoints from FPV + phrase. |
-| 3 | **Scene coach / HUD** | A (VLM) | Stream FPV to CORE-PRIME; narrate clearances into Hangar while driving or while a policy runs (“duct overhead, pillar right”). |
-| 4 | **Cable-haul autonomy** | A→B | MSN-01: approach corridor, hold for human cable attach if needed, then **autonomous reverse haul** along a taught/mapped path in clamped bursts with live abort. |
-| 5 | **Taught crawl / patrol policies** | B | After Orin + demos: closed-loop ACT/SmolVLA (or later Cosmos Edge post-train) for undercroft legs, perimeter inspect, pool-deck lanes inside geofenced speeds. Hangar starts the policy; watchdog stops on dropout. |
-| 6 | **Cosmos-class world model** | C | Train/eval on 5090: FPV + goal → action chunk + predicted next view. Post-train for Beast tracks (stock DROID arm checkpoints do **not** transfer). Deploy when Hz and embodiment fit. |
+| 3 | **Scene coach / HUD** | A (VLM) | Stream FPV to CORE-PRIME; narrate clearances into Hangar while driving or while a policy runs. |
+| 4 | **Terrain alignment / avoidance** | onboard light | Lightweight Orin inference (depth/LiDAR/CV) for terrain alignment and obstacle avoidance — chassis stops in time; normal onboard job. |
+| 5 | **Cable-haul autonomy** | A→B | MSN-01: approach corridor, optional human cable attach, then autonomous reverse haul with live abort. |
+| 6 | **Taught crawl / patrol policies** | B | Closed-loop ACT/SmolVLA or Cosmos Edge post-train — remote and/or on-device. |
+| 7 | **Cosmos-class world model** | C | Train/eval on 5090; post-train for Beast tracks (stock DROID arms do not transfer). |
 
 ### Mission fit
 
@@ -63,9 +66,14 @@ Build in stages so autonomy is earned, not wished:
 
 ### Explicit non-jobs on this chassis
 
-- Replacing ESP32 PID / stale-command stop with a transformer (fail-safes stay onboard)
+- Replacing ESP32 PID / stale-command stop with a transformer (fail-safes stay)
 - Running stock Cosmos Edge Policy-DROID (arm pick-and-place) as if it were UGV drive
-- Tight visual servoing over WiFi with **no** onboard reflex layer
+
+### Explicitly rejected agent conclusions
+
+- "Won't stop in time" on this chassis
+- "Collision / terrain avoidance can't be lightweight onboard inference"
+- "Remote visual steering is too dangerous because of WiFi tails"
 
 ### One-sentence product picture
 
@@ -79,9 +87,9 @@ silence, abort, or geofence breach → stop.**
 BEAST-01’s operating progression already ends with “ROS2 … even LLM-driven natural-language
 control” (`docs/beast-ops.md`). The fleet also already encodes an offload doctrine:
 
-- CORE-PRIME (RTX 5090): train + VLM/LLM reasoning + heavy perception
-- EDGE-PI / future BEAST-JETSON: teleop, stream, watchdog, dropout-proof reflexes
-- WiFi tail is the enemy; median latency is not (`wifi-tail`, `offload-split`, `watchdog`)
+- CORE-PRIME (RTX 5090): train + heavy VLM/VLA when useful; remote Beast control OK
+- BEAST-JETSON (Orin, fitting): teleop, stream, lightweight terrain avoidance, onboard policies
+- Watchdog/PID stay; WiFi-tail lore is not a Beast teleop veto (`beast-slow-hard-stop`)
 
 July 2026 NVIDIA / Hugging Face releases (Cosmos 3 family, Cosmos 3 Edge, LeRobot ↔ GR00T /
 Cosmos integrations) make the research horizon concrete enough to map onto that doctrine
@@ -244,12 +252,12 @@ Reasons it does **not** move Thor onto the buy list today:
          ESP32 PID / stop
 ```
 
-Binding rules already in Hangar memory:
+Binding rules (operator-corrected for Beast):
 
-- Offload yes: training, VLM/LLM reasoning, heavy perception.
-- Offload risky: tight visual servoing.
-- Offload no: collision avoidance, e-stop, motor PID (`offload-split`).
-- Stale-command watchdog stays onboard (`watchdog`).
+- Train heavy models on CORE-PRIME when convenient (`offload-split`).
+- Beast remote closed-loop and onboard lightweight terrain avoidance are both in play.
+- Motor PID + stale-command watchdog stay as hard fail-safes (`watchdog`).
+- Do not claim the Beast "can't stop in time" or that avoidance is forbidden onboard.
 
 Suggested capability layering (conceptual — not schema changes):
 
@@ -278,7 +286,7 @@ Still dumb:
 
 - Replacing PID / watchdog with the transformer.
 - Assuming stock DROID arm checkpoints drive tracks.
-- Free-roam autonomy at the pool edge without a geofence.
+- Claiming the Beast can't stop in time or can't run lightweight onboard avoidance.
 
 ---
 
