@@ -111,6 +111,7 @@ INSERT INTO tags(namespace,name,label) VALUES ('tag','teleop','teleop') ON CONFL
 INSERT INTO tags(namespace,name,label) VALUES ('tag','undercroft','undercroft') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','north-star','north-star') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','perception','perception') ON CONFLICT (namespace,name) DO NOTHING;
+INSERT INTO tags(namespace,name,label) VALUES ('tag','edge','edge') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','deployment','deployment') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','shipwright','shipwright') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','ghcr','ghcr') ON CONFLICT (namespace,name) DO NOTHING;
@@ -503,6 +504,17 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-host-gap',id FROM tags 
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-host-gap',id FROM tags WHERE namespace='tag' AND name='orin' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-host-gap',id FROM tags WHERE namespace='tag' AND name='cutover' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-host-gap',id FROM tags WHERE namespace='tag' AND name='operations' ON CONFLICT DO NOTHING;
+INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('orin-edge-model-shortlist','Orin Nano shortlist: SmolVLA first, then GR00T / small VLMs','On Orin Nano 8GB (~7.6 GB usable): SmolVLA (~450M) is the first closed-loop VLA that fits with headroom; GR00T N1.x (~3B FP16) also fits. For scene/phrase work: InternVL3 or Qwen*-VL 2B-class + Qwen3-4B/Nemotron-Nano-4B INT4. Cosmos 3 Edge is interesting as an open world-action + post-train path (5090 gym; Thor-quoted 15 Hz; Cosmos Reason ~2B called out for Orin 8GB) — not as a Thor purchase trigger. Pi0/OpenVLA stay on CORE-PRIME unless distilled.','high','docs/plans/2026-07-22-robot-control-llms-briefing.md#6-orin-nano-8gb--what-else-is-actually-sota-adjacent-and-fits','2026-07-22');
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('orin-edge-model-shortlist','orin-nano') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('orin-edge-model-shortlist','beast') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('orin-edge-model-shortlist','workstation') ON CONFLICT DO NOTHING;
+INSERT INTO insight_missions(insight_id,mission_id) VALUES ('orin-edge-model-shortlist','undercroft') ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='orin' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='vla' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='llm' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='cosmos' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='edge' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='decision' ON CONFLICT DO NOTHING;
 INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('ghcr-buildrun-noise','Diagnose GHCR from live BuildRuns, not stale failures','On 2026-07-01 the live ExternalSecret-backed GHCR push and pull secrets were synced and shaped correctly, and current Shipwright BuildRuns pushed immutable image digests. Old failed BuildRuns were Dockerfile path mistakes and cleanup noise, not evidence that the GHCR tokens were broken.','high','coldaine-k8cluster live kubectl inspection','2026-07-01');
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM tags WHERE namespace='tag' AND name='deployment' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM tags WHERE namespace='tag' AND name='shipwright' ON CONFLICT DO NOTHING;
@@ -511,6 +523,7 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('wifi-tail','beast') ON CONFLICT DO NOTHING;
 
 -- activity_log
+INSERT INTO activity_log(id,at,kind,text) VALUES ('a-orin-models','2026-07-22T03:55:00Z','researched','Orin edge shortlist: SmolVLA first; GR00T/small VLMs; Cosmos Edge as WAM post-train path.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-orin-host-gap','2026-07-22T03:45:00Z','mission','OP-ORIN-GAP: Pi removed from BEAST-01; host empty while Orin Nano is fitted.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-beast-slow','2026-07-22T03:46:00Z','insight','Beast stops in time; lightweight onboard terrain avoidance is in play — drop false refusals.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-ag2-repealed','2026-07-22T03:40:00Z','insight','North Star AG2 autonomy ban repealed; G7 makes closed-loop Beast policies in scope.');

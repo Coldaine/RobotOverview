@@ -278,6 +278,7 @@ export const hangarData: HangarData = {
         'ag2-repealed',
         'beast-slow-hard-stop',
         'orin-host-gap',
+        'orin-edge-model-shortlist',
       ],
       tags: ['rover', 'flagship', 'waveshare', 'acce', 'ros2', 'cutover'],
       shortcuts: [
@@ -485,7 +486,14 @@ export const hangarData: HangarData = {
       price: { us: 249, import: null },
       power: { watts: 25, rail: 'battery' },
       capabilities: ['teleop', 'onboard-autonomy'],
-      insights: ['orin-tier', 'blackwell-gap', 'robot-llm-lanes', 'orin-host-gap', 'beast-slow-hard-stop'],
+      insights: [
+        'orin-tier',
+        'blackwell-gap',
+        'robot-llm-lanes',
+        'orin-host-gap',
+        'beast-slow-hard-stop',
+        'orin-edge-model-shortlist',
+      ],
       tags: ['jetson', 'orin', 'ampere', 'edge-ai', 'cutover'],
       links: [{ label: 'NVIDIA Jetson Orin', url: 'https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/' }],
       acquired: 'owned',
@@ -1031,6 +1039,19 @@ export const hangarData: HangarData = {
       capturedAt: '2026-07-22',
     },
     {
+      id: 'orin-edge-model-shortlist',
+      title: 'Orin Nano shortlist: SmolVLA first, then GR00T / small VLMs',
+      body: 'On Orin Nano 8GB (~7.6 GB usable): SmolVLA (~450M) is the first closed-loop VLA that fits with headroom; GR00T N1.x (~3B FP16) also fits. For scene/phrase work: InternVL3 or Qwen*-VL 2B-class + Qwen3-4B/Nemotron-Nano-4B INT4. Cosmos 3 Edge is interesting as an open world-action + post-train path (5090 gym; Thor-quoted 15 Hz; Cosmos Reason ~2B called out for Orin 8GB) — not as a Thor purchase trigger. Pi0/OpenVLA stay on CORE-PRIME unless distilled.',
+      tags: ['orin', 'vla', 'llm', 'cosmos', 'edge', 'decision'],
+      bay: 'compute',
+      units: ['orin-nano', 'beast', 'workstation'],
+      missions: ['undercroft'],
+      confidence: 'high',
+      source:
+        'docs/plans/2026-07-22-robot-control-llms-briefing.md#6-orin-nano-8gb--what-else-is-actually-sota-adjacent-and-fits',
+      capturedAt: '2026-07-22',
+    },
+    {
       id: 'ghcr-buildrun-noise',
       title: 'Diagnose GHCR from live BuildRuns, not stale failures',
       body: 'On 2026-07-01 the live ExternalSecret-backed GHCR push and pull secrets were synced and shaped correctly, and current Shipwright BuildRuns pushed immutable image digests. Old failed BuildRuns were Dockerfile path mistakes and cleanup noise, not evidence that the GHCR tokens were broken.',
@@ -1043,6 +1064,12 @@ export const hangarData: HangarData = {
   ],
 
   activity: [
+    {
+      id: 'a-orin-models',
+      at: '2026-07-22T03:55:00Z',
+      kind: 'researched',
+      text: 'Orin edge shortlist: SmolVLA first; GR00T/small VLMs; Cosmos Edge as WAM post-train path.',
+    },
     {
       id: 'a-orin-host-gap',
       at: '2026-07-22T03:45:00Z',

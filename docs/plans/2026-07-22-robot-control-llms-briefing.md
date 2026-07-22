@@ -34,6 +34,25 @@ Keep ESP32 PID + watchdog.
 
 ---
 
+## Why Cosmos 3 Edge is actually interesting for Hangar
+
+Not because Thor is on the buy list. Because it is the first open **world-action** tier in
+the NVIDIA Physical AI stack Hangar already lives in (Orin host, 5090 train box, JetPack /
+Isaac / ROS path).
+
+| Interest | Why it maps to BEAST |
+| --- | --- |
+| **World model, not just a VLA** | Same weights can reason about a scene, predict the next view, and emit actions. Crawlspace work is mostly “what happens if I creep under that duct,” not tabletop pick-and-place. |
+| **Action + expected visual consequence** | Policy mode returns a move *and* a predicted outcome — useful for Hangar review, demo mining, and Undercroft rehearsal before floor contact. |
+| **Common action geometry** | Translation / rotation / manipulation-state vectors across embodiments. Tracks + gimbal are an adapter + post-train problem, not a different universe. |
+| **4B open edge checkpoint + post-train scripts** | Stock DROID arm policy is the wrong body; the valuable part is the open post-train path (“~a day” vendor claim) onto Beast sensors/demos on CORE-PRIME, then deploy. |
+| **Orin is still in the family** | Vendor 15 Hz / 32-action figures are quoted on **Jetson Thor**. Separately, NVIDIA calls out running the **~2B Nemotron / Cosmos Reasoner path on Jetson Orin 8GB**. Beast’s slow dynamics mean even sub-Thor Hz is useful for drive + terrain alignment. |
+| **5090 is the gym; Orin is the field** | Post-train / distill / eval on CORE-PRIME; run lighter policies and reasoners on Orin; keep remote closed-loop as a first-class alternate. |
+
+So the pull is: **open physical-AI world model you can specialize to this rover**, not “must buy Thor to matter.”
+
+---
+
 ## What we would actually have it do on BEAST-01
 
 The Beast is a tracked rover with pan-tilt camera (and later depth/LiDAR), not an arm.
@@ -290,33 +309,83 @@ Still dumb:
 
 ---
 
-## 6. Decision matrix (Hangar-specific)
+## 6. Orin Nano 8GB — what else is actually SOTA-adjacent and fits
+
+Usable unified memory on Orin Nano is roughly **~7.6 GB** after OS. Memory is the gate; Beast
+being slow means **Hz budgets are forgiving** (single-digit control Hz can still be useful).
+
+Context7 checked: Context7 MCP unavailable; sizing below from Jetson AI Lab / TensorRT
+Edge-LLM docs, NVIDIA SIGGRAPH notes, LeRobot ecosystem, and published Jetson VLA fit matrices
+(accessed 2026-07-22).
+
+### A. Vision-language-action / policies (closed-loop drive)
+
+| Model | Size | Orin Nano 8GB fit | Notes for Beast |
+| --- | ---: | --- | --- |
+| **SmolVLA** (HF LeRobot) | ~450M (~1.6 GB) | **Best first fit** — ~15–25 ms class with ORT-TRT/INT8 in published Jetson notes | Production Nano-class VLA; post-train on Beast demos via [huggingface/lerobot](https://github.com/huggingface/lerobot) (26.0k stars) |
+| **Isaac GR00T N1.6 / N1.7** | ~3B (~4.4 GB FP16) | **Fits with headroom** | Stronger NVIDIA VLA; humanoid-heavy pretrain; still a post-train candidate; [NVIDIA/Isaac-GR00T](https://github.com/NVIDIA/Isaac-GR00T) (7.6k stars) |
+| **TinyVLA / MiniVLA-class** | ~1B | Likely fits | Embedded VLA experiments; less ecosystem than SmolVLA |
+| **π0 / π0.5 (openpi)** | ~3.5B | **Usually no** in full form (~12–13 GB); SnapFlow 1-step FP16 student ~6.5 GB is a **tight maybe** | Quality leader; treat as 5090 train / distill target, not day-one Nano |
+| **OpenVLA 7B** | ~7.5B | **No** for real-time on Nano | Keep as 5090 research / OFT recipes only |
+| **Cosmos 3 Edge** | 4B WAM | **Try on 5090 first**; Thor-quoted 15 Hz; Orin may run slower or reasoner-only | World-action + post-train path (see above) |
+
+### B. VLMs (scene coach, terrain language, “is the path under the duct clear?”)
+
+| Model | Size | Orin Nano note |
+| --- | ---: | --- |
+| **SmolVLM / SmolVLM2** | 256M–2.2B | Comfortable; used in edge voice-to-action stacks |
+| **InternVL3 1B / 2B** | 1–2B | Published Orin Nano TensorRT numbers (tens of tok/s quantized) |
+| **Qwen2.5-VL / Qwen3-VL 2B–3B** | 2–3B | Common Orin Nano VLM ceiling with INT4/FP16 |
+| **Cosmos Reason ~2B** | ~2B | NVIDIA explicitly calls out Orin 8GB for this reasoner path |
+| **VILA 1.5 ~3B / Gemma 3 4B VLM** | 3–4B | Upper end of comfortable Nano VLMs |
+
+### C. Text LLMs (Lane A phrase → JSON / ROS goals)
+
+| Model | Size | Orin Nano note |
+| --- | ---: | --- |
+| **Qwen3 1.7B / 4B** (INT4 AWQ) | 1.7–4B | TensorRT Edge-LLM Orin Nano path; 4B INT4 ~2 GB weights |
+| **Nemotron-3-Nano 4B** | 4B | NVIDIA edge LLM; Edge-LLM supported |
+| **Gemma 3 1B / 4B**, **Llama 3.2 3B** | 1–4B | Fine for goal parsing / tool-calling on-device |
+
+### D. Runtimes that matter on Orin
+
+- [NVIDIA/TensorRT-Edge-LLM](https://github.com/NVIDIA/TensorRT-Edge-LLM) (481 stars) — Jetson C++ LLM/VLM path
+- LeRobot train on 5090 → ONNX/ORT-TRT or TensorRT on Orin (JetPack Python ≠ LeRobot’s 3.12 train env; export off-device)
+- Classical CV / depth / LiDAR tricks for terrain alignment still count as “lightweight onboard inference”
+
+### Practical Hangar shortlist (once Orin is seated)
+
+1. **SmolVLA** — first closed-loop policy candidate on-device  
+2. **Qwen3-VL 2B or InternVL3-1B/2B + Qwen3-4B INT4** — scene coach + phrase driving on Orin  
+3. **GR00T N1.x** — second VLA if SmolVLA is too small after Beast post-train  
+4. **Cosmos Reason 2B / Cosmos 3 Edge** — reasoner now; full WAM post-train on 5090, measure Orin Hz later  
+5. Keep **π0 / OpenVLA** on CORE-PRIME unless distilled to Nano-sized students  
+
+---
+
+## 7. Decision matrix (Hangar-specific)
 
 | Question | Answer |
 | --- | --- |
-| Is Cosmos 3 Edge relevant? | Yes — as the open edge WAM reference and future post-train base. |
-| Does it change the Orin buy / cutover? | No. Orin remains the owned CUDA edge host. |
-| Does it put Thor on the buy list? | No. Keep researching; T2000/T3000 may revise tiering later. |
-| Best first LLM control for Beast? | Lane A over ROS2/Socket once Orin is in; remote closed-loop OK. |
-| Best first learned policy stack? | LeRobot (ACT → SmolVLA), trained on CORE-PRIME, closed-loop on Beast. |
-| When to touch Cosmos Edge Policy-DROID? | As a 5090 lab spike / recipe reference; UGV needs Beast post-train, not stock DROID. |
+| Why care about Cosmos 3 Edge? | Open world-action model + post-train path in the NVIDIA stack Hangar already uses; action+future-view; Orin reasoner path exists. |
+| Best Orin-first VLA? | **SmolVLA**, then GR00T N1.x if needed. |
+| Best Orin-first VLM / LLM pair? | Qwen3-VL or InternVL3 (2B-class) + Qwen3-4B / Nemotron-Nano-4B INT4. |
+| Does Edge force a Thor buy? | No. |
+| Best first LLM control for Beast? | Lane A over ROS2 once Orin is in; remote closed-loop OK. |
 | Hangar UI role? | Command portal: telemetry, video, teleop, remote + on-device autonomy. |
 
 ---
 
-## 7. Open questions
+## 8. Open questions
 
-- Can Cosmos 3 Edge run usefully (even offline / non-real-time) on Orin Nano 8GB, or is
-  Thor the honest floor for the 15 Hz claim?
-- What action dimensionality / adapter makes Beast differential drive + gimbal fit Cosmos’s
-  common action vectors?
-- For Undercroft cable haul, how soon does Lane B closed-loop beat Lane A goal scripts?
-- Should Hangar grow an explicit `capability` for “NL goal control” separate from
-  `teleop` / `onboard-autonomy`?
+- Measured Cosmos 3 Edge and Cosmos Reason 2B Hz / VRAM on **this** Orin Nano Super (not vendor Thor slides).
+- Beast differential-drive + gimbal action adapter for Cosmos / GR00T / SmolVLA.
+- How soon SmolVLA post-train beats Lane A scripts for Undercroft haul.
+- Whether a SnapFlow-style π0 student is worth the Nano memory squeeze vs just using SmolVLA.
 
 ---
 
-## 8. Sources (accessed 2026-07-22)
+## 9. Sources (accessed 2026-07-22)
 
 ### Primary — Cosmos
 
@@ -334,6 +403,10 @@ Still dumb:
 - [NVIDIA/Isaac-GR00T](https://github.com/NVIDIA/Isaac-GR00T) (7.6k stars)
 - [openvla/openvla](https://github.com/openvla/openvla) (6.7k stars)
 - [Physical-Intelligence/openpi](https://github.com/Physical-Intelligence/openpi) (12.9k stars)
+- [NVIDIA/TensorRT-Edge-LLM](https://github.com/NVIDIA/TensorRT-Edge-LLM) (481 stars)
+- [Jetson AI Lab — TensorRT Edge-LLM](https://www.jetson-ai-lab.com/tutorials/tensorrt-edge-llm/)
+- [Deploying VLAs on Jetson (fit matrix)](https://jared-hpc.com/posts/vla-physical-ai-tensorrt-tether/)
+- [NVIDIA SIGGRAPH / Cosmos Edge + Orin reasoner note](https://blogs.nvidia.com/blog/siggraph-news-2026/)
 - Wikipedia — [Vision–language–action model](https://en.wikipedia.org/wiki/Vision%E2%80%93language%E2%80%93action_model) (background only)
 
 ### Lane A / UGV NLP control patterns
@@ -353,6 +426,6 @@ Still dumb:
 ## Persistence
 
 - Full brief: this file.
-- Codex insights: `robot-llm-lanes`, `beast-llm-jobs` in `src/data/hangar.ts`.
+- Codex insights: `robot-llm-lanes`, `beast-llm-jobs`, `orin-edge-model-shortlist` in `src/data/hangar.ts`.
 - Activity ticker: researched event for `RND-ROBOT-LLM`.
 - `docs/beast-ops.md`: one-line research pointer under operating progression / references.
