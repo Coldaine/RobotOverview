@@ -268,6 +268,7 @@ export const hangarData: HangarData = {
         'video-device-path',
         'beast-socket-control',
         'robot-llm-lanes',
+        'beast-llm-jobs',
       ],
       tags: ['rover', 'flagship', 'waveshare', 'acce', 'ros2'],
       shortcuts: [
@@ -602,7 +603,13 @@ export const hangarData: HangarData = {
       afterAction: [
         '2026-07-01 OP-BEAST-CONTACT: Pi web UI, JupyterLab, Socket.IO command channel, and telemetry verified at 192.168.20.184. beast.local did not resolve from icarus-laptop; use the fixed IP until DNS/mDNS is repaired. Sent zero-speed stop only; no drive nudge performed.',
       ],
-      insights: ['dust-backscatter', 'power-rail', 'watchdog', 'beast-socket-control'],
+      insights: [
+        'dust-backscatter',
+        'power-rail',
+        'watchdog',
+        'beast-socket-control',
+        'beast-llm-jobs',
+      ],
     },
     {
       id: 'perimeter-mapping',
@@ -930,9 +937,22 @@ export const hangarData: HangarData = {
       tags: ['llm', 'vla', 'cosmos', 'policy', 'architecture', 'decision'],
       bay: 'robotics',
       units: ['beast', 'workstation', 'orin-nano', 'jetson-thor'],
+      missions: ['undercroft'],
       confidence: 'high',
       source:
         'docs/plans/2026-07-22-robot-control-llms-briefing.md; https://huggingface.co/blog/nvidia/cosmos3edge',
+      capturedAt: '2026-07-22',
+    },
+    {
+      id: 'beast-llm-jobs',
+      title: 'On BEAST, the LLM is a crawlspace co-pilot',
+      body: 'Worth building, in order: (1) phrase driving — “creep under the duct / nudge left / stop” → clamped L/R bursts; (2) look-where-I-mean gimbal aims from FPV + phrase; (3) scene coach HUD that narrates clearances while you still drive; (4) confirmed multi-step cable-haul chunks for Undercroft. Later: taught crawl segments via LeRobot. Not jobs: unattended patrol, stock DROID arm policies on tracks, or replacing the watchdog/PID.',
+      tags: ['llm', 'beast', 'teleop', 'undercroft', 'decision'],
+      bay: 'robotics',
+      units: ['beast', 'workstation'],
+      missions: ['undercroft'],
+      confidence: 'high',
+      source: 'docs/plans/2026-07-22-robot-control-llms-briefing.md#what-we-would-actually-have-it-do-on-beast-01',
       capturedAt: '2026-07-22',
     },
     {

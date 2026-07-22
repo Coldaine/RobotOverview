@@ -29,6 +29,51 @@ Hangar portal. Current Pi stack remains teleop + Socket.IO.
 
 ---
 
+## What we would actually have it do on BEAST-01
+
+The Beast is a tracked teleop rover with pan-tilt camera (and later depth/LiDAR), not an
+arm. So the LLM’s job is **crawlspace co-pilot**, not humanoid manipulation and not
+unattended patrol.
+
+Every item below is **propose → operator confirm → execute**, with onboard stop/watchdog
+still owning safety.
+
+### Jobs worth building (ordered)
+
+| # | Job on the Beast | Lane | Concrete behavior |
+| --- | --- | --- | --- |
+| 1 | **Phrase driving** for Undercroft | A | Operator says “creep forward under the duct”, “nudge left past the pillar”, “spin in place 90°”, “stop”. Model emits clamped `{L,R,duration}` (or `/cmd_vel`) over Socket.IO/ROS2. Hard speed caps; unknown verbs rejected. |
+| 2 | **Look-where-I-mean** gimbal | A (+ VLM) | “Look at the cable end”, “tilt up at the joists”, “scan left for the orange conduit”. Model proposes pan-tilt setpoints from the current frame + phrase; human confirms before servo move. |
+| 3 | **Scene coach / HUD** | A (VLM only) | No motion. Stream FPV to CORE-PRIME; model narrates obstacles and clearances (“duct ~30 cm overhead, pillar right, path under looks clear”) into the Hangar portal while Patrick still drives. Highest value, lowest risk. |
+| 4 | **Cable-haul assist script** | A | Multi-step plan for MSN-01: approach spool → grip/attach is still human → rover backs out along a confirmed corridor in short confirmed chunks. LLM sequences chunks; human clicks each one. |
+| 5 | **Taught crawl segments** | B | After Orin + demo recording: imitate a few repeated teleop maneuvers (straight crawl under duct, pillar slalom, deck lane). Triggered by name (“run undercroft-leg-2”), still confirmed. ACT/SmolVLA on 5090, actions streamed down. |
+| 6 | **Cosmos-class world model** | C | Lab only at first: given FPV + “pull toward the far pier”, predict action chunk **and** expected next view for review. Useful for training/eval and “what would happen if…” — not day-one floor control. DROID pick-and-place checkpoints do **not** map to tracks without Beast-specific post-train. |
+
+### Mission fit
+
+- **Undercroft (MSN-01):** jobs 1–4 are the real product. Dust, pillars, duct clearance, and
+  cable haul are awkward on a gamepad; phrase + scene coach reduce that load without
+  surrendering the stick.
+- **Perimeter mapping (MSN-02):** mostly classical SLAM/Nav once sensing exists; LLM helps
+  as “go inspect that fence line” goal language and as a mapping checklist, not as the
+  mapper itself.
+- **Pool deck (MSN-03):** LLM may only propose **low-speed** moves inside pre-marked
+  exclusion zones; anything near water stays manual-first.
+
+### Explicit non-jobs on this chassis
+
+- Unattended “patrol the property” loops
+- Replacing ESP32 PID / stale-command stop with a transformer
+- Running stock Cosmos Edge Policy-DROID (arm pick-and-place) as if it were UGV drive
+- Tight visual servoing over WiFi without an onboard reflex layer
+
+### One-sentence product picture
+
+**Hangar shows FPV + a suggested next nudge or look; Patrick confirms; Beast moves a
+short, clamped burst; silence or dropout → stop.**
+
+---
+
 ## 1. Why this briefing exists
 
 BEAST-01’s operating progression already ends with “ROS2 … even LLM-driven natural-language
