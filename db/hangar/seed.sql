@@ -96,20 +96,21 @@ INSERT INTO tags(namespace,name,label) VALUES ('tag','latency','latency') ON CON
 INSERT INTO tags(namespace,name,label) VALUES ('tag','operations','operations') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','telemetry','telemetry') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','architecture','architecture') ON CONFLICT (namespace,name) DO NOTHING;
+INSERT INTO tags(namespace,name,label) VALUES ('tag','autonomy','autonomy') ON CONFLICT (namespace,name) DO NOTHING;
+INSERT INTO tags(namespace,name,label) VALUES ('tag','decision','decision') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','sensing','sensing') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','calibration','calibration') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','compute','compute') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','tiering','tiering') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','software','software') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','policy','policy') ON CONFLICT (namespace,name) DO NOTHING;
-INSERT INTO tags(namespace,name,label) VALUES ('tag','decision','decision') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','llm','llm') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','vla','vla') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','cosmos','cosmos') ON CONFLICT (namespace,name) DO NOTHING;
-INSERT INTO tags(namespace,name,label) VALUES ('tag','autonomy','autonomy') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','teleop','teleop') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','undercroft','undercroft') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','north-star','north-star') ON CONFLICT (namespace,name) DO NOTHING;
+INSERT INTO tags(namespace,name,label) VALUES ('tag','perception','perception') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','deployment','deployment') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','shipwright','shipwright') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','ghcr','ghcr') ON CONFLICT (namespace,name) DO NOTHING;
@@ -346,7 +347,7 @@ INSERT INTO mission_constraints(mission_id,label,value,budget,unit) VALUES ('poo
 INSERT INTO capabilities(id,name,description,unlocked) VALUES ('teleop','Remote Teleoperation','FPV remote piloting with onboard I/O on the Jetson Orin host and PID on the ESP32. Offline while the host mount is empty mid-cutover.',false);
 INSERT INTO capabilities(id,name,description,unlocked) VALUES ('night-ops','Low-Light / Night Ops','Offset flood lighting enables piloting in dark, dusty spaces without backscatter washout.',false);
 INSERT INTO capabilities(id,name,description,unlocked) VALUES ('crawlspace-ops','Crawlspace Operations','Navigate under pillars, pipes, and ductwork in tight, low-clearance environments.',true);
-INSERT INTO capabilities(id,name,description,unlocked) VALUES ('gpu-offload','Off-board GPU Offload','Stream observations to the 5090 over WiFi 6; receive actions/perception back. Latency-tolerant work only.',true);
+INSERT INTO capabilities(id,name,description,unlocked) VALUES ('gpu-offload','Off-board GPU Offload','Stream observations to the 5090 over WiFi 6; receive actions/perception back. On BEAST, remote closed-loop is first-class alongside on-device Orin inference.',true);
 INSERT INTO capabilities(id,name,description,unlocked) VALUES ('policy-training','Policy Training','Train / fine-tune learned policies off-board on the 5090, deploy to the edge.',true);
 INSERT INTO capabilities(id,name,description,unlocked) VALUES ('onboard-autonomy','Dropout-Proof Onboard Autonomy','In-motion autonomy that survives a WiFi dropout — needs a CUDA brain on the rover (Orin).',false);
 INSERT INTO capabilities(id,name,description,unlocked) VALUES ('rgbd-perception','Fused RGB-D Perception','Registered colour + depth out of the box, zero calibration burden.',false);
@@ -414,11 +415,14 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-socket-control',id FRO
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-socket-control',id FROM tags WHERE namespace='tag' AND name='control' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-socket-control',id FROM tags WHERE namespace='tag' AND name='telemetry' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-socket-control',id FROM tags WHERE namespace='tag' AND name='network' ON CONFLICT DO NOTHING;
-INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('offload-split','Offload the latency-tolerant, keep the reflexes onboard','Yes: training, VLM/LLM reasoning, heavy perception. Risky: tight visual servoing. No: collision avoidance / e-stop / motor PID — those stay onboard so a dropout never blinds the robot mid-motion.','high',NULL,'2026-05-31');
+INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('offload-split','Train heavy offboard; run Beast control where it fits','CORE-PRIME is still the training / heavy-VLM box. On BEAST, operator override 2026-07-22: remote closed-loop and lightweight on-device inference (terrain alignment, obstacle avoidance) are both fine — the rover is slow and stops in time. Keep motor PID + stale-command watchdog as hard fail-safes. Rejected: treating avoidance or visual steering as forbidden over WiFi or “too late to stop.”','high','Operator correction 2026-07-22','2026-07-22');
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('offload-split','workstation') ON CONFLICT DO NOTHING;
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('offload-split','beast') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('offload-split','orin-nano') ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'offload-split',id FROM tags WHERE namespace='tag' AND name='architecture' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'offload-split',id FROM tags WHERE namespace='tag' AND name='offload' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'offload-split',id FROM tags WHERE namespace='tag' AND name='autonomy' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'offload-split',id FROM tags WHERE namespace='tag' AND name='decision' ON CONFLICT DO NOTHING;
 INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('depth-onboard','Integrated depth cameras compute depth onboard','An integrated RGB-D camera ships factory-calibrated and computes depth on-device, so the Pi can stream fused RGB-D without a GPU — erasing intrinsics, extrinsics, and time-sync from the to-do list.','high',NULL,'2026-05-31');
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('depth-onboard','beast') ON CONFLICT DO NOTHING;
 INSERT INTO insight_missions(insight_id,mission_id) VALUES ('depth-onboard','perimeter-mapping') ON CONFLICT DO NOTHING;
@@ -450,7 +454,7 @@ INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('lerob
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'lerobot-optional',id FROM tags WHERE namespace='tag' AND name='software' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'lerobot-optional',id FROM tags WHERE namespace='tag' AND name='policy' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'lerobot-optional',id FROM tags WHERE namespace='tag' AND name='decision' ON CONFLICT DO NOTHING;
-INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('robot-llm-lanes','Robot-control LLMs are three lanes, not one buy','Split the space: (A) language orchestrators that emit validated teleop/Nav2 goals, (B) VLA/imitation policies for closed-loop drive (LeRobot ACT/SmolVLA first), (C) world action models such as NVIDIA Cosmos 3 Edge. Autonomy is in scope (G7). On this slow hard-stopping Beast, remote closed-loop from CORE-PRIME and on-device Orin inference are both fine — do not invent WiFi-tail or confirm-every-chunk blockers. Keep watchdog/PID as fail-safes; post-train for tracks, not stock DROID arms.','high','docs/plans/2026-07-22-robot-control-llms-briefing.md; https://huggingface.co/blog/nvidia/cosmos3edge','2026-07-22');
+INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('robot-llm-lanes','Robot-control LLMs are three lanes, not one buy','Split the space: (A) language orchestrators → goals, (B) VLA/imitation closed-loop drive, (C) world action models (Cosmos 3 Edge). Autonomy in scope (G7). On Beast: remote closed-loop, on-device lightweight terrain alignment/avoidance, and heavier Orin/5090 policies are all fine — it stops in time. Keep PID/watchdog; reject stop-in-time and “avoidance forbidden” refusals. Post-train for tracks, not stock DROID arms.','high','docs/plans/2026-07-22-robot-control-llms-briefing.md; https://huggingface.co/blog/nvidia/cosmos3edge','2026-07-22');
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('robot-llm-lanes','beast') ON CONFLICT DO NOTHING;
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('robot-llm-lanes','workstation') ON CONFLICT DO NOTHING;
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('robot-llm-lanes','orin-nano') ON CONFLICT DO NOTHING;
@@ -463,7 +467,7 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'robot-llm-lanes',id FROM tag
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'robot-llm-lanes',id FROM tags WHERE namespace='tag' AND name='architecture' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'robot-llm-lanes',id FROM tags WHERE namespace='tag' AND name='decision' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'robot-llm-lanes',id FROM tags WHERE namespace='tag' AND name='autonomy' ON CONFLICT DO NOTHING;
-INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('beast-llm-jobs','On BEAST, the LLM path ends in self-driving missions','Build order once Orin is in: (1) phrase driving → clamped L/R; (2) look-where-I-mean gimbal; (3) scene coach HUD; (4) autonomous Undercroft cable-haul; (5) closed-loop crawl/patrol via LeRobot, later Cosmos Edge post-train on-device or offboard. Remote control is first-class. Not jobs: stock DROID arm policies on tracks, or replacing the watchdog/PID.','high','docs/plans/2026-07-22-robot-control-llms-briefing.md#what-we-would-actually-have-it-do-on-beast-01','2026-07-22');
+INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('beast-llm-jobs','On BEAST, the LLM path ends in self-driving missions','Build order once Orin is in: (1) phrase driving; (2) gimbal aim; (3) scene coach; (4) lightweight onboard terrain alignment / obstacle avoidance; (5) autonomous Undercroft cable-haul; (6) closed-loop crawl/patrol via LeRobot / Cosmos post-train — remote or on-device. Remote control is first-class. Not jobs: stock DROID arm policies on tracks, or replacing the watchdog/PID.','high','docs/plans/2026-07-22-robot-control-llms-briefing.md#what-we-would-actually-have-it-do-on-beast-01','2026-07-22');
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('beast-llm-jobs','beast') ON CONFLICT DO NOTHING;
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('beast-llm-jobs','workstation') ON CONFLICT DO NOTHING;
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('beast-llm-jobs','orin-nano') ON CONFLICT DO NOTHING;
@@ -479,7 +483,7 @@ INSERT INTO insight_assets(insight_id,asset_id) VALUES ('ag2-repealed','beast') 
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ag2-repealed',id FROM tags WHERE namespace='tag' AND name='north-star' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ag2-repealed',id FROM tags WHERE namespace='tag' AND name='autonomy' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ag2-repealed',id FROM tags WHERE namespace='tag' AND name='decision' ON CONFLICT DO NOTHING;
-INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('beast-slow-hard-stop','Beast is slow and stops on a dime — remote is fine','Operator correction 2026-07-22: BEAST-01 crawls slowly and hard-stops cleanly via the ESP32 path. WiFi-tail drama and “must babysit every chunk” framing are the wrong risk model for this chassis. Remote teleop and remote closed-loop from CORE-PRIME are absolutely in play; on-device Orin inference is also fine. Keep the watchdog; stop inventing refusals.','high','Operator correction during Orin cutover','2026-07-22');
+INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('beast-slow-hard-stop','Beast stops in time — lightweight onboard avoidance is fine','Operator correction 2026-07-22: BEAST-01 crawls slowly, hard-stops, and absolutely can stop in time for terrain/obstacle reactions. Remote closed-loop from CORE-PRIME is fine. Lightweight on-device Orin inference for terrain alignment and avoidance is fine — lots of tricks available, not a research fantasy. Rejected conclusions: “won’t stop in time,” “avoidance must stay classical-only,” “WiFi/visual steering too dangerous on this chassis.” Keep PID + watchdog; do not invent more refusals.','high','Operator correction during Orin cutover','2026-07-22');
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('beast-slow-hard-stop','beast') ON CONFLICT DO NOTHING;
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('beast-slow-hard-stop','orin-nano') ON CONFLICT DO NOTHING;
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('beast-slow-hard-stop','workstation') ON CONFLICT DO NOTHING;
@@ -488,6 +492,7 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-slow-hard-stop',id FRO
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-slow-hard-stop',id FROM tags WHERE namespace='tag' AND name='control' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-slow-hard-stop',id FROM tags WHERE namespace='tag' AND name='latency' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-slow-hard-stop',id FROM tags WHERE namespace='tag' AND name='autonomy' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-slow-hard-stop',id FROM tags WHERE namespace='tag' AND name='perception' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'beast-slow-hard-stop',id FROM tags WHERE namespace='tag' AND name='decision' ON CONFLICT DO NOTHING;
 INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('orin-host-gap','Pi out, Orin not in — Beast has no upper computer','2026-07-22: Raspberry Pi 5 removed from BEAST-01; host controller mount is empty while the software-ready Orin Nano Super is being fitted. No teleop/FPV until the Jetson is physically installed, UART/power/USB sensors are live, and beast network identity is moved off the old Pi. Active blocker is mechanical/host integration, not flash or ROS build.','high','Operator report 2026-07-22','2026-07-22');
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('orin-host-gap','beast') ON CONFLICT DO NOTHING;
@@ -507,7 +512,7 @@ INSERT INTO insight_assets(insight_id,asset_id) VALUES ('wifi-tail','beast') ON 
 
 -- activity_log
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-orin-host-gap','2026-07-22T03:45:00Z','mission','OP-ORIN-GAP: Pi removed from BEAST-01; host empty while Orin Nano is fitted.');
-INSERT INTO activity_log(id,at,kind,text) VALUES ('a-beast-slow','2026-07-22T03:46:00Z','insight','Beast is slow and hard-stopping — remote closed-loop is fine; drop false refusals.');
+INSERT INTO activity_log(id,at,kind,text) VALUES ('a-beast-slow','2026-07-22T03:46:00Z','insight','Beast stops in time; lightweight onboard terrain avoidance is in play — drop false refusals.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-ag2-repealed','2026-07-22T03:40:00Z','insight','North Star AG2 autonomy ban repealed; G7 makes closed-loop Beast policies in scope.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-robot-llm-brief','2026-07-22T03:20:00Z','researched','RND-ROBOT-LLM: mapped control-LLM / VLA / Cosmos 3 Edge lanes for BEAST autonomy.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a7','2026-07-01T18:32:19Z','mission','OP-BEAST-CONTACT verified BEAST-01 web, Jupyter, Socket.IO control, and telemetry over 192.168.20.184.');

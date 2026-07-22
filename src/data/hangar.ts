@@ -787,7 +787,8 @@ export const hangarData: HangarData = {
     {
       id: 'gpu-offload',
       name: 'Off-board GPU Offload',
-      description: 'Stream observations to the 5090 over WiFi 6; receive actions/perception back. Latency-tolerant work only.',
+      description:
+        'Stream observations to the 5090 over WiFi 6; receive actions/perception back. On BEAST, remote closed-loop is first-class alongside on-device Orin inference.',
       unlockedBy: ['workstation', 'udm-pro-max', 'unifi-aps'],
       bay: 'compute',
       unlocked: true,
@@ -898,13 +899,14 @@ export const hangarData: HangarData = {
     },
     {
       id: 'offload-split',
-      title: 'Offload the latency-tolerant, keep the reflexes onboard',
-      body: 'Yes: training, VLM/LLM reasoning, heavy perception. Risky: tight visual servoing. No: collision avoidance / e-stop / motor PID — those stay onboard so a dropout never blinds the robot mid-motion.',
-      tags: ['architecture', 'offload'],
+      title: 'Train heavy offboard; run Beast control where it fits',
+      body: 'CORE-PRIME is still the training / heavy-VLM box. On BEAST, operator override 2026-07-22: remote closed-loop and lightweight on-device inference (terrain alignment, obstacle avoidance) are both fine — the rover is slow and stops in time. Keep motor PID + stale-command watchdog as hard fail-safes. Rejected: treating avoidance or visual steering as forbidden over WiFi or “too late to stop.”',
+      tags: ['architecture', 'offload', 'autonomy', 'decision'],
       bay: 'compute',
-      units: ['workstation', 'beast'],
+      units: ['workstation', 'beast', 'orin-nano'],
       confidence: 'high',
-      capturedAt: '2026-05-31',
+      source: 'Operator correction 2026-07-22',
+      capturedAt: '2026-07-22',
     },
     {
       id: 'depth-onboard',
@@ -971,7 +973,7 @@ export const hangarData: HangarData = {
     {
       id: 'robot-llm-lanes',
       title: 'Robot-control LLMs are three lanes, not one buy',
-      body: 'Split the space: (A) language orchestrators that emit validated teleop/Nav2 goals, (B) VLA/imitation policies for closed-loop drive (LeRobot ACT/SmolVLA first), (C) world action models such as NVIDIA Cosmos 3 Edge. Autonomy is in scope (G7). On this slow hard-stopping Beast, remote closed-loop from CORE-PRIME and on-device Orin inference are both fine — do not invent WiFi-tail or confirm-every-chunk blockers. Keep watchdog/PID as fail-safes; post-train for tracks, not stock DROID arms.',
+      body: 'Split the space: (A) language orchestrators → goals, (B) VLA/imitation closed-loop drive, (C) world action models (Cosmos 3 Edge). Autonomy in scope (G7). On Beast: remote closed-loop, on-device lightweight terrain alignment/avoidance, and heavier Orin/5090 policies are all fine — it stops in time. Keep PID/watchdog; reject stop-in-time and “avoidance forbidden” refusals. Post-train for tracks, not stock DROID arms.',
       tags: ['llm', 'vla', 'cosmos', 'policy', 'architecture', 'decision', 'autonomy'],
       bay: 'robotics',
       units: ['beast', 'workstation', 'orin-nano', 'jetson-thor'],
@@ -984,7 +986,7 @@ export const hangarData: HangarData = {
     {
       id: 'beast-llm-jobs',
       title: 'On BEAST, the LLM path ends in self-driving missions',
-      body: 'Build order once Orin is in: (1) phrase driving → clamped L/R; (2) look-where-I-mean gimbal; (3) scene coach HUD; (4) autonomous Undercroft cable-haul; (5) closed-loop crawl/patrol via LeRobot, later Cosmos Edge post-train on-device or offboard. Remote control is first-class. Not jobs: stock DROID arm policies on tracks, or replacing the watchdog/PID.',
+      body: 'Build order once Orin is in: (1) phrase driving; (2) gimbal aim; (3) scene coach; (4) lightweight onboard terrain alignment / obstacle avoidance; (5) autonomous Undercroft cable-haul; (6) closed-loop crawl/patrol via LeRobot / Cosmos post-train — remote or on-device. Remote control is first-class. Not jobs: stock DROID arm policies on tracks, or replacing the watchdog/PID.',
       tags: ['llm', 'beast', 'teleop', 'undercroft', 'autonomy', 'decision'],
       bay: 'robotics',
       units: ['beast', 'workstation', 'orin-nano'],
@@ -1006,9 +1008,9 @@ export const hangarData: HangarData = {
     },
     {
       id: 'beast-slow-hard-stop',
-      title: 'Beast is slow and stops on a dime — remote is fine',
-      body: 'Operator correction 2026-07-22: BEAST-01 crawls slowly and hard-stops cleanly via the ESP32 path. WiFi-tail drama and “must babysit every chunk” framing are the wrong risk model for this chassis. Remote teleop and remote closed-loop from CORE-PRIME are absolutely in play; on-device Orin inference is also fine. Keep the watchdog; stop inventing refusals.',
-      tags: ['beast', 'control', 'latency', 'autonomy', 'decision'],
+      title: 'Beast stops in time — lightweight onboard avoidance is fine',
+      body: 'Operator correction 2026-07-22: BEAST-01 crawls slowly, hard-stops, and absolutely can stop in time for terrain/obstacle reactions. Remote closed-loop from CORE-PRIME is fine. Lightweight on-device Orin inference for terrain alignment and avoidance is fine — lots of tricks available, not a research fantasy. Rejected conclusions: “won’t stop in time,” “avoidance must stay classical-only,” “WiFi/visual steering too dangerous on this chassis.” Keep PID + watchdog; do not invent more refusals.',
+      tags: ['beast', 'control', 'latency', 'autonomy', 'perception', 'decision'],
       bay: 'robotics',
       units: ['beast', 'orin-nano', 'workstation'],
       missions: ['undercroft'],
@@ -1051,7 +1053,7 @@ export const hangarData: HangarData = {
       id: 'a-beast-slow',
       at: '2026-07-22T03:46:00Z',
       kind: 'insight',
-      text: 'Beast is slow and hard-stopping — remote closed-loop is fine; drop false refusals.',
+      text: 'Beast stops in time; lightweight onboard terrain avoidance is in play — drop false refusals.',
     },
     {
       id: 'a-ag2-repealed',

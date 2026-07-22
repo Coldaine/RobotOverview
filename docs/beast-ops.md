@@ -9,8 +9,9 @@ re-verify against the live robot before relying on anything stale.
 > autonomous / learned policies — North Star G7, autonomy in scope as of 2026-07-22). Onboard
 > fail-safes (stale-command watchdog, explicit stop, motor PID) remain mandatory engineering —
 > they are not a ban on self-driving. **Dynamics note (operator, 2026-07-22):** the Beast is
-> slow and hard-stops cleanly; remote closed-loop from CORE-PRIME and on-device Orin inference
-> are both viable once a host is fitted — do not treat WiFi-tail lore as a teleop veto.
+> slow, hard-stops, and **stops in time** for terrain/obstacle reactions. Remote closed-loop
+> from CORE-PRIME is fine. Lightweight on-device Orin inference for terrain alignment /
+> avoidance is fine. Reject “won’t stop in time” and “avoidance must stay classical-only.”
 
 ## Hardware chain
 
@@ -34,7 +35,8 @@ Browser  ──HTTP/WebSocket──▶  Raspberry Pi 5 + ugv_rpi  ──UART─�
   offboard policy inference. **Not yet installed in the chassis.**
 - **Upper computer (previous):** Raspberry Pi 5 + Waveshare `ugv_rpi` — removed; kept as spare.
 - **Lower computer:** ESP32 — motion (PID), stock pan-tilt servo bus, sensor feedback, stop.
-- **Chassis dynamics:** slow tracked base; stops on a dime when commanded / watchdog fires.
+- **Chassis dynamics:** slow tracked base; hard-stops and stops in time for lightweight
+  onboard terrain alignment / obstacle avoidance once Orin is fitted.
 
 ## Network
 
