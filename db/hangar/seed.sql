@@ -102,6 +102,9 @@ INSERT INTO tags(namespace,name,label) VALUES ('tag','tiering','tiering') ON CON
 INSERT INTO tags(namespace,name,label) VALUES ('tag','software','software') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','policy','policy') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','decision','decision') ON CONFLICT (namespace,name) DO NOTHING;
+INSERT INTO tags(namespace,name,label) VALUES ('tag','llm','llm') ON CONFLICT (namespace,name) DO NOTHING;
+INSERT INTO tags(namespace,name,label) VALUES ('tag','vla','vla') ON CONFLICT (namespace,name) DO NOTHING;
+INSERT INTO tags(namespace,name,label) VALUES ('tag','cosmos','cosmos') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','deployment','deployment') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','shipwright','shipwright') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','ghcr','ghcr') ON CONFLICT (namespace,name) DO NOTHING;
@@ -440,6 +443,17 @@ INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('lerob
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'lerobot-optional',id FROM tags WHERE namespace='tag' AND name='software' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'lerobot-optional',id FROM tags WHERE namespace='tag' AND name='policy' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'lerobot-optional',id FROM tags WHERE namespace='tag' AND name='decision' ON CONFLICT DO NOTHING;
+INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('robot-llm-lanes','Robot-control LLMs are three lanes, not one buy','Split the space: (A) language orchestrators that emit validated teleop/Nav2 commands, (B) VLA/imitation policies (LeRobot ACT/SmolVLA first), (C) world action models such as NVIDIA Cosmos 3 Edge (4B, ~15 Hz claims on Jetson Thor, DROID policy companion). For BEAST-01 stay supervised: Lane A after Socket.IO/ROS2, Lane B after Orin cutover + demo recording on CORE-PRIME, Lane C as 5090 research — not a Thor purchase trigger. E-stop/watchdog/PID never leave the robot.','high','docs/plans/2026-07-22-robot-control-llms-briefing.md; https://huggingface.co/blog/nvidia/cosmos3edge','2026-07-22');
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('robot-llm-lanes','beast') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('robot-llm-lanes','workstation') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('robot-llm-lanes','orin-nano') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('robot-llm-lanes','jetson-thor') ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'robot-llm-lanes',id FROM tags WHERE namespace='tag' AND name='llm' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'robot-llm-lanes',id FROM tags WHERE namespace='tag' AND name='vla' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'robot-llm-lanes',id FROM tags WHERE namespace='tag' AND name='cosmos' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'robot-llm-lanes',id FROM tags WHERE namespace='tag' AND name='policy' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'robot-llm-lanes',id FROM tags WHERE namespace='tag' AND name='architecture' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'robot-llm-lanes',id FROM tags WHERE namespace='tag' AND name='decision' ON CONFLICT DO NOTHING;
 INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('ghcr-buildrun-noise','Diagnose GHCR from live BuildRuns, not stale failures','On 2026-07-01 the live ExternalSecret-backed GHCR push and pull secrets were synced and shaped correctly, and current Shipwright BuildRuns pushed immutable image digests. Old failed BuildRuns were Dockerfile path mistakes and cleanup noise, not evidence that the GHCR tokens were broken.','high','coldaine-k8cluster live kubectl inspection','2026-07-01');
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM tags WHERE namespace='tag' AND name='deployment' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM tags WHERE namespace='tag' AND name='shipwright' ON CONFLICT DO NOTHING;
@@ -448,6 +462,7 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('wifi-tail','beast') ON CONFLICT DO NOTHING;
 
 -- activity_log
+INSERT INTO activity_log(id,at,kind,text) VALUES ('a-robot-llm-brief','2026-07-22T03:20:00Z','researched','RND-ROBOT-LLM: mapped control-LLM / VLA / Cosmos 3 Edge lanes for supervised BEAST control.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a7','2026-07-01T18:32:19Z','mission','OP-BEAST-CONTACT verified BEAST-01 web, Jupyter, Socket.IO control, and telemetry over 192.168.20.184.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-video-relock','2026-06-30T22:51:00Z','insight','Restored BEAST-01 FPV stream after USB camera re-enumeration; patched camera path selection.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a6','2026-07-01T14:25:43Z','insight','Shipwright/GHCR live status captured; both repos now have bootstrap tooling entrypoints.');

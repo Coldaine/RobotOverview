@@ -11,7 +11,7 @@ export const hangarData: HangarData = {
     title: 'THE HANGAR',
     operator: 'Patrick MacLyman',
     codename: 'FLEET COMMAND',
-    updated: '2026-07-03',
+    updated: '2026-07-22',
   },
 
   bays: [
@@ -267,6 +267,7 @@ export const hangarData: HangarData = {
         'wifi-tail',
         'video-device-path',
         'beast-socket-control',
+        'robot-llm-lanes',
       ],
       tags: ['rover', 'flagship', 'waveshare', 'acce', 'ros2'],
       shortcuts: [
@@ -398,7 +399,7 @@ export const hangarData: HangarData = {
       power: { watts: 600, rail: 'mains' },
       capabilities: ['gpu-offload', 'policy-training'],
       missions: ['undercroft'],
-      insights: ['wifi-tail', 'offload-split'],
+      insights: ['wifi-tail', 'offload-split', 'robot-llm-lanes'],
       tags: ['blackwell', '5090', 'workstation', 'cuda'],
       acquired: 'owned',
     },
@@ -449,7 +450,7 @@ export const hangarData: HangarData = {
       price: { us: 249, import: null },
       power: { watts: 25, rail: 'battery' },
       capabilities: ['onboard-autonomy'],
-      insights: ['orin-tier', 'blackwell-gap'],
+      insights: ['orin-tier', 'blackwell-gap', 'robot-llm-lanes'],
       tags: ['jetson', 'orin', 'ampere', 'edge-ai'],
       links: [{ label: 'NVIDIA Jetson Orin', url: 'https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/' }],
       acquired: 'owned',
@@ -474,7 +475,7 @@ export const hangarData: HangarData = {
       ],
       price: { us: 1999, import: null },
       power: { watts: 75, rail: 'battery' },
-      insights: ['blackwell-gap', 'thor-tier'],
+      insights: ['blackwell-gap', 'thor-tier', 'robot-llm-lanes'],
       tags: ['jetson', 'thor', 'blackwell', 'industrial'],
       horizon: 'Q2 2026 · wrong tier',
     },
@@ -923,6 +924,18 @@ export const hangarData: HangarData = {
       capturedAt: '2026-05-31',
     },
     {
+      id: 'robot-llm-lanes',
+      title: 'Robot-control LLMs are three lanes, not one buy',
+      body: 'Split the space: (A) language orchestrators that emit validated teleop/Nav2 commands, (B) VLA/imitation policies (LeRobot ACT/SmolVLA first), (C) world action models such as NVIDIA Cosmos 3 Edge (4B, ~15 Hz claims on Jetson Thor, DROID policy companion). For BEAST-01 stay supervised: Lane A after Socket.IO/ROS2, Lane B after Orin cutover + demo recording on CORE-PRIME, Lane C as 5090 research — not a Thor purchase trigger. E-stop/watchdog/PID never leave the robot.',
+      tags: ['llm', 'vla', 'cosmos', 'policy', 'architecture', 'decision'],
+      bay: 'robotics',
+      units: ['beast', 'workstation', 'orin-nano', 'jetson-thor'],
+      confidence: 'high',
+      source:
+        'docs/plans/2026-07-22-robot-control-llms-briefing.md; https://huggingface.co/blog/nvidia/cosmos3edge',
+      capturedAt: '2026-07-22',
+    },
+    {
       id: 'ghcr-buildrun-noise',
       title: 'Diagnose GHCR from live BuildRuns, not stale failures',
       body: 'On 2026-07-01 the live ExternalSecret-backed GHCR push and pull secrets were synced and shaped correctly, and current Shipwright BuildRuns pushed immutable image digests. Old failed BuildRuns were Dockerfile path mistakes and cleanup noise, not evidence that the GHCR tokens were broken.',
@@ -935,6 +948,12 @@ export const hangarData: HangarData = {
   ],
 
   activity: [
+    {
+      id: 'a-robot-llm-brief',
+      at: '2026-07-22T03:20:00Z',
+      kind: 'researched',
+      text: 'RND-ROBOT-LLM: mapped control-LLM / VLA / Cosmos 3 Edge lanes for supervised BEAST control.',
+    },
     {
       id: 'a7',
       at: '2026-07-01T18:32:19Z',

@@ -136,7 +136,8 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 3. **JSON command API** — `/json` Socket.IO. Script motion and gimbal control; this is also
    the integration point if the Hangar ever gains a (supervised) command view.
 4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, even
-   LLM-driven natural-language control. Bigger jump.
+   LLM-driven natural-language control. Bigger jump. Research brief on control-LLM /
+   VLA / Cosmos lanes: [robot-control LLMs briefing](plans/2026-07-22-robot-control-llms-briefing.md).
 
 ## NVMe storage policy — PLANNED, NOT APPLIED
 
@@ -1237,3 +1238,5 @@ service and move the `beast` DHCP/DNS identity away from the disconnected Pi.
 - Waveshare UGV Beast — https://www.waveshare.com/ugv-beast.htm
 - `ugv_rpi` (Pi upper-computer code) — https://github.com/waveshareteam/ugv_rpi
 - `ugv_base_general` / `ugv_base_ros` (ESP32 lower-computer code) — https://github.com/waveshareteam
+- Robot control LLMs / VLA / Cosmos 3 Edge research brief — [docs/plans/2026-07-22-robot-control-llms-briefing.md](plans/2026-07-22-robot-control-llms-briefing.md)
+- Introducing Cosmos 3 Edge (Hugging Face) — https://huggingface.co/blog/nvidia/cosmos3edge
