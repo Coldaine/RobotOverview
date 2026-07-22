@@ -269,6 +269,7 @@ export const hangarData: HangarData = {
         'beast-socket-control',
         'robot-llm-lanes',
         'beast-llm-jobs',
+        'ag2-repealed',
       ],
       tags: ['rover', 'flagship', 'waveshare', 'acce', 'ros2'],
       shortcuts: [
@@ -547,7 +548,7 @@ export const hangarData: HangarData = {
       lifecycle: 'deployed',
       provenance: 'owner',
       summary:
-        'Whole-home automation brain with a Thread border router. Referenced by the Hangar, never controlled by it — the Hangar catalogs, it does not operate.',
+        'Whole-home automation brain with a Thread border router. Hangar catalogs its role; Home Assistant remains the home-automation control plane.',
       specs: [
         { label: 'Thread', value: 'ZBT-2 border router' },
         { label: 'Climate', value: 'Ecobee' },
@@ -933,8 +934,8 @@ export const hangarData: HangarData = {
     {
       id: 'robot-llm-lanes',
       title: 'Robot-control LLMs are three lanes, not one buy',
-      body: 'Split the space: (A) language orchestrators that emit validated teleop/Nav2 commands, (B) VLA/imitation policies (LeRobot ACT/SmolVLA first), (C) world action models such as NVIDIA Cosmos 3 Edge (4B, ~15 Hz claims on Jetson Thor, DROID policy companion). For BEAST-01 stay supervised: Lane A after Socket.IO/ROS2, Lane B after Orin cutover + demo recording on CORE-PRIME, Lane C as 5090 research — not a Thor purchase trigger. E-stop/watchdog/PID never leave the robot.',
-      tags: ['llm', 'vla', 'cosmos', 'policy', 'architecture', 'decision'],
+      body: 'Split the space: (A) language orchestrators that emit validated teleop/Nav2 goals, (B) VLA/imitation policies for closed-loop drive (LeRobot ACT/SmolVLA first), (C) world action models such as NVIDIA Cosmos 3 Edge (4B, ~15 Hz claims on Jetson Thor). Autonomy is in scope (North Star G7): Lane A after Socket.IO/ROS2, Lane B after Orin cutover + demos on CORE-PRIME, Lane C post-train on the 5090 — not a Thor purchase trigger. E-stop/watchdog/PID stay onboard as fail-safes.',
+      tags: ['llm', 'vla', 'cosmos', 'policy', 'architecture', 'decision', 'autonomy'],
       bay: 'robotics',
       units: ['beast', 'workstation', 'orin-nano', 'jetson-thor'],
       missions: ['undercroft'],
@@ -945,14 +946,25 @@ export const hangarData: HangarData = {
     },
     {
       id: 'beast-llm-jobs',
-      title: 'On BEAST, the LLM is a crawlspace co-pilot',
-      body: 'Worth building, in order: (1) phrase driving — “creep under the duct / nudge left / stop” → clamped L/R bursts; (2) look-where-I-mean gimbal aims from FPV + phrase; (3) scene coach HUD that narrates clearances while you still drive; (4) confirmed multi-step cable-haul chunks for Undercroft. Later: taught crawl segments via LeRobot. Not jobs: unattended patrol, stock DROID arm policies on tracks, or replacing the watchdog/PID.',
-      tags: ['llm', 'beast', 'teleop', 'undercroft', 'decision'],
+      title: 'On BEAST, the LLM path ends in self-driving missions',
+      body: 'Build order: (1) phrase driving — “creep under the duct / nudge left / stop” → clamped L/R; (2) look-where-I-mean gimbal from FPV + phrase; (3) scene coach HUD; (4) autonomous Undercroft cable-haul along taught/mapped paths with live abort; (5) closed-loop crawl/patrol policies via LeRobot, later Cosmos Edge post-train. Not jobs: stock DROID arm policies on tracks, or replacing the watchdog/PID. Pool deck stays geofenced low-speed.',
+      tags: ['llm', 'beast', 'teleop', 'undercroft', 'autonomy', 'decision'],
       bay: 'robotics',
       units: ['beast', 'workstation'],
       missions: ['undercroft'],
       confidence: 'high',
       source: 'docs/plans/2026-07-22-robot-control-llms-briefing.md#what-we-would-actually-have-it-do-on-beast-01',
+      capturedAt: '2026-07-22',
+    },
+    {
+      id: 'ag2-repealed',
+      title: 'Autonomy ban repealed — Hangar may self-drive units',
+      body: '2026-07-22: North Star AG2 (“not an autonomous system / human always in the loop”) is removed. New G7: Hangar hosts a live command portal including teleop and autonomous/learned policies. Onboard fail-safes remain mandatory engineering, not a product veto on closed-loop control.',
+      tags: ['north-star', 'autonomy', 'decision'],
+      bay: 'robotics',
+      units: ['beast'],
+      confidence: 'high',
+      source: 'docs/NORTH_STAR.md',
       capturedAt: '2026-07-22',
     },
     {
@@ -969,10 +981,16 @@ export const hangarData: HangarData = {
 
   activity: [
     {
+      id: 'a-ag2-repealed',
+      at: '2026-07-22T03:40:00Z',
+      kind: 'insight',
+      text: 'North Star AG2 autonomy ban repealed; G7 makes closed-loop Beast policies in scope.',
+    },
+    {
       id: 'a-robot-llm-brief',
       at: '2026-07-22T03:20:00Z',
       kind: 'researched',
-      text: 'RND-ROBOT-LLM: mapped control-LLM / VLA / Cosmos 3 Edge lanes for supervised BEAST control.',
+      text: 'RND-ROBOT-LLM: mapped control-LLM / VLA / Cosmos 3 Edge lanes for BEAST autonomy.',
     },
     {
       id: 'a7',

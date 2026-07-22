@@ -5,11 +5,11 @@ purchase decisions are changed by this document.
 
 **Codename:** `RND-ROBOT-LLM`
 
-**Audience:** Hangar operator + agents planning supervised BEAST-01 control upgrades.
+**Audience:** Hangar operator + agents planning BEAST-01 control and autonomy.
 
-**North Star constraint:** Hangar is never unattended autonomy (AG2). Any LLM / VLA path
-must stay human-supervised, with e-stop / stale-command watchdog / motor PID remaining
-onboard reflexes.
+**North Star:** Autonomy is in scope (**G7**, decided 2026-07-22). The old AG2 ban on
+unattended / autonomous operation is repealed. Onboard fail-safes (e-stop, stale-command
+watchdog, motor PID) remain engineering requirements — they do not forbid self-driving.
 
 ---
 
@@ -20,57 +20,53 @@ Treat “robot control LLMs” as **three different products**, not one:
 | Lane | What it does | Hangar fit now |
 | --- | --- | --- |
 | **A. Language orchestrator** | NL / voice → structured teleop or Nav2 goals | Near-term after Socket.IO / ROS2 cutover; runs offboard on CORE-PRIME |
-| **B. VLA / imitation policy** | Camera (+ language) → continuous actions | Research after Orin cutover + demo recording; LeRobot / SmolVLA / ACT first |
-| **C. World action model (WAM)** | Shared world model that reasons, simulates, and emits actions | Horizon research; NVIDIA Cosmos 3 Edge is the headline open edge checkpoint |
+| **B. VLA / imitation policy** | Camera (+ language) → continuous actions | Self-driving path after Orin cutover + demo recording; LeRobot / SmolVLA / ACT first |
+| **C. World action model (WAM)** | Shared world model that reasons, simulates, and emits actions | Autonomy research + post-train; NVIDIA Cosmos 3 Edge is the headline open edge checkpoint |
 
-**Do not** put a closed-loop VLA or WAM on the motion path until Orin physical cutover,
-watchdog validation, and a supervised “propose → confirm → execute” gate exist in the
-Hangar portal. Current Pi stack remains teleop + Socket.IO.
+**Engineering gate (not a product ban):** closed-loop VLA/WAM on the motion path waits on
+Orin physical cutover + validated watchdog/stop behavior. Until then the Pi stack is teleop
++ Socket.IO while CORE-PRIME trains and evaluates policies.
 
 ---
 
 ## What we would actually have it do on BEAST-01
 
-The Beast is a tracked teleop rover with pan-tilt camera (and later depth/LiDAR), not an
-arm. So the LLM’s job is **crawlspace co-pilot**, not humanoid manipulation and not
-unattended patrol.
+The Beast is a tracked rover with pan-tilt camera (and later depth/LiDAR), not an arm.
+The end state is **self-driving on missions** — crawlspace cable haul, perimeter runs,
+deck lanes — with Hangar as the command portal that starts, monitors, and aborts policies.
 
-Every item below is **propose → operator confirm → execute**, with onboard stop/watchdog
-still owning safety.
+Build in stages so autonomy is earned, not wished:
 
 ### Jobs worth building (ordered)
 
 | # | Job on the Beast | Lane | Concrete behavior |
 | --- | --- | --- | --- |
-| 1 | **Phrase driving** for Undercroft | A | Operator says “creep forward under the duct”, “nudge left past the pillar”, “spin in place 90°”, “stop”. Model emits clamped `{L,R,duration}` (or `/cmd_vel`) over Socket.IO/ROS2. Hard speed caps; unknown verbs rejected. |
-| 2 | **Look-where-I-mean** gimbal | A (+ VLM) | “Look at the cable end”, “tilt up at the joists”, “scan left for the orange conduit”. Model proposes pan-tilt setpoints from the current frame + phrase; human confirms before servo move. |
-| 3 | **Scene coach / HUD** | A (VLM only) | No motion. Stream FPV to CORE-PRIME; model narrates obstacles and clearances (“duct ~30 cm overhead, pillar right, path under looks clear”) into the Hangar portal while Patrick still drives. Highest value, lowest risk. |
-| 4 | **Cable-haul assist script** | A | Multi-step plan for MSN-01: approach spool → grip/attach is still human → rover backs out along a confirmed corridor in short confirmed chunks. LLM sequences chunks; human clicks each one. |
-| 5 | **Taught crawl segments** | B | After Orin + demo recording: imitate a few repeated teleop maneuvers (straight crawl under duct, pillar slalom, deck lane). Triggered by name (“run undercroft-leg-2”), still confirmed. ACT/SmolVLA on 5090, actions streamed down. |
-| 6 | **Cosmos-class world model** | C | Lab only at first: given FPV + “pull toward the far pier”, predict action chunk **and** expected next view for review. Useful for training/eval and “what would happen if…” — not day-one floor control. DROID pick-and-place checkpoints do **not** map to tracks without Beast-specific post-train. |
+| 1 | **Phrase driving** for Undercroft | A | “Creep forward under the duct”, “nudge left past the pillar”, “spin 90°”, “stop” → clamped `{L,R,duration}` / `/cmd_vel`. Hard speed caps; unknown verbs rejected. First autonomy-shaped interface. |
+| 2 | **Look-where-I-mean** gimbal | A (+ VLM) | “Look at the cable end”, “tilt up at the joists”, “scan left for the orange conduit” → pan-tilt setpoints from FPV + phrase. |
+| 3 | **Scene coach / HUD** | A (VLM) | Stream FPV to CORE-PRIME; narrate clearances into Hangar while driving or while a policy runs (“duct overhead, pillar right”). |
+| 4 | **Cable-haul autonomy** | A→B | MSN-01: approach corridor, hold for human cable attach if needed, then **autonomous reverse haul** along a taught/mapped path in clamped bursts with live abort. |
+| 5 | **Taught crawl / patrol policies** | B | After Orin + demos: closed-loop ACT/SmolVLA (or later Cosmos Edge post-train) for undercroft legs, perimeter inspect, pool-deck lanes inside geofenced speeds. Hangar starts the policy; watchdog stops on dropout. |
+| 6 | **Cosmos-class world model** | C | Train/eval on 5090: FPV + goal → action chunk + predicted next view. Post-train for Beast tracks (stock DROID arm checkpoints do **not** transfer). Deploy when Hz and embodiment fit. |
 
 ### Mission fit
 
-- **Undercroft (MSN-01):** jobs 1–4 are the real product. Dust, pillars, duct clearance, and
-  cable haul are awkward on a gamepad; phrase + scene coach reduce that load without
-  surrendering the stick.
-- **Perimeter mapping (MSN-02):** mostly classical SLAM/Nav once sensing exists; LLM helps
-  as “go inspect that fence line” goal language and as a mapping checklist, not as the
-  mapper itself.
-- **Pool deck (MSN-03):** LLM may only propose **low-speed** moves inside pre-marked
-  exclusion zones; anything near water stays manual-first.
+- **Undercroft (MSN-01):** phrase drive → taught crawl → autonomous cable haul is the
+  flagship autonomy story.
+- **Perimeter mapping (MSN-02):** classical SLAM/Nav plus language goals (“inspect that
+  fence line”); later a patrol policy on the map.
+- **Pool deck (MSN-03):** autonomy only inside marked exclusion zones and low-speed
+  profiles — self-driving with hard geofence, not a free roam near water.
 
 ### Explicit non-jobs on this chassis
 
-- Unattended “patrol the property” loops
-- Replacing ESP32 PID / stale-command stop with a transformer
+- Replacing ESP32 PID / stale-command stop with a transformer (fail-safes stay onboard)
 - Running stock Cosmos Edge Policy-DROID (arm pick-and-place) as if it were UGV drive
-- Tight visual servoing over WiFi without an onboard reflex layer
+- Tight visual servoing over WiFi with **no** onboard reflex layer
 
 ### One-sentence product picture
 
-**Hangar shows FPV + a suggested next nudge or look; Patrick confirms; Beast moves a
-short, clamped burst; silence or dropout → stop.**
+**Hangar launches a Beast policy (or phrase goal); the rover drives the mission closed-loop;
+silence, abort, or geofence breach → stop.**
 
 ---
 
@@ -100,10 +96,11 @@ existing Hangar owner docs.
 Pipeline: speech or text → LLM → **validated** JSON / ROS messages / short action scripts →
 existing controllers (Socket.IO `{"T":1,"L","R"}`, `/cmd_vel`, Nav2).
 
-- Strength: cheap to stand up; reuses classical stacks; easy to keep a human confirm step.
+- Strength: cheap to stand up; reuses classical stacks; good for goal-level autonomy and
+  scripted mission segments.
 - Weakness: not continuous closed-loop control; grounding fails without vision or a map;
-  latency is turn-based (hundreds of ms to seconds), so it is a **supervisor**, not a
-  servo.
+  latency is turn-based (hundreds of ms to seconds), so it plans / sequences rather than
+  servoing.
 - UGV-relevant pattern: multimodal planner that returns a short validated action plan from
   a voice command + camera frame, then clamps speeds before driving (see Cyberwave UGV
   voice tutorial pattern — plan verbs, not learned continuous control).
@@ -204,8 +201,8 @@ Reasons it does **not** move Thor onto the buy list today:
 2. Stock policy release is **DROID arm pick-and-place**, not Waveshare tracked UGV
    differential drive. Embodiment transfer requires post-training on Beast demos /
    sim — exactly the Cosmos “post-train in about a day” story, but still unpaid work.
-3. North Star AG2 forbids unattended closed-loop control. Even a perfect Edge policy would
-   enter Hangar as a **supervised proposer**, never as silent autonomy.
+3. Autonomy is in scope (G7); Edge still needs Beast-specific post-train before closed-loop
+   UGV deploy — stock DROID is the wrong embodiment, not a policy ban.
 4. Existing Hangar insights already say Thor is industrial-tier for large onboard VLAs
    (`thor-tier`). T2000/T3000 soften the price/power curve later; they do not erase the
    “hobby rover within AP range” offload doctrine.
@@ -213,7 +210,7 @@ Reasons it does **not** move Thor onto the buy list today:
 **Where Edge *does* fit Hangar compute:**
 
 - **CORE-PRIME (5090):** fine-tune / distill / evaluate Cosmos Edge or Nano; generate
-  synthetic trajectories; run heavier reasoner modes with human confirm.
+  synthetic trajectories; run heavier reasoner modes and closed-loop offboard policies.
 - **BEAST-JETSON (Orin Nano Super):** after cutover, candidate for **smaller** LeRobot
   policies (ACT / SmolVLA class) and classical Isaac / ROS perception — not assumed to
   host full Edge 15 Hz claims.
@@ -226,17 +223,17 @@ Reasons it does **not** move Thor onto the buy list today:
 
 ```text
  Operator (Hangar UI / voice)
-        │  propose / confirm
+        │  launch / monitor / abort
         ▼
  ┌──────────────────────────────┐
  │ CORE-PRIME  RTX 5090         │  Lane A LLM planner
- │  + optional VLA / Cosmos     │  Lane B/C training & heavy infer
+ │  + VLA / Cosmos policies     │  Lane B/C train + offboard infer
  └─────────────┬────────────────┘
                │ WiFi 6 (design for tail)
                ▼
  ┌──────────────────────────────┐
- │ Onboard host (Pi now / Orin) │  stream · watchdog · validate
- │  never silent autonomy       │
+ │ Onboard host (Pi now / Orin) │  stream · watchdog · onboard policy
+ │  autonomy in scope (G7)      │
  └─────────────┬────────────────┘
                │ UART JSON
                ▼
@@ -252,36 +249,35 @@ Binding rules already in Hangar memory:
 
 Suggested capability layering (conceptual — not schema changes):
 
-1. **Supervised NL teleop** (Lane A) on top of Socket.IO / later ROS2.
+1. **NL goal / teleop** (Lane A) on Socket.IO / later ROS2.
 2. **Demo recording** to `/data/beast/datasets` once NVMe storage policy is applied.
-3. **LeRobot ACT / SmolVLA** experiments offboard, replay on lifted tracks.
-4. **Cosmos Edge / Nano** only after (2)–(3) exist and embodiment adapters are defined.
+3. **LeRobot ACT / SmolVLA** closed-loop on lifted tracks, then floor.
+4. **Cosmos Edge / Nano** post-train after (2)–(3) and Beast action adapters exist.
 
 ---
 
 ## 5. Recommended Hangar progression
 
-Ordered so each step stays supervised and reversible:
+Ordered so each step earns more autonomy without skipping fail-safes:
 
 1. **Finish physical Orin cutover gates** already listed in `docs/beast-ops.md`
    (UART, telemetry, camera, LiDAR, lifted-track heartbeat-stop). Without this, every
-   “onboard policy” claim is fiction.
-2. **Hangar supervised command view** — human confirms every motion chunk; reuse
-   `tools/beast-probe.mjs` safety culture (zero-speed default).
+   onboard policy claim is fiction.
+2. **Hangar command portal** — start/monitor/abort motion; reuse
+   `tools/beast-probe.mjs` safety culture (zero-speed default, watchdog).
 3. **Lane A prototype** — multimodal LLM returns clamped `{L,R,duration}` or Nav2 goals;
-   reject unknown verbs; hard speed caps; require confirm.
-4. **Record teleop demos** for Undercroft / deck lanes once storage layout lands.
-5. **Lane B on CORE-PRIME** — train ACT or SmolVLA via LeRobot; evaluate in sim or
-   lifted-track before floor contact.
-6. **Lane C research spike** — pull `nvidia/Cosmos3-Edge` + Policy-DROID on the 5090;
-   measure VRAM / Hz; decide whether UGV post-train is worth a mission; do **not**
-   purchase Thor for this spike.
+   reject unknown verbs; hard speed caps; then run goals without per-chunk babysitting.
+4. **Record teleop demos** for Undercroft / deck / perimeter once storage layout lands.
+5. **Lane B closed-loop** — train ACT or SmolVLA via LeRobot on CORE-PRIME; lift-track,
+   then floor autonomy with live abort.
+6. **Lane C / Cosmos Edge** — pull `nvidia/Cosmos3-Edge` on the 5090; measure VRAM / Hz;
+   post-train for Beast tracks; do **not** purchase Thor for the spike alone.
 
-Anti-goals for this research lane:
+Engineering anti-patterns (still banned):
 
-- No unattended patrol loops driven by an LLM/VLA.
-- No “replace PID with the transformer.”
-- No assuming DROID arm checkpoints transfer to tracks without data.
+- “Replace PID / watchdog with the transformer.”
+- Assuming DROID arm checkpoints transfer to tracks without Beast data.
+- Autonomy near the pool without geofenced low-speed profiles.
 
 ---
 
@@ -292,10 +288,10 @@ Anti-goals for this research lane:
 | Is Cosmos 3 Edge relevant? | Yes — as the open edge WAM reference and future post-train base. |
 | Does it change the Orin buy / cutover? | No. Orin remains the owned CUDA edge host. |
 | Does it put Thor on the buy list? | No. Keep researching; T2000/T3000 may revise tiering later. |
-| Best first LLM control for Beast? | Lane A orchestrator over Socket.IO/ROS2 with confirm + clamps. |
-| Best first learned policy stack? | LeRobot (ACT → SmolVLA), trained on CORE-PRIME. |
-| When to touch Cosmos Edge Policy-DROID? | After demo recording exists **or** as a 5090 lab spike for manipulation arms, not as UGV day-one control. |
-| Hangar UI role? | Portal for telemetry / video / supervised teleop; LLM outputs are proposals. |
+| Best first LLM control for Beast? | Lane A orchestrator over Socket.IO/ROS2 with clamps + abort. |
+| Best first learned policy stack? | LeRobot (ACT → SmolVLA), trained on CORE-PRIME, closed-loop on Beast. |
+| When to touch Cosmos Edge Policy-DROID? | As a 5090 lab spike / recipe reference; UGV needs Beast post-train, not stock DROID. |
+| Hangar UI role? | Command portal: telemetry, video, teleop, launch/monitor/abort autonomous policies. |
 
 ---
 
@@ -305,8 +301,8 @@ Anti-goals for this research lane:
   Thor the honest floor for the 15 Hz claim?
 - What action dimensionality / adapter makes Beast differential drive + gimbal fit Cosmos’s
   common action vectors?
-- For Undercroft cable haul, is Lane A + classical CV enough that Lane B never pays off?
-- Should Hangar grow an explicit `capability` for “supervised NL control” separate from
+- For Undercroft cable haul, how soon does Lane B closed-loop beat Lane A goal scripts?
+- Should Hangar grow an explicit `capability` for “NL goal control” separate from
   `teleop` / `onboard-autonomy`?
 
 ---
@@ -338,16 +334,16 @@ Anti-goals for this research lane:
 
 ### Hangar owner truth
 
-- `docs/NORTH_STAR.md` — AG2 supervised portal, no unattended autonomy
+- `docs/NORTH_STAR.md` — G7 live command portal; autonomy in scope (AG2 repealed 2026-07-22)
 - `docs/beast-ops.md` — Pi/Jetson stack, Socket.IO control, operating progression
 - `src/data/hangar.ts` — insights `offload-split`, `wifi-tail`, `watchdog`, `thor-tier`,
-  `lerobot-optional`
+  `lerobot-optional`, `robot-llm-lanes`, `beast-llm-jobs`
 
 ---
 
 ## Persistence
 
 - Full brief: this file.
-- Codex insight: `robot-llm-lanes` in `src/data/hangar.ts`.
+- Codex insights: `robot-llm-lanes`, `beast-llm-jobs` in `src/data/hangar.ts`.
 - Activity ticker: researched event for `RND-ROBOT-LLM`.
 - `docs/beast-ops.md`: one-line research pointer under operating progression / references.

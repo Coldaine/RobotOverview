@@ -446,7 +446,8 @@ export default function UnitDetail() {
                 })}
               </div>
               <p className="mt-3 border-t border-rim/50 pt-3 font-mono text-[10px] leading-relaxed text-ink-dim">
-                Supervised launch/copy only. Hangar does not execute robot commands.
+                Shortcuts open or copy unit surfaces. In-app teleop and autonomy ship with the
+                Hangar command portal (North Star G7).
               </p>
             </div>
           )}

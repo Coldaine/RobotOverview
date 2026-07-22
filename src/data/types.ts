@@ -168,8 +168,8 @@ export interface Unit {
   acquired?: string; // ISO date or "—"
   horizon?: string; // for future items: when it's expected
   provenance?: ProvenanceKind;
-  // External system this unit's live status is *referenced* from (e.g. "Home Assistant").
-  // Catalog reference only — the Hangar never controls the system (North Star AG2).
+  // External system this unit's live status may be referenced from (e.g. "Home Assistant").
+  // Optional cross-link; does not by itself imply Hangar owns that system's control plane.
   monitoredVia?: string;
 }
 

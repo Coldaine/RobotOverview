@@ -5,9 +5,11 @@ read its telemetry, and program it. The catalog entry for the unit lives in
 `src/data/hangar.ts` (`id: 'beast'`). Facts below carry the date they were last verified;
 re-verify against the live robot before relying on anything stale.
 
-> The Hangar is growing an in-app supervised portal to the Beast (telemetry, video, teleop —
-> North Star AG2, decided 2026-07-02). Until it ships, the robot's own dashboard below is the
-> control surface. Human-in-the-loop always; nothing operates the robot unattended.
+> The Hangar is growing an in-app command portal to the Beast (telemetry, video, teleop, and
+> autonomous / learned policies — North Star G7, autonomy in scope as of 2026-07-22). Until it
+> ships, the robot's own dashboard below is the control surface. Onboard fail-safes (stale-command
+> watchdog, explicit stop, motor PID) remain mandatory engineering — they are not a ban on
+> self-driving.
 
 ## Hardware chain
 
@@ -134,10 +136,10 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 2. **JupyterLab (`:8888`)** — official lesson notebooks: motion, camera/CV (face/object/line/
    gesture), and gimbal control. This is where you learn to program it.
 3. **JSON command API** — `/json` Socket.IO. Script motion and gimbal control; this is also
-   the integration point if the Hangar ever gains a (supervised) command view.
-4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, even
-   LLM-driven natural-language control. Bigger jump. Research brief on control-LLM /
-   VLA / Cosmos lanes: [robot-control LLMs briefing](plans/2026-07-22-robot-control-llms-briefing.md).
+   the integration point for the Hangar command portal (teleop and autonomy).
+4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, and
+   LLM / VLA-driven control including closed-loop autonomy. Bigger jump. Research brief:
+   [robot-control LLMs briefing](plans/2026-07-22-robot-control-llms-briefing.md).
 
 ## NVMe storage policy — PLANNED, NOT APPLIED
 
