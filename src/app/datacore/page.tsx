@@ -1,8 +1,9 @@
 'use client';
-import { Plus, Search, SlidersHorizontal, Trash2, X, FileText } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, Trash2, X, FileText, BookOpen, CircuitBoard } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SectionTitle } from '@/components/ui/Primitives';
+import { HardwareLibrary } from '@/components/datacore/HardwareLibrary';
 import { isHangarBayId } from '@/data/hangar';
 import { DATACORE_BRIEFINGS } from '@/data/datacore-briefings';
 import { INSIGHT_CONFIDENCE_LEVELS, isInsightConfidence, type InsightConfidence } from '@/data/types';
@@ -11,9 +12,11 @@ import { useHangar, LOCAL_INSIGHT_PREFIX } from '@/lib/store';
 import clsx from 'clsx';
 
 type ConfidenceFilter = 'all' | InsightConfidence;
+type DatacoreTab = 'knowledge' | 'library';
 
 export default function Datacore() {
-  const { data, insights, unit, mission, addLocalInsight, removeLocalInsight } = useHangar();
+  const { data, insights, documents, unit, mission, addLocalInsight, removeLocalInsight } = useHangar();
+  const [tab, setTab] = useState<DatacoreTab>('knowledge');
   const [q, setQ] = useState('');
   const [bay, setBay] = useState<'all' | string>('all');
   const [conf, setConf] = useState<ConfidenceFilter>('all');
@@ -73,15 +76,39 @@ export default function Datacore() {
             Research briefs, field notes, and speculative intel — searchable, linked to units and missions.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowCapture((v) => !v)}
-          className="btn btn-ghost text-[10px]"
-        >
-          {showCapture ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
-          {showCapture ? 'Cancel' : 'Capture Note'}
-        </button>
+        {tab === 'knowledge' && (
+          <button
+            type="button"
+            onClick={() => setShowCapture((v) => !v)}
+            className="btn btn-ghost text-[10px]"
+          >
+            {showCapture ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+            {showCapture ? 'Cancel' : 'Capture Note'}
+          </button>
+        )}
       </header>
+
+      {/* section tabs */}
+      <div className="flex flex-wrap gap-1.5">
+        {([
+          { id: 'knowledge', label: 'Knowledge Core', code: 'CORE', icon: BookOpen, count: DATACORE_BRIEFINGS.length + insights.length },
+          { id: 'library', label: 'Hardware Library', code: 'HW', icon: CircuitBoard, count: documents.length },
+        ] as const).map((t) => {
+          const TabIcon = t.icon;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id)}
+              className={clsx('btn text-[10px]', tab === t.id ? 'btn-active' : 'btn-ghost')}
+            >
+              <TabIcon className="h-3 w-3" />
+              {t.label}
+              <span className="ml-1 font-mono text-[9px] text-ink-dim">{t.count}</span>
+            </button>
+          );
+        })}
+      </div>
 
       {showCapture && (
         <div className="panel space-y-2 p-3">
@@ -130,44 +157,52 @@ export default function Datacore() {
       )}
 
       <div className="panel p-3">
-        <div className="grid gap-2 md:grid-cols-[1.6fr_0.8fr_0.8fr]">
+        <div className={clsx('grid gap-2', tab === 'knowledge' && 'md:grid-cols-[1.6fr_0.8fr_0.8fr]')}>
           <label className="relative block">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-dim" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search briefs, insight title, body, tags..."
+              placeholder={tab === 'knowledge' ? 'Search briefs, insight title, body, tags...' : 'Search CAD, schematics, datasheets, firmware...'}
               className="w-full rounded-md border border-rim bg-panel-2/40 py-2 pl-9 pr-3 font-mono text-xs text-ink outline-none ring-cyan/40 transition focus:ring"
             />
           </label>
 
-          <label className="flex items-center gap-2 rounded-md border border-rim bg-panel-2/40 px-2.5">
-            <SlidersHorizontal className="h-4 w-4 text-cyan" />
-            <select value={bay} onChange={(e) => setBay(e.target.value)} className="w-full bg-transparent py-2 font-mono text-xs text-ink outline-none">
-              <option value="all">All bays</option>
-              {data.bays.map((b) => (
-                <option key={b.id} value={b.id}>{b.name}</option>
-              ))}
-            </select>
-          </label>
+          {tab === 'knowledge' && (
+            <>
+              <label className="flex items-center gap-2 rounded-md border border-rim bg-panel-2/40 px-2.5">
+                <SlidersHorizontal className="h-4 w-4 text-cyan" />
+                <select value={bay} onChange={(e) => setBay(e.target.value)} className="w-full bg-transparent py-2 font-mono text-xs text-ink outline-none">
+                  <option value="all">All bays</option>
+                  {data.bays.map((b) => (
+                    <option key={b.id} value={b.id}>{b.name}</option>
+                  ))}
+                </select>
+              </label>
 
-          <label className="flex items-center gap-2 rounded-md border border-rim bg-panel-2/40 px-2.5">
-            <SlidersHorizontal className="h-4 w-4 text-amber" />
-            <select value={conf} onChange={(e) => onConfidenceChange(e.target.value)} className="w-full bg-transparent py-2 font-mono text-xs text-ink outline-none">
-              <option value="all">All confidence</option>
-              {INSIGHT_CONFIDENCE_LEVELS.map((level) => (
-                <option key={level} value={level}>
-                  {insightConfidenceMeta(level).label}
-                </option>
-              ))}
-            </select>
-          </label>
+              <label className="flex items-center gap-2 rounded-md border border-rim bg-panel-2/40 px-2.5">
+                <SlidersHorizontal className="h-4 w-4 text-amber" />
+                <select value={conf} onChange={(e) => onConfidenceChange(e.target.value)} className="w-full bg-transparent py-2 font-mono text-xs text-ink outline-none">
+                  <option value="all">All confidence</option>
+                  {INSIGHT_CONFIDENCE_LEVELS.map((level) => (
+                    <option key={level} value={level}>
+                      {insightConfidenceMeta(level).label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </>
+          )}
         </div>
       </div>
 
-      {briefingHits.length > 0 && (
+      {tab === 'library' && <HardwareLibrary query={q} />}
+
+      {tab === 'knowledge' && (
         <>
-          <SectionTitle code="BRIEF">{briefingHits.length} research brief{briefingHits.length === 1 ? '' : 's'}</SectionTitle>
+          {briefingHits.length > 0 && (
+            <>
+              <SectionTitle code="BRIEF">{briefingHits.length} research brief{briefingHits.length === 1 ? '' : 's'}</SectionTitle>
           <div className="grid gap-3 md:grid-cols-2">
             {briefingHits.map((brief) => (
               <Link
@@ -266,6 +301,8 @@ export default function Datacore() {
           );
         })}
       </div>
+        </>
+      )}
     </div>
   );
 }

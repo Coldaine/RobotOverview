@@ -37,6 +37,13 @@ build definition, and database provision.
   production = trigger a BuildRun, pin the new Shipwright digest in
   `coldaine-k8cluster/apps/robot-overview/deployment.yaml`, apply. Any future push-triggered
   pipeline must still end in an explicit digest pin plus deliberate cluster apply.
+- **Hardware archive host is not stood up yet.** The Datacore Hardware Library
+  (`docs/hardware-library.md`) resolves CAD/schematic/datasheet files from
+  `NEXT_PUBLIC_ARCHIVE_BASE_URL`. The intended host is `rclone serve` (WebDAV/HTTP/S3) over the
+  Google Drive copy of `UGV-Beast-Archive/`, exposed read-only through the Cloudflare tunnel.
+  Until that endpoint exists and the env var is set, the library is browsable but "Open" links
+  show "archive offline" — by design, never broken. The env var and rclone/tunnel wiring are
+  cluster-owned (`coldaine-k8cluster`); the app only reads the base URL.
 
 ## Deploying by hand
 

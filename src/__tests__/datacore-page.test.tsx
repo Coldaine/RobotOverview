@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import Datacore from '@/app/datacore/page';
 import { HangarProvider } from '@/lib/store';
@@ -40,5 +40,18 @@ describe('Datacore page', () => {
       'href',
       '/datacore/compute-workload',
     );
+  });
+
+  it('switches to the Hardware Library tab and lists documents linking to detail pages', () => {
+    renderDatacore();
+
+    fireEvent.click(screen.getByRole('button', { name: /Hardware Library/i }));
+
+    // A known seeded document surfaces, linking to its detail route.
+    const link = screen.getByRole('link', { name: /General Driver for Robots — Schematic/i });
+    expect(link).toHaveAttribute('href', '/datacore/doc-gdb-schematic');
+
+    // The knowledge-only confidence filter is not shown on the library tab.
+    expect(screen.queryByRole('option', { name: 'High' })).not.toBeInTheDocument();
   });
 });
