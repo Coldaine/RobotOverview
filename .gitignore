@@ -11,5 +11,8 @@ dist/
 .omo/
 .letta/
 
+# Local checkout stashes (do not commit)
+_stash_*/
+
 # Bulk vendor/source archive for BEAST-01. Keep binaries in object storage, not git.
 UGV-Beast-Archive/

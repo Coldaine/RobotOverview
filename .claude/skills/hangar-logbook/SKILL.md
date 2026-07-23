@@ -15,7 +15,8 @@ with the product model.
 - Draft one coherent human record first; map it to storage surfaces after the record makes sense.
 - Persist to existing Hangar surfaces. Do not invent a new log file unless the user asks.
 - Omit secrets, passwords, tokens, private keys, and raw credential material.
-- Keep Hangar supervised: record robot operations and navigation, not unattended control.
+- Record teleop, navigation, and autonomous / policy runs the same way — omit secrets, keep
+  fail-safe facts in the runbook when they change.
 - Include next steps only when they exist, and persist them instead of leaving them only in chat.
 
 ## Current Persistence
@@ -39,7 +40,8 @@ Use the narrowest durable home that fits:
 - `missions[].afterAction`: mission-scoped debrief bullets and next mission steps. Rendered on
   mission detail pages as the after-action log.
 - `insights[]`: durable field knowledge, decisions, gotchas, and research lessons. Rendered in
-  the Codex page and linkable to units and missions.
+  **Datacore** (`/datacore`) and linkable to units and missions. Long-form research briefs live
+  under `/datacore/...` (see `src/data/datacore-briefings.ts`).
 - `activity[]`: one-line global timeline events for the command-center ticker.
 - `docs/beast-ops.md`: BEAST network, endpoints, control protocol, telemetry, video recovery,
   safety, and operating procedure.

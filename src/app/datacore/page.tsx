@@ -1,18 +1,22 @@
 'use client';
-import { Plus, Search, SlidersHorizontal, Trash2, X } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, Trash2, X, FileText, BookOpen, CircuitBoard } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SectionTitle } from '@/components/ui/Primitives';
+import { HardwareLibrary } from '@/components/datacore/HardwareLibrary';
 import { isHangarBayId } from '@/data/hangar';
+import { DATACORE_BRIEFINGS } from '@/data/datacore-briefings';
 import { INSIGHT_CONFIDENCE_LEVELS, isInsightConfidence, type InsightConfidence } from '@/data/types';
 import { insightConfidenceMeta } from '@/lib/format';
 import { useHangar, LOCAL_INSIGHT_PREFIX } from '@/lib/store';
 import clsx from 'clsx';
 
 type ConfidenceFilter = 'all' | InsightConfidence;
+type DatacoreTab = 'knowledge' | 'library';
 
-export default function Codex() {
-  const { data, insights, unit, mission, addLocalInsight, removeLocalInsight } = useHangar();
+export default function Datacore() {
+  const { data, insights, documents, unit, mission, addLocalInsight, removeLocalInsight } = useHangar();
+  const [tab, setTab] = useState<DatacoreTab>('knowledge');
   const [q, setQ] = useState('');
   const [bay, setBay] = useState<'all' | string>('all');
   const [conf, setConf] = useState<ConfidenceFilter>('all');
@@ -53,23 +57,58 @@ export default function Codex() {
     });
   }, [insights, q, bay, conf]);
 
+  const briefingHits = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    if (!needle) return DATACORE_BRIEFINGS;
+    return DATACORE_BRIEFINGS.filter((b) => {
+      const hay = `${b.title} ${b.summary} ${b.tags.join(' ')}`.toLowerCase();
+      return hay.includes(needle);
+    });
+  }, [q]);
+
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.35em] text-cyan/70">Field Notes</div>
-          <h1 className="mt-1 font-display text-2xl font-bold uppercase tracking-[0.06em] text-ink">Codex</h1>
-          <p className="mt-1 font-mono text-xs text-ink-dim">Searchable tactical knowledge. Tiny wiki brain, no fluff.</p>
+          <div className="font-mono text-[11px] uppercase tracking-[0.35em] text-cyan/70">Knowledge Core</div>
+          <h1 className="mt-1 font-display text-2xl font-bold uppercase tracking-[0.06em] text-ink">Datacore</h1>
+          <p className="mt-1 font-mono text-xs text-ink-dim">
+            Research briefs, field notes, and speculative intel — searchable, linked to units and missions.
+          </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowCapture((v) => !v)}
-          className="btn btn-ghost text-[10px]"
-        >
-          {showCapture ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
-          {showCapture ? 'Cancel' : 'Capture Note'}
-        </button>
+        {tab === 'knowledge' && (
+          <button
+            type="button"
+            onClick={() => setShowCapture((v) => !v)}
+            className="btn btn-ghost text-[10px]"
+          >
+            {showCapture ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
+            {showCapture ? 'Cancel' : 'Capture Note'}
+          </button>
+        )}
       </header>
+
+      {/* section tabs */}
+      <div className="flex flex-wrap gap-1.5">
+        {([
+          { id: 'knowledge', label: 'Knowledge Core', code: 'CORE', icon: BookOpen, count: DATACORE_BRIEFINGS.length + insights.length },
+          { id: 'library', label: 'Hardware Library', code: 'HW', icon: CircuitBoard, count: documents.length },
+        ] as const).map((t) => {
+          const TabIcon = t.icon;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTab(t.id)}
+              className={clsx('btn text-[10px]', tab === t.id ? 'btn-active' : 'btn-ghost')}
+            >
+              <TabIcon className="h-3 w-3" />
+              {t.label}
+              <span className="ml-1 font-mono text-[9px] text-ink-dim">{t.count}</span>
+            </button>
+          );
+        })}
+      </div>
 
       {showCapture && (
         <div className="panel space-y-2 p-3">
@@ -118,42 +157,87 @@ export default function Codex() {
       )}
 
       <div className="panel p-3">
-        <div className="grid gap-2 md:grid-cols-[1.6fr_0.8fr_0.8fr]">
+        <div className={clsx('grid gap-2', tab === 'knowledge' && 'md:grid-cols-[1.6fr_0.8fr_0.8fr]')}>
           <label className="relative block">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-dim" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search insight title, body, tags..."
+              placeholder={tab === 'knowledge' ? 'Search briefs, insight title, body, tags...' : 'Search CAD, schematics, datasheets, firmware...'}
               className="w-full rounded-md border border-rim bg-panel-2/40 py-2 pl-9 pr-3 font-mono text-xs text-ink outline-none ring-cyan/40 transition focus:ring"
             />
           </label>
 
-          <label className="flex items-center gap-2 rounded-md border border-rim bg-panel-2/40 px-2.5">
-            <SlidersHorizontal className="h-4 w-4 text-cyan" />
-            <select value={bay} onChange={(e) => setBay(e.target.value)} className="w-full bg-transparent py-2 font-mono text-xs text-ink outline-none">
-              <option value="all">All bays</option>
-              {data.bays.map((b) => (
-                <option key={b.id} value={b.id}>{b.name}</option>
-              ))}
-            </select>
-          </label>
+          {tab === 'knowledge' && (
+            <>
+              <label className="flex items-center gap-2 rounded-md border border-rim bg-panel-2/40 px-2.5">
+                <SlidersHorizontal className="h-4 w-4 text-cyan" />
+                <select value={bay} onChange={(e) => setBay(e.target.value)} className="w-full bg-transparent py-2 font-mono text-xs text-ink outline-none">
+                  <option value="all">All bays</option>
+                  {data.bays.map((b) => (
+                    <option key={b.id} value={b.id}>{b.name}</option>
+                  ))}
+                </select>
+              </label>
 
-          <label className="flex items-center gap-2 rounded-md border border-rim bg-panel-2/40 px-2.5">
-            <SlidersHorizontal className="h-4 w-4 text-amber" />
-            <select value={conf} onChange={(e) => onConfidenceChange(e.target.value)} className="w-full bg-transparent py-2 font-mono text-xs text-ink outline-none">
-              <option value="all">All confidence</option>
-              {INSIGHT_CONFIDENCE_LEVELS.map((level) => (
-                <option key={level} value={level}>
-                  {insightConfidenceMeta(level).label}
-                </option>
-              ))}
-            </select>
-          </label>
+              <label className="flex items-center gap-2 rounded-md border border-rim bg-panel-2/40 px-2.5">
+                <SlidersHorizontal className="h-4 w-4 text-amber" />
+                <select value={conf} onChange={(e) => onConfidenceChange(e.target.value)} className="w-full bg-transparent py-2 font-mono text-xs text-ink outline-none">
+                  <option value="all">All confidence</option>
+                  {INSIGHT_CONFIDENCE_LEVELS.map((level) => (
+                    <option key={level} value={level}>
+                      {insightConfidenceMeta(level).label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </>
+          )}
         </div>
       </div>
 
-      <SectionTitle code="WIKI">{filtered.length} insight{filtered.length === 1 ? '' : 's'}</SectionTitle>
+      {tab === 'library' && <HardwareLibrary query={q} />}
+
+      {tab === 'knowledge' && (
+        <>
+          {briefingHits.length > 0 && (
+            <>
+              <SectionTitle code="BRIEF">{briefingHits.length} research brief{briefingHits.length === 1 ? '' : 's'}</SectionTitle>
+          <div className="grid gap-3 md:grid-cols-2">
+            {briefingHits.map((brief) => (
+              <Link
+                key={brief.id}
+                href={brief.href}
+                className="panel group block p-4 transition-all hover:border-cyan/40 hover:shadow-hud-cyan"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded border border-cyan/30 bg-cyan/5 text-cyan">
+                    <FileText className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan/70">
+                      {brief.capturedAt}
+                    </div>
+                    <h2 className="mt-1 font-display text-sm uppercase tracking-[0.08em] text-ink group-hover:text-cyan">
+                      {brief.title}
+                    </h2>
+                    <p className="mt-2 font-mono text-[11px] leading-relaxed text-ink-dim">{brief.summary}</p>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {brief.tags.map((t) => (
+                        <span key={t} className="chip border-cyan/30 bg-cyan/5 text-cyan">
+                          #{t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+
+      <SectionTitle code="CORE">{filtered.length} insight{filtered.length === 1 ? '' : 's'}</SectionTitle>
       <div className="space-y-3">
         {filtered.map((ins) => {
           const isLocal = ins.id.startsWith(LOCAL_INSIGHT_PREFIX);
@@ -217,6 +301,8 @@ export default function Codex() {
           );
         })}
       </div>
+        </>
+      )}
     </div>
   );
 }

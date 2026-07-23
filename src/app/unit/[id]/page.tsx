@@ -370,10 +370,10 @@ export default function UnitDetail() {
           {/* insights */}
           {insights.length > 0 && (
             <section>
-              <SectionTitle code="CODEX"><span className="inline-flex items-center gap-2"><Lightbulb className="h-3.5 w-3.5 text-amber" /> Field Insights</span></SectionTitle>
+              <SectionTitle code="CORE"><span className="inline-flex items-center gap-2"><Lightbulb className="h-3.5 w-3.5 text-amber" /> Field Insights</span></SectionTitle>
               <div className="space-y-2">
                 {insights.map((ins) => (
-                  <Link key={ins!.id} href="/codex" className="panel block p-3 transition-all hover:border-cyan/40">
+                  <Link key={ins!.id} href="/datacore" className="panel block p-3 transition-all hover:border-cyan/40">
                     <div className="font-display text-xs uppercase tracking-[0.08em] text-ink">{ins!.title}</div>
                     <p className="mt-1 font-mono text-[11px] leading-relaxed text-ink-dim">{ins!.body}</p>
                   </Link>
@@ -446,7 +446,8 @@ export default function UnitDetail() {
                 })}
               </div>
               <p className="mt-3 border-t border-rim/50 pt-3 font-mono text-[10px] leading-relaxed text-ink-dim">
-                Supervised launch/copy only. Hangar does not execute robot commands.
+                Shortcuts open or copy unit surfaces. In-app teleop and autonomy ship with the
+                Hangar command portal (North Star G7).
               </p>
             </div>
           )}
