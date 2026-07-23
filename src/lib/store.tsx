@@ -222,6 +222,9 @@ interface HangarStore {
   terminals: Terminal[];
   nets: Net[];
   documents: DocumentRef[];
+  // Datacore Hardware Library store base URL, resolved server-side at request time
+  // (see src/app/layout.tsx) — null when DATACORE_LIBRARY_URL is unset.
+  libraryBaseUrl: string | null;
   inventoryRead: InventoryReadStatus;
   // Active UI theme
   theme: ThemeMode;
@@ -268,10 +271,12 @@ export function HangarProvider({
   children,
   initialItems,
   initialInventoryRead,
+  initialLibraryBaseUrl,
 }: {
   children: ReactNode;
   initialItems?: InventoryItem[];
   initialInventoryRead?: InventoryReadStatus;
+  initialLibraryBaseUrl?: string | null;
 }) {
   const [theme, setTheme] = useState<ThemeMode>(() => readStoredTheme());
   const [lensMissionId, setLensMissionId] = useState<string | null>(() => readStoredLensMissionId());
@@ -415,6 +420,7 @@ export function HangarProvider({
       terminals: data.terminals,
       nets: data.nets,
       documents: data.documents,
+      libraryBaseUrl: initialLibraryBaseUrl ?? null,
       inventoryRead,
       theme,
       setTheme,
@@ -455,7 +461,7 @@ export function HangarProvider({
       openDrawer,
       closeDrawer,
     };
-  }, [theme, lensMissionId, source, spotlightId, units, initialItems, initialInventoryRead, objectiveOverrides, wishStatusOverrides, localInsights, drawerOpen, drawerSlotContext]);
+  }, [theme, lensMissionId, source, spotlightId, units, initialItems, initialInventoryRead, initialLibraryBaseUrl, objectiveOverrides, wishStatusOverrides, localInsights, drawerOpen, drawerSlotContext]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

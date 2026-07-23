@@ -1,13 +1,12 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type { DocumentRef } from '@/data/types';
 import {
   documentSubsystem,
   groupDocumentsBySubsystem,
+  normalizeLibraryBaseUrl,
   resolveDocumentUrl,
   stripLibraryPrefix,
 } from '@/lib/documents';
-
-const ENV_KEY = 'NEXT_PUBLIC_DATACORE_LIBRARY_URL';
 
 function doc(partial: Partial<DocumentRef> & Pick<DocumentRef, 'libraryPath'>): DocumentRef {
   return {
@@ -21,10 +20,6 @@ function doc(partial: Partial<DocumentRef> & Pick<DocumentRef, 'libraryPath'>): 
   };
 }
 
-afterEach(() => {
-  delete process.env[ENV_KEY];
-});
-
 describe('stripLibraryPrefix', () => {
   it('drops the beast/ prefix', () => {
     expect(stripLibraryPrefix('beast/02-Driver-Board/x.pdf')).toBe('02-Driver-Board/x.pdf');
@@ -34,29 +29,46 @@ describe('stripLibraryPrefix', () => {
   });
 });
 
+describe('normalizeLibraryBaseUrl', () => {
+  it('returns null for unset/empty input', () => {
+    expect(normalizeLibraryBaseUrl(undefined)).toBeNull();
+    expect(normalizeLibraryBaseUrl(null)).toBeNull();
+    expect(normalizeLibraryBaseUrl('')).toBeNull();
+    expect(normalizeLibraryBaseUrl('   ')).toBeNull();
+  });
+
+  it('trims whitespace and trailing slashes', () => {
+    expect(normalizeLibraryBaseUrl('  https://library.example.com/ ')).toBe('https://library.example.com');
+    expect(normalizeLibraryBaseUrl('https://library.example.com///')).toBe('https://library.example.com');
+  });
+});
+
 describe('resolveDocumentUrl', () => {
   it('returns null when no url and no base configured', () => {
-    delete process.env[ENV_KEY];
-    expect(resolveDocumentUrl(doc({ libraryPath: 'beast/02-Driver-Board/x.pdf' }))).toBeNull();
+    expect(resolveDocumentUrl(doc({ libraryPath: 'beast/02-Driver-Board/x.pdf' }), null)).toBeNull();
   });
 
   it('prefers an explicit url', () => {
-    process.env[ENV_KEY] = 'https://library.example.com';
     const url = resolveDocumentUrl(
       doc({ libraryPath: 'beast/02-Driver-Board/x.pdf', url: 'https://cdn.example.com/x.pdf' }),
+      'https://library.example.com',
     );
     expect(url).toBe('https://cdn.example.com/x.pdf');
   });
 
-  it('builds a url from base + library key, trimming trailing slashes', () => {
-    process.env[ENV_KEY] = 'https://library.example.com/';
-    const url = resolveDocumentUrl(doc({ libraryPath: 'beast/02-Driver-Board/x.pdf' }));
+  it('builds a url from base + library key', () => {
+    const url = resolveDocumentUrl(
+      doc({ libraryPath: 'beast/02-Driver-Board/x.pdf' }),
+      'https://library.example.com',
+    );
     expect(url).toBe('https://library.example.com/02-Driver-Board/x.pdf');
   });
 
   it('url-encodes path segments with spaces', () => {
-    process.env[ENV_KEY] = 'https://library.example.com';
-    const url = resolveDocumentUrl(doc({ libraryPath: 'beast/05-Chassis-CAD/UGV Beast PT.step' }));
+    const url = resolveDocumentUrl(
+      doc({ libraryPath: 'beast/05-Chassis-CAD/UGV Beast PT.step' }),
+      'https://library.example.com',
+    );
     expect(url).toBe('https://library.example.com/05-Chassis-CAD/UGV%20Beast%20PT.step');
   });
 });
@@ -77,5 +89,14 @@ describe('groupDocumentsBySubsystem', () => {
     ]);
     expect(groups.map((g) => g.subsystem.key)).toEqual(['02-Driver-Board', '06-Jetson-Orin']);
     expect(groups[0].documents.map((d) => d.id)).toEqual(['b', 'c']);
+  });
+
+  it('breaks order ties deterministically by subsystem key', () => {
+    const groups = groupDocumentsBySubsystem([
+      doc({ id: 'a', libraryPath: 'zzz-unrecognized/a.zip' }),
+      doc({ id: 'b', libraryPath: 'aaa-unrecognized/b.zip' }),
+    ]);
+    // both fall back to order 999 (no numeric prefix) — key breaks the tie
+    expect(groups.map((g) => g.subsystem.key)).toEqual(['aaa-unrecognized', 'zzz-unrecognized']);
   });
 });

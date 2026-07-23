@@ -43,6 +43,9 @@ Future certificate-verified modes need an explicit trust-bundle/certificate cont
   owned OAK-D Lite, D500 LiDAR, Jetson state, loadout, interfaces, terminals, and nets. It applies
   cleanly twice and its 93 affected semantic projections match a clean current-schema/current-seed
   rebuild in an ephemeral PostgreSQL 18.3 scratch cluster.
+  `2026-07-23-documents-library-path.sql` renames `documents.archive_path` to `library_path` and
+  rewrites any remaining `UGV-Beast-Archive/`-prefixed rows to the `beast/` prefix, matching the
+  `libraryPath` rename in `src/data/types.ts`. Repeatable; a no-op once applied.
 - `gen-seed.ts` — transforms `src/data/hangar.ts` → seed SQL (defensive: junctions filtered to resolvable refs).
 - `seed.sql` — generated output (committed so the DB rebuilds with `psql` alone).
 

@@ -246,8 +246,8 @@ CREATE TABLE activity_log (
 -- ── CONNECTED TWIN (terminals + nets) ────────────────────────────────────────
 -- A terminal is a physical connector on an asset; a net joins terminals that
 -- are wired together (power rail, UART link, servo daisy-chain). Documents are
--- the downloaded source library (archive_path is the stable key; url filled
--- once files move to object storage).
+-- the downloaded source library (library_path is the stable key, under beast/;
+-- url filled once files move to object storage).
 CREATE TYPE net_kind AS ENUM ('power','data','mixed','mechanical');
 
 CREATE TABLE terminals (
@@ -277,7 +277,7 @@ CREATE TABLE documents (
   id           TEXT PRIMARY KEY,
   title        TEXT NOT NULL,
   kind         TEXT NOT NULL CHECK (kind IN ('schematic','manual','cad','firmware','wiki','datasheet','image')),
-  archive_path TEXT NOT NULL UNIQUE,
+  library_path TEXT NOT NULL UNIQUE,
   url          TEXT,
   note         TEXT
 );

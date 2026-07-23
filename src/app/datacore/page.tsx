@@ -110,7 +110,7 @@ export default function Datacore() {
         })}
       </div>
 
-      {showCapture && (
+      {tab === 'knowledge' && showCapture && (
         <div className="panel space-y-2 p-3">
           <input
             value={draftTitle}

@@ -39,10 +39,11 @@ build definition, and database provision.
   pipeline must still end in an explicit digest pin plus deliberate cluster apply.
 - **Datacore library store is not stood up yet.** The Datacore Hardware Library
   (`docs/hardware-library.md`) resolves CAD/schematic/datasheet files from the cluster S3
-  (Garage) via `NEXT_PUBLIC_DATACORE_LIBRARY_URL`. Until that endpoint exists and the env var is
-  set, the library is browsable but "Open" links show "library offline" — by design, never broken.
-  The endpoint/bucket wiring is cluster-owned (`coldaine-k8cluster`) and not yet stood up for this
-  app; the app only reads the base URL.
+  (Garage) via the plain runtime env var `DATACORE_LIBRARY_URL` (read server-side at request
+  time — not a `NEXT_PUBLIC_` build-time var, so no rebuild is needed once the cluster sets it).
+  Until that endpoint exists and the env var is set, the library is browsable but "Open" links
+  show "library offline" — by design, never broken. The endpoint/bucket wiring is cluster-owned
+  (`coldaine-k8cluster`) and not yet stood up for this app; the app only reads the base URL.
 
 ## Deploying by hand
 

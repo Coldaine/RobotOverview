@@ -33,7 +33,7 @@ function useReducedMotion(): boolean {
 const ALL_KINDS = new Set<NetKind>(LAYERS.map((l) => l.kind));
 
 export function ConnectedTwin({ variant = 'full' }: { variant?: 'full' | 'preview' }) {
-  const { units, terminals, nets, documents } = useHangar();
+  const { units, terminals, nets, documents, libraryBaseUrl } = useHangar();
   const reducedMotion = useReducedMotion();
 
   const [mode, setMode] = useState<ViewMode>('board');
@@ -131,6 +131,7 @@ export function ConnectedTwin({ variant = 'full' }: { variant?: 'full' | 'previe
           units={units}
           terminals={terminals}
           documents={documents}
+          libraryBaseUrl={libraryBaseUrl}
           active={active}
           onClose={() => setSelectedNetId(null)}
           onHoverTerminal={setHoveredTerminal}

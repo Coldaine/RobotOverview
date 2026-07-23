@@ -20,7 +20,7 @@ const EXPLORER_DOC_ID = 'doc-gdb-schematic';
 export default function DatacoreDocumentPage() {
   const params = useParams<{ docId: string }>();
   const docId = params?.docId;
-  const { documents, nets, terminals, unit } = useHangar();
+  const { documents, nets, terminals, unit, libraryBaseUrl } = useHangar();
 
   const doc = useMemo(() => documents.find((d) => d.id === docId), [documents, docId]);
 
@@ -56,7 +56,7 @@ export default function DatacoreDocumentPage() {
 
   const kindMeta = DOCUMENT_KIND_META[doc.kind];
   const subsystem = documentSubsystem(doc);
-  const url = resolveDocumentUrl(doc);
+  const url = resolveDocumentUrl(doc, libraryBaseUrl);
   const relatedUnits = (doc.units ?? []).map((id) => ({ id, u: unit(id) }));
 
   return (
@@ -86,7 +86,7 @@ export default function DatacoreDocumentPage() {
           </a>
         ) : (
           <span
-            title="Set NEXT_PUBLIC_DATACORE_LIBRARY_URL to the library store to enable downloads"
+            title="Set DATACORE_LIBRARY_URL to the library store to enable downloads"
             className="btn btn-ghost cursor-not-allowed text-[10px] opacity-60"
           >
             <FileWarning className="h-3 w-3" /> Library offline
