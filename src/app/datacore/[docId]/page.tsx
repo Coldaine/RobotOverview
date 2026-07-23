@@ -10,7 +10,7 @@ import {
   DOCUMENT_KIND_META,
   documentSubsystem,
   resolveDocumentUrl,
-  stripArchivePrefix,
+  stripLibraryPrefix,
 } from '@/lib/documents';
 import clsx from 'clsx';
 
@@ -71,7 +71,7 @@ export default function DatacoreDocumentPage() {
           <h1 className="mt-1 font-display text-2xl font-bold uppercase tracking-[0.05em] text-ink">{doc.title}</h1>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <span className={clsx('chip', kindMeta.cls)}>{kindMeta.label}</span>
-            <span className="chip border-rim bg-panel-2/40 font-mono text-ink-dim">{stripArchivePrefix(doc.archivePath)}</span>
+            <span className="chip border-rim bg-panel-2/40 font-mono text-ink-dim">{stripLibraryPrefix(doc.libraryPath)}</span>
           </div>
         </div>
 
@@ -86,10 +86,10 @@ export default function DatacoreDocumentPage() {
           </a>
         ) : (
           <span
-            title="Set NEXT_PUBLIC_ARCHIVE_BASE_URL to the archive host to enable downloads"
+            title="Set NEXT_PUBLIC_DATACORE_LIBRARY_URL to the library store to enable downloads"
             className="btn btn-ghost cursor-not-allowed text-[10px] opacity-60"
           >
-            <FileWarning className="h-3 w-3" /> Archive offline
+            <FileWarning className="h-3 w-3" /> Library offline
           </span>
         )}
       </header>

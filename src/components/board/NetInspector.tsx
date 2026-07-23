@@ -34,7 +34,7 @@ export function NetInspector({
   }, []);
 
   const copy = async (doc: DocumentRef) => {
-    const value = doc.url ?? doc.archivePath;
+    const value = doc.url ?? doc.libraryPath;
     try {
       await navigator.clipboard.writeText(value);
       setCopied(doc.id);
@@ -135,14 +135,14 @@ export function NetInspector({
                       <DocIcon className="h-4 w-4 shrink-0 text-cyan" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate font-mono text-[11px] text-ink">{doc.title}</div>
-                        <div className="truncate font-mono text-[9px] text-ink-dim">{doc.archivePath}</div>
+                        <div className="truncate font-mono text-[9px] text-ink-dim">{doc.libraryPath}</div>
                       </div>
                       {doc.url ? (
                         <a href={doc.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Open ${doc.title}`}>
                           <ArrowRight className="h-3.5 w-3.5" />
                         </a>
                       ) : (
-                        <button type="button" onClick={() => copy(doc)} className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Copy archive path for ${doc.title}`}>
+                        <button type="button" onClick={() => copy(doc)} className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Copy library path for ${doc.title}`}>
                           {copied === doc.id ? <Check className="h-3.5 w-3.5 text-signal-ok" /> : <Copy className="h-3.5 w-3.5" />}
                         </button>
                       )}

@@ -1138,7 +1138,7 @@ export const hangarData: HangarData = {
   ],
 
   // ── CONNECTED TWIN — BEAST-01 terminals + nets ─────────────────────────────
-  // Authored 2026-07-03 from the UGV-Beast-Archive (Waveshare wikis + schematics);
+  // Authored 2026-07-03 from the beast hardware library (Waveshare wikis + schematics);
   // each net lists the documents that prove it. BEAST-01 is the ACCE ROS2 kit:
   // stock pan-tilt camera, OAK-D Lite, and D500 LiDAR; no manipulator arm.
   terminals: [
@@ -1279,22 +1279,22 @@ export const hangarData: HangarData = {
   ],
 
   documents: [
-    { id: 'doc-gdb-schematic', title: 'General Driver for Robots — Schematic', kind: 'schematic', archivePath: 'UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf', units: ['driver-board'] },
-    { id: 'doc-gdb-wiki', title: 'General Driver for Robots — Wiki', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/General-Driver-for-Robots_Wiki.md', units: ['driver-board'] },
-    { id: 'doc-gdb-step', title: 'General Driver for Robots — STEP CAD', kind: 'cad', archivePath: 'UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_STEP.zip', units: ['driver-board'] },
-    { id: 'doc-ups-schematic', title: 'UPS Module 3S — Schematic', kind: 'schematic', archivePath: 'UGV-Beast-Archive/03-Power-UPS/Ups01_Schematic.pdf', units: ['stock-ups'] },
-    { id: 'doc-ups-wiki', title: 'UPS Module 3S — Wiki', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UPS-Module-3S_Wiki.md', units: ['stock-ups'] },
-    { id: 'doc-ups-code', title: 'UPS Module 3S — INA219 Monitoring Code', kind: 'firmware', archivePath: 'UGV-Beast-Archive/03-Power-UPS/UPS_Module_3S_Code.zip', units: ['stock-ups'] },
-    { id: 'doc-st3215-manual', title: 'ST3215 Servo — User Manual', kind: 'manual', archivePath: 'UGV-Beast-Archive/04-Servos/ST3215_Servo_User_Manual.pdf', units: ['beast'] },
-    { id: 'doc-st-protocol', title: 'ST Serial Bus Servo — Protocol Manual', kind: 'manual', archivePath: 'UGV-Beast-Archive/04-Servos/ST_Servo_Communication_Protocol_Manual.pdf', units: ['beast'] },
-    { id: 'doc-st-circuit', title: 'ST Bus Servo — Control Circuit Schematic', kind: 'schematic', archivePath: 'UGV-Beast-Archive/04-Servos/ST_Bus_Servo_Control_Circuit.pdf', units: ['driver-board'] },
-    { id: 'doc-beast-wiki', title: 'UGV Beast — Wiki', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast_Wiki.md', units: ['beast'] },
-    { id: 'doc-beast-product', title: 'UGV Beast PT — Product Page', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast_Product-Page.md', units: ['beast'] },
-    { id: 'doc-beast-cad', title: 'UGV Beast PT AI Kit — STEP CAD', kind: 'cad', archivePath: 'UGV-Beast-Archive/05-Chassis-CAD/UGV_Beast_PT_AI_Kit_STEP.zip', units: ['beast'] },
-    { id: 'doc-orin-3d', title: 'UGV Beast PT Jetson Orin — 3D CAD', kind: 'cad', archivePath: 'UGV-Beast-Archive/06-Jetson-Orin/UGV_Beast_PT_Jetson_Orin_3D.zip', units: ['orin-nano', 'beast'] },
-    { id: 'doc-orin-wiki', title: 'UGV Beast PT Jetson Orin AI Kit — Wiki', kind: 'wiki', archivePath: 'UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast-PT-Jetson-Orin-AI-Kit_Wiki.md', units: ['orin-nano'] },
-    { id: 'doc-esp32-firmware', title: 'UGV01 Base — ESP32 Firmware', kind: 'firmware', archivePath: 'UGV-Beast-Archive/07-Code-Firmware/UGV01_BASE_ESP32_Firmware.zip', units: ['driver-board'] },
-    { id: 'doc-cp210x-driver', title: 'CP210x USB-UART Driver', kind: 'firmware', archivePath: 'UGV-Beast-Archive/07-Code-Firmware/CP210x_USB_TO_UART_Driver.zip', units: ['driver-board'] },
+    { id: 'doc-gdb-schematic', title: 'General Driver for Robots — Schematic', kind: 'schematic', libraryPath: 'beast/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf', units: ['driver-board'] },
+    { id: 'doc-gdb-wiki', title: 'General Driver for Robots — Wiki', kind: 'wiki', libraryPath: 'beast/08-Wiki-Pages/General-Driver-for-Robots_Wiki.md', units: ['driver-board'] },
+    { id: 'doc-gdb-step', title: 'General Driver for Robots — STEP CAD', kind: 'cad', libraryPath: 'beast/02-Driver-Board/General_Driver_for_Robots_STEP.zip', units: ['driver-board'] },
+    { id: 'doc-ups-schematic', title: 'UPS Module 3S — Schematic', kind: 'schematic', libraryPath: 'beast/03-Power-UPS/Ups01_Schematic.pdf', units: ['stock-ups'] },
+    { id: 'doc-ups-wiki', title: 'UPS Module 3S — Wiki', kind: 'wiki', libraryPath: 'beast/08-Wiki-Pages/UPS-Module-3S_Wiki.md', units: ['stock-ups'] },
+    { id: 'doc-ups-code', title: 'UPS Module 3S — INA219 Monitoring Code', kind: 'firmware', libraryPath: 'beast/03-Power-UPS/UPS_Module_3S_Code.zip', units: ['stock-ups'] },
+    { id: 'doc-st3215-manual', title: 'ST3215 Servo — User Manual', kind: 'manual', libraryPath: 'beast/04-Servos/ST3215_Servo_User_Manual.pdf', units: ['beast'] },
+    { id: 'doc-st-protocol', title: 'ST Serial Bus Servo — Protocol Manual', kind: 'manual', libraryPath: 'beast/04-Servos/ST_Servo_Communication_Protocol_Manual.pdf', units: ['beast'] },
+    { id: 'doc-st-circuit', title: 'ST Bus Servo — Control Circuit Schematic', kind: 'schematic', libraryPath: 'beast/04-Servos/ST_Bus_Servo_Control_Circuit.pdf', units: ['driver-board'] },
+    { id: 'doc-beast-wiki', title: 'UGV Beast — Wiki', kind: 'wiki', libraryPath: 'beast/08-Wiki-Pages/UGV-Beast_Wiki.md', units: ['beast'] },
+    { id: 'doc-beast-product', title: 'UGV Beast PT — Product Page', kind: 'wiki', libraryPath: 'beast/08-Wiki-Pages/UGV-Beast_Product-Page.md', units: ['beast'] },
+    { id: 'doc-beast-cad', title: 'UGV Beast PT AI Kit — STEP CAD', kind: 'cad', libraryPath: 'beast/05-Chassis-CAD/UGV_Beast_PT_AI_Kit_STEP.zip', units: ['beast'] },
+    { id: 'doc-orin-3d', title: 'UGV Beast PT Jetson Orin — 3D CAD', kind: 'cad', libraryPath: 'beast/06-Jetson-Orin/UGV_Beast_PT_Jetson_Orin_3D.zip', units: ['orin-nano', 'beast'] },
+    { id: 'doc-orin-wiki', title: 'UGV Beast PT Jetson Orin AI Kit — Wiki', kind: 'wiki', libraryPath: 'beast/08-Wiki-Pages/UGV-Beast-PT-Jetson-Orin-AI-Kit_Wiki.md', units: ['orin-nano'] },
+    { id: 'doc-esp32-firmware', title: 'UGV01 Base — ESP32 Firmware', kind: 'firmware', libraryPath: 'beast/07-Code-Firmware/UGV01_BASE_ESP32_Firmware.zip', units: ['driver-board'] },
+    { id: 'doc-cp210x-driver', title: 'CP210x USB-UART Driver', kind: 'firmware', libraryPath: 'beast/07-Code-Firmware/CP210x_USB_TO_UART_Driver.zip', units: ['driver-board'] },
   ],
 };
 

@@ -29,7 +29,7 @@ docs exist to serve the visible experience, never the other way around.
 - `docs/deploy.md` — verified deployment facts and gaps.
 - `docs/beast-ops.md` — BEAST-01 operating facts (network, protocol, telemetry, safety).
 - `docs/hardware-library.md` — CAD, schematics, datasheets & firmware to reference when
-  designing (the Datacore Hardware Library surface + where the archive lives).
+  designing (the Datacore Hardware Library surface + where the library store lives).
 - `db/hangar/standup.md` — data/backend shape, seed, migrations, and read-cutover status.
 - `AGENTS.md` — this file.
 

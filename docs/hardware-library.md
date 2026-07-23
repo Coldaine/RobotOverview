@@ -20,29 +20,28 @@ data; the bytes live outside the repo. Verify against `src/` before relying on a
 
 - **Records:** `src/data/hangar.ts` → `documents[]`, typed by `DocumentRef` in
   `src/data/types.ts` (`kind`: schematic | manual | cad | firmware | wiki | datasheet | image).
-- **Stable key:** each record's `archivePath` is a path under `UGV-Beast-Archive/<NN-Subsystem>/…`.
-  `hangar-integrity.test.ts` enforces the `UGV-Beast-Archive/` prefix; the UI derives the
+- **Stable key:** each record's `libraryPath` is a path under `beast/<NN-Subsystem>/…`.
+  `hangar-integrity.test.ts` enforces the `beast/` prefix; the UI derives the
   subsystem grouping from the `<NN-Subsystem>` folder, so the numeric prefix sets the order.
 
 ## Where the bytes live (hosting)
 
-The binaries are **not** in the repo or the container image — `UGV-Beast-Archive/` is gitignored
-and dockerignored. They live in the operator's local archive cache and, for the deployed app, in
-an external store served **read-only via `rclone serve`** over the Google Drive copy
-(`G:\My Drive\UGV-Beast-Archive\`). See `docs/deploy.md`.
+The binaries are **not** in the repo or the container image. They are served from the Datacore
+library store (the homelab's cluster S3 / Garage), resolved via `NEXT_PUBLIC_DATACORE_LIBRARY_URL`.
+See `docs/deploy.md`.
 
 - The app resolves a document to a URL at render time: `resolveDocumentUrl()` in
-  `src/lib/documents.ts` returns an explicit `url` if set, else `${NEXT_PUBLIC_ARCHIVE_BASE_URL}/`
-  + the archive-relative key.
-- **Offline-safe:** when `NEXT_PUBLIC_ARCHIVE_BASE_URL` is unset or the host is unreachable, the
-  catalog stays fully browsable and open links show "archive offline" — never a broken link.
+  `src/lib/documents.ts` returns an explicit `url` if set, else `${NEXT_PUBLIC_DATACORE_LIBRARY_URL}/`
+  + the library-relative key.
+- **Offline-safe:** when `NEXT_PUBLIC_DATACORE_LIBRARY_URL` is unset or the store is unreachable, the
+  catalog stays fully browsable and open links show "library offline" — never a broken link.
 
 ## Adding a document
 
-1. Copy the file into the archive under the right subsystem folder (both the local cache and the
-   Drive copy that rclone serves), keeping the `<NN-Subsystem>/` layout.
+1. Copy the file into the library store under the right subsystem folder, keeping the
+   `<NN-Subsystem>/` layout.
 2. Add a `DocumentRef` to `documents[]` in `src/data/hangar.ts` with a matching
-   `archivePath: 'UGV-Beast-Archive/<NN-Subsystem>/<file>'`, its `kind`, and related `units`.
+   `libraryPath: 'beast/<NN-Subsystem>/<file>'`, its `kind`, and related `units`.
 3. If the file proves a wiring connection, cite its id in the relevant `nets[]` entry.
 4. Run `npm run test:run` (integrity) and `npm run typecheck`.
 

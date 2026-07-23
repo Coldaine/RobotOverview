@@ -540,9 +540,9 @@ describe('hangar.ts data integrity', () => {
     });
   });
 
-  it('every document has a stable archive path', () => {
+  it('every document has a stable library path', () => {
     hangarData.documents.forEach((d) => {
-      expect(d.archivePath.startsWith('UGV-Beast-Archive/'), `document "${d.id}" archivePath must live under UGV-Beast-Archive/`).toBe(true);
+      expect(d.libraryPath.startsWith('beast/'), `document "${d.id}" libraryPath must live under beast/`).toBe(true);
     });
   });
 

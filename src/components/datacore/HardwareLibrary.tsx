@@ -9,7 +9,7 @@ import {
   DOCUMENT_KIND_META,
   groupDocumentsBySubsystem,
   resolveDocumentUrl,
-  stripArchivePrefix,
+  stripLibraryPrefix,
 } from '@/lib/documents';
 
 const KIND_ICON: Record<DocumentKind, typeof FileText> = {
@@ -22,10 +22,10 @@ const KIND_ICON: Record<DocumentKind, typeof FileText> = {
   image: ImageIcon,
 };
 
-/** The filename tail of an archive path (for the mono caption). */
-function fileName(archivePath: string): string {
-  const parts = stripArchivePrefix(archivePath).split('/');
-  return parts[parts.length - 1] ?? archivePath;
+/** The filename tail of a library path (for the mono caption). */
+function fileName(libraryPath: string): string {
+  const parts = stripLibraryPrefix(libraryPath).split('/');
+  return parts[parts.length - 1] ?? libraryPath;
 }
 
 export function HardwareLibrary({ query }: { query: string }) {
@@ -36,7 +36,7 @@ export function HardwareLibrary({ query }: { query: string }) {
     if (!needle) return documents;
     return documents.filter((d) => {
       const unitNames = (d.units ?? []).map((id) => unit(id)?.name ?? id).join(' ');
-      const hay = `${d.title} ${d.kind} ${d.archivePath} ${unitNames} ${d.note ?? ''}`.toLowerCase();
+      const hay = `${d.title} ${d.kind} ${d.libraryPath} ${unitNames} ${d.note ?? ''}`.toLowerCase();
       return hay.includes(needle);
     });
   }, [documents, query, unit]);
@@ -55,8 +55,8 @@ export function HardwareLibrary({ query }: { query: string }) {
     <div className="space-y-6">
       <div className="panel-inset p-3 font-mono text-[10px] leading-relaxed text-ink-dim">
         Source-of-truth CAD, schematics, datasheets &amp; firmware for the UGV Beast, referenced by stable
-        <span className="text-cyan"> UGV-Beast-Archive/</span> keys. Files are served from the external archive
-        (Google Drive via rclone) — open links resolve when the archive host is reachable, otherwise the
+        <span className="text-cyan"> beast/</span> keys. Files are served from the Datacore library store
+        (cluster S3) — open links resolve when the library store is reachable, otherwise the
         catalog stays fully browsable. See <span className="text-cyan">docs/hardware-library.md</span>.
       </div>
 
@@ -106,7 +106,7 @@ function DocumentCard({ doc, unitName }: { doc: DocumentRef; unitName: (id: stri
           >
             {doc.title}
           </Link>
-          <div className="mt-1 truncate font-mono text-[10px] text-ink-dim">{fileName(doc.archivePath)}</div>
+          <div className="mt-1 truncate font-mono text-[10px] text-ink-dim">{fileName(doc.libraryPath)}</div>
         </div>
         <span className={clsx('chip shrink-0', kindMeta.cls)}>{kindMeta.label}</span>
       </div>
@@ -133,7 +133,7 @@ function DocumentCard({ doc, unitName }: { doc: DocumentRef; unitName: (id: stri
             <Download className="h-3 w-3" /> Open
           </a>
         ) : (
-          <span className="font-mono text-[10px] text-ink-dim/60">archive offline</span>
+          <span className="font-mono text-[10px] text-ink-dim/60">library offline</span>
         )}
       </div>
     </div>

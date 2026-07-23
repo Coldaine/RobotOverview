@@ -1,29 +1,29 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Datacore Hardware Library — document resolution + grouping helpers.
 //
-// DocumentRefs (src/data/types.ts) reference files by a stable `archivePath`
-// under UGV-Beast-Archive/. The bytes are not in the repo or the container
-// image; they live in an external archive (Google Drive, exposed to the cluster
-// read-only via `rclone serve`). The app resolves an archivePath to a URL at
-// render time using NEXT_PUBLIC_ARCHIVE_BASE_URL — so the UI ships useful even
-// when the archive endpoint is offline (it just shows metadata, never a broken
-// link). See docs/hardware-library.md.
+// DocumentRefs (src/data/types.ts) reference files by a stable `libraryPath`
+// under beast/. The bytes are not in the repo or the container image; they live
+// in the Datacore library store (the homelab's cluster S3), separate from the
+// app. The app resolves a libraryPath to a URL at render time using
+// NEXT_PUBLIC_DATACORE_LIBRARY_URL — so the UI ships useful even when the
+// library endpoint is offline (it just shows metadata, never a broken link).
+// See docs/hardware-library.md.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { DocumentKind, DocumentRef } from '@/data/types';
 
-export const ARCHIVE_PREFIX = 'UGV-Beast-Archive/';
+export const LIBRARY_PREFIX = 'beast/';
 
-/** Drop the stable `UGV-Beast-Archive/` prefix, leaving the archive-relative key. */
-export function stripArchivePrefix(archivePath: string): string {
-  return archivePath.startsWith(ARCHIVE_PREFIX)
-    ? archivePath.slice(ARCHIVE_PREFIX.length)
-    : archivePath;
+/** Drop the stable `beast/` prefix, leaving the library-relative key. */
+export function stripLibraryPrefix(libraryPath: string): string {
+  return libraryPath.startsWith(LIBRARY_PREFIX)
+    ? libraryPath.slice(LIBRARY_PREFIX.length)
+    : libraryPath;
 }
 
-/** The configured archive host (rclone/Drive), trailing slashes trimmed, or null. */
-export function archiveBaseUrl(): string | null {
-  const raw = process.env.NEXT_PUBLIC_ARCHIVE_BASE_URL;
+/** The configured Datacore library store base URL, trailing slashes trimmed, or null. */
+export function libraryBaseUrl(): string | null {
+  const raw = process.env.NEXT_PUBLIC_DATACORE_LIBRARY_URL;
   if (!raw) return null;
   const trimmed = raw.trim().replace(/\/+$/, '');
   return trimmed.length > 0 ? trimmed : null;
@@ -31,14 +31,14 @@ export function archiveBaseUrl(): string | null {
 
 /**
  * Resolve a DocumentRef to an openable URL, or null when it can't be resolved.
- * Precedence: an explicit `url` on the record, else `${base}/${archive-key}`.
- * Returns null (→ "archive offline" in the UI) when no base URL is configured.
+ * Precedence: an explicit `url` on the record, else `${base}/${library-key}`.
+ * Returns null (→ "library offline" in the UI) when no base URL is configured.
  */
-export function resolveDocumentUrl(doc: Pick<DocumentRef, 'url' | 'archivePath'>): string | null {
+export function resolveDocumentUrl(doc: Pick<DocumentRef, 'url' | 'libraryPath'>): string | null {
   if (doc.url && doc.url.trim().length > 0) return doc.url;
-  const base = archiveBaseUrl();
+  const base = libraryBaseUrl();
   if (!base) return null;
-  const key = stripArchivePrefix(doc.archivePath)
+  const key = stripLibraryPrefix(doc.libraryPath)
     .split('/')
     .map(encodeURIComponent)
     .join('/');
@@ -46,14 +46,14 @@ export function resolveDocumentUrl(doc: Pick<DocumentRef, 'url' | 'archivePath'>
 }
 
 export interface Subsystem {
-  key: string; // raw archive folder, e.g. '02-Driver-Board'
+  key: string; // raw library folder, e.g. '02-Driver-Board'
   order: number; // numeric prefix for stable ordering
   label: string; // 'Driver Board'
 }
 
-/** Derive the subsystem grouping from a document's archive folder. */
-export function documentSubsystem(doc: Pick<DocumentRef, 'archivePath'>): Subsystem {
-  const rest = stripArchivePrefix(doc.archivePath);
+/** Derive the subsystem grouping from a document's library folder. */
+export function documentSubsystem(doc: Pick<DocumentRef, 'libraryPath'>): Subsystem {
+  const rest = stripLibraryPrefix(doc.libraryPath);
   const seg = rest.split('/')[0] || 'misc';
   const m = seg.match(/^(\d+)[-_](.*)$/);
   const order = m ? Number.parseInt(m[1], 10) : 999;
