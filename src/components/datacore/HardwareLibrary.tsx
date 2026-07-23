@@ -29,7 +29,7 @@ function fileName(libraryPath: string): string {
 }
 
 export function HardwareLibrary({ query }: { query: string }) {
-  const { documents, unit } = useHangar();
+  const { documents, unit, libraryBaseUrl } = useHangar();
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -78,7 +78,12 @@ export function HardwareLibrary({ query }: { query: string }) {
 
             <div className="grid gap-3 md:grid-cols-2">
               {docs.map((doc) => (
-                <DocumentCard key={doc.id} doc={doc} unitName={(id) => unit(id)?.name ?? id} />
+                <DocumentCard
+                  key={doc.id}
+                  doc={doc}
+                  unitName={(id) => unit(id)?.name ?? id}
+                  libraryBaseUrl={libraryBaseUrl}
+                />
               ))}
             </div>
           </section>
@@ -88,10 +93,18 @@ export function HardwareLibrary({ query }: { query: string }) {
   );
 }
 
-function DocumentCard({ doc, unitName }: { doc: DocumentRef; unitName: (id: string) => string }) {
+function DocumentCard({
+  doc,
+  unitName,
+  libraryBaseUrl,
+}: {
+  doc: DocumentRef;
+  unitName: (id: string) => string;
+  libraryBaseUrl: string | null;
+}) {
   const kindMeta = DOCUMENT_KIND_META[doc.kind];
   const Icon = KIND_ICON[doc.kind];
-  const url = resolveDocumentUrl(doc);
+  const url = resolveDocumentUrl(doc, libraryBaseUrl);
 
   return (
     <div className="panel group flex flex-col p-4 transition-all hover:border-cyan/40 hover:shadow-hud-cyan">

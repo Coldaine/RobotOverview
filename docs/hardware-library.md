@@ -27,14 +27,22 @@ data; the bytes live outside the repo. Verify against `src/` before relying on a
 ## Where the bytes live (hosting)
 
 The binaries are **not** in the repo or the container image. They are served from the Datacore
-library store (the homelab's cluster S3 / Garage), resolved via `NEXT_PUBLIC_DATACORE_LIBRARY_URL`.
-See `docs/deploy.md`.
+library store (the homelab's cluster S3 / Garage), resolved via the plain runtime env var
+`DATACORE_LIBRARY_URL`. See `docs/deploy.md`.
 
-- The app resolves a document to a URL at render time: `resolveDocumentUrl()` in
-  `src/lib/documents.ts` returns an explicit `url` if set, else `${NEXT_PUBLIC_DATACORE_LIBRARY_URL}/`
-  + the library-relative key.
-- **Offline-safe:** when `NEXT_PUBLIC_DATACORE_LIBRARY_URL` is unset or the store is unreachable, the
-  catalog stays fully browsable and open links show "library offline" — never a broken link.
+- **Deliberately not `NEXT_PUBLIC_*`.** A `NEXT_PUBLIC_` var is string-inlined into the client
+  bundle at `next build` time — the cluster could never set it after the image is built without a
+  rebuild. `DATACORE_LIBRARY_URL` is instead read server-side at request time in
+  `src/app/layout.tsx` (which is `force-dynamic`) and threaded through `HangarProvider` into the
+  store as `libraryBaseUrl`, so the cluster can set/change it as an ordinary Deployment env var —
+  no rebuild required.
+- The app resolves a document to a URL at render time: `resolveDocumentUrl(doc, libraryBaseUrl)` in
+  `src/lib/documents.ts` returns an explicit `url` if set, else `${libraryBaseUrl}/` + the
+  library-relative key.
+- **Offline-safe when unset:** when `DATACORE_LIBRARY_URL` is unset, the catalog stays fully
+  browsable and open links show "library offline" — never a broken link. There is currently no
+  reachability probe: if the var is set but the store is actually unreachable, "Open" still
+  renders a link, which may 404/time out when clicked.
 
 ## Adding a document
 

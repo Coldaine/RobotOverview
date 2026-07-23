@@ -4,10 +4,17 @@
 // DocumentRefs (src/data/types.ts) reference files by a stable `libraryPath`
 // under beast/. The bytes are not in the repo or the container image; they live
 // in the Datacore library store (the homelab's cluster S3), separate from the
-// app. The app resolves a libraryPath to a URL at render time using
-// NEXT_PUBLIC_DATACORE_LIBRARY_URL — so the UI ships useful even when the
-// library endpoint is offline (it just shows metadata, never a broken link).
-// See docs/hardware-library.md.
+// app. The app resolves a libraryPath to a URL at render time given the
+// library base URL — so the UI ships useful even when the library endpoint is
+// offline (it just shows metadata, never a broken link). See docs/hardware-library.md.
+//
+// The base URL is read server-side from the plain (non-NEXT_PUBLIC_) env var
+// `DATACORE_LIBRARY_URL` in src/app/layout.tsx and threaded through HangarProvider —
+// deliberately not read here via process.env, because this module is imported by
+// 'use client' components: a NEXT_PUBLIC_ var gets string-inlined into the client
+// bundle at `next build` time, so it could never be set later by the cluster without
+// a rebuild. Reading it server-side at request time (layout.tsx is force-dynamic)
+// lets the cluster set/change it as an ordinary runtime env var.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { DocumentKind, DocumentRef } from '@/data/types';
@@ -21,9 +28,8 @@ export function stripLibraryPrefix(libraryPath: string): string {
     : libraryPath;
 }
 
-/** The configured Datacore library store base URL, trailing slashes trimmed, or null. */
-export function libraryBaseUrl(): string | null {
-  const raw = process.env.NEXT_PUBLIC_DATACORE_LIBRARY_URL;
+/** Normalize a raw library base URL (trim, drop trailing slashes), or null when unset. */
+export function normalizeLibraryBaseUrl(raw: string | null | undefined): string | null {
   if (!raw) return null;
   const trimmed = raw.trim().replace(/\/+$/, '');
   return trimmed.length > 0 ? trimmed : null;
@@ -31,18 +37,20 @@ export function libraryBaseUrl(): string | null {
 
 /**
  * Resolve a DocumentRef to an openable URL, or null when it can't be resolved.
- * Precedence: an explicit `url` on the record, else `${base}/${library-key}`.
+ * Precedence: an explicit `url` on the record, else `${libraryBaseUrl}/${library-key}`.
  * Returns null (→ "library offline" in the UI) when no base URL is configured.
  */
-export function resolveDocumentUrl(doc: Pick<DocumentRef, 'url' | 'libraryPath'>): string | null {
+export function resolveDocumentUrl(
+  doc: Pick<DocumentRef, 'url' | 'libraryPath'>,
+  libraryBaseUrl: string | null,
+): string | null {
   if (doc.url && doc.url.trim().length > 0) return doc.url;
-  const base = libraryBaseUrl();
-  if (!base) return null;
+  if (!libraryBaseUrl) return null;
   const key = stripLibraryPrefix(doc.libraryPath)
     .split('/')
     .map(encodeURIComponent)
     .join('/');
-  return `${base}/${key}`;
+  return `${libraryBaseUrl}/${key}`;
 }
 
 export interface Subsystem {
@@ -79,7 +87,9 @@ export function groupDocumentsBySubsystem(docs: DocumentRef[]): SubsystemGroup[]
     if (existing) existing.documents.push(doc);
     else groups.set(subsystem.key, { subsystem, documents: [doc] });
   }
-  return [...groups.values()].sort((a, b) => a.subsystem.order - b.subsystem.order);
+  return [...groups.values()].sort(
+    (a, b) => a.subsystem.order - b.subsystem.order || a.subsystem.key.localeCompare(b.subsystem.key),
+  );
 }
 
 export const DOCUMENT_KIND_META: Record<DocumentKind, { label: string; cls: string }> = {
