@@ -9,7 +9,6 @@ function makeUnit(overrides: Partial<Unit> = {}): Unit {
     bay: 'compute',
     class: 'SBC · Onboard I/O',
     status: 'operational',
-    lifecycle: 'inventory',
     summary: '',
     specs: [],
     tags: [],

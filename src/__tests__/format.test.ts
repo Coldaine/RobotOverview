@@ -7,7 +7,6 @@ import {
   timeAgo,
   STATUS_META,
   ACTIVITY_KIND_META,
-  LIFECYCLE_META,
   ITEM_STATUS_META,
   TONE_COLOR_VARS,
   WISHLIST_STATUS_META,
@@ -19,7 +18,6 @@ import {
 } from '@/lib/format';
 import {
   INVENTORY_ITEM_STATUSES,
-  LIFECYCLE_STATES,
   MISSION_STATUSES,
   ACTIVITY_KINDS,
   INSIGHT_CONFIDENCE_LEVELS,
@@ -74,19 +72,27 @@ describe('timeAgo()', () => {
 });
 
 describe('STATUS_META exhaustiveness', () => {
+  it('uses one mutually exclusive unit-state vocabulary', () => {
+    expect(UNIT_STATUSES).toEqual([
+      'researching',
+      'planned',
+      'on-order',
+      'inventory',
+      'integrating',
+      'operational',
+      'needs-attention',
+      'blocked',
+      'retired',
+    ]);
+  });
+
   it.each(UNIT_STATUSES)('has an entry for status "%s"', (status) => {
     expect(STATUS_META[status]).toBeDefined();
     expect(STATUS_META[status].label).toBeTruthy();
+    expect(STATUS_META[status].description).toBeTruthy();
     expect(STATUS_META[status].tone).toBeTruthy();
     expect(TONE_COLOR_VARS[STATUS_META[status].tone]).toBeTruthy();
     expect(unitStatusColorVar(status)).toBe(TONE_COLOR_VARS[STATUS_META[status].tone]);
-  });
-});
-
-describe('LIFECYCLE_META exhaustiveness', () => {
-  it.each(LIFECYCLE_STATES)('has an entry for lifecycle "%s"', (state) => {
-    expect(LIFECYCLE_META[state]).toBeDefined();
-    expect(LIFECYCLE_META[state].label).toBeTruthy();
   });
 });
 

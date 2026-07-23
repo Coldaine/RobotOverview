@@ -11,7 +11,6 @@ function makeUnit(overrides: Partial<Unit> = {}): Unit {
     bay: 'robotics',
     class: 'Test Class',
     status: 'operational',
-    lifecycle: 'assembled',
     summary: 'A unit under test.',
     specs: [],
     ...overrides,

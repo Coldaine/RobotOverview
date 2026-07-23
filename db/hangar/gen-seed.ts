@@ -94,7 +94,7 @@ w('\n-- assets: units');
 for (const u of H.units) {
   const kind = u.loadout && u.loadout.length ? 'system' : 'module';
   w(
-    `INSERT INTO assets(${assetCols}) VALUES (${S(u.id)},${S(kind)},${S(u.name)},NULL,NULL,${S(u.callsign)},${S(u.status)},${S(u.lifecycle)},${S(u.provenance)},${B(u.flagship)},${S(u.summary)},NULL,NULL,${S(u.monitoredVia)},${S(u.acquired)},${S(u.horizon)},1,${N(u.power?.watts)},${N(u.power?.volts)},${S(u.power?.rail)},${N(u.massGrams)},${N(u.price?.us)},${N(u.price?.import)},${J(u.specs)},${J(u.links)},NULL,NULL);`,
+    `INSERT INTO assets(${assetCols}) VALUES (${S(u.id)},${S(kind)},${S(u.name)},NULL,NULL,${S(u.callsign)},${S(u.status)},NULL,${S(u.provenance)},${B(u.flagship)},${S(u.summary)},NULL,NULL,${S(u.monitoredVia)},${S(u.acquired)},${S(u.horizon)},1,${N(u.power?.watts)},${N(u.power?.volts)},${S(u.power?.rail)},${N(u.massGrams)},${N(u.price?.us)},${N(u.price?.import)},${J(u.specs)},${J(u.links)},NULL,NULL);`,
   );
 }
 
