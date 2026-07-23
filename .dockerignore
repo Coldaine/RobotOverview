@@ -1,6 +1,7 @@
 .git
 .github
 .next
+assets
 coverage
 node_modules
 npm-debug.log*
