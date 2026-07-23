@@ -199,7 +199,7 @@ export function DriverBoardSchematic() {
 
                   {/* port hotspot */}
                   <g
-                    className="cursor-pointer outline-none"
+                    className="cursor-pointer"
                     role="button"
                     tabIndex={0}
                     aria-label={`${port.label} — ${isFilled ? 'filled' : 'empty'}`}
