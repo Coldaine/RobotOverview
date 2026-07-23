@@ -318,7 +318,7 @@ for (const t of H.terminals ?? []) {
 
 w('\n-- documents + document_assets');
 for (const d of H.documents ?? []) {
-  w(`INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES (${S(d.id)},${S(d.title)},${S(d.kind)},${S(d.archivePath)},${S(d.url)},${S(d.note)});`);
+  w(`INSERT INTO documents(id,title,kind,library_path,url,note) VALUES (${S(d.id)},${S(d.title)},${S(d.kind)},${S(d.libraryPath)},${S(d.url)},${S(d.note)});`);
   for (const uid of d.units ?? [])
     if (A(uid)) w(`INSERT INTO document_assets(document_id,asset_id) VALUES (${S(d.id)},${S(uid)}) ON CONFLICT DO NOTHING;`);
 }

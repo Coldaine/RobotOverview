@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import type { DocumentRef, Net, Terminal, Unit } from '@/data/types';
 import { documentsForNet, netKindColor, type ActiveSet } from '@/lib/twin';
+import { resolveDocumentUrl } from '@/lib/documents';
 import { docIcon, NET_STROKE } from './palette';
 
 export function NetInspector({
@@ -12,6 +13,7 @@ export function NetInspector({
   units,
   terminals,
   documents,
+  libraryBaseUrl,
   active,
   onClose,
   onHoverTerminal,
@@ -20,6 +22,7 @@ export function NetInspector({
   units: Unit[];
   terminals: Terminal[];
   documents: DocumentRef[];
+  libraryBaseUrl: string | null;
   active: ActiveSet;
   onClose: () => void;
   onHoverTerminal: (terminalId: string | null) => void;
@@ -34,7 +37,7 @@ export function NetInspector({
   }, []);
 
   const copy = async (doc: DocumentRef) => {
-    const value = doc.url ?? doc.archivePath;
+    const value = doc.url ?? doc.libraryPath;
     try {
       await navigator.clipboard.writeText(value);
       setCopied(doc.id);
@@ -130,19 +133,20 @@ export function NetInspector({
               <ul className="flex flex-col gap-1">
                 {proving.map((doc) => {
                   const DocIcon = docIcon(doc.kind);
+                  const url = resolveDocumentUrl(doc, libraryBaseUrl);
                   return (
                     <li key={doc.id} className="panel-inset group flex items-center gap-2 px-2.5 py-2">
                       <DocIcon className="h-4 w-4 shrink-0 text-cyan" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate font-mono text-[11px] text-ink">{doc.title}</div>
-                        <div className="truncate font-mono text-[9px] text-ink-dim">{doc.archivePath}</div>
+                        <div className="truncate font-mono text-[9px] text-ink-dim">{doc.libraryPath}</div>
                       </div>
-                      {doc.url ? (
-                        <a href={doc.url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Open ${doc.title}`}>
+                      {url ? (
+                        <a href={url} target="_blank" rel="noopener noreferrer" className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Open ${doc.title}`}>
                           <ArrowRight className="h-3.5 w-3.5" />
                         </a>
                       ) : (
-                        <button type="button" onClick={() => copy(doc)} className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Copy archive path for ${doc.title}`}>
+                        <button type="button" onClick={() => copy(doc)} className="btn btn-ghost shrink-0 !p-1.5" aria-label={`Copy library path for ${doc.title}`}>
                           {copied === doc.id ? <Check className="h-3.5 w-3.5 text-signal-ok" /> : <Copy className="h-3.5 w-3.5" />}
                         </button>
                       )}

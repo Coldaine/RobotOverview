@@ -120,7 +120,7 @@ export default function Items() {
                           </Link>
                         ))}
                         {relInsights.map((ins) => (
-                          <Link key={ins!.id} href="/codex" className="chip border-rim/70 bg-panel-2/40 text-ink-dim hover:underline">
+                          <Link key={ins!.id} href="/datacore" className="chip border-rim/70 bg-panel-2/40 text-ink-dim hover:underline">
                             ✎ {ins!.title}
                           </Link>
                         ))}

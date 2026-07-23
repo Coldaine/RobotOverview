@@ -3,7 +3,7 @@ title: Hangar North Star
 date: 2026-05-31
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-07-07
+last_confirmed: 2026-07-22
 ---
 
 # Hangar North Star
@@ -25,12 +25,12 @@ Directional, not testable.
 - **G4.** Show what to acquire next and why (an upgrade path), and what I already own and where it sits.
 - **G5.** Capture lessons learned so knowledge is retrievable by unit and mission, not lost to chat history.
 - **G6.** Design primarily for desktop, widescreen, and ultrawide use. Phone layouts must not break or become unusable, but mobile support must not compromise the desktop command-center experience.
+- **G7.** Host a live command portal to running units — telemetry, video, teleop, and autonomous / learned policies. Autonomy is in scope. Safety reflexes (watchdog, e-stop, motor PID) stay on the robot; operating detail lives in each unit's runbook (see `docs/beast-ops.md`), not here.
 
 ## Anti-Goals
 
 - **AG1.** Not a flat inventory list. It refuses to be a catalog of disconnected possessions; the reason it exists is the connected model where units, missions, and lessons relate to one another.
-- **AG2.** Not an *autonomous* system. The Hangar SHOULD host a live portal to a running unit — telemetry, video, and supervised teleop controls in the app itself (decided 2026-07-02) — but a human stays in the loop for every action it surfaces. It never operates the systems it catalogs unattended or autonomously. Operating detail for a unit lives in its runbook (see `docs/beast-ops.md`), not here.
-- **AG3.** Undercroft, and any mission, is content inside the system, never the system's identity.
+- **AG2.** Undercroft, and any mission, is content inside the system, never the system's identity.
 
 ## Pillars
 
@@ -47,6 +47,7 @@ Directional, not testable.
 - **In what form is the content stored?** In a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) with room for flexible, localized metadata (power budgets, pricing, specs). `src/data/hangar.ts` bootstraps that model and remains the authoring surface; Postgres follows it lane-by-lane (inventory items currently read through `src/server/hangar/`, deployment truth in `docs/deploy.md`).
 - **What is the model for what I own and its state?** Standalone products and parts are tracked as `InventoryItem`s; assembled or deployable systems are tracked as `Unit`s. Assembly is modeled via grouped `Loadout Slots` (e.g. Chassis Mounts, Driver Board Interfaces), allowing any unit to act as a parent chassis that other units plug into, replicating a base-builder upgrade tree.
 - **Where does it live (hosting)?** `hangar.moosegoose.xyz` on the personal Kubernetes cluster (`coldaine-k8cluster` owns runtime manifests; see `docs/deploy.md`). Content authored in this repo ships inside the image on every deploy.
+- **Is autonomy in scope?** Yes (decided 2026-07-22). The prior AG2 ban on unattended / autonomous operation is repealed. Hangar may run closed-loop policies on units it catalogs. Onboard fail-safes remain engineering requirements, not a product ban on self-driving.
 
 ## Open Questions
 

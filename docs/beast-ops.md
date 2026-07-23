@@ -5,36 +5,51 @@ read its telemetry, and program it. The catalog entry for the unit lives in
 `src/data/hangar.ts` (`id: 'beast'`). Facts below carry the date they were last verified;
 re-verify against the live robot before relying on anything stale.
 
-> The Hangar is growing an in-app supervised portal to the Beast (telemetry, video, teleop —
-> North Star AG2, decided 2026-07-02). Until it ships, the robot's own dashboard below is the
-> control surface. Human-in-the-loop always; nothing operates the robot unattended.
+> The Hangar is growing an in-app command portal to the Beast (telemetry, video, teleop, and
+> autonomous / learned policies — North Star G7, autonomy in scope as of 2026-07-22). Onboard
+> fail-safes (stale-command watchdog, explicit stop, motor PID) remain mandatory engineering —
+> they are not a ban on self-driving. **Dynamics note (operator, 2026-07-22):** the Beast is
+> slow, hard-stops, and **stops in time** for terrain/obstacle reactions. Remote closed-loop
+> from CORE-PRIME is fine. Lightweight on-device Orin inference for terrain alignment /
+> avoidance is fine. Reject “won’t stop in time” and “avoidance must stay classical-only.”
 
 ## Hardware chain
 
+> **Cutover status 2026-07-22 — OP-ORIN-GAP:** Raspberry Pi 5 **removed**. Host controller
+> mount is **empty**. Jetson Orin Nano Super is software-ready (JP 6.2.2 / R36.5, ROS 2 Humble,
+> Waveshare workspace built) and is being physically fitted. Until UART/power/USB sensors and
+> network identity land on the Orin, there is **no** live upper-computer control surface.
+
 ```
-Browser / HTTP client  ──HTTP/WebSocket──▶  Raspberry Pi 5 (upper computer)
-                                              │  Flask web app `ugv_rpi`, camera, strategy
+Target (Orin cutover):
+Browser / Hangar / CORE-PRIME  ──LAN──▶  Jetson Orin Nano Super (upper computer)
+                                              │  ROS 2 / policy / camera / LiDAR
                                               ▼  JSON over UART @115200
                                             ESP32 (lower computer)  ──▶ motors · servos · IMU · voltage
+
+Previous (retired 2026-07-22):
+Browser  ──HTTP/WebSocket──▶  Raspberry Pi 5 + ugv_rpi  ──UART──▶  ESP32
 ```
 
-- **Upper computer:** Raspberry Pi 5 — vision, web UI, command relay. No CUDA; learned-policy
-  inference lives offboard.
-- **Lower computer:** ESP32 — motion (PID), stock pan-tilt servo bus, sensor feedback.
-- **Software stack:** Waveshare `ugv_rpi` (standard, not ROS2). Server is Werkzeug / Python 3.11.
+- **Upper computer (target):** Jetson Orin Nano Super — vision, ROS 2, teleop, on-device and/or
+  offboard policy inference. **Not yet installed in the chassis.**
+- **Upper computer (previous):** Raspberry Pi 5 + Waveshare `ugv_rpi` — removed; kept as spare.
+- **Lower computer:** ESP32 — motion (PID), stock pan-tilt servo bus, sensor feedback, stop.
+- **Chassis dynamics:** slow tracked base; hard-stops and stops in time for lightweight
+  onboard terrain alignment / obstacle avoidance once Orin is fitted.
 
 ## Network
 
 | Fact | Value | Verified |
 |---|---|---|
 | Hostname | `beast.local` | ⚠️ did not resolve from `icarus-laptop` on 2026-07-01 |
-| IP | `192.168.20.184` | ✅ HTTP 200, 8-14 ms ping |
-| Cross-VLAN reach | reachable from the dev workstation (different VLAN) | ✅ measured 2026-07-01 |
-| DHCP reservation | fixed IP held on the UDM | ⚠️ per setup — confirm on the UDM |
+| IP (former Pi) | `192.168.20.184` | ✅ HTTP 200, 8-14 ms ping **while Pi was installed** (2026-07-01); **offline mid-cutover** |
+| Cross-VLAN reach | reachable from the dev workstation (different VLAN) | ✅ measured 2026-07-01 (Pi era) |
+| DHCP reservation | fixed IP held on the UDM for beast identity | ⚠️ move to Orin MAC at cutover |
 | Source VLAN | CastleMooseGoose → robot VLAN (`192.168.20.x`) | ⚠️ per setup — confirm |
 
-Use the raw IP as the operator path until mDNS/DNS is fixed. After a Beast reboot or a DHCP
-renew, re-confirm it returns to `192.168.20.184` (that's what the reservation is for).
+Former Pi endpoints below are historical until the Orin assumes the beast DHCP/DNS identity.
+Re-verify IP after the Jetson is on the robot VLAN.
 
 ## Services & dashboards
 
@@ -134,9 +149,10 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
 2. **JupyterLab (`:8888`)** — official lesson notebooks: motion, camera/CV (face/object/line/
    gesture), and gimbal control. This is where you learn to program it.
 3. **JSON command API** — `/json` Socket.IO. Script motion and gimbal control; this is also
-   the integration point if the Hangar ever gains a (supervised) command view.
-4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, even
-   LLM-driven natural-language control. Bigger jump.
+   the integration point for the Hangar command portal (teleop and autonomy).
+4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, and
+   LLM / VLA-driven control including closed-loop autonomy. Bigger jump. Research brief:
+   [robot-control LLMs briefing](plans/2026-07-22-robot-control-llms-briefing.md).
 
 ## NVMe storage policy — UPDATE PENDING DEPLOYMENT
 
@@ -161,15 +177,16 @@ Do not provision or enable storage units from this section yet. Follow the [stor
 
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
-> **Status: SOFTWARE PROVISIONING COMPLETE; PHYSICAL BEAST INTEGRATION PENDING — verified
-> 2026-07-11.** The initial Intel Raptor Lake run flashed QSPI and the 2 TB NVMe. The later
+> **Status: SOFTWARE PROVISIONING COMPLETE; PHYSICAL HOST SWAP IN PROGRESS — updated
+> 2026-07-22.** The initial Intel Raptor Lake run flashed QSPI and the 2 TB NVMe. The later
 > credential-safe external-only restore rewrote the NVMe but deliberately left the already-valid
 > QSPI untouched; that restored image is the current `beast-01` system on Jetson Linux R36.5.
 > Key-based SSH and Doppler-backed sudo both pass. JetPack 6.2.2 and the NVIDIA Docker runtime are
 > installed and verified. ROS 2 Humble and all 29 packages in the Jetson-adapted Waveshare
-> workspace build on the Orin; its zero-motion systemd unit is installed but disabled. Physical
-> UART, telemetry, camera, LiDAR, and stop-behavior validation are the remaining gates. BEAST-01
-> still physically runs the Raspberry Pi 5 stack until those gates pass and the Jetson is installed.
+> workspace build on the Orin; its zero-motion systemd unit is installed but disabled.
+> **2026-07-22:** Raspberry Pi 5 has been **removed** from BEAST-01; the host mount is empty and
+> the Orin is being fitted. Remaining gates are mechanical install plus onboard UART, power,
+> telemetry, camera, LiDAR, and stop-behavior validation on the robot — not flash/ROS rebuild.
 
 ### Target and non-goals
 
@@ -1204,14 +1221,16 @@ validation. Camera, LiDAR, SLAM/Nav2, and web control follow only after the chas
 ### Remaining physical cutover record
 
 Credentials, native packages, JetPack, Docker/CUDA, ROS 2, the 29-package build, and the disabled
-zero-motion service are complete. The current USB inventory contains only the carrier's hubs and
-Bluetooth radio, so do not infer camera or LiDAR behavior from this detached bench state.
+zero-motion service are complete. **Pi is already off the robot (2026-07-22);** the active work is
+fitting the Orin into the empty host mount and bringing sensors/UART live. Do not infer camera or
+LiDAR behavior from a detached bench USB inventory.
 
-Before declaring the Beast compute cutover complete, record the onboard UART loopback result, then
-connect the ACCE hardware with power removed and capture zero-motion voltage, IMU, and odometry.
-Identify the D500's stable `/dev/serial/by-id` path, verify one frame stream from the 5 MP camera and
-OAK-D Lite, and complete the lifted-track heartbeat-stop test above. Only then enable the staged
-service and move the `beast` DHCP/DNS identity away from the disconnected Pi.
+Before declaring the Beast compute cutover complete: seat and power the Orin in the chassis, record
+the onboard UART loopback result, then capture zero-motion voltage, IMU, and odometry with ACCE
+hardware connected (power removed while wiring). Identify the D500's stable `/dev/serial/by-id`
+path, verify one frame stream from the 5 MP camera and OAK-D Lite, and complete the lifted-track
+heartbeat-stop test above. Only then enable the staged service and move the `beast` DHCP/DNS
+identity onto the Orin MAC (former Pi identity `192.168.20.184` is offline mid-gap).
 
 ### Research references
 
@@ -1242,3 +1261,5 @@ service and move the `beast` DHCP/DNS identity away from the disconnected Pi.
 - Waveshare UGV Beast — https://www.waveshare.com/ugv-beast.htm
 - `ugv_rpi` (Pi upper-computer code) — https://github.com/waveshareteam/ugv_rpi
 - `ugv_base_general` / `ugv_base_ros` (ESP32 lower-computer code) — https://github.com/waveshareteam
+- Robot control LLMs / VLA / Cosmos 3 Edge research brief — [docs/plans/2026-07-22-robot-control-llms-briefing.md](plans/2026-07-22-robot-control-llms-briefing.md)
+- Introducing Cosmos 3 Edge (Hugging Face) — https://huggingface.co/blog/nvidia/cosmos3edge

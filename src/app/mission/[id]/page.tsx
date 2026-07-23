@@ -131,10 +131,10 @@ export default function MissionView() {
 
           {insights.length > 0 && (
             <section>
-              <SectionTitle code="CODEX">Linked Insights</SectionTitle>
+              <SectionTitle code="CORE">Linked Insights</SectionTitle>
               <div className="space-y-2">
                 {insights.map((ins) => (
-                  <Link key={ins!.id} href="/codex" className="panel block p-3 transition-all hover:border-cyan/40">
+                  <Link key={ins!.id} href="/datacore" className="panel block p-3 transition-all hover:border-cyan/40">
                     <div className="font-display text-xs uppercase tracking-[0.08em] text-ink">{ins!.title}</div>
                     <p className="mt-1 font-mono text-[11px] leading-relaxed text-ink-dim">{ins!.body}</p>
                   </Link>
