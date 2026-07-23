@@ -199,9 +199,19 @@ export function DriverBoardSchematic() {
 
                   {/* port hotspot */}
                   <g
-                    className="cursor-pointer"
+                    className="cursor-pointer outline-none"
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${port.label} — ${isFilled ? 'filled' : 'empty'}`}
+                    aria-pressed={isActive}
                     onClick={() => setActive(port.id)}
                     onMouseEnter={() => setActive(port.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setActive(port.id);
+                      }
+                    }}
                   >
                     {/* generous invisible hit target */}
                     <circle cx={pad.x} cy={pad.y} r="4" fill="transparent" />

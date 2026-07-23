@@ -169,7 +169,7 @@ function renderInline(text: string): ReactNode[] {
             key={key++}
             href={link[2]}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="text-cyan underline decoration-cyan/40 underline-offset-2 hover:text-cyan-soft"
           >
             {link[1]}

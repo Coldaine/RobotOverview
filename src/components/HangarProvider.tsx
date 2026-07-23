@@ -8,13 +8,19 @@ export function HangarProvider({
   children,
   initialItems,
   initialInventoryRead,
+  initialLibraryBaseUrl,
 }: {
   children: ReactNode;
   initialItems?: InventoryItem[];
   initialInventoryRead?: HangarReadStatus;
+  initialLibraryBaseUrl?: string | null;
 }) {
   return (
-    <Provider initialItems={initialItems} initialInventoryRead={initialInventoryRead}>
+    <Provider
+      initialItems={initialItems}
+      initialInventoryRead={initialInventoryRead}
+      initialLibraryBaseUrl={initialLibraryBaseUrl}
+    >
       {children}
     </Provider>
   );
