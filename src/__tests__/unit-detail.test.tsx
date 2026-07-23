@@ -36,7 +36,7 @@ describe('Unit detail command shortcuts', () => {
     expect(screen.queryByText('Assembled')).not.toBeInTheDocument();
   });
 
-  it('renders BEAST supervised command shortcuts', () => {
+  it('renders BEAST command shortcuts', () => {
     renderUnitDetail('beast');
 
     expect(screen.getByText('Command Shortcuts')).toBeInTheDocument();

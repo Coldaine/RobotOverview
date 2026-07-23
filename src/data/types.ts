@@ -165,8 +165,8 @@ export interface Unit {
   acquired?: string; // ISO date or "—"
   horizon?: string; // for future items: when it's expected
   provenance?: ProvenanceKind;
-  // External system this unit's live status is *referenced* from (e.g. "Home Assistant").
-  // Catalog reference only — the Hangar never controls the system (North Star AG2).
+  // External system this unit's live status may be referenced from (e.g. "Home Assistant").
+  // Optional cross-link; does not by itself imply Hangar owns that system's control plane.
   monitoredVia?: string;
 }
 
@@ -322,8 +322,8 @@ export interface Net {
 }
 
 // ── Documents: the downloaded source-of-truth library ────────────────────────
-// References into the UGV-Beast-Archive (and, later, object storage). The
-// archivePath is the stable key; url is filled once files live in storage.
+// References into the Datacore hardware library (and, later, object storage).
+// The libraryPath is the stable key; url is filled once files live in storage.
 
 export const DOCUMENT_KINDS = [
   'schematic',
@@ -340,7 +340,7 @@ export interface DocumentRef {
   id: string;
   title: string;
   kind: DocumentKind;
-  archivePath: string; // path under UGV-Beast-Archive/
+  libraryPath: string; // path under beast/
   url?: string; // public/object-storage URL once uploaded
   units?: string[]; // related unit ids
   note?: string;
