@@ -112,6 +112,7 @@ INSERT INTO tags(namespace,name,label) VALUES ('tag','undercroft','undercroft') 
 INSERT INTO tags(namespace,name,label) VALUES ('tag','north-star','north-star') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','perception','perception') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','edge','edge') ON CONFLICT (namespace,name) DO NOTHING;
+INSERT INTO tags(namespace,name,label) VALUES ('tag','sizing','sizing') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','deployment','deployment') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','shipwright','shipwright') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','ghcr','ghcr') ON CONFLICT (namespace,name) DO NOTHING;
@@ -515,6 +516,15 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',i
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='cosmos' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='edge' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='decision' ON CONFLICT DO NOTHING;
+INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('compute-sizing-method','Jetson tier fit needs linked workload views, not TOPS','Orin Nano / NX / AGX decisions are proven with concurrent pipelines: requirements → functional dataflow → cyber-physical allocation → interface/timing → engine matrix → full-graph measurements. Camera ingress, ISP, memory, encode, and sync often dominate over advertised TOPS. Full brief in Datacore.','high','/datacore/compute-workload','2026-07-23');
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('compute-sizing-method','orin-nano') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('compute-sizing-method','beast') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('compute-sizing-method','workstation') ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'compute-sizing-method',id FROM tags WHERE namespace='tag' AND name='compute' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'compute-sizing-method',id FROM tags WHERE namespace='tag' AND name='jetson' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'compute-sizing-method',id FROM tags WHERE namespace='tag' AND name='orin' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'compute-sizing-method',id FROM tags WHERE namespace='tag' AND name='sizing' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'compute-sizing-method',id FROM tags WHERE namespace='tag' AND name='architecture' ON CONFLICT DO NOTHING;
 INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('ghcr-buildrun-noise','Diagnose GHCR from live BuildRuns, not stale failures','On 2026-07-01 the live ExternalSecret-backed GHCR push and pull secrets were synced and shaped correctly, and current Shipwright BuildRuns pushed immutable image digests. Old failed BuildRuns were Dockerfile path mistakes and cleanup noise, not evidence that the GHCR tokens were broken.','high','coldaine-k8cluster live kubectl inspection','2026-07-01');
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM tags WHERE namespace='tag' AND name='deployment' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM tags WHERE namespace='tag' AND name='shipwright' ON CONFLICT DO NOTHING;
@@ -523,6 +533,7 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('wifi-tail','beast') ON CONFLICT DO NOTHING;
 
 -- activity_log
+INSERT INTO activity_log(id,at,kind,text) VALUES ('a-compute-sizing','2026-07-23T10:00:00Z','researched','Datacore: compute-workload sizing brief (NX vs AGX linked views) persisted.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-orin-models','2026-07-22T03:55:00Z','researched','Orin edge shortlist: SmolVLA first; GR00T/small VLMs; Cosmos Edge as WAM post-train path.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-orin-host-gap','2026-07-22T03:45:00Z','mission','OP-ORIN-GAP: Pi removed from BEAST-01; host empty while Orin Nano is fitted.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-beast-slow','2026-07-22T03:46:00Z','insight','Beast stops in time; lightweight onboard terrain avoidance is in play — drop false refusals.');
@@ -565,38 +576,38 @@ INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('beast-camer
 INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('beast-oled','beast','OLED Display','I²C','input','Voltage / IP telemetry readout');
 
 -- documents + document_assets
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-gdb-schematic','General Driver for Robots — Schematic','schematic','UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-gdb-schematic','General Driver for Robots — Schematic','schematic','beast/02-Driver-Board/General_Driver_for_Robots_Schematic.pdf',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-gdb-schematic','driver-board') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-gdb-wiki','General Driver for Robots — Wiki','wiki','UGV-Beast-Archive/08-Wiki-Pages/General-Driver-for-Robots_Wiki.md',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-gdb-wiki','General Driver for Robots — Wiki','wiki','beast/08-Wiki-Pages/General-Driver-for-Robots_Wiki.md',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-gdb-wiki','driver-board') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-gdb-step','General Driver for Robots — STEP CAD','cad','UGV-Beast-Archive/02-Driver-Board/General_Driver_for_Robots_STEP.zip',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-gdb-step','General Driver for Robots — STEP CAD','cad','beast/02-Driver-Board/General_Driver_for_Robots_STEP.zip',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-gdb-step','driver-board') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-ups-schematic','UPS Module 3S — Schematic','schematic','UGV-Beast-Archive/03-Power-UPS/Ups01_Schematic.pdf',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-ups-schematic','UPS Module 3S — Schematic','schematic','beast/03-Power-UPS/Ups01_Schematic.pdf',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-ups-schematic','stock-ups') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-ups-wiki','UPS Module 3S — Wiki','wiki','UGV-Beast-Archive/08-Wiki-Pages/UPS-Module-3S_Wiki.md',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-ups-wiki','UPS Module 3S — Wiki','wiki','beast/08-Wiki-Pages/UPS-Module-3S_Wiki.md',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-ups-wiki','stock-ups') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-ups-code','UPS Module 3S — INA219 Monitoring Code','firmware','UGV-Beast-Archive/03-Power-UPS/UPS_Module_3S_Code.zip',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-ups-code','UPS Module 3S — INA219 Monitoring Code','firmware','beast/03-Power-UPS/UPS_Module_3S_Code.zip',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-ups-code','stock-ups') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-st3215-manual','ST3215 Servo — User Manual','manual','UGV-Beast-Archive/04-Servos/ST3215_Servo_User_Manual.pdf',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-st3215-manual','ST3215 Servo — User Manual','manual','beast/04-Servos/ST3215_Servo_User_Manual.pdf',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-st3215-manual','beast') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-st-protocol','ST Serial Bus Servo — Protocol Manual','manual','UGV-Beast-Archive/04-Servos/ST_Servo_Communication_Protocol_Manual.pdf',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-st-protocol','ST Serial Bus Servo — Protocol Manual','manual','beast/04-Servos/ST_Servo_Communication_Protocol_Manual.pdf',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-st-protocol','beast') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-st-circuit','ST Bus Servo — Control Circuit Schematic','schematic','UGV-Beast-Archive/04-Servos/ST_Bus_Servo_Control_Circuit.pdf',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-st-circuit','ST Bus Servo — Control Circuit Schematic','schematic','beast/04-Servos/ST_Bus_Servo_Control_Circuit.pdf',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-st-circuit','driver-board') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-beast-wiki','UGV Beast — Wiki','wiki','UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast_Wiki.md',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-beast-wiki','UGV Beast — Wiki','wiki','beast/08-Wiki-Pages/UGV-Beast_Wiki.md',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-beast-wiki','beast') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-beast-product','UGV Beast PT — Product Page','wiki','UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast_Product-Page.md',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-beast-product','UGV Beast PT — Product Page','wiki','beast/08-Wiki-Pages/UGV-Beast_Product-Page.md',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-beast-product','beast') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-beast-cad','UGV Beast PT AI Kit — STEP CAD','cad','UGV-Beast-Archive/05-Chassis-CAD/UGV_Beast_PT_AI_Kit_STEP.zip',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-beast-cad','UGV Beast PT AI Kit — STEP CAD','cad','beast/05-Chassis-CAD/UGV_Beast_PT_AI_Kit_STEP.zip',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-beast-cad','beast') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-orin-3d','UGV Beast PT Jetson Orin — 3D CAD','cad','UGV-Beast-Archive/06-Jetson-Orin/UGV_Beast_PT_Jetson_Orin_3D.zip',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-orin-3d','UGV Beast PT Jetson Orin — 3D CAD','cad','beast/06-Jetson-Orin/UGV_Beast_PT_Jetson_Orin_3D.zip',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-orin-3d','orin-nano') ON CONFLICT DO NOTHING;
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-orin-3d','beast') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-orin-wiki','UGV Beast PT Jetson Orin AI Kit — Wiki','wiki','UGV-Beast-Archive/08-Wiki-Pages/UGV-Beast-PT-Jetson-Orin-AI-Kit_Wiki.md',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-orin-wiki','UGV Beast PT Jetson Orin AI Kit — Wiki','wiki','beast/08-Wiki-Pages/UGV-Beast-PT-Jetson-Orin-AI-Kit_Wiki.md',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-orin-wiki','orin-nano') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-esp32-firmware','UGV01 Base — ESP32 Firmware','firmware','UGV-Beast-Archive/07-Code-Firmware/UGV01_BASE_ESP32_Firmware.zip',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-esp32-firmware','UGV01 Base — ESP32 Firmware','firmware','beast/07-Code-Firmware/UGV01_BASE_ESP32_Firmware.zip',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-esp32-firmware','driver-board') ON CONFLICT DO NOTHING;
-INSERT INTO documents(id,title,kind,archive_path,url,note) VALUES ('doc-cp210x-driver','CP210x USB-UART Driver','firmware','UGV-Beast-Archive/07-Code-Firmware/CP210x_USB_TO_UART_Driver.zip',NULL,NULL);
+INSERT INTO documents(id,title,kind,library_path,url,note) VALUES ('doc-cp210x-driver','CP210x USB-UART Driver','firmware','beast/07-Code-Firmware/CP210x_USB_TO_UART_Driver.zip',NULL,NULL);
 INSERT INTO document_assets(document_id,asset_id) VALUES ('doc-cp210x-driver','driver-board') ON CONFLICT DO NOTHING;
 
 -- nets + net_terminals + net_documents

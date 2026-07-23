@@ -43,7 +43,7 @@ const NAV: NavStation[] = [
   { to: '/items', label: 'Items', code: 'INV', icon: Package },
   { to: '/quartermaster', label: 'Quartermaster', code: 'QM', icon: Hexagon },
   { to: '/tech-tree', label: 'Tech Tree', code: 'CAP', icon: Network },
-  { to: '/codex', label: 'Codex', code: 'WIKI', icon: ScrollText },
+  { to: '/datacore', label: 'Datacore', code: 'CORE', icon: ScrollText, activePrefixes: ['/datacore'] },
 ];
 
 function NavItem({

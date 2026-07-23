@@ -426,6 +426,7 @@ Edge-LLM docs, NVIDIA SIGGRAPH notes, LeRobot ecosystem, and published Jetson VL
 ## Persistence
 
 - Full brief: this file.
-- Codex insights: `robot-llm-lanes`, `beast-llm-jobs`, `orin-edge-model-shortlist` in `src/data/hangar.ts`.
+- Datacore insights: `robot-llm-lanes`, `beast-llm-jobs`, `orin-edge-model-shortlist` in `src/data/hangar.ts`.
+- Related Datacore brief: [/datacore/compute-workload](/datacore/compute-workload) (Orin NX vs AGX linked-view sizing).
 - Activity ticker: researched event for `RND-ROBOT-LLM`.
 - `docs/beast-ops.md`: one-line research pointer under operating progression / references.

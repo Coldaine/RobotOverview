@@ -4,6 +4,7 @@ import './globals.css';
 import { HangarProvider } from '@/components/HangarProvider';
 import { Shell } from '@/components/Shell';
 import { getInventoryItems } from '@/server/hangar/items';
+import { normalizeLibraryBaseUrl } from '@/lib/documents';
 
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -25,6 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           source: 'static' as const,
           fallbackReason: inventoryItems.fallbackReason,
         };
+  const libraryBaseUrl = normalizeLibraryBaseUrl(process.env.DATACORE_LIBRARY_URL);
 
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} ${outfit.variable}`}>
@@ -32,6 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <HangarProvider
           initialItems={inventoryItems.items}
           initialInventoryRead={inventoryReadStatus}
+          initialLibraryBaseUrl={libraryBaseUrl}
         >
           <Shell>{children}</Shell>
         </HangarProvider>

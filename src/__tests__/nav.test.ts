@@ -16,7 +16,7 @@ describe('isNavActive()', () => {
 
   it('does not match an unrelated route', () => {
     expect(isNavActive('/quartermaster', '/items', {})).toBe(false);
-    expect(isNavActive('/codex', '/items', {})).toBe(false);
+    expect(isNavActive('/datacore', '/items', {})).toBe(false);
   });
 
   it('Missions stays active on a mission detail via activePrefixes', () => {
