@@ -1,9 +1,10 @@
 'use client';
-import { Plus, Search, SlidersHorizontal, Trash2, X } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, Trash2, X, FileText } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SectionTitle } from '@/components/ui/Primitives';
 import { isHangarBayId } from '@/data/hangar';
+import { DATACORE_BRIEFINGS } from '@/data/datacore-briefings';
 import { INSIGHT_CONFIDENCE_LEVELS, isInsightConfidence, type InsightConfidence } from '@/data/types';
 import { insightConfidenceMeta } from '@/lib/format';
 import { useHangar, LOCAL_INSIGHT_PREFIX } from '@/lib/store';
@@ -11,7 +12,7 @@ import clsx from 'clsx';
 
 type ConfidenceFilter = 'all' | InsightConfidence;
 
-export default function Codex() {
+export default function Datacore() {
   const { data, insights, unit, mission, addLocalInsight, removeLocalInsight } = useHangar();
   const [q, setQ] = useState('');
   const [bay, setBay] = useState<'all' | string>('all');
@@ -53,13 +54,24 @@ export default function Codex() {
     });
   }, [insights, q, bay, conf]);
 
+  const briefingHits = useMemo(() => {
+    const needle = q.trim().toLowerCase();
+    if (!needle) return DATACORE_BRIEFINGS;
+    return DATACORE_BRIEFINGS.filter((b) => {
+      const hay = `${b.title} ${b.summary} ${b.tags.join(' ')}`.toLowerCase();
+      return hay.includes(needle);
+    });
+  }, [q]);
+
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <div className="font-mono text-[11px] uppercase tracking-[0.35em] text-cyan/70">Field Notes</div>
-          <h1 className="mt-1 font-display text-2xl font-bold uppercase tracking-[0.06em] text-ink">Codex</h1>
-          <p className="mt-1 font-mono text-xs text-ink-dim">Searchable tactical knowledge. Tiny wiki brain, no fluff.</p>
+          <div className="font-mono text-[11px] uppercase tracking-[0.35em] text-cyan/70">Knowledge Core</div>
+          <h1 className="mt-1 font-display text-2xl font-bold uppercase tracking-[0.06em] text-ink">Datacore</h1>
+          <p className="mt-1 font-mono text-xs text-ink-dim">
+            Research briefs, field notes, and speculative intel — searchable, linked to units and missions.
+          </p>
         </div>
         <button
           type="button"
@@ -124,7 +136,7 @@ export default function Codex() {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Search insight title, body, tags..."
+              placeholder="Search briefs, insight title, body, tags..."
               className="w-full rounded-md border border-rim bg-panel-2/40 py-2 pl-9 pr-3 font-mono text-xs text-ink outline-none ring-cyan/40 transition focus:ring"
             />
           </label>
@@ -153,7 +165,44 @@ export default function Codex() {
         </div>
       </div>
 
-      <SectionTitle code="WIKI">{filtered.length} insight{filtered.length === 1 ? '' : 's'}</SectionTitle>
+      {briefingHits.length > 0 && (
+        <>
+          <SectionTitle code="BRIEF">{briefingHits.length} research brief{briefingHits.length === 1 ? '' : 's'}</SectionTitle>
+          <div className="grid gap-3 md:grid-cols-2">
+            {briefingHits.map((brief) => (
+              <Link
+                key={brief.id}
+                href={brief.href}
+                className="panel group block p-4 transition-all hover:border-cyan/40 hover:shadow-hud-cyan"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded border border-cyan/30 bg-cyan/5 text-cyan">
+                    <FileText className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan/70">
+                      {brief.capturedAt}
+                    </div>
+                    <h2 className="mt-1 font-display text-sm uppercase tracking-[0.08em] text-ink group-hover:text-cyan">
+                      {brief.title}
+                    </h2>
+                    <p className="mt-2 font-mono text-[11px] leading-relaxed text-ink-dim">{brief.summary}</p>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {brief.tags.map((t) => (
+                        <span key={t} className="chip border-cyan/30 bg-cyan/5 text-cyan">
+                          #{t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+
+      <SectionTitle code="CORE">{filtered.length} insight{filtered.length === 1 ? '' : 's'}</SectionTitle>
       <div className="space-y-3">
         {filtered.map((ins) => {
           const isLocal = ins.id.startsWith(LOCAL_INSIGHT_PREFIX);

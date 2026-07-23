@@ -132,7 +132,7 @@ function readStoredLocalInsights(): Insight[] {
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
     // Keep only records with the required string identity, then NORMALIZE the rest of
-    // the Insight shape — Codex calls ins.tags.join()/.map(), so a missing/non-array
+    // the Insight shape — Datacore calls ins.tags.join()/.map(), so a missing/non-array
     // `tags` (or bad confidence/capturedAt) would crash rendering.
     return parsed
       .filter(

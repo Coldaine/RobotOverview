@@ -112,6 +112,7 @@ INSERT INTO tags(namespace,name,label) VALUES ('tag','undercroft','undercroft') 
 INSERT INTO tags(namespace,name,label) VALUES ('tag','north-star','north-star') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','perception','perception') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','edge','edge') ON CONFLICT (namespace,name) DO NOTHING;
+INSERT INTO tags(namespace,name,label) VALUES ('tag','sizing','sizing') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','deployment','deployment') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','shipwright','shipwright') ON CONFLICT (namespace,name) DO NOTHING;
 INSERT INTO tags(namespace,name,label) VALUES ('tag','ghcr','ghcr') ON CONFLICT (namespace,name) DO NOTHING;
@@ -515,6 +516,15 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',i
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='cosmos' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='edge' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'orin-edge-model-shortlist',id FROM tags WHERE namespace='tag' AND name='decision' ON CONFLICT DO NOTHING;
+INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('compute-sizing-method','Jetson tier fit needs linked workload views, not TOPS','Orin Nano / NX / AGX decisions are proven with concurrent pipelines: requirements → functional dataflow → cyber-physical allocation → interface/timing → engine matrix → full-graph measurements. Camera ingress, ISP, memory, encode, and sync often dominate over advertised TOPS. Full brief in Datacore.','high','/datacore/compute-workload','2026-07-23');
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('compute-sizing-method','orin-nano') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('compute-sizing-method','beast') ON CONFLICT DO NOTHING;
+INSERT INTO insight_assets(insight_id,asset_id) VALUES ('compute-sizing-method','workstation') ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'compute-sizing-method',id FROM tags WHERE namespace='tag' AND name='compute' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'compute-sizing-method',id FROM tags WHERE namespace='tag' AND name='jetson' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'compute-sizing-method',id FROM tags WHERE namespace='tag' AND name='orin' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'compute-sizing-method',id FROM tags WHERE namespace='tag' AND name='sizing' ON CONFLICT DO NOTHING;
+INSERT INTO insight_tags(insight_id,tag_id) SELECT 'compute-sizing-method',id FROM tags WHERE namespace='tag' AND name='architecture' ON CONFLICT DO NOTHING;
 INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES ('ghcr-buildrun-noise','Diagnose GHCR from live BuildRuns, not stale failures','On 2026-07-01 the live ExternalSecret-backed GHCR push and pull secrets were synced and shaped correctly, and current Shipwright BuildRuns pushed immutable image digests. Old failed BuildRuns were Dockerfile path mistakes and cleanup noise, not evidence that the GHCR tokens were broken.','high','coldaine-k8cluster live kubectl inspection','2026-07-01');
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM tags WHERE namespace='tag' AND name='deployment' ON CONFLICT DO NOTHING;
 INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM tags WHERE namespace='tag' AND name='shipwright' ON CONFLICT DO NOTHING;
@@ -523,6 +533,7 @@ INSERT INTO insight_tags(insight_id,tag_id) SELECT 'ghcr-buildrun-noise',id FROM
 INSERT INTO insight_assets(insight_id,asset_id) VALUES ('wifi-tail','beast') ON CONFLICT DO NOTHING;
 
 -- activity_log
+INSERT INTO activity_log(id,at,kind,text) VALUES ('a-compute-sizing','2026-07-23T10:00:00Z','researched','Datacore: compute-workload sizing brief (NX vs AGX linked views) persisted.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-orin-models','2026-07-22T03:55:00Z','researched','Orin edge shortlist: SmolVLA first; GR00T/small VLMs; Cosmos Edge as WAM post-train path.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-orin-host-gap','2026-07-22T03:45:00Z','mission','OP-ORIN-GAP: Pi removed from BEAST-01; host empty while Orin Nano is fitted.');
 INSERT INTO activity_log(id,at,kind,text) VALUES ('a-beast-slow','2026-07-22T03:46:00Z','insight','Beast stops in time; lightweight onboard terrain avoidance is in play — drop false refusals.');

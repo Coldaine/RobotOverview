@@ -493,6 +493,7 @@ export const hangarData: HangarData = {
         'orin-host-gap',
         'beast-slow-hard-stop',
         'orin-edge-model-shortlist',
+        'compute-sizing-method',
       ],
       tags: ['jetson', 'orin', 'ampere', 'edge-ai', 'cutover'],
       links: [{ label: 'NVIDIA Jetson Orin', url: 'https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/' }],
@@ -1052,6 +1053,17 @@ export const hangarData: HangarData = {
       capturedAt: '2026-07-22',
     },
     {
+      id: 'compute-sizing-method',
+      title: 'Jetson tier fit needs linked workload views, not TOPS',
+      body: 'Orin Nano / NX / AGX decisions are proven with concurrent pipelines: requirements → functional dataflow → cyber-physical allocation → interface/timing → engine matrix → full-graph measurements. Camera ingress, ISP, memory, encode, and sync often dominate over advertised TOPS. Full brief in Datacore.',
+      tags: ['compute', 'jetson', 'orin', 'sizing', 'architecture'],
+      bay: 'compute',
+      units: ['orin-nano', 'beast', 'workstation'],
+      confidence: 'high',
+      source: '/datacore/compute-workload',
+      capturedAt: '2026-07-23',
+    },
+    {
       id: 'ghcr-buildrun-noise',
       title: 'Diagnose GHCR from live BuildRuns, not stale failures',
       body: 'On 2026-07-01 the live ExternalSecret-backed GHCR push and pull secrets were synced and shaped correctly, and current Shipwright BuildRuns pushed immutable image digests. Old failed BuildRuns were Dockerfile path mistakes and cleanup noise, not evidence that the GHCR tokens were broken.',
@@ -1064,6 +1076,12 @@ export const hangarData: HangarData = {
   ],
 
   activity: [
+    {
+      id: 'a-compute-sizing',
+      at: '2026-07-23T10:00:00Z',
+      kind: 'researched',
+      text: 'Datacore: compute-workload sizing brief (NX vs AGX linked views) persisted.',
+    },
     {
       id: 'a-orin-models',
       at: '2026-07-22T03:55:00Z',

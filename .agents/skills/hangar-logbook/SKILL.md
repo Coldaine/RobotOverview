@@ -40,7 +40,8 @@ Use the narrowest durable home that fits:
 - `missions[].afterAction`: mission-scoped debrief bullets and next mission steps. Rendered on
   mission detail pages as the after-action log.
 - `insights[]`: durable field knowledge, decisions, gotchas, and research lessons. Rendered in
-  the Codex page and linkable to units and missions.
+  **Datacore** (`/datacore`) and linkable to units and missions. Long-form research briefs live
+  under `/datacore/...` (see `src/data/datacore-briefings.ts`).
 - `activity[]`: one-line global timeline events for the command-center ticker.
 - `docs/beast-ops.md`: BEAST network, endpoints, control protocol, telemetry, video recovery,
   safety, and operating procedure.
