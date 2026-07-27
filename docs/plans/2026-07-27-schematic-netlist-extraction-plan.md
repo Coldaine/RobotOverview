@@ -13,8 +13,9 @@ a file exists.
 
 Concretely, all four:
 
-1. Every cable and rail on the assembled robot is represented in the wiring model with a citation
-   that names the *sheet zone or image region* proving it, not just a PDF.
+1. Every cable and rail on the assembled robot is represented in the wiring model with the source
+   or observation appropriate to that claim. Document-derived claims name a sheet zone or image
+   region; as-built claims name the observation or measurement that established them.
 2. The twin view and the console view agree everywhere the two overlap.
 3. Every entry in `reference-data.ts` `OPEN_ITEMS` is either closed with a recorded method, or
    restated as a question that genuinely cannot be answered from what we hold.
@@ -28,15 +29,15 @@ this plan.
 
 ## Part 1 — The corpus
 
-Everything BEAST-01 documentation currently exists as. **The point of this table is the third
-column**: most of these have never been read for what they could tell us.
+The inputs currently indexed for this plan. **The point of this table is the third column**: several
+have not yet been read specifically for the wiring questions this plan asks.
 
 ### Board schematics — `public/datacore/pdfs/`
 
 | File | Bytes | What it can still tell us |
 | --- | --- | --- |
-| `ROS_Driver_for_Robots.pdf` | 1,023,807 | **The primary source.** Every intra-board net on the driver board: the M2/Q1/Q2 gate topology, what `VDD5V` actually reaches, the AMS1117 and MP8759 supply boundaries, the 40-pin header's rail. This is the sheet that answers the power-trace questions. |
-| `General_Driver_for_Robots.pdf` | 1,008,991 | The sibling board. Differences from the ROS Driver are unmapped — worth a structured diff, because most published Waveshare pinout guidance describes *this* board and gets applied to ours by assumption. |
+| `ROS_Driver_for_Robots.pdf` | 1,023,807 | **The board-level electrical source.** It depicts the M2/Q1/Q2 gate topology, `VDD5V`, the AMS1117 and MP8759 supply boundaries, and the 40-pin header rail. Trace those questions from the drawing rather than assuming the answer. |
+| `General_Driver_for_Robots.pdf` | 1,008,991 | The sibling board. Differences from the ROS Driver are unmapped — worth a structured diff where existing repo claims appear to inherit General Driver guidance. |
 | `Servo_Driver_with_ESP32_Schematic.pdf` | 489,007 | ESP32 peripheral wiring in isolation — cleaner than reading it out of the dense main sheet. |
 | `Bus_servo_control_circuit.pdf` | 141,892 | The servo bus half-duplex driver and its supply. Answers what feeds the servo rail. |
 | `RPi-Motor-Driver-Board-Schematic.pdf` | 103,369 | Different product. Useful only as a TB6612FNG reference pattern. Low priority. |
@@ -46,32 +47,34 @@ column**: most of these have never been read for what they could tell us.
 
 | File | Bytes | Verdict |
 | --- | --- | --- |
-| `RasperryPIversionofROS_Driver_for_Robots.pdf` | 1,023,807 | Byte-identical to `ROS_Driver_for_Robots.pdf`. **Yields nothing new.** The filename asserts a Pi-specific variant that does not exist. |
-| `UnclearMaybeforOrinDiagram.pdf` | 1,023,807 | Same bytes again. There is no Orin-specific driver schematic in our holdings. |
+| `RasperryPIversionofROS_Driver_for_Robots.pdf` | 1,023,807 | Byte-identical to `ROS_Driver_for_Robots.pdf`; it adds no distinct schematic content. The filename may describe intended context, but it does not establish a separate board variant. |
+| `UnclearMaybeforOrinDiagram.pdf` | 1,023,807 | Same bytes again. It does not add Orin-specific schematic content. |
 
-Both filenames are wrong in a way that will mislead a future agent. Do not delete them (see
-`keyArtifactstosort/agents.md`) — record the finding where it will be read.
+Both filenames can invite interpretations that the byte-identical contents do not establish. Do not
+delete them (see `keyArtifactstosort/agents.md`); keep the identity finding discoverable.
 
-### Firmware — never examined, and authoritative
+### Firmware — not yet mined for these wiring questions
 
 | Source | What it can tell us |
 | --- | --- |
-| `UGV_RoverFACTORY-260706.zip` → `bin/ROS_Driver.ino.bin` and `dl_temp/` image | Compiled ESP32 firmware, two builds that differ (2026-05-08 and 2025-08-27). One of them is probably what is running on BEAST-01 right now. `strings` on these yields **the JSON command vocabulary directly** — the actual protocol, not a wiki's description of it. |
-| `linkToOldWSGIT.txt` → `https://github.com/waveshareteam/ugv_ws` | The Waveshare ROS 2 workspace. Its ESP32 firmware source defines **GPIO-to-function mapping in code** — which outranks schematic inference for every pin question, including the ones currently open. Follow to sibling repos if the `.ino` source lives elsewhere. |
-| `combine/SUCCESS.txt`, flashing logs | Flash offsets and partition layout; confirms which image was actually written. |
+| `UGV_RoverFACTORY-260706.zip` → `bin/ROS_Driver.ino.bin` and `dl_temp/` image | Compiled ESP32 firmware, two builds that differ (2026-05-08 and 2025-08-27). Current holdings do not establish which, if either, is running on BEAST-01. `strings` may reveal printable protocol tokens and is a discovery aid, not a complete protocol decoder. |
+| `linkToOldWSGIT.txt` → `https://github.com/waveshareteam/ugv_ws` | The Waveshare ROS 2 workspace. Its ESP32 firmware source can establish intended GPIO assignments and command handling for that source revision. Compare those claims with the schematic and any flashed-build evidence; they answer different questions. Follow to sibling repos if the `.ino` source lives elsewhere. |
+| `combine/SUCCESS.txt`, flashing logs | Flash offsets and partition layout; records what the flashing operation reported writing. |
 
-**This is the highest-value unexploited material we hold.** A pin assignment read out of firmware
-source is a fact; the same assignment inferred from a dense schematic raster is a guess. An earlier
-version of this plan spent five phases inferring what one repository states outright.
+This is high-value unexploited material. A pin assignment in firmware source is direct evidence of
+the software's intended assignment for that revision; the schematic is direct evidence of the
+board's electrical connection. Comparing them is more useful than treating either as a global
+winner.
 
 ### Photographs — `keyArtifactstosort/`
 
-None of these have been examined. Filenames are the owner's own, and describe intent.
+These have been identity-indexed, but still need a wiring-focused visual pass. Filenames are the
+owner's own and describe why they were retained, not necessarily what each image can prove.
 
 | File | Bytes | What it should be read for |
 | --- | --- | --- |
 | `imageShowingRaspberryPIInvertedandconnectedOnTop(justshowsraspberrypis).png` | 365,244 | **Highest safety value.** The vacated Pi dock — mirrored, downward-facing, beside a live 5 V rail — is where the Orin UART jumpers are supposed to go, and we have no verified pin reference for it. Read for dock orientation and pin-1 marking. |
-| `audioDriverBoard.png` | 289,977 | The Audio HAT, for which **no schematic exists anywhere** (`OPEN_ITEMS`). Read for connector complement, silkscreen labels, visible ICs, and header orientation. |
+| `audioDriverBoard.png` | 289,977 | The Audio HAT. No schematic is present in the current holdings. Read for connector complement, silkscreen labels, visible ICs, and header orientation; the image cannot establish hidden internal routing. |
 | `correctbutincompleteimageofaudioBoard.jpg` | 160,720 | Second view of the same board. The owner flags it incomplete — use it to cross-check the above, not alone. |
 | `imagesortofshowingthe stackandhowitworksforraspberrypi.png` | 530,653 | Stack order and standoff heights — the geometry the Jetson has to fit into. |
 | `rawDriverBoardshot.jpg` | 160,296 | Unannotated driver board. Cross-check against the annotated callout PNG; look for silkscreen the annotated version covers. |
@@ -85,7 +88,7 @@ None of these have been examined. Filenames are the owner's own, and describe in
 
 | File | Role |
 | --- | --- |
-| `public/datacore/beast-driver-board-callouts.png` | The 19-callout vendor legend. **Outranks the schematic for physical identification** — which connector is which. Source of the verified connector-6 finding. |
+| `public/datacore/beast-driver-board-callouts.png` | The 19-callout vendor legend. Use it for vendor connector names and visual identification; use the schematic for depicted electrical connectivity. Source of the connector-6 identification currently recorded in the app. |
 | `public/datacore/beast-schematic-annotated.png` | Annotated schematic view already wired into the console. |
 
 ### CAD — `data/hardware-cad-assets` branch (LFS)
@@ -111,11 +114,30 @@ this question; this section states only the constraints extraction imposes on it
 - **Provenance gets sharper, not broader.** Citations currently name whole PDFs. Extend them to name
   the sheet zone (`doc-ros-driver#C6`) or image region. A citation pointing at a 1 MB PDF is not
   proof of anything.
-- **Never reconcile a disagreement by editing one side to match.** If the schematic and the console
-  disagree, both stay, and the conflict goes into `OPEN_ITEMS` with both claims stated. Silent
-  convergence is how a wrong fact becomes two wrong facts.
+- **Do not silently reconcile a disagreement by editing one side to match.** State the exact claims,
+  what each source establishes, and the follow-up that would distinguish them. Keep the conflict in
+  `OPEN_ITEMS` until it is resolved, then update the canonical fact once.
 - **New generated assets are permitted only for tiles** — `public/datacore/tiles/<board>/<zone>.png`
   plus an index. Tiles are a reading aid, not a source of truth.
+
+### How to interpret sources
+
+Do not assume a global source ranking for this plan. Match the source to the claim:
+
+| Source | What it usually supports |
+| --- | --- |
+| Board schematic | Depicted component and electrical connectivity for this board. |
+| Firmware source | Intended GPIO use, command handling, and behavior for that source revision. |
+| Compiled image | Behavior encoded in that build, to the extent analysis can recover it; not proof that the build is flashed. |
+| Flash log or manifest | What a particular flashing operation reports writing. |
+| Callout diagram | Vendor connector names and visual identification. |
+| Photograph | Visible assembly state, orientation, and routing at the time photographed. |
+| Runtime observation or measurement | What happened under the recorded test conditions. |
+| Owner statement | Project-specific fact within the scope the owner states. |
+
+When sources differ, do not collapse the disagreement into “X wins.” Record the claim under
+examination, each source's scoped statement, plausible explanations, and the smallest follow-up
+that would distinguish them.
 
 ---
 
@@ -146,8 +168,9 @@ Do not run them in numbered order out of habit — T1, T2 and T3 are independent
   Clone the upstream repo and read the pin definitions and command dispatch out of source.
 - **Emit:** a GPIO-to-function table and the JSON command vocabulary, written into
   `docs/beast-ops.md` (existing owner doc — do not create a new one).
-- **Done when:** every ESP32 pin claim in the repo cites either firmware source or a schematic zone.
-  **Firmware source wins where they disagree**, and the disagreement is recorded.
+- **Done when:** every ESP32 pin claim in the repo states whether it concerns electrical routing,
+  intended firmware configuration, a compiled build, or observed runtime behavior, and cites the
+  relevant source. Disagreements remain explicit until a targeted follow-up resolves them.
 - **Note:** this task can answer several `OPEN_ITEMS` outright and costs a clone. Do it early.
 
 ### T3 — Read the photographs
@@ -156,8 +179,9 @@ Do not run them in numbered order out of habit — T1, T2 and T3 are independent
 - **Do:** for each, describe what is actually visible — connectors, silkscreen text, orientation,
   cable routing. Distinguish *read from the image* from *inferred*. State when an image is too low
   resolution to support a claim; that is a useful result, not a failure.
-- **Emit:** append to [keyartifacts-intake-2026-07-27.md](../history/keyartifacts-intake-2026-07-27.md),
-  which already indexes these files by identity — this adds what they *contain*.
+- **Emit:** wiring findings into the persistence target selected by the architecture plan;
+  non-wiring hardware facts into `docs/hardware-library.md`; and unresolved questions into
+  `OPEN_ITEMS`. Leave the identity register in `docs/history/` historical.
 - **Done when:** the Audio HAT's connector complement and the vacated Pi dock's orientation are
   described from images, or recorded as not determinable from what we hold (→ Part 6).
 
@@ -165,16 +189,18 @@ Do not run them in numbered order out of habit — T1, T2 and T3 are independent
 
 - **Input:** T1 tiles; `ROS_Driver_for_Robots.pdf`.
 - **Do:** dump every text span with bbox and rotation, and every vector path with its point list
-  (PyMuPDF). **No interpretation in this step.** Then group labels by normalised value and associate
-  each with the nearest path endpoint or component pin.
+  (PyMuPDF). **No interpretation in this step.** Group labels by normalised value and use proximity
+  to propose candidate path endpoints or component pins. Confirm each accepted association against
+  the rendered schematic; proximity alone is not a connection rule.
 - **Emit:** intermediate working data — **intermediate, not a persisted model.** Record the source
   PDF's SHA-256 alongside it; `reference-data.ts` `INTEGRITY_NOTE` records these PDFs being silently
   corrupted once by LFS deduplication, so invalidation needs to be possible.
-- **Must flag rather than silently drop:** single-member nets (a label connecting to nothing is a
-  parse failure), labels matching no geometry, geometry with no nearby label, and any net spanning
-  multiple zones without an intervening port symbol.
+- **Review rather than silently drop:** single-member nets, labels matching no geometry, geometry
+  with no nearby label, and nets spanning multiple zones. Each may be legitimate or may expose a
+  parse problem; classify it after visual inspection.
 - **Done when:** the anomaly list is reviewed and each entry is explained or escalated. **A sheet
-  this dense reporting zero anomalies is wrong and must be distrusted.**
+  this dense reporting zero anomalies receives a deliberate second review rather than automatic
+  acceptance or rejection.**
 
 ### T5 — Diff the ROS Driver against the General Driver
 
@@ -188,9 +214,9 @@ Do not run them in numbered order out of habit — T1, T2 and T3 are independent
 ### T6 — Land the facts in the model
 
 - **Input:** everything from T2, T3, T4, T5.
-- **Do:** update the wiring model with zone-level citations. Backfill the findings the twin view
-  currently does not know: **connector 6 is the ESP32 host link**, **the D500 rides the Audio HAT's
-  LiDAR socket**, **the Orin DC input is 9–20 V**.
+- **Do:** update the wiring model with zone-level citations. Re-evaluate the current claims about
+  connector 6, the D500 route, and the Orin DC input against the scoped sources above; retain,
+  revise, or flag each claim based on that comparison.
 - **Done when:** integrity tests pass and no net cites a bare PDF where a zone exists.
 
 ### T7 — Reconcile the two views
@@ -243,31 +269,35 @@ change** so the open-questions list stays honest.
 
 ## Part 5 — What no document can answer
 
-**Observe first. Meter only where observation cannot answer, or where guessing damages hardware.**
-This ordering must not be reversed. Powering the robot into a known state and recording what comes
-alive answers the operational question directly, needs no probes near live rails, and cannot short
-two pins with a slipped tip. A voltage reading is a proxy for behaviour; behaviour is the thing we
-need.
+Prefer the least invasive method that answers the specific question. A controlled observation may
+answer an operational question without probing live rails; a meter may be necessary for voltage,
+polarity, continuity, or to distinguish explanations that look identical in operation. Record the
+test state and what the result actually establishes.
 
-**The primary test — resolves Q1 with no instrument:**
+**Useful first operational observation — narrows Q1 without an instrument:**
 
 > Jetson powered from its mains barrel adapter, battery pack **off** at the chassis switch, USB cable
 > in driver-board connector 6 (silkscreen `USB`).
 >
-> - **FAN-2507 spins** → the 40-pin 5 V rail is live from USB VBUS; the HAT is powered without the pack.
-> - **Audio codec and USB hub appear in `lsusb`** → same conclusion, independently.
-> - **D500 appears as a serial device** → answers Q6 in the same observation.
+> - **FAN-2507 spins** → the fan received power in this test state; compare the schematic to
+>   identify the path rather than inferring it from the fan alone.
+> - **Audio codec and USB hub appear in `lsusb`** → the HAT's USB devices were powered and reached
+>   the host in this test state.
+> - **D500 appears as a serial device** → the tested LiDAR data path was operational; record which
+>   connector route was present.
 
-A positive on any of those is conclusive. Record as `method: "observation"`.
+Record each result as `method: "observation"` with the test configuration. Treat it as evidence of
+the observed behavior, not automatically as proof of a unique internal power or data route.
 
-Metering is justified in exactly two cases:
+Two particularly useful metering cases are:
 
 1. **Disambiguating a negative.** "The fan did not spin" does not separate *no voltage* from *dead
-   fan or unpopulated header*. Only then probe pin 2 to pin 6: ≈0 V means M2 blocks reverse flow and
-   the HAT genuinely needs the pack; ≈4.5–5 V means the rail is live and the fault is downstream.
-2. **Before inserting any conductor into a socket whose pinout is inferred — Q2.** No observational
-   substitute exists, because here the observation *is* the damage. Identify the 5 V holes with a
-   meter, mark them, power down, then insert.
+   fan or unpopulated header*. Probe pin 2 to pin 6: ≈0 V is consistent with the rail not being
+   energized at that point; ≈4.5–5 V is consistent with the rail being energized and shifts the
+   investigation downstream. Interpret the result with the schematic and test configuration.
+2. **Before inserting any conductor into a socket whose pinout is inferred — Q2.** Visual inspection
+   may not distinguish a power pin from a signal pin. Identify the 5 V holes with an appropriate
+   measurement, mark them, power down, and re-check orientation before inserting the conductor.
 
 Also worth capturing while the robot is in a known state: a baseline of the driver board's rails, so
 future changes have something to compare against.
@@ -278,14 +308,15 @@ future changes have something to compare against.
 
 Things we genuinely do not hold. Record here when closed.
 
-- **The Audio HAT has no schematic anywhere.** Waveshare documents it component-level only
-  (SSS1629A5, FE1.1S, CH340, APA2068). T3 photographs are the only route to its connector map, and
-  photographs cannot show internal routing. If Q6 survives T3, it needs physical continuity testing.
-- **Waveshare's wiki returns HTTP 403 to automated fetches.** Enumerating kit download pages —
-  needed to confirm whether a Beast-specific Orin schematic exists at all — requires a human with a
-  browser.
-- **NVIDIA gates the P3768 carrier mounting-hole coordinates** behind a login. The CAD plan's X1 is
-  the way around this; if it fails, measurement is the only route.
+- **No Audio HAT schematic is present in the current holdings, and the searches recorded so far did
+  not locate one.** Waveshare documents it component-level (SSS1629A5, FE1.1S, CH340, APA2068).
+  Photographs can establish visible connector information but not hidden internal routing. If Q6
+  survives T3, physical continuity testing is one possible follow-up.
+- **Waveshare's wiki returned HTTP 403 to the recorded automated fetches.** A later fetch or a human
+  browser session may have different access; record the date and method when retrying.
+- **The recorded NVIDIA access path put the P3768 carrier mounting-hole coordinates behind a
+  login.** The CAD plan's X1 is another route; direct measurement remains an option if the design
+  files are unavailable.
 
 ---
 
@@ -293,10 +324,10 @@ Things we genuinely do not hold. Record here when closed.
 
 - T1–T5 are safe to run unattended. T6 and T7 change shipped data — run `task check`
   (the front door: lint, typecheck, tests, build) before committing, not individual npm scripts.
-- **The callout diagram outranks the schematic for physical identification** (which connector is
-  which). **The schematic outranks the callout diagram for connectivity** (what is wired to what).
-  **Firmware source outranks both for pin function.** They answer different questions; none
-  substitutes for another.
+- Apply the claim-specific source roles in Part 2. Callouts support vendor connector identity, the
+  schematic supports depicted electrical connectivity, firmware supports intended software
+  behavior for its revision, and observation supports the recorded as-built test state. A conflict
+  prompts comparison and follow-up, not an automatic winner.
 - Do not create new documentation files. Owner docs are `docs/NORTH_STAR.md`, `docs/deploy.md`,
   `docs/beast-ops.md`, `docs/hardware-library.md`, `db/hangar/standup.md`, `AGENTS.md`. Findings go
   into those, or into `OPEN_ITEMS`, or on screen.
