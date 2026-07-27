@@ -347,25 +347,42 @@ draft and verified nets identically reintroduces the original problem in a new f
 **Acceptance:** the emitted SPICE parses in any SPICE tool. The emitted Mermaid renders. Neither
 silently launders a draft net into an apparent fact.
 
-### Phase 5 — Physical measurement protocol
+### Phase 5 — Physical observation protocol
 
-**Deliverable:** `docs/beast-rail-measurements.md` — a checklist, and the recorded results.
+**Deliverable:** `docs/beast-rail-observations.md` — a checklist, and the recorded results.
 
 For everything no PDF can answer: E8a, E8b, E8c, confirmation of E1 on the actual board, and the G5
-baseline. Each entry states the probe points, the power condition, the expected value, and **what
-each possible outcome implies** — so the operator is executing a decision procedure, not collecting
-numbers to be interpreted later.
+baseline.
 
-The first and most valuable measurement, which resolves E1 empirically regardless of how the PDF
-work goes:
+**Observe first. Meter only where observation cannot answer or where guessing damages hardware.**
+This ordering is deliberate and must not be reversed by an executing agent. Powering the robot into
+a known state and recording what comes alive answers the operational question directly, requires no
+probes near live rails, and cannot short two pins with a slipped tip. A voltage reading is a proxy
+for behaviour; behaviour is what we actually need to know.
+
+The primary test, which resolves E1 with no instrument at all:
 
 > Jetson powered from its mains barrel adapter, battery pack **off** at the chassis switch, USB cable
-> in driver-board connector 6. Measure DC volts on the driver board's 40-pin header between pin 2 and
-> pin 6.
-> **≈0 V** → M2 blocks reverse flow; the Audio HAT and its fan need the pack.
-> **≈4.5–5 V** → Jetson USB back-feeds the 40-pin; the HAT rail is live on USB alone.
+> in driver-board connector 6 (silkscreen `USB`).
+> **FAN-2507 spins** → the 40-pin 5 V rail is live from USB VBUS; the HAT is powered without the pack.
+> **Audio codec and USB hub appear in `lsusb`** → same conclusion, independently.
+> **D500 appears as a serial device** → answers E8b in the same observation.
 
-Results feed back into the netlist at `method: "meter"`.
+A positive result on any of those is conclusive and closes the item. Record it at
+`method: "observation"`.
+
+Metering is justified in exactly two cases, and the protocol must state which applies:
+
+1. **Disambiguating a negative.** "The fan did not spin" does not separate *no voltage on the rail*
+   from *voltage present but the fan is dead or its header unpopulated*. Only then probe pin 2 to
+   pin 6: ≈0 V means M2 blocks reverse flow and the HAT genuinely needs the pack; ≈4.5–5 V means the
+   rail is live and the fault is downstream.
+2. **Before inserting any conductor into a socket whose pinout is inferred — E7.** This one is not
+   optional and has no observational substitute, because the observation *is* the damage. The Orin
+   UART route asks an operator to place jumpers in the Audio HAT's mirrored, downward-facing Pi dock
+   beside a live 5 V rail. Identify the 5 V holes with a meter, mark them, power down, then insert.
+
+Results feed back into the netlist at `method: "observation"` or `method: "meter"` accordingly.
 
 ---
 
