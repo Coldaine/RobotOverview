@@ -13,7 +13,8 @@ Do not delete source artifacts from `keyArtifactstosort/`.
 - `INA219.pdf`, `DS-HY2120_EN.pdf`, `DS-HY2213_EN.pdf` — linked component datasheets.
 - `UPS_Power_Module_C.rar` — linked vendor 2D/3D archive.
 - `UPS-Power-Module-C-details-15.jpg` — full-resolution interface diagram.
-- `UPS-Power-Module-C-1-preview.jpg` — product image as rendered by the wiki.
+- `UPS-Power-Module-C-1.jpg` — original 540×405 product image.
+- `UPS-Power-Module-C-1-preview.jpg` — 360 px product preview as rendered by the wiki.
 - `UPS-Power-Module-C-2.png` — demo output image.
 - `UPS-Power-Module-C-4.jpg`, `UPS-Power-Module-C-5.jpg` — battery/installation precaution diagrams.
 
