@@ -1,411 +1,305 @@
-# Schematic netlist extraction — plan and evidence register
+# Extract everything we already hold, and finish the wiring model
 
-**Status:** PROPOSED — 2026-07-27. No tooling written, no repo data changed by this document.
-Written for handoff: an executing agent should need nothing from the conversation that produced it.
+**Status:** PROPOSED — 2026-07-27. Written to be executed by an agent that has none of the
+conversation that produced it.
 
-## Why this exists
+**Depends on:** the architecture unification plan for its persistence target. This plan says *what to
+extract*; that one says *where it lands*. Do not invent a storage location here.
 
-On 2026-07-27, while tracing BEAST-01's power domains for the Jetson Orin cutover, an assistant
-asserted that the Audio HAT's FAN-2507 cannot run without the battery pack. The reasoning chain was
-"MP8759GD buck → 40-pin 5 V → HAT". Closer inspection of the ROS Driver schematic found an
-**AO4407 P-channel MOSFET (M2), gated by Q1/Q2**, sitting between the buck output net and `VDD5V` —
-and found that `VDD5V` shares a node with the D1/D2 Schottky cathodes fed from USB VBUS. Depending
-on which side of M2 the 40-pin header sits, Jetson USB may or may not back-power the HAT. The claim
-was stated as fact and could not be checked, because **the repository has no representation in which
-an intra-board net claim can live, be cited, or be falsified.**
+## Done condition
 
-`src/components/datacore/beast-console/bench-data.ts` models the loom *between* boards — connector
-to connector. That model is good and should not be disturbed. It simply cannot express "what is on
-net `VDD5V` inside the ROS Driver board", which is where the error occurred and where several
-remaining cutover questions live.
+This plan is finished when **BEAST-01's wiring model is complete and correct in the app** — not when
+a file exists.
 
-The reasoning surface is also wrong. `public/datacore/beast-schematic-annotated.png` is a raster
-derivative. Reading connectivity off it requires guessing pixel coordinates and squinting at
-1-pixel-wide traces. The authoritative artifact — the vector PDF — is not currently inspectable at
-useful magnification by any tool in the repo.
+Concretely, all four:
 
-## Decision: the interchange format question
+1. Every cable and rail on the assembled robot is represented in the wiring model with a citation
+   that names the *sheet zone or image region* proving it, not just a PDF.
+2. The twin view and the console view agree everywhere the two overlap.
+3. Every entry in `reference-data.ts` `OPEN_ITEMS` is either closed with a recorded method, or
+   restated as a question that genuinely cannot be answered from what we hold.
+4. The material an operator needs before touching the robot — the vacated Pi dock, the 40-pin
+   numbering, which USB-C is which — is **on screen**, not only in markdown.
 
-There is a "universal text-based way to express these diagrams," and there are several. Assessed
-honestly against this project's actual need:
+An executing agent that produces tooling and data but leaves the app unchanged has not completed
+this plan.
 
-| Format | What it is | Verdict here |
+---
+
+## Part 1 — The corpus
+
+Everything BEAST-01 documentation currently exists as. **The point of this table is the third
+column**: most of these have never been read for what they could tell us.
+
+### Board schematics — `public/datacore/pdfs/`
+
+| File | Bytes | What it can still tell us |
 | --- | --- | --- |
-| **SPICE netlist** (`.cir`) | The de-facto lingua franca. Components + nets, plain text, read by everything since the 1970s. | **Adopt as an emitted output.** Trivial to generate, gives a universal escape hatch for free. |
-| **KiCad S-expression** (`.kicad_sch`, `.net`) | Text, git-diffable, best-supported modern EDA ecosystem, round-trips to a real editor. | Reject as the source of truth. Round-tripping to a schematic editor is a cost with no payoff — we are reverse-engineering a board we did not design and will never fabricate. |
-| **EDIF 2 0 0** | The ISO-era universal interchange. Verbose LISP-like. | Reject. Legacy, and nothing in our path consumes it. |
-| **atopile** (`.ato`) | Modern text-based hardware description language, git-native. | Reject for now. Designed for authoring new boards; young ecosystem. Worth revisiting if this project ever designs a carrier. |
-| **Graphviz DOT / Mermaid** | Not circuit formats — general graph languages. Mermaid renders natively in this repo's artifacts and in GitHub markdown. | **Adopt as an emitted output** for derived views (power tree, signal chain). This is what humans should read. |
+| `ROS_Driver_for_Robots.pdf` | 1,023,807 | **The primary source.** Every intra-board net on the driver board: the M2/Q1/Q2 gate topology, what `VDD5V` actually reaches, the AMS1117 and MP8759 supply boundaries, the 40-pin header's rail. This is the sheet that answers the power-trace questions. |
+| `General_Driver_for_Robots.pdf` | 1,008,991 | The sibling board. Differences from the ROS Driver are unmapped — worth a structured diff, because most published Waveshare pinout guidance describes *this* board and gets applied to ours by assumption. |
+| `Servo_Driver_with_ESP32_Schematic.pdf` | 489,007 | ESP32 peripheral wiring in isolation — cleaner than reading it out of the dense main sheet. |
+| `Bus_servo_control_circuit.pdf` | 141,892 | The servo bus half-duplex driver and its supply. Answers what feeds the servo rail. |
+| `RPi-Motor-Driver-Board-Schematic.pdf` | 103,369 | Different product. Useful only as a TB6612FNG reference pattern. Low priority. |
+| `jetson_orin_nano_carrier_board_spec.pdf` | 979,573 | Already mined for the 9–20 V DC input (pp. 7, 31, 32). **Still unmined:** the 40-pin header's own pin functions, UART electrical levels, and current limits per rail — all of which bear on the Orin↔HAT jumper route. |
 
-**The decision: do not adopt an EDA format as the source of truth.** Use a small project-local JSON
-netlist, and emit SPICE and Mermaid from it.
+### Confirmed duplicates — `keyArtifactstosort/`
 
-The reason is that the single most important field in our data is one that **no EDA format has**:
-how we know. Every net in this project needs provenance and a confidence level, because our nets
-come from reading a PDF, not from a design database. A KiCad file asserts connectivity flatly; it
-has no way to say "this net is label-matched but visually unconfirmed, and a power claim depends on
-it." The repository's existing discipline — facts carry the date they were verified, and stale facts
-are re-verified before use, per `docs/beast-ops.md` — must extend to nets or this failure recurs.
+| File | Bytes | Verdict |
+| --- | --- | --- |
+| `RasperryPIversionofROS_Driver_for_Robots.pdf` | 1,023,807 | Byte-identical to `ROS_Driver_for_Robots.pdf`. **Yields nothing new.** The filename asserts a Pi-specific variant that does not exist. |
+| `UnclearMaybeforOrinDiagram.pdf` | 1,023,807 | Same bytes again. There is no Orin-specific driver schematic in our holdings. |
 
-## The extraction insight that makes this tractable
+Both filenames are wrong in a way that will mislead a future agent. Do not delete them (see
+`keyArtifactstosort/agents.md`) — record the finding where it will be read.
 
-Full geometric schematic reverse-engineering is hard and should not be attempted. It is not
-necessary here.
+### Firmware — never examined, and authoritative
 
-**Waveshare's schematic connects most things by named net ports, not by drawn wire.** Labels like
-`VDD5V`, `VDDUSB`, `USBD_P`, `USBD_N`, `D_P`, `D_N`, `DC_IN`, `P_TX`, `P_RX`, `IO4`, `IIC_SDA`,
-`3V3_OP`, `CP_RX` appear repeatedly across the sheet, and two pins carrying the same label are the
-same net regardless of distance. That reduces most of the netlist to a **text-grouping problem**.
+| Source | What it can tell us |
+| --- | --- |
+| `UGV_RoverFACTORY-260706.zip` → `bin/ROS_Driver.ino.bin` and `dl_temp/` image | Compiled ESP32 firmware, two builds that differ (2026-05-08 and 2025-08-27). One of them is probably what is running on BEAST-01 right now. `strings` on these yields **the JSON command vocabulary directly** — the actual protocol, not a wiki's description of it. |
+| `linkToOldWSGIT.txt` → `https://github.com/waveshareteam/ugv_ws` | The Waveshare ROS 2 workspace. Its ESP32 firmware source defines **GPIO-to-function mapping in code** — which outranks schematic inference for every pin question, including the ones currently open. Follow to sibling repos if the `.ino` source lives elsewhere. |
+| `combine/SUCCESS.txt`, flashing logs | Flash offsets and partition layout; confirms which image was actually written. |
 
-Geometric path tracing is needed only for **local junctions** where components connect by drawn wire
-with no intervening label — precisely the D1/D2/`VDD5V`/AMS1117 node, and the M2 bridge between the
-buck output and `VDD5V`. That is a small, bounded set.
+**This is the highest-value unexploited material we hold.** A pin assignment read out of firmware
+source is a fact; the same assignment inferred from a dense schematic raster is a guess. An earlier
+version of this plan spent five phases inferring what one repository states outright.
 
-Hence two tiers, and the plan below separates them:
+### Photographs — `keyArtifactstosort/`
 
-- **Tier A — label matching.** Automatable, high yield, covers most nets.
-- **Tier B — local geometry, assisted.** Low volume, applied only where Tier A leaves a gap or where
-  a load-bearing claim depends on the answer.
+None of these have been examined. Filenames are the owner's own, and describe intent.
 
-A claim is **load-bearing** if being wrong about it could damage hardware or produce a wrong
-power-on decision. Load-bearing nets may never reach `verified` on Tier A evidence alone.
+| File | Bytes | What it should be read for |
+| --- | --- | --- |
+| `imageShowingRaspberryPIInvertedandconnectedOnTop(justshowsraspberrypis).png` | 365,244 | **Highest safety value.** The vacated Pi dock — mirrored, downward-facing, beside a live 5 V rail — is where the Orin UART jumpers are supposed to go, and we have no verified pin reference for it. Read for dock orientation and pin-1 marking. |
+| `audioDriverBoard.png` | 289,977 | The Audio HAT, for which **no schematic exists anywhere** (`OPEN_ITEMS`). Read for connector complement, silkscreen labels, visible ICs, and header orientation. |
+| `correctbutincompleteimageofaudioBoard.jpg` | 160,720 | Second view of the same board. The owner flags it incomplete — use it to cross-check the above, not alone. |
+| `imagesortofshowingthe stackandhowitworksforraspberrypi.png` | 530,653 | Stack order and standoff heights — the geometry the Jetson has to fit into. |
+| `rawDriverBoardshot.jpg` | 160,296 | Unannotated driver board. Cross-check against the annotated callout PNG; look for silkscreen the annotated version covers. |
+| `imageoftopcutoutsandfrontcutouts(cleannothingmounted).png` | 102,049 | Chassis cutouts with nothing mounted — the clearest view of available mounting real estate. |
+| `UGV-Beast-details-size-1.jpg` | 352,019 | Name suggests a dimensioned drawing. If so, chassis dimensions without opening the CAD. |
+| `UGV-Beast-details-25/73/83.jpg` | 179K/156K/108K | Vendor product photos. Read for cable routing and connector positions as-shipped. |
+| `possiblebatteryexpansion.jpg` | 42,079 | Battery mounting options — feeds the V-mount mass/balance question. |
+| `threeQuarterImageofBeastwithuselessmarkup.jpg` | 164,099 | Owner rates the markup useless; the underlying photo may still show routing. Low priority. |
 
-## Non-goals
+### Already in the app
 
-- Do not attempt fully automatic schematic reverse-engineering.
-- Do not adopt KiCad, atopile, or EDIF as a source of truth.
-- Do not modify `bench-data.ts`, `power-data.ts`, or `reference-data.ts` during Phases 0–3. The
-  console's inter-board loom model is correct and orthogonal.
-- Do not write inferred nets into `docs/beast-ops.md` or any console data module at `verified`
-  confidence.
-- Do not re-derive facts already carried in the repo; cite them and mark their origin.
+| File | Role |
+| --- | --- |
+| `public/datacore/beast-driver-board-callouts.png` | The 19-callout vendor legend. **Outranks the schematic for physical identification** — which connector is which. Source of the verified connector-6 finding. |
+| `public/datacore/beast-schematic-annotated.png` | Annotated schematic view already wired into the console. |
 
----
+### CAD — `data/hardware-cad-assets` branch (LFS)
 
-## Evidence register
-
-Each item is a discrete, falsifiable question. **E1, E2, and E7 are load-bearing.** An executing
-agent should treat each as a unit of work with a definite answer, not a topic to discuss.
-
-Nets and reference designators below are quoted from the ROS Driver for Robots schematic
-(`public/datacore/pdfs/ROS_Driver_for_Robots.pdf`). Sheet zone references use the drawing's own
-printed border grid (columns 1–8 across the top, rows A–D down the side).
-
-### E1 — Which 5 V net reaches the 40-pin host header? *(load-bearing, blocking)*
-
-Headers **P1** and **P2** (callouts 14 "Host controller 40PIN extended header" and 15 "Host
-controller connection header") tie their 5 V pins to a net rendered as `5V`. The buck output is
-rendered as `5V` / `Vout`, and **M2 (AO4407)** sits between that and `VDD5V`.
-
-Determine whether the 40-pin 5 V pins are on the **buck side (pre-M2)** or the **diode-OR node
-(post-M2, shared with USB VBUS)**.
-
-- Pre-M2 → M2 blocks reverse flow; Jetson USB cannot power the Audio HAT; the FAN-2507 requires the
-  battery pack.
-- Post-M2 → Jetson USB VBUS reaches the 40-pin 5 V rail and the HAT is partially live on USB alone.
-
-Consequence: decides whether the stack fan and possibly the D500 LiDAR appear before or after the
-chassis switch, and therefore what "the fan isn't spinning" means during bring-up.
-
-### E2 — What is M2's gate topology? *(load-bearing)*
-
-**M2 (AO4407, P-channel)** is driven by **Q1** and **Q2** (MMBT3906 PNP) with **R18 100 K** and
-**R19 470 K**. Establish whether this is a reverse-current-blocking ideal-diode arrangement, a
-simple enable-controlled load switch, or a soft-start. Determine the permitted direction of current
-flow between the buck output net and `VDD5V`.
-
-Consequence: this is the mechanism that either does or does not protect the buck and the 40-pin from
-USB back-feed. E1's answer is only trustworthy alongside E2's.
-
-### E3 — Is the ESP32 supply pin on the AMS1117 output?
-
-Confirm that **ESP32-WROOM-32UE (M3)** pin `VDD33` sits on `VDD3V3` / `3V3` from **AMS-1
-(AMS1117-3.3)**, and not on a separate regulator.
-
-Consequence: underwrites the claim that the board's logic — and therefore the JSON telemetry link —
-comes alive on Jetson USB power with the pack off. Currently believed but not traced.
-
-### E4 — Is `3V3_OP` the same net as `3V3`?
-
-**U7 (CH343P)** takes `3V3_OP` on its `VIO` and `VDD5` pins, not a plainly-labelled `3V3`. The LiDAR
-bridge CH343 shows the same `3V3_OP`. Determine whether `3V3_OP` is identical to `VDD3V3`/`3V3`, a
-separately switched rail, or an alternate label for the same node.
-
-Consequence: decides whether the USB-UART bridges enumerate with the pack off. If `3V3_OP` is
-switched from the pack, the control link would not come up on USB alone — which would contradict
-observed behaviour and must be reconciled.
-
-### E5 — What supplies the bus servo bus?
-
-`bench-data.ts` asserts the ST3215 servo bus is "powered at pack voltage". This was never traced.
-Trace the power pin of the 5264-3P servo headers (**H7**, **H8**, callout 12) to a named net.
-
-Consequence: a stated fact in shipped repo data currently has no evidence behind it.
-
-### E6 — Which 5 V net feeds the LiDAR UART header?
-
-Header **H1** (callout 11, "Lidar UART interface", 4-pin `5V`/`GND`/`NC`/`RX`) has a 5 V pin.
-Identify its net and its relationship to E1's answer.
-
-Consequence: determines LiDAR power behaviour if the D500 is ever moved from the Audio HAT socket to
-the driver board's own socket.
-
-### E7 — Ground-truth the 40-pin pin numbering *(load-bearing)*
-
-`reference-data.ts` `PINS40` states pin 2 and pin 4 are `5V`, pin 8 is `P_TX`, pin 10 is `P_RX`, and
-pin 6 is `GND`. Its own `OPEN_ITEMS` array already flags this as "high-confidence, but the wiki never
-states the pins explicitly." A raster reading on 2026-07-27 appeared to show 5 V on pins **1 and 3**
-of P1/P2 — which is either a misreading of the schematic's mirrored column numbering, or an error in
-`PINS40`.
-
-Resolve definitively. Record which of the two is wrong.
-
-Consequence: the documented Orin UART jumper route (HAT hole 8 → Jetson pin 10, hole 10 → Jetson
-pin 8, hole 6 → pin 6) depends entirely on this numbering, and the operator is instructed to insert
-jumpers into a **mirrored, downward-facing socket**. A pin-numbering error here puts 5 V into a
-Jetson UART pin.
-
-### E8 — Audio HAT internals *(no schematic exists — cannot be extracted)*
-
-`reference-data.ts` `OPEN_ITEMS` already records that Waveshare publishes no schematic for the RPI
-Audio HAT for Robots; it is documented component-level only (SSS1629A5 USB codec, FE1.1S USB hub,
-CH340, APA2068 amplifier). Unresolved:
-
-- **E8a** — What feeds the FAN-2507 fan header: the 40-pin 5 V, or the HAT's own USB VBUS?
-- **E8b** — What supplies the D500 on the HAT's LiDAR socket?
-- **E8c** — Does the HAT's USB-C uplink carry the codec *and* the CH340 LiDAR bridge through the
-  FE1.1S hub, and is that uplink required for either to reach the host? *(Disputed between assistant
-  and owner as of 2026-07-27. The assistant's position: the Pi 40-pin carries no USB lines, and all
-  three HAT chips are USB devices, so a USB uplink must exist. Unresolved — record the outcome
-  rather than assuming either side.)*
-
-**This item cannot be closed by any PDF work.** It requires physical measurement or new
-documentation. See "Documentation and scan gaps".
+Covered separately in
+[2026-07-27-cad-assets-usage-and-discoverability.md](2026-07-27-cad-assets-usage-and-discoverability.md).
+**X1 there gates drilling and should run before anything in this plan touches mounting.** Do not
+duplicate that work here.
 
 ---
 
-## Documentation and scan gaps
+## Part 2 — Where extracted facts land
 
-Things no amount of tooling can extract, because the source does not exist or is not good enough.
+**Do not create a new netlist store.** The repo already carries two wiring models and the owner has
+decided both stay. A third would guarantee three-way drift. The architecture unification plan owns
+this question; this section states only the constraints extraction imposes on it.
 
-### G1 — Audio HAT has no schematic at all *(largest hole)*
-
-Blocks E8 entirely, and E8a/E8b sit directly on the bring-up path. Three ways to close it, in
-descending order of value:
-
-1. **Request it from Waveshare.** Cheapest if it works. No evidence it has been asked for.
-2. **Physical measurement protocol** (see Phase 5). Answers E8a and E8b for *this* robot without
-   answering them in general — which is sufficient.
-3. **High-resolution photographs of both faces of the HAT**, flat, even lighting, with the 40-pin
-   header and every connector legible. Sufficient to identify chips and trace short runs; not
-   sufficient for buried layers.
-
-### G2 — Vector PDF is not inspectable at magnification
-
-We have the authoritative artifact but no way to look at it closely. `pdftoppm` is not installed;
-the only rendered form in the repo is a raster PNG derivative. **Phase 0 closes this.**
-
-### G3 — No physical-identification reference for the Audio HAT or the mounted Jetson
-
-`driverBoarddiagram.png` (Waveshare's numbered callout diagram, 19 callouts) is an excellent
-physical-identification reference for the driver board and resolved the USB-C ambiguity immediately.
-There is no equivalent for the Audio HAT or for the Jetson carrier as mounted in the chassis.
-
-### G4 — The HAT's vacated Pi dock is undocumented *(safety-relevant)*
-
-The Orin UART jumper route requires finding pins 6, 8, and 10 on a **downward-facing, mirrored**
-40-pin socket, currently by metering for the 5 V holes. Needed: a photograph of that socket in situ
-with pin 1 unambiguously marked. This is the highest-consequence undocumented physical detail on the
-robot — it is the one place an operator is asked to insert conductors next to a live 5 V rail using
-inference rather than a reference.
-
-### G5 — No captured baseline of the driver board's rails
-
-No recorded meter readings for `DC_IN`, `VDD5V`, `3V3`, or the 40-pin 5 V under either power
-condition. Phase 5 produces the first.
+- **Intra-board rails are not top-level nets.** The inter-module model describes board-to-board
+  wiring. `VDD5V`, `3V3_OP`, and the M2 gate are *answers* that resolve `OPEN_ITEMS` and sharpen
+  existing net descriptions — they do not each become a net. Adding hundreds of internal nodes
+  destroys the model's usefulness. If intra-board detail needs a home, it is a **separate grain**
+  that references the spine, not more rows in it.
+- **Provenance gets sharper, not broader.** Citations currently name whole PDFs. Extend them to name
+  the sheet zone (`doc-ros-driver#C6`) or image region. A citation pointing at a 1 MB PDF is not
+  proof of anything.
+- **Never reconcile a disagreement by editing one side to match.** If the schematic and the console
+  disagree, both stay, and the conflict goes into `OPEN_ITEMS` with both claims stated. Silent
+  convergence is how a wrong fact becomes two wrong facts.
+- **New generated assets are permitted only for tiles** — `public/datacore/tiles/<board>/<zone>.png`
+  plus an index. Tiles are a reading aid, not a source of truth.
 
 ---
 
-## Tooling plan
+## Part 3 — The work
 
-Phases are independently valuable and ordered so each unblocks the next. **Phase 0 alone resolves
-most of the immediate pain and should not wait for the rest.**
+Tasks are independently valuable. **T1 and T2 are cheap, unblock everything, and should go first.**
+Do not run them in numbered order out of habit — T1, T2 and T3 are independent.
 
-All new tooling goes in `tools/`. Existing precedent there is Node ESM (`beast-probe.mjs`,
-`postinstall-bootstrap.mjs`); PyMuPDF 1.28.0 on Python 3.13 is confirmed available on the workstation,
-so Python is acceptable for extraction specifically. Generated data goes in `data/schematics/`.
+### T1 — Tile the schematics into their own printed zones
 
-### Phase 0 — Tile the vector PDF for inspection
+- **Input:** the four board PDFs above.
+- **Do:** render each page at high DPI; cut along the sheet's *own* printed border zones (columns
+  1–8 across the top, rows A–D down the side). Using the sheet's native grid means an agent, the
+  operator, and the printed page all name the same region identically.
+- **Emit:** `public/datacore/tiles/<board>/<zone>.png` and `index.json` mapping zone → source bbox in
+  PDF points. Tooling in `tools/`; Node ESM matches existing precedent (`beast-probe.mjs`), and
+  PyMuPDF 1.28.0 on Python 3.13 is confirmed available if Python suits the render better.
+- **Done when:** requesting "zone C6 of the ROS Driver" returns an image where reference designators
+  and net labels are legible without further zoom. Verify specifically on **M2 / Q1 / Q2** and the
+  **D1 / D2 / AMS1117 junction** — those are the regions where reading a raster at the wrong
+  magnification produced a wrong power claim once already.
 
-**Deliverable:** `tools/schematic-tiles.mjs` (or `.py`), plus generated tiles and an index.
+### T2 — Mine the firmware for pin assignments and protocol
 
-Render each PDF page at high DPI and cut it into a labelled grid. **Align the grid to the drawing's
-own printed border zones** — the sheet already numbers columns 1–8 across the top and rows A–D down
-the side. Using the sheet's native zones means an agent, a human, and the printed schematic all
-refer to the same region by the same name.
+- **Input:** both ESP32 images in `UGV_RoverFACTORY-260706.zip`; `github.com/waveshareteam/ugv_ws`
+  and any sibling repo holding the `.ino` source.
+- **Do:** `strings` both binaries and diff them — the two builds differ and the delta is informative.
+  Clone the upstream repo and read the pin definitions and command dispatch out of source.
+- **Emit:** a GPIO-to-function table and the JSON command vocabulary, written into
+  `docs/beast-ops.md` (existing owner doc — do not create a new one).
+- **Done when:** every ESP32 pin claim in the repo cites either firmware source or a schematic zone.
+  **Firmware source wins where they disagree**, and the disagreement is recorded.
+- **Note:** this task can answer several `OPEN_ITEMS` outright and costs a clone. Do it early.
 
-Emit `data/schematics/<board>/tiles/<zone>.png` and an `index.json` mapping each zone to its source
-bounding box in PDF points, so a reader can convert between zone, tile pixel, and PDF coordinate.
+### T3 — Read the photographs
 
-**Acceptance:** an agent can request "zone C6 of the ROS Driver schematic" and receive an image in
-which component reference designators and net labels are legible without further zooming. Verify
-specifically that M2/Q1/Q2 and the D1/D2/AMS1117 junction are readable.
+- **Input:** the photograph table in Part 1, in the priority order given there.
+- **Do:** for each, describe what is actually visible — connectors, silkscreen text, orientation,
+  cable routing. Distinguish *read from the image* from *inferred*. State when an image is too low
+  resolution to support a claim; that is a useful result, not a failure.
+- **Emit:** append to [keyartifacts-intake-2026-07-27.md](../history/keyartifacts-intake-2026-07-27.md),
+  which already indexes these files by identity — this adds what they *contain*.
+- **Done when:** the Audio HAT's connector complement and the vacated Pi dock's orientation are
+  described from images, or recorded as not determinable from what we hold (→ Part 6).
 
-**Why first:** it makes every later verification step cheap, and it immediately fixes the failure
-mode that caused the original error — reasoning from a raster at the wrong magnification.
+### T4 — Extract the driver-board netlist
 
-### Phase 1 — Raw extraction
+- **Input:** T1 tiles; `ROS_Driver_for_Robots.pdf`.
+- **Do:** dump every text span with bbox and rotation, and every vector path with its point list
+  (PyMuPDF). **No interpretation in this step.** Then group labels by normalised value and associate
+  each with the nearest path endpoint or component pin.
+- **Emit:** intermediate working data — **intermediate, not a persisted model.** Record the source
+  PDF's SHA-256 alongside it; `reference-data.ts` `INTEGRITY_NOTE` records these PDFs being silently
+  corrupted once by LFS deduplication, so invalidation needs to be possible.
+- **Must flag rather than silently drop:** single-member nets (a label connecting to nothing is a
+  parse failure), labels matching no geometry, geometry with no nearby label, and any net spanning
+  multiple zones without an intervening port symbol.
+- **Done when:** the anomaly list is reviewed and each entry is explained or escalated. **A sheet
+  this dense reporting zero anomalies is wrong and must be distrusted.**
 
-**Deliverable:** `tools/schematic-extract.py`, emitting `data/schematics/<board>.raw.json`.
+### T5 — Diff the ROS Driver against the General Driver
 
-Using PyMuPDF: dump every text span with its bounding box, rotation, and page, and every vector
-drawing path with its point list and stroke properties. **No interpretation.** Record the source
-PDF's SHA-256 in the output so downstream data can be invalidated if the PDF is ever replaced —
-`reference-data.ts` `INTEGRITY_NOTE` records that these PDFs have been silently corrupted once
-before by LFS deduplication, so this is not hypothetical.
+- **Input:** both PDFs, tiled.
+- **Do:** establish what actually differs. Most published Waveshare pinout guidance describes the
+  General Driver and gets applied to ours by assumption — including, possibly, the 65×65 / 49×58
+  mounting figures currently in `MOUNT_LAYERS`.
+- **Done when:** every place the repo cites General Driver documentation for a ROS Driver fact is
+  either confirmed transferable or flagged.
 
-**Acceptance:** deterministic and re-runnable — two runs on the same PDF produce byte-identical
-output. Known labels (`VDD5V`, `USBD_P`, `AMS1117-3.3`, `AO4407`) are present in the dump.
+### T6 — Land the facts in the model
 
-### Phase 2 — Tier A label-matched netlist draft
+- **Input:** everything from T2, T3, T4, T5.
+- **Do:** update the wiring model with zone-level citations. Backfill the findings the twin view
+  currently does not know: **connector 6 is the ESP32 host link**, **the D500 rides the Audio HAT's
+  LiDAR socket**, **the Orin DC input is 9–20 V**.
+- **Done when:** integrity tests pass and no net cites a bare PDF where a zone exists.
 
-**Deliverable:** `tools/schematic-netlist.mjs`, emitting `data/schematics/<board>.netlist.draft.json`.
+### T7 — Reconcile the two views
 
-Group text spans by normalised value; associate each label with the nearest path endpoint or
-component pin; emit nets with `confidence: "draft"` and `method: "label-match"`.
+- **Do:** assert that overlapping claims agree between the twin and the console. The pairs that
+  describe the same physical thing: `gdb-usb-esp32` ↔ `drv-esp32-usb`, `orin-dc-in` ↔ `jet-barrel`,
+  `net-d500-lidar` ↔ the HAT lidar route, `net-5v-host` ↔ `drv-5v`.
+- **Done when:** updating one view without the other fails CI **by name**, saying which fact drifted.
+  This is what lets both stay independent without silently diverging.
+- **Note:** the architecture plan may supersede the mechanism here. The requirement — divergence is
+  loud — stands either way.
 
-Must explicitly flag, rather than silently drop:
+### T8 — Put it on screen
 
-- nets with only one member (a label that connects to nothing is a parse failure, not a net)
-- labels matching no geometry
-- geometry with no nearby label
-- any net whose members span more than one sheet zone without an intervening port symbol
+- **Do:** surface what an operator needs before touching hardware. At minimum the vacated Pi dock
+  orientation and the 40-pin numbering, since that is where a mistake puts 5 V into a UART pin.
+  Zone tiles become the citation target when inspecting a net.
+- **Done when:** an operator can answer "where do the UART jumpers go" from the running app.
+- **Why this task is not optional:** `AGENTS.md` — *"The UI is the product... docs exist to serve the
+  visible experience, never the other way around."* T1–T7 all produce data. This is the one that
+  makes it product.
 
-**Acceptance:** the flagged-anomaly list is reviewed and each entry is either explained or becomes a
-Tier B item. A draft that reports zero anomalies on a sheet this dense is wrong and must be
-distrusted.
+### T9 — Emit derived views
 
-### Phase 3 — Verification pass
+- **Do:** generate a Mermaid power tree from the settled model. Mermaid renders natively in this
+  repo's artifacts and in GitHub markdown, so it needs no toolchain. Optionally emit SPICE as a
+  portability escape hatch so the work is never trapped in a bespoke schema.
+- **Must:** render unverified relationships visually distinctly, or refuse to include them. A diagram
+  that draws inferred and confirmed nets identically recreates the original problem in a new format.
 
-**Deliverable:** `data/schematics/<board>.netlist.json` — the verified netlist.
+---
 
-A net is promoted from draft only with `verified_by`, `verified_on`, `method`, and an `evidence`
-string citing the sheet zone or measurement. Schema:
+## Part 4 — Questions to close
 
-```json
-{
-  "board": "ros-driver-for-robots",
-  "source": { "pdf": "public/datacore/pdfs/ROS_Driver_for_Robots.pdf", "sha256": "…" },
-  "components": [
-    { "ref": "M2", "type": "AO4407", "desc": "P-channel MOSFET", "zone": "B5" }
-  ],
-  "nets": [
-    {
-      "name": "VDD5V",
-      "members": [
-        { "ref": "D1", "pin": "K" },
-        { "ref": "D2", "pin": "K" },
-        { "ref": "AMS-1", "pin": "Vi" }
-      ],
-      "confidence": "verified",
-      "method": "tile-visual",
-      "verified_by": "<agent or operator>",
-      "verified_on": "2026-07-27",
-      "evidence": "zone B5: D1/D2 cathodes, the VDD5V port, PWR1, PWR2 and AMS1117 Vi share one junction",
-      "loadBearing": true
-    }
-  ]
-}
-```
+These are live entries in `reference-data.ts` `OPEN_ITEMS`. **When one closes, update it in the same
+change** so the open-questions list stays honest.
 
-Confidence values: `verified` · `probable` · `draft` · `disputed`.
-Method values: `label-match` · `tile-visual` · `meter` · `vendor-doc`.
+| # | Question | Answerable by | Priority |
+| --- | --- | --- | --- |
+| Q1 | Which 5 V net reaches the 40-pin host header — pre- or post-M2? Determines whether the HAT and its fan are live from USB VBUS alone, with the battery pack off. | T4, confirmed by observation (Part 5) | **Blocking** — this is the claim that was asserted without tracing |
+| Q2 | 40-pin pin numbering on the HAT's vacated dock. | T2 firmware + T3 photos + T4 | **Blocking and safety-critical** — wrong numbering puts 5 V into a Jetson UART pin |
+| Q3 | M2's gate topology (Q1/Q2 MMBT3906, R18 100K / R19 470K) — what actually switches the P-MOS. | T4 | High |
+| Q4 | Is `3V3_OP` the same net as `3V3`? | T4 | Medium |
+| Q5 | What supplies the bus servo rail? | T4 + `Bus_servo_control_circuit.pdf` | Medium |
+| Q6 | Audio HAT USB uplink — how the CH340/FE1.1S/codec reach the host. | T3 photos only; no schematic exists | High, and may be undecidable from documents |
+| Q7 | Does a spare usable 40-pin header (callout 14) exist on the assembled board? The callout diagram names two host headers; owner inspection found one. | T3 + physical look | Medium — likely two footprints for one bus |
+| Q8 | Are the 65×65 / 49×58 mounting figures valid for the ROS Driver, or inherited from the General Driver? | T5, or CAD plan X2 | Medium — precedes drilling |
 
-**Rule:** a net with `loadBearing: true` may not reach `verified` on `label-match` alone. It needs
-`tile-visual` or `meter`. This rule is the entire point of the schema — it is what would have caught
-the original error.
+---
 
-**Acceptance:** E1 through E7 each have an answer at `verified` or an explicit record of why they
-could not be closed. E8 is expected to remain open here and pass to Phase 5.
+## Part 5 — What no document can answer
 
-### Phase 4 — Emitters
+**Observe first. Meter only where observation cannot answer, or where guessing damages hardware.**
+This ordering must not be reversed. Powering the robot into a known state and recording what comes
+alive answers the operational question directly, needs no probes near live rails, and cannot short
+two pins with a slipped tip. A voltage reading is a proxy for behaviour; behaviour is the thing we
+need.
 
-**Deliverable:** `tools/netlist-emit.mjs`.
-
-From the verified netlist, generate:
-
-- **SPICE `.cir`** — the universal-format escape hatch, so this work is never trapped in a bespoke
-  JSON schema.
-- **Mermaid power-tree** — for `docs/` and for artifacts. Mermaid renders natively in both.
-- **A typed TypeScript module** the BEAST Console can import, so the Live Plug view can finally
-  answer intra-board questions ("what else is on this rail?") instead of only inter-board ones.
-
-Emitters must **refuse to emit** nets below `verified`, or emit them into a visually distinct
-"unverified" section. Confidence must survive the transformation — a Mermaid diagram that renders
-draft and verified nets identically reintroduces the original problem in a new format.
-
-**Acceptance:** the emitted SPICE parses in any SPICE tool. The emitted Mermaid renders. Neither
-silently launders a draft net into an apparent fact.
-
-### Phase 5 — Physical observation protocol
-
-**Deliverable:** `docs/beast-rail-observations.md` — a checklist, and the recorded results.
-
-For everything no PDF can answer: E8a, E8b, E8c, confirmation of E1 on the actual board, and the G5
-baseline.
-
-**Observe first. Meter only where observation cannot answer or where guessing damages hardware.**
-This ordering is deliberate and must not be reversed by an executing agent. Powering the robot into
-a known state and recording what comes alive answers the operational question directly, requires no
-probes near live rails, and cannot short two pins with a slipped tip. A voltage reading is a proxy
-for behaviour; behaviour is what we actually need to know.
-
-The primary test, which resolves E1 with no instrument at all:
+**The primary test — resolves Q1 with no instrument:**
 
 > Jetson powered from its mains barrel adapter, battery pack **off** at the chassis switch, USB cable
 > in driver-board connector 6 (silkscreen `USB`).
-> **FAN-2507 spins** → the 40-pin 5 V rail is live from USB VBUS; the HAT is powered without the pack.
-> **Audio codec and USB hub appear in `lsusb`** → same conclusion, independently.
-> **D500 appears as a serial device** → answers E8b in the same observation.
+>
+> - **FAN-2507 spins** → the 40-pin 5 V rail is live from USB VBUS; the HAT is powered without the pack.
+> - **Audio codec and USB hub appear in `lsusb`** → same conclusion, independently.
+> - **D500 appears as a serial device** → answers Q6 in the same observation.
 
-A positive result on any of those is conclusive and closes the item. Record it at
-`method: "observation"`.
+A positive on any of those is conclusive. Record as `method: "observation"`.
 
-Metering is justified in exactly two cases, and the protocol must state which applies:
+Metering is justified in exactly two cases:
 
-1. **Disambiguating a negative.** "The fan did not spin" does not separate *no voltage on the rail*
-   from *voltage present but the fan is dead or its header unpopulated*. Only then probe pin 2 to
-   pin 6: ≈0 V means M2 blocks reverse flow and the HAT genuinely needs the pack; ≈4.5–5 V means the
-   rail is live and the fault is downstream.
-2. **Before inserting any conductor into a socket whose pinout is inferred — E7.** This one is not
-   optional and has no observational substitute, because the observation *is* the damage. The Orin
-   UART route asks an operator to place jumpers in the Audio HAT's mirrored, downward-facing Pi dock
-   beside a live 5 V rail. Identify the 5 V holes with a meter, mark them, power down, then insert.
+1. **Disambiguating a negative.** "The fan did not spin" does not separate *no voltage* from *dead
+   fan or unpopulated header*. Only then probe pin 2 to pin 6: ≈0 V means M2 blocks reverse flow and
+   the HAT genuinely needs the pack; ≈4.5–5 V means the rail is live and the fault is downstream.
+2. **Before inserting any conductor into a socket whose pinout is inferred — Q2.** No observational
+   substitute exists, because here the observation *is* the damage. Identify the 5 V holes with a
+   meter, mark them, power down, then insert.
 
-Results feed back into the netlist at `method: "observation"` or `method: "meter"` accordingly.
+Also worth capturing while the robot is in a known state: a baseline of the driver board's rails, so
+future changes have something to compare against.
 
 ---
 
-## Execution notes for the implementing agent
+## Part 6 — Real gaps
 
-- Phases 0 and 1 are mechanical and safe to run unattended. Phase 3 requires judgement and must not
-  be rushed — it is the phase whose whole purpose is to not assert things.
-- Do not "fix" a disagreement between the draft netlist and existing repo data by editing either to
-  match. Record the conflict and escalate. `reference-data.ts` `OPEN_ITEMS` is the established place
-  for unresolved hardware questions and already contains several.
-- The 19-callout legend in `driverBoarddiagram.png` is vendor documentation and outranks inference
-  from the schematic for **physical identification** (which connector is which). The schematic
-  outranks the callout diagram for **connectivity** (what is wired to what). They answer different
-  questions; neither is a substitute for the other.
-- When an item closes, update the corresponding entry in `reference-data.ts` `OPEN_ITEMS` in the same
-  change, so the open-questions list stays honest.
+Things we genuinely do not hold. Record here when closed.
 
-## References
+- **The Audio HAT has no schematic anywhere.** Waveshare documents it component-level only
+  (SSS1629A5, FE1.1S, CH340, APA2068). T3 photographs are the only route to its connector map, and
+  photographs cannot show internal routing. If Q6 survives T3, it needs physical continuity testing.
+- **Waveshare's wiki returns HTTP 403 to automated fetches.** Enumerating kit download pages —
+  needed to confirm whether a Beast-specific Orin schematic exists at all — requires a human with a
+  browser.
+- **NVIDIA gates the P3768 carrier mounting-hole coordinates** behind a login. The CAD plan's X1 is
+  the way around this; if it fails, measurement is the only route.
 
-- ROS Driver for Robots schematic (vector) — `public/datacore/pdfs/ROS_Driver_for_Robots.pdf`
-- Waveshare 19-callout board diagram — `driverBoarddiagram.png` *(pending relocation into `public/datacore/`)*
-- Annotated raster derivative — `public/datacore/beast-schematic-annotated.png` *(not authoritative for connectivity)*
-- Inter-board loom model — `src/components/datacore/beast-console/bench-data.ts`
-- 40-pin map, provenance, open items — `src/components/datacore/beast-console/reference-data.ts`
-- Cutover status and UART gate — `docs/beast-ops.md`
-- PDF integrity incident (LFS deduplication) — `reference-data.ts` `INTEGRITY_NOTE`
+---
+
+## Execution notes
+
+- T1–T5 are safe to run unattended. T6 and T7 change shipped data — run `task check`
+  (the front door: lint, typecheck, tests, build) before committing, not individual npm scripts.
+- **The callout diagram outranks the schematic for physical identification** (which connector is
+  which). **The schematic outranks the callout diagram for connectivity** (what is wired to what).
+  **Firmware source outranks both for pin function.** They answer different questions; none
+  substitutes for another.
+- Do not create new documentation files. Owner docs are `docs/NORTH_STAR.md`, `docs/deploy.md`,
+  `docs/beast-ops.md`, `docs/hardware-library.md`, `db/hangar/standup.md`, `AGENTS.md`. Findings go
+  into those, or into `OPEN_ITEMS`, or on screen.
+- `docs/history/` is an archive, not guidance. Read it for facts; do not adopt its process machinery.
+- Nothing in `keyArtifactstosort/` may be deleted — see `keyArtifactstosort/agents.md`. Copy and
+  extract freely.

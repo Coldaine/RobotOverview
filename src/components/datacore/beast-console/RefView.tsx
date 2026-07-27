@@ -101,8 +101,8 @@ function Pinout() {
 
 const RAILS = [
   { rail: 'UPS → driver DC-IN', spec: 'XH2.54 · 7–13 V', verdict: 'ok', note: 'powers ESP32, motors, servos, spotlight' },
-  { rail: 'UPS pigtail → Orin barrel', spec: '5.5×2.5 mm · 9–19 V · 45 W', verdict: 'ok', note: "the Orin's rail in this build" },
-  { rail: 'Driver 5 V buck → 40-pin', spec: 'MP8759GD · 5 V / 5 A', verdict: 'no', note: 'fed the Pi 5. Orin needs 9–19 V — never this' },
+  { rail: 'UPS pigtail → Orin barrel', spec: '5.5×2.5 mm · 9–20 V · 45 W', verdict: 'ok', note: "the Orin's rail in this build" },
+  { rail: 'Driver 5 V buck → 40-pin', spec: 'MP8759GD · 5 V / 5 A', verdict: 'no', note: 'fed the Pi 5. Orin needs 9–20 V — never this' },
   { rail: '12.6 V 2 A charger → UPS', spec: 'one-time + charging', verdict: 'warn', note: 'required once to wake the UPS protection circuit' },
   { rail: 'Driver 5 V buck → OAK-D Pro Y-adapter', spec: '5 V / 5 A · future', verdict: 'ok', note: 'the idle Pi rail finds a job — covers the 15 W IR peak' },
   { rail: 'Pack tap (add XT30) → Mid-360S', spec: '9–27 V in · ~6.5 W · future', verdict: 'ok', note: 'new spliced tap — NOT the CH343P LiDAR bridge' },

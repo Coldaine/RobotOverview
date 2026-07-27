@@ -311,7 +311,7 @@ export const PORTS: PortDef[] = [
   {
     id: 'ups-out2', board: 'ups', label: 'OUT · pigtail', conn: '→ 5.5×2.5 mm barrel', cat: 'power',
     x: 820, y: 240, side: 'bottom',
-    detail: "Orin build: pack voltage to the Jetson's barrel jack, from the UPS's FREE 4th XH2.54 socket (owner-observed: 4 headers, 3 populated). Verify the free socket with the meter FIRST: pack armed → expect ~11–12.6 V and note which hole is +; if it reads 0 V it's the charge-extension node — pick again. Terminate the pigtail with an XH2.54 lead matching that polarity. CAVEAT: this socket is likely upstream of the chassis switch, so the Jetson stays live whenever the pack is armed — shut it down in software, unplug the barrel for storage, or add an inline XH switch lead later. Do NOT use IO4/IO5 for this (ESP32-switched). Final check at the barrel: center pin positive, ~pack voltage. 9–12.6 V sits inside the Orin's 9–19 V window.",
+    detail: "Orin build: pack voltage to the Jetson's barrel jack, from the UPS's FREE 4th XH2.54 socket (owner-observed: 4 headers, 3 populated). Verify the free socket with the meter FIRST: pack armed → expect ~11–12.6 V and note which hole is +; if it reads 0 V it's the charge-extension node — pick again. Terminate the pigtail with an XH2.54 lead matching that polarity. CAVEAT: this socket is likely upstream of the chassis switch, so the Jetson stays live whenever the pack is armed — shut it down in software, unplug the barrel for storage, or add an inline XH switch lead later. Do NOT use IO4/IO5 for this (ESP32-switched). Final check at the barrel: center pin positive, ~pack voltage. 9–12.6 V sits inside the Orin's 9–20 V window.",
     expect: 'Pigtail → Jetson barrel', link: 'jet-barrel',
   },
   {
@@ -322,7 +322,7 @@ export const PORTS: PortDef[] = [
   },
   // Jetson — top edge
   {
-    id: 'jet-barrel', board: 'jetson', label: 'DC barrel 9–19V', conn: '5.5×2.5 mm center+ · 45 W max', cat: 'power',
+    id: 'jet-barrel', board: 'jetson', label: 'DC barrel 9–20V', conn: '5.5×2.5 mm center+ · 45 W max', cat: 'power',
     x: 990, y: 300, side: 'top',
     detail: "The Orin's power input in this build: your pigtail from the UPS rail (~9–12.6 V, in range). This replaces the 40-pin 5 V feed the Pi used — the Orin cannot be powered through its 40-pin.",
     expect: 'UPS pigtail → barrel plug', link: 'ups-out2',
@@ -601,7 +601,7 @@ export const CONVERSION_STEPS: ConversionStep[] = [
   {
     n: 5, kind: 'new', anchor: 'jet-barrel', cable: 'ups-out2->jet-barrel',
     title: 'Power the Jetson (do this last — wall adapter until then)',
-    how: 'PLAN A — split-rail upgrade, solderless (recommended): 99 Wh V-mount battery with USB-C PD output, mounted on the rear T-slot rails → USB-C PD trigger cable FIXED AT 15 V → 5.5×2.5 barrel. Never a 20 V trigger — the Orin tops out at 19 V; meter the barrel first plug-in (center +, 15 V). Cells: verified Molicel P30B (30 A) — no swap needed; the drive pack is already right.PLAN B — interim pack tap: XH2.54 lead on the pigtail into the UPS\'s free 4th socket (meter it first: ~11–12.6 V, note the + hole; it likely bypasses the chassis switch, so the Jetson stays live while the pack is armed).',
+    how: 'PLAN A — split-rail upgrade, solderless (recommended): 99 Wh V-mount battery with USB-C PD output, mounted on the rear T-slot rails → USB-C PD trigger cable FIXED AT 15 V → 5.5×2.5 barrel. Pick 15 V for headroom, not 20 V: NVIDIA\'s carrier spec (SP-11324-001, pp. 7/31/32) rates the DC jack 9–20 V, so a 20 V trigger is technically in spec but leaves zero margin for PD overshoot. Meter the barrel first plug-in (center +, 15 V). Cells: verified Molicel P30B (30 A) — no swap needed; the drive pack is already right.PLAN B — interim pack tap: XH2.54 lead on the pigtail into the UPS\'s free 4th socket (meter it first: ~11–12.6 V, note the + hole; it likely bypasses the chassis switch, so the Jetson stays live while the pack is armed).',
   },
   {
     n: 6, kind: 'move', anchor: 'jet-usb2', cable: 'camera->jet-usb2',

@@ -376,7 +376,7 @@ function PortDrawer({ portId, onClose }: { portId: string; onClose: () => void }
         {port.danger && (
           <div className="rounded-md border border-signal-crit/60 bg-signal-crit/10 p-2.5 font-mono text-[11px] leading-relaxed text-ink">
             <strong>Do not use for the Orin.</strong> This 5 V rail fed the Pi 5. The Orin needs
-            9–19 V into its own barrel jack.
+            9–20 V into its own barrel jack.
           </div>
         )}
 

@@ -152,7 +152,7 @@ export const MOUNT_CHECKS: { id: string; label: string }[] = [
 export const PROVENANCE: { label: string; note: string }[] = [
   { label: 'Waveshare wiki/store — driver boards + Audio Driver Board', note: 'board ID: UGV Rover/Beast/RaspRover ship the ROS Driver (ugv_base_ros README); connector list, MP8759GD 5V/5A buck; Audio HAT = SSS1629A5 USB codec + FE1.1S/CH340 hub + fan header, multi-system' },
   { label: 'Waveshare wiki — UGV Beast Jetson Orin AI/ROS2 kits', note: 'kit wiring, UPS activation gotcha, USB cameras (pan-tilt 5MP + OAK-D Lite), assembly split' },
-  { label: 'NVIDIA Orin Nano carrier spec SP-11324-001 v1.3 (local PDF)', note: 'barrel 5.5×2.5 mm 9–19 V 45 W, PCB 100×79 mm, M2.5 hex standoffs 4.5×6.57 mm; hole XY only in gated P3768 design files' },
+  { label: 'NVIDIA Orin Nano carrier spec SP-11324-001 v1.3 (local PDF)', note: 'barrel 5.5×2.5 mm 9–20 V 45 W, PCB 100×79 mm, M2.5 hex standoffs 4.5×6.57 mm; hole XY only in gated P3768 design files' },
   { label: 'ROS Driver for Robots schematic (vector PDF)', note: '40-pin net names (P_TX/P_RX/IIC), bridge chips, bucks — extracted programmatically via PyMuPDF' },
   { label: 'Waveshare labeled callout diagram — ROS Driver for Robots (local PNG)', note: "official front/back product diagram, callouts 1–19: settles which USB-C is which (6 = ESP32/host, silkscreen USB; 7 = LiDAR bridge, silkscreen LIDAR), names both host headers (14/15), and gives the board silkscreen for every connector" },
   { label: 'Owner inspection + Waveshare CAD (UGV Beast PT & Jetson Orin STEP, data/hardware-cad-assets)', note: 'stack bottom→top = Pi 5 inverted → Audio HAT → ROS Driver; FAN-2507 integral to the HAT (cutout + screws); HAT+driver pair unchanged in the Jetson variant; deck 231.54 × 159.96 mm' },
