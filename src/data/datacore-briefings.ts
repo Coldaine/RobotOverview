@@ -31,6 +31,17 @@ export const DATACORE_BRIEFINGS: DatacoreBriefing[] = [
     capturedAt: '2026-07-23',
   },
   {
+    id: 'artifact-intake',
+    title: 'BEAST-01 Source Artifacts — Intake Register',
+    href: '/datacore/briefing/artifact-intake',
+    source: 'docs/history/keyartifacts-intake-2026-07-27.md',
+    kind: 'research',
+    summary:
+      'Every source artifact verified by hash and opened: what each file actually is, what each image actually depicts, eleven anomalies where the filename lies about the contents, and five things the files cannot establish.',
+    tags: ['artifacts', 'beast', 'provenance', 'schematic'],
+    capturedAt: '2026-07-27',
+  },
+  {
     id: 'architecture-unification',
     title: 'Unite the Wiring Architecture — One Spine, Two Eyes',
     href: '/datacore/briefing/architecture-unification',
