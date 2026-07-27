@@ -202,3 +202,31 @@ physical volume — it guards against accidental deletion, not against drive fai
   Waveshare factory workstation origin, but nothing in the archive states it.
 - **Why the Beast-specific Orin CAD is absent** from this folder while its Rover counterparts are
   present.
+
+## Pruning applied — 2026-07-27
+
+Verified against the hash-checked backup at
+`D:\_projects\_artifact-backups\RobotOverview-keyArtifactstosort-2026-07-27\` (all 23 files confirmed
+hash-identical) **before** any removal. Rationale and fetch instructions are in
+[CAD assets — usage and discoverability](../plans/2026-07-27-cad-assets-usage-and-discoverability.md).
+
+| Removed | Recoverable from |
+| --- | --- |
+| `UGV_Beast_PI4B_AI_Kit_3D.zip` | `data/hardware-cad-assets` (LFS) |
+| `UGV_Beast_PI4B_AI_Kit_step.zip` | `data/hardware-cad-assets` (LFS) |
+| `UGV_Beast_PT_AI_Kit_3D.zip` | `data/hardware-cad-assets` (LFS) |
+| `UGV_Beast_PT_AI_Kit_step.zip` | `data/hardware-cad-assets` (LFS) |
+| `UGV_Rover_Jetson_Orin_ROS2_Kit_2D.zip` | `data/hardware-cad-assets` (LFS) |
+| `UGV_Rover_PT_Jetson_Orin_ROS2_Kit_STEP.zip` | `data/hardware-cad-assets` (LFS) |
+| `flash_download_tool_3.9.5.exe`, from inside `UGV_RoverFACTORY-260706.zip` | Espressif, freely published |
+
+The removed executable was Espressif's flash download tool, version 3.9.5, 19,636,965 bytes,
+SHA-256 `146db73596dda2865e409a611e1f31737cf1feac3817fd4ebd619f8e97b9c273`. The factory archive was
+repacked with the other 61 entries intact and shrank from 22,722,509 to 3,631,566 bytes.
+
+**Retained deliberately:** both ESP32 application images (`bin/` 2026-05-08 and `dl_temp/`
+2025-08-27 — they differ, and one is likely what runs on BEAST-01 today), the release notes, all
+flashing logs, both PDFs (byte-identical to a repo file, so they cost no additional stored bytes,
+and they preserve the record of what was downloaded under those misleading names), and every image.
+
+Folder went from 23 files / 65.98 MB to 17 files / 8.0 MB.
