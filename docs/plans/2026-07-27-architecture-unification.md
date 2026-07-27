@@ -12,8 +12,8 @@ underneath them*, so that a fact learned once is written once and appears in bot
 ## Done condition
 
 1. A newly learned hardware fact is added in **one** place, and both views reflect it.
-2. Nothing in either view asserts something the other contradicts, and CI says so **by name** if it
-   ever does.
+2. Neither view can contradict the other, because neither holds its own copy of the facts. Not
+   "divergence is detected" — divergence is **not representable**.
 3. The console's data is typed and integrity-checked to the same standard as the spine.
 4. There is no half-built infrastructure left ambiguous — every table either has a read path or is
    explicitly marked unread.
@@ -105,11 +105,21 @@ voltage is.
 
 ### Alternative considered and rejected
 
-*Keep both models fully separate; add a consistency test asserting overlapping claims agree.* Cheap
-— maybe an hour — and it does make divergence loud. Rejected as the destination because it does not
-make facts **easily addable**: you still write every fact twice and the test only tells you when you
-forgot. It is, however, the right **first step** (S2 below), because it delivers the safety benefit
-immediately and its mapping table is exactly the input the migration needs.
+*Keep both models fully separate; add a consistency test asserting overlapping claims agree.*
+
+**Rejected outright — not staged, not as a first step.** It is a second linter guarding two copies
+of the same truth. You still write every fact twice; the test only tells you when you forgot. It
+adds a correspondence map that must itself be maintained, so the repo now has three things to keep
+in sync instead of two.
+
+The tempting version of this is "do it first, it's cheap, the migration supersedes it later." That
+is throwaway work: **the correspondence map is needed either way**, and writing it as a migration
+costs barely more than writing it as a test. Write the map once, as the thing that unites the
+models.
+
+After unification there is nothing to reconcile, so no cross-model test exists. The only assertion
+needed is ordinary integrity on the one model — every `connector` net names a real parent — which
+belongs with the rest of the integrity suite.
 
 ---
 
@@ -127,17 +137,7 @@ Staged so each step is valuable alone. **Stop after any stage and the repo is be
 - **Why first:** the models currently disagree on live safety-relevant data. Fix the facts before
   building machinery to keep facts in sync.
 
-### S2 — Make divergence loud
-
-- **Do:** add `src/__tests__/wiring-consistency.test.ts` with an explicit correspondence map, then
-  assert the paired claims agree. Known pairs: `gdb-usb-esp32` ↔ `drv-esp32-usb`, `orin-dc-in` ↔
-  `jet-barrel`, `net-d500-lidar` ↔ the HAT lidar route, `net-5v-host` ↔ `drv-5v`, `net-host-uart` ↔
-  the USB host link.
-- **Done when:** editing one side alone fails CI with a message naming the fact that drifted.
-- **Note:** the correspondence map written here is the migration table S4 consumes. Write it as data,
-  not as inline assertions.
-
-### S3 — Give the console the same rigor as the spine
+### S2 — Give the console the same rigor as the spine
 
 - **Do:** move `PortDef`, `CableDef`, `PeripheralDef`, `BoardDef` into `src/data/types.ts`. Add
   `src/__tests__/bench-data-integrity.test.ts` covering what `hangar-integrity.test.ts` already
@@ -147,20 +147,26 @@ Staged so each step is valuable alone. **Stop after any stage and the repo is be
 - **Why:** this is the model driving a physical hardware conversion and it currently has less
   protection than `nav.ts`.
 
-### S4 — Introduce grain
+### S3 — Unite the surface: introduce grain
+
+**This is the stage that matters.** Everything else supports it.
 
 - **Do:** add `grain: 'module' | 'connector' | 'internal'` to `Net` and `parentNet?: string`. Tag the
   existing 11 nets `module`. Migrate the 29 console cables into `nets[]` as `connector` grain, each
-  naming its parent, using S2's correspondence map. `bench-data.ts` keeps `PortDef` layout data and
-  derives its cable list from the spine.
+  naming its parent. `bench-data.ts` keeps `PortDef` layout data and derives its cable list from the
+  spine.
+- **The correspondence map is the migration.** Write it once, here, as the thing that folds one
+  model into the other — not as a test that watches two models drift. Known pairs to start from:
+  `gdb-usb-esp32` ↔ `drv-esp32-usb`, `orin-dc-in` ↔ `jet-barrel`, `net-d500-lidar` ↔ the HAT lidar
+  route, `net-5v-host` ↔ `drv-5v`, `net-host-uart` ↔ the USB host link.
 - **Also:** extend `Net.documents[]` citations to accept a zone suffix (`doc-ros-driver#C6`) so the
   netlist extraction plan has somewhere to land. A citation naming a 1 MB PDF proves nothing.
-- **Done when:** `EXPECTED_CABLES` is derived, not authored; both views render unchanged; S2's test
-  becomes trivially true and can be simplified to a grain-coverage check.
+- **Done when:** `EXPECTED_CABLES` is derived, not authored, and both views render unchanged. The
+  only new assertion is ordinary integrity — every `connector` net names a real parent.
 - **Care required:** this is the only stage that can regress a working UI. Both views must render
   identically before and after — screenshot or snapshot them first.
 
-### S5 — Resolve the dead database tables
+### S4 — Resolve the dead database tables
 
 - **Do:** pick one, explicitly. Either (a) add a nets/terminals repository following `items.ts` and
   wire it through `readWithStaticFallback`, or (b) record in `db/hangar/standup.md` that the twin
@@ -169,20 +175,20 @@ Staged so each step is valuable alone. **Stop after any stage and the repo is be
 - **Recommendation:** (a). The pattern exists, `items.ts` proves it, and the seed is already being
   generated — the remaining work is one repository and one route.
 
-### S6 — Surface it
+### S5 — Surface it
 
 - **Do:** the operator-facing material — the vacated Pi dock, 40-pin numbering, which USB-C is which
   — goes on screen. `OPEN_ITEMS` should be visible from both views, not only the Reference tab.
 - **Done when:** an operator can answer "where do the UART jumpers go" from the running app without
   opening a markdown file.
 - **Why:** `AGENTS.md` — *"The UI is the product... docs exist to serve the visible experience, never
-  the other way around."* S1–S5 are all plumbing. This is the stage that makes them product.
+  the other way around."* S1–S4 are all plumbing. This is the stage that makes them product.
 
 ---
 
 ## Part 4 — Rules for whoever adds the next fact
 
-Once S4 lands:
+Once S3 lands:
 
 - **A wiring fact is a net.** Pick the grain, write one record, cite the zone or image region that
   proves it.
