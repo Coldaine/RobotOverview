@@ -324,6 +324,23 @@ export interface Net {
   note?: string;
 }
 
+// ── Wiring: build variant + signal class ─────────────────────────────────────
+// Shared by every wiring surface. These are facts about the robot, so they live
+// here rather than beside the component that happens to draw them. The colour
+// each category renders in is presentation and stays with the view (`CAT` in
+// bench-data.ts).
+
+export const BUILDS = ['pi5', 'orin'] as const;
+/** Which host the robot is wired for: the original Pi 5 kit, or the Jetson target. */
+export type Build = (typeof BUILDS)[number];
+
+export const PORT_CATEGORIES = [
+  'power', 'uart', 'usb', 'i2c', 'motor', 'servo',
+  'sensor', 'video', 'net', 'rf', 'storage', 'audio',
+] as const;
+/** What a port carries or a cable conveys. */
+export type PortCategory = (typeof PORT_CATEGORIES)[number];
+
 // ── Documents: the downloaded source-of-truth library ────────────────────────
 // References into the Datacore hardware library (and, later, object storage).
 // The libraryPath is the stable key; url is filled once files live in storage.
