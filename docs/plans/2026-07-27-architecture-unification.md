@@ -1,7 +1,6 @@
 # Unite the wiring architecture — one spine, two eyes
 
-**Status:** PROPOSED — 2026-07-27. Written to be executed by an agent that has none of the
-conversation that produced it.
+**Status:** PARTIALLY EXECUTED — 2026-07-27. Read Part 3 before starting; some of this has landed.
 
 **This plan does not merge The Board and the BEAST Console.** Both views stay. They are different
 eyes on the same robot and the owner has decided both are worth keeping. What unites is the *data
@@ -22,191 +21,202 @@ underneath them*, so that a fact learned once is written once and appears in bot
 
 ## Part 1 — What is actually there
 
-Three data paths, in decreasing order of rigor. This is the finding that matters.
+**Five wiring surfaces, four join keys.** An earlier version of this plan said three; that was wrong,
+and the error came from inventorying the data files without reading the consumption layer.
 
-| | **Hangar spine** | **The Board** (twin) | **BEAST Console** |
+| Surface | Route | Data source | Joins on |
 | --- | --- | --- | --- |
-| Route | `/`, `/items`, `/unit/[id]` | `/board` | `/datacore` |
-| Data | `src/data/hangar.ts` — units, items, missions | `hangar.ts` — terminals, nets, documents | `beast-console/*-data.ts` |
-| Records | 40+ units/items | **25 terminals · 11 nets · 16 documents** | **5 boards · 39 ports · 16 peripherals · 29 cables** |
-| Types | `src/data/types.ts` | `src/data/types.ts:296–350` | **local interfaces in `bench-data.ts`** |
-| SQL schema | ✅ `db/hangar/schema.sql` | ✅ tables at `schema.sql:253–296` | ❌ none |
-| Seed emitted | ✅ | ✅ `gen-seed.ts:306+` | ❌ none |
-| Integrity test | ✅ ~30 assertions | ✅ 4 assertions | ❌ **none** |
-| Postgres read path | ✅ items only | ❌ **tables exist, nothing reads them** | ❌ none |
+| The Board | `/board` | `hangar.ts` nets → `twin.ts` | terminal id |
+| Live Plug | `/datacore` | `bench-data.ts` | port / peripheral id |
+| DriverBoardSchematic | `/datacore/[docId]` | own `BOARD_PORTS` + loadout | **slot name string** |
+| RoverSchematic | unit page | `beast.hotspots` | hotspot id |
+| WiringDiagram | inside RoverSchematic | **5 hardcoded SVG paths** | hotspotId booleans |
 
-Reading down the columns, rigor falls off a cliff. **The least-governed model is the one actually
-being used** — the console is what the Jetson conversion is being driven from, and it is the only
-data in the repo with no shared types, no schema, and no test.
+**Data flow:** `hangarData` is static and immutable → `HangarProvider` (`src/lib/store.tsx`) layers
+user overrides → `useHangar()`. Four surfaces go through it. **Live Plug bypassed the store
+entirely**, which is why it drifted furthest.
 
-### Four concrete problems
+### The problems
 
-**P1 — A fact has no single home, and no rule says which to pick.** On 2026-07-27 the verified
-findings (driver-board connector 6 is the ESP32 host link; the D500 rides the Audio HAT's LiDAR
-socket; the Orin DC input is 9–20 V not 9–19 V) were written into the console because that was the
-file open at the time. The twin still contradicts all three. Nothing caught it.
+**P1 — A fact has no single home.** The verified 2026-07-27 findings went into the console because
+that was the file open at the time. The twin contradicted all three for two days.
 
-**P2 — The console's types are private.** `PortDef`, `CableDef`, `PeripheralDef`, `BoardDef` are
-declared inside `bench-data.ts` rather than `types.ts`. There is no structural relationship between
-a `CableDef` and a `Net`, so nothing stops them describing the same wire differently forever.
+**P2 — Grain mismatch.** The spine models 11 inter-module nets; the console models 29
+connector-level cables. Same robot, ~2.5× resolution. Neither is wrong and neither contains the
+other.
 
-**P3 — The twin's database tables are built and unread.** Migration
-`db/hangar/migrations/2026-07-03-connected-twin.sql` created `terminals`, `nets`, `net_terminals`,
-`documents`, `net_documents`. `gen-seed.ts` emits rows for all of them. `readWithStaticFallback` in
-`src/server/hangar/read-model.ts` is the established pattern and `items.ts` proves it works. But
-there is no nets repository and no API route — so the twin reads static data exclusively, and the
-tables are dead weight that looks alive.
+**P3 — The richer model was the ungoverned one.** The console had 39 ports and 16 peripherals against
+the spine's 25 terminals, and the spine has **no Audio HAT terminals at all**. Folding the console
+into the spine would have meant folding the better model into a coarser one that is missing a board.
 
-**P4 — Grain mismatch is the real blocker.** The spine models **11 inter-module nets**; the console
-models **29 connector-level cables**. Same physical robot, ~2.5× resolution difference. This is why
-nobody has unified them: neither is wrong, and neither contains the other.
+**P4 — The twin's Postgres tables are built and unread.** Migration `2026-07-03-connected-twin.sql`
+created `terminals`, `nets`, `net_terminals`, `documents`, `net_documents`; `gen-seed.ts` emits rows
+for all of them; `readWithStaticFallback` is the proven pattern. No repository, no route. Dead weight
+that looks alive.
 
 ---
 
 ## Part 2 — The design
 
-**One net table, tagged by grain. Each view filters to the grain it renders.**
+**One net collection, tagged by grain. Each view filters to the grain it renders.**
 
-Add a `grain` discriminator to `Net`:
+| Grain | Meaning | Rendered by |
+| --- | --- | --- |
+| `module` | Board-to-board / subsystem trunk | The Board |
+| `connector` | One physical cable between two named ends | Live Plug |
+| `internal` | Intra-board rail (`VDD5V`, the M2 gate) | Net inspector detail, on demand |
 
-| Grain | Meaning | Count today | Rendered by |
-| --- | --- | --- | --- |
-| `module` | Board-to-board / subsystem wiring | 11 | The Board |
-| `connector` | Specific cable between two named sockets | 29 (in console) | Live Plug |
-| `internal` | Intra-board rail (`VDD5V`, the M2 gate) | 0 — future | Net inspector detail, on demand |
-
-A `connector` net names its parent `module` net. That makes the relationship explicit and
-queryable: The Board shows the trunk, Live Plug shows the strands, and asking "which cables make up
-`net-host-uart`?" becomes a filter rather than a guess.
-
-**Adding a fact becomes one operation:** write one net at the correct grain. It appears in whichever
-view renders that grain, with no second edit and no chance of divergence — because there is no
-second copy.
+A `connector` net names its parent `module` net, so "which cables make up this trunk?" is a filter,
+not a guess. Adding a fact is one operation: write one net at the right grain.
 
 ### What each view keeps
 
-Unification is at the data layer only. Everything below stays exactly where it is:
+Unification is at the data layer only.
 
-| Stays console-owned | Why |
+| Stays with the view | Why |
 | --- | --- |
-| `PortDef` x/y/side, `BoardDef` chips | Diagram layout coordinates — presentation, not fact |
-| Plug state, `console-store.ts` | Session state, not hardware truth |
-| `CONVERSION_STEPS` | An ordered procedure; genuinely not a wiring model |
-| `PINS40` pin tables | Reference material with no spine equivalent yet |
+| `PortDef` x/y/side, `BoardDef` chips, `palette.ts` | Diagram layout — presentation, not fact |
+| Plug state (`console-store.ts`) | Session state |
+| `CONVERSION_STEPS` | An ordered procedure, not a wiring model |
+| `buildBoardLayout` / `buildIsoLayout` / `buildBusLayout` | View projections |
 
-| Stays twin-owned | Why |
-| --- | --- |
-| `buildBoardLayout` / `buildIsoLayout` / `buildBusLayout` | Three view projections — presentation |
-| `resolveActive` host filtering | The Pi↔Orin toggle |
-| `palette.ts`, layer bar | Presentation |
-
-**The split is: facts move to the spine, presentation stays local.** A coordinate is not a fact. A
-voltage is.
+**A coordinate is not a fact. A voltage is.**
 
 ### Alternative considered and rejected
 
-*Keep both models fully separate; add a consistency test asserting overlapping claims agree.*
+*Keep both models separate; add a consistency test asserting overlapping claims agree.*
 
-**Rejected outright — not staged, not as a first step.** It is a second linter guarding two copies
-of the same truth. You still write every fact twice; the test only tells you when you forgot. It
-adds a correspondence map that must itself be maintained, so the repo now has three things to keep
-in sync instead of two.
-
-The tempting version of this is "do it first, it's cheap, the migration supersedes it later." That
-is throwaway work: **the correspondence map is needed either way**, and writing it as a migration
-costs barely more than writing it as a test. Write the map once, as the thing that unites the
-models.
-
-After unification there is nothing to reconcile, so no cross-model test exists. The only assertion
-needed is ordinary integrity on the one model — every `connector` net names a real parent — which
-belongs with the rest of the integrity suite.
+**Rejected outright.** It is a second linter guarding two copies of the same truth. You still write
+every fact twice; the test only says when you forgot. The correspondence map it needs is the same map
+the migration needs — so write the map once, as the thing that unites them.
 
 ---
 
-## Part 3 — The work
+## Part 3 — What is already done
 
-Staged so each step is valuable alone. **Stop after any stage and the repo is better than it was.**
+**Read this before starting.** A partial refactor landed 2026-07-27 (PR #130). It is real, tested,
+and pushed. Do not redo it, and do not assume the design above is unstarted.
 
-### S1 — Backfill the known divergences *(do first, small)*
+| Landed | Where | Commit |
+| --- | --- | --- |
+| The 29-cable loom moved to a shared surface | `src/data/wiring.ts` | `e6dec6f` |
+| `Build` and `PortCategory` moved to the spine | `src/data/types.ts` | `ecf8414` |
+| **The console derives its loom** — `EXPECTED_CABLES` projects from `WIRING_LINKS` | `bench-data.ts` | `ecf8414` |
+| Wiring integrity suite: projection fidelity, the `DriverBoardSchematic` label join, orphan count | `src/__tests__/wiring.test.ts` | `ecf8414` |
+| One generic briefing route; bespoke per-doc page deleted | `/datacore/briefing/[slug]` | `d15502f` |
+| Twin's Type-C bridges corrected `CP2102` → CH343P; callouts 6 / 7 identified | `hangar.ts` terminals | `ea4411e` |
 
-- **Do:** propagate the three verified 2026-07-27 findings into `hangar.ts` — connector 6 as the
-  ESP32 host link, the D500 on the Audio HAT socket, 9–20 V on `orin-dc-in`. Commit the uncommitted
-  voltage corrections sitting in the working tree.
-- **Done when:** `task check` passes and the two views no longer contradict each other on any known
-  fact.
-- **Why first:** the models currently disagree on live safety-relevant data. Fix the facts before
-  building machinery to keep facts in sync.
+**The state this leaves:** the console is fed from the shared surface. **The Board is not** — it still
+reads `hangar.ts` nets directly. `parentNet` on each link is a *reference*, not a feed. So a fact is
+written once for one view and separately for the other: the original problem, half-solved, which is a
+worse resting state than either end.
 
-### S2 — Give the console the same rigor as the spine
+`grain` was never added to `Net`. The tasks below assume it does not exist yet.
 
-- **Do:** move `PortDef`, `CableDef`, `PeripheralDef`, `BoardDef` into `src/data/types.ts`. Add
-  `src/__tests__/bench-data-integrity.test.ts` covering what `hangar-integrity.test.ts` already
-  covers for the spine: no duplicate IDs, every cable endpoint resolves to a real port or peripheral,
-  every port belongs to a real board, every build variant is valid.
-- **Done when:** the console cannot ship a cable pointing at a port that does not exist.
-- **Why:** this is the model driving a physical hardware conversion and it currently has less
-  protection than `nav.ts`.
+---
 
-### S3 — Unite the surface: introduce grain
+## Part 4 — The work
 
-**This is the stage that matters.** Everything else supports it.
+Each task states input, what to do, what to emit, and how to know it is done. **W1 closes the
+half-finished state and goes first.**
 
-- **Do:** add `grain: 'module' | 'connector' | 'internal'` to `Net` and `parentNet?: string`. Tag the
-  existing 11 nets `module`. Migrate the 29 console cables into `nets[]` as `connector` grain, each
-  naming its parent. `bench-data.ts` keeps `PortDef` layout data and derives its cable list from the
-  spine.
-- **The correspondence map is the migration.** Write it once, here, as the thing that folds one
-  model into the other — not as a test that watches two models drift. Known pairs to start from:
-  `gdb-usb-esp32` ↔ `drv-esp32-usb`, `orin-dc-in` ↔ `jet-barrel`, `net-d500-lidar` ↔ the HAT lidar
-  route, `net-5v-host` ↔ `drv-5v`, `net-host-uart` ↔ the USB host link.
-- **Also:** extend `Net.documents[]` citations to accept a zone suffix (`doc-ros-driver#C6`) so the
-  netlist extraction plan has somewhere to land. A citation naming a 1 MB PDF proves nothing.
-- **Done when:** `EXPECTED_CABLES` is derived, not authored, and both views render unchanged. The
-  only new assertion is ordinary integrity — every `connector` net names a real parent.
-- **Care required:** this is the only stage that can regress a working UI. Both views must render
-  identically before and after — screenshot or snapshot them first.
+### W1 — The Board consumes the wiring surface *(closes the partial refactor)*
 
-### S4 — Resolve the dead database tables
+- **Input:** `src/lib/twin.ts`, `src/data/wiring.ts`, `hangar.ts` `nets[]`.
+- **Do:** add `grain` and `parentNet?` to `Net` in `types.ts`. Tag the existing 11 nets `module`.
+  Have the twin's net list come from one exported selector rather than reading `hangarData.nets`
+  directly, so both views draw from the same call.
+- **Emit:** `netsAtGrain(grain)` in `wiring.ts`, consumed by both `twin.ts` and the console.
+- **Done when:** neither view reads a wiring collection the other cannot see, `wiring.test.ts`
+  asserts it, `task check` passes, and The Board renders identically before and after.
+- **Care:** the only task here that can regress a working UI. Snapshot both views first.
+- **Do not half-land this.** A surface feeding one view and not the other is worse than either
+  endpoint, because the next reader cannot tell which is authoritative. If it cannot be finished,
+  do not start it.
 
-- **Do:** pick one, explicitly. Either (a) add a nets/terminals repository following `items.ts` and
-  wire it through `readWithStaticFallback`, or (b) record in `db/hangar/standup.md` that the twin
-  tables are seeded-but-unread by design, with the reason.
+### W2 — Close the 7 orphan strands
+
+- **Input:** `orphanLinks()` — speaker, spotlight, ESP32 antenna, the HAT USB uplink on both builds,
+  Jetson Wi-Fi, the Mid-360S Ethernet run.
+- **Do:** for each, add the module-grain trunk it belongs to, or record why the subsystem has none.
+- **Done when:** every remaining orphan has a stated reason rather than an absence. The count is
+  pinned in `wiring.test.ts`; lowering it is a deliberate edit.
+
+### W3 — Decide what the loadout surfaces are
+
+- **Input:** `WiringDiagram.tsx`, `RoverSchematic.tsx`, `DriverBoardSchematic.tsx`.
+- **The problem:** these draw connection lines from *installation* state, not wiring data.
+  `WiringDiagram` holds five connections as literal SVG path strings gated on whether a loadout slot
+  is filled. `DriverBoardSchematic` joins to the spine on a human-readable label. Nothing states the
+  line between **installed** (is a module slotted) and **cabled** (which wire runs where) — which is
+  how a path string became a wiring claim.
+- **Do:** state that line, then either bring these onto the wiring surface or document them as
+  loadout views that deliberately do not model cables.
+- **Done when:** no surface makes a wiring claim from data that does not describe wiring.
+- **Note:** the label join is already pinned by a test, so it cannot break silently meanwhile.
+
+### W4 — Consume the schematic enumeration *(the missing link)*
+
+**Nothing currently covers this.** The enumeration plan deliberately stops at YAML and forbids
+touching the app. Something must carry it the rest of the way.
+
+- **Input:** `content/datacore/ros-driver-schematic-enumeration.yaml`, produced by
+  [the enumeration plan](2026-07-27-schematic-netlist-extraction-plan.md).
+- **Do:**
+  1. Read the YAML. **Do not re-derive anything from the PDF** — that plan owns extraction, this one
+     owns consumption.
+  2. Map its claim states onto the model. Only `visible` and `visually-traced` claims may become
+     `internal`-grain nets. `ambiguous` and `not-determinable-from-source` become `OPEN_ITEMS`
+     entries, never silent omissions.
+  3. Carry the source location through. A net derived from zone `C6` cites `C6`, not the whole PDF.
+  4. Where the enumeration contradicts an existing record, **record both and escalate.** Do not edit
+     either side to agree.
+- **Emit:** `internal`-grain nets, updated `OPEN_ITEMS`, and a view of the driver board's internal
+  rails reachable from the app.
+- **Done when:** the question that started all of this — *which 5 V net reaches the 40-pin header,
+  pre- or post-M2* — is answerable on screen with a zone citation, or recorded as not determinable.
+- **Why it matters:** extraction that lands in a YAML file nothing reads is the same failure as a
+  plan that lands in `docs/` nothing renders.
+
+### W5 — Resolve the dead Postgres tables
+
+- **Do:** either add a nets/terminals repository following `src/server/hangar/items.ts` and wire it
+  through `readWithStaticFallback`, or record in `db/hangar/standup.md` that the twin tables are
+  seeded-but-unread by design, with the reason.
 - **Done when:** no reader has to guess whether the Postgres twin path works.
-- **Recommendation:** (a). The pattern exists, `items.ts` proves it, and the seed is already being
-  generated — the remaining work is one repository and one route.
+- **Recommendation:** the former. The pattern exists, `items.ts` proves it, the seed is already
+  generated — what remains is one repository and one route.
 
-### S5 — Surface it
+### W6 — Rewrite the AGENTS.md content workflow
 
-- **Do:** the operator-facing material — the vacated Pi dock, 40-pin numbering, which USB-C is which
-  — goes on screen. `OPEN_ITEMS` should be visible from both views, not only the Reference tab.
-- **Done when:** an operator can answer "where do the UART jumpers go" from the running app without
-  opening a markdown file.
-- **Why:** `AGENTS.md` — *"The UI is the product... docs exist to serve the visible experience, never
-  the other way around."* S1–S4 are all plumbing. This is the stage that makes them product.
+- **Input:** the `## Content workflow` section, carrying the operator's note
+  `REWRITE THIS RIGHT NOW aS YOU REDEISGN`.
+- **Do:** it says agents ingest "directly into `src/data/hangar.ts`". After W1 that is incomplete —
+  wiring facts land in `wiring.ts`, and briefings are records in `datacore-briefings.ts` pointing at
+  markdown that stays where it was authored. Describe what is true once W1 lands.
+- **Done when:** an agent following that section alone puts a new fact in the right place.
 
 ---
 
-## Part 4 — Rules for whoever adds the next fact
+## Part 5 — Rules for whoever picks this up
 
-Once S3 lands:
-
-- **A wiring fact is a net.** Pick the grain, write one record, cite the zone or image region that
-  proves it.
+- **A wiring fact is a net.** Pick the grain, write one record, cite the zone or image region proving
+  it.
 - **Layout coordinates are not facts.** They live with the view that draws them.
-- **A disagreement between sources is never resolved by editing one to match.** Both claims stay;
-  the conflict goes to `OPEN_ITEMS` naming both. Silent convergence turns one wrong fact into two.
-- **Source precedence for hardware claims:** firmware source > schematic > vendor callout diagram >
-  wiki > inference. For *physical identification* (which connector is which), the callout diagram
-  outranks the schematic — they answer different questions.
-- **New views are new projections, not new stores.** A third eye is welcome. A third copy of the
-  facts is not.
+- **A disagreement between sources is never resolved by editing one to match.** Both claims stay; the
+  conflict goes to `OPEN_ITEMS` naming both. Silent convergence turns one wrong fact into two.
+- **Source precedence:** firmware source > schematic > vendor callout diagram > wiki > inference. For
+  *physical identification* — which connector is which — the callout diagram outranks the schematic.
+  They answer different questions.
+- **New views are new projections, not new stores.** A third eye is welcome; a third copy is not.
+- **Work that does not reach the screen is not finished** (North Star G4). A data model with no view
+  is unfinished work.
 
 ---
 
 ## Companion plans
 
-- [2026-07-27-schematic-netlist-extraction-plan.md](2026-07-27-schematic-netlist-extraction-plan.md)
-  — what to extract from the documents we hold. Depends on this plan for its persistence target;
-  `internal` grain and zone-level citations are the hooks it needs.
-- [2026-07-27-cad-assets-usage-and-discoverability.md](2026-07-27-cad-assets-usage-and-discoverability.md)
-  — the CAD archives. Its **X1 gates drilling** and is independent of this work.
+- [Enumerate the ROS Driver schematic PDF](2026-07-27-schematic-netlist-extraction-plan.md) — bounded
+  visual extraction into YAML. **W4 is its consumer**; that plan deliberately does not touch the app.
+- [CAD assets](2026-07-27-cad-assets-usage-and-discoverability.md) — the archives, three filename
+  traps, U1–U6 uses. **X1 gates drilling** and is independent of this work.
