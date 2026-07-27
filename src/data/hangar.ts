@@ -1060,7 +1060,7 @@ export const hangarData: HangarData = {
       bay: 'compute',
       units: ['orin-nano', 'beast', 'workstation'],
       confidence: 'high',
-      source: '/datacore/compute-workload',
+      source: '/datacore/briefing/compute-workload',
       capturedAt: '2026-07-23',
     },
     {

@@ -1,16 +1,35 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { BriefingMarkdown } from '@/components/datacore/BriefingMarkdown';
+import { DATACORE_BRIEFINGS, briefingById } from '@/data/datacore-briefings';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ComputeWorkloadBriefingPage() {
-  const markdown = await readFile(
-    path.join(process.cwd(), 'content/datacore/compute-workload.md'),
-    'utf8',
-  );
+export function generateStaticParams() {
+  return DATACORE_BRIEFINGS.map((b) => ({ slug: b.id }));
+}
+
+const KIND_LABEL: Record<string, string> = {
+  research: 'Research Brief',
+  plan: 'Plan',
+};
+
+export default async function BriefingPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  // The slug only selects a record; the path comes from the briefing index, so
+  // no caller-supplied path ever reaches the filesystem.
+  const briefing = briefingById(slug);
+  if (!briefing) notFound();
+
+  const markdown = await readFile(path.join(process.cwd(), briefing.source), 'utf8');
 
   return (
     <div className="space-y-6">
@@ -23,11 +42,12 @@ export default async function ComputeWorkloadBriefingPage() {
           Datacore
         </Link>
         <div className="font-mono text-[11px] uppercase tracking-[0.35em] text-cyan/70">
-          Research Brief · RND-COMPUTE-SIZING
+          {KIND_LABEL[briefing.kind] ?? 'Briefing'} · {briefing.id.toUpperCase()}
         </div>
-        <p className="max-w-3xl font-mono text-xs text-ink-dim">
-          How engineers formally represent the workload that leads to Orin NX versus AGX Orin —
-          linked views, not a single TOPS diagram.
+        <h1 className="text-xl font-semibold text-ink md:text-2xl">{briefing.title}</h1>
+        <p className="max-w-3xl font-mono text-xs text-ink-dim">{briefing.summary}</p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-dim/70">
+          source · {briefing.source}
         </p>
       </header>
 

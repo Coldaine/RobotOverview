@@ -38,7 +38,7 @@ describe('Datacore page', () => {
     expect(screen.getByRole('heading', { name: 'Datacore' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Compute Workload Sizing/i })).toHaveAttribute(
       'href',
-      '/datacore/compute-workload',
+      '/datacore/briefing/compute-workload',
     );
   });
 
