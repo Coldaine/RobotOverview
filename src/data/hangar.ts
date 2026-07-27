@@ -1150,8 +1150,8 @@ export const hangarData: HangarData = {
     { id: 'gdb-motor-a', unitId: 'driver-board', name: 'Motor Interface A', connector: 'PH2.0 6P', role: 'output', note: 'TB6612FNG channel + encoder feedback' },
     { id: 'gdb-motor-b', unitId: 'driver-board', name: 'Motor Interface B', connector: 'PH2.0 6P', role: 'output', note: 'TB6612FNG channel + encoder feedback' },
     { id: 'gdb-i2c', unitId: 'driver-board', name: 'I²C Peripheral Header', connector: 'pin header', role: 'bidirectional', note: 'OLED and I²C sensors, driven by the ESP32' },
-    { id: 'gdb-usb-esp32', unitId: 'driver-board', name: 'Type-C (ESP32 UART)', connector: 'USB-C', role: 'bidirectional', note: 'CP2102 bridge — flashing and debug serial @ 115200' },
-    { id: 'gdb-lidar-uart', unitId: 'driver-board', name: 'LiDAR UART Port', connector: 'UART + Type-C', role: 'bidirectional', note: 'Second CP2102 routes radar serial to USB' },
+    { id: 'gdb-usb-esp32', unitId: 'driver-board', name: 'Type-C (ESP32 UART)', connector: 'USB-C', role: 'bidirectional', note: 'Callout 6, silkscreen "USB" — the LEFT of the two Type-C ports, beside the DC jack. CH343P bridge to ESP32 UART0; host JSON link @ 115200. This is the Jetson connection.' },
+    { id: 'gdb-lidar-uart', unitId: 'driver-board', name: 'LiDAR UART Port', connector: 'UART + Type-C', role: 'bidirectional', note: 'Callout 7, silkscreen "LIDAR" — the RIGHT Type-C. A second CH343P routes radar serial to USB. Idle on BEAST-01: the D500 rides the Audio HAT LiDAR socket instead.' },
     { id: 'gdb-12v-switched', unitId: 'driver-board', name: '12V Switched Outputs', connector: 'IO4 / IO5', role: 'output', note: 'ESP32-switched pack-voltage outputs for LEDs or payloads' },
 
     // UPS Module 3S
