@@ -1,9 +1,11 @@
 'use client';
-import { Plus, Search, SlidersHorizontal, Trash2, X, FileText, BookOpen, CircuitBoard } from 'lucide-react';
+import { Plus, Search, SlidersHorizontal, Trash2, X, FileText, BookOpen, CircuitBoard, Plug } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SectionTitle } from '@/components/ui/Primitives';
 import { HardwareLibrary } from '@/components/datacore/HardwareLibrary';
+import { BeastConsole } from '@/components/datacore/beast-console/BeastConsole';
+import { EXPECTED_CABLES } from '@/components/datacore/beast-console/bench-data';
 import { isHangarBayId } from '@/data/hangar';
 import { DATACORE_BRIEFINGS } from '@/data/datacore-briefings';
 import { INSIGHT_CONFIDENCE_LEVELS, isInsightConfidence, type InsightConfidence } from '@/data/types';
@@ -12,7 +14,7 @@ import { useHangar, LOCAL_INSIGHT_PREFIX } from '@/lib/store';
 import clsx from 'clsx';
 
 type ConfidenceFilter = 'all' | InsightConfidence;
-type DatacoreTab = 'knowledge' | 'library';
+type DatacoreTab = 'knowledge' | 'library' | 'console';
 
 export default function Datacore() {
   const { data, insights, documents, unit, mission, addLocalInsight, removeLocalInsight } = useHangar();
@@ -93,6 +95,7 @@ export default function Datacore() {
         {([
           { id: 'knowledge', label: 'Knowledge Core', code: 'CORE', icon: BookOpen, count: DATACORE_BRIEFINGS.length + insights.length },
           { id: 'library', label: 'Hardware Library', code: 'HW', icon: CircuitBoard, count: documents.length },
+          { id: 'console', label: 'BEAST Console', code: 'PLUG', icon: Plug, count: EXPECTED_CABLES.filter((c) => !c.era && c.build !== 'pi5').length },
         ] as const).map((t) => {
           const TabIcon = t.icon;
           return (
@@ -156,6 +159,7 @@ export default function Datacore() {
         </div>
       )}
 
+      {tab !== 'console' && (
       <div className="panel p-3">
         <div className={clsx('grid gap-2', tab === 'knowledge' && 'md:grid-cols-[1.6fr_0.8fr_0.8fr]')}>
           <label className="relative block">
@@ -195,8 +199,11 @@ export default function Datacore() {
           )}
         </div>
       </div>
+      )}
 
       {tab === 'library' && <HardwareLibrary query={q} />}
+
+      {tab === 'console' && <BeastConsole />}
 
       {tab === 'knowledge' && (
         <>

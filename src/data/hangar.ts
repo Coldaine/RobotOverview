@@ -1150,7 +1150,7 @@ export const hangarData: HangarData = {
 
     // Jetson Orin (swap-path host)
     { id: 'orin-uart', unitId: 'orin-nano', name: '40-Pin Header (UART jumpers)', connector: 'jumper wires', role: 'bidirectional', note: 'TX/RX/GND only — the Orin does not stack and cannot draw header 5V' },
-    { id: 'orin-dc-in', unitId: 'orin-nano', name: 'DC Power Input', connector: 'barrel jack', role: 'input', note: '9–19V ~45W; fed from the battery rail, never the 5V host rail' },
+    { id: 'orin-dc-in', unitId: 'orin-nano', name: 'DC Power Input', connector: 'barrel jack', role: 'input', note: '9–20V ~45W; fed from the battery rail, never the 5V host rail' },
     { id: 'orin-usb', unitId: 'orin-nano', name: 'USB Host Ports', connector: 'USB-A', role: 'bidirectional', note: 'Future ACCE camera and LiDAR host after cutover' },
 
     // ACCE ROS2 sensing payload

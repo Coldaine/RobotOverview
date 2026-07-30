@@ -35,6 +35,12 @@ Browser  ──HTTP/WebSocket──▶  Raspberry Pi 5 + ugv_rpi  ──UART─�
   offboard policy inference. **Not yet installed in the chassis.**
 - **Upper computer (previous):** Raspberry Pi 5 + Waveshare `ugv_rpi` — removed; kept as spare.
 - **Lower computer:** ESP32 — motion (PID), stock pan-tilt servo bus, sensor feedback, stop.
+- **Identifying the ESP32 link on the driver board:** the board has two USB-C ports. The **left**
+  one — silkscreen `USB`, next to the DC jack, callout 6 on Waveshare's labeled diagram — is the
+  ESP32/host port and enumerates as `/dev/ttyUSB0`. The right one (silkscreen `LIDAR`, callout 7)
+  is the board's own LiDAR UART→USB bridge and is unused on BEAST, which runs the D500 through the
+  Audio HAT's LiDAR socket. Diagram: `public/datacore/beast-driver-board-callouts.png`, surfaced at
+  Datacore → BEAST Console → Reference.
 - **Chassis dynamics:** slow tracked base; hard-stops and stops in time for lightweight
   onboard terrain alignment / obstacle avoidance once Orin is fitted.
 

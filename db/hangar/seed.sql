@@ -565,7 +565,7 @@ INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('ups-telemet
 INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('pi5-40pin','pi5','40-Pin GPIO Header','40-pin header','bidirectional','Stacks on the driver board: takes 5V power + UART');
 INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('pi5-usb','pi5','USB Host Ports','USB-A','bidirectional','Camera input');
 INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('orin-uart','orin-nano','40-Pin Header (UART jumpers)','jumper wires','bidirectional','TX/RX/GND only — the Orin does not stack and cannot draw header 5V');
-INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('orin-dc-in','orin-nano','DC Power Input','barrel jack','input','9–19V ~45W; fed from the battery rail, never the 5V host rail');
+INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('orin-dc-in','orin-nano','DC Power Input','barrel jack','input','9–20V ~45W; fed from the battery rail, never the 5V host rail');
 INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('orin-usb','orin-nano','USB Host Ports','USB-A','bidirectional','Future ACCE camera and LiDAR host after cutover');
 INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('oak-usb','oak-d-lite','OAK-D Lite USB','USB','output','RGB, stereo depth, and onboard vision data');
 INSERT INTO terminals(id,asset_id,name,connector,role,note) VALUES ('d500-uart','d500-lidar','D500 UART','ZH1.5T-4P','output','STL-19P/LDS19 scan data at 230400 baud');
