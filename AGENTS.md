@@ -12,15 +12,27 @@ Working on UI? Follow [`docs/rich-ui.md`](docs/rich-ui.md) — enrich surfaces, 
 
 ## Content workflow
 
-REWRITE THIS RIGHT NOW aS YOU REDEISGN
-Agents ingest items, research, and unit data **directly into `src/data/hangar.ts`** (typed by
-`src/data/types.ts`; referential integrity enforced by `hangar-integrity.test.ts`). Content
-for static or not-yet-cutover surfaces ships inside the Docker image. Postgres-backed lanes
-need the matching seed/migration/data application in addition to an app deploy.
-Postgres (`db/hangar/`) follows the TypeScript spine: when shapes change, regenerate
-schema/seed, and any live migration must handle data already stored in the database.
-If the app serves static-fallback data instead of Postgres, that state must be loudly
-visible, never silent.
+**Postgres is canonical.** Facts that appear in the Hangar UI are written through the
+ingest API against the live app / database — not by editing TypeScript.
+
+```http
+POST https://hangar.moosegoose.xyz/api/hangar/ingest
+Authorization: Bearer $HANGAR_INGEST_TOKEN
+Content-Type: application/json
+
+{ "entity": "<kind>", "record": { "id": "…", … } }
+```
+
+Kinds: `unit` · `item` · `mission` · `wishlist` · `capability` · `insight` ·
+`activity` · `terminal` · `net` · `document`. Token lives in Doppler
+(`homelab`/`dev` → `HANGAR_INGEST_TOKEN`). See [`docs/deploy.md`](docs/deploy.md).
+
+`src/data/hangar.ts` is a **fixture / offline fallback** and bootstrap source for
+`npm run hangar:seed-spine`. Do not treat it as the agent write mouth. Types live in
+`src/data/types.ts`; integrity tests still guard the fixture shape. Schema/migrations
+live in `db/hangar/`. If the UI is on static fallback, that state must be loudly visible.
+
+Research notes may still land in `content/` or intake dirs; **Hangar facts go through ingest.**
 
 ## Where docs live
 

@@ -201,7 +201,7 @@ export function Shell({ children }: { readonly children: ReactNode }) {
 function StaticDataBanner() {
   const { inventoryRead } = useHangar();
   if (inventoryRead.source === 'postgres') return null;
-  const detail = hangarFallbackDetail('inventory', inventoryRead.fallbackReason);
+  const detail = hangarFallbackDetail('spine', inventoryRead.fallbackReason);
   return (
     <div
       role="status"
@@ -209,7 +209,7 @@ function StaticDataBanner() {
     >
       <span aria-hidden="true" className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-amber" />
       <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-amber">
-        STATIC INVENTORY
+        STATIC SPINE
       </span>
       <span className="min-w-0 truncate font-mono text-[11px] text-ink-dim">{detail}</span>
     </div>

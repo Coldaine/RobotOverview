@@ -61,6 +61,7 @@ jobs:
           tags: |
             type=sha,prefix=sha-,format=long
             type=ref,event=pr,prefix=pr-
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
             type=raw,value=${{ steps.pkg.outputs.version }},enable=${{ github.ref == 'refs/heads/main' }}
 
       - name: Build image
