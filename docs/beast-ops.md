@@ -476,6 +476,26 @@ maintenance window and a tested rollback.
 
 Do not provision or enable storage units from this section yet. Follow the [command-level implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md). Once that implementation plan is approved and its dry-run checks pass, only `beast-storage-maintenance.timer` may be enabled. Keep black-box, mission, and motion storage units disabled until the documentation PR is merged, the stacked workspace change is reviewed, and physical recording/replay validation succeeds. An interactive [storage dossier](../design/beast-storage/index.html) walks the same policy visually.
 
+### `ugv_ws` workspace provenance — truth gap (verified 2026-07-30)
+
+The Jetson runbook below records ROS 2 Humble and all 29 packages built from a Jetson-adapted
+Waveshare workspace on the Orin. That **on-robot** workspace state is not tracked in any git
+repo the Hangar can see.
+
+| Fact | Value |
+|---|---|
+| Fork | [Coldaine/ugv_ws](https://github.com/Coldaine/ugv_ws) (fork of [waveshareteam/ugv_ws](https://github.com/waveshareteam/ugv_ws)) |
+| Local clone | `D:\_projects\ugv_ws` |
+| Fork last pushed | ~2026-07-12 |
+| Upstream activity | still active (~2026-07-28) |
+| Fork contents | near-vanilla Waveshare workspace — no `deploy/storage/`; no clear Jetson-adapted 29-package evidence in that git history |
+
+The Orin may still hold the adapted build at `~/beast/ugv_ws` (commit `ad274d63…` cited below),
+but Hangar docs must not treat the Coldaine fork tip as proof of on-robot state. Before applying
+the [NVMe storage implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md),
+reconcile stacked workspace changes against the **live on-robot** `ugv_ws` tree — not the fork
+alone.
+
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
 > **Status: SOFTWARE PROVISIONING COMPLETE; PHYSICAL HOST SWAP IN PROGRESS — updated
