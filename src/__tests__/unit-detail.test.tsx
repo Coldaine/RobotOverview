@@ -26,6 +26,16 @@ beforeEach(() => {
 });
 
 describe('Unit detail command shortcuts', () => {
+  it('shows one combined integration state for unverified BEAST sensors', () => {
+    renderUnitDetail('oak-d-lite');
+
+    expect(screen.getByText('Integrating').closest('.chip')).toHaveAttribute(
+      'title',
+      'Installed or being configured; acceptance checks are incomplete.',
+    );
+    expect(screen.queryByText('Assembled')).not.toBeInTheDocument();
+  });
+
   it('renders BEAST command shortcuts', () => {
     renderUnitDetail('beast');
 

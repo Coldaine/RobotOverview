@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import type { Unit, WishlistItem } from '@/data/types';
 
 function isUnitRecord(record: Unit | WishlistItem): record is Unit {
-  return 'bay' in record && 'lifecycle' in record;
+  return 'bay' in record;
 }
 
 export default function TechTree() {

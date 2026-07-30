@@ -110,6 +110,12 @@ describe('hangar.ts data integrity', () => {
     });
   });
 
+  it('units use status as their single state indicator', () => {
+    hangarData.units.forEach((u) => {
+      expect(u, `unit "${u.id}" must not carry a second lifecycle state`).not.toHaveProperty('lifecycle');
+    });
+  });
+
   it('all unit provenance values are valid ProvenanceKind values', () => {
     hangarData.units.forEach((u) => {
       if (!u.provenance) return;

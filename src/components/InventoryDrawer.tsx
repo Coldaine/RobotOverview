@@ -7,6 +7,13 @@ import type { Unit } from '@/data/types';
 import { checkCompatibility } from '@/lib/compatibility';
 import clsx from 'clsx';
 
+const LOADOUT_AVAILABLE_STATUSES: ReadonlySet<Unit['status']> = new Set([
+  'inventory',
+  'integrating',
+  'operational',
+  'needs-attention',
+]);
+
 export function InventoryDrawer() {
   const {
     units,
@@ -48,7 +55,7 @@ export function InventoryDrawer() {
     });
 
     return units.filter(u => {
-      const isOwned = u.lifecycle !== 'wishlist' && u.lifecycle !== 'on-order';
+      const isOwned = LOADOUT_AVAILABLE_STATUSES.has(u.status);
       const isNotEquipped = !equippedIds.has(u.id);
       const isNotParent = drawerSlotContext ? u.id !== drawerSlotContext.parentId : true;
       return isOwned && isNotEquipped && isNotParent;

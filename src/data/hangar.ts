@@ -194,8 +194,7 @@ export const hangarData: HangarData = {
       callsign: 'BEAST-01',
       bay: 'robotics',
       class: 'Tracked ROS2 Rover',
-      status: 'needs-attention',
-      lifecycle: 'assembled',
+      status: 'blocked',
       flagship: true,
       provenance: 'owner',
       summary:
@@ -323,8 +322,7 @@ export const hangarData: HangarData = {
       callsign: 'BEAST-RGBD',
       bay: 'robotics',
       class: 'RGB-D Camera',
-      status: 'operational',
-      lifecycle: 'assembled',
+      status: 'integrating',
       provenance: 'owner',
       summary: 'OAK-D Lite depth and AI camera installed as part of the BEAST-01 ACCE ROS2 kit.',
       specs: [
@@ -341,8 +339,7 @@ export const hangarData: HangarData = {
       callsign: 'BEAST-LIDAR',
       bay: 'robotics',
       class: '2D LiDAR',
-      status: 'operational',
-      lifecycle: 'assembled',
+      status: 'integrating',
       provenance: 'owner',
       summary: 'D500 360° DTOF LiDAR installed as part of the BEAST-01 ACCE ROS2 kit; the sensor core is STL-19P/LDS19.',
       specs: [
@@ -363,7 +360,6 @@ export const hangarData: HangarData = {
       bay: 'robotics',
       class: 'Power Module',
       status: 'operational',
-      lifecycle: 'assembled',
       provenance: 'owner',
       summary:
         'Stock undercarriage UPS module installed in BEAST-01, with room for 3x 18650 cells and external 3S pack experiments.',
@@ -383,7 +379,6 @@ export const hangarData: HangarData = {
       bay: 'robotics',
       class: 'Robot Controller Board',
       status: 'operational',
-      lifecycle: 'assembled',
       provenance: 'owner',
       summary:
         'Waveshare ESP32-WROOM-32 driver board at the heart of BEAST-01: motor H-bridge, ST3215 servo bus, 5V host rail for the Pi, IMU, and battery telemetry on one 65×65mm PCB.',
@@ -403,8 +398,7 @@ export const hangarData: HangarData = {
       name: 'Open Rover Slot',
       bay: 'robotics',
       class: 'Unassigned bay',
-      status: 'wishlist',
-      lifecycle: 'wishlist',
+      status: 'planned',
       provenance: 'inferred',
       summary: 'Reserved bay for the next ground unit or aerial drone as the fleet grows.',
       specs: [{ label: 'Status', value: 'Empty — future acquisition' }],
@@ -419,7 +413,6 @@ export const hangarData: HangarData = {
       bay: 'compute',
       class: 'Workstation · Off-board Brain',
       status: 'operational',
-      lifecycle: 'deployed',
       flagship: true,
       provenance: 'owner',
       summary:
@@ -445,7 +438,6 @@ export const hangarData: HangarData = {
       bay: 'compute',
       class: 'SBC · Onboard I/O',
       status: 'retired',
-      lifecycle: 'inventory',
       provenance: 'owner',
       summary:
         'Former Beast upper computer — removed 2026-07-22 for the Orin Nano cutover. Kept in inventory as a spare SBC. No CUDA; when it was onboard it handled teleop, streaming, I/O, and the stale-command watchdog on the constrained 5V/5A rail.',
@@ -467,8 +459,7 @@ export const hangarData: HangarData = {
       callsign: 'BEAST-JETSON',
       bay: 'compute',
       class: 'Edge AI Module',
-      status: 'needs-attention',
-      lifecycle: 'assembled',
+      status: 'integrating',
       provenance: 'owner',
       summary:
         'Owned NVIDIA Jetson Orin Nano 8GB developer kit — JetPack 6.2.2 / R36.5 on NVMe, ROS 2 Humble and the Jetson-adapted Waveshare workspace built. Software-ready Beast host; physical install into the empty host mount is the active cutover blocker (2026-07-22).',
@@ -505,7 +496,6 @@ export const hangarData: HangarData = {
       bay: 'compute',
       class: 'Edge AI — Industrial Tier',
       status: 'researching',
-      lifecycle: 'wishlist',
       provenance: 'inferred',
       summary:
         'Blackwell in an embedded module — but the wrong tier for a hobby rover. Built for humanoids and industrial AMRs. Logged for the research horizon, not the buy list.',
@@ -532,7 +522,6 @@ export const hangarData: HangarData = {
       bay: 'network',
       class: 'Gateway · Controller',
       status: 'operational',
-      lifecycle: 'deployed',
       provenance: 'owner',
       summary: 'Core of Network Ops — gateway, controller, and the spine the offload link rides on.',
       specs: [
@@ -551,7 +540,6 @@ export const hangarData: HangarData = {
       bay: 'network',
       class: 'Access Points',
       status: 'operational',
-      lifecycle: 'deployed',
       provenance: 'owner',
       summary:
         'In-wall + outdoor APs providing the 5GHz / WiFi 6+ coverage the offload architecture depends on. Coverage = autonomy range when the brain is off-board.',
@@ -570,7 +558,6 @@ export const hangarData: HangarData = {
       bay: 'network',
       class: 'Surveillance',
       status: 'operational',
-      lifecycle: 'deployed',
       provenance: 'owner',
       summary: 'PTZ camera coverage across the property — eyes for the base, distinct from on-rover sensing.',
       specs: [{ label: 'Type', value: 'G6 PTZ' }],
@@ -587,7 +574,6 @@ export const hangarData: HangarData = {
       bay: 'home',
       class: 'Automation Hub',
       status: 'operational',
-      lifecycle: 'deployed',
       provenance: 'owner',
       summary:
         'Whole-home automation brain with a Thread border router. Hangar catalogs its role; Home Assistant remains the home-automation control plane.',
@@ -610,7 +596,6 @@ export const hangarData: HangarData = {
       bay: 'audio',
       class: 'Open-back Planar Headset',
       status: 'operational',
-      lifecycle: 'deployed',
       provenance: 'owner',
       summary: 'Current daily driver in the Audio Lab; anchor for an Audeze-heavy wishlist.',
       specs: [{ label: 'Type', value: 'Open-back planar' }],
