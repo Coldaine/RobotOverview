@@ -4,7 +4,6 @@ import {
   type ActivityKind,
   type InventoryItemStatus,
   type InsightConfidence,
-  type LifecycleState,
   type MissionStatus,
   type ProvenanceKind,
   type UnitStatus,
@@ -19,16 +18,57 @@ export function money(n: number | null | undefined): string {
 
 export const STATUS_META: Record<
   UnitStatus,
-  { label: string; tone: 'ok' | 'warn' | 'crit' | 'cyan' | 'amber' | 'idle' }
+  {
+    label: string;
+    description: string;
+    tone: 'ok' | 'warn' | 'crit' | 'cyan' | 'amber' | 'idle';
+  }
 > = {
-  operational: { label: 'Operational', tone: 'ok' },
-  'needs-attention': { label: 'Needs Attention', tone: 'warn' },
-  blocked: { label: 'Blocked on Part', tone: 'crit' },
-  'in-mission': { label: 'In Mission', tone: 'cyan' },
-  wishlist: { label: 'Wishlist', tone: 'idle' },
-  'on-order': { label: 'On Order', tone: 'amber' },
-  researching: { label: 'Researching', tone: 'cyan' },
-  retired: { label: 'Retired', tone: 'idle' },
+  researching: {
+    label: 'Researching',
+    description: 'Candidate being evaluated; no acquisition decision has been made.',
+    tone: 'cyan',
+  },
+  planned: {
+    label: 'Planned',
+    description: 'Approved acquisition target that has not been purchased.',
+    tone: 'idle',
+  },
+  'on-order': {
+    label: 'On Order',
+    description: 'Purchased and awaiting delivery.',
+    tone: 'amber',
+  },
+  inventory: {
+    label: 'In Inventory',
+    description: 'Owned and available, but not integrated into a working system.',
+    tone: 'idle',
+  },
+  integrating: {
+    label: 'Integrating',
+    description: 'Installed or being configured; acceptance checks are incomplete.',
+    tone: 'cyan',
+  },
+  operational: {
+    label: 'Operational',
+    description: 'Acceptance checks passed and ready for use.',
+    tone: 'ok',
+  },
+  'needs-attention': {
+    label: 'Needs Attention',
+    description: 'Degraded or requiring work, but not fully blocked.',
+    tone: 'warn',
+  },
+  blocked: {
+    label: 'Blocked',
+    description: 'Cannot be used or progress until a named dependency is resolved.',
+    tone: 'crit',
+  },
+  retired: {
+    label: 'Retired',
+    description: 'Deliberately removed from service.',
+    tone: 'idle',
+  },
 };
 
 export const ITEM_STATUS_META: Record<
@@ -42,14 +82,6 @@ export const ITEM_STATUS_META: Record<
   deployed: { label: 'Deployed', tone: 'ok' },
   retired: { label: 'Retired', tone: 'idle' },
   rejected: { label: 'Rejected', tone: 'crit' },
-};
-
-export const LIFECYCLE_META: Record<LifecycleState, { label: string }> = {
-  inventory: { label: 'In Inventory' },
-  assembled: { label: 'Assembled' },
-  deployed: { label: 'Deployed' },
-  wishlist: { label: 'Wishlist' },
-  'on-order': { label: 'On Order' },
 };
 
 export const PROVENANCE_META: Record<ProvenanceKind, { label: string; cls: string }> = {

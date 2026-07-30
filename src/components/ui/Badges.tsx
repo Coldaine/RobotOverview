@@ -7,7 +7,7 @@ export function StatusBadge({ status }: { status: UnitStatus }) {
   const meta = STATUS_META[status];
   const tone = TONE_CLASSES[meta.tone];
   return (
-    <span className={clsx('chip', tone.text, tone.border, tone.bg)}>
+    <span className={clsx('chip', tone.text, tone.border, tone.bg)} title={meta.description}>
       <span className={clsx('h-1.5 w-1.5 rounded-full', tone.dot)} />
       {meta.label}
     </span>

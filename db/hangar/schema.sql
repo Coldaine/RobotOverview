@@ -12,10 +12,10 @@
 BEGIN;
 
 -- ── ENUMS ────────────────────────────────────────────────────────────────────
--- asset_status is the UNION of the legacy Unit/Item/Wishlist status vocabularies,
--- so every existing record maps without lossy reinterpretation.
+-- asset_status is the union of the single Unit state machine and the separate
+-- InventoryItem/Wishlist acquisition vocabularies stored in this shared table.
 CREATE TYPE asset_status AS ENUM (
-  'operational','needs-attention','blocked','in-mission','deployed','owned',
+  'operational','needs-attention','blocked','inventory','integrating','deployed','owned',
   'on-order','researching','wishlist','watching','planned','buy-next','received',
   'retired','rejected'
 );
