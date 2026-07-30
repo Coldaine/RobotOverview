@@ -2,37 +2,25 @@
 
 Proposed work, written to be executed by an agent that was not present when the plan was written.
 A plan here is a work order, not a record of reasoning: it names inputs, what to do, what to emit,
-and how to tell when it is done.
+and how to tell when it is done. Executed plans are deleted, not archived — git history is the
+archive. Research briefings are not plans; they live in `content/datacore/`.
 
 **Code is truth.** A plan describes intended work; it never governs. If a plan and the code
 disagree, the code is right and the plan is stale.
 
-## Active — BEAST-01 Jetson conversion
-
-Read in this order. The first two are coupled; the third is independent and time-critical.
+## Live work orders
 
 | Plan | What it covers | Blocking? |
 | --- | --- | --- |
-| [Architecture unification](2026-07-27-architecture-unification.md) | One wiring spine, two views (The Board + BEAST Console). Grain-tagged nets so a fact is written once. **Owns the persistence question** for the plan below. | S1 fixes live contradictions between the two views |
-| [Extract everything we hold](2026-07-27-schematic-netlist-extraction-plan.md) | Full corpus inventory — schematics, firmware, photographs — what each can still tell us, and how to finish the wiring model. | Q1/Q2 are safety-relevant: wrong 40-pin numbering puts 5 V into a Jetson UART pin |
-| [CAD assets](2026-07-27-cad-assets-usage-and-discoverability.md) | Where the CAD lives, three filename traps, and what it is for. | **X1 gates drilling.** Run before making holes |
-
-## Pending — on the Jetson, not this repo
-
-| Plan | Status |
-| --- | --- |
-| [BEAST NVMe storage — design](2026-07-11-beast-nvme-storage-design.md) | Decision recorded; **NOT APPLIED** to the Jetson (per `docs/beast-ops.md`) |
-| [BEAST NVMe storage — implementation](2026-07-11-beast-nvme-storage-implementation.md) | **NOT APPLIED** — do not provision until beast-ops says otherwise |
-
-## Executed / reference
-
-| Plan | Status |
-| --- | --- |
-| [Enumerate the ROS Driver schematic PDF](2026-07-27-ros-driver-pdf-enumeration.md) | **Executed** — outputs in `keyArtifactstosort/Artifacts/ros-driver/` (current + superseded) |
-| [Robot control LLMs briefing](2026-07-22-robot-control-llms-briefing.md) | Background research, not a work order; cited from `hangar.ts` unit records |
+| [Finish the wiring model](2026-07-30-wiring-model-completion.md) | One spine, two eyes: The Board consumes `wiring.ts`, corpus extraction (schematics, firmware, photos, CAD), facts landed with zone citations, operator answers on screen. Merges the 2026-07-27 unification, extraction, and CAD plans. | Q1/Q2 safety-relevant (wrong 40-pin numbering puts 5 V into a Jetson UART pin); X1 gates drilling |
+| [BEAST NVMe storage — implementation](2026-07-11-beast-nvme-storage-implementation.md) | Command-level storage utility + systemd units for the Jetson. **NOT APPLIED** — targets the robot's `ugv_ws`, not this repo; do not provision until `docs/beast-ops.md` says otherwise. The design decision is folded into `docs/beast-ops.md` (NVMe storage policy). | Parked behind the physical Orin host swap |
 
 ## Related, outside this directory
 
 - `keyArtifactstosort/INTAKE-REGISTER.md` — identity index for `keyArtifactstosort/`
-  (what each file *is*; the extraction plan covers what each file *contains*)
+  (what each file *is*)
+- `keyArtifactstosort/Artifacts/ros-driver/` — traced-connectivity extraction outputs
+  (the executed work of the deleted enumeration plan; Phase 3 of the wiring plan lands it)
 - `keyArtifactstosort/agents.md` — **nothing in that directory may be deleted**
+- `content/datacore/robot-control-llms.md` — robot-control LLM research (RND-ROBOT-LLM),
+  cited from `hangar.ts` insights

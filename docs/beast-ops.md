@@ -426,7 +426,8 @@ serial link are both alive. Fields arrive as numeric keys; decoded values observ
    the integration point for the Hangar command portal (teleop and autonomy).
 4. **ROS2 stack** (optional, separate install, port `:5100`) — SLAM, mapping, nav, and
    LLM / VLA-driven control including closed-loop autonomy. Bigger jump. Research brief:
-   [robot-control LLMs briefing](plans/2026-07-22-robot-control-llms-briefing.md).
+   [robot-control LLMs briefing](../content/datacore/robot-control-llms.md) (also surfaced in
+   the Datacore as `RND-ROBOT-LLM`).
 
 ## NVMe storage policy — PLANNED, NOT APPLIED
 
@@ -436,13 +437,44 @@ spare, and zero media errors. The existing unsafe-shutdown (62) and error-log (9
 comparison baselines; weekly TRIM is already enabled.
 
 Keep the 2 TB drive and leave the partition, Docker, journald, mount options, and filesystem
-unchanged. `/data/beast` will be the stable data interface for recordings, datasets, maps, models,
-and recovery staging. Proposed recording budgets are 150 GiB black-box, 900 GiB missions, a 300 GiB
-minimum free floor, and 350 GiB target free. Automated retention is limited to eligible closed
-recordings and never deletes datasets, maps, models, recovery staging, Docker data, or unrelated
-paths. Onboard recovery staging is not an independent backup.
+unchanged. A 512 GB replacement would offer no useful weight or power reduction, would cut rated
+endurance from 600 TBW to 150 TBW, and would unnecessarily constrain sensor recording.
+`/data/beast` will be the stable data interface for recordings, datasets, maps, models, and
+recovery staging. It initially resides on `APP`; it may become a distinct mount later without
+changing recorder, dataset, map, model, or recovery consumers. Proposed recording budgets are
+150 GiB black-box, 900 GiB missions, a 300 GiB minimum free floor, and 350 GiB target free.
+Automated retention is limited to eligible closed recordings and never deletes datasets, maps,
+models, recovery staging, Docker data, or unrelated paths. Onboard recovery staging is not an
+independent backup.
 
-Do not provision or enable storage units from this section yet. Follow the [storage design](plans/2026-07-11-beast-nvme-storage-design.md) and [command-level implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md). Once that implementation plan is approved and its dry-run checks pass, only `beast-storage-maintenance.timer` may be enabled. Keep black-box, mission, and motion storage units disabled until the documentation PR is merged, the stacked workspace change is reviewed, and physical recording/replay validation succeeds.
+Planned layout and maintenance policy:
+
+```text
+/data/beast/
+├── recordings/blackbox/        rolling telemetry and sensor context
+├── recordings/missions/        operator-started full-sensor captures
+├── datasets/  maps/  models/   never automatically pruned
+└── recovery-staging/           recovery transfer area, not a backup
+```
+
+Maintenance first skips active advisory locks and `.keep` recordings, never follows symlinks,
+caps black box then missions oldest-first, and below the floor restores the target by pruning
+black box before missions. If protected or eligible data cannot restore the floor, recording
+stops or is rejected. SMART is `unknown` when absent or malformed; `warning` at 65 °C, 80%
+lifetime used, 10% or less spare, or a counter increase; `critical` for a critical-warning bit,
+70 °C, 100% lifetime used, exhausted spare, or increased media errors. Illustrative planning
+rates (not measurements): black box 1–5 GiB/hour, full camera/depth mission 30–100 GiB/hour;
+actual rates must be measured after the physical topic graph is known.
+
+Rejected approaches, recorded so they are not re-litigated: repartitioning now (flash/recovery
+risk without a present capacity benefit), dual-root / A-B rootfs (complexity unrelated to
+retention; reconsider only as a separate recovery project), quotas or Docker relocation
+(adds behavior to a healthy filesystem while leaving retention unsolved; the directory-level
+policy has a smaller blast radius). Offload selected missions and recovery artifacts before any
+destructive device work; a future separate-volume mount at `/data/beast` requires a reviewed
+maintenance window and a tested rollback.
+
+Do not provision or enable storage units from this section yet. Follow the [command-level implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md). Once that implementation plan is approved and its dry-run checks pass, only `beast-storage-maintenance.timer` may be enabled. Keep black-box, mission, and motion storage units disabled until the documentation PR is merged, the stacked workspace change is reviewed, and physical recording/replay validation succeeds. An interactive [storage dossier](../design/beast-storage/index.html) walks the same policy visually.
 
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
@@ -1530,5 +1562,5 @@ identity onto the Orin MAC (former Pi identity `192.168.20.184` is offline mid-g
 - Waveshare UGV Beast — https://www.waveshare.com/ugv-beast.htm
 - `ugv_rpi` (Pi upper-computer code) — https://github.com/waveshareteam/ugv_rpi
 - `ugv_base_general` / `ugv_base_ros` (ESP32 lower-computer code) — https://github.com/waveshareteam
-- Robot control LLMs / VLA / Cosmos 3 Edge research brief — [docs/plans/2026-07-22-robot-control-llms-briefing.md](plans/2026-07-22-robot-control-llms-briefing.md)
+- Robot control LLMs / VLA / Cosmos 3 Edge research brief — [content/datacore/robot-control-llms.md](../content/datacore/robot-control-llms.md)
 - Introducing Cosmos 3 Edge (Hugging Face) — https://huggingface.co/blog/nvidia/cosmos3edge

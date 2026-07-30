@@ -1,14 +1,21 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // BEAST-01 wiring — the single surface that holds what is connected to what.
 //
-// Two views project from this file and neither owns a copy of the facts:
+// Intended end state (tracked in docs/plans/2026-07-30-wiring-model-completion.md):
+// two views project from this file and neither owns a copy of the facts:
 //   • The Board  (/board)     renders `grain: 'module'`      — subsystem trunks
 //   • Live Plug  (/datacore)  renders `grain: 'connector'`   — individual cables
+//
+// TODAY only Live Plug projects from this file (via EXPECTED_CABLES in
+// bench-data.ts). The Board still reads hangar.ts nets directly — the unification
+// is half-landed, and the grain model below is not yet in types.ts. Phase 1 of
+// the plan closes this; until then, a wiring fact must be written in BOTH this
+// file and hangar.ts nets.
 //
 // A fact is written here once. Layout coordinates, plug state, and conversion
 // procedure are NOT facts and stay with the view that draws them.
 //
-// Grain:
+// Grain (planned — not yet on Net):
 //   module     board-to-board / subsystem wiring          → hangar.ts nets
 //   connector  one physical cable between two named ends  → the loom below
 //   internal   intra-board rail (VDD5V, the M2 gate)      → not yet populated

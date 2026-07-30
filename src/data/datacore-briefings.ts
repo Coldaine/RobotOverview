@@ -63,6 +63,18 @@ export const DATACORE_PACKS: DatacorePack[] = [
 /** Long-form research / speculative docs surfaced in Datacore (beyond short insights). */
 export const DATACORE_BRIEFINGS: DatacoreBriefing[] = [
   {
+    id: 'robot-control-llms',
+    title: 'Robot Control LLMs — Hangar Briefing',
+    href: '/datacore/briefing/robot-control-llms',
+    source: 'content/datacore/robot-control-llms.md',
+    kind: 'research',
+    summary:
+      'Three-lane taxonomy for LLM robot control (orchestrator / VLA / world-action model), Cosmos 3 Edge analysis, Orin Nano fit matrices, and the recommended Hangar progression. Codename RND-ROBOT-LLM; insights persisted in hangar.ts.',
+    tags: ['llm', 'vla', 'autonomy', 'orin', 'control', 'research'],
+    aliases: ['rnd-robot-llm', 'cosmos', 'world action model', 'orchestrator'],
+    capturedAt: '2026-07-22',
+  },
+  {
     id: 'compute-workload',
     title: 'Compute Workload Sizing — Orin NX vs AGX Orin',
     href: '/datacore/briefing/compute-workload',
@@ -87,37 +99,25 @@ export const DATACORE_BRIEFINGS: DatacoreBriefing[] = [
     capturedAt: '2026-07-27',
   },
   {
-    id: 'architecture-unification',
-    title: 'Unite the Wiring Architecture — One Spine, Two Eyes',
-    href: '/datacore/briefing/architecture-unification',
-    source: 'docs/plans/2026-07-27-architecture-unification.md',
+    id: 'wiring-model-completion',
+    title: 'Finish the Wiring Model — One Spine, Two Eyes',
+    href: '/datacore/briefing/wiring-model-completion',
+    source: 'docs/plans/2026-07-30-wiring-model-completion.md',
     kind: 'plan',
     summary:
-      'Five wiring surfaces had drifted apart across the app, with four different join keys. Collapses them onto one shared surface while The Board and the BEAST Console stay independent views.',
-    tags: ['architecture', 'wiring', 'beast', 'refactor'],
-    aliases: ['join key', 'the board', 'wiring spine'],
-    capturedAt: '2026-07-27',
-  },
-  {
-    id: 'ros-driver-schematic',
-    title: 'Enumerate the ROS Driver Schematic PDF',
-    href: '/datacore/briefing/ros-driver-schematic',
-    source: 'docs/plans/2026-07-27-schematic-netlist-extraction-plan.md',
-    kind: 'plan',
-    summary:
-      'Bounded visual extraction of every component, pin, net, connector, note, and ambiguity depicted in the ROS Driver schematic — with an explicit claim vocabulary so an unreadable region is recorded rather than guessed.',
-    tags: ['schematic', 'beast', 'driver-board', 'extraction'],
-    aliases: ['netlist', 'esp32', 'claim vocabulary'],
-    capturedAt: '2026-07-27',
+      'The single wiring work order: close the half-fed spine so The Board and the console project from wiring.ts, extract the corpus (schematics, firmware, photos, CAD), land facts with zone citations, and put operator-critical answers on screen.',
+    tags: ['architecture', 'wiring', 'beast', 'schematic', 'cad'],
+    aliases: ['join key', 'the board', 'wiring spine', 'netlist', 'grain', 'x1'],
+    capturedAt: '2026-07-30',
   },
   {
     id: 'cad-assets',
     title: 'CAD Assets — Where They Live and What They Are For',
     href: '/datacore/briefing/cad-assets',
-    source: 'docs/plans/2026-07-27-cad-assets-usage-and-discoverability.md',
-    kind: 'plan',
+    source: 'docs/hardware-library.md',
+    kind: 'research',
     summary:
-      'Seven Waveshare CAD archives, three filename traps that send agents to the wrong file, and the uses each archive answers. X1 gates drilling the Jetson mounting pattern.',
+      'Seven Waveshare CAD archives on the data/hardware-cad-assets LFS branch, three filename traps that send agents to the wrong file, and fetch commands. The X1–X6 exploration work moved into the wiring-model plan.',
     tags: ['cad', 'beast', 'mounting', 'jetson'],
     aliases: ['step', 'stl', 'mounting pattern', 'x1'],
     capturedAt: '2026-07-27',

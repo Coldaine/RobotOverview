@@ -19,7 +19,7 @@ The companion hash register is `reference/EVIDENCE-MANIFEST.md`.
 
 **Scope limit.** This document describes artifacts. It does not assess what engineering questions any
 artifact might answer; that analysis belongs to
-`docs/plans/2026-07-27-schematic-netlist-extraction-plan.md`.
+`docs/plans/2026-07-30-wiring-model-completion.md`.
 
 **This is a snapshot of a live folder.** It grew from 12 files to 23 during the verification run
 (05:10 → 05:22 on 2026-07-27). Re-verify the count before relying on it.
@@ -208,7 +208,7 @@ physical volume — it guards against accidental deletion, not against drive fai
 Verified against the hash-checked backup at
 `D:\_projects\_artifact-backups\RobotOverview-keyArtifactstosort-2026-07-27\` (all 23 files confirmed
 hash-identical) **before** any removal. Rationale and fetch instructions are in
-[CAD assets — usage and discoverability](../plans/2026-07-27-cad-assets-usage-and-discoverability.md).
+[the Hardware Library CAD section](../docs/hardware-library.md).
 
 | Removed | Recoverable from |
 | --- | --- |
