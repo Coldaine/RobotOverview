@@ -19,3 +19,6 @@ UGV-Beast-Archive/
 
 # Playwright/UI review scratch (node_modules inside)
 /.tmp/
+
+# Vendor source archives — re-downloadable, recorded in keyArtifactstosort/reference/INDEX.md
+keyArtifactstosort/reference/*.zip
