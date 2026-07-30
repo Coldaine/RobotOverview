@@ -1,25 +1,13 @@
 # AGENTS.md
 
-## Identity
+The Hangar is Patrick's personal command center for his physical tech: inventory, wiki,
+want list, and a live portal to the robots it tracks — styled as a base-builder game
+(Next.js 16 / React 19 / Tailwind 4). Flagship unit: BEAST-01, a Waveshare UGV Beast.
+**The UI is the product** — work that doesn't reach the screen isn't finished.
 
-The Hangar is a video-game-grade command center for Patrick's physical tech — inventory,
-wiki, want list, and a live portal to the robots it catalogs, styled as a base-builder
-hangar ("Dark Engineering HUD": blueprint grids, cyan/amber accents). Next.js 16 / React 19 /
-Tailwind 4. The flagship unit is BEAST-01, a Waveshare UGV Beast.
-
-**The UI is the product.** Prefer work that changes what's on screen. Plumbing, process, and
-docs exist to serve the visible experience, never the other way around.
-
-## Rich UI quality bar
-
-Nontrivial visual work must enrich a domain surface, not flatten it. Full rubric:
-[`docs/rich-ui.md`](docs/rich-ui.md).
-
-## Truth rules
-
-Always read [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) — intent, goals, anti-goals.
-Orient from [`docs/overview.md`](docs/overview.md) — where every piece of this repo lives
-and which doc owns it.
+Start here: [`docs/overview.md`](docs/overview.md) — what this repo is and where everything lives.
+Intent and goals: [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md).
+Working on UI? Follow [`docs/rich-ui.md`](docs/rich-ui.md) — enrich surfaces, never flatten.
 
 ## Content workflow
 
@@ -33,26 +21,17 @@ schema/seed, and any live migration must handle data already stored in the datab
 If the app serves static-fallback data instead of Postgres, that state must be loudly
 visible, never silent.
 
-## Documentation workflow
+## Where docs live
 
-Nontrivial documentation changes must run this workflow before editing; typo-only edits may
-reduce it to "confirmed no ownership or status impact." This section is the workflow; do not
-require agents to read another process doc first.
+Update the owner doc, not wherever is convenient:
 
-1. Classify the change: intent, deployment/runtime fact, BEAST operation, data/backend shape,
-   agent/process rule, or historical evidence.
-2. Verify against the real source first: `src/`, `db/hangar/`, `.github/workflows/`, cluster
-   manifests, or live state. Then update the owner doc:
-   - intent/goals/anti-goals -> `docs/NORTH_STAR.md`
-   - verified deploy/runtime facts and gaps -> `docs/deploy.md`
-   - BEAST operating facts -> `docs/beast-ops.md`
-   - data/backend shape, seed, migrations, and read-cutover status -> `db/hangar/standup.md`
-   - agent/process rules and command routing -> `AGENTS.md`
-   - rich UI reasoning rubric -> `docs/rich-ui.md`
-   - repo structure ("where does X live") -> `docs/overview.md`
-3. Keep dependent docs light when another doc genuinely needs context: one-line summary plus
-   link. Do not copy the same current-state paragraph everywhere.
-4. Search for stale repeats before finishing when touching status-bearing docs. At minimum check
-   the changed phrase across `AGENTS.md`, `docs/`, `db/hangar/`, `.github/`, and `src/`.
-5. Leave `docs/history/` historical. Use it as evidence only after checking current code,
-   manifests, or live state; do not move its old process machinery back into the live docs.
+- intent/goals/anti-goals -> `docs/NORTH_STAR.md`
+- repo structure ("where does X live") -> `docs/overview.md`
+- verified deploy/runtime facts and gaps -> `docs/deploy.md`
+- BEAST operating facts -> `docs/beast-ops.md`
+- data/backend shape, seed, migrations, read-cutover status -> `db/hangar/standup.md`
+- rich UI reasoning rubric -> `docs/rich-ui.md`
+- agent/process rules -> this file
+
+Keep dependent docs light: one-line summary plus link, never the same paragraph twice.
+`docs/history/` is a graveyard — evidence only, never guidance.
