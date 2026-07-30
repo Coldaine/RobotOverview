@@ -56,6 +56,12 @@ const A = (id: string) => assetIds.has(id);
 w('BEGIN;');
 w('SET client_min_messages = warning;');
 
+// ── HANGAR META ─────────────────────────────────────────────────────────────
+w('\n-- hangar_meta');
+w(
+  `INSERT INTO hangar_meta(id,title,operator,codename,updated) VALUES ('hangar',${S(H.meta.title)},${S(H.meta.operator)},${S(H.meta.codename)},${S(H.meta.updated)});`,
+);
+
 // ── GROUPS (bays) ───────────────────────────────────────────────────────────
 w('\n-- groups (bays)');
 for (const b of H.bays)
@@ -96,6 +102,21 @@ for (const u of H.units) {
   w(
     `INSERT INTO assets(${assetCols}) VALUES (${S(u.id)},${S(kind)},${S(u.name)},NULL,NULL,${S(u.callsign)},${S(u.status)},NULL,${S(u.provenance)},${B(u.flagship)},${S(u.summary)},NULL,NULL,${S(u.monitoredVia)},${S(u.acquired)},${S(u.horizon)},1,${N(u.power?.watts)},${N(u.power?.volts)},${S(u.power?.rail)},${N(u.massGrams)},${N(u.price?.us)},${N(u.price?.import)},${J(u.specs)},${J(u.links)},NULL,NULL);`,
   );
+}
+
+w('\n-- asset_shortcuts (unit shortcuts; position = array index)');
+for (const u of H.units) {
+  (u.shortcuts ?? []).forEach((sc, position) => {
+    if (sc.type === 'url') {
+      w(
+        `INSERT INTO asset_shortcuts(asset_id,position,label,type,url,command,note) VALUES (${S(u.id)},${position},${S(sc.label)},'url',${S(sc.url)},NULL,${S(sc.note)});`,
+      );
+    } else {
+      w(
+        `INSERT INTO asset_shortcuts(asset_id,position,label,type,url,command,note) VALUES (${S(u.id)},${position},${S(sc.label)},'command',NULL,${S(sc.command)},${S(sc.note)});`,
+      );
+    }
+  });
 }
 
 w('\n-- assets: inventory items');
