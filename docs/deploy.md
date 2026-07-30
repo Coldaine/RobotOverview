@@ -1,70 +1,71 @@
+---
+title: Deployment — verified facts
+last_verified: 2026-07-30
+---
+
 # Deployment — verified facts
 
-Everything below was verified against the live cluster and `coldaine-k8cluster` origin/main
-on 2026-07-07. When this page and reality disagree, reality wins — check live state
-(`kubectl`, `curl`) before building on anything here. This repo owns the app code, the
-`Dockerfile`, and its content; `coldaine-k8cluster` owns every runtime manifest, secret,
-build definition, and database provision.
+Everything below was verified against the live cluster (`admin@homelab-target`) and
+`coldaine-homelab` on 2026-07-30. When this page and reality disagree, reality wins —
+check live state (`kubectl`, `curl`) before building on anything here.
+
+**This repo** owns the Hangar app code, `Dockerfile`, and content tooling.
+**[`coldaine-homelab`](https://github.com/Coldaine/coldaine-homelab)** owns runtime
+manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation.
+`coldaine-k8cluster` is a frozen pre-reset snapshot — not the deploy owner.
 
 ## What runs today
 
-- **Workload:** Deployment `robot-overview` in namespace `apps`, running and Ready.
-  Image pinned by `@sha256` digest. Env from Secret `hangar-env`
-  (`HANGAR_DB_HOST/PORT/NAME/USER/PASSWORD/SSLMODE` → the shared `pg18` CloudNativePG cluster).
-  Readiness probe is `GET /api/hangar/preflight`, which requires DB reachability — a Ready pod
-  means the app is talking to Postgres.
-- **Build:** Shipwright `Build` `robot-overview` in namespace `builds` (buildkit strategy)
-  builds this repo's `main` from GitHub and pushes `ghcr.io/coldaine/robot-overview` with the
-  `ghcr-push` secret. GitHub Actions (`.github/workflows/image.yml`) also builds images for
-  main pushes and PRs, and publishes same-repo refs to GHCR for CI/package proof; production still
-  deploys the Shipwright-built digest pinned in `coldaine-k8cluster`.
-- **Route:** HTTPRoute `robot-overview` (namespace `apps`) attaches hostname
-  `hangar.moosegoose.xyz` to the shared Gateway `main`; the route is Accepted and has
-  ResolvedRefs. DNS resolves the hostname to the Gateway/LAN path, and
-  `GET /api/hangar/preflight` returns OK through the Gateway. Public egress is via
-  `cloudflared` (token-managed tunnel — hostname mappings live in the Cloudflare Zero
-  Trust dashboard, not in cluster manifests).
+- **Workload:** Deployment `hangar` in namespace `hangar` (Flux `target-apps` →
+  `infra/k8s/apps/hangar/`). Image `ghcr.io/coldaine/robot-overview:latest` with
+  `imagePullPolicy: Always` (Soil-style interim; digest pin is a follow-up).
+- **Database:** Logical DB `hangar` on CloudNativePG `pg18-core` (`data-platform`).
+  App env from Secret `hangar-runtime-secrets` (`HANGAR_DB_*`, `HANGAR_INGEST_TOKEN`).
+  Readiness probe is `GET /api/hangar/preflight` — a Ready pod means Postgres is reachable.
+- **UI spine:** Postgres table `content_snapshots` (`id=hangar`) holds the HangarData JSON
+  the UI reads. Agents write via `POST /api/hangar/ingest` (Bearer `HANGAR_INGEST_TOKEN`),
+  not by editing TypeScript. Static `hangar.ts` is the offline/fixture fallback only
+  (loudly indicated in the Shell when used).
+- **Build:** GitHub Actions (`.github/workflows/image.yml`) builds and publishes to GHCR
+  on `main` (and PR proof tags). Shipwright is installed on the cluster but is not the
+  Hangar image path today.
+- **Route:** HTTPRoute `hangar` → hostname `hangar.moosegoose.xyz` on Gateway
+  `platform-gateway` listener `https-hangar` (TLS via cert-manager DNS-01). Public egress
+  is Cloudflare tunnel / Zero Trust dashboard mapping when enabled; LAN resolves via the
+  Gateway VIP.
 
-## Known gaps (as of 2026-07-07)
+## Shipping a change
 
-- **Gateway TLS is still using the cluster self-signed path.** The route and preflight are
-  healthy, but normal clients may reject `https://hangar.moosegoose.xyz` unless that trust path
-  is accepted or replaced with a public/managed certificate.
-- **The apex `moosegoose.xyz` is currently served by a legacy Vercel deployment**, not the
-  cluster. Irrelevant to the Hangar — the subdomain does not depend on it.
-- **No automatic cluster rollout.** The cluster model is deliberate apply (no GitOps reconciler;
-  Argo CD and Flux are gone). A GitHub push may build/publish an image, but shipping new code to
-  production = trigger a BuildRun, pin the new Shipwright digest in
-  `coldaine-k8cluster/apps/robot-overview/deployment.yaml`, apply. Any future push-triggered
-  pipeline must still end in an explicit digest pin plus deliberate cluster apply.
-- **Datacore library store is not stood up yet.** The Datacore Hardware Library
-  (`docs/hardware-library.md`) resolves CAD/schematic/datasheet files from the cluster S3
-  (Garage) via the plain runtime env var `DATACORE_LIBRARY_URL` (read server-side at request
-  time — not a `NEXT_PUBLIC_` build-time var, so no rebuild is needed once the cluster sets it).
-  Until that endpoint exists and the env var is set, the library is browsable but "Open" links
-  show "library offline" — by design, never broken. The endpoint/bucket wiring is cluster-owned
-  (`coldaine-k8cluster`) and not yet stood up for this app; the app only reads the base URL.
+1. Merge app code to `RobotOverview` `main` → GHA publishes a new GHCR image.
+2. With `:latest` + `Always`, restart/roll the Deployment if the node cached an old pull:
+   `kubectl -n hangar rollout restart deploy/hangar`.
+3. For digest-pinned deploys (future): bump the image ref in
+   `coldaine-homelab/infra/k8s/apps/hangar/deployment.yaml` and merge so Flux reconciles.
+4. Verify: `GET https://hangar.moosegoose.xyz/api/hangar/preflight` and Shell DATA lamp = PG.
 
-## Deploying by hand
+## Agent ingest
 
-From a machine with the operator kubeconfig:
+```http
+POST /api/hangar/ingest
+Authorization: Bearer <HANGAR_INGEST_TOKEN>
+Content-Type: application/json
 
-```powershell
-kubectl create -n builds -f - # a BuildRun referencing Build/robot-overview
-# wait for completion, note the pushed digest, then in coldaine-k8cluster:
-# edit apps/robot-overview/deployment.yaml to the new @sha256 digest
-kubectl apply -f apps/robot-overview/deployment.yaml
-kubectl rollout status -n apps deploy/robot-overview
+{ "entity": "insight", "record": { "id": "…", "title": "…", "body": "…", … } }
 ```
 
-Never use a floating tag with `imagePullPolicy: IfNotPresent` — the node caches the first
-image forever. Always pin the digest.
+Entity kinds: `unit`, `item`, `mission`, `wishlist`, `capability`, `insight`,
+`activity`, `terminal`, `net`, `document`. Upserts into the Postgres spine snapshot.
 
-## Content and data deploys
+Bootstrap / refresh from the TypeScript fixture (operators only):
 
-`src/data/hangar.ts` (and everything else agents ingest into this repo) is baked into the
-image at build time for static or not-yet-cutover surfaces. For Postgres-backed lanes,
-authored content reaches production only after the matching seed, migration, or data load is
-applied to the target database as well. If a change alters what is stored in Postgres, the
-change must include a migration that handles data already in the database — never assume the
-DB is empty or disposable.
+```bash
+# after applying db/hangar/migrations/2026-07-30-content-snapshots.sql
+doppler run -p homelab -c dev -- npm run hangar:seed-spine
+```
+
+## Known gaps
+
+- Datacore library store (`DATACORE_LIBRARY_URL` / Garage) is not wired — library "Open"
+  links stay offline by design until the bucket exists.
+- Digest pinning in Git (instead of `:latest`) is deferred.
+- Shipwright `Build` for Hangar is optional future work; not required for production today.

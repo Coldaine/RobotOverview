@@ -225,6 +225,7 @@ interface HangarStore {
   // Datacore Hardware Library store base URL, resolved server-side at request time
   // (see src/app/layout.tsx) — null when DATACORE_LIBRARY_URL is unset.
   libraryBaseUrl: string | null;
+  /** Postgres vs static for the full Hangar spine (primary data lamp). */
   inventoryRead: InventoryReadStatus;
   // Active UI theme
   theme: ThemeMode;
@@ -269,20 +270,28 @@ const Ctx = createContext<HangarStore | null>(null);
 
 export function HangarProvider({
   children,
+  initialData,
+  initialSpineRead,
   initialItems,
   initialInventoryRead,
   initialLibraryBaseUrl,
 }: {
   children: ReactNode;
+  /** Postgres-first HangarData spine (falls back to hangar.ts when omitted). */
+  initialData?: HangarData;
+  initialSpineRead?: InventoryReadStatus;
+  /** @deprecated Prefer initialData.items from the spine snapshot. */
   initialItems?: InventoryItem[];
+  /** @deprecated Prefer initialSpineRead. */
   initialInventoryRead?: InventoryReadStatus;
   initialLibraryBaseUrl?: string | null;
 }) {
+  const spine = initialData ?? hangarData;
   const [theme, setTheme] = useState<ThemeMode>(() => readStoredTheme());
   const [lensMissionId, setLensMissionId] = useState<string | null>(() => readStoredLensMissionId());
   const [source, setSource] = useState<SourcePreference>(() => readStoredSource());
   const [spotlightId, setSpotlightId] = useState<string | null>(null);
-  const [units, setUnits] = useState<Unit[]>(() => hangarData.units);
+  const [units, setUnits] = useState<Unit[]>(() => spine.units);
   const [objectiveOverrides, setObjectiveOverrides] = useState<ObjectiveOverrides>(() => readStoredObjectives());
   const [wishStatusOverrides, setWishStatusOverrides] = useState<WishStatusOverrides>(() => readStoredWishStatus());
   const [localInsights, setLocalInsights] = useState<Insight[]>(() => readStoredLocalInsights());
@@ -344,7 +353,7 @@ export function HangarProvider({
 
   const toggleObjective = (missionId: string, idx: number) => {
     setObjectiveOverrides((prev) => {
-      const base = hangarData.missions.find((m) => m.id === missionId)?.objectives[idx]?.done ?? false;
+      const base = spine.missions.find((m) => m.id === missionId)?.objectives[idx]?.done ?? false;
       const current = prev[missionId]?.[idx] ?? base;
       return {
         ...prev,
@@ -397,8 +406,13 @@ export function HangarProvider({
   };
 
   const value = useMemo<HangarStore>(() => {
-    const inventoryRead = inventoryReadStatusFor(initialItems, initialInventoryRead);
-    const data = { ...hangarData, items: initialItems ?? hangarData.items, units };
+    const inventoryRead =
+      initialSpineRead ?? inventoryReadStatusFor(initialItems, initialInventoryRead);
+    const data = {
+      ...spine,
+      items: initialItems ?? spine.items,
+      units,
+    };
     const byId = <T extends { id: string }>(arr: T[]) => {
       const m = new Map<string, T>();
       arr.forEach((x) => m.set(x.id, x));
@@ -461,7 +475,7 @@ export function HangarProvider({
       openDrawer,
       closeDrawer,
     };
-  }, [theme, lensMissionId, source, spotlightId, units, initialItems, initialInventoryRead, initialLibraryBaseUrl, objectiveOverrides, wishStatusOverrides, localInsights, drawerOpen, drawerSlotContext]);
+  }, [theme, lensMissionId, source, spotlightId, units, spine, initialItems, initialInventoryRead, initialSpineRead, initialLibraryBaseUrl, objectiveOverrides, wishStatusOverrides, localInsights, drawerOpen, drawerSlotContext]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

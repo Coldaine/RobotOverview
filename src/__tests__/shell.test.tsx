@@ -8,10 +8,10 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/items',
 }));
 
-describe('Shell inventory fallback status', () => {
-  it('shows Postgres read fallback as a visible warning, not silent fallback', () => {
+describe('Shell spine fallback status', () => {
+  it('shows Postgres spine fallback as a visible warning, not silent fallback', () => {
     render(
-      <HangarProvider initialInventoryRead={{ source: 'static', fallbackReason: 'postgres-error' }}>
+      <HangarProvider initialSpineRead={{ source: 'static', fallbackReason: 'postgres-error' }}>
         <Shell>
           <div>Items content</div>
         </Shell>
@@ -20,9 +20,9 @@ describe('Shell inventory fallback status', () => {
 
     const banner = screen.getByRole('status');
 
-    expect(banner).toHaveTextContent('STATIC INVENTORY');
+    expect(banner).toHaveTextContent('STATIC SPINE');
     expect(banner).toHaveTextContent(
-      'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
+      'Hangar Postgres spine read FAILED — serving hangar.ts fixture.',
     );
     expect(banner).not.toHaveTextContent(/silently/i);
     expect(screen.getByText(/DATA · STATIC · PG ERR/)).toBeInTheDocument();
@@ -30,7 +30,10 @@ describe('Shell inventory fallback status', () => {
 
   it('does not show the static-data banner for Postgres-backed reads', () => {
     render(
-      <HangarProvider initialItems={[hangarData.items[0]]} initialInventoryRead={{ source: 'postgres' }}>
+      <HangarProvider
+        initialData={{ ...hangarData, items: [hangarData.items[0]] }}
+        initialSpineRead={{ source: 'postgres' }}
+      >
         <Shell>
           <div>Items content</div>
         </Shell>

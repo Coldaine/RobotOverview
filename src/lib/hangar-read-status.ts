@@ -4,7 +4,7 @@ export type HangarReadSource = (typeof HANGAR_READ_SOURCES)[number];
 export const HANGAR_FALLBACK_REASONS = ['not-configured', 'postgres-error'] as const;
 export type HangarFallbackReason = (typeof HANGAR_FALLBACK_REASONS)[number];
 
-export const HANGAR_READ_LANES = ['inventory'] as const;
+export const HANGAR_READ_LANES = ['inventory', 'spine'] as const;
 export type HangarReadLane = (typeof HANGAR_READ_LANES)[number];
 
 export type HangarReadStatus =
@@ -62,6 +62,15 @@ export const HANGAR_READ_LANE_META: Record<
         'Inventory Postgres is not configured — items are coming from the hangar.ts spine.',
       'postgres-error':
         'Inventory Postgres read FAILED — serving items from the hangar.ts spine.',
+    },
+  },
+  spine: {
+    fallbackDetail: 'Serving the Hangar UI spine from the static hangar.ts fixture.',
+    fallbackReasonDetails: {
+      'not-configured':
+        'Hangar Postgres is not configured — UI spine is coming from hangar.ts.',
+      'postgres-error':
+        'Hangar Postgres spine read FAILED — serving hangar.ts fixture.',
     },
   },
 };
