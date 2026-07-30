@@ -10,10 +10,14 @@ Tailwind 4. The flagship unit is BEAST-01, a Waveshare UGV Beast.
 **The UI is the product.** Prefer work that changes what's on screen. Plumbing, process, and
 docs exist to serve the visible experience, never the other way around.
 
+## Rich UI quality bar
+
+Nontrivial visual work must enrich a domain surface, not flatten it. Full rubric:
+[`docs/rich-ui.md`](docs/rich-ui.md).
+
 ## Truth rules
 
-
-always read @/docs/NORTH_STAR.md` — intent, goals, anti-goals.
+Always read [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) — intent, goals, anti-goals.
 
 ## Content workflow
 
@@ -42,10 +46,10 @@ require agents to read another process doc first.
    - BEAST operating facts -> `docs/beast-ops.md`
    - data/backend shape, seed, migrations, and read-cutover status -> `db/hangar/standup.md`
    - agent/process rules and command routing -> `AGENTS.md`
+   - rich UI reasoning rubric -> `docs/rich-ui.md`
 3. Keep dependent docs light when another doc genuinely needs context: one-line summary plus
    link. Do not copy the same current-state paragraph everywhere.
 4. Search for stale repeats before finishing when touching status-bearing docs. At minimum check
    the changed phrase across `AGENTS.md`, `docs/`, `db/hangar/`, `.github/`, and `src/`.
 5. Leave `docs/history/` historical. Use it as evidence only after checking current code,
    manifests, or live state; do not move its old process machinery back into the live docs.
-

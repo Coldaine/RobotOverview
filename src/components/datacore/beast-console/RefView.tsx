@@ -6,9 +6,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
-import { FileText, Camera, Flame } from 'lucide-react';
+import Link from 'next/link';
+import { FileText, Camera } from 'lucide-react';
 import {
-  PINS40, PROVENANCE, DOCUMENTS, CAMERA_CANDIDATES, OPEN_ITEMS, INTEGRITY_NOTE,
+  PINS40, PROVENANCE, DOCUMENTS, CAMERA_SHORTLIST_SUPERSEDED, OPEN_ITEMS, INTEGRITY_NOTE,
   DRIVER_CALLOUTS, DRIVER_CALLOUT_IMAGE,
   type PinDef, type PinRole, type CalloutDef,
 } from './reference-data';
@@ -273,44 +274,36 @@ function Documents() {
 }
 
 function CameraShortlist() {
+  const s = CAMERA_SHORTLIST_SUPERSEDED;
   return (
     <div className="panel p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <div className="hud-label">Pan-tilt camera upgrade — zoom / thermal shortlist</div>
-        <span className="font-mono text-[10px] text-ink-dim/70">replaces the 5MP 160° cam on the existing bracket</span>
+        <div className="hud-label">{s.title}</div>
+        <span className="chip border-amber/50 text-amber">research superseded</span>
       </div>
-      <div className="mt-2.5 grid gap-3 md:grid-cols-2">
-        {CAMERA_CANDIDATES.map((c, i) => {
-          const KindIcon = c.kind === 'thermal' ? Flame : Camera;
-          const top = c.pick === 'top';
-          const accent = c.kind === 'thermal' ? 'var(--color-signal-crit)' : 'var(--color-cyan)';
-          return (
-            <motion.div
-              key={c.name}
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ ...SPRING_SOFT, delay: i * 0.05 }}
-              className="panel-inset p-3"
-              style={{ borderLeft: `3px solid ${top ? accent : 'var(--color-rim)'}` }}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={SPRING_SOFT}
+        className="panel-inset mt-2.5 p-3"
+        style={{ borderLeft: '3px solid var(--color-amber)' }}
+      >
+        <div className="flex items-start gap-2">
+          <Camera className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber" />
+          <p className="font-mono text-[10.5px] leading-relaxed text-ink">{s.note}</p>
+        </div>
+        <div className="mt-2.5 flex flex-wrap gap-2">
+          {s.links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="chip border-cyan/40 text-cyan hover:border-cyan hover:bg-cyan/10"
             >
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <KindIcon className="h-3.5 w-3.5" style={{ color: accent }} />
-                  <span className="text-[13px] font-semibold text-ink">{c.name}</span>
-                </div>
-                <div className="flex shrink-0 items-center gap-1.5">
-                  <span className="chip border-rim text-ink-dim">{c.price}</span>
-                  {top && <span className="chip" style={{ borderColor: accent, color: accent }}>TOP PICK</span>}
-                </div>
-              </div>
-              <div className="mt-2 grid gap-1 font-mono text-[10px] leading-relaxed text-ink-dim">
-                <div>{c.spec}</div>
-                <div><span className="text-ink-dim/60">linux · </span>{c.linux}</div>
-              </div>
-              <p className="mt-1.5 font-mono text-[10.5px] leading-relaxed text-ink">{c.verdict}</p>
-            </motion.div>
-          );
-        })}
-      </div>
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 }

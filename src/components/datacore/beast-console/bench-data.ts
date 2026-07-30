@@ -205,7 +205,7 @@ export const PORTS: PortDef[] = [
   {
     id: 'drv-5v', board: 'driver', label: '5V rail', conn: 'MP8759GD buck → 40-pin 5V', cat: 'power',
     x: 120, y: 380, side: 'left', danger: true,
-    detail: "5 V / 5 A buck feeding the 40-pin 5 V pins — this is what powers the HAT (and powered the Pi 5 through the stack). The Orin can't run on 5 V and must never be fed here: its 40-pin 5 V pins are OUTPUTS. In the Orin build the headroom freed by the Pi makes this the natural aux-5V feed for the OAK-D Pro's Y-adapter.",
+    detail: "5 V / 5 A buck feeding the 40-pin 5 V pins — this is what powers the HAT (and powered the Pi 5 through the stack). The Orin can't run on 5 V and must never be fed here: its 40-pin 5 V pins are OUTPUTS. In the Orin build the headroom freed by the Pi makes this the natural aux-5V feed for the OAK-D Pro's Y-adapter. IMPORTANT (netlist-verified 2026-07-27): the buck is NOT the only source on this net. Schematic net \"5V\" also carries D2's cathode, so the host's USB VBUS on Type_C1 back-feeds this exact rail — with the chassis switch off, the Jetson alone powers the HAT, its amp, the fan and the LiDAR motor through one USB cable. See docs/beast-ops.md — OP-BEAST-BACKFEED.",
     expect: '(future) OAK-D Pro Y-adapter 5 V',
   },
   {
@@ -312,7 +312,7 @@ export const PORTS: PortDef[] = [
   {
     id: 'ups-out2', board: 'ups', label: 'OUT · pigtail', conn: '→ 5.5×2.5 mm barrel', cat: 'power',
     x: 820, y: 240, side: 'bottom',
-    detail: "Orin build: pack voltage to the Jetson's barrel jack, from the UPS's FREE 4th XH2.54 socket (owner-observed: 4 headers, 3 populated). Verify the free socket with the meter FIRST: pack armed → expect ~11–12.6 V and note which hole is +; if it reads 0 V it's the charge-extension node — pick again. Terminate the pigtail with an XH2.54 lead matching that polarity. CAVEAT: this socket is likely upstream of the chassis switch, so the Jetson stays live whenever the pack is armed — shut it down in software, unplug the barrel for storage, or add an inline XH switch lead later. Do NOT use IO4/IO5 for this (ESP32-switched). Final check at the barrel: center pin positive, ~pack voltage. 9–12.6 V sits inside the Orin's 9–20 V window.",
+    detail: "Orin build: pack voltage to the Jetson's barrel jack, from the UPS's FREE 4th XH2.54 socket (owner-observed: 4 headers, 3 populated). Verify the free socket with the meter FIRST: pack armed → expect ~11–12.6 V and note which hole is +; if it reads 0 V it's the charge-extension node, and if it reads ~5 V it's the SY8286 5 V/5 A regulator output (vendor-confirmed: this board carries pack-series, 5 V and 3.3 V outputs) — either way, pick again. 5 V is below the Orin's 9 V floor and it will not boot. Terminate the pigtail with an XH2.54 lead matching that polarity. CAVEAT: this socket is likely upstream of the chassis switch, so the Jetson stays live whenever the pack is armed — shut it down in software, unplug the barrel for storage, or add an inline XH switch lead later. Do NOT use IO4/IO5 for this (ESP32-switched). Final check at the barrel: center pin positive, ~pack voltage. 9–12.6 V sits inside the Orin's 9–20 V window.",
     expect: 'Pigtail → Jetson barrel', link: 'jet-barrel',
   },
   {

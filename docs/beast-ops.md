@@ -15,10 +15,17 @@ re-verify against the live robot before relying on anything stale.
 
 ## Hardware chain
 
-> **Cutover status 2026-07-22 — OP-ORIN-GAP:** Raspberry Pi 5 **removed**. Host controller
-> mount is **empty**. Jetson Orin Nano Super is software-ready (JP 6.2.2 / R36.5, ROS 2 Humble,
-> Waveshare workspace built) and is being physically fitted. Until UART/power/USB sensors and
-> network identity land on the Orin, there is **no** live upper-computer control surface.
+> **Cutover status 2026-07-28 — OP-ORIN-POWER (was OP-ORIN-GAP):** Jetson Orin Nano Super is
+> **physically fitted and network-verified.** Powered from the pack through a barrel-jack pigtail
+> already wired into the UPS Module 3S board — not through the driver board's USB-C, so the
+> OP-BEAST-BACKFEED path is not in the power loop for this boot. Live-confirmed by SSH 2026-07-28:
+> hostname `beast-01`, `R36 (release), REVISION: 5.0` (JetPack 6.2.2), GPU `Orin (nvgpu)`, up on
+> LAN (`192.168.0.166`), Wi-Fi (`192.168.0.251`), and Tailscale (`100.107.16.72`) simultaneously.
+> Remaining before this counts as a full cutover: the ESP32 UART jumper link (pins 8/10 + GND, see
+> below) is not yet wired/confirmed, so there is no motor/servo/telemetry control surface yet — only
+> host boot and network. Mechanical follow-up: one side of the host mounting struts is missing;
+> do not drill the Orin carrier board to improvise a mount — see the "Mounting" note under Open
+> questions.
 
 ```
 Target (Orin cutover):
@@ -44,18 +51,279 @@ Browser  ──HTTP/WebSocket──▶  Raspberry Pi 5 + ugv_rpi  ──UART─�
 - **Chassis dynamics:** slow tracked base; hard-stops and stops in time for lightweight
   onboard terrain alignment / obstacle avoidance once Orin is fitted.
 
+## Power domain — OP-BEAST-BACKFEED
+
+> **Established 2026-07-27** while chasing a ~4 s repeating pop from the HAT's speakers during
+> bench bring-up. The finding is bigger than the noise: **with the chassis switch off, the Jetson
+> was powering the entire robot stack through one USB cable.** Primary sources are archived under
+> `keyArtifactstosort/reference/` — see its `INDEX.md`.
+
+### The back-feed path (netlist-verified)
+
+```
+Jetson USB-A ──▶ driver board USB-C (Type_C1, silkscreen "USB")
+                   └─▶ VBUS ──▶ D2 (MBR230LSFT1G) ──▶ net "5V"
+                                                       ├─▶ P1/P2 40-pin 5V pins ──▶ Audio HAT
+                                                       │                              ├─ SSS1629A5 codec
+                                                       │                              ├─ APA2068 amp ──▶ speakers
+                                                       │                              ├─ FE1.1S hub + CH340
+                                                       │                              ├─ FAN-2507
+                                                       │                              └─ D500 LiDAR (5V, motor spins)
+                                                       ├─▶ AMS1117-3.3 ──▶ VDD3V3 (ESP32, IMU, INA219, OLED)
+                                                       ├─▶ H1 pin 4 (driver LiDAR header 5V)
+                                                       └─▶ both CH343P VBUS pins
+```
+
+Traced from the netlist embedded in `RasperryPIversionofROS_Driver_for_Robots.pdf`. The net labelled
+`NL5V` groups `PID202` (D2 pin 2), `PID102` (D1 pin 2), `PIM201/202/203` (M2 pins 1–3 — the **main
+5 V** side of the reverse-block MOSFET; the raw buck output sits on M2 pins 5–8), `PIQ202` (Q2
+emitter), `PIP101/PIP103` and `PIP201/PIP203` (**both 40-pin headers' 5 V pins**), `PIPWR101`
+(the `PWR-IN 5V-5A` port annotated "5V Power for RPi/Jetson nano"), `PIH104`, `PIAMS0103`, and
+`PIU309`/`PIU709`. D2 pin **1** sits on the Type_C1 VBUS net.
+
+**Consequence:** the driver board's USB-C is not a data-only control link. Connecting it energises
+the whole stack's 5 V rail. This is by design — the board is built to *power the host*, and it
+assumes the pack is on.
+
+### Corrections to prior documentation
+
+| Claim | Status |
+|---|---|
+| "Type_C1 → D2 → AMS1117-3.3 → **3V3 logic**" (extent of back-feed) | ❌ Understated. VBUS lands on net `5V`, which feeds both 40-pin headers and the entire HAT. |
+| Hazard 4 "back-feed direction is safe" | ✅ Direction correct (D2 blocks reverse), ❌ extent badly understated. |
+| State matrix: FAN-2507, speakers, LiDAR, HAT chips "stay dark until the pack is on" | ❌ All are on the back-fed rail and come up with the pack **off**. |
+| "The stack fan not spinning with the pack off is correct, not a failure" | ❌ Backwards. On a back-fed rail the fan should spin. |
+| `v4l2-ctl --list-devices` should show two cameras | ❌ Shows one. OAK-D is a MyriadX over DepthAI/XLink, never UVC. |
+| Wi-Fi antennas "unverified" | ✅ Confirmed — `wlP1p1s0` holds `192.168.0.251`. |
+| Pan-tilt camera "likely" | ✅ Confirmed — `0abd:8050`, `/dev/video0`. |
+
+### Vendor limits that constrain this
+
+| Fact | Value | Source |
+|---|---|---|
+| Orin DC jack (J16) | 9–20 V · **centre pin positive (+V)** · **3.5 A max** · 5.5 mm barrel, 2.5 mm pin, 9.5 mm length · Singatron 2DC-0005D206F | NVIDIA carrier spec §3.8 p.30 |
+| Alternate power input (J18) | "PoE Backpower Header", 1×2, 2.54 mm pitch, same 9–20 V, **3 A max** — an alternative to the barrel entirely, if populated on the board | Carrier spec §3.9, Table 3-10 |
+| Orin 40-pin pins 2 & 4 | **5.0 V, carrier-sourced output** | NVIDIA carrier spec Fig 3-1 |
+| Powering Orin *via* 40-pin 5 V | **Blocked** — "it can not be supplied from 5V pins on the expansion header as the blocker circuit exist" | NVIDIA staff, forum 253291 |
+| 40-pin header 5 V allocation | 0.5 A | Carrier spec Table 5-3 |
+| USB Type-A ×4 allocation | 0.5 A | Carrier spec Table 5-3 |
+| `VDD_5V_SYS` total | **2.78 A**, of which SO-DIMM is allocated **2.12 A** | Carrier spec Tables 5-2 / 5-3 |
+| Type-A load switch (AP22811AW5-7) trip | **ILIMIT 2.2 / 2.7 / 3.2 A** — will *not* trip at the ~1 A the stack draws | AP22811 datasheet |
+| APA2068 amp supply | **4.5 V min** – 5.5 V max | APA2068KAI-TRG datasheet |
+| Back-fed rail voltage | ≈ 5.0 V VBUS − D2 forward drop ≈ **4.6 V** | ⚠️ estimated — D2 curve not yet obtained |
+
+The amp's 4.5 V floor against a ≈4.6 V back-fed rail is roughly 0.1 V of margin. That is the
+leading explanation for the popping, and it is **not** an overcurrent trip.
+
+### Hypotheses tested and rejected
+
+- **USB port over-current hiccup** — rejected. AP22811 ILIMIT is 2.2 A min; the stack draws ~1 A.
+- **PipeWire / ALSA idle-suspend cycling** — rejected. Popping persisted with the HAT's USB-C
+  unplugged, so no codec was enumerated and no audio stack was involved.
+- **Ground loop through two parallel USB paths** — rejected. Breaking the HAT's cable (removing the
+  Jetson→driver→40-pin→HAT→Jetson loop) did not change the popping.
+- **D500 LiDAR motor stalling on a collapsing rail** — rejected. LiDAR shows no symptoms.
+- **WM8960 / I²S GPIO audio conflict** (proposed externally) — rejected on the premise. This board
+  is an **SSS1629A5 USB** codec: "supports USB interface communication, driver-free, plug and play."
+  There is no I²S, no GPIO audio, and no shared host bus. The 40-pin is power + UART pass-through only.
+
+### The host ↔ ESP32 link is GPIO UART, not USB
+
+`ugv_jetson/app.py` opens the lower computer as:
+
+```python
+base = BaseController('/dev/ttyTHS0', 115200)
+# base = BaseController('/dev/ttyTHS1', 115200)
+```
+
+`ttyTHS*` is a **Tegra High-Speed UART** — a hardware serial port on the SoC, exposed on the Orin
+Nano dev kit's 40-pin header (UART1: pin 8 TXD, pin 10 RXD). It is *not* a USB device; USB serial
+adapters enumerate as `ttyUSB*` / `ttyACM*`. In `base_ctrl.py` the `ttyUSB*` path exists but is
+**commented out**.
+
+So Waveshare's official Orin build reaches the ESP32 over **a handful of GPIO jumper wires** — not
+over the driver board's USB-C, and not through a mated 40-pin stack (an Orin Nano dev kit cannot
+stack onto the driver board the way a Pi does). Minimum set: **TX, RX, GND**. Power cannot ride
+these — the Orin's 40-pin 5 V pins are outputs behind a back-power blocker, so its supply must
+arrive at the barrel jack separately.
+
+**This is the escape hatch from the back-feed.** The driver board's USB-C is the only proven
+back-feed path (Type_C1 VBUS → D2 → net `5V`), and the official design does not use that cable for
+control at all. Replacing it with UART jumpers removes the path outright, while leaving the Audio
+HAT's USB-C — codec, FE1.1S hub, and the D500 LiDAR's CH340 — untouched.
+
+#### The vendor harness is a 2×5 on pins 1–10 (owner-observed 2026-07-27)
+
+Owner observed a **5×2 (10-way) header** in the assembly video. There is no 10-pin connector on this
+board — the schematic's full connector inventory is `P1`/`P2` (40 pins each), `H3`–`H6` (6), and
+`H1`/`P3`/`P4` (4). So the 2×5 is a jumper block landing on **pins 1–10 of the 40-pin header**,
+which on a Pi-standard pinout is:
+
+| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|----|
+| 3V3 | **5V** | SDA | **5V** | SCL | GND | GPIO4 | **TXD** | GND | **RXD** |
+
+That is the complete host interface — power, I²C, UART, grounds — matching the vendor's description
+of the 40-pin as *"communicating via serial port or IIC, and powering the host computer."* Nothing
+past pin 10 matters to a host.
+
+> ⚠️ **UNRESOLVED AND IMPORTANT: are the two 5 V conductors populated in the *Jetson* harness?**
+> If they are, the official Orin build bonds the driver board's buck to the Orin's 40-pin 5 V pins —
+> which are **outputs**. That is a second back-feed path, independent of the USB-C one, and removing
+> the USB-C would not fix it. NVIDIA's blocker stops current flowing *into* the Orin; it does not
+> make the Orin's 5 V output stop sourcing. Until this is settled, **build the harness with TX, RX
+> and GND only** (add SDA/SCL only if something needs them) and leave positions 1, 2 and 4 empty.
+> Settle it by pausing the assembly video on the connector, or by metering the loomed harness.
+
+⚠️ **Driver-board pin numbering still not confirmed against the schematic.** Altium pads pin numbers
+variably (`PIP101` = P1 pin 1, `PIP1010` = P1 pin 10, `PIP1040` = P1 pin 40), and once decoded,
+`NLGND` lands on P1 pins 5/10/19/26/29/33/39/40 — which is *not* the Pi's GND set (6/9/14/20/25/30/
+34/39). The schematic symbol is evidently not numbered in Pi physical order. **Meter the header
+before wiring.** Second source: Waveshare's assembly video, below.
+
+### Independent vector trace — agreements and refinements (2026-07-27)
+
+A second, independent pass over the same PDF using wire-geometry/terminal tracing rather than
+netlist-token extraction. Artifacts: `keyArtifactstosort/Artifacts/ros-driver/current/`.
+**It agrees with the back-feed finding above** and adds three things worth keeping.
+
+Independently confirmed, matching our token extraction pin-for-pin:
+
+| Item | Both methods agree |
+|---|---|
+| `Type_C1 VBUS → D2 → main 5V`, `Type_C2 VBUS → D1 → main 5V` | ✅ the back-feed path |
+| P1/P2 5 V ↔ main 5 V, **not** diode-isolated, bidirectional | ✅ |
+| H1 (LiDAR): pin 1 `CP_RX`, pin 2 NC, pin 3 GND, pin 4 main 5 V, pin 0 mount | ✅ our `NLGND`/`NLNC`/`NL5V` land on exactly those pins |
+| M2 pins 1–3 on main 5 V | ✅ |
+
+**1. The back-feed is *confined* to the main 5 V rail.** M2/Q1/Q2 (AO4407 + two MMBT3906) is an
+active reverse-block stage, not a passive pass. When main 5 V is externally higher than the raw
+buck output, Q2 pulls M2's gate toward its source and turns it off. So a back-fed rail does **not**
+propagate to `5V_Vout`, `VIN`, or `DC_IN`. The documented back-feed scope above is therefore right
+as written — nothing needs widening.
+
+**2. The INA219 does not measure total battery current.** The sense path is `U6.IN+` = `DC_IN` →
+`R21 0.01 Ω` → `VIN` = `U6.IN-`, i.e. it sits on the **buck/logic branch only**. These bypass the
+shunt entirely and are invisible to telemetry:
+
+- both TB6612FNG motor drivers (VM tie straight to `DC_IN`)
+- H7/H8 servo power
+- J1–J4 switched-load power
+
+The schematic text corroborates directly: `R21 0.01R 1% 2512 2W 合金`, drawn between `DC_IN` and
+`VIN`. Firmware agrees on the value — `ugv_base_ros/battery_ctrl.h` calls
+`setShuntSizeInOhms(0.01)`. (`setBusRange(BRNG_16)` is *consistent* with a pack-side measurement but
+does not prove it — a 16 V range works perfectly well on a 5 V rail. The placement is proven by the
+topology, not the firmware config.)
+**Operational consequence: the reported battery current understates real draw during driving, and
+a motor stall will not show up in it at all.** It also explains why telemetry read ≈0 V with the
+pack off while the stack was fully alive on the back-fed rail — the INA219 is upstream of the buck,
+on a rail that genuinely was dead.
+
+**3. ⚠️ Unverified: M1 may conduct backwards to the input connector.** M1 (AO4407) is a
+reverse-*polarity* protection P-MOS with its gate at GND through R15 — not a reverse-*current*
+blocker. If `DC_IN` is energised externally (via H7/H8, J1–J4, or motor regeneration through the
+TB6612 body diodes), the channel can conduct back toward the DC-IN connector. Physically plausible
+and worth knowing before hot-plugging anything on those headers, but **not yet confirmed on the
+bench** — treat as a hypothesis.
+
+**4. There is a third logic rail — 1.8 V for the IMU.** Verified visually by rendering the PDF
+region at 9× (`page.search_for('RT9193-1.8GB')` → rect ≈ (172, 69), sheet block **"10-DOF-IMU-
+Sensor-D"**, upper-left of the A4-landscape sheet):
+
+```
+VDD3V3 ─▶ U2  RT9193-1.8GB  ─▶ 1V8 ─┬─▶ U1 ICM-20948   VDDIO (8) + VDD (13)
+          (VIN/GND/EN/BP/VOUT)      └─▶ U4 LSF0204PWR  VCCA (1)
+3V3 ──────────────────────────────────▶ U4 LSF0204PWR  VCCB (14)
+
+U4 translates ICM_SDA / ICM_SCL (3V3, from ESP32 IO32/IO33)
+        ⇄  I2C_SDA_ICM / I2C_SCL_ICM (1V8, to the ICM-20948)
+```
+
+The IMU here is an **ICM-20948** (9-axis, on a 1.8 V rail behind a level shifter) — *not* the
+QMI8658 + AK09918C pair that the General Driver for Robots wiki lists. One more reason never to read
+across between those two boards.
+
+Adjudication of the two claims first disputed here — **both resolved against the trace author, not
+against them:**
+
+- *"INA219 A0 unconnected, `0x42` unresolved."* Resolved as **`0x42`**. `battery_ctrl.h` has
+  `#define INA219_ADDRESS 0x42`, and the schematic ties `A1→GND`, `A0→SDA`, which is exactly `0x42`
+  in TI's address table. Author retracted it as a visual-tracing miss.
+- *"RT9193 → 1.8 V."* **Correct — this doc was wrong to reject it.** I had treated RT9193 as a
+  single 3.3 V part and assumed contamination from the UPS Module 3S inventory. It is a
+  fixed-voltage *family*; the schematic carries the `-1.8GB` variant as `U2` on this board. Retracted.
+
+### Corrections to prior documentation
+
+| Claim | Status |
+|---|---|
+| "Waveshare's Jetson assembly tutorial is an unpublished stub / no vendor tutorial exists" | ❌ Wrong. It exists as a **video**: *"How to install UGV with Jetson orin & battery"* (Waveshare Electronics, 1:29) — <https://www.youtube.com/watch?v=m_P2LfZAp9Q> — linked as "Assembly tutorial for ugv" from both the Beast and Rover Jetson Orin wikis. The wiki *prose* still describes only the Pi install; the video is the Jetson one. |
+| Driver board UART-to-USB bridge is CH343P | ⚠️ Schematic says CH343P; the vendor wiki callouts 25/26 say **CP2102**. Board revision difference — irrelevant to the power path, but do not treat either as authoritative for part-level work. |
+
+### Operating rules
+
+1. **Never run the Jetson with the chassis switch off** while the driver board's USB-C is connected.
+   That state has no legitimate use and it is the only state in which the fault appears.
+2. **Waveshare's design is one supply, one switch.** The product power switch powers the Jetson too —
+   there is no separate host supply in the stock kit. The mains-barrel bench rig is an improvisation.
+3. **Mate every cable before applying power.** NVIDIA: "Connecting a device while powered on may
+   damage the developer kit carrier board, Jetson Orin Nano, or peripheral device."
+4. **Nothing on the Orin's 40-pin *power* pins.** Pins 2/4 (5 V) and 1/17 (3V3) are outputs; bonding
+   them to the buck puts two regulated 5 V sources on one node with no protection between them.
+   Pins 8/10 + a GND are the exception — that UART link is the vendor-intended connection.
+5. The driver board ↔ Audio HAT 40-pin joint **stays mated** — it is the stack backbone.
+
+### Open questions
+
+- **Does the HAT's USB-C VBUS tie to the 40-pin 5 V?** No schematic exists for the HAT. Settle with a
+  continuity meter, HAT unpowered.
+- **Where does the HAT's LiDAR socket take its 5 V from?** Same measurement session.
+- **D2 forward drop at ~1 A** — needed to turn "≈4.6 V" into a number. onsemi/Mouser block scripted
+  download; fetch `MBR230LSFT1G` by hand.
+- **Mounting:** one side of the Orin's host-controller mounting struts is missing from the kit.
+  Do not drill through the Orin Nano carrier board to improvise a mount point — it is a dense
+  multi-layer PCB with unmapped internal traces/vias; a stray hole can sever a trace with no visible
+  symptom until it fails under vibration. Use the board's four corner M2.5 mounting holes only. Try
+  an adhesive/foam standoff or a small printed bracket landing on those holes first; check whether
+  Waveshare sells the missing strut as a spare part (candidate line item for the support email in
+  `keyArtifactstosort/reference/` / scratchpad).
+- **ESP32 UART jumper link not yet wired.** Host boot and network are confirmed; the pins 8/10 + GND
+  jumpers from the Orin's 40-pin header to the driver board are the next step before motor/servo/
+  telemetry control exists. Still open beneath this: whether the vendor's factory 2×5 harness (for
+  the *Pi* build) populates the two 5 V positions — irrelevant now that the Orin's link is hand-built
+  from TX/RX/GND jumpers per the operating rules above, but worth resolving before reusing any
+  factory harness piece.
+
+### Resolved 2026-07-28 — OP-ORIN-POWER
+
+- **The UPS's "free 4th port" was a barrel-jack pigtail, not an XH2.54 socket.** Already wired into
+  the UPS Module 3S board — almost certainly the factory Jetson power lead, unused because the
+  original build used a Pi 5. Verified before connecting: sleeve/center polarity test read **center
+  pin positive relative to sleeve** (matches the Orin J16 spec, center-positive) at **11.5 V**, in
+  range for a 3S pack; dry-fit into the Orin's DC jack seated flush with no wobble (2.5 mm pin, not
+  the generic 2.1 mm DC5521 size). Connected and the Jetson booted clean — see the cutover status
+  banner above for the live SSH readout. This is the answer to the back-feed investigation's
+  practical question: **power the Orin from this barrel-jack pack lead, not from the driver board's
+  USB-C.** That fully avoids OP-BEAST-BACKFEED rather than requiring any board rework.
+
 ## Network
 
 | Fact | Value | Verified |
 |---|---|---|
-| Hostname | `beast.local` | ⚠️ did not resolve from `icarus-laptop` on 2026-07-01 |
-| IP (former Pi) | `192.168.20.184` | ✅ HTTP 200, 8-14 ms ping **while Pi was installed** (2026-07-01); **offline mid-cutover** |
-| Cross-VLAN reach | reachable from the dev workstation (different VLAN) | ✅ measured 2026-07-01 (Pi era) |
-| DHCP reservation | fixed IP held on the UDM for beast identity | ⚠️ move to Orin MAC at cutover |
-| Source VLAN | CastleMooseGoose → robot VLAN (`192.168.20.x`) | ⚠️ per setup — confirm |
+| Hostname (Orin) | `beast-01` | ✅ SSH 2026-07-28 |
+| LAN IP (Orin) | `192.168.0.166` (`enP8p1s0`, DHCP) | ✅ SSH 2026-07-28 — **note: `192.168.0.x`, not the Pi-era `192.168.20.x` robot VLAN** |
+| Wi-Fi IP (Orin) | `192.168.0.251` (`wlP1p1s0`, DHCP) | ✅ SSH 2026-07-28 |
+| Tailscale IP (Orin) | `100.107.16.72`, tailnet hostname `beast-01`, permanent | ✅ see `[[beast-jetson-ssh-access]]` memory; SSH alias `beast-01-ts` |
+| SSH access | `ssh beast-01-ts` (Tailscale, preferred) or `ssh beast-01` (LAN) | ✅ key-only, `hephastus_ed25519` |
+| Hostname (former Pi) | `beast.local` | ⚠️ did not resolve from `icarus-laptop` on 2026-07-01 — historical |
+| IP (former Pi) | `192.168.20.184` | Historical — Pi is retired, this address is not the Orin's |
+| DHCP reservation | fixed IP held on the UDM for beast identity | ⚠️ still needs to move to the Orin's MAC — currently plain DHCP on `192.168.0.x`, not the reserved `192.168.20.x` robot VLAN identity |
+| Source VLAN | CastleMooseGoose → robot VLAN (`192.168.20.x`) | ⚠️ the Orin is **not** currently on this VLAN — landed on the general `192.168.0.x` network instead; confirm whether that's intended before relying on VLAN-scoped firewall rules |
 
-Former Pi endpoints below are historical until the Orin assumes the beast DHCP/DNS identity.
-Re-verify IP after the Jetson is on the robot VLAN.
+Former Pi endpoints below (`192.168.20.184:*`) are historical and will 404/timeout — the Orin has
+not been moved to the robot VLAN identity or had its control-UI software stack verified yet. Only
+SSH (above) is currently confirmed live on the Orin.
 
 ## Services & dashboards
 

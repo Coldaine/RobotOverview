@@ -173,49 +173,21 @@ export const DOCUMENTS: { label: string; file: string; note: string }[] = [
   { label: 'Jetson Orin Nano carrier board spec', file: '/datacore/pdfs/jetson_orin_nano_carrier_board_spec.pdf', note: 'SP-11324-001 v1.3 incl. mechanical chapter (957 KB)' },
 ];
 
-export interface CameraCandidate {
-  name: string;
-  kind: 'zoom' | 'thermal';
-  pick: 'top' | 'alt';
-  spec: string;
-  linux: string;
-  price: string;
-  verdict: string;
-}
-
-/** Shortlist to replace the pan-tilt 5MP camera (researched 2026-07-23). */
-export const CAMERA_CANDIDATES: CameraCandidate[] = [
-  {
-    name: 'ELP 10× zoom USB (IMX415)', kind: 'zoom', pick: 'top',
-    spec: '4K · 5–50 mm motorized 10× optical · rides the existing pan-tilt bracket',
-    linux: 'true UVC — zoom via v4l2-ctl zoom_absolute, ROS2 v4l2_camera just works',
-    price: '~$100–150',
-    verdict: 'Top zoom pick: no vendor SDK, no CSI port used, cheap.',
-  },
-  {
-    name: 'Arducam PTZ (IMX477)', kind: 'zoom', pick: 'alt',
-    spec: '12 MP CSI · real optical zoom + own pan-tilt servos (full bracket replacement)',
-    linux: 'CSI + I2C control via vendor Python scripts — no ROS2-native path',
-    price: '~$70–90',
-    verdict: 'Alt: most integrated, but costs the CSI port + custom glue code.',
-  },
-  {
-    name: 'FLIR Lepton 3.5 + PureThermal 3', kind: 'thermal', pick: 'top',
-    spec: '160×120 radiometric · 8.7 Hz (export cap) · ~10 g — trivial for the bracket',
-    linux: 'native UVC out of the box; Lepton controls via UVC extension unit',
-    price: '~$250',
-    verdict: 'Top thermal pick — and the overall pick if buying one: heat vision is the capability nothing else on BEAST has; OAK-D Pro already covers "look closer".',
-  },
-  {
-    name: 'Topdon TC001', kind: 'thermal', pick: 'alt',
-    spec: '256×192 radiometric · 25 Hz · 30 g',
-    linux: 'not UVC — PyThermalCamera decode + v4l2loopback glue (Linux/Pi pedigree)',
-    price: '~$200–250',
-    verdict: 'Alt: better res + frame rate, at the cost of custom driver glue.',
-  },
-];
+/** Prior zoom/thermal shortlist (2026-07-23) — superseded by Datacore vision research. */
+export const CAMERA_SHORTLIST_SUPERSEDED = {
+  title: 'Pan-tilt camera shortlist — superseded',
+  note:
+    'The 2026-07-23 zoom / thermal shortlist is research-killed under the current premise (appearance capture for offline splatting). Datacore owns the long form; this console does not re-list those candidates as live picks.',
+  links: [
+    { label: 'Rejected paths', href: '/datacore/briefing/beast-rejected-paths' },
+    { label: 'Servo-head research candidate', href: '/datacore/briefing/beast-servo-camera' },
+    { label: 'Vision research index', href: '/datacore/briefing/beast-vision' },
+  ],
+} as const;
 
 export const OPEN_ITEMS: string[] = [
+  'Vision research (2026-07-28, non-definitive): servo-head camera research candidate is Arducam B0497 IMX678 pending focus / IR-cut / fps flags — see Datacore beast-servo-camera. Not purchased.',
+  'Vision research (2026-07-28, open): standalone LiDAR upgrade still Mid-360S vs RoboSense Airy 96; mounting unresolved — see Datacore beast-lidar-open.',
   'Power record set straight (2026-07-24): the pack runs Molicel P30B ×3 (3.0 Ah, 30 A) and NO power problems were ever observed on the Pi build — the earlier "brownout" framing was a misreading of a planning request. The Power Planner is forward-looking (Jetson + future loads). Worth doing anyway: baseline INA219 pack telemetry before the conversion.',
   'UART pin numbers (8/10/6) follow the standard Pi/Jetson header convention — high-confidence, but the wiki never states the pins explicitly.',
   'Jetson carrier mounting-hole XY coordinates are unpublished — NVIDIA gates them inside the P3768 Altium/KiCad design files (login required). Official standoff spec is known (M2.5 hex 4.5×6.57 mm); measure the pattern and record it in the Mount tab.',

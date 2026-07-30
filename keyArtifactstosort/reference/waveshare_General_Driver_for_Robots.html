@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html class="client-nojs" lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<title>General Driver for Robots - Waveshare Wiki</title>
+<script>document.documentElement.className="client-js";RLCONF={"wgBreakFrames":!1,"wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgRequestId":"bb240e940e5f5f14e1297a72","wgCSPNonce":!1,"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":!1,"wgNamespaceNumber":0,"wgPageName":"General_Driver_for_Robots","wgTitle":"General Driver for Robots","wgCurRevisionId":103968,"wgRevisionId":103968,"wgArticleId":14774,"wgIsArticle":!0,"wgIsRedirect":!1,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":[],"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgRelevantPageName":"General_Driver_for_Robots","wgRelevantArticleId":14774,"wgIsProbablyEditable":!1,"wgRelevantPageIsProbablyEditable":!1,"wgRestrictionEdit":[],"wgRestrictionMove":[]};RLSTATE={"ext.gadget.tabber":"ready",
+"site.styles":"ready","noscript":"ready","user.styles":"ready","user":"ready","user.options":"loading","mediawiki.toc.styles":"ready","skins.tweeki.styles":"ready","skins.tweeki.bootstraptheme.styles":"ready","skins.tweeki.externallinks.styles":"ready","skins.tweeki.awesome.styles":"ready"};RLPAGEMODULES=["site","mediawiki.page.startup","mediawiki.page.ready","mediawiki.toc","ext.FancyBoxThumbs","ext.HighlightjsIntegration","skins.tweeki.messages","skins.tweeki.scripts"];</script>
+<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.implement("user.options@1hzgi",function($,jQuery,require,module){/*@nomin*/mw.user.tokens.set({"patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+});});</script>
+<link rel="stylesheet" href="/w/Uy8Yw0y/aAdkk0o.php?lang=en&amp;modules=mediawiki.toc.styles%7Cskins.tweeki.awesome.styles%7Cskins.tweeki.bootstraptheme.styles%7Cskins.tweeki.externallinks.styles%7Cskins.tweeki.styles&amp;only=styles&amp;skin=tweeki"/>
+<script async="" src="/w/Uy8Yw0y/aAdkk0o.php?lang=en&amp;modules=startup&amp;only=scripts&amp;raw=1&amp;skin=tweeki"></script>
+<meta name="ResourceLoaderDynamicStyles" content=""/>
+<link rel="stylesheet" href="/w/Uy8Yw0y/aAdkk0o.php?lang=en&amp;modules=ext.gadget.tabber&amp;only=styles&amp;skin=tweeki"/>
+<link rel="stylesheet" href="/w/Uy8Yw0y/aAdkk0o.php?lang=en&amp;modules=site.styles&amp;only=styles&amp;skin=tweeki"/>
+<meta name="generator" content="MediaWiki 1.35.5"/>
+<meta property="og:image" content="https://www.waveshare.com/w/upload/9/90/300px-General_Driver.jpg"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="shortcut icon" href="/w/favicon.ico"/>
+<link rel="search" type="application/opensearchdescription+xml" href="/w/opensearch_desc.php" title="Waveshare Wiki (en)"/>
+<link rel="EditURI" type="application/rsd+xml" href="https://www.waveshare.com/w/api.php?action=rsd"/>
+<link rel="alternate" type="application/atom+xml" title="Waveshare Wiki Atom feed" href="/w/index.php?title=Special:RecentChanges&amp;feed=atom"/>
+<!--[if lt IE 9]><script src="/w/resources/lib/html5shiv/html5shiv.js"></script><![endif]-->
+</head>
+<body class="mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-General_Driver_for_Robots rootpage-General_Driver_for_Robots skin-tweeki action-view tweeki-animateLayout tweeki-non-advanced tweeki-user-anon">			<!-- navbar -->
+			<div id="mw-navigation" class="navbar navbar-default navbar-fixed-top navbar-expand-lg fixed-top navbar-light bg-light" role="navigation">
+				<h2>Navigation menu</h2>
+				<div id="mw-head" class="navbar-inner">
+					<div class="container">
+
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+
+							<a href="/wiki/Main_Page" class="navbar-brand"><img src="https://www.waveshare.com/w/upload/a/a7/Ws-watermark-en.svg" alt="Waveshare Wiki" /></a>
+						</div>
+
+						<div id="navbar" class="navbar-collapse collapse">
+													<ul class="nav navbar-nav">
+							<li class="nav"><a href="#" id="n-raspberry-pi" class="dropdown-toggle" data-toggle="dropdown">Raspberry Pi <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523rpi-boards"><a href="/wiki/Main_Page#RPi-Boards" tabindex="-1">Boards/Kits</a></li><li id="n-main_page.2523rpi-displays"><a href="/wiki/Main_Page#RPi-Displays" tabindex="-1">Displays</a></li><li id="n-main_page.2523rpi-cameras"><a href="/wiki/Main_Page#RPi-Cameras" tabindex="-1">Cameras</a></li><li id="n-main_page.2523rpi-expansions"><a href="/wiki/Main_Page#RPi-Expansions" tabindex="-1">Expansions</a></li><li id="n-main_page.2523rpi-laptops"><a href="/wiki/Main_Page#RPi-Laptops" tabindex="-1">All-in-one</a></li><li id="n-main_page.2523rpi-robots"><a href="/wiki/Main_Page#RPi-Robots" tabindex="-1">Robots</a></li><li id="n-main_page.2523rpi-games"><a href="/wiki/Main_Page#RPi-Games" tabindex="-1">Portable Gaming</a></li><li id="n-main_page.2523rpi-acces"><a href="/wiki/Main_Page#RPi-Acces" tabindex="-1">Accessories</a></li><li id="n-main_page.2523android-linux-boards"><a href="/wiki/Main_Page#Android-Linux-Boards" tabindex="-1">Other Android/Linux Boards</a></li></ul></li><li class="nav"><a href="#" id="n-ai" class="dropdown-toggle" data-toggle="dropdown">AI <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523jetson-ai-boards"><a href="/wiki/Main_Page#Jetson-AI-Boards" tabindex="-1">Boards/Kits</a></li><li id="n-main_page.2523jetson-ai-displays"><a href="/wiki/Main_Page#Jetson-AI-Displays" tabindex="-1">Displays</a></li><li id="n-main_page.2523jetson-ai-cameras"><a href="/wiki/Main_Page#Jetson-AI-Cameras" tabindex="-1">Cameras</a></li><li id="n-main_page.2523jetson-ai-hat"><a href="/wiki/Main_Page#Jetson-AI-HAT" tabindex="-1">Expansions</a></li><li id="n-main_page.2523jetson-ai-robots"><a href="/wiki/Main_Page#Jetson-AI-Robots" tabindex="-1">Robots</a></li></ul></li><li class="nav"><a href="#" id="n-displays" class="dropdown-toggle" data-toggle="dropdown">Displays <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523display-lcd-oleds"><a href="/wiki/Main_Page#Display-LCD-OLEDs" tabindex="-1">LCD/OLED</a></li><li id="n-main_page.2523display-e-paper"><a href="/wiki/Main_Page#Display-e-Paper" tabindex="-1">e-Paper</a></li></ul></li><li class="nav"><a href="#" id="n-iot" class="dropdown-toggle" data-toggle="dropdown">IoT <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523long-range-wireless-comm"><a href="/wiki/Main_Page#Long-range-wireless-comm" tabindex="-1">Long Range Wireless</a></li><li id="n-main_page.2523short-range-wireless-comm"><a href="/wiki/Main_Page#Short-range-wireless-comm" tabindex="-1">Short Range Wireless</a></li><li id="n-main_page.2523wired-communication"><a href="/wiki/Main_Page#Wired-communication" tabindex="-1">Wired Comm / Converter</a></li><li id="n-main_page.2523misc-cameras-av"><a href="/wiki/Main_Page#Misc-cameras-av" tabindex="-1">Cameras / Audio / Video</a></li><li id="n-main_page.2523misc-sensor-modules"><a href="/wiki/Main_Page#Misc-sensor-modules" tabindex="-1">Sensors</a></li><li id="n-main_page.2523misc-servos-motors"><a href="/wiki/Main_Page#Misc-servos-motors" tabindex="-1">Motors / Servos</a></li><li id="n-main_page.2523misc-other-modules"><a href="/wiki/Main_Page#Misc-other-modules" tabindex="-1">others</a></li></ul></li><li class="nav"><a href="#" id="n-robotics" class="dropdown-toggle" data-toggle="dropdown">Robotics <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523robotics-cars"><a href="/wiki/Main_Page#Robotics-cars" tabindex="-1">Mobile Robots</a></li><li id="n-main_page.2523dog-like-robots"><a href="/wiki/Main_Page#Dog-like-Robots" tabindex="-1">Dog-like Robots</a></li><li id="n-main_page.2523robotics-drivers-sensors"><a href="/wiki/Main_Page#Robotics-drivers-sensors" tabindex="-1">Drivers / Sensors</a></li><li id="n-main_page.2523robotics-robot-arms"><a href="/wiki/Main_Page#Robotics-robot-arms" tabindex="-1">Robot Arm / Control</a></li></ul></li><li class="nav"><a href="#" id="n-mcu.252Ffpga" class="dropdown-toggle" data-toggle="dropdown">MCU/FPGA <b class="caret"></b></a><ul class="dropdown-menu " role="menu"><li id="n-main_page.2523arduino-main-boards"><a href="/wiki/Main_Page#Arduino-main-boards" tabindex="-1">Arduino</a></li><li id="n-main_page.2523micro.253Abit"><a href="/wiki/Main_Page#micro:bit" tabindex="-1">micro:bit</a></li><li id="n-main_page.2523mcu.2farm" class="LPC"><a href="/wiki/Main_Page#MCU.2FARM" tabindex="-1">STM32</a></li><li id="n-main_page.2523fpga"><a href="/wiki/Main_Page#FPGA" tabindex="-1">FPGA</a></li></ul></li><li class="nav"><a href="https://service.waveshare.com" id="n-https.253A.252F.252Fservice.waveshare.com" rel="nofollow" target="_blank">Support</a></li>							</ul>
+						
+													<ul class="nav navbar-nav navbar-right">
+							</ul>
+				<form class="navbar-form navbar-right" action="/w/index.php" id="searchform">
+					<div class="form-group"><input type="search" name="search" placeholder="Product name search" title="Search Waveshare Wiki [f]" accesskey="f" id="searchInput" class="search-query form-control"/><input type="submit" name="go" value="Go" title="Go to a page with this exact name if it exists" id="mw-searchButton" class="searchButton btn hidden"/>
+					</div>
+				</form><ul class="nav navbar-nav navbar-right">							</ul>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			<!-- /navbar -->
+					<div id="mw-page-base"></div>
+			<div id="mw-head-base"></div>
+			<a id="top"></a>
+
+			<!-- content -->
+			<div id="contentwrapper" class="user-loggedout not-editable container with-navbar with-navbar-fixed">
+
+				
+				<div class="row">
+					<div class="col-md-offset-2 col-md-10" role="main">
+								<div class="mw-body" id="content">
+			<div id="mw-js-message" style="display:none;"></div>
+									<h1 id="firstHeading" class="firstHeading page-header" lang="en"><span dir="auto">General Driver for Robots</span></h1>
+									<!-- bodyContent -->
+			<div id="bodyContent">
+								<div id="siteSub">From Waveshare Wiki</div>
+								<div id="contentSub"></div>
+												<div id="jump-to-nav" class="mw-jump">
+					Jump to:					<a href="#mw-navigation">navigation</a>, 					<a href="#p-search">search</a>
+				</div>
+				<div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="mw-parser-output"><div class="wiki-pages jet-green-color">
+<table id="infotable" class="a-r at-c roundy bgd-green bl-white" style="margin-left: 5px; margin-bottom: 5px; width: 30%;">
+
+<tbody><tr>
+<td>
+<table class="at-c roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>General Driver for Robots</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><a href="https://www.waveshare.com/general-driver-for-robots.htm" target="_blank" rel="nofollow noreferrer noopener"><img alt="300px-General Driver.jpg" src="/w/upload/thumb/9/90/300px-General_Driver.jpg/300px-300px-General_Driver.jpg" decoding="async" loading="lazy" width="300" height="289" srcset="/w/upload/9/90/300px-General_Driver.jpg 1.5x" /></a><br /><br /><small>UART, TTL, IIC, I/Os</small>
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>{{{name2}}}</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><br />
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>{{{name3}}}</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><br />
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>{{{name4}}}</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><br />
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>{{{name5}}}</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><br />
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="roundy" style="background: transparent;width:100%;">
+
+<tbody><tr>
+<td class="at-c textwhite"><b>{{{name6}}}</b>
+</td></tr>
+<tr>
+<td class="at-c bgwhite" style="margin:5px;"><br />
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<td>
+<table class="roundy" style="display:none;">
+<tbody><tr>
+<td style="width:2%;">
+</td>
+<td style="width:3%;">
+</td>
+<th colspan="2" width="90%" class="at-c roundytop bgl-white">Primary Attribute
+</th>
+<td style="width:3%;">
+</td>
+<td style="width:2%;">
+</td></tr>
+<tr>
+<td colspan="6" width="90px" class="at-c roundytl roundytr bgwhite b-green" style="border-width: 0 0 1px 0;"><b>Category:</b>
+</td></tr>
+<tr style="display:none;">
+<th colspan="3" width="90px" class="at-r bgwhite b-green" style="border-width: 0 0 1px 0;">{{{userDefinedInfo}}}:
+</th>
+<td colspan="3" class="at-l b-green bgwhite" style="border-width: 0 0 1px 0;">{{{userdefinedvalue}}}
+</td></tr>
+<tr style="display:none;">
+<td colspan="6" width="90px" class="at-c roundybl roundybr bgwhite"><b>Brand:</b> Waveshare
+</td></tr></tbody></table>
+</td></tr>
+<tr>
+<td>
+<table class="a-r roundy" style="display:none;">
+<tbody><tr>
+<td style="width:2%;">
+</td>
+<td style="width:3%;">
+</td>
+<th colspan="2" width="90%" class="at-c roundytop bgl-white">Website
+</th>
+<td style="width:3%;">
+</td>
+<td style="width:2%;">
+</td></tr>
+<tr>
+<td colspan="6" width="90px" class="at-c roundytl roundytr bgwhite b-green" style="border-width: 0 0 1px 0;"><b>International:</b> <a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://www.waveshare.com/general-driver-for-robots.htm">Website</a>
+</td></tr>
+<tr>
+<td colspan="6" width="90px" class="at-c roundybl roundybr bgwhite"><b>Chinese:</b> <a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://www.waveshare.net/shop/General-Driver-for-Robots.htm">官网</a>
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="a-r roundy" style="background: transparent; border-collapse:collapse;width:100%;display:none;">
+<tbody><tr>
+<td style="width:2%;">
+</td>
+<td style="width:3%;">
+</td>
+<th colspan="2" width="90%" class="at-c roundytop bgl-white">Onboard Interfaces
+</th>
+<td style="width:3%;">
+</td>
+<td style="width:2%;">
+</td></tr>
+<tr>
+<td colspan="6" width="90px" class="at-l roundy bgwhite b-green" style="border-width: 0 0 1px 0;">
+<table class="roundy bgwhite fulltable" style="text-align:center;">
+
+<tbody><tr>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td></tr>
+<tr>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td></tr>
+<tr>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td></tr>
+<tr>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td></tr>
+<tr>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td>
+<td class="roundy bl-gray bw-1" style="width:25%;display:none;"><small></small>
+</td></tr></tbody></table>
+</td></tr></tbody></table>
+</td></tr>
+<tr style="display:none;">
+<td>
+<table class="a-r roundy" style="background: transparent; border-collapse:collapse;width:100%;;display:none;">
+<tbody><tr>
+<td style="width:2%;">
+</td>
+<td style="width:3%;">
+</td>
+<th colspan="2" width="90%" class="at-c roundytop bgl-white">Related Products
+</th>
+<td style="width:3%;">
+</td>
+<td style="width:2%;">
+</td></tr>
+<tr>
+<td colspan="6" width="90px" class="at-l roundy bgwhite b-green" style="border-width: 0 0 1px 0;">
+</td></tr></tbody></table>
+</td></tr></tbody></table>
+<div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none" /><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Introduction"><span class="tocnumber">1.1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#Features"><span class="tocnumber">1.2</span> <span class="toctext">Features</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Parameters"><span class="tocnumber">1.3</span> <span class="toctext">Parameters</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Onboard_Resources"><span class="tocnumber">1.4</span> <span class="toctext">Onboard Resources</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Main_Usage"><span class="tocnumber">1.5</span> <span class="toctext">Main Usage</span></a>
+<ul>
+<li class="toclevel-3 tocsection-7"><a href="#Onboard_Rich_Peripheral_Interfaces_For_Driving_Various_Robots"><span class="tocnumber">1.5.1</span> <span class="toctext">Onboard Rich Peripheral Interfaces For Driving Various Robots</span></a></li>
+<li class="toclevel-3 tocsection-8"><a href="#Module_Usage_Tutorial"><span class="tocnumber">1.5.2</span> <span class="toctext">Module Usage Tutorial</span></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-9"><a href="#Resource"><span class="tocnumber">2</span> <span class="toctext">Resource</span></a>
+<ul>
+<li class="toclevel-2 tocsection-10"><a href="#Open-source_Demo"><span class="tocnumber">2.1</span> <span class="toctext">Open-source Demo</span></a></li>
+<li class="toclevel-2 tocsection-11"><a href="#Circuit_Diagram"><span class="tocnumber">2.2</span> <span class="toctext">Circuit Diagram</span></a></li>
+<li class="toclevel-2 tocsection-12"><a href="#Dimensions_And_Drawings"><span class="tocnumber">2.3</span> <span class="toctext">Dimensions And Drawings</span></a></li>
+<li class="toclevel-2 tocsection-13"><a href="#Model"><span class="tocnumber">2.4</span> <span class="toctext">Model</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-14"><a href="#FAQ"><span class="tocnumber">3</span> <span class="toctext">FAQ</span></a></li>
+<li class="toclevel-1 tocsection-15"><a href="#Support"><span class="tocnumber">4</span> <span class="toctext">Support</span></a></li>
+</ul>
+</div>
+
+<h1><span class="mw-headline" id="Overview">Overview</span></h1>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>The multifunctional driver board specially designed for robots provides more possibilities for robots.
+Based on the ESP32-WROOM-32 module, Arduino IDE can be used for development, and it supports a variety of wireless communication methods, including WIFI, Bluetooth, and ESP-NOW. 
+</p><p>Onboard versatile commonly used robot component interfaces, including DC motor interface with encoder, DC motor interface without encoder, bus servo interface, IIC interface, Lidar interface, PWM servo interface, SD card slot, etc.
+</p><p>A variety of resources are on board, which is convenient for robot project construction, including a 9-axis IMU, temperature sensor, automatic download circuit, Lidar serial port to USB circuit, bus servo control circuit, etc.<br />
+</p><p><font color="#FF0000">
+<b>The PWM servos used in this board do not support the MG996R Servo and MG90S Servo sold on the official website, as well as other high-power PWM servos. The recommended PWM servo for this driver board is the <a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://www.waveshare.com/wp90-servo.htm">WP90 Servo</a>.</b></font>
+</p>
+<h2><span class="mw-headline" id="Features">Features</span></h2>
+<ul><li>Based on the ESP32-WROOM-32 module, supports wireless communication&#160;methods such as WIFI, Bluetooth, and ESP-NOW.</li>
+<li>Onboard motor control interface for 2x&#160;DC motors with encoder or 4x&#160;DC motors (two groups) without encoder.</li>
+<li>Onboard serial bus servos control interface for controlling up to 253 ST3215 serial bus servos and obtaining servo feedback.</li>
+<li>Onboard 9-axis IMU can obtain attitude and heading information at any time.</li>
+<li>7~13V voltage input can be powered directly by 2S or 3S lithium battery.</li>
+<li>Automatic download circuit for easy uploading demos.</li>
+<li>Support input voltage and current monitoring.</li>
+<li>Onboard TF card slot.</li>
+<li>Onboard Lidar&#160;interface and integrated UART to USB function.</li>
+<li>IIC interface for expanding other peripherals such as OLED, IMU, and other IIC communication protocols.</li>
+<li>Multi-functional extended interface, adapting to remaining interfaces for additional functions, such as controlling servos or relays.</li>
+<li>40PIN extended header for connecting to Raspberry Pi, Jetson Nano, and other host computers, communicating via serial port or IIC, and powering the host computer.</li>
+<li>Provides open-source demos for onboard resources, and online detailed tutorials for beginners to get started.</li></ul>
+<h2><span class="mw-headline" id="Parameters">Parameters</span></h2>
+<table border="1;" style="height:200px;width:500px;">
+
+<tbody><tr style="background:#7eb128; color:white;">
+<td>Main Controller</td>
+<td>ESP32-WROOM-32
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>Power Supply</td>
+<td>DC 7-13V
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>Power Port</td>
+<td>XH2.54
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>Antenna Connector</td>
+<td>IPEX1
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>Download Interface</td>
+<td>Type-C
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>Control Chip</td>
+<td>ESP32
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>Wireless Communication</td>
+<td>WIFI, Bluetooth, ESP-NOW
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>Dimensions</td>
+<td>65 x 65mm
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>Mounting hole spacing</td>
+<td>49 x 58mm
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>Mounting hole diameter</td>
+<td>3mm
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Onboard_Resources">Onboard Resources</span></h2>
+<p><a href="/wiki/File:General_Driver_for_Robot02.jpg" class="image"><img alt="General Driver for Robot02.jpg" src="/w/upload/thumb/f/f0/General_Driver_for_Robot02.jpg/800px-General_Driver_for_Robot02.jpg" decoding="async" loading="lazy" width="800" height="438" srcset="/w/upload/f/f0/General_Driver_for_Robot02.jpg 1.5x" /></a><br />
+</p>
+<table border="1;" style="height:200px;width:700px;">
+
+<tbody><tr style="background:#7eb128; color:white;">
+<td>No.</td>
+<td>Onboard Resources</td>
+<td>Introduction
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>1</td>
+<td>ESP32-WROOM-32 main controller</td>
+<td>Can be developed with the Arduino IDE
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>2</td>
+<td>IPEX1 WiFi connector</td>
+<td>For connecting the WIFI antenna to increase the wireless communication distance
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>3</td>
+<td>LIDAR interface</td>
+<td>Integrated radar adapter board function
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>4</td>
+<td>IIC peripheral expansion interface</td>
+<td>Can be used to connect OLED screens or other IIC sensors
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>5</td>
+<td>Reset button</td>
+<td>Press and release to reboot the ESP32
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>6</td>
+<td>Download button</td>
+<td>The ESP32 will enter the download mode when the power is turned on by pressing
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>7</td>
+<td>DC-DC 5V voltage regulator circuit</td>
+<td>Power supply for host computers such as Raspberry Pi or Jetson nano
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>8</td>
+<td>Type-C connector (LIDAR)</td>
+<td>LIDAR data interface
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>9</td>
+<td>Type-C connector (USB)</td>
+<td>ESP32 UART communication interface, can upload programs for ESP32
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>10</td>
+<td>XH2.54 power port</td>
+<td>Input DC 7~13V, this interface directly powers the serial bus servo and motor
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>11</td>
+<td>INA219</td>
+<td>Voltage/current monitoring chip
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>12</td>
+<td>Power ON/OFF</td>
+<td>Switches to control external power supply
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>13</td>
+<td>ST3215 serial bus servo interface</td>
+<td>For connecting to ST3215 serial bus servo
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>14</td>
+<td>Motor interface PH2.0 6P</td>
+<td>Group B interface for motor with encoder
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>15</td>
+<td>Motor interface PH2.0 6P</td>
+<td>Group A interface for motor with encoder
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>16</td>
+<td>Motor interface PH2.0 2P</td>
+<td>Group A interface for motor without encoder
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>17</td>
+<td>Motor interface PH2.0 2P</td>
+<td>Group B interface for motor without encoder
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>18</td>
+<td>AK09918C</td>
+<td>3-axis electronic compass
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>19</td>
+<td>QMI8658</td>
+<td>6-axis motion sensor
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>20</td>
+<td>TB6612FNG</td>
+<td>Motor control chip
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>21</td>
+<td>Serial bus servo control circuit</td>
+<td>Can be used to expand multiple ST3215 serial bus servos and obtain servo feedback
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>22</td>
+<td>SD card slot</td>
+<td>Can be used to store logs or WIFI configurations
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>23</td>
+<td>40PIN extended header</td>
+<td>Easy access to Raspberry Pi or Horizon Sunrise X3 Pi
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>24</td>
+<td>40PIN extended header</td>
+<td>Easy to use the pins of the host computer installed on the driver board
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>25</td>
+<td>CP2102</td>
+<td>UART to USB for radar data transfer
+</td></tr>
+<tr style="background:#CFCFCF;">
+<td>26</td>
+<td>CP2102</td>
+<td>UART to USB for ESP32 UART communication
+</td></tr>
+<tr style="background:#E8E8E8;">
+<td>27</td>
+<td>Automatic download circuit</td>
+<td>Upload demos for the ESP32 without pressing the EN and BOOT buttons
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Main_Usage">Main Usage</span></h2>
+<h3><span class="mw-headline" id="Onboard_Rich_Peripheral_Interfaces_For_Driving_Various_Robots">Onboard Rich Peripheral Interfaces For Driving Various Robots</span></h3>
+<ul><li>Crawler Robot</li>
+<li>Four-wheel drive UGV</li>
+<li>Two-wheel drive AGV</li>
+<li>Balance car</li>
+<li>Robotic arm</li>
+<li>Pan-tilt</li></ul>
+<h3><span class="mw-headline" id="Module_Usage_Tutorial">Module Usage Tutorial</span></h3>
+<ul><li><a href="/wiki/How_To_Install_Arduino_IDE" title="How To Install Arduino IDE">How To Install Arduino IDE</a></li></ul>
+<p>The above tutorial takes the complete demo of the UGV01 product as an example to explain how to use the Arduino IDE to upload the demo. You can replace the demo with the demo in the follow-up tutorial to the driver board.
+</p>
+<ul><li><a href="/wiki/Tutorial_I:_Motor_With_Encoder_Control_Demo" title="Tutorial I: Motor With Encoder Control Demo">Tutorial I: Motor With Encoder Control Demo</a></li>
+<li><a href="/wiki/Tutorial_II:_Motor_With_Encoder_Control_Demo_2" title="Tutorial II: Motor With Encoder Control Demo 2">Tutorial II: Motor With Encoder Control Demo 2</a></li>
+<li><a href="/wiki/Tutorial_III:_Motor_With_Encoder_Control_Demo_3" title="Tutorial III: Motor With Encoder Control Demo 3">Tutorial III: Motor With Encoder Control Demo 3</a></li>
+<li><a href="/wiki/Tutorial_II:_Motor_Without_Encoder_Control_Demo" title="Tutorial II: Motor Without Encoder Control Demo">Tutorial IV: Motor Without Encoder Control Demo</a></li>
+<li><a href="/wiki/Tutorial_III:_ST3215_Serial_Bus_Servo_Control_Demo" title="Tutorial III: ST3215 Serial Bus Servo Control Demo">Tutorial V: ST3215 Serial Bus Servo Control Demo </a></li>
+<li><a href="/wiki/Tutorial_IV:_PWM_Servo_Control_Demo" title="Tutorial IV: PWM Servo Control Demo">Tutorial VI: PWM Servo Control Demo</a></li>
+<li><a href="/wiki/Tutorial_V:_IMU_Data_Reading_Demo" title="Tutorial V: IMU Data Reading Demo">Tutorial VII: IMU Data Reading Demo</a></li>
+<li><a href="/wiki/Tutorial_VI:_SD_Card_Reading_Demo" title="Tutorial VI: SD Card Reading Demo"> Tutorial VIII: SD Card Reading Demo</a></li>
+<li><a href="/wiki/Tutorial_VII:_INA219_Voltage_And_Current_Monitoring_Demo" title="Tutorial VII: INA219 Voltage And Current Monitoring Demo">Tutorial IX: INA219 Voltage And Current Monitoring Demo</a></li>
+<li><a href="/wiki/Tutorial_VIII:_OLED_Screen_Control_Demo" title="Tutorial VIII: OLED Screen Control Demo">Tutorial X: OLED Screen Control Demo</a></li>
+<li><a href="/wiki/Tutorial_IX_Lidar_and_Publishing_Lidar_Topics_in_ROS2" title="Tutorial IX Lidar and Publishing Lidar Topics in ROS2">Tutorial XI Lidar and Publishing Lidar Topics in ROS2 </a></li></ul>
+<h1><span class="mw-headline" id="Resource">Resource</span></h1>
+<h2><span class="mw-headline" id="Open-source_Demo">Open-source Demo</span></h2>
+<ul><li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/0/0c/UGV01_BASE.zip">UGV01 Open-source Demo</a></li></ul>
+<h2><span class="mw-headline" id="Circuit_Diagram">Circuit Diagram</span></h2>
+<ul><li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/3/37/General_Driver_for_Robots.pdf">Circuit Diagram</a></li></ul>
+<h2><span class="mw-headline" id="Dimensions_And_Drawings">Dimensions And Drawings</span></h2>
+<ul><li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/5/50/GENERAL-DRIVER-FOR-ROBOTS-STR-DXF.zip">GENERAL-DRIVER-FOR-ROBOTS-STR-DXF Drawing</a></li>
+<li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/0/0a/GENERAL-DRIVER-FOR-ROBOTS-STR-PDF.zip">GENERAL-DRIVER-FOR-ROBOTS-STR-PDF Drawing</a></li></ul>
+<h2><span class="mw-headline" id="Model">Model</span></h2>
+<ul><li><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/upload/8/8e/General_Driver_for_Robots_STEP.zip">General Driver for Robots STEP Model</a></li></ul>
+<h1><span class="mw-headline" id="FAQ">FAQ</span></h1>
+<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a data-toggle="collapse" data-parent="#accordion" href="#accordion1">
+								Question:  1. What is the maximum current output supported by the bus servo control interface? How many servos can the current support at most?
+
+							</a>
+						</h4>
+					</div>
+					<div id="accordion1" class="panel-collapse collapse in">
+						<div class="panel-body">
+<div>&#160;<b>Answer:</b></div>
+<div>
+<p>For the General Driver for Robots, the current output limit for bus servos is controlled by a switch, with a maximum current of 5A for long-term operation; the number of servos specifically depends on their operating conditions. For example, with the ST3215 Servo, it can support up to 5 servos (ensuring that these 5 servos are not stalled simultaneously in the program).
+</p>
+</div>
+<div style="display:none;"></div>
+<div style="display:none;"></div>
+<p><font color="red" style="display:none;">{{{5}}}</font>
+</p>
+						</div>
+					</div>
+				</div>
+</div>
+<p><br />
+</p>
+<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a data-toggle="collapse" data-parent="#accordion" href="#accordion2">
+								Question:  2. Is there a new COM port appearing in the device manager of the computer when the robot universal driver board is plugged into the computer? Why?
+							</a>
+						</h4>
+					</div>
+					<div id="accordion2" class="panel-collapse collapse in">
+						<div class="panel-body">
+<div>&#160;<b>Answer:</b></div>
+<div>
+<p>Check if there is a new COM port in the computer's Device Manager. If not, check if there are any unidentified devices with "CP2102" in their names under other devices (as shown in the image) <a href="/wiki/File:450px-CP2102%E6%9C%AA%E8%AF%86%E5%88%AB.png" class="image"><img alt="450px-CP2102未识别.png" src="/w/upload/thumb/f/f7/450px-CP2102%E6%9C%AA%E8%AF%86%E5%88%AB.png/300px-450px-CP2102%E6%9C%AA%E8%AF%86%E5%88%AB.png" decoding="async" loading="lazy" width="300" height="51" srcset="/w/upload/f/f7/450px-CP2102%E6%9C%AA%E8%AF%86%E5%88%AB.png 1.5x" /></a>. If there are, it is due to the missing driver, and you can click to install the <a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://files.waveshare.com/wiki/common/CP210x_USB_TO_UART.zip"><b>CP2102 Serial Port Driver</b></a>. If there are no unidentified devices with "CP2102" in other devices, contact the customer service for factory repair.
+</p>
+</div>
+<div style="display:none;"></div>
+<div style="display:none;"></div>
+<p><font color="red" style="display:none;"></font>
+</p>
+						</div>
+					</div>
+				</div>
+</div>
+<p><br />
+</p>
+<h1><span class="mw-headline" id="Support">Support</span></h1>
+<p><br />
+<br />
+</p>
+<div style="background:linear-gradient(to bottom right,#91C942,#7DB036); border-radius:15px; width:100%;min-width:750px;">
+<div style="display:flex;flex-direction: row;align-items: flex-start;">
+<div style="flex:l; font-size:15px; width:70%; margin-top:20px; margin-bottom:20px; margin-right:40px;padding-left:40px;">
+<p style="font-size:20px; font-weight:bold;">
+Technical Support
+</p>
+<p>
+If you need technical support or have any feedback/review, please click the <b>Submit Now</b> button to submit a ticket, Our support team will check and reply to you within 1 to 2 working days. Please be patient as we make every effort to help you to resolve the issue. 
+<br /> 
+Working Time: 9 AM - 6 PM GMT+8 (Monday to Friday)
+</p>
+</div>
+<div style="margin-top:94px;">
+<div id="service" style="display:flex; flex:r; background-color:#393939; color:white; text-align:center; font-size:20px; border-radius:20px;">
+<p><a target="_blank" rel="nofollow noreferrer noopener" class="external text" href="https://service.waveshare.com/">Submit Now</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 
+NewPP limit report
+Cached time: 20260727145649
+Cache expiry: 0
+Dynamic content: true
+Complications: []
+CPU time usage: 0.088 seconds
+Real time usage: 0.162 seconds
+Preprocessor visited node count: 506/1000000
+Post‐expand include size: 7239/2097152 bytes
+Template argument size: 2484/2097152 bytes
+Highest expansion depth: 8/40
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 2672/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   89.669      1 -total
+ 44.30%   39.724      2 Template:FAQ
+ 38.69%   34.689      1 Template:Infobox_item
+ 16.47%   14.773      1 Template:Servicebox1
+ 13.46%   12.068      1 Template:Amazon_nolink
+-->
+</div></div>								<div class="printfooter">
+				Retrieved from "<a dir="ltr" href="https://www.waveshare.com/w/index.php?title=General_Driver_for_Robots&amp;oldid=103968">https://www.waveshare.com/w/index.php?title=General_Driver_for_Robots&amp;oldid=103968</a>"				</div>
+												<div id="catlinks" class="catlinks catlinks-allhidden" data-mw="interface"></div>												<div class="visualClear"></div>
+							</div>
+			<!-- /bodyContent -->
+		</div>
+						</div>
+				</div>
+			</div>
+			<!-- /content -->
+
+			<!-- sidebar-left -->
+			<div class="sidebar-wrapper sidebar-left-wrapper">
+				<div class="sidebar-container container">
+					<div class="row">
+						<div id="sidebar-left" class="col-md-2 col-md-offset-0">
+							<div id="tweekiTOC"></div>						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /sidebar-left -->
+					<!-- footer -->
+			<div id="footer" role="contentinfo" class="footer container footer-sticky bg-light">
+			<ul id="footer-custom"><li class="dropup"><a href="/w/index.php?title=Special:UserLogin&amp;returnto=General+Driver+for+Robots" title="You are encouraged to log in; however, it is not mandatory [o]" accesskey="o">Login / Create Account</a></li></ul><div style="clear:both"></div>			</div>
+			<!-- /footer -->
+		
+<script>
+var fbtFancyBoxOptions = {};
+</script>
+
+<script>(RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgPageParseReport":{"limitreport":{"cputime":"0.088","walltime":"0.162","ppvisitednodes":{"value":506,"limit":1000000},"postexpandincludesize":{"value":7239,"limit":2097152},"templateargumentsize":{"value":2484,"limit":2097152},"expansiondepth":{"value":8,"limit":40},"expensivefunctioncount":{"value":0,"limit":100},"unstrip-depth":{"value":0,"limit":20},"unstrip-size":{"value":2672,"limit":5000000},"timingprofile":["100.00%   89.669      1 -total"," 44.30%   39.724      2 Template:FAQ"," 38.69%   34.689      1 Template:Infobox_item"," 16.47%   14.773      1 Template:Servicebox1"," 13.46%   12.068      1 Template:Amazon_nolink"]},"cachereport":{"timestamp":"20260727145649","ttl":0,"transientcontent":true}}});mw.config.set({"wgBackendResponseTime":582});});</script>	<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a21c7e33f95dafbc',t:'MTc4NTE2NDIwOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

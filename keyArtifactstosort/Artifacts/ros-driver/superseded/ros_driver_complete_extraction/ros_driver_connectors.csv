@@ -1,0 +1,171 @@
+Connector,Type / value,Pin,Net,Functional block
+P3,PH2.0 4P vertical,0,GND,10DOF / I2C
+P3,PH2.0 4P vertical,1,3V3,10DOF / I2C
+P3,PH2.0 4P vertical,2,GND,10DOF / I2C
+P3,PH2.0 4P vertical,3,IIC_SDA,10DOF / I2C
+P3,PH2.0 4P vertical,4,IIC_SCL,10DOF / I2C
+P4,PH2.0 4P vertical,0,GND,10DOF / I2C
+P4,PH2.0 4P vertical,1,3V3,10DOF / I2C
+P4,PH2.0 4P vertical,2,GND,10DOF / I2C
+P4,PH2.0 4P vertical,3,IIC_SDA,10DOF / I2C
+P4,PH2.0 4P vertical,4,IIC_SCL,10DOF / I2C
+H2,5.5x2.1 DC005 barrel jack,0,GND,PWR-IN / 5V-5A
+H2,5.5x2.1 DC005 barrel jack,1,VDD_DC_JACK,PWR-IN / 5V-5A
+H2,5.5x2.1 DC005 barrel jack,2,GND,PWR-IN / 5V-5A
+H1,PH2.0 4P vertical,0,GND,LIDAR USB-UART
+H1,PH2.0 4P vertical,1,CP_RX,LIDAR USB-UART
+H1,PH2.0 4P vertical,2,NC,LIDAR USB-UART
+H1,PH2.0 4P vertical,3,GND,LIDAR USB-UART
+H1,PH2.0 4P vertical,4,5V,LIDAR USB-UART
+Type_C1,"USB Type-C receptacle, 16P SMT",A1/B12,GND,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",A12/B1,GND,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",A4/B9,VDDUSB,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",A5,IP0,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",A6,USBD_P,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",A7,USBD_N,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",A8,NC,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",A9/B4,VDDUSB,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",B5,IP1,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",B6,USBD_P,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",B7,USBD_N,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",B8,NC,USB Type-C
+Type_C1,"USB Type-C receptacle, 16P SMT",MTB,GND,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",A1/B12,GND,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",A12/B1,GND,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",A4/B9,VDDUSB1,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",A5,CC1,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",A6,D_P,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",A7,D_N,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",A8,NC,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",A9/B4,VDDUSB1,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",B5,CC2,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",B6,D_P,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",B7,D_N,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",B8,NC,USB Type-C
+Type_C2,"USB Type-C receptacle, 16P SMT",MTB,GND,USB Type-C
+H7,3-pin 2.5mm 5264-3A,1,DATA,Bus Servo
+H7,3-pin 2.5mm 5264-3A,2,DC_IN,Bus Servo
+H7,3-pin 2.5mm 5264-3A,3,GND,Bus Servo
+H8,3-pin 2.5mm 5264-3A,1,DATA,Bus Servo
+H8,3-pin 2.5mm 5264-3A,2,DC_IN,Bus Servo
+H8,3-pin 2.5mm 5264-3A,3,GND,Bus Servo
+J1,2-pin connector + shell pin 0,0,GND,IO Control
+J1,2-pin connector + shell pin 0,1,IO4_SWITCHED,IO Control
+J1,2-pin connector + shell pin 0,2,DC_IN,IO Control
+J2,2-pin connector + shell pin 0,0,GND,IO Control
+J2,2-pin connector + shell pin 0,1,IO5_SWITCHED,IO Control
+J2,2-pin connector + shell pin 0,2,DC_IN,IO Control
+J3,2-pin connector + shell pin 0,0,GND,IO Control
+J3,2-pin connector + shell pin 0,1,IO4_SWITCHED,IO Control
+J3,2-pin connector + shell pin 0,2,DC_IN,IO Control
+J4,2-pin connector + shell pin 0,0,GND,IO Control
+J4,2-pin connector + shell pin 0,1,IO5_SWITCHED,IO Control
+J4,2-pin connector + shell pin 0,2,DC_IN,IO Control
+P1,40-pin header,1,5V,Host Headers
+P1,40-pin header,2,HEADER_PASS_2,Host Headers
+P1,40-pin header,3,5V,Host Headers
+P1,40-pin header,4,IIC_SDA,Host Headers
+P1,40-pin header,5,GND,Host Headers
+P1,40-pin header,6,IIC_SCL,Host Headers
+P1,40-pin header,7,U0RX,Host Headers
+P1,40-pin header,8,HEADER_PASS_8,Host Headers
+P1,40-pin header,9,U0TX,Host Headers
+P1,40-pin header,10,GND,Host Headers
+P1,40-pin header,11,HEADER_PASS_11,Host Headers
+P1,40-pin header,12,HEADER_PASS_12,Host Headers
+P1,40-pin header,13,HEADER_PASS_13,Host Headers
+P1,40-pin header,14,HEADER_PASS_14,Host Headers
+P1,40-pin header,15,HEADER_PASS_15,Host Headers
+P1,40-pin header,16,HEADER_PASS_16,Host Headers
+P1,40-pin header,17,HEADER_PASS_17,Host Headers
+P1,40-pin header,18,HEADER_PASS_18,Host Headers
+P1,40-pin header,19,GND,Host Headers
+P1,40-pin header,20,HEADER_PASS_20,Host Headers
+P1,40-pin header,21,HEADER_PASS_21,Host Headers
+P1,40-pin header,22,HEADER_PASS_22,Host Headers
+P1,40-pin header,23,HEADER_PASS_23,Host Headers
+P1,40-pin header,24,HEADER_PASS_24,Host Headers
+P1,40-pin header,25,HEADER_PASS_25,Host Headers
+P1,40-pin header,26,GND,Host Headers
+P1,40-pin header,27,HEADER_PASS_27,Host Headers
+P1,40-pin header,28,HEADER_PASS_28,Host Headers
+P1,40-pin header,29,GND,Host Headers
+P1,40-pin header,30,HEADER_PASS_30,Host Headers
+P1,40-pin header,31,HEADER_PASS_31,Host Headers
+P1,40-pin header,32,HEADER_PASS_32,Host Headers
+P1,40-pin header,33,GND,Host Headers
+P1,40-pin header,34,HEADER_PASS_34,Host Headers
+P1,40-pin header,35,HEADER_PASS_35,Host Headers
+P1,40-pin header,36,HEADER_PASS_36,Host Headers
+P1,40-pin header,37,HEADER_PASS_37,Host Headers
+P1,40-pin header,38,HEADER_PASS_38,Host Headers
+P1,40-pin header,39,GND,Host Headers
+P1,40-pin header,40,GND,Host Headers
+P2,40-pin header,1,5V,Host Headers
+P2,40-pin header,2,HEADER_PASS_2,Host Headers
+P2,40-pin header,3,5V,Host Headers
+P2,40-pin header,4,IIC_SDA,Host Headers
+P2,40-pin header,5,GND,Host Headers
+P2,40-pin header,6,IIC_SCL,Host Headers
+P2,40-pin header,7,U0RX,Host Headers
+P2,40-pin header,8,HEADER_PASS_8,Host Headers
+P2,40-pin header,9,U0TX,Host Headers
+P2,40-pin header,10,GND,Host Headers
+P2,40-pin header,11,HEADER_PASS_11,Host Headers
+P2,40-pin header,12,HEADER_PASS_12,Host Headers
+P2,40-pin header,13,HEADER_PASS_13,Host Headers
+P2,40-pin header,14,HEADER_PASS_14,Host Headers
+P2,40-pin header,15,HEADER_PASS_15,Host Headers
+P2,40-pin header,16,HEADER_PASS_16,Host Headers
+P2,40-pin header,17,HEADER_PASS_17,Host Headers
+P2,40-pin header,18,HEADER_PASS_18,Host Headers
+P2,40-pin header,19,GND,Host Headers
+P2,40-pin header,20,HEADER_PASS_20,Host Headers
+P2,40-pin header,21,HEADER_PASS_21,Host Headers
+P2,40-pin header,22,HEADER_PASS_22,Host Headers
+P2,40-pin header,23,HEADER_PASS_23,Host Headers
+P2,40-pin header,24,HEADER_PASS_24,Host Headers
+P2,40-pin header,25,HEADER_PASS_25,Host Headers
+P2,40-pin header,26,GND,Host Headers
+P2,40-pin header,27,HEADER_PASS_27,Host Headers
+P2,40-pin header,28,HEADER_PASS_28,Host Headers
+P2,40-pin header,29,GND,Host Headers
+P2,40-pin header,30,HEADER_PASS_30,Host Headers
+P2,40-pin header,31,HEADER_PASS_31,Host Headers
+P2,40-pin header,32,HEADER_PASS_32,Host Headers
+P2,40-pin header,33,GND,Host Headers
+P2,40-pin header,34,HEADER_PASS_34,Host Headers
+P2,40-pin header,35,HEADER_PASS_35,Host Headers
+P2,40-pin header,36,HEADER_PASS_36,Host Headers
+P2,40-pin header,37,HEADER_PASS_37,Host Headers
+P2,40-pin header,38,HEADER_PASS_38,Host Headers
+P2,40-pin header,39,GND,Host Headers
+P2,40-pin header,40,GND,Host Headers
+H3,PH2.0 6P vertical,0,GND,Motor Drivers
+H3,PH2.0 6P vertical,1,MB2,Motor Drivers
+H3,PH2.0 6P vertical,2,GND,Motor Drivers
+H3,PH2.0 6P vertical,3,B_C2_CONN,Motor Drivers
+H3,PH2.0 6P vertical,4,B_C1_CONN,Motor Drivers
+H3,PH2.0 6P vertical,5,3V3,Motor Drivers
+H3,PH2.0 6P vertical,6,MB1,Motor Drivers
+H4,PH2.0 6P vertical,0,GND,Motor Drivers
+H4,PH2.0 6P vertical,1,MB2_PRIME,Motor Drivers
+H4,PH2.0 6P vertical,2,NC,Motor Drivers
+H4,PH2.0 6P vertical,3,NC,Motor Drivers
+H4,PH2.0 6P vertical,4,NC,Motor Drivers
+H4,PH2.0 6P vertical,5,NC,Motor Drivers
+H4,PH2.0 6P vertical,6,MB1_PRIME,Motor Drivers
+H5,PH2.0 6P vertical,0,GND,Motor Drivers
+H5,PH2.0 6P vertical,1,MA2,Motor Drivers
+H5,PH2.0 6P vertical,2,GND,Motor Drivers
+H5,PH2.0 6P vertical,3,A_C2_CONN,Motor Drivers
+H5,PH2.0 6P vertical,4,A_C1_CONN,Motor Drivers
+H5,PH2.0 6P vertical,5,3V3,Motor Drivers
+H5,PH2.0 6P vertical,6,MA1,Motor Drivers
+H6,PH2.0 6P vertical,0,GND,Motor Drivers
+H6,PH2.0 6P vertical,1,MA2_PRIME,Motor Drivers
+H6,PH2.0 6P vertical,2,NC,Motor Drivers
+H6,PH2.0 6P vertical,3,NC,Motor Drivers
+H6,PH2.0 6P vertical,4,NC,Motor Drivers
+H6,PH2.0 6P vertical,5,NC,Motor Drivers
+H6,PH2.0 6P vertical,6,MA1_PRIME,Motor Drivers
