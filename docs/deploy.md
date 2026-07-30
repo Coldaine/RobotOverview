@@ -30,9 +30,11 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
   on `main` (and PR proof tags). Shipwright is installed on the cluster but is not the
   Hangar image path today.
 - **Route:** HTTPRoute `hangar` → hostname `hangar.moosegoose.xyz` on Gateway
-  `platform-gateway` listener `https-hangar` (TLS via cert-manager DNS-01). Public egress
-  is Cloudflare tunnel / Zero Trust dashboard mapping when enabled; LAN resolves via the
-  Gateway VIP.
+  `platform-gateway` listener `https-hangar` (TLS via cert-manager DNS-01). LAN path:
+  Gateway VIP `192.168.30.201` (verify with
+  `curl --resolve hangar.moosegoose.xyz:443:192.168.30.201 https://hangar.moosegoose.xyz/api/hangar/preflight`).
+  Public Cloudflare tunnel ingress is dashboard-managed; confirm the hostname still points
+  at the platform Gateway if WAN access times out.
 
 ## Shipping a change
 
