@@ -65,18 +65,82 @@ const storage = (() => {
 
 export const consoleStorageMode: 'local' | 'memory' = storage ? 'local' : 'memory';
 
-function isConsoleState(value: unknown): value is ConsoleState {
-  if (!value || typeof value !== 'object') return false;
-  const v = value as ConsoleState;
-  return typeof v.activeProject === 'string' && !!v.projects && typeof v.projects === 'object';
+const isRecord = (v: unknown): v is Record<string, unknown> =>
+  !!v && typeof v === 'object' && !Array.isArray(v);
+
+function isPortRecord(v: unknown): v is PortRecord {
+  if (!isRecord(v)) return false;
+  return (
+    (v.status === 'empty' || v.status === 'planned' || v.status === 'plugged') &&
+    typeof v.connectedTo === 'string' &&
+    typeof v.cable === 'string' &&
+    typeof v.notes === 'string'
+  );
+}
+
+function isMountRecord(v: unknown): v is MountRecord {
+  if (!isRecord(v)) return false;
+  return (
+    (v.status === 'planned' || v.status === 'mounted' || v.status === 'removed') &&
+    typeof v.hardware === 'string' &&
+    typeof v.notes === 'string'
+  );
+}
+
+/**
+ * Repair a project from a save file: missing maps become empty, malformed
+ * records are dropped rather than crashing the editor later. Returns null when
+ * the value cannot be a project at all.
+ */
+function normalizeProject(value: unknown): ConsoleProject | null {
+  if (!isRecord(value) || typeof value.name !== 'string') return null;
+  const { name } = value;
+  const v = value as Partial<ConsoleProject>;
+  const ports: Record<string, PortRecord> = {};
+  if (isRecord(v.ports)) {
+    for (const [id, rec] of Object.entries(v.ports)) {
+      if (isPortRecord(rec)) ports[id] = rec;
+    }
+  }
+  const mounts: Record<string, MountRecord> = {};
+  if (isRecord(v.mounts)) {
+    for (const [id, rec] of Object.entries(v.mounts)) {
+      if (isMountRecord(rec)) mounts[id] = rec;
+    }
+  }
+  const checks: Record<string, boolean> = {};
+  if (isRecord(v.checks)) {
+    for (const [id, c] of Object.entries(v.checks)) {
+      if (typeof c === 'boolean') checks[id] = c;
+    }
+  }
+  return { name, ports, mounts, checks, notes: typeof v.notes === 'string' ? v.notes : '' };
+}
+
+/**
+ * Deep validation for save files: every project is normalized, and the active
+ * project must survive. Anything less is not a console save.
+ */
+function normalizeState(value: unknown): ConsoleState | null {
+  if (!isRecord(value) || typeof value.activeProject !== 'string' || !isRecord(value.projects)) {
+    return null;
+  }
+  const projects: Record<string, ConsoleProject> = {};
+  for (const [pid, proj] of Object.entries(value.projects)) {
+    const normalized = normalizeProject(proj);
+    if (normalized) projects[pid] = normalized;
+  }
+  const activeProject = value.activeProject;
+  if (!projects[activeProject]) return null;
+  return { activeProject, projects };
 }
 
 function load(): ConsoleState {
   try {
     const raw = storage?.getItem(KEY);
     if (raw) {
-      const parsed: unknown = JSON.parse(raw);
-      if (isConsoleState(parsed) && parsed.projects[parsed.activeProject]) return parsed;
+      const normalized = normalizeState(JSON.parse(raw));
+      if (normalized) return normalized;
     }
   } catch {
     /* fresh start */
@@ -167,11 +231,11 @@ export const consoleActions = {
     return pid;
   },
   importState(json: string) {
-    const parsed: unknown = JSON.parse(json);
-    if (!isConsoleState(parsed) || !parsed.projects[parsed.activeProject]) {
+    const normalized = normalizeState(JSON.parse(json));
+    if (!normalized) {
       throw new Error('Not a BEAST Console save file');
     }
-    state = parsed;
+    state = normalized;
     emit();
   },
 };

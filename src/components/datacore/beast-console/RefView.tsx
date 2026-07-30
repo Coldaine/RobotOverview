@@ -68,8 +68,9 @@ function Pinout() {
     <div className="panel flex-[1_1_380px] p-4">
       <div className="hud-label">40-pin host header — both boards, same map</div>
       <p className="mt-1.5 font-mono text-[11px] leading-relaxed text-ink-dim">
-        Driver board and Jetson both follow the Raspberry-Pi header convention, which is why the
-        3-wire link is same-pin on both ends. Net names extracted from the schematic&apos;s vector layer.
+        Driver board and Jetson both follow the Raspberry-Pi header convention, so the 3-wire
+        link lands on the same header positions at both ends (GND, TX, RX) — but TX/RX must cross:
+        one board&apos;s TX feeds the other&apos;s RX. Net names extracted from the schematic&apos;s vector layer.
       </p>
       <div className="mt-3 flex flex-wrap items-start gap-5">
         <div className="panel-inset grid grid-cols-[26px_26px] gap-1 p-3">

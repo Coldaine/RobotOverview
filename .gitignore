@@ -18,4 +18,4 @@ _stash_*/
 UGV-Beast-Archive/
 
 # Playwright/UI review scratch (node_modules inside)
-.tmp/
+/.tmp/

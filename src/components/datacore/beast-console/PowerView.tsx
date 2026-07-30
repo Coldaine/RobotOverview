@@ -21,8 +21,9 @@ const defaultModes = () => Object.fromEntries(LOADS.map((l) => [l.id, l.defaultM
 
 function fmtRuntime(hours: number): string {
   if (!isFinite(hours)) return '∞';
-  const h = Math.floor(hours);
-  const m = Math.round((hours - h) * 60);
+  const totalMinutes = Math.round(hours * 60);
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
   return h > 0 ? `${h} h ${m.toString().padStart(2, '0')} m` : `${m} min`;
 }
 
@@ -60,7 +61,7 @@ function LoadRow({ load, mode, onMode }: {
           ))}
         </div>
         <span className="w-12 text-right font-mono text-[10px] tabular-nums text-ink-dim">
-          {active.watts ? `${active.watts} W` : '—'}
+          {`${active.watts} W`}
         </span>
       </div>
     </div>
