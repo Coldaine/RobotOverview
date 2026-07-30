@@ -18,6 +18,8 @@ Nontrivial visual work must enrich a domain surface, not flatten it. Full rubric
 ## Truth rules
 
 Always read [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) — intent, goals, anti-goals.
+Orient from [`docs/overview.md`](docs/overview.md) — where every piece of this repo lives
+and which doc owns it.
 
 ## Content workflow
 
@@ -47,6 +49,7 @@ require agents to read another process doc first.
    - data/backend shape, seed, migrations, and read-cutover status -> `db/hangar/standup.md`
    - agent/process rules and command routing -> `AGENTS.md`
    - rich UI reasoning rubric -> `docs/rich-ui.md`
+   - repo structure ("where does X live") -> `docs/overview.md`
 3. Keep dependent docs light when another doc genuinely needs context: one-line summary plus
    link. Do not copy the same current-state paragraph everywhere.
 4. Search for stale repeats before finishing when touching status-bearing docs. At minimum check
