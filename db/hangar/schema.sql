@@ -71,6 +71,7 @@ CREATE TABLE wishlist_meta (
   risk_note             TEXT,
   for_asset_id          TEXT REFERENCES assets(id) ON DELETE SET NULL,
   for_mission_id        TEXT,                   -- FK added after missions exists
+  source                TEXT,
   FOREIGN KEY (asset_id, asset_lifecycle)
     REFERENCES assets(id, lifecycle) ON DELETE CASCADE
 );
@@ -163,7 +164,8 @@ CREATE TABLE missions (
   name        TEXT NOT NULL,
   status      mission_status NOT NULL,
   objective   TEXT,
-  environment TEXT
+  environment TEXT,
+  required_loadout TEXT[] NOT NULL DEFAULT '{}'
 );
 CREATE TABLE mission_requisitions (
   mission_id TEXT NOT NULL REFERENCES missions(id) ON DELETE CASCADE,
@@ -197,7 +199,8 @@ CREATE TABLE capabilities (
   id          TEXT PRIMARY KEY,
   name        TEXT NOT NULL,
   description TEXT,
-  unlocked    BOOLEAN NOT NULL DEFAULT false
+  unlocked    BOOLEAN NOT NULL DEFAULT false,
+  bay         TEXT
 );
 CREATE TABLE capability_deps (
   capability_id TEXT NOT NULL REFERENCES capabilities(id) ON DELETE CASCADE,
@@ -217,7 +220,8 @@ CREATE TABLE insights (
   body        TEXT,
   confidence  confidence_level,
   source      TEXT,
-  captured_at TIMESTAMPTZ
+  captured_at TIMESTAMPTZ,
+  bay         TEXT
 );
 CREATE TABLE insight_assets (                    -- explicit junctions (revision #8)
   insight_id TEXT NOT NULL REFERENCES insights(id) ON DELETE CASCADE,

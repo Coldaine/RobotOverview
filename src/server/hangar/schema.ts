@@ -131,6 +131,7 @@ export const wishlistMeta = pgTable(
     riskNote: text('risk_note'),
     forAssetId: text('for_asset_id').references(() => assets.id, { onDelete: 'set null' }),
     forMissionId: text('for_mission_id').references(() => missions.id, { onDelete: 'set null' }),
+    source: text('source'),
   },
   (t) => [
     foreignKey({
@@ -282,6 +283,7 @@ export const missions = pgTable('missions', {
   status: missionStatus('status').notNull(),
   objective: text('objective'),
   environment: text('environment'),
+  requiredLoadout: text('required_loadout').array().notNull().default([]),
 });
 
 export const missionRequisitions = pgTable(
@@ -336,6 +338,7 @@ export const capabilities = pgTable('capabilities', {
   name: text('name').notNull(),
   description: text('description'),
   unlocked: boolean('unlocked').notNull().default(false),
+  bay: text('bay'),
 });
 
 export const capabilityDeps = pgTable(
@@ -372,6 +375,7 @@ export const insights = pgTable('insights', {
   confidence: confidenceLevel('confidence'),
   source: text('source'),
   capturedAt: timestamp('captured_at', { withTimezone: true }),
+  bay: text('bay'),
 });
 
 export const insightAssets = pgTable(

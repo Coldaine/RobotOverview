@@ -38,6 +38,11 @@ const N = (v: unknown) => {
   return String(number);
 };
 const B = (v: unknown) => (v ? 'true' : 'false');
+// text[] literal: ARRAY[...]::text[] with each element SQL-escaped
+const TA = (xs: unknown) =>
+  !Array.isArray(xs) || xs.length === 0
+    ? `ARRAY[]::text[]`
+    : `ARRAY[${xs.map((x) => S(x)).join(',')}]::text[]`;
 const J = (v: unknown) =>
   v === null || v === undefined ? 'NULL' : `'${JSON.stringify(sanitizeJson(v)).replace(/'/g, "''")}'::jsonb`;
 
@@ -232,7 +237,7 @@ for (const assignment of pendingAssignments) {
 // ── MISSIONS ────────────────────────────────────────────────────────────────
 w('\n-- missions + requisitions + objectives + constraints');
 for (const m of H.missions) {
-  w(`INSERT INTO missions(id,code,name,status,objective,environment) VALUES (${S(m.id)},${S(m.code)},${S(m.name)},${S(m.status)},${S(m.objective)},${S(m.environment)});`);
+  w(`INSERT INTO missions(id,code,name,status,objective,environment,required_loadout) VALUES (${S(m.id)},${S(m.code)},${S(m.name)},${S(m.status)},${S(m.objective)},${S(m.environment)},${TA(m.requiredLoadout)});`);
   for (const aid of m.requisitionedUnits ?? [])
     if (A(aid)) w(`INSERT INTO mission_requisitions(mission_id,asset_id) VALUES (${S(m.id)},${S(aid)}) ON CONFLICT DO NOTHING;`);
   for (const o of m.objectives ?? [])
@@ -247,7 +252,7 @@ for (const m of H.missions) {
 // ── CAPABILITIES ────────────────────────────────────────────────────────────
 w('\n-- capabilities + deps + asset_capabilities');
 for (const c of H.capabilities)
-  w(`INSERT INTO capabilities(id,name,description,unlocked) VALUES (${S(c.id)},${S(c.name)},${S(c.description)},${B(c.unlocked)});`);
+  w(`INSERT INTO capabilities(id,name,description,unlocked,bay) VALUES (${S(c.id)},${S(c.name)},${S(c.description)},${B(c.unlocked)},${S(c.bay)});`);
 const seenAssetCaps = new Set<string>();
 for (const c of H.capabilities) {
   for (const dep of c.dependsOn ?? [])
@@ -275,7 +280,7 @@ for (const wi of H.wishlist) {
   const cap = wi.unlocks && capIds.has(wi.unlocks) ? S(wi.unlocks) : 'NULL';
   const fu = wi.forUnit && A(wi.forUnit) ? S(wi.forUnit) : 'NULL';
   const fm = wi.forMission && missionIds.has(wi.forMission) ? S(wi.forMission) : 'NULL';
-  w(`INSERT INTO wishlist_meta(asset_id,asset_lifecycle,rationale,unlocks_capability_id,risk_note,for_asset_id,for_mission_id) VALUES (${S(wi.id)},'wishlist',${S(wi.rationale)},${cap},${S(wi.riskNote)},${fu},${fm});`);
+  w(`INSERT INTO wishlist_meta(asset_id,asset_lifecycle,rationale,unlocks_capability_id,risk_note,for_asset_id,for_mission_id,source) VALUES (${S(wi.id)},'wishlist',${S(wi.rationale)},${cap},${S(wi.riskNote)},${fu},${fm},${S(wi.source)});`);
 }
 
 // ── INSIGHTS ────────────────────────────────────────────────────────────────
@@ -283,7 +288,7 @@ w('\n-- insights + junctions');
 const seenInsightAssets = new Set<string>();
 const seenInsightMissions = new Set<string>();
 for (const ins of H.insights) {
-  w(`INSERT INTO insights(id,title,body,confidence,source,captured_at) VALUES (${S(ins.id)},${S(ins.title)},${S(ins.body)},${S(ins.confidence)},${S(ins.source)},${ins.capturedAt ? S(ins.capturedAt) : 'NULL'});`);
+  w(`INSERT INTO insights(id,title,body,confidence,source,captured_at,bay) VALUES (${S(ins.id)},${S(ins.title)},${S(ins.body)},${S(ins.confidence)},${S(ins.source)},${ins.capturedAt ? S(ins.capturedAt) : 'NULL'},${S(ins.bay)});`);
   for (const aid of ins.units ?? []) {
     const key = `${ins.id}:${aid}`;
     if (A(aid) && !seenInsightAssets.has(key)) {

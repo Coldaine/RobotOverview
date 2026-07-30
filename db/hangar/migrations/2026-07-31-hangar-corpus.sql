@@ -54,6 +54,12 @@ ALTER TABLE briefing_packs
   ADD CONSTRAINT briefing_packs_hub_fk
     FOREIGN KEY (hub_briefing_id) REFERENCES briefings(id) ON DELETE SET NULL;
 
+-- Corpus gaps the June schema never modeled (present in the HangarData fixture):
+ALTER TABLE missions ADD COLUMN required_loadout TEXT[] NOT NULL DEFAULT '{}';
+ALTER TABLE insights ADD COLUMN bay TEXT;
+ALTER TABLE capabilities ADD COLUMN bay TEXT;
+ALTER TABLE wishlist_meta ADD COLUMN source TEXT;
+
 ALTER TABLE asset_shortcuts OWNER TO hangar;
 GRANT ALL ON TABLE asset_shortcuts TO hangar;
 
