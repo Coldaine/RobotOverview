@@ -12,10 +12,10 @@ FILES FROM HERE …"). Its filenames have proven unreliable — two PDFs named f
 byte-identical — so contents were verified independently of names. This register records what each file
 actually is.
 
-It lives in `docs/history/` because that is where this repo keeps intake-style evidence records
-(`docs/history/inventory-intake.md`, `docs/history/reference/beast-source-evidence-manifest.md`). It
-follows the newer register convention used by `docs/plans/*.md`: plain markdown, `**Status:**` line,
-dated facts.
+It lives in `keyArtifactstosort/` alongside the artifacts it describes (moved from
+`docs/history/` on 2026-07-30 when the history graveyard was deleted). It follows the register
+convention used by `docs/plans/*.md`: plain markdown, `**Status:**` line, dated facts.
+The companion hash register is `reference/EVIDENCE-MANIFEST.md`.
 
 **Scope limit.** This document describes artifacts. It does not assess what engineering questions any
 artifact might answer; that analysis belongs to
@@ -123,7 +123,7 @@ pairs, and the two enclosed drawings carry different dimension values and differ
 | `UGV_Rover_PT_Jetson_Orin_ROS2_Kit_STEP.zip` | LFS oid `eaa50ebd…`, `assets/hardware/orin/` |
 
 The six CAD zip hashes additionally match the upstream hashes recorded in
-`docs/history/reference/beast-source-evidence-manifest.md` (rows `beast-pi4b-3d`, `beast-pi4b-step`,
+`reference/EVIDENCE-MANIFEST.md` (rows `beast-pi4b-3d`, `beast-pi4b-step`,
 `beast-pt-3d`, `beast-pt-step`) or, for the two Rover Orin zips, appear on the CAD branch without a
 manifest row.
 
@@ -194,7 +194,7 @@ physical volume — it guards against accidental deletion, not against drive fai
   whether Waveshare publishes one schematic under two product links, or the same link was followed
   twice, cannot be distinguished from the files alone.
 - **Upstream URLs for the two Rover Orin zips and for the factory archive.** None appear in
-  `docs/history/reference/beast-source-evidence-manifest.md`, and the archives carry no source metadata.
+  `reference/EVIDENCE-MANIFEST.md`, and the archives carry no source metadata.
 - **Whether a distinct Pi-specific or Orin-specific driver-board schematic exists upstream at all.**
   Not resolved: `waveshare.com/wiki` returns HTTP 403 to automated fetches, so the kit pages' download
   lists could not be enumerated.

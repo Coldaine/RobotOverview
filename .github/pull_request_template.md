@@ -45,10 +45,10 @@
 
 ## Superseded Docs / Cleanup
 
-<!-- Required for documentation changes; for non-doc changes write "None required" with a reason. Consult docs/history only when the current owner docs or change scope point there. -->
+<!-- Required for documentation changes; for non-doc changes write "None required" with a reason. -->
 
 - Current or superseded docs reviewed:
-  <!-- owner docs, related README/AGENTS guidance, old plans, or docs/history only when relevant -->
+  <!-- owner docs, related README/AGENTS guidance, or old plans when relevant -->
 - Cleanup performed:
   <!-- updated, summarized, moved, marked historical, or "None" -->
 - Wording/change rationale:

@@ -78,7 +78,7 @@ export const DATACORE_BRIEFINGS: DatacoreBriefing[] = [
     id: 'artifact-intake',
     title: 'BEAST-01 Source Artifacts — Intake Register',
     href: '/datacore/briefing/artifact-intake',
-    source: 'docs/history/keyartifacts-intake-2026-07-27.md',
+    source: 'keyArtifactstosort/INTAKE-REGISTER.md',
     kind: 'research',
     summary:
       'Every source artifact verified by hash and opened: what each file actually is, what each image actually depicts, eleven anomalies where the filename lies about the contents, and five things the files cannot establish.',

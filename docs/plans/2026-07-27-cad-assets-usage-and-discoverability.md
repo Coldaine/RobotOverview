@@ -29,9 +29,9 @@ that a dimension is unknown when the repo has held the answer all along. `refere
 | `UGV_Beast_PT_Jetson_Orin-3D.zip` | Beast Orin CAD, LFS oid `56615c77…` | `data/hardware-cad-assets` (LFS) — **not in the 2026-07-27 intake** |
 
 Per-file SHA-256 values, verified archive contents, and duplicate status are in
-[keyartifacts-intake-2026-07-27.md](../history/keyartifacts-intake-2026-07-27.md). Upstream hashes
+[INTAKE-REGISTER.md](../../keyArtifactstosort/INTAKE-REGISTER.md). Upstream hashes
 are independently recorded in
-[beast-source-evidence-manifest.md](../history/reference/beast-source-evidence-manifest.md) — two
+[EVIDENCE-MANIFEST.md](../../keyArtifactstosort/reference/EVIDENCE-MANIFEST.md) — two
 independent records of the same hashes, which is what makes the in-tree copies redundant rather than
 load-bearing.
 
@@ -104,8 +104,8 @@ are currently unmeasured.
 
 ### U6 — Feed the Hangar's connected-twin surfaces
 
-`docs/history/components/connected-twin.md` describes twin surfaces already built against modelled
-geometry. Real dimensions from the vendor CAD would replace estimates with measurements.
+The Board's connected-twin surfaces were built against modelled geometry. Real dimensions
+from the vendor CAD would replace estimates with measurements.
 
 ## Proposed exploration
 

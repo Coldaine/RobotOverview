@@ -35,4 +35,3 @@ Update the owner doc, not wherever is convenient:
 - agent/process rules -> this file
 
 Keep dependent docs light: one-line summary plus link, never the same paragraph twice.
-`docs/history/` is a graveyard — evidence only, never guidance.

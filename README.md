@@ -25,7 +25,7 @@ Two flows run through the repo:
 `src/app` routes · `src/components` UI (Shell, Board twin, Datacore console) ·
 `src/data` content spine · `src/lib` state & helpers · `db/hangar` Postgres ·
 `content` longform · `docs` owner docs (`deploy`, `beast-ops`, `rich-ui`, `hardware-library`,
-`plans/`) · `db/hangar/standup.md` data status · `docs/history/` graveyard (evidence only).
+`plans/`) · `db/hangar/standup.md` data status.
 
 Not here: cluster/runtime manifests (`coldaine-k8cluster` repo) and bulk vendor archives
 (object storage; indexed in `keyArtifactstosort/reference/INDEX.md`).

@@ -56,5 +56,5 @@ library store (the homelab's cluster S3 / Garage), resolved via the plain runtim
 ## Provenance
 
 Per-file source URLs and SHA256 hashes are recorded in
-`docs/history/reference/beast-source-evidence-manifest.md`. That file is historical evidence
-(the `docs/history/` graveyard) — use it to check provenance, not as live guidance.
+`keyArtifactstosort/reference/EVIDENCE-MANIFEST.md` — the hash register that lives with the
+artifacts themselves. Use it to check provenance.

@@ -17,22 +17,22 @@ Read in this order. The first two are coupled; the third is independent and time
 | [Extract everything we hold](2026-07-27-schematic-netlist-extraction-plan.md) | Full corpus inventory — schematics, firmware, photographs — what each can still tell us, and how to finish the wiring model. | Q1/Q2 are safety-relevant: wrong 40-pin numbering puts 5 V into a Jetson UART pin |
 | [CAD assets](2026-07-27-cad-assets-usage-and-discoverability.md) | Where the CAD lives, three filename traps, and what it is for. | **X1 gates drilling.** Run before making holes |
 
-## Active — source enumeration
-
-| Plan | What it covers |
-| --- | --- |
-| [Enumerate the ROS Driver schematic PDF](2026-07-27-ros-driver-pdf-enumeration.md) | One bounded extraction: turn the supplied board schematic into a single canonical YAML file, then stop. |
-
-## Reference
+## Pending — on the Jetson, not this repo
 
 | Plan | Status |
 | --- | --- |
-| [Robot control LLMs briefing](2026-07-22-robot-control-llms-briefing.md) | Background research; cited from `hangar.ts` unit records |
-| [BEAST NVMe storage — design](2026-07-11-beast-nvme-storage-design.md) | Shipped |
-| [BEAST NVMe storage — implementation](2026-07-11-beast-nvme-storage-implementation.md) | Shipped |
+| [BEAST NVMe storage — design](2026-07-11-beast-nvme-storage-design.md) | Decision recorded; **NOT APPLIED** to the Jetson (per `docs/beast-ops.md`) |
+| [BEAST NVMe storage — implementation](2026-07-11-beast-nvme-storage-implementation.md) | **NOT APPLIED** — do not provision until beast-ops says otherwise |
+
+## Executed / reference
+
+| Plan | Status |
+| --- | --- |
+| [Enumerate the ROS Driver schematic PDF](2026-07-27-ros-driver-pdf-enumeration.md) | **Executed** — outputs in `keyArtifactstosort/Artifacts/ros-driver/` (current + superseded) |
+| [Robot control LLMs briefing](2026-07-22-robot-control-llms-briefing.md) | Background research, not a work order; cited from `hangar.ts` unit records |
 
 ## Related, outside this directory
 
-- `docs/history/keyartifacts-intake-2026-07-27.md` — identity index for `keyArtifactstosort/`
+- `keyArtifactstosort/INTAKE-REGISTER.md` — identity index for `keyArtifactstosort/`
   (what each file *is*; the extraction plan covers what each file *contains*)
 - `keyArtifactstosort/agents.md` — **nothing in that directory may be deleted**
