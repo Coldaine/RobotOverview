@@ -6,7 +6,8 @@ want list, and a live portal to the robots it tracks — styled as a base-builde
 **The UI is the product** — work that doesn't reach the screen isn't finished.
 
 Start here: [`docs/overview.md`](docs/overview.md) — what this repo is and where everything lives.
-Intent and goals: [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md).
+Intent: [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) — a statement of intent, nearly frozen.
+Read it; do not edit it casually. Tactical state belongs in the owner docs below.
 Working on UI? Follow [`docs/rich-ui.md`](docs/rich-ui.md) — enrich surfaces, never flatten.
 
 ## Content workflow
@@ -25,7 +26,7 @@ visible, never silent.
 
 Update the owner doc, not wherever is convenient:
 
-- intent/goals/anti-goals -> `docs/NORTH_STAR.md`
+- intent/goals/anti-goals -> `docs/NORTH_STAR.md` (rare, deliberate changes only)
 - repo structure ("where does X live") -> `docs/overview.md`
 - verified deploy/runtime facts and gaps -> `docs/deploy.md`
 - BEAST operating facts -> `docs/beast-ops.md`

@@ -14,8 +14,10 @@ When something moves, update the map — the map is one file so it stays true.
 
 The Hangar: a Next.js 16 / React 19 / Tailwind 4 command-center app for Patrick's
 physical tech (inventory, wiki, want list, robot portal), plus the Postgres read path
-behind it and the vendor/research artifacts that feed it. Intent and goals live in
-[`docs/NORTH_STAR.md`](./NORTH_STAR.md) — read that before the code.
+behind it and the vendor/research artifacts that feed it. Intent lives in
+[`docs/NORTH_STAR.md`](./NORTH_STAR.md) — a statement of intent, nearly frozen; read it
+before the code. Everything tactical (plans, status, operating facts) lives in the docs
+below, not there.
 
 ## The app — `src/`
 
