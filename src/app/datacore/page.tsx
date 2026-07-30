@@ -7,7 +7,14 @@ import { HardwareLibrary } from '@/components/datacore/HardwareLibrary';
 import { BeastConsole } from '@/components/datacore/beast-console/BeastConsole';
 import { EXPECTED_CABLES } from '@/components/datacore/beast-console/bench-data';
 import { isHangarBayId } from '@/data/hangar';
-import { DATACORE_BRIEFINGS } from '@/data/datacore-briefings';
+import {
+  DATACORE_BRIEFINGS,
+  DATACORE_PACKS,
+  briefingById,
+  briefingMatchesQuery,
+  briefingsInPack,
+  packMatchesQuery,
+} from '@/data/datacore-briefings';
 import { INSIGHT_CONFIDENCE_LEVELS, isInsightConfidence, type InsightConfidence } from '@/data/types';
 import { insightConfidenceMeta } from '@/lib/format';
 import { useHangar, LOCAL_INSIGHT_PREFIX } from '@/lib/store';
@@ -34,6 +41,11 @@ export default function Datacore() {
     setConf(value === 'all' || isInsightConfidence(value) ? value : 'all');
   };
 
+  const setSearch = (term: string) => {
+    setQ(term);
+    setTab('knowledge');
+  };
+
   const submitDraft = () => {
     addLocalInsight({
       title: draftTitle,
@@ -48,25 +60,30 @@ export default function Datacore() {
     setShowCapture(false);
   };
 
+  const needle = q.trim().toLowerCase();
+
   const filtered = useMemo(() => {
-    const needle = q.trim().toLowerCase();
     return insights.filter((ins) => {
       if (bay !== 'all' && ins.bay !== bay) return false;
       if (conf !== 'all' && ins.confidence !== conf) return false;
       if (!needle) return true;
-      const hay = `${ins.title} ${ins.body} ${ins.tags.join(' ')}`.toLowerCase();
+      const hay = `${ins.id} ${ins.title} ${ins.body} ${ins.tags.join(' ')} ${ins.source ?? ''}`.toLowerCase();
       return hay.includes(needle);
     });
-  }, [insights, q, bay, conf]);
+  }, [insights, needle, bay, conf]);
 
-  const briefingHits = useMemo(() => {
-    const needle = q.trim().toLowerCase();
-    if (!needle) return DATACORE_BRIEFINGS;
+  const packHits = useMemo(
+    () => DATACORE_PACKS.filter((p) => packMatchesQuery(p, needle)),
+    [needle],
+  );
+
+  const looseBriefingHits = useMemo(() => {
+    const packedInHit = new Set(packHits.flatMap((p) => briefingsInPack(p.id).map((b) => b.id)));
     return DATACORE_BRIEFINGS.filter((b) => {
-      const hay = `${b.title} ${b.summary} ${b.tags.join(' ')}`.toLowerCase();
-      return hay.includes(needle);
+      if (packedInHit.has(b.id)) return false;
+      return briefingMatchesQuery(b, needle);
     });
-  }, [q]);
+  }, [needle, packHits]);
 
   return (
     <div className="space-y-6">
@@ -167,7 +184,11 @@ export default function Datacore() {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder={tab === 'knowledge' ? 'Search briefs, insight title, body, tags...' : 'Search CAD, schematics, datasheets, firmware...'}
+              placeholder={
+                tab === 'knowledge'
+                  ? 'Search: splat, arducam, livox, gaussian, rejected, tags…'
+                  : 'Search CAD, schematics, datasheets, firmware...'
+              }
               className="w-full rounded-md border border-rim bg-panel-2/40 py-2 pl-9 pr-3 font-mono text-xs text-ink outline-none ring-cyan/40 transition focus:ring"
             />
           </label>
@@ -207,42 +228,131 @@ export default function Datacore() {
 
       {tab === 'knowledge' && (
         <>
-          {briefingHits.length > 0 && (
+          {packHits.length > 0 && (
             <>
-              <SectionTitle code="BRIEF">{briefingHits.length} research brief{briefingHits.length === 1 ? '' : 's'}</SectionTitle>
-          <div className="grid gap-3 md:grid-cols-2">
-            {briefingHits.map((brief) => (
-              <Link
-                key={brief.id}
-                href={brief.href}
-                className="panel group block p-4 transition-all hover:border-cyan/40 hover:shadow-hud-cyan"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded border border-cyan/30 bg-cyan/5 text-cyan">
-                    <FileText className="h-4 w-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan/70">
-                      {brief.capturedAt}
+              <SectionTitle code="PACK">
+                {packHits.length} research pack{packHits.length === 1 ? '' : 's'}
+              </SectionTitle>
+              <div className="space-y-3">
+                {packHits.map((pack) => {
+                  const hub = briefingById(pack.hubBriefingId);
+                  const members = briefingsInPack(pack.id);
+                  const narrowed = needle
+                    ? members.filter((b) => briefingMatchesQuery(b, needle))
+                    : members;
+                  const shown = narrowed.length > 0 ? narrowed : members;
+                  return (
+                    <section
+                      key={pack.id}
+                      className="panel space-y-3 p-4"
+                      style={{ borderColor: 'color-mix(in oklab, var(--color-amber) 35%, var(--color-rim))' }}
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="font-mono text-[10px] uppercase tracking-[0.25em] text-amber">
+                            {pack.code} · non-definitive research
+                          </div>
+                          <h2 className="mt-1 font-display text-base uppercase tracking-[0.08em] text-ink">
+                            {pack.title}
+                          </h2>
+                          <p className="mt-1.5 max-w-3xl font-mono text-[11px] leading-relaxed text-ink-dim">
+                            {pack.summary}
+                          </p>
+                        </div>
+                        {hub && (
+                          <Link href={hub.href} className="btn btn-ghost shrink-0 text-[10px]">
+                            <FileText className="h-3 w-3" />
+                            Open index
+                          </Link>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {pack.topics.map((topic) => (
+                          <button
+                            key={topic}
+                            type="button"
+                            onClick={() => setSearch(topic)}
+                            className="chip border-amber/35 bg-amber/5 text-amber hover:border-amber/60"
+                          >
+                            {topic}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="grid gap-2 md:grid-cols-2">
+                        {shown.map((brief) => (
+                          <Link
+                            key={brief.id}
+                            href={brief.href}
+                            className="panel-inset group block p-3 transition-all hover:border-cyan/40"
+                          >
+                            <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan/70">
+                              {brief.id === pack.hubBriefingId ? 'index' : brief.kind} · {brief.capturedAt}
+                            </div>
+                            <h3 className="mt-1 font-display text-xs uppercase tracking-[0.08em] text-ink group-hover:text-cyan">
+                              {brief.title}
+                            </h3>
+                            <p className="mt-1 font-mono text-[10px] leading-relaxed text-ink-dim line-clamp-2">
+                              {brief.summary}
+                            </p>
+                          </Link>
+                        ))}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {looseBriefingHits.length > 0 && (
+            <>
+              <SectionTitle code="BRIEF">
+                {packHits.length > 0
+                  ? `${looseBriefingHits.length} other brief${looseBriefingHits.length === 1 ? '' : 's'}`
+                  : `${looseBriefingHits.length} research brief${looseBriefingHits.length === 1 ? '' : 's'}`}
+              </SectionTitle>
+              <div className="grid gap-3 md:grid-cols-2">
+                {looseBriefingHits.map((brief) => (
+                  <Link
+                    key={brief.id}
+                    href={brief.href}
+                    className="panel group block p-4 transition-all hover:border-cyan/40 hover:shadow-hud-cyan"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="grid h-9 w-9 shrink-0 place-items-center rounded border border-cyan/30 bg-cyan/5 text-cyan">
+                        <FileText className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-cyan/70">
+                          {brief.kind} · {brief.capturedAt}
+                        </div>
+                        <h2 className="mt-1 font-display text-sm uppercase tracking-[0.08em] text-ink group-hover:text-cyan">
+                          {brief.title}
+                        </h2>
+                        <p className="mt-2 font-mono text-[11px] leading-relaxed text-ink-dim">{brief.summary}</p>
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {brief.tags.map((t) => (
+                            <button
+                              key={t}
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setSearch(t);
+                              }}
+                              className="chip border-cyan/30 bg-cyan/5 text-cyan hover:border-cyan/60"
+                            >
+                              #{t}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                    <h2 className="mt-1 font-display text-sm uppercase tracking-[0.08em] text-ink group-hover:text-cyan">
-                      {brief.title}
-                    </h2>
-                    <p className="mt-2 font-mono text-[11px] leading-relaxed text-ink-dim">{brief.summary}</p>
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {brief.tags.map((t) => (
-                        <span key={t} className="chip border-cyan/30 bg-cyan/5 text-cyan">
-                          #{t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </>
-      )}
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
 
       <SectionTitle code="CORE">{filtered.length} insight{filtered.length === 1 ? '' : 's'}</SectionTitle>
       <div className="space-y-3">
@@ -280,7 +390,8 @@ export default function Datacore() {
               {ins.tags.map((t) => (
                 <button
                   key={t}
-                  onClick={() => setQ((prev) => (prev ? `${prev} ${t}` : t))}
+                  type="button"
+                  onClick={() => setSearch(t)}
                   className="chip border-cyan/30 bg-cyan/5 text-cyan hover:border-cyan/60"
                 >
                   #{t}

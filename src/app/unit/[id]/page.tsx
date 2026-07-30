@@ -370,13 +370,26 @@ export default function UnitDetail() {
           {insights.length > 0 && (
             <section>
               <SectionTitle code="CORE"><span className="inline-flex items-center gap-2"><Lightbulb className="h-3.5 w-3.5 text-amber" /> Field Insights</span></SectionTitle>
+              {u.id === 'beast' && (
+                <Link
+                  href="/datacore/briefing/beast-vision"
+                  className="mb-2 flex items-center justify-between gap-2 rounded-md border border-amber/35 bg-amber/5 px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-amber transition hover:border-amber/60"
+                >
+                  <span>RND-BEAST-VISION · research pack</span>
+                  <span className="text-amber/80">open index →</span>
+                </Link>
+              )}
               <div className="space-y-2">
-                {insights.map((ins) => (
-                  <Link key={ins!.id} href="/datacore" className="panel block p-3 transition-all hover:border-cyan/40">
-                    <div className="font-display text-xs uppercase tracking-[0.08em] text-ink">{ins!.title}</div>
-                    <p className="mt-1 font-mono text-[11px] leading-relaxed text-ink-dim">{ins!.body}</p>
-                  </Link>
-                ))}
+                {insights.map((ins) => {
+                  const href =
+                    ins!.source?.startsWith('/datacore/') ? ins!.source : '/datacore';
+                  return (
+                    <Link key={ins!.id} href={href} className="panel block p-3 transition-all hover:border-cyan/40">
+                      <div className="font-display text-xs uppercase tracking-[0.08em] text-ink">{ins!.title}</div>
+                      <p className="mt-1 font-mono text-[11px] leading-relaxed text-ink-dim">{ins!.body}</p>
+                    </Link>
+                  );
+                })}
               </div>
             </section>
           )}

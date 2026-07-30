@@ -3,7 +3,7 @@ title: Hangar North Star
 date: 2026-05-31
 author: Patrick MacLyman
 status: living
-last_confirmed: 2026-07-22
+last_confirmed: 2026-07-27
 ---
 
 # Hangar North Star
@@ -17,13 +17,23 @@ last_confirmed: 2026-07-22
 
 ## Goals
 
-Directional, not testable.
+Directional, not testable. Each one should change a decision; if it only describes a feature,
+it does not belong here.
 
-- **G1.** Keep one current picture of the fleet across inventory, wiki, and want list, so nothing important lives only in a chat log.
-- **G2.** Make adding and maintaining entries cheap enough that an LLM does most of it and I curate.
-- **G3.** Make the experience fun enough to sustain, modeled on a base-builder hangar.
-- **G4.** Show what to acquire next and why (an upgrade path), and what I already own and where it sits.
-- **G5.** Capture lessons learned so knowledge is retrievable by unit and mission, not lost to chat history.
+- **G1. A fact is written once.** One current picture of the fleet, and nothing important living
+  only in a chat log. When a fact would have to be written in two places to stay true, that is the
+  signal to change the structure — not to write it twice.
+- **G2. The LLM populates; I own.** Accept rougher machine-drafted entries in exchange for
+  activation energy low enough that the thing actually gets populated. Hand-authoring everything
+  yields cleaner entries and reintroduces the friction that kills personal knowledge bases.
+- **G3. Make it worth maintaining.** Modeled on a base-builder hangar, because an inventory nobody
+  enjoys maintaining goes stale and a stale inventory is worthless. Presentation is load-bearing,
+  not decoration.
+- **G4. Work that does not reach the screen is not finished.** Data models, tooling, and docs exist
+  to serve what is visible. A change that improves only the repo is unfinished work, not done work.
+- **G5. Let structure follow content.** The schema emerges as entries go in; designing it up front
+  feels rigorous and has repeatedly drifted. Bounded by G1 — deferral ends the moment ambiguity
+  would force a fact into two places.
 - **G6.** Design primarily for desktop, widescreen, and ultrawide use. Phone layouts must not break or become unusable, but mobile support must not compromise the desktop command-center experience.
 - **G7.** Host a live command portal to running units — telemetry, video, teleop, and autonomous / learned policies. Autonomy is in scope. Safety reflexes (watchdog, e-stop, motor PID) stay on the robot; operating detail lives in each unit's runbook (see `docs/beast-ops.md`), not here.
 
@@ -31,23 +41,6 @@ Directional, not testable.
 
 - **AG1.** Not a flat inventory list. It refuses to be a catalog of disconnected possessions; the reason it exists is the connected model where units, missions, and lessons relate to one another.
 - **AG2.** Undercroft, and any mission, is content inside the system, never the system's identity.
-
-## Pillars
-
-**The substance is content; the spine is data, not UI.** I accept a less flashy build in exchange for something cheap to maintain and extend, because at the end of the day this is information, notes, and a want list. The reasonable opposite, leading with the visualization, looks impressive but makes the thing expensive to build and brittle as it grows.
-
-**The presentation is load-bearing, not decoration.** I accept spending real effort on the hangar feel, because an inventory no one enjoys maintaining goes stale, and a stale inventory is worthless. The reasonable opposite, a plain asset tracker, is cheaper to build and dies from neglect.
-
-**Do not prescribe before populating.** I accept structural ambiguity now in exchange for a shape that fits real content, because the schema should emerge as entries go in. The reasonable opposite, designing the full structure up front, feels rigorous but has repeatedly drifted across my projects and wastes effort on guesses.
-
-**The LLM populates; I own.** I accept rougher, machine-drafted entries in exchange for low enough activation energy that the thing actually gets populated. The reasonable opposite, hand-authoring everything, yields cleaner entries but reintroduces the friction that kills personal knowledge bases.
-
-## Resolved Questions
-
-- **In what form is the content stored?** In a strict data spine for topology (Units socketed into Loadout Slots, Mission Requisitions) with room for flexible, localized metadata (power budgets, pricing, specs). `src/data/hangar.ts` bootstraps that model and remains the authoring surface; Postgres follows it lane-by-lane (inventory items currently read through `src/server/hangar/`, deployment truth in `docs/deploy.md`).
-- **What is the model for what I own and its state?** Standalone products and parts are tracked as `InventoryItem`s; assembled or deployable systems are tracked as `Unit`s. Assembly is modeled via grouped `Loadout Slots` (e.g. Chassis Mounts, Driver Board Interfaces), allowing any unit to act as a parent chassis that other units plug into, replicating a base-builder upgrade tree.
-- **Where does it live (hosting)?** `hangar.moosegoose.xyz` on the personal Kubernetes cluster (`coldaine-k8cluster` owns runtime manifests; see `docs/deploy.md`). Content authored in this repo ships inside the image on every deploy.
-- **Is autonomy in scope?** Yes (decided 2026-07-22). The prior AG2 ban on unattended / autonomous operation is repealed. Hangar may run closed-loop policies on units it catalogs. Onboard fail-safes remain engineering requirements, not a product ban on self-driving.
 
 ## Open Questions
 

@@ -198,16 +198,16 @@ export const hangarData: HangarData = {
       flagship: true,
       provenance: 'owner',
       summary:
-        'Waveshare UGV Beast ACCE ROS2 kit with the stock pan-tilt 5MP camera, OAK-D Lite depth camera, and D500 LiDAR. First unit of the fleet. Mid Orin cutover (2026-07-22): Raspberry Pi 5 removed; host mount empty while the owned Jetson Orin Nano Super is being fitted. Slow tracked base that stops on a dime — remote and on-device control are both viable once the host is back.',
+        'Waveshare UGV Beast PT PI5 ROS2 Kit Acce (owner-confirmed 2026-07-27) with the stock pan-tilt 5MP camera, OAK-D Lite depth camera, and D500 LiDAR — all three ship with the ROS2 Kit; "Acce" means the host board was supplied separately. First unit of the fleet. Orin cutover (2026-07-28): Jetson Orin Nano Super physically fitted, powered via the factory barrel-jack pigtail on the UPS board (not the back-fed driver-board USB-C), and network-verified over LAN/Wi-Fi/Tailscale by live SSH. ESP32 UART jumper link and one side of the host mounting struts remain outstanding before teleop is live. Slow tracked base that stops on a dime — remote and on-device control are both viable once wiring is complete.',
       specs: [
         { label: 'Chassis', value: 'Tracked, all-terrain · slow, hard-stopping' },
-        { label: 'Onboard host', value: 'EMPTY — Orin Nano cutover in progress' },
+        { label: 'Onboard host', value: 'Jetson Orin Nano Super — fitted, network-verified 2026-07-28' },
         { label: 'Motor control', value: 'ESP32 (PID)' },
         { label: 'Pan-tilt camera', value: '5MP · 160° · USB' },
         { label: 'Depth camera', value: 'OAK-D Lite · USB' },
         { label: 'LiDAR', value: 'D500 / STL-19P · 360° · 230400 baud' },
         { label: 'Pack', value: '3S Li-ion (~11.1V)' },
-        { label: 'Control', value: 'Offline until Orin host is fitted' },
+        { label: 'Control', value: 'Host up; ESP32 UART link not yet wired' },
       ],
       power: { watts: 25, volts: 5, rail: '5V' },
       massGrams: 3200,
@@ -215,8 +215,8 @@ export const hangarData: HangarData = {
         {
           group: 'Chassis Mounts',
           slot: 'Host Controller Mount',
-          filledBy: null,
-          note: 'Pi 5 removed 2026-07-22; Orin Nano Super fitting in progress',
+          filledBy: 'orin-nano',
+          note: 'Fitted and network-verified 2026-07-28; one side of the mounting struts is still missing',
           hotspotId: 'compute',
         },
         { group: 'Chassis Mounts', slot: '21mm Picatinny Rail', filledBy: 'oak-d-lite', note: 'OAK-D Lite from the ACCE ROS2 kit', hotspotId: 'lighting' },
@@ -278,6 +278,12 @@ export const hangarData: HangarData = {
         'beast-slow-hard-stop',
         'orin-host-gap',
         'orin-edge-model-shortlist',
+        'orin-barrel-jack-power',
+        'rnd-splat-arch-b',
+        'rnd-servo-cam-b0497',
+        'rnd-vision-rejected',
+        'rnd-lidar-open',
+        'rnd-calibration-scope',
       ],
       tags: ['rover', 'flagship', 'waveshare', 'acce', 'ros2', 'cutover'],
       shortcuts: [
@@ -462,7 +468,7 @@ export const hangarData: HangarData = {
       status: 'integrating',
       provenance: 'owner',
       summary:
-        'Owned NVIDIA Jetson Orin Nano 8GB developer kit — JetPack 6.2.2 / R36.5 on NVMe, ROS 2 Humble and the Jetson-adapted Waveshare workspace built. Software-ready Beast host; physical install into the empty host mount is the active cutover blocker (2026-07-22).',
+        'Owned NVIDIA Jetson Orin Nano 8GB developer kit — JetPack 6.2.2 / R36.5 on NVMe, ROS 2 Humble and the Jetson-adapted Waveshare workspace built. Physically fitted into BEAST-01 and network-verified by live SSH 2026-07-28 (hostname beast-01, LAN + Wi-Fi + Tailscale). Powered from the pack via the UPS board barrel-jack lead, not the driver board back-feed path. Remaining before full teleop: wire the ESP32 UART jumper link and finish the host mounting struts.',
       specs: [
         { label: 'AI perf', value: 'up to 67 TOPS (Super); ~1.7× prior' },
         { label: 'Arch', value: 'Ampere GPU + 6-core Arm' },
@@ -472,7 +478,7 @@ export const hangarData: HangarData = {
         { label: 'Carrier', value: 'Accepts Orin Nano + Orin NX' },
         { label: 'Stack', value: 'CUDA · TensorRT · Isaac ROS' },
         { label: 'Lifecycle', value: 'through 2032' },
-        { label: 'Cutover', value: 'Pi out · Orin fitting' },
+        { label: 'Cutover', value: 'Fitted · network-verified · UART link pending' },
       ],
       price: { us: 249, import: null },
       power: { watts: 25, rail: 'battery' },
@@ -485,6 +491,7 @@ export const hangarData: HangarData = {
         'beast-slow-hard-stop',
         'orin-edge-model-shortlist',
         'compute-sizing-method',
+        'orin-barrel-jack-power',
       ],
       tags: ['jetson', 'orin', 'ampere', 'edge-ai', 'cutover'],
       links: [{ label: 'NVIDIA Jetson Orin', url: 'https://www.nvidia.com/en-us/autonomous-machines/embedded-systems/jetson-orin/' }],
@@ -631,6 +638,7 @@ export const hangarData: HangarData = {
       afterAction: [
         '2026-07-01 OP-BEAST-CONTACT: Pi web UI, JupyterLab, Socket.IO command channel, and telemetry verified at 192.168.20.184. beast.local did not resolve from icarus-laptop; use the fixed IP until DNS/mDNS is repaired. Sent zero-speed stop only; no drive nudge performed.',
         '2026-07-22 OP-ORIN-GAP: Raspberry Pi 5 removed; host mount empty mid Orin Nano cutover. No upper-computer teleop until Jetson is fitted. Operator notes Beast is slow and hard-stopping — remote + on-device control are both viable after host restore.',
+        '2026-07-28 OP-ORIN-POWER: Jetson Orin Nano Super fitted and network-verified by live SSH (hostname beast-01, LAN/Wi-Fi/Tailscale all up), powered via the UPS board\'s factory barrel-jack pigtail rather than the driver board\'s back-feeding USB-C. Host boot and network confirmed; ESP32 UART jumper link and one side of the mounting struts remain before FPV teleop is live.',
       ],
       insights: [
         'dust-backscatter',
@@ -640,6 +648,7 @@ export const hangarData: HangarData = {
         'beast-llm-jobs',
         'beast-slow-hard-stop',
         'orin-host-gap',
+        'orin-barrel-jack-power',
       ],
     },
     {
@@ -661,7 +670,15 @@ export const hangarData: HangarData = {
         { label: 'Payload', value: 0, budget: 500, unit: 'g' },
         { label: 'Loadout Cost', value: 0, budget: 600, unit: '$' },
       ],
-      insights: ['calibration-burden', 'depth-onboard'],
+      insights: [
+        'calibration-burden',
+        'depth-onboard',
+        'rnd-splat-arch-b',
+        'rnd-servo-cam-b0497',
+        'rnd-vision-rejected',
+        'rnd-lidar-open',
+        'rnd-calibration-scope',
+      ],
     },
     {
       id: 'pool-deck-patrol',
@@ -757,7 +774,7 @@ export const hangarData: HangarData = {
       id: 'teleop',
       name: 'Remote Teleoperation',
       description:
-        'FPV remote piloting with onboard I/O on the Jetson Orin host and PID on the ESP32. Offline while the host mount is empty mid-cutover.',
+        'FPV remote piloting with onboard I/O on the Jetson Orin host and PID on the ESP32. Host is fitted and network-verified (2026-07-28); offline until the ESP32 UART jumper link is wired and the control software stack is confirmed on the Orin.',
       unlockedBy: ['beast', 'orin-nano'],
       bay: 'robotics',
       unlocked: false,
@@ -825,6 +842,28 @@ export const hangarData: HangarData = {
   ],
 
   insights: [
+    {
+      id: 'usb-backfeeds-the-stack',
+      title: 'The ESP32 USB cable powers the whole robot, not just its logic',
+      body: 'On the ROS driver board the Type-C VBUS lands on net "5V" through Schottky D2 — the same net as both 40-pin headers, the LiDAR header and the AMS1117 input. So plugging the host into the ESP32 port energises the entire stack: HAT, codec, amp, fan and LiDAR motor, all through one USB connector, even with the chassis switch off. Confirmed on the bench by a D500 spinning with the pack dead. The board is designed to power the host, so it assumes the pack is on; running host-on/pack-off is not a supported state. Full trace in docs/beast-ops.md — OP-BEAST-BACKFEED.',
+      tags: ['power', 'usb', 'orin', 'gotcha'],
+      bay: 'robotics',
+      units: ['beast'],
+      confidence: 'high',
+      source: 'docs/beast-ops.md — OP-BEAST-BACKFEED',
+      capturedAt: '2026-07-27',
+    },
+    {
+      id: 'read-the-netlist-not-the-summary',
+      title: 'Derived diagrams drift; go back to the netlist',
+      body: 'A day of wrong diagnoses came from reasoning off a summarised power tree that said host VBUS reached only the 3V3 regulator. The schematic PDF\'s embedded netlist said otherwise in one line, and Waveshare\'s own product page — already sitting in keyArtifactstosort — answered the architecture question outright. When a hardware symptom contradicts the model, re-read the primary source before building a theory on the model. Vendor primaries are archived under keyArtifactstosort/reference/ with an INDEX noting what each answers.',
+      tags: ['method', 'documentation', 'debugging'],
+      bay: 'robotics',
+      units: ['beast'],
+      confidence: 'high',
+      source: 'keyArtifactstosort/reference/INDEX.md',
+      capturedAt: '2026-07-27',
+    },
     {
       id: 'dust-backscatter',
       title: 'Offset lights from the camera lens',
@@ -974,7 +1013,7 @@ export const hangarData: HangarData = {
       missions: ['undercroft'],
       confidence: 'high',
       source:
-        'docs/plans/2026-07-22-robot-control-llms-briefing.md; https://huggingface.co/blog/nvidia/cosmos3edge',
+        'content/datacore/robot-control-llms.md; https://huggingface.co/blog/nvidia/cosmos3edge',
       capturedAt: '2026-07-22',
     },
     {
@@ -986,7 +1025,7 @@ export const hangarData: HangarData = {
       units: ['beast', 'workstation', 'orin-nano'],
       missions: ['undercroft'],
       confidence: 'high',
-      source: 'docs/plans/2026-07-22-robot-control-llms-briefing.md#what-we-would-actually-have-it-do-on-beast-01',
+      source: 'content/datacore/robot-control-llms.md#what-we-would-actually-have-it-do-on-beast-01',
       capturedAt: '2026-07-22',
     },
     {
@@ -1025,6 +1064,18 @@ export const hangarData: HangarData = {
       capturedAt: '2026-07-22',
     },
     {
+      id: 'orin-barrel-jack-power',
+      title: 'The UPS board\'s "spare" barrel pigtail was the factory Jetson power lead',
+      body: 'A 4th connector on the UPS Module 3S — assumed to be a bare XH2.54 socket — turned out to be a barrel-jack pigtail already wired into the board, unused because the original build ran a Pi 5. Verified before trusting it: sleeve/center multimeter test read center pin positive relative to sleeve at 11.5V (matches the Orin J16 spec — center-positive, 9-20V range), then an unpowered dry-fit into the Orin\'s DC jack seated flush with no wobble (2.5mm pin, not the generic 2.1mm DC5521). Connected and the Jetson booted clean, confirmed live over SSH: hostname beast-01, JetPack R36.5.0 (R36 REVISION 5.0), simultaneously reachable on LAN (192.168.0.166), Wi-Fi (192.168.0.251), and Tailscale (100.107.16.72). This is the practical resolution to OP-BEAST-BACKFEED: power the Orin from this pack-fed barrel lead, never from the driver board\'s USB-C — no board rework needed, the fix was using the connector the vendor already ran.',
+      tags: ['beast', 'orin', 'power', 'cutover', 'gotcha'],
+      bay: 'robotics',
+      units: ['beast', 'orin-nano'],
+      missions: ['undercroft'],
+      confidence: 'high',
+      source: 'Live multimeter check + SSH boot verification, 2026-07-28',
+      capturedAt: '2026-07-28',
+    },
+    {
       id: 'orin-edge-model-shortlist',
       title: 'Orin Nano shortlist: SmolVLA first, then GR00T / small VLMs',
       body: 'On Orin Nano 8GB (~7.6 GB usable): SmolVLA (~450M) is the first closed-loop VLA that fits with headroom; GR00T N1.x (~3B FP16) also fits. For scene/phrase work: InternVL3 or Qwen*-VL 2B-class + Qwen3-4B/Nemotron-Nano-4B INT4. Cosmos 3 Edge is interesting as an open world-action + post-train path (5090 gym; Thor-quoted 15 Hz; Cosmos Reason ~2B called out for Orin 8GB) — not as a Thor purchase trigger. Pi0/OpenVLA stay on CORE-PRIME unless distilled.',
@@ -1034,7 +1085,7 @@ export const hangarData: HangarData = {
       missions: ['undercroft'],
       confidence: 'high',
       source:
-        'docs/plans/2026-07-22-robot-control-llms-briefing.md#6-orin-nano-8gb--what-else-is-actually-sota-adjacent-and-fits',
+        'content/datacore/robot-control-llms.md#6-orin-nano-8gb--what-else-is-actually-sota-adjacent-and-fits',
       capturedAt: '2026-07-22',
     },
     {
@@ -1045,7 +1096,7 @@ export const hangarData: HangarData = {
       bay: 'compute',
       units: ['orin-nano', 'beast', 'workstation'],
       confidence: 'high',
-      source: '/datacore/compute-workload',
+      source: '/datacore/briefing/compute-workload',
       capturedAt: '2026-07-23',
     },
     {
@@ -1058,9 +1109,87 @@ export const hangarData: HangarData = {
       source: 'coldaine-k8cluster live kubectl inspection',
       capturedAt: '2026-07-01',
     },
+    {
+      id: 'rnd-splat-arch-b',
+      title: 'Build A capture: images carry poses, LiDAR supplies geometry',
+      body: 'Research (non-definitive): for offline Gaussian splatting, Architecture B wins — park the rover, stop-and-shoot, recover poses from the images (COLMAP/SfM), and use LiDAR for dense init / depth supervision. Sub-ms time sync, rigid cam-to-LiDAR mount, and hardware trigger are not load-bearing for this capture path. Full brief in Datacore.',
+      tags: ['vision', 'beast', 'research', 'splat', 'architecture', 'gaussian', 'colmap', '3dgs'],
+      bay: 'robotics',
+      units: ['beast'],
+      missions: ['perimeter-mapping'],
+      confidence: 'medium',
+      source: '/datacore/briefing/beast-splat-architecture',
+      capturedAt: '2026-07-28',
+    },
+    {
+      id: 'rnd-servo-cam-b0497',
+      title: 'Servo-head research candidate: Arducam B0497 IMX678',
+      body: 'Research (not purchased): Arducam B0497 (8.3MP STARVIS 2 IMX678, UVC USB3, ~$160) is the current pan-tilt head candidate under Architecture B. Three flags before any buy: stock focus is 3m–∞ (budget a closer M12 lens for indoors), integral IR-cut (visible only), 4K at 15fps only. Fixed chassis slot stays the owned OAK-D Lite.',
+      tags: ['vision', 'beast', 'research', 'camera', 'arducam', 'b0497', 'imx678', 'starvis'],
+      bay: 'robotics',
+      units: ['beast', 'oak-d-lite'],
+      missions: ['perimeter-mapping'],
+      confidence: 'medium',
+      source: '/datacore/briefing/beast-servo-camera',
+      capturedAt: '2026-07-28',
+    },
+    {
+      id: 'rnd-vision-rejected',
+      title: 'Zoom, thermal, FPV, and PTZ paths are research-killed',
+      body: 'Research kill list for the current premise: DJI/Walksnail FPV chains, Insta360 X5, IP PTZ security cams, FLIR Lepton / InfiRay thermal, motorized optical zoom, and machine-vision trigger cameras. Do not re-propose without a new premise — prior console zoom/thermal shortlist is superseded. Full reasons in Datacore.',
+      tags: ['vision', 'beast', 'research', 'rejected', 'camera', 'thermal', 'fpv', 'zoom', 'ptz'],
+      bay: 'robotics',
+      units: ['beast'],
+      missions: ['perimeter-mapping'],
+      confidence: 'medium',
+      source: '/datacore/briefing/beast-rejected-paths',
+      capturedAt: '2026-07-28',
+    },
+    {
+      id: 'rnd-lidar-open',
+      title: 'Standalone LiDAR upgrade still open: Mid-360S vs Airy',
+      body: 'Open research (not a ruling): Livox Mid-360S vs RoboSense Airy 96. Current lean is Mid for software lineage and Orin point-rate budget, but confidence is only medium. Servo-vs-rigid LiDAR mounting is a separate unresolved question for Build B nav SLAM.',
+      tags: ['vision', 'beast', 'research', 'lidar', 'livox', 'mid-360', 'robosense', 'airy'],
+      bay: 'robotics',
+      units: ['beast', 'd500-lidar'],
+      missions: ['perimeter-mapping'],
+      confidence: 'medium',
+      source: '/datacore/briefing/beast-lidar-open',
+      capturedAt: '2026-07-28',
+    },
+    {
+      id: 'rnd-calibration-scope',
+      title: 'Calibration burden still real for nav — not the Build A blocker',
+      body: 'Research nuance on calibration-burden: extrinsic + time-sync still matter for Build B live navigation SLAM. Under Architecture B for Build A offline capture, those requirements dissolve — register the cloud to the finished reconstruction afterward. Do not treat the older high-confidence calibration lesson as false; scope it.',
+      tags: ['vision', 'beast', 'research', 'calibration', 'lidar', 'extrinsic', 'time-sync'],
+      bay: 'robotics',
+      units: ['beast'],
+      missions: ['perimeter-mapping'],
+      confidence: 'medium',
+      source: '/datacore/briefing/beast-splat-architecture',
+      capturedAt: '2026-07-28',
+    },
   ],
 
   activity: [
+    {
+      id: 'a-rnd-beast-vision',
+      at: '2026-07-28T15:00:00Z',
+      kind: 'researched',
+      text: 'RND-BEAST-VISION: Datacore vision research pack indexed (splat arch, servo cam candidate, rejected paths, open LiDAR).',
+    },
+    {
+      id: 'a-orin-barrel-power',
+      at: '2026-07-28T01:00:00Z',
+      kind: 'mission',
+      text: 'OP-ORIN-POWER: Jetson Orin fitted, powered via the UPS board\'s factory barrel-jack lead, booted and network-verified over LAN/Wi-Fi/Tailscale by live SSH.',
+    },
+    {
+      id: 'a-beast-backfeed',
+      at: '2026-07-27T09:30:00Z',
+      kind: 'insight',
+      text: 'BEAST power domain: Jetson USB found back-feeding the whole 5V stack through D2 — netlist-verified, vendor specs archived.',
+    },
     {
       id: 'a-compute-sizing',
       at: '2026-07-23T10:00:00Z',
@@ -1124,7 +1253,7 @@ export const hangarData: HangarData = {
 
   // ── CONNECTED TWIN — BEAST-01 terminals + nets ─────────────────────────────
   // Authored 2026-07-03 from the beast hardware library (Waveshare wikis + schematics);
-  // each net lists the documents that prove it. BEAST-01 is the ACCE ROS2 kit:
+  // each net lists the documents that prove it. BEAST-01 is the PT PI5 ROS2 Kit Acce:
   // stock pan-tilt camera, OAK-D Lite, and D500 LiDAR; no manipulator arm.
   terminals: [
     // General Driver for Robots (ESP32 board)
@@ -1135,8 +1264,8 @@ export const hangarData: HangarData = {
     { id: 'gdb-motor-a', unitId: 'driver-board', name: 'Motor Interface A', connector: 'PH2.0 6P', role: 'output', note: 'TB6612FNG channel + encoder feedback' },
     { id: 'gdb-motor-b', unitId: 'driver-board', name: 'Motor Interface B', connector: 'PH2.0 6P', role: 'output', note: 'TB6612FNG channel + encoder feedback' },
     { id: 'gdb-i2c', unitId: 'driver-board', name: 'I²C Peripheral Header', connector: 'pin header', role: 'bidirectional', note: 'OLED and I²C sensors, driven by the ESP32' },
-    { id: 'gdb-usb-esp32', unitId: 'driver-board', name: 'Type-C (ESP32 UART)', connector: 'USB-C', role: 'bidirectional', note: 'CP2102 bridge — flashing and debug serial @ 115200' },
-    { id: 'gdb-lidar-uart', unitId: 'driver-board', name: 'LiDAR UART Port', connector: 'UART + Type-C', role: 'bidirectional', note: 'Second CP2102 routes radar serial to USB' },
+    { id: 'gdb-usb-esp32', unitId: 'driver-board', name: 'Type-C (ESP32 UART)', connector: 'USB-C', role: 'bidirectional', note: 'Callout 6, silkscreen "USB" — the LEFT of the two Type-C ports, beside the DC jack. CH343P bridge to ESP32 UART0; host JSON link @ 115200. This is the Jetson connection.' },
+    { id: 'gdb-lidar-uart', unitId: 'driver-board', name: 'LiDAR UART Port', connector: 'UART + Type-C', role: 'bidirectional', note: 'Callout 7, silkscreen "LIDAR" — the RIGHT Type-C. A second CH343P routes radar serial to USB. Idle on BEAST-01: the D500 rides the Audio HAT LiDAR socket instead.' },
     { id: 'gdb-12v-switched', unitId: 'driver-board', name: '12V Switched Outputs', connector: 'IO4 / IO5', role: 'output', note: 'ESP32-switched pack-voltage outputs for LEDs or payloads' },
 
     // UPS Module 3S
@@ -1150,7 +1279,7 @@ export const hangarData: HangarData = {
 
     // Jetson Orin (swap-path host)
     { id: 'orin-uart', unitId: 'orin-nano', name: '40-Pin Header (UART jumpers)', connector: 'jumper wires', role: 'bidirectional', note: 'TX/RX/GND only — the Orin does not stack and cannot draw header 5V' },
-    { id: 'orin-dc-in', unitId: 'orin-nano', name: 'DC Power Input', connector: 'barrel jack', role: 'input', note: '9–20V ~45W; fed from the battery rail, never the 5V host rail' },
+    { id: 'orin-dc-in', unitId: 'orin-nano', name: 'DC Power Input', connector: 'barrel jack', role: 'input', note: '9–20V ~45W; fed from the battery rail, never the 5V host rail. Confirmed 2026-07-28: the UPS Module 3S board carries a factory barrel-jack pigtail for exactly this — center-positive, measured 11.5V, live-booted on it.' },
     { id: 'orin-usb', unitId: 'orin-nano', name: 'USB Host Ports', connector: 'USB-A', role: 'bidirectional', note: 'Future ACCE camera and LiDAR host after cutover' },
 
     // ACCE ROS2 sensing payload

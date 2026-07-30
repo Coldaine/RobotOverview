@@ -33,7 +33,9 @@ const HUB = { x: 50, y: 50 };
 
 // Ports grouped by function around the board perimeter. `slot` matches the
 // "Driver Board Interfaces" group in the beast loadout so store actions line up.
-const BOARD_PORTS: BoardPort[] = [
+// Exported for the join test: `slot` string-matches LoadoutSlot.slot in
+// hangar.ts, so renaming a slot label silently unwires this diagram.
+export const BOARD_PORTS: BoardPort[] = [
   // Left edge — power domain
   { id: 'batt', slot: 'XH2.54 Battery Input', label: 'BATT IN', x: 32, y: 40, side: 'left' },
   { id: 'pwr-out', slot: 'Power Output Pins', label: '5V/3V3 OUT', x: 32, y: 50, side: 'left' },

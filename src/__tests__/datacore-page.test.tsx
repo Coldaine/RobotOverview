@@ -38,8 +38,32 @@ describe('Datacore page', () => {
     expect(screen.getByRole('heading', { name: 'Datacore' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Compute Workload Sizing/i })).toHaveAttribute(
       'href',
-      '/datacore/compute-workload',
+      '/datacore/briefing/compute-workload',
     );
+  });
+
+  it('clusters Beast Vision as a findable research pack', () => {
+    renderDatacore();
+
+    expect(screen.getByRole('heading', { name: /Beast Vision & Capture/i })).toBeInTheDocument();
+    expect(screen.getByText(/RND-BEAST-VISION/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Open index/i })).toHaveAttribute(
+      'href',
+      '/datacore/briefing/beast-vision',
+    );
+  });
+
+  it('finds the vision pack via product aliases like arducam and livox', () => {
+    renderDatacore();
+
+    const search = screen.getByPlaceholderText(/Search: splat, arducam/i);
+    fireEvent.change(search, { target: { value: 'arducam' } });
+    expect(screen.getByRole('heading', { name: /Beast Vision & Capture/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Servo-Head Camera/i })).toBeInTheDocument();
+
+    fireEvent.change(search, { target: { value: 'livox' } });
+    expect(screen.getByRole('heading', { name: /Beast Vision & Capture/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /LiDAR Upgrade/i })).toBeInTheDocument();
   });
 
   it('switches to the Hardware Library tab and lists documents linking to detail pages', () => {

@@ -148,7 +148,7 @@ export default function DatacoreDocumentPage() {
 
       <div className="border-t border-rim/40 pt-3 font-mono text-[10px] text-ink-dim">
         Provenance &amp; SHA256 hashes:{' '}
-        <span className="text-cyan">docs/history/reference/beast-source-evidence-manifest.md</span>
+        <span className="text-cyan">keyArtifactstosort/reference/EVIDENCE-MANIFEST.md</span>
       </div>
     </div>
   );

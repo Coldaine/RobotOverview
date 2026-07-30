@@ -17,11 +17,12 @@
  * the Pi from the bottom; the HAT + driver pair stays mated.
  */
 
-export type Build = 'pi5' | 'orin';
+import { WIRING_LINKS } from '@/data/wiring';
+import type { Build, PortCategory } from '@/data/types';
 
-export type PortCategory =
-  | 'power' | 'uart' | 'usb' | 'i2c' | 'motor' | 'servo'
-  | 'sensor' | 'video' | 'net' | 'rf' | 'storage' | 'audio';
+// Build and PortCategory are facts about the robot and live in the data spine.
+// Re-exported here so existing console imports keep working unchanged.
+export type { Build, PortCategory };
 
 export const CAT: Record<PortCategory, { label: string; color: string }> = {
   power: { label: 'Power', color: 'var(--color-signal-crit)' },
@@ -204,7 +205,7 @@ export const PORTS: PortDef[] = [
   {
     id: 'drv-5v', board: 'driver', label: '5V rail', conn: 'MP8759GD buck → 40-pin 5V', cat: 'power',
     x: 120, y: 380, side: 'left', danger: true,
-    detail: "5 V / 5 A buck feeding the 40-pin 5 V pins — this is what powers the HAT (and powered the Pi 5 through the stack). The Orin can't run on 5 V and must never be fed here: its 40-pin 5 V pins are OUTPUTS. In the Orin build the headroom freed by the Pi makes this the natural aux-5V feed for the OAK-D Pro's Y-adapter.",
+    detail: "5 V / 5 A buck feeding the 40-pin 5 V pins — this is what powers the HAT (and powered the Pi 5 through the stack). The Orin can't run on 5 V and must never be fed here: its 40-pin 5 V pins are OUTPUTS. In the Orin build the headroom freed by the Pi makes this the natural aux-5V feed for the OAK-D Pro's Y-adapter. IMPORTANT (netlist-verified 2026-07-27): the buck is NOT the only source on this net. Schematic net \"5V\" also carries D2's cathode, so the host's USB VBUS on Type_C1 back-feeds this exact rail — with the chassis switch off, the Jetson alone powers the HAT, its amp, the fan and the LiDAR motor through one USB cable. See docs/beast-ops.md — OP-BEAST-BACKFEED.",
     expect: '(future) OAK-D Pro Y-adapter 5 V',
   },
   {
@@ -311,7 +312,7 @@ export const PORTS: PortDef[] = [
   {
     id: 'ups-out2', board: 'ups', label: 'OUT · pigtail', conn: '→ 5.5×2.5 mm barrel', cat: 'power',
     x: 820, y: 240, side: 'bottom',
-    detail: "Orin build: pack voltage to the Jetson's barrel jack, from the UPS's FREE 4th XH2.54 socket (owner-observed: 4 headers, 3 populated). Verify the free socket with the meter FIRST: pack armed → expect ~11–12.6 V and note which hole is +; if it reads 0 V it's the charge-extension node — pick again. Terminate the pigtail with an XH2.54 lead matching that polarity. CAVEAT: this socket is likely upstream of the chassis switch, so the Jetson stays live whenever the pack is armed — shut it down in software, unplug the barrel for storage, or add an inline XH switch lead later. Do NOT use IO4/IO5 for this (ESP32-switched). Final check at the barrel: center pin positive, ~pack voltage. 9–12.6 V sits inside the Orin's 9–20 V window.",
+    detail: "Orin build: pack voltage to the Jetson's barrel jack, from the UPS's FREE 4th XH2.54 socket (owner-observed: 4 headers, 3 populated). Verify the free socket with the meter FIRST: pack armed → expect ~11–12.6 V and note which hole is +; if it reads 0 V it's the charge-extension node, and if it reads ~5 V it's the SY8286 5 V/5 A regulator output (vendor-confirmed: this board carries pack-series, 5 V and 3.3 V outputs) — either way, pick again. 5 V is below the Orin's 9 V floor and it will not boot. Terminate the pigtail with an XH2.54 lead matching that polarity. CAVEAT: this socket is likely upstream of the chassis switch, so the Jetson stays live whenever the pack is armed — shut it down in software, unplug the barrel for storage, or add an inline XH switch lead later. Do NOT use IO4/IO5 for this (ESP32-switched). Final check at the barrel: center pin positive, ~pack voltage. 9–12.6 V sits inside the Orin's 9–20 V window.",
     expect: 'Pigtail → Jetson barrel', link: 'jet-barrel',
   },
   {
@@ -520,41 +521,17 @@ export const NODE_INDEX: Record<string, BenchNode> = Object.fromEntries([
 ]);
 
 /** Canonical loom, one entry per physical cable. No `build` = both builds. */
-export const EXPECTED_CABLES: CableDef[] = [
-  // shared by both builds
-  { from: 'ups-out1', to: 'drv-dcin', cat: 'power', label: 'XH2.54 lead · via power switch' },
-  { from: 'charger', to: 'ups-chg', cat: 'power', label: 'Charger (arming + top-up)' },
-  { from: 'drv-40pin', to: 'hat-40pin-top', cat: 'uart', label: 'stack mate · 5 V + UART pass-through' },
-  { from: 'fan2507', to: 'hat-fan', cat: 'power', label: 'integral fan · 2-pin' },
-  { from: 'speaker', to: 'hat-spk', cat: 'audio', label: '2× 2-pin speaker leads' },
-  { from: 'oled', to: 'drv-i2c', cat: 'i2c', label: 'PH2.0 4-wire' },
-  { from: 'spotlight', to: 'drv-io45', cat: 'power', label: '2-wire switched feed' },
-  { from: 'motor-l', to: 'drv-m1', cat: 'motor', label: 'PH2.0 6-wire' },
-  { from: 'motor-r', to: 'drv-m2', cat: 'motor', label: 'PH2.0 6-wire' },
-  { from: 'pantilt', to: 'drv-servo', cat: 'servo', label: '3-wire servo daisy chain' },
-  { from: 'antenna', to: 'drv-ipex', cat: 'rf', label: 'IPEX lead' },
-  // original Pi 5 build
-  { from: 'hat-40pin-bot', to: 'pi-40pin', cat: 'uart', label: 'stack dock · Pi 5 inverted below', build: 'pi5' },
-  { from: 'hat-usbc', to: 'pi-usb2', cat: 'usb', label: 'USB-C → USB-A (audio + LiDAR via hub)', build: 'pi5' },
-  { from: 'lidar', to: 'hat-lidar', cat: 'sensor', label: 'D500 → HAT LiDAR socket (stock route)', build: 'pi5' },
-  { from: 'camera', to: 'pi-usb3b', cat: 'video', label: 'USB', build: 'pi5' },
-  { from: 'oakd', to: 'pi-usb3a', cat: 'video', label: 'USB-C → USB-A (USB3)', build: 'pi5' },
-  // Jetson Orin build
-  { from: 'ups-out2', to: 'jet-barrel', cat: 'power', label: 'Pigtail → 5.5×2.5 barrel', build: 'orin' },
-  { from: 'antenna-jet', to: 'jet-wifi', cat: 'rf', label: 'MHF4 leads ×2', build: 'orin' },
-  { from: 'hat-40pin-bot', to: 'jet-40pin', cat: 'uart', label: '3× M-F jumpers from the Pi\'s vacated dock (8↔10 crossed, 6→6)', build: 'orin' },
-  { from: 'lidar', to: 'drv-lidar-sensor', cat: 'sensor', label: 'ZH1.5T-4P LiDAR cable', build: 'orin' },
-  { from: 'drv-lidar-usb', to: 'jet-usb1', cat: 'usb', label: 'USB-C → USB-A (LiDAR data)', build: 'orin' },
-  { from: 'camera', to: 'jet-usb2', cat: 'video', label: 'USB', build: 'orin' },
-  { from: 'oakd', to: 'jet-usb3', cat: 'video', label: 'USB-C → USB-A (USB3)', build: 'orin' },
-  { from: 'hat-usbc', to: 'jet-usb4', cat: 'usb', label: 'USB-C → USB-A (audio · hub free for LiDAR)', build: 'orin' },
-  // ——— future loadout (proposals, not state-tracked; Orin build) ———
-  { from: 'oakdpro', to: 'jet-usb3', cat: 'video', label: 'USB3 ≤2 m shielded (replaces Lite)', era: 'future', build: 'orin' },
-  { from: 'camup', to: 'jet-usb2', cat: 'video', label: 'UVC USB (replaces 5MP cam)', era: 'future', build: 'orin' },
-  { from: 'oakdpro', to: 'drv-5v', cat: 'power', label: 'Y-adapter aux 5 V ← Pi-freed buck (5 A)', era: 'future', build: 'orin' },
-  { from: 'mid360s', to: 'jet-rj45', cat: 'net', label: 'M12 pigtail → RJ45 (100BASE-TX)', era: 'future', build: 'orin' },
-  { from: 'mid360s', to: 'ups-aux', cat: 'power', label: '9–27 V pack tap (add XT30)', era: 'future', build: 'orin' },
-];
+/**
+ * The loom, projected for the bench view. `parentNet` and `documents` are spine
+ * bookkeeping and are deliberately dropped here — the view draws cables, it does
+ * not carry provenance. Edit {@link WIRING_LINKS}, never this.
+ */
+export const EXPECTED_CABLES: CableDef[] = WIRING_LINKS.map((link) => {
+  const cable: CableDef = { from: link.from, to: link.to, cat: link.cat, label: link.label };
+  if (link.build) cable.build = link.build;
+  if (link.era) cable.era = link.era;
+  return cable;
+});
 
 export type StepKind = 'unplug' | 'new' | 'move' | 'check';
 

@@ -1,0 +1,109 @@
+id,from_node,to_node,element,mechanism,direction,condition,confidence,note
+PWR-E001,H2.1/VDD_DC_JACK,DC_IN,M1 AO4407,P-channel MOSFET channel,bidirectional_when_on,M1 VGS sufficiently negative; gate pulled to GND by R15,high,Input reverse-polarity / reverse-current stage. Drain pins 5-8 are input; source pins 1-3 are DC_IN.
+PWR-E002,H2.1/VDD_DC_JACK,DC_IN,M1 body diode,P-MOS body diode,forward_only,forward biased from drain to source,high,Startup path from barrel input toward DC_IN; blocks reverse current toward barrel when reverse biased.
+PWR-E003,DC_IN,VIN,R21 0.01 ohm,current shunt,bidirectional,always,high,INA219 IN+ is on DC_IN side; IN- is on VIN side. Only the buck/5-V branch passes through this shunt.
+PWR-E004,VIN,SW,U5 MP8759,buck switching stage,forward_power,U5 enabled and switching,high,VIN pin 1 to SW pin 7 through internal switching devices.
+PWR-E005,SW,VOUT_5V_RAW,L2 1.5uH,inductor,bidirectional,always,high,Raw regulated output after L2; labeled Vout / 5V_Vout on the drawing.
+PWR-E006,VOUT_5V_RAW,5V_MAIN,M2 AO4407,P-channel MOSFET channel,bidirectional_when_on,M2 gate network Q1/Q2 enables channel,high,M2 drain pins 5-8 are on 5V_Vout; source pins 1-3 are on 5V/VDD5V.
+PWR-E007,VOUT_5V_RAW,5V_MAIN,M2 body diode,P-MOS body diode,forward_only,forward biased from drain to source,high,Intrinsic forward path from raw buck output to board 5-V rail; reverse direction is blocked by the body diode.
+PWR-E008,TYPE_C1_VBUS/VDDUSB,5V_MAIN,D2 MBR230,Schottky diode,forward_only,VBUS exceeds 5V_MAIN by diode drop,high,USB-C1 may source the post-M2 5-V rail; main 5 V cannot backfeed Type-C1 through D2.
+PWR-E009,TYPE_C2_VBUS/VDDUSB1,5V_MAIN,D1 MBR230,Schottky diode,forward_only,VBUS exceeds 5V_MAIN by diode drop,high,USB-C2 may source the post-M2 5-V rail; main 5 V cannot backfeed Type-C2 through D1.
+PWR-E010,HOST_HEADER_5V,5V_MAIN,P1/P2 copper,direct copper,bidirectional,always,medium,The header 5-V terminals are on the board 5-V net; exact P1/P2 pin-number mapping is still being verified from the mirrored drawing.
+PWR-E011,5V_MAIN,3V3_MAIN,AMS-1 AMS1117-3.3,linear regulator,forward_power,input above dropout and within rating,high,5V/VDD5V is the AMS1117 input; VDD3V3/3V3 is the output.
+PWR-E012,3V3_MAIN,1V8,U2 RT9193-1.8,linear regulator,forward_power,enabled; EN is tied to input rail,high,Powers ICM-20948 and 1.8-V side of level translator.
+PWR-E013,DC_IN,TB1_VM,board copper,direct branch,bidirectional,always,high,"TB1 VM1/VM2/VM3 motor-power pins; branch occurs before R21, so its current is not measured by U6."
+PWR-E014,DC_IN,TB2_VM,board copper,direct branch,bidirectional,always,high,"TB2 VM1/VM2/VM3 motor-power pins; branch occurs before R21, so its current is not measured by U6."
+PWR-E015,DC_IN,H7.2_SERVO_POWER,board copper,direct branch,bidirectional,always,high,"Bus-servo connector H7 pin 2; branch occurs before R21, so its current is not measured by U6."
+PWR-E016,DC_IN,H8.2_SERVO_POWER,board copper,direct branch,bidirectional,always,high,"Bus-servo connector H8 pin 2; branch occurs before R21, so its current is not measured by U6."
+PWR-E017,DC_IN,J1.2_LOAD_PLUS,board copper,direct branch,bidirectional,always,high,"IO-control output group A connector J1 pin 2; branch occurs before R21, so its current is not measured by U6."
+PWR-E018,DC_IN,J3.2_LOAD_PLUS,board copper,direct branch,bidirectional,always,high,"IO-control output group A connector J3 pin 2; branch occurs before R21, so its current is not measured by U6."
+PWR-E019,DC_IN,J2.2_LOAD_PLUS,board copper,direct branch,bidirectional,always,high,"IO-control output group B connector J2 pin 2; branch occurs before R21, so its current is not measured by U6."
+PWR-E020,DC_IN,J4.2_LOAD_PLUS,board copper,direct branch,bidirectional,always,high,"IO-control output group B connector J4 pin 2; branch occurs before R21, so its current is not measured by U6."
+PWR-E021,5V_MAIN,H1.3_LIDAR_5V,board copper,direct branch,bidirectional,always,high,LIDAR connector H1 pin 3
+PWR-E022,5V_MAIN,U3.9_VBUS,board copper,direct branch,bidirectional,always,high,LIDAR CH343P VBUS pin
+PWR-E023,5V_MAIN,U7.9_VBUS,board copper,direct branch,bidirectional,always,high,ESP32 CH343P VBUS pin
+PWR-E024,5V_MAIN,P1/P2_5V,board copper,direct branch,bidirectional,always,high,Host-header 5-V terminals
+PWR-E025,5V_MAIN,AMS1.VIN,board copper,direct branch,bidirectional,always,high,3.3-V regulator input
+PWR-E026,3V3_MAIN,M3.2_VDD33,board copper,direct branch,bidirectional,always,high,ESP32-WROOM-32UE supply
+PWR-E027,3V3_MAIN,U6.5_VS,board copper,direct branch,bidirectional,always,high,INA219 supply
+PWR-E028,3V3_MAIN,U3_VIO_VDD5_V3,board copper,direct branch,bidirectional,always,high,CH343P U3 logic/supply pins shown on 3V3_OP
+PWR-E029,3V3_MAIN,U7_VIO_VDD5_V3,board copper,direct branch,bidirectional,always,high,CH343P U7 logic/supply pins shown on 3V3_OP
+PWR-E030,3V3_MAIN,U4.14_VCCB,board copper,direct branch,bidirectional,always,high,LSF0204 3.3-V side
+PWR-E031,3V3_MAIN,U2.1_VIN,board copper,direct branch,bidirectional,always,high,RT9193 input
+PWR-E032,3V3_MAIN,TB1.19_20_STBY_VCC,board copper,direct branch,bidirectional,always,high,TB1 STBY and VCC
+PWR-E033,3V3_MAIN,TB2.19_20_STBY_VCC,board copper,direct branch,bidirectional,always,high,TB2 STBY and VCC
+PWR-E034,3V3_MAIN,H3.5_ENCODER_POWER,board copper,direct branch,bidirectional,always,high,Motor-B encoder connector power
+PWR-E035,3V3_MAIN,H5.5_ENCODER_POWER,board copper,direct branch,bidirectional,always,high,Motor-A encoder connector power
+PWR-E036,3V3_MAIN,P3.1_I2C_POWER,board copper,direct branch,bidirectional,always,high,I2C connector P3 power
+PWR-E037,3V3_MAIN,P4.1_I2C_POWER,board copper,direct branch,bidirectional,always,high,I2C connector P4 power
+PWR-E038,3V3_MAIN,U8.5_VCC,board copper,direct branch,bidirectional,always,high,Servo transmit buffer
+PWR-E039,3V3_MAIN,U9.5_VCC,board copper,direct branch,bidirectional,always,high,Servo receive buffer
+PWR-E040,1V8,U1.8_VDDIO,board copper,direct branch,bidirectional,always,high,ICM-20948 VDDIO.
+PWR-E041,1V8,U1.13_VDD,board copper,direct branch,bidirectional,always,high,ICM-20948 VDD.
+PWR-E042,1V8,U4.1_VCCA,board copper,direct branch,bidirectional,always,high,LSF0204 low-voltage reference.
+PWR-E043,1V8,U4.8_OE_via_R9,R9 10k,pull-up,bidirectional,always,high,Enables the level translator.
+IO-E001,J1.1/J3.1_SWITCHED_LOW,GND,Q4 channel,N-MOS low-side switch,bidirectional_when_on,IO4 high enough after R54; R56 pulls gate low when idle,high,J1 and J3 are parallel outputs: each load is connected between DC_IN on pin 2 and this switched node on pin 1.
+IO-E002,IO4,Q4_GATE,R54 10 ohm,gate resistor,bidirectional,always,high,R56 10k pulls Q4 gate to GND.
+IO-E003,J2.1/J4.1_SWITCHED_LOW,GND,Q5 channel,N-MOS low-side switch,bidirectional_when_on,IO5 high enough after R55; R57 pulls gate low when idle,high,J2 and J4 are parallel outputs.
+IO-E004,IO5,Q5_GATE,R55 10 ohm,gate resistor,bidirectional,always,high,R57 10k pulls Q5 gate to GND.
+SIG-E001,ESP_IO32,IIC_SDA,direct label/copper,signal path,bidirectional,always,high,ESP32 GPIO32 is the board I2C SDA net.
+SIG-E002,IIC_SDA,P3.3,direct copper,signal path,bidirectional,always,high,External I2C connector P3 SDA.
+SIG-E003,IIC_SDA,P4.3,direct copper,signal path,bidirectional,always,high,External I2C connector P4 SDA.
+SIG-E004,IIC_SDA,U6.3_SDA,direct copper,signal path,bidirectional,always,high,INA219 SDA.
+SIG-E005,IIC_SDA,U4.11_B3,direct copper,signal path,bidirectional,always,high,3.3-V side of IMU SDA level-shifter channel.
+SIG-E006,U4.4_A3,U1.24_SDA_SDI,LSF0204 channel 3,signal path,bidirectional,always,high,Level-shifted 1.8-V SDA path.
+SIG-E007,ESP_IO33,IIC_SCL,direct label/copper,signal path,bidirectional,always,high,ESP32 GPIO33 is the board I2C SCL net.
+SIG-E008,IIC_SCL,P3.4,direct copper,signal path,bidirectional,always,high,External I2C connector P3 SCL.
+SIG-E009,IIC_SCL,P4.4,direct copper,signal path,bidirectional,always,high,External I2C connector P4 SCL.
+SIG-E010,IIC_SCL,U6.4_SCL,direct copper,signal path,bidirectional,always,high,INA219 SCL.
+SIG-E011,IIC_SCL,U4.10_B4,direct copper,signal path,bidirectional,always,high,3.3-V side of IMU SCL level-shifter channel.
+SIG-E012,U4.5_A4,U1.23_SCL_SCLK,LSF0204 channel 4,signal path,bidirectional,always,high,Level-shifted 1.8-V SCL path.
+SIG-E020,TYPE_C1_DPLUS,U7.7_UDPLUS,USB differential copper,signal path,bidirectional,always,high,Type-C1 DP1/DP2 are tied and connect to U7 UD+.
+SIG-E021,TYPE_C1_DMINUS,U7.8_UDMINUS,USB differential copper,signal path,bidirectional,always,high,Type-C1 DN1/DN2 are tied and connect to U7 UD-.
+SIG-E022,U7.4_TXD,ESP_U0RX,R33 option 22R/1k,signal path,forward,always,high,USB-UART transmit into ESP32 receive.
+SIG-E023,ESP_U0TX,U7.5_RXD,R34 option 22R/1k,signal path,forward,always,high,ESP32 transmit into USB-UART receive.
+SIG-E024,HOST_P_TX,ESP_U0RX,header copper/label,signal path,forward,always,high,"Host TX shares the ESP U0RX node with U7 TXD, creating possible driver contention if both are active."
+SIG-E025,ESP_U0TX,HOST_P_RX,header copper/label,signal path,forward,always,high,ESP U0TX is exposed as host P_RX.
+SIG-E026,U7.12_DTR,AUTO_PROGRAM_DTR,direct copper,signal path,forward,always,high,DTR enters cross-coupled S8050 network.
+SIG-E027,U7.13_RTS,AUTO_PROGRAM_RTS,direct copper,signal path,forward,always,high,RTS enters cross-coupled S8050 network.
+SIG-E028,AUTO_PROGRAM,ESP_EN_AND_IO0,VT1/VT2 cross-coupled network,signal path,conditional,DTR/RTS state,high,Generates reset/boot combinations shown in the schematic truth table.
+SIG-E030,TYPE_C2_DPLUS,U3.7_UDPLUS,USB differential copper,signal path,bidirectional,always,high,Type-C2 DP1/DP2 tied to D_P.
+SIG-E031,TYPE_C2_DMINUS,U3.8_UDMINUS,USB differential copper,signal path,bidirectional,always,high,Type-C2 DN1/DN2 tied to D_N.
+SIG-E032,H1.1_CP_RX,U3.5_RXD,R4 1k,signal path,forward,always,high,One-way LIDAR serial receive path into USB-UART.
+SIG-E033,U3.4_TXD,NC,explicit no-connect,signal path,none,always,high,U3 TXD is marked no-connect; there is no board-to-LIDAR serial transmit path in this drawing.
+SIG-E040,ESP_IO19/U1TXD,U8.2_A,direct copper,signal path,forward,always,high,Transmit data input.
+SIG-E041,ESP_IO19/U1TXD,TXEN,Q3 MMBT3906 + R47/R49,signal path,conditional,"U1TXD low turns Q3 on, raising TXEN; U1TXD high releases TXEN low",high,TX-enable generation.
+SIG-E042,U8.2_A,DATA,U8 SN74LVC1G126,signal path,forward,TXEN high,high,Active-high output-enable transmit path.
+SIG-E043,DATA,U9.2_A,direct copper,signal path,forward,always,high,Receive sense input.
+SIG-E044,U9.2_A,ESP_IO18/U1RXD,U9 SN74LVC1G125,signal path,forward,TXEN low,high,Active-low output-enable receive path.
+SIG-E045,3V3_MAIN,DATA,R45 10k,signal path,pull-up,always,high,DATA defaults high; the transmit scheme behaves as release-high / actively-drive-low.
+SIG-E046,DATA,H7.1,direct copper,signal path,bidirectional,always,high,Bus-servo data connector H7.
+SIG-E047,DATA,H8.1,direct copper,signal path,bidirectional,always,high,Bus-servo data connector H8.
+MOTOR-TB1-S0,S0,TB1.23_PWMA,direct copper,logic control,forward,always,high,S0 drives both motor-driver ICs in parallel.
+MOTOR-TB1-S1,S1,TB1.22_AIN2,direct copper,logic control,forward,always,high,S1 drives both motor-driver ICs in parallel.
+MOTOR-TB1-S2,S2,TB1.21_AIN1,direct copper,logic control,forward,always,high,S2 drives both motor-driver ICs in parallel.
+MOTOR-TB1-S3,S3,TB1.17_BIN1,direct copper,logic control,forward,always,high,S3 drives both motor-driver ICs in parallel.
+MOTOR-TB1-S4,S4,TB1.16_BIN2,direct copper,logic control,forward,always,high,S4 drives both motor-driver ICs in parallel.
+MOTOR-TB1-S5,S5,TB1.15_PWMB,direct copper,logic control,forward,always,high,S5 drives both motor-driver ICs in parallel.
+MOTOR-TB2-S0,S0,TB2.23_PWMA,direct copper,logic control,forward,always,high,S0 drives both motor-driver ICs in parallel.
+MOTOR-TB2-S1,S1,TB2.22_AIN2,direct copper,logic control,forward,always,high,S1 drives both motor-driver ICs in parallel.
+MOTOR-TB2-S2,S2,TB2.21_AIN1,direct copper,logic control,forward,always,high,S2 drives both motor-driver ICs in parallel.
+MOTOR-TB2-S3,S3,TB2.17_BIN1,direct copper,logic control,forward,always,high,S3 drives both motor-driver ICs in parallel.
+MOTOR-TB2-S4,S4,TB2.16_BIN2,direct copper,logic control,forward,always,high,S4 drives both motor-driver ICs in parallel.
+MOTOR-TB2-S5,S5,TB2.15_PWMB,direct copper,logic control,forward,always,high,S5 drives both motor-driver ICs in parallel.
+MOTOR-E001,TB2.AO1,H5.6_MA1,direct copper,motor output,bidirectional,H-bridge state,high,TB2 AO1 pins 1/2.
+MOTOR-E002,TB2.AO2,H5.1_MA2,direct copper,motor output,bidirectional,H-bridge state,high,TB2 AO2 pins 5/6.
+MOTOR-E003,TB2.BO2,H3.6_MB1,direct copper,motor output,bidirectional,H-bridge state,high,TB2 BO2 pins 7/8.
+MOTOR-E004,TB2.BO1,H3.1_MB2,direct copper,motor output,bidirectional,H-bridge state,high,"TB2 BO1 pins 11/12; source symbol has a duplicated BO2 text at one pin, interpreted by standard TB6612 pinout."
+MOTOR-E005,TB1.AO1,H6.6_MA1_PRIME,direct copper,motor output,bidirectional,H-bridge state,high,TB1 AO1 pins 1/2.
+MOTOR-E006,TB1.AO2,H6.1_MA2_PRIME,direct copper,motor output,bidirectional,H-bridge state,high,TB1 AO2 pins 5/6.
+MOTOR-E007,TB1.BO2,H4.6_MB1_PRIME,direct copper,motor output,bidirectional,H-bridge state,high,TB1 BO2 pins 7/8.
+MOTOR-E008,TB1.BO1,H4.1_MB2_PRIME,direct copper,motor output,bidirectional,H-bridge state,high,TB1 BO1 pins 11/12.
+MOTOR-E009,H5.4_A_C1,ESP_IO34,R39 10 ohm,encoder input,forward,always,Motor-A encoder/feedback channel 1.,
+MOTOR-E010,H5.3_A_C2,ESP_IO35,R40 10 ohm,encoder input,forward,always,Motor-A encoder/feedback channel 2.,
+MOTOR-E011,H3.4_B_C1,ESP_IO27,R36 10 ohm,encoder input,forward,always,Motor-B encoder/feedback channel 1.,
+MOTOR-E012,H3.3_B_C2,ESP_IO16,R37 10 ohm,encoder input,forward,always,Motor-B encoder/feedback channel 2.,
+SD-SD_CS,ESP_IO15,SD_CS,net label,signal route,forward,always,high,Destination is not drawn as a connector/component in the supplied sheet; only the named route is shown.
+SD-SPI_MO,ESP_IO13,SPI_MO,net label,signal route,bidirectional,always,high,Destination is not drawn as a connector/component in the supplied sheet; only the named route is shown.
+SD-SPI_CK,ESP_IO14,SPI_CK,net label,signal route,bidirectional,always,high,Destination is not drawn as a connector/component in the supplied sheet; only the named route is shown.
+SD-SPI_SO,ESP_IO12,SPI_SO,net label,signal route,bidirectional,always,high,Destination is not drawn as a connector/component in the supplied sheet; only the named route is shown.

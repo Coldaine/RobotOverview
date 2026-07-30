@@ -56,5 +56,42 @@ library store (the homelab's cluster S3 / Garage), resolved via the plain runtim
 ## Provenance
 
 Per-file source URLs and SHA256 hashes are recorded in
-`docs/history/reference/beast-source-evidence-manifest.md`. That file is historical evidence
-(the `docs/history/` graveyard) — use it to check provenance, not as live guidance.
+`keyArtifactstosort/reference/EVIDENCE-MANIFEST.md` — the hash register that lives with the
+artifacts themselves. Use it to check provenance.
+
+## CAD archives (LFS branch)
+
+Seven Waveshare CAD archives live as Git LFS objects on the `data/hardware-cad-assets` branch —
+deliberately **not** on `main`, so an agent working in `main` sees no CAD and must not conclude
+the project has none. Fetch with:
+
+```bash
+git fetch origin data/hardware-cad-assets
+git checkout data/hardware-cad-assets -- <path>
+```
+
+| Archive | Contents | Trap |
+| --- | --- | --- |
+| `UGV_Beast_PI4B_AI_Kit_3D.zip` | **2D drawings** (despite the name) | Title block reads "UGV Beast PT" — upstream mislabel; contents are genuinely the Pi kit |
+| `UGV_Beast_PI4B_AI_Kit_step.zip` | STEP geometry | — |
+| `UGV_Beast_PT_AI_Kit_3D.zip` | **2D drawings** (despite the name) | — |
+| `UGV_Beast_PT_AI_Kit_step.zip` | STEP geometry | — |
+| `UGV_Rover_Jetson_Orin_ROS2_Kit_2D.zip` | 2D drawings | **Rover, not Beast** |
+| `UGV_Rover_PT_Jetson_Orin_ROS2_Kit_STEP.zip` | STEP geometry | **Rover, not Beast** |
+| `UGV_Beast_PT_Jetson_Orin-3D.zip` | Beast Orin CAD, LFS oid `56615c77…` | The only true Beast Orin archive; was absent from the 2026-07-27 intake |
+
+**Three naming traps, verified 2026-07-27:** `_3D.zip` archives contain 2D drawings (3D geometry
+is in `_step.zip`); both "Jetson Orin" archives are Rover kits; the PI4B `_3D.zip` title block
+says "PT". One archive uses non-ASCII internal paths (`尺寸图纸`) — extract with explicit UTF-8
+handling.
+
+Per-file SHA-256 values, verified archive contents, and duplicate status are in
+`keyArtifactstosort/INTAKE-REGISTER.md`; upstream hashes are independently in
+`keyArtifactstosort/reference/EVIDENCE-MANIFEST.md`. The 2026-07-27 pruning (six archives removed
+from the working tree as byte-identical LFS duplicates, plus the redistributable
+`flash_download_tool_3.9.5.exe`) is safe because of those two hash records; unmodified originals
+are also at `D:\_projects\_artifact-backups\RobotOverview-keyArtifactstosort-2026-07-27\`
+(same-volume deletion protection, **not** an off-volume backup).
+
+What the CAD is *for* (mounting holes, mast planning, URDF, twin geometry) is tracked as work in
+[`docs/plans/2026-07-30-wiring-model-completion.md`](./plans/2026-07-30-wiring-model-completion.md).

@@ -1,0 +1,6 @@
+source,path,reachable_loads,boundary,important_note
+Barrel H2,VDD_DC_JACK -> M1 -> DC_IN,motors TB1/TB2; servo H7/H8; IO J1-J4,direct after M1,These branches bypass R21/INA219
+Barrel H2,VDD_DC_JACK -> M1 -> DC_IN -> R21 -> VIN -> U5 -> L2 -> 5V_Vout -> M2 -> 5V_MAIN,host 5V; LIDAR 5V; USB bridges; AMS1117,conditional on regulators/MOSFETs,This branch is measured by INA219 across R21
+USB-C1,VBUS/VDDUSB -> D2 -> 5V_MAIN,host 5V; LIDAR 5V; USB bridges; AMS1117/3V3,Schottky forward direction,Cannot reach DC_IN through any explicit direct copper path; M2 reverse behavior depends on its control network
+USB-C2,VBUS/VDDUSB1 -> D1 -> 5V_MAIN,host 5V; LIDAR 5V; USB bridges; AMS1117/3V3,Schottky forward direction,Same post-M2 injection behavior as Type-C1
+Host header,5V terminal -> 5V_MAIN,same post-M2 5-V loads and AMS1117,direct copper,Electrically bidirectional; no input protection is drawn at the header
