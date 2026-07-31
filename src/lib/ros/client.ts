@@ -97,6 +97,18 @@ export interface DiagnosticsItem {
   values: Record<string, string>;
 }
 
+export interface CockpitEstop {
+  /**
+   * Operator intent — the stop is latched down. Survives component unmount and
+   * socket drops; only an explicit release clears it.
+   */
+  engaged: boolean;
+  /** The >= 1 Hz `true` republish is actually running on an open socket. */
+  heartbeat: boolean;
+  /** The post-release `false` burst is still in flight. */
+  releasing: boolean;
+}
+
 // Parse a numeric field defensively — live diagnostics can carry "unknown",
 // empty, or garbage strings that must never render as NaN.
 function safeNumber(value: string | undefined, fallback: number): number {
@@ -124,6 +136,7 @@ let statusState: CockpitStatus = {
 };
 let diagnosticsState: DiagnosticsItem[] = [];
 let scanState: CockpitScan = { points: [], angleMin: 0, angleMax: 0, angleIncrement: 0, rangeMin: 0, rangeMax: 0 };
+let estopState: CockpitEstop = { engaged: false, heartbeat: false, releasing: false };
 
 // Listeners per category
 const listeners = {
@@ -135,13 +148,14 @@ const listeners = {
   status: new Set<() => void>(),
   diagnostics: new Set<() => void>(),
   scan: new Set<() => void>(),
+  estop: new Set<() => void>(),
 };
 
 // Ref for reactive-image-rendering callbacks that bypass React state
 const imageCallbacks = new Map<string, (url: string) => void>();
 
 let socket: WebSocket | null = null;
-let reconnectTimer: NodeJS.Timeout | null = null;
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let reconnectDelay = 1000;
 const MAX_RECONNECT_DELAY = 10000;
 let lastWsUrl = '';
@@ -150,6 +164,112 @@ function notify(category: keyof typeof listeners) {
   for (const l of listeners[category]) {
     l();
   }
+}
+
+// ── E-STOP LOCK REPUBLISH CONTRACT ──────────────────────────────────────────
+// The robot arbitrates motion with twist_mux. `/cmd_vel_estop_lock` is a lock
+// topic at priority 255 configured `timeout: 0.0` (manual toggle), and
+// twist_mux subscribes to lock topics with VOLATILE durability and a shallow
+// queue. That imposes a hard client contract, because a one-shot publish is
+// not sufficient:
+//
+//   1. MATCHING RACE — a volatile message only reaches subscriptions that are
+//      already matched at the instant it is sent. A publisher that advertises
+//      and immediately publishes can lose the race with discovery, and the
+//      e-stop silently does nothing. That is the worst possible failure for
+//      this control. (Over rosbridge the ROS-side publisher lives in the
+//      long-lived rosbridge_websocket node, so the exposure is narrowed to the
+//      first publish after an `advertise` — but it is not eliminated.)
+//   2. MUX RESTART — lock state does not survive a twist_mux restart. A mux
+//      that crashes and comes back starts RELEASED regardless of what was
+//      published before, so an engaged e-stop can quietly un-engage itself
+//      under the operator.
+//
+// THEREFORE: republish `{data: true}` at >= 1 Hz for the whole time the stop is
+// held, and publish `{data: false}` repeatedly on release. We run 2 Hz for
+// margin.
+//
+// LIFETIME — WHY THIS LIVES HERE AND NOT IN A REACT EFFECT:
+// A safety heartbeat must not stop because a component unmounted. A
+// `useEffect` interval dies on route change, Strict Mode's double invoke, or
+// any remount, which would mute an engaged stop with no operator-visible
+// signal. So the machine is module state in the ros client and the invariant
+// is:
+//
+//     the heartbeat timer runs exactly while (operatorEngaged && socket OPEN)
+//
+// `operatorEngaged` outlives both the React tree and the socket. Reconnect
+// re-advertises and resumes the heartbeat immediately (see
+// advertiseAndSubscribe) because the mux may have restarted while we were
+// gone. Only an explicit release clears the intent — and CockpitClient keeps
+// the socket open on unmount while the stop is engaged, so navigating away
+// cannot silence it either.
+const ESTOP_TOPIC = '/cmd_vel_estop_lock';
+const ESTOP_HEARTBEAT_MS = 500; // 2 Hz — contract floor is 1 Hz
+const ESTOP_RELEASE_INTERVAL_MS = 400;
+const ESTOP_RELEASE_SENDS = 4; // ~1.2 s of `false` before going quiet
+
+let operatorEngaged = false;
+let estopHeartbeatTimer: ReturnType<typeof setInterval> | null = null;
+let estopReleaseTimer: ReturnType<typeof setInterval> | null = null;
+let estopReleaseSends = 0;
+
+function setEstopState(next: Partial<CockpitEstop>) {
+  const merged = { ...estopState, ...next };
+  if (
+    merged.engaged === estopState.engaged &&
+    merged.heartbeat === estopState.heartbeat &&
+    merged.releasing === estopState.releasing
+  ) {
+    return; // keep the snapshot referentially stable for useSyncExternalStore
+  }
+  estopState = merged;
+  notify('estop');
+}
+
+function publishEstopLock(value: boolean): boolean {
+  return rosClient.publish(ESTOP_TOPIC, { data: value });
+}
+
+function stopEstopHeartbeat() {
+  if (estopHeartbeatTimer) {
+    clearInterval(estopHeartbeatTimer);
+    estopHeartbeatTimer = null;
+  }
+  setEstopState({ heartbeat: false });
+}
+
+function stopEstopRelease() {
+  if (estopReleaseTimer) {
+    clearInterval(estopReleaseTimer);
+    estopReleaseTimer = null;
+  }
+  estopReleaseSends = 0;
+  setEstopState({ releasing: false });
+}
+
+function stopEstopTimers() {
+  stopEstopHeartbeat();
+  stopEstopRelease();
+}
+
+// Assert the lock now, then hold it. Idempotent — a second engage reuses the
+// running interval instead of stacking a second one.
+function startEstopHeartbeat(): boolean {
+  stopEstopRelease();
+  if (!publishEstopLock(true)) {
+    // Socket went away. Drop the timer; the next successful connect resumes it
+    // from advertiseAndSubscribe.
+    stopEstopHeartbeat();
+    return false;
+  }
+  if (!estopHeartbeatTimer) {
+    estopHeartbeatTimer = setInterval(() => {
+      if (!publishEstopLock(true)) stopEstopHeartbeat();
+    }, ESTOP_HEARTBEAT_MS);
+  }
+  setEstopState({ heartbeat: true });
+  return true;
 }
 
 // SSR compatible Server Snapshots (stable references)
@@ -173,6 +293,7 @@ const serverState = {
   } as CockpitStatus,
   diagnostics: [] as DiagnosticsItem[],
   scan: { points: [], angleMin: 0, angleMax: 0, angleIncrement: 0, rangeMin: 0, rangeMax: 0 } as CockpitScan,
+  estop: { engaged: false, heartbeat: false, releasing: false } as CockpitEstop,
 };
 
 export const rosClient = {
@@ -193,6 +314,10 @@ export const rosClient = {
       clearTimeout(reconnectTimer);
       reconnectTimer = null;
     }
+    // Timers die with the socket — publishing into a closed socket is a no-op
+    // and a spinning interval with nowhere to send is a leak. Operator intent
+    // is deliberately preserved: reconnecting re-asserts the lock.
+    stopEstopTimers();
     if (socket) {
       socket.onclose = null;
       socket.onerror = null;
@@ -228,6 +353,9 @@ export const rosClient = {
 
     socket.onclose = () => {
       connectionState = 'disconnected';
+      // Hold the timers while the socket is down so the UI stops claiming a
+      // live heartbeat; advertiseAndSubscribe restarts it on the next open.
+      stopEstopTimers();
       notify('connection');
       this.handleScheduleReconnect(url);
     };
@@ -300,6 +428,14 @@ export const rosClient = {
         type,
       }));
     });
+
+    // Contract: every (re)connect must re-assert a held stop immediately. The
+    // mux may have restarted while we were disconnected and come back with the
+    // lock RELEASED. This runs after the advertise above so the publisher
+    // exists before the first message.
+    if (operatorEngaged) {
+      startEstopHeartbeat();
+    }
   },
 
   publish(topic: string, msg: unknown): boolean {
@@ -312,9 +448,77 @@ export const rosClient = {
     return true;
   },
 
+  /**
+   * Engage or release the twist_mux e-stop lock under the republish contract
+   * documented above. Returns whether the command actually left the socket —
+   * callers must not render "LOCKED" on a `false`.
+   *
+   * Engage latches operator intent and starts the 2 Hz `true` heartbeat.
+   * Release stops the heartbeat and fires a short burst of `false`, then goes
+   * quiet; a release that never lands leaves the robot STOPPED, which is the
+   * safe direction to fail. Release always publishes even when we hold no
+   * intent, so the operator can clear a lock the robot reports but we did not
+   * set. Both directions are idempotent.
+   */
+  setEstopLock(engaged: boolean): boolean {
+    if (typeof window === 'undefined') return false;
+    const live = !!socket && socket.readyState === WebSocket.OPEN;
+    // No socket means no way to reach the mux. Refusing to ENGAGE here keeps
+    // the UI honest. A refused RELEASE must still drop local intent or the
+    // next reconnect would re-assert a lock the operator already cleared.
+    if (!live) {
+      if (engaged) return false;
+      operatorEngaged = false;
+      stopEstopTimers();
+      setEstopState({ engaged: false });
+      return false;
+    }
+
+    if (engaged) {
+      const armed = startEstopHeartbeat();
+      if (!armed) return false;
+      operatorEngaged = true;
+      setEstopState({ engaged: true });
+      return true;
+    }
+
+    operatorEngaged = false;
+    stopEstopHeartbeat();
+    const sent = publishEstopLock(false);
+    estopReleaseSends = sent ? 1 : 0;
+    if (!estopReleaseTimer) {
+      estopReleaseTimer = setInterval(() => {
+        if (estopReleaseSends >= ESTOP_RELEASE_SENDS || !publishEstopLock(false)) {
+          stopEstopRelease();
+          return;
+        }
+        estopReleaseSends += 1;
+      }, ESTOP_RELEASE_INTERVAL_MS);
+    }
+    setEstopState({ engaged: false, releasing: true });
+    return sent;
+  },
+
+  /** Operator intent, readable outside React (e.g. unmount teardown checks). */
+  isEstopEngaged(): boolean {
+    return operatorEngaged;
+  },
+
+  /**
+   * Drop operator intent and every timer WITHOUT telling the robot. Teardown
+   * and test hygiene only — never use this to release a live stop, because the
+   * mux would keep holding the lock with nothing left to clear it. Use
+   * `setEstopLock(false)` for that.
+   */
+  clearEstopIntent() {
+    operatorEngaged = false;
+    stopEstopTimers();
+    setEstopState({ engaged: false });
+  },
+
   callService(serviceName: string, args: unknown) {
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
-    const callId = `call_${Math.random().toString(36).substr(2, 9)}`;
+    const callId = `call_${Math.random().toString(36).slice(2, 11)}`;
     const triggerMsg = JSON.stringify({
       op: 'call_service',
       service: serviceName,
@@ -587,6 +791,17 @@ export function useCockpitDiagnostics(): DiagnosticsItem[] {
     },
     () => diagnosticsState,
     () => serverState.diagnostics
+  );
+}
+
+export function useCockpitEstop(): CockpitEstop {
+  return useSyncExternalStore(
+    (cb) => {
+      listeners.estop.add(cb);
+      return () => listeners.estop.delete(cb);
+    },
+    () => estopState,
+    () => serverState.estop
   );
 }
 

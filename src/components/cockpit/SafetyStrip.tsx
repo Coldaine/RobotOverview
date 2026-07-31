@@ -1,12 +1,12 @@
 'use client';
 
-import { 
-  rosClient, 
-  useCockpitVoltage, 
+import {
+  rosClient,
+  useCockpitVoltage,
   useCockpitStatus,
+  useCockpitEstop,
   useConnectionState
 } from '@/lib/ros/client';
-import { useState } from 'react';
 import clsx from 'clsx';
 import { ShieldAlert, ShieldCheck } from 'lucide-react';
 
@@ -14,22 +14,32 @@ export function SafetyStrip() {
   const { voltage } = useCockpitVoltage();
   const status = useCockpitStatus();
   const connection = useConnectionState();
+  const estop = useCockpitEstop();
 
-  const [estopLocal, setEstopLocal] = useState(false);
-
-  // The robot's twist_mux is the source of truth for the lock; local optimistic
-  // state only applies while connected and is overridden by a real mux report.
+  // The robot's twist_mux is the source of truth for the lock; our own intent
+  // only applies while connected and is overridden by a real mux report. The
+  // intent lives in the ros client, not in component state, so the >= 1 Hz
+  // republish that actually holds the lock cannot be killed by a remount.
   const connected = connection === 'connected';
-  const estopEngaged = status.muxSource === 'E-STOP lock' || (connected && estopLocal);
+  const estopEngaged = status.muxSource === 'E-STOP lock' || (connected && estop.engaged);
 
-  // Only flip the button when the command actually leaves the socket. A
-  // disconnected click must never present a false "LOCKED".
+  // The client refuses to latch anything it could not transmit, so a
+  // disconnected click can never present a false "LOCKED".
   const handleEstop = () => {
     if (!connected) return;
-    const next = !estopEngaged;
-    const sent = rosClient.publish('/cmd_vel_estop_lock', { data: next });
-    if (sent) setEstopLocal(next);
+    rosClient.setEstopLock(!estopEngaged);
   };
+
+  // Say what the client is actually doing on the wire. "holding" only appears
+  // when the republish heartbeat is genuinely running against an open socket —
+  // a lock the robot reports but we are not holding reads plainly instead.
+  const estopCaption = !connected
+    ? 'offline'
+    : estop.releasing
+      ? 'clearing · resending'
+      : estopEngaged
+        ? (estop.heartbeat ? 'holding 2 hz · click to clear' : 'click to clear')
+        : 'mux lock · pri 255';
 
   // Calculate voltage slider progress (range 8.8V - 12.6V)
   const minVolts = 8.8;
@@ -61,7 +71,7 @@ export function SafetyStrip() {
       >
         <span>{!connected ? "E-STOP" : estopEngaged ? "ESTOP LOCKED" : "E-STOP"}</span>
         <small className={clsx("font-mono text-[9px] uppercase tracking-wider font-bold", !connected ? "text-zinc-500" : estopEngaged ? "text-emerald-500" : "text-red-500/80")}>
-          {!connected ? "offline" : estopEngaged ? "click to clear" : "mux lock · pri 255"}
+          {estopCaption}
         </small>
       </button>
 
