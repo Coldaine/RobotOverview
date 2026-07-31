@@ -82,6 +82,11 @@ def generate_launch_description():
     cockpit_status = Node(
         package='ugv_cockpit', executable='cockpit_status',
         name='cockpit_status', output='screen',
+        # The deployed cockpit is a physical-robot surface and deliberately
+        # shares twist_mux's physical default clock. It is not a simulation
+        # launch and exposes no independent clock override that could drift
+        # from the arbiter it mirrors.
+        parameters=[{'use_sim_time': False}],
     )
 
     return LaunchDescription([

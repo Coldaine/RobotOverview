@@ -46,9 +46,16 @@ def motion_harness(allow_motion, cmd_vel_timeout=0.5):
         base_controller=RecordingController(),
         zero_vel_count=0,
         zero_vel_limit=5,
+        safety_publish_count=0,
         get_logger=lambda: logger,
     )
     harness.send_stop_command = MethodType(ugv_bringup.send_stop_command, harness)
+    harness._publish_safety_state = MethodType(
+        lambda self: setattr(
+            self, 'safety_publish_count', self.safety_publish_count + 1
+        ),
+        harness,
+    )
     harness._cmd_vel_watchdog_tick = MethodType(
         ugv_bringup._cmd_vel_watchdog_tick, harness
     )
@@ -115,10 +122,12 @@ def test_cmd_vel_watchdog_sends_one_stop_after_timeout(monkeypatch):
         {'T': '13', 'X': 0.0, 'Z': 0.0},
     ]
     assert harness._cmd_vel_watchdog_armed is False
+    assert harness.safety_publish_count == 1
 
     clock['now'] = 1001.5
     harness._cmd_vel_watchdog_tick()
     assert len(harness.base_controller.commands) == 2
+    assert harness.safety_publish_count == 1
 
 
 def test_cmd_vel_watchdog_resets_timer_on_fresh_command(monkeypatch):

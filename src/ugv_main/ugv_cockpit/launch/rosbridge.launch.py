@@ -65,12 +65,13 @@ VERIFIED ROSBRIDGE 2.0.7 BEHAVIOUR (read from source, not the docs)
     to work. docs/cockpit.md carries the commissioning check that proves the
     boundary is live — run it after any change to these strings.
 
-rosapi_node is NOT launched, deliberately. rosbridge force-appends
-``/rosapi/*`` to any non-``None`` ``services_glob``, so ``services_glob:='[]'``
-cannot refuse it — including ``/rosapi/set_param``, which would let a client
-flip ``allow_motion`` straight through the "no motion path" claim. Not starting
-the node is the only way to make the denial real. The shipped cockpit uses only
-advertise / publish / subscribe, so nothing is lost.
+rosapi_node is NOT launched, deliberately. More importantly, the
+``cockpit_rosbridge`` wrapper removes every service and action capability from
+the upstream protocol. rosbridge 2.0.7 force-appends ``/rosapi/*`` to any
+non-``None`` ``services_glob``, so configuration alone cannot refuse it if
+another launch starts rosapi in the same ROS domain. With no ``call_service``
+operation registered, that graph coexistence cannot widen this socket. The
+shipped cockpit uses only advertise / publish / subscribe, so nothing is lost.
 
 Every constant below is asserted by test/test_cockpit_bridge.py.
 """
@@ -86,8 +87,8 @@ ROSBRIDGE_PORT = 9090
 
 # Client -> robot. Exhaustively the five topics the shipped cockpit advertises
 # (Coldaine/RobotOverview src/lib/ros/client.ts). Each is either the mux's
-# priority-50 UI rung, the e-stop lock (which can only stop the robot), or a
-# non-velocity actuator. The mux OUTPUT /cmd_vel and the higher rungs
+# priority-50 UI rung, remote e-stop lock assert/release, or a non-velocity
+# actuator. The mux OUTPUT /cmd_vel and the higher rungs
 # cmd_vel_joy_robot / cmd_vel_joy_operator / cmd_vel_nav are absent, so a
 # browser can neither bypass arbitration nor outrank the human at the robot.
 TOPICS_PUB_GLOB = (
@@ -117,8 +118,8 @@ ACTIONS_GLOB = '[]'
 def generate_launch_description():
     """Stand up the cockpit's rosbridge websocket, and nothing else."""
     rosbridge = Node(
-        package='rosbridge_server',
-        executable='rosbridge_websocket',
+        package='ugv_cockpit',
+        executable='cockpit_rosbridge',
         name='rosbridge_websocket',
         output='screen',
         parameters=[{

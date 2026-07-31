@@ -37,6 +37,7 @@ TWIST_MUX_CONFIG = 'src/ugv_main/ugv_cockpit/config/twist_mux.yaml'
 BRINGUP_LAUNCH = 'src/ugv_main/ugv_bringup/launch/bringup_lidar.launch.py'
 BRINGUP_NODE = 'src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py'
 PACKAGE_XML = 'src/ugv_main/ugv_cockpit/package.xml'
+PROTOCOL_WRAPPER = 'src/ugv_main/ugv_cockpit/ugv_cockpit/cockpit_rosbridge.py'
 SERVICE_UNIT = 'deploy/systemd/beast-cockpit.service'
 COCKPIT_DOC = 'docs/cockpit.md'
 
@@ -78,7 +79,8 @@ FORBIDDEN_PUB_TOPICS = [
     '/cmd_vel_smoothed',
 ]
 
-ROSBRIDGE_PACKAGE = 'rosbridge_server'
+ROSBRIDGE_PACKAGE = 'ugv_cockpit'
+ROSBRIDGE_EXECUTABLE = 'cockpit_rosbridge'
 
 # Glob parameters that must be set explicitly. rosbridge maps an unset ("")
 # value to None and every capability treats None as "no restriction", so an
@@ -231,8 +233,7 @@ def test_every_twist_mux_rung_is_covered_by_the_forbidden_list():
     lock = '/' + params['locks']['estop']['topic'].lstrip('/')
 
     assert lock in EXPECTED_PUB_TOPICS, (
-        "the e-stop lock must stay publishable — it is the cockpit's stop button, "
-        'and it can only stop the robot, never move it'
+        'the e-stop lock must stay publishable for explicit remote assert and release'
     )
     # The UI rung is the one drive input a browser is allowed to reach.
     unguarded = rungs - set(FORBIDDEN_PUB_TOPICS) - {'/cmd_vel_ui'}
@@ -350,6 +351,28 @@ def test_no_rosapi_node_is_launched(launch_tree):
         'and cannot be denied by configuration — the only way to refuse them '
         'is not to start the node.' % (LAUNCH_FILE, sorted(offenders))
     )
+
+
+def test_bridge_registers_topic_operations_only():
+    source = read(PROTOCOL_WRAPPER)
+    tree = ast.parse(source, filename=PROTOCOL_WRAPPER)
+    assignment = next(
+        node for node in tree.body
+        if isinstance(node, ast.Assign)
+        and any(isinstance(target, ast.Name) and target.id == 'TOPIC_ONLY_CAPABILITIES'
+                for target in node.targets)
+    )
+    names = [elt.id for elt in assignment.value.elts]
+    assert names == ['Advertise', 'Publish', 'Subscribe', 'Defragment']
+    for forbidden in ('CallService', 'AdvertiseService', 'SendActionGoal'):
+        assert forbidden not in source
+
+
+def test_launch_uses_the_topic_only_wrapper(launch_tree):
+    nodes = node_calls(launch_tree)
+    assert len(nodes) == 1
+    assert literal(nodes[0]['package']) == ROSBRIDGE_PACKAGE
+    assert literal(nodes[0]['executable']) == ROSBRIDGE_EXECUTABLE
 
 
 def test_package_manifest_does_not_depend_on_rosapi():

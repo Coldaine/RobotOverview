@@ -32,6 +32,8 @@ import yaml
 PACKAGE_DIR = 'src/ugv_main/ugv_cockpit/ugv_cockpit'
 TWIST_MUX_CONFIG = 'src/ugv_main/ugv_cockpit/config/twist_mux.yaml'
 STATUS_NODE = 'src/ugv_main/ugv_cockpit/ugv_cockpit/cockpit_status.py'
+COCKPIT_LAUNCH = 'src/ugv_main/ugv_cockpit/launch/cockpit.launch.py'
+TWIST_MUX_LAUNCH = 'src/ugv_main/ugv_cockpit/launch/twist_mux.launch.py'
 BRINGUP_NODE = 'src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py'
 
 # The exact strings the UI switches on. Spelled out here as an INDEPENDENT
@@ -146,6 +148,12 @@ def test_mux_source_table_matches_twist_mux_yaml(contract):
     assert contract.SOURCE_TIMEOUT_S == next(iter(params['topics'].values()))['timeout']
 
 
+def test_mux_policy_cannot_be_replaced_without_a_code_review():
+    source = read(TWIST_MUX_LAUNCH)
+    assert "LaunchConfiguration('twist_mux_config')" not in source
+    assert 'default_config' in source
+
+
 def test_mux_sources_are_ordered_highest_priority_first(contract):
     """resolve_active_source returns on the first live rung, so order matters."""
     priorities = [priority for _, _, priority, _ in contract.MUX_SOURCES]
@@ -239,6 +247,15 @@ def test_status_node_subscribes_every_rung_and_the_lock():
         '%s must subscribe the four rung topics and the e-stop lock — that is '
         'the only way to know which source holds the floor' % STATUS_NODE
     )
+
+
+def test_status_node_and_mux_share_the_ros_clock_mode():
+    status_source = read(STATUS_NODE)
+    launch_source = read(COCKPIT_LAUNCH)
+    assert 'self.get_clock().now().nanoseconds' in status_source
+    assert 'time.monotonic()' not in status_source
+    assert "parameters=[{'use_sim_time': False}]" in launch_source
+    assert "DeclareLaunchArgument(\n        'use_sim_time'" not in launch_source
 
 
 def test_bringup_publishes_the_safety_state_the_cockpit_gates_on():

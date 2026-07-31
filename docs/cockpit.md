@@ -51,7 +51,7 @@ mux unbypassable from a browser.**
 | Topic | Type | Why it is admitted |
 |---|---|---|
 | `/cmd_vel_ui` | `geometry_msgs/Twist` | The mux's **priority-50 rung**. A pad at the robot (150) or an operator pad (100) always outranks it |
-| `/cmd_vel_estop_lock` | `std_msgs/Bool` | The stop button, priority 255 — it can only stop the robot, never move it |
+| `/cmd_vel_estop_lock` | `std_msgs/Bool` | Remote priority-255 lock control: `true` stops; `false` releases the lock and may expose the next live source |
 | `/ugv/led_ctrl` | `std_msgs/Int32MultiArray` | Lights |
 | `/pt_joint_position_controller/commands` | `std_msgs/Float64MultiArray` | Pan-tilt |
 | `/ugv/pt_steady_ctrl` | `std_msgs/Float64MultiArray` | Pan-tilt levelling |
@@ -76,10 +76,13 @@ the list stays closed so a client cannot enumerate and read whatever a later PR 
 
 ### Services and actions
 
-Both are `[]`, which denies everything — and `rosapi_node` is **not launched**.
-rosbridge force-appends `/rosapi/*` to any non-empty `services_glob`, so refusing
-rosapi by configuration is impossible; that append would otherwise admit
-`/rosapi/set_param`, which lets a client flip `allow_motion` straight through the "this
+Both are `[]`. The `cockpit_rosbridge` wrapper also removes service and action
+capabilities from the protocol entirely, and `rosapi_node` is **not launched**.
+rosbridge 2.0.7 force-appends `/rosapi/*` to any non-empty `services_glob`, so
+refusing rosapi by configuration alone is impossible; that append would otherwise
+admit graph and parameter services outside this cockpit's required surface. The
+topic-only wrapper is the real denial, while omitting rosapi avoids publishing an
+unneeded sensitive service surface in the first place. This preserves the "this
 package adds no motion path" claim. Not starting the node is the only real denial. The
 shipped cockpit uses only advertise / publish / subscribe, so nothing is lost.
 

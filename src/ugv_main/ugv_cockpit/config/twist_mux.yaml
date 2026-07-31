@@ -166,7 +166,7 @@ twist_mux:
     # in docs/command_arbitration.md#emergency-lock.
     #
     # The cockpit bridge's client-publish whitelist admits this topic
-    # (launch/cockpit_bridge.launch.py, TOPICS_PUB_GLOB), so the web cockpit's
+    # (launch/rosbridge.launch.py, TOPICS_PUB_GLOB), so the web cockpit's
     # e-stop control is a real publisher of it. No node in THIS workspace
     # publishes it: the client is a browser, and the ">= 1 Hz while engaged"
     # contract above is on that client, not on anything here.

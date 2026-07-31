@@ -44,7 +44,6 @@ Host metrics
     visible in ``ros2 topic echo`` as well as in the cockpit.
 """
 import shutil
-import time
 
 import rclpy
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
@@ -151,10 +150,9 @@ class CockpitStatus(Node):
         self._watchdog_fired = False
         self._watchdog_at = None
 
-        # Mux rung observation. time.monotonic() rather than the ROS clock on
-        # purpose: these ages are compared against twist_mux's wall-clock
-        # expiry, and the panel must keep reporting sensibly if /clock is
-        # absent or jumps.
+        # Mux rung observation uses this node's ROS clock, the same time base
+        # twist_mux uses. In simulation both nodes therefore pause and jump
+        # with /clock together instead of reporting contradictory expiry.
         self._last_command_at = {key: None for key, _, _, _ in MUX_SOURCES}
         self._estop_engaged = False
 
@@ -186,7 +184,7 @@ class CockpitStatus(Node):
 
     def _make_command_callback(self, key):
         def callback(_msg):
-            self._last_command_at[key] = time.monotonic()
+            self._last_command_at[key] = self._now_s()
         return callback
 
     def _on_estop_lock(self, msg: Bool):
@@ -196,17 +194,19 @@ class CockpitStatus(Node):
 
     def _on_allow(self, msg: Bool):
         self._allow_motion = bool(msg.data)
-        self._allow_motion_at = time.monotonic()
+        self._allow_motion_at = self._now_s()
 
     def _on_watchdog(self, msg: DiagnosticStatus):
         values = {kv.key: kv.value for kv in msg.values}
         self._watchdog_armed = values.get(KEY_ARMED, 'false') == 'true'
         self._watchdog_fired = values.get(KEY_FIRED, 'false') == 'true'
-        self._watchdog_at = time.monotonic()
+        self._watchdog_at = self._now_s()
 
-    @staticmethod
-    def _is_fresh(stamp):
-        return stamp is not None and (time.monotonic() - stamp) <= BRINGUP_STALE_S
+    def _now_s(self):
+        return self.get_clock().now().nanoseconds / 1_000_000_000.0
+
+    def _is_fresh(self, stamp):
+        return stamp is not None and (self._now_s() - stamp) <= BRINGUP_STALE_S
 
     def _tick(self):
         arr = DiagnosticArray()
@@ -221,7 +221,7 @@ class CockpitStatus(Node):
 
     def _mux_status(self):
         display, age = resolve_active_source(
-            time.monotonic(),
+            self._now_s(),
             self._last_command_at,
             self._estop_engaged,
             self._source_timeout_s,
