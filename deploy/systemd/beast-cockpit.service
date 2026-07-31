@@ -1,3 +1,15 @@
+# DISABLED BY DEFAULT, ON PURPOSE.
+#
+# Starting this unit opens a rosbridge websocket that can publish onto the
+# robot's command topics. There is no authentication on it; the boundary is the
+# loopback bind + the topic whitelist in ugv_cockpit/launch/rosbridge.launch.py
+# + tailscale serve. `systemctl enable` is an operator decision, not part of
+# installing the workspace.
+#
+# docs/cockpit.md has the whitelist, the commissioning check that proves it is
+# enforced (denials are SILENT to the client), and the tailscale serve command.
+# Port 9090 is loopback-only, so no firewall hole is needed or wanted.
+
 [Unit]
 Description=BEAST-01 Command Deck cockpit (OAK + rosbridge + cockpit nodes)
 Wants=network-online.target beast-ros-base.service
@@ -8,7 +20,10 @@ ConditionPathExists=/home/beast/beast/ugv_ws/install/setup.bash
 Type=simple
 User=beast
 Group=beast
-SupplementaryGroups=dialout video render plugdev
+# No `dialout`: this unit never touches the ESP32 serial link. video/render/
+# plugdev are for the OAK-D over USB. Least privilege for a unit whose whole
+# claim is that it adds no motion path.
+SupplementaryGroups=video render plugdev
 WorkingDirectory=/home/beast/beast/ugv_ws
 EnvironmentFile=/etc/beast/ugv.env
 Environment=PYTHONUNBUFFERED=1

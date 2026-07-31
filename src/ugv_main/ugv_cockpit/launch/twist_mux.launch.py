@@ -20,8 +20,10 @@ What this file does NOT do:
     twist_mux never publishes a stop of its own — on source silence it
     simply stops emitting. The watchdog is the only thing in the chain
     guaranteed to notice silence and act on it.
-  * It does not open a network port. The cockpit bridge (foxglove_bridge)
-    and the operator teleop path land in PR-2.
+  * It does not open a network port. That is cockpit_bridge.launch.py in this
+    same package — a rosbridge websocket bound to loopback with an explicit
+    topic whitelist — and it is deliberately NOT included by bringup. See
+    docs/cockpit.md.
 """
 
 import os

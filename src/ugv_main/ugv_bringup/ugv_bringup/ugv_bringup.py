@@ -19,9 +19,11 @@ Hangar (RobotOverview) never deploys to the robot.
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Header, Float32MultiArray
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile
+from std_msgs.msg import Header, Bool, Float32MultiArray
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu, MagneticField, JointState, BatteryState
+from diagnostic_msgs.msg import DiagnosticStatus, KeyValue
 
 import os
 import time
@@ -113,7 +115,31 @@ class ugv_bringup(Node):
         self._motion_reject_warned = False
         self._last_cmd_vel_time = None
         self._cmd_vel_watchdog_armed = False
-                        
+        # Latched: the watchdog issued a stop and nothing has driven since.
+        # Cleared when a fresh non-zero command is accepted. Only this node can
+        # observe it — the stop it sends is byte-identical to an operator's, so
+        # no outside watcher could tell them apart from /cmd_vel.
+        self._cmd_vel_watchdog_fired = False
+
+        # Safety state for the cockpit. These two topics exist so the browser
+        # cockpit can gate its drive controls on what the ROBOT reports rather
+        # than on what the UI last sent — see ugv_cockpit/cockpit_status.py and
+        # docs/cockpit.md. TRANSIENT_LOCAL with depth 1 so a client that
+        # connects between ticks gets the current state immediately instead of
+        # rendering "unknown" for up to half a second; the periodic republish
+        # below is what lets a consumer detect that this node has died.
+        safety_qos = QoSProfile(
+            depth=1,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            history=HistoryPolicy.KEEP_LAST,
+        )
+        self.allow_motion_publisher_ = self.create_publisher(
+            Bool, 'ugv/allow_motion', safety_qos
+        )
+        self.watchdog_state_publisher_ = self.create_publisher(
+            DiagnosticStatus, 'ugv/watchdog_state', safety_qos
+        )
+
         # Initialize the base controller with the UART port and baud rate
         self.base_controller = BaseController(serial_port_name, baud_rate)
         request_data = json.dumps({"T":131,"cmd":1}) + "\n"
@@ -127,8 +153,57 @@ class ugv_bringup(Node):
         self.ip_thread.start()
         # Stale-cmd_vel watchdog: ESP32 latches last velocity with no firmware timeout
         self._cmd_vel_watchdog_timer = self.create_timer(0.1, self._cmd_vel_watchdog_tick)
+        # 2 Hz safety heartbeat. Deliberately faster than the cockpit's 3 s
+        # staleness window, so one dropped tick never reads as "bringup is gone".
+        self._safety_state_timer = self.create_timer(0.5, self._publish_safety_state)
+        self._publish_safety_state()
 
         self.set_ugv_version()
+
+    def _publish_safety_state(self):
+        """Publish the arming gate and the cmd_vel watchdog state.
+
+        Both values are read from this node's own state, which is the only
+        place either one exists:
+
+          * `allow_motion` is the parameter this node latched at startup and
+            actually enforces in cmd_vel_callback — not the parameter server's
+            current value, which nothing re-reads. Publishing the enforced
+            value is what makes the cockpit's gate honest.
+          * `armed` means "the stop-on-silence protection is live on the motion
+            path", i.e. motion is allowed AND the timeout is positive. With
+            allow_motion false there is no motion path to protect, and the
+            cockpit already shows that separately.
+          * `watching` is the transient internal flag: a non-zero command is in
+            flight and the next tick will time it. It flips on every zero
+            command, which is why `armed` is the stable value the UI reads.
+          * `fired` latches the watchdog's own stop until something drives
+            again.
+        """
+        self.allow_motion_publisher_.publish(Bool(data=bool(self.allow_motion)))
+
+        status = DiagnosticStatus()
+        status.name = 'cmd_vel_watchdog'
+        status.hardware_id = 'ugv_bringup'
+        armed = bool(self.allow_motion) and self.cmd_vel_timeout > 0.0
+        if self._cmd_vel_watchdog_fired:
+            status.level = DiagnosticStatus.ERROR
+            status.message = 'watchdog stopped the robot; no command since'
+        elif armed:
+            status.level = DiagnosticStatus.OK
+            status.message = 'armed'
+        else:
+            status.level = DiagnosticStatus.WARN
+            status.message = 'not armed (motion locked or timeout disabled)'
+        status.values = [
+            KeyValue(key='armed', value=str(armed).lower()),
+            KeyValue(key='fired', value=str(self._cmd_vel_watchdog_fired).lower()),
+            KeyValue(
+                key='watching', value=str(self._cmd_vel_watchdog_armed).lower()
+            ),
+            KeyValue(key='timeout', value=f'{self.cmd_vel_timeout:.2f}'),
+        ]
+        self.watchdog_state_publisher_.publish(status)
 
     def set_ugv_version(self):
         model = os.getenv("UGV_MODEL", "ugv_rover")
@@ -313,6 +388,10 @@ class ugv_bringup(Node):
         self._cmd_vel_watchdog_armed = not (
             linear_velocity == 0.0 and angular_velocity == 0.0
         )
+        if self._cmd_vel_watchdog_armed:
+            # Something is driving again, so the previous watchdog stop is
+            # history rather than the current state of the robot.
+            self._cmd_vel_watchdog_fired = False
 
     def _cmd_vel_watchdog_tick(self):
         if not self.allow_motion or not self._cmd_vel_watchdog_armed:
@@ -323,6 +402,10 @@ class ugv_bringup(Node):
             return
         self.send_stop_command()
         self._cmd_vel_watchdog_armed = False
+        self._cmd_vel_watchdog_fired = True
+        # Report it immediately rather than waiting up to 0.5 s for the next
+        # heartbeat: this is the one transition the cockpit must not lag on.
+        self._publish_safety_state()
         self.get_logger().warning(
             f'cmd_vel watchdog stop after {self.cmd_vel_timeout:.2f}s silence'
         )

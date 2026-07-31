@@ -85,8 +85,18 @@ EKF config: `src/ugv_main/ugv_bringup/config/ekf.yaml` — wheel velocities from
 | `/scan` | `sensor_msgs/LaserScan` | Pub | 2D LiDAR (`base_lidar_link`) |
 | `/odom` | `nav_msgs/Odometry` | Pub | EKF-fused odometry |
 | `ugv/voltage` | `sensor_msgs/BatteryState` | Pub | Battery voltage |
-| `imu/raw` | `sensor_msgs/Imu` | Pub | IMU from motor board |
+| `imu/raw` | `sensor_msgs/Imu` | Pub | IMU from motor board. **There is no `/imu/data`** — the `imu/data_raw` publisher is commented out and no filter republishes it |
 | `ugv/led_ctrl` | `std_msgs/Float32MultiArray` | Sub | LED brightness |
+| `ugv/allow_motion` | `std_msgs/Bool` | Pub | The arming gate this node actually enforces, 2 Hz, latched. Consumed by the [cockpit](cockpit.md#safety-state-the-cockpit-gates-on) so the browser gates drive controls on the robot's answer, not the UI's |
+| `ugv/watchdog_state` | `diagnostic_msgs/DiagnosticStatus` | Pub | `cmd_vel` watchdog: `armed`, `fired`, `watching`, `timeout`. 2 Hz, latched, plus an immediate republish the moment the watchdog stops the robot |
+
+!!! note "Why the watchdog has to publish this itself"
+    Nothing outside this node can observe whether the watchdog has fired: the stop it
+    sends the ESP32 is byte-identical to an operator's stop, so no external watcher
+    could tell them apart from `/cmd_vel`. `armed` means "the stop-on-silence
+    protection is live on the motion path" (motion allowed **and** `cmd_vel_timeout >
+    0`); `watching` is the transient per-command flag, which flips on every zero
+    command and is therefore not what a status panel should display.
 
 ---
 

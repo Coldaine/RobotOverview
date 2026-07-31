@@ -1,16 +1,19 @@
 name: Command Spine Tests
 
-# The ugv_cockpit suite is the merge gate for the BEAST-01 command spine: it
-# proves the twist_mux priority ladder is exactly as specified, that the e-stop
-# lock is 255/manual, that every nav2 node capable of emitting velocity is
-# routed off /cmd_vel, and that no file in the tree reintroduces a direct
-# /cmd_vel publisher.
+# The ugv_cockpit suite is the merge gate for the BEAST-01 command spine and
+# the cockpit bridge that sits in front of it. It proves the twist_mux priority
+# ladder is exactly as specified, that the e-stop lock is 255/manual, that every
+# nav2 node capable of emitting velocity is routed off /cmd_vel, that no file in
+# the tree reintroduces a direct /cmd_vel publisher, that the rosbridge topic
+# whitelist admits exactly the shipped cockpit's topics and binds loopback only,
+# and that the /cockpit/status strings still match what the cockpit renders.
 #
-# It is entirely STATIC — it reads and parses source, YAML and launch files and
-# never imports rclpy or starts a node — so it runs on a bare ubuntu-latest
-# runner with nothing but pytest and pyyaml. No ROS, no colcon, no container.
-# That is the whole point: the safety check must be cheap enough to run on
-# every push, not only on the robot.
+# It never imports rclpy or starts a node — it parses source, YAML and launch
+# files and exercises the pure-logic modules (depth maths, the arbitration
+# mirror, the wire-string contract) directly — so it runs on a bare
+# ubuntu-latest runner with pip-installable packages only. No ROS, no colcon,
+# no container. That is the whole point: the safety check must be cheap enough
+# to run on every push, not only on the robot.
 
 on:
   pull_request:
@@ -41,7 +44,12 @@ jobs:
           python-version: '3.10'
 
       - name: Install test dependencies
-        run: pip install pytest pyyaml
+        # numpy + opencv are what ugv_cockpit/depth_ops.py needs. They are
+        # installed rather than skipped so the depth NaN/zero-pixel tests
+        # actually RUN here instead of reporting green as a skip;
+        # opencv-python-headless is the no-GUI build, ~40 s of install for six
+        # real assertions. Still no ROS, no rclpy, no cv_bridge.
+        run: pip install pytest pyyaml numpy opencv-python-headless
 
-      - name: Run command spine tests
+      - name: Run command spine and cockpit bridge tests
         run: python -m pytest src/ugv_main/ugv_cockpit/test -q
