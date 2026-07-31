@@ -1,3 +1,22 @@
+"""UGV bringup — ESP32 serial bridge + sensor republish (runs on the Jetson).
+
+Telemetry honesty (see also RobotOverview docs/beast-ops.md Quick connect):
+  REAL     /ugv/voltage.voltage — pack bus volts from ESP32 JSON "v"
+  FAKE     /ugv/voltage.percentage — V/12.6, not state-of-charge
+  DUMMY    BatteryState current/charge/capacity/temperature/power_supply_status
+  ASSUMED  IMU/mag LSB scales (vendor ICM-20948); odom odl/odr ÷100 as cm→m
+  HACK     cmd_vel zero-drop after N zeros; ±0.2 yaw deadband boost
+  MISSING  true SOC / charging — needs UPS Module 3S I²C telemetry → Orin
+
+Calibration: do not "tune" FAKE/DUMMY fields. Vendor IMU scales are fine to start
+(spot-check 1 g at rest). Calibrate wheel odom / EKF before mapping. Mag only if
+using compass. Wire UPS I²C before trusting charge/% .
+
+Deploy to beast-01: edit in D:\\_projects\\ugv_ws → push Coldaine/ugv_ws →
+ssh → git pull in ~/beast/ugv_ws → colcon build → restart beast-ros-base.service.
+Hangar (RobotOverview) never deploys to the robot.
+"""
+
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Header, Float32MultiArray
@@ -171,14 +190,16 @@ class ugv_bringup(Node):
         msg = Imu()
         msg.header = Header()
         msg.header.stamp = self.get_clock().now().to_msg()  # Get the current timestamp
+        # ASSUMED: sensor is not at the chassis origin; covariances left at msg defaults (0).
         msg.header.frame_id = "base_link"
         imu_raw_data = self.base_controller.base_data
                 
-        # Populate the linear acceleration and angular velocity fields degree/s  m/s^2 
+        # ASSUMED vendor scale (ICM-20948 ±4g / 8192 LSB/g) — not calibrated on this robot.
         msg.linear_acceleration.x = 9.8 * float(imu_raw_data["ax"]) / 8192
         msg.linear_acceleration.y = 9.8 * float(imu_raw_data["ay"]) / 8192
         msg.linear_acceleration.z = 9.8 * float(imu_raw_data["az"]) / 8192
         
+        # ASSUMED vendor scale (±2000 dps / 16.4 LSB/dps) — not calibrated on this robot.
         msg.angular_velocity.x = 3.1415926 * float(imu_raw_data["gx"]) / (16.4 * 180)
         msg.angular_velocity.y = 3.1415926 * float(imu_raw_data["gy"]) / (16.4 * 180)
         msg.angular_velocity.z = 3.1415926 * float(imu_raw_data["gz"]) / (16.4 * 180)
@@ -190,10 +211,11 @@ class ugv_bringup(Node):
         msg = MagneticField()
         msg.header = Header()
         msg.header.stamp = self.get_clock().now().to_msg()  # Get the current timestamp
+        # ASSUMED: same frame_id caveat as imu/raw; covariances left at defaults.
         msg.header.frame_id = "base_link"
         imu_raw_data = self.base_controller.base_data
 
-        # Populate the magnetic field data μT
+        # ASSUMED vendor scale (0.15 µT/LSB) — not calibrated on this robot.
         msg.magnetic_field.x = float(imu_raw_data["mx"]) * 0.15
         msg.magnetic_field.y = float(imu_raw_data["my"]) * 0.15
         msg.magnetic_field.z = float(imu_raw_data["mz"]) * 0.15
@@ -203,6 +225,8 @@ class ugv_bringup(Node):
     # Publish odometry data to the ROS topic "odom/odom_raw" m
     def publish_odom_raw(self):
         odom_raw_data = self.base_controller.base_data
+        # ASSUMED: odl/odr are cm from firmware (/100 → m). L/R are ESP32-reported wheel
+        # speeds as-is — not fused odometry; EKF consumers must not treat this as ground truth.
         array = [odom_raw_data["odl"]/100, odom_raw_data["odr"]/100,odom_raw_data["L"], odom_raw_data["R"]]
         msg = Float32MultiArray(data=array)
         self.odom_publisher_.publish(msg)  # Publish the odometry data
@@ -232,15 +256,21 @@ class ugv_bringup(Node):
         except Exception as e:
             self.get_logger().error(f"Failed low battery warning: {e}")
 
-    # Publish voltage data to the ROS topic "voltage" v
+    # Publish voltage data to the ROS topic "ugv/voltage"
     def publish_voltage(self):
         voltage_data = self.base_controller.base_data
         msg = BatteryState()
         msg.header = Header()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = "base_link"
+        # REAL: pack bus voltage from ESP32 JSON field "v" (centivolts → volts).
         msg.voltage = float(voltage_data["v"] / 100)
+        # FAKE: not state-of-charge. Linear open-circuit guess V / 12.6 V. Lies under load
+        # and while charging. No fuel gauge / UPS I²C current is wired to the Orin yet.
         msg.percentage = float(voltage_data["v"] / 1260)
+        # DUMMY: left at BatteryState defaults — current, charge, capacity, temperature,
+        # power_supply_status (charging vs not) are unset/zero. present=True only means
+        # "we got a voltage sample," not "healthy pack."
         msg.present = True
         self.voltage_publisher_.publish(msg)
         self._maybe_low_battery_warning(msg.voltage)
@@ -262,6 +292,7 @@ class ugv_bringup(Node):
 
         self._last_cmd_vel_time = time.monotonic()
 
+        # HACK: after zero_vel_limit consecutive zeros, drop further zero cmds (silent).
         if linear_velocity == 0.0 and angular_velocity == 0.0:
             self.zero_vel_count += 1
             if self.zero_vel_count > self.zero_vel_limit:
@@ -269,7 +300,7 @@ class ugv_bringup(Node):
         else:
             self.zero_vel_count = 0  
 
-        # Apply minimum threshold to angular velocity if linear velocity is zero
+        # HACK: deadband boost — tiny yaw when not translating is forced to ±0.2.
         if linear_velocity == 0.0:
             if 0 < angular_velocity < 0.2:
                 angular_velocity = 0.2
