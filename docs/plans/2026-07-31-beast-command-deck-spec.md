@@ -89,6 +89,15 @@ consecutive zero Twists further zeros are dropped; small yaw commands are force-
    exists. The upgrade path is documented inline in the drafts.
 5. Motion preconditions, in order: pack ≥ 10.5 V → watchdog re-gate passed → runway confirmed →
    `allow_motion:=true` for the supervised session only → explicit stop + relock afterward.
+6. **Capability vs. permission (reconciliation, 2026-07-31).** Point 1 gates cockpit teleop on
+   the beast-paces Phase 2 live watchdog re-gate, while the cockpit already ships a drive pad.
+   Those are not in conflict: **the capability ships, the motion stays inert.** The client
+   publishes `/cmd_vel_ui` only when the robot itself reports `allow_motion == true`; an absent
+   publisher is UNKNOWN and UNKNOWN is not permission, so the pad is disabled with the reason
+   shown on screen until the robot is deliberately armed. Arming remains a supervised,
+   robot-side act gated on point 1 — **this note does not weaken that gate**, it states where it
+   is enforced. Shipping the UI before the gate passes is what lets the gate be exercised
+   against the real control surface instead of a mock.
 
 ## Sensor spine (verified 2026-07-31)
 
