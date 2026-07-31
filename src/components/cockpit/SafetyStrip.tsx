@@ -3,7 +3,8 @@
 import { 
   rosClient, 
   useCockpitVoltage, 
-  useCockpitStatus 
+  useCockpitStatus,
+  useConnectionState
 } from '@/lib/ros/client';
 import { useState } from 'react';
 import clsx from 'clsx';
@@ -12,14 +13,22 @@ import { ShieldAlert, ShieldCheck } from 'lucide-react';
 export function SafetyStrip() {
   const { voltage } = useCockpitVoltage();
   const status = useCockpitStatus();
-  
-  const [estopEngaged, setEstopEngaged] = useState(false);
+  const connection = useConnectionState();
 
-  // Handle ESTOP toggle
+  const [estopLocal, setEstopLocal] = useState(false);
+
+  // The robot's twist_mux is the source of truth for the lock; local optimistic
+  // state only applies while connected and is overridden by a real mux report.
+  const connected = connection === 'connected';
+  const estopEngaged = status.muxSource === 'E-STOP lock' || (connected && estopLocal);
+
+  // Only flip the button when the command actually leaves the socket. A
+  // disconnected click must never present a false "LOCKED".
   const handleEstop = () => {
-    const nextState = !estopEngaged;
-    setEstopEngaged(nextState);
-    rosClient.publish('/cmd_vel_estop_lock', { data: nextState });
+    if (!connected) return;
+    const next = !estopEngaged;
+    const sent = rosClient.publish('/cmd_vel_estop_lock', { data: next });
+    if (sent) setEstopLocal(next);
   };
 
   // Calculate voltage slider progress (range 8.8V - 12.6V)
@@ -40,16 +49,19 @@ export function SafetyStrip() {
       {/* ── E-STOP BUTTON ───────────────────────── */}
       <button 
         onClick={handleEstop}
+        disabled={!connected}
         className={clsx(
           "relative z-10 flex flex-col items-center justify-center gap-1.5 rounded-lg border px-4 py-3 font-display font-black tracking-widest text-sm transition-all shadow-inner select-none",
-          estopEngaged 
-            ? "border-emerald-500 bg-emerald-950/40 text-emerald-400 shadow-hud-green text-glow-emerald" 
-            : "border-red-500 bg-red-950/40 text-red-500 shadow-hud-red text-glow-red animate-pulse"
+          !connected
+            ? "border-zinc-600 bg-zinc-900/40 text-zinc-500 cursor-not-allowed"
+            : estopEngaged 
+              ? "border-emerald-500 bg-emerald-950/40 text-emerald-400 shadow-hud-green text-glow-emerald" 
+              : "border-red-500 bg-red-950/40 text-red-500 shadow-hud-red text-glow-red animate-pulse"
         )}
       >
-        <span>{estopEngaged ? "ESTOP LOCKED" : "E-STOP"}</span>
-        <small className={clsx("font-mono text-[9px] uppercase tracking-wider font-bold", estopEngaged ? "text-emerald-500" : "text-red-500/80")}>
-          {estopEngaged ? "click to clear" : "mux lock · pri 255"}
+        <span>{!connected ? "E-STOP" : estopEngaged ? "ESTOP LOCKED" : "E-STOP"}</span>
+        <small className={clsx("font-mono text-[9px] uppercase tracking-wider font-bold", !connected ? "text-zinc-500" : estopEngaged ? "text-emerald-500" : "text-red-500/80")}>
+          {!connected ? "offline" : estopEngaged ? "click to clear" : "mux lock · pri 255"}
         </small>
       </button>
 

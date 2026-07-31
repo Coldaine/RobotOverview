@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useCockpitScan } from '@/lib/ros/client';
+import { useCockpitScan, useCockpitOdom } from '@/lib/ros/client';
 import { Target, Zap } from 'lucide-react';
 import clsx from 'clsx';
 
 export function SpatialView() {
   const scan = useCockpitScan();
+  const odom = useCockpitOdom();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [scale, setScale] = useState(40); // Pixels per meter
@@ -184,8 +185,8 @@ export function SpatialView() {
         <span className={clsx("chip border-rim rounded-full py-0.5 px-2.5", scan.points.length > 0 ? "text-emerald-400 border-emerald-500/20" : "text-ink-dim")}>
           rf2o {scan.points.length > 0 ? '9.9 Hz' : '0.0Hz'}
         </span>
-        <span className="chip border-rim rounded-full py-0.5 px-2.5">
-          EKF /odom
+        <span className="chip border-rim rounded-full py-0.5 px-2.5 text-cyan/90" title="EKF-fused odometry pose + speed">
+          EKF {odom.x.toFixed(2)},{odom.y.toFixed(2)}m · {odom.linearSpeed.toFixed(2)} m/s
         </span>
         <span className="chip border-rim rounded-full py-0.5 px-2.5">
           map — Phase E

@@ -97,6 +97,13 @@ export interface DiagnosticsItem {
   values: Record<string, string>;
 }
 
+// Parse a numeric field defensively — live diagnostics can carry "unknown",
+// empty, or garbage strings that must never render as NaN.
+function safeNumber(value: string | undefined, fallback: number): number {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 // Memory-only stores for each topic
 let connectionState: ConnectionState = 'disconnected';
 let voltageState: CockpitVoltage = { voltage: 0, percentage: 0 };
@@ -295,13 +302,14 @@ export const rosClient = {
     });
   },
 
-  publish(topic: string, msg: unknown) {
-    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+  publish(topic: string, msg: unknown): boolean {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return false;
     socket.send(JSON.stringify({
       op: 'publish',
       topic,
       msg,
     }));
+    return true;
   },
 
   callService(serviceName: string, args: unknown) {
@@ -333,8 +341,11 @@ export const rosClient = {
     if (imageCallbacks.has(topic)) {
       const cb = imageCallbacks.get(topic);
       if (cb && msg.data) {
-        // Base64 compressed image
-        const format = msg.format || 'jpeg';
+        // Whitelist the format token — it lands in an <img> data URI. Not an XSS
+        // sink (src, not innerHTML), but keeps a malformed value from silently
+        // producing a broken frame.
+        const raw = (msg.format || 'jpeg').toLowerCase();
+        const format = raw.includes('png') ? 'png' : 'jpeg';
         cb(`data:image/${format};base64,${msg.data}`);
       }
       return; // Handled, bypass React
@@ -411,15 +422,15 @@ export const rosClient = {
               statusObj.watchdogFired = values.fired === 'true';
             } else if (d.name === 'twist_mux') {
               statusObj.muxSource = values.active_source || 'NONE';
-              statusObj.cmdAge = Number(values.command_age || -1);
-              statusObj.pubCount = Number(values.publisher_count || 0);
+              statusObj.cmdAge = safeNumber(values.command_age, -1);
+              statusObj.pubCount = Math.max(0, safeNumber(values.publisher_count, 0));
             } else if (d.name === 'bringup') {
               statusObj.allowMotion = values.allow_motion === 'true';
             } else if (d.name === 'system_metrics') {
-              statusObj.wifiRssi = Number(values.wifi_rssi || -100);
+              statusObj.wifiRssi = safeNumber(values.wifi_rssi, -100);
               statusObj.diskFree = values.disk_free || 'unknown';
-              statusObj.cpuTemp = Number(values.cpu_temp || 0);
-              statusObj.gpuTemp = Number(values.gpu_temp || 0);
+              statusObj.cpuTemp = safeNumber(values.cpu_temp, 0);
+              statusObj.gpuTemp = safeNumber(values.gpu_temp, 0);
             }
           });
         }

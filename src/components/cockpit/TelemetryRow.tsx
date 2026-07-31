@@ -4,15 +4,17 @@ import { useEffect, useRef, useState } from 'react';
 import { 
   useCockpitVoltage, 
   useCockpitImu, 
-  useCockpitDiagnostics 
+  useCockpitDiagnostics,
+  useCockpitStatus
 } from '@/lib/ros/client';
-import { Database } from 'lucide-react';
+import { Database, Thermometer } from 'lucide-react';
 import clsx from 'clsx';
 
 export function TelemetryRow() {
   const { voltage } = useCockpitVoltage();
   const imu = useCockpitImu();
   const diags = useCockpitDiagnostics();
+  const status = useCockpitStatus();
 
   const voltCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const imuCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -278,9 +280,16 @@ export function TelemetryRow() {
             {isRecording ? "BAG RECORDING ON" : "REC MISSION BAG"}
           </button>
           
-          <span className="hud-label font-mono text-[9px] flex items-center gap-1.5 scale-90">
-            <Database className="h-3 w-3 text-cyan" /> disk 1.8 TB free
-          </span>
+          <div className="flex items-center gap-2.5">
+            {status.cpuTemp > 0 && (
+              <span className="hud-label font-mono text-[9px] flex items-center gap-1 scale-90" title="Jetson CPU / GPU temperature">
+                <Thermometer className="h-3 w-3 text-amber" /> {status.cpuTemp.toFixed(0)}/{status.gpuTemp.toFixed(0)}°C
+              </span>
+            )}
+            <span className="hud-label font-mono text-[9px] flex items-center gap-1.5 scale-90">
+              <Database className="h-3 w-3 text-cyan" /> {status.diskFree !== 'unknown' ? status.diskFree : '1.8 TB'} free
+            </span>
+          </div>
         </div>
       </section>
     </div>

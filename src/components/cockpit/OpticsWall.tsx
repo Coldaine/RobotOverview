@@ -11,29 +11,30 @@ export function OpticsWall() {
   const rgbRef = useRef<HTMLImageElement | null>(null);
   const depthRef = useRef<HTMLImageElement | null>(null);
 
-  const [rgbFrames, setRgbFrames] = useState(0);
-  const [depthFrames, setDepthFrames] = useState(0);
+  // Frame counts live in refs so inbound frames never re-render React (the
+  // image bytes go straight to <img>.src). Only the once-a-second FPS tick
+  // touches state.
+  const rgbFrameCount = useRef(0);
+  const depthFrameCount = useRef(0);
   const [rgbFps, setRgbFps] = useState(0);
   const [depthFps, setDepthFps] = useState(0);
-
   const [rgbActive, setRgbActive] = useState(false);
   const [depthActive, setDepthActive] = useState(false);
 
-  // Monitor frame counts and calculate real FPS once per second
+  // Sample the frame counters once per second for FPS + liveness.
   useEffect(() => {
     const timer = setInterval(() => {
-      setRgbFps(rgbFrames);
-      setDepthFps(depthFrames);
-      
-      setRgbActive(rgbFrames > 0);
-      setDepthActive(depthFrames > 0);
-
-      setRgbFrames(0);
-      setDepthFrames(0);
+      const r = rgbFrameCount.current;
+      const d = depthFrameCount.current;
+      setRgbFps(r);
+      setDepthFps(d);
+      setRgbActive(r > 0);
+      setDepthActive(d > 0);
+      rgbFrameCount.current = 0;
+      depthFrameCount.current = 0;
     }, 1000);
-
     return () => clearInterval(timer);
-  }, [rgbFrames, depthFrames]);
+  }, []);
 
   // Hook up image topic subscriptions
   useEffect(() => {
@@ -41,14 +42,14 @@ export function OpticsWall() {
       if (rgbRef.current) {
         rgbRef.current.src = src;
       }
-      setRgbFrames((f) => f + 1);
+      rgbFrameCount.current += 1;
     });
 
     const unsubDepth = rosClient.registerImageCallback('/cockpit/depth/compressed', (src) => {
       if (depthRef.current) {
         depthRef.current.src = src;
       }
-      setDepthFrames((f) => f + 1);
+      depthFrameCount.current += 1;
     });
 
     return () => {
