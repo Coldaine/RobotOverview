@@ -30,7 +30,8 @@ every way of getting one wrong fails **silently**.
 | `overhead_clearance` | `/cockpit/overhead_clearance` (`Float32`, m) | "Will I fit under this duct?" — image-space min on the top depth band. Mission Undercroft's defining question. |
 | `cockpit_status` | `/cockpit/status` (`DiagnosticArray`) | Active mux source and command age, `/cmd_vel` publisher count, arming + watchdog state, disk free, Jetson temps, Wi-Fi RSSI. |
 
-`/scan`, `/odom`, `/ugv/voltage`, `/imu/raw`, `/diagnostics`, and
+`/scan`, `/odom`, `/ugv/voltage`, `/imu/raw`, `/diagnostics`,
+`/ugv/allow_motion`, `/ugv/watchdog_state`, and
 `/oak/rgb/image_raw/compressed` come from `beast-ros-base` + the OAK launch and
 are simply carried on the same bridge.
 

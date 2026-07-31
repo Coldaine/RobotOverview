@@ -104,16 +104,14 @@ TOPICS_PUB_GLOB = (
 # imu/data_raw publisher is commented out and no filter node republishes as
 # imu/data), so /imu/data does not exist on this robot.
 #
-# CROSS-REPO: the shipped cockpit client does NOT subscribe /imu/raw yet. At
-# Coldaine/RobotOverview HEAD today it still asks for /imu/data, which this glob
-# denies — silently, like every rosbridge denial. The client fix (/imu/data ->
-# /imu/raw) is in flight on RobotOverview branch fix/cockpit-review-round1 and
-# merges before this PR: THIS ENTRY AND THAT CLIENT CHANGE LAND TOGETHER, and
-# neither is correct on its own.
+# CROSS-REPO: RobotOverview #148 now subscribes /imu/raw plus the two dedicated
+# safety topics below. Keep this exhaustive list in lockstep with its
+# ROS_SUBSCRIPTIONS contract; denying a safety subscription would force the UI
+# onto the slower aggregator and surface a bridge fault.
 TOPICS_SUB_GLOB = (
     '[/ugv/voltage, /scan, /odom, /imu/raw, /cockpit/overhead_clearance, '
-    '/cockpit/status, /diagnostics, /oak/rgb/image_raw/compressed, '
-    '/cockpit/depth/compressed]'
+    '/cockpit/status, /diagnostics, /ugv/allow_motion, /ugv/watchdog_state, '
+    '/oak/rgb/image_raw/compressed, /cockpit/depth/compressed]'
 )
 
 # Empty LIST, not empty string: "" parses to None, which means allow-all.

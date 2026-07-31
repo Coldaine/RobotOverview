@@ -64,31 +64,20 @@ that outranks the person standing next to the robot.
 ### Robot → client (`topics_sub_glob`)
 
 `/ugv/voltage`, `/scan`, `/odom`, `/imu/raw`, `/diagnostics`, `/cockpit/status`,
-`/cockpit/overhead_clearance`, `/cockpit/depth/compressed`,
+`/ugv/allow_motion`, `/ugv/watchdog_state`, `/cockpit/overhead_clearance`, `/cockpit/depth/compressed`,
 `/oak/rgb/image_raw/compressed`. Telemetry only — nothing here can move anything — but
 the list stays closed so a client cannot enumerate and read whatever a later PR adds.
 
-!!! note "`/imu/raw`, not `/imu/data` — and the client change lands with this one"
+!!! note "`/imu/raw`, not `/imu/data`"
     `ugv_bringup` publishes `sensor_msgs/Imu` on **`imu/raw`**; its `imu/data_raw`
     publisher is commented out and no filter node republishes as `imu/data`. Nothing on
     this robot publishes `/imu/data`, so whitelisting it would be dead config that
     reads as a working feed.
 
-    **The shipped cockpit client does not yet subscribe `/imu/raw`.** At RobotOverview
-    HEAD today it still asks for `/imu/data`, which this glob denies. The client fix
-    (`/imu/data` → `/imu/raw`) is in flight on RobotOverview branch
-    `fix/cockpit-review-round1` and merges before this PR: **this glob entry and that
-    client change land together**, and neither is correct alone. Until both are in, the
-    cockpit's IMU feed is silently empty — a denied subscribe returns no error to the
-    browser.
-
-!!! note "The client's `/ugv/led_ctrl` and `/ugv/pt_steady_ctrl` types are also being fixed"
-    The table above gives the types `ugv_bringup.py` actually subscribes
-    (`Float32MultiArray`, matching [`bringup.md`](bringup.md#key-topics)). The shipped
-    cockpit still advertises `Int32MultiArray` / `Float64MultiArray`; that correction is
-    on the same `fix/cockpit-review-round1` branch. No whitelist entry changes — a topic
-    type mismatch is not a security boundary — but until it merges, lights and pan-tilt
-    levelling from the browser should be treated as unproven.
+    RobotOverview #148 landed the matching `/imu/raw` subscription and corrected
+    `/ugv/led_ctrl` plus `/ugv/pt_steady_ctrl` to the robot's `Float32MultiArray`
+    contract. The bridge also admits the client's direct allow-motion and watchdog
+    subscriptions so safety state does not depend only on the 1 Hz aggregator.
 
 ### Services and actions
 

@@ -64,6 +64,8 @@ EXPECTED_SUB_TOPICS = [
     '/cockpit/overhead_clearance',
     '/cockpit/status',
     '/diagnostics',
+    '/ugv/allow_motion',
+    '/ugv/watchdog_state',
     '/oak/rgb/image_raw/compressed',
     '/cockpit/depth/compressed',
 ]
