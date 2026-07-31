@@ -5,23 +5,24 @@ read its telemetry, and program it. The catalog entry for the unit lives in
 `src/data/hangar.ts` (`id: 'beast'`). Facts below carry the date they were last verified;
 re-verify against the live robot before relying on anything stale.
 
-## Quick connect (verified 2026-07-30)
+## Quick connect (verified 2026-07-31)
 
 Turn on the chassis switch (it powers the Jetson too), wait ~2 minutes for boot, then:
 
 ```bash
-ssh beast-01        # LAN — resolves beast-01.local via mDNS, survives DHCP drift
-ssh beast-01-ts     # Tailscale 100.107.16.72 — works from anywhere, only needed off-LAN
+ssh beast-01        # LAN — HostName beast-01.local; on Windows mDNS often fails — use Wi-Fi IP
+ssh beast-01-ts     # Tailscale 100.107.16.72 — needs Tailscale up on the Jetson after boot
+# Fallback: ssh -i ~/.ssh/hephastus_ed25519 -o HostKeyAlias=beast-01 beast@192.168.0.187
 ```
 
-**All ways in (each verified working 2026-07-31):**
+**All ways in (2026-07-31):**
 
 | # | Path | Address | Notes |
 |---|---|---|---|
-| 1 | `ssh beast-01` | `beast-01.local` (mDNS) | Preferred on LAN; IP-agnostic |
-| 2 | Direct Ethernet | `192.168.0.166` | DHCP but has held stable |
-| 3 | Direct Wi-Fi | `192.168.0.187` | DHCP, **drifts** — resolve via `ping beast-01.local` |
-| 4 | `ssh beast-01-ts` | `100.107.16.72` (Tailscale) | Permanent address; works off-LAN |
+| 1 | `ssh beast-01` | `beast-01.local` (mDNS) | Preferred when mDNS works; Windows often cannot resolve `.local` |
+| 2 | Direct Ethernet | `192.168.0.166` | DHCP; down when cable unplugged |
+| 3 | Direct Wi-Fi | `192.168.0.187` | DHCP, **drifts** — live-verified after brownout reboot 2026-07-31 |
+| 4 | `ssh beast-01-ts` | `100.107.16.72` (Tailscale) | Offline until Tailscale comes up post-boot |
 | 5 | sudo password | Doppler **`homelab`/`dev`** → `BEAST_JETSON_ADMIN_PASSWORD` | Older runbook text says `secrets_managment/dev` — that project name is wrong |
 | 6 | USB gadget (fallback) | `192.168.55.1` | Point-to-point USB cable to the Orin, last-resort recovery |
 
@@ -71,30 +72,106 @@ First command: service state, configured serial ports, devices, listening ports.
 live topics, battery telemetry (proves the ESP32 link end-to-end), and whether anything is
 publishing drive commands. Update this block, dated, whenever a session learns a robot fact.
 
-- **What's on it (live-verified 2026-07-30):** JetPack 6.2.2 (R36.5), ROS 2 Humble,
-  `ugv_ws` at `b709bfd` (includes storage PRs #2–#4 — ahead of the commit recorded below).
-  `beast-ros-base.service` is **enabled and runs at boot** with `use_lidar:=true`,
-  `allow_motion:=false`: base driver, LD19 LiDAR (~10 Hz scans), pan-tilt `ros2_control`,
-  wheel + rf2o odometry, and EKF are all up; battery/IMU telemetry flows.
+**Telemetry honesty (`ugv_bringup` — annotated in source 2026-07-31):**
+
+| Topic / field | Trust? | Reality |
+|---|---|---|
+| `/ugv/voltage` → `voltage` | Real | Pack bus volts from ESP32 `v` |
+| `/ugv/voltage` → `percentage` | **Fake** | `V / 12.6` — not SOC; lies under load / while charging |
+| `/ugv/voltage` → `current`, `charge`, `capacity`, `temperature`, `power_supply_status` | **Dummy** | Left at ROS defaults (zero / unset) |
+| `/imu/raw`, `/imu/mag` scales | Assumed | Waveshare ICM-20948 LSB factors; not calibrated here; `frame_id` is `base_link` (wrong frame) |
+| `/odom/odom_raw` | Partial | `odl`/`odr` ÷100 assumed cm→m; `L`/`R` are ESP32 wheel speeds, not fused pose |
+| Charging / true SOC | **Missing** | Needs UPS Module 3S I²C telemetry header → Orin (not wired) |
+
+Source: module docstring + inline `FAKE` / `DUMMY` / `ASSUMED` / `HACK` in
+`ugv_ws` → `src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py`.
+
+**Do we calibrate these?**
+
+| Kind | Action |
+|---|---|
+| Fake `%` / dummy BatteryState fields | **Do not calibrate** — need UPS I²C (+ SOC model) first |
+| IMU/mag vendor LSB scales | **Spot-check only** at rest (≈1 g on Z, gyros ≈0); full bias/mag calibration only if nav needs it |
+| Wheel odom / EKF | **Calibrate before mapping/autonomy** if distance/turns disagree with reality |
+| Angular deadband / zero-cmd hacks | Behavior quirks — leave or remove; not calibration |
+
+### Syncing robot code (`ugv_ws`) to BEAST-01
+
+Hangar ([RobotOverview](.)) **never** deploys to the Jetson. Robot brain code lives in a
+separate repo and is synced by hand:
+
+| Piece | Where |
+|---|---|
+| Fork | [Coldaine/ugv_ws](https://github.com/Coldaine/ugv_ws) |
+| Edit on PC | `D:\_projects\ugv_ws` (branch `beast/jetson-orin-nano-adaptation`) |
+| On robot | `~/beast/ugv_ws` (same remote) |
+
+```bash
+# On PC (after commit)
+cd D:/_projects/ugv_ws
+git push origin beast/jetson-orin-nano-adaptation
+
+# On beast-01 (Wi-Fi: often beast@192.168.0.187 if mDNS fails)
+cd ~/beast/ugv_ws
+git fetch origin
+git checkout beast/jetson-orin-nano-adaptation
+git pull --ff-only origin beast/jetson-orin-nano-adaptation
+source /opt/ros/humble/setup.bash
+colcon build --packages-select ugv_bringup --symlink-install   # or full workspace
+sudo systemctl restart beast-ros-base.service                 # stays allow_motion:=false
+git rev-parse --short HEAD   # record in Quick connect when it changes
+```
+
+No CI/CD to the robot. If you only edited Hangar docs/UI, the Jetson does not change.
+
+- **What's on it (live-verified 2026-07-31):** JetPack 6.2.2 (R36.5), ROS 2 Humble,
+  `ugv_ws` at `7d7fe3d` on `beast/jetson-orin-nano-adaptation` (watchdog + telemetry honesty
+  annotations; was `a1b2822` / earlier `b709bfd`). `beast-ros-base.service` is **enabled and runs at boot**
+  with `use_lidar:=true`, `allow_motion:=false`: base driver, LD19 LiDAR, pan-tilt
+  `ros2_control`, wheel + rf2o odometry, and EKF are all up; battery/IMU telemetry flows.
 - **ESP32 link is USB, not GPIO jumpers:** the driver board talks to the Orin over
   `/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00` (→ `ttyACM0`); the LiDAR is
   the `…5970075705` sibling (→ `ttyACM1`). Both set in `/etc/beast/ugv.env`. The pins-8/10
   UART-jumper plan in the sections below is **superseded** — keep only its back-feed rule:
   never leave the driver-board USB connected to a powered Jetson with the chassis switch off.
+- **✅ OAK-D Lite FIRST LIGHT (live-verified 2026-07-31, evening session):** launched the in-tree
+  `ugv_vision/launch/oak_d_lite.launch.py` (depthai-ros 2.12.2 apt packages already installed;
+  udev rule already present at `/etc/udev/rules.d/80-movidius.rules`). Camera MXID
+  `1944301091FCBE2F00` connected; **`USB SPEED: HIGH` = USB 2.0 live** (the idle-lsusb 480 Mbps
+  was bootloader enumeration, but the live session confirms USB2 negotiation — swap to a
+  known-USB3 USB-C cable on a direct Orin USB3 port to get SUPER; the in-box Lite cable is
+  presumed USB2-only). Measured: RGB preview 640×480 bgr8 @ **~16 FPS**, stereo depth 640×480
+  `16UC1` @ **~16.3 FPS**, both stamped `oak_rgb_camera_optical_frame` (depth aligned to RGB).
+  TF chain `base_link → oak_rgb_camera_optical_frame` resolves correctly from the URDF's OAK
+  macro (translation [0.087, 0, 0.084], standard optical rotation) — no driver/URDF frame
+  conflict. **5 MP pan-tilt camera one-frame grab also verified** (`v4l2-ctl`, `/dev/video0`).
+  15 s baseline bag (417 MB: scan, TF, odoms, IMU, voltage, OAK RGB+depth+camera_info) at
+  `~/beast-acceptance/bags/oak-baseline-20260731`. **rf2o "duplicate node" diagnosed as
+  cosmetic:** one process, two same-named in-process rclcpp nodes (upstream quirk); `/odom_rf2o`
+  publishes single-rate ~10 Hz (scan-driven). OAK launch stopped after the session; base service
+  left active and motion-locked. IMU presence on this Lite revision still unchecked (python3
+  `depthai` module not installed; check before ever enabling `i_enable_imu`).
 - **⚠️ HEARTBEAT-STOP TEST FAILED (2026-07-31): the ESP32 does NOT auto-stop on command
   silence.** Supervised floor test: after the `/cmd_vel` publisher was killed mid-crawl, the
   ESP32 kept executing the last command (0.02 m/s) for **minutes** — ~1 m of creep — until an
-  explicit zero was sent. `ugv_bringup.py` is purely event-driven (no re-send timer, no
-  cmd_vel timeout), so serial silence = ESP32 latches last command indefinitely. The
-  documented "3-second stale-command watchdog" does not exist in the flashed firmware's
-  current state. **Do not enable `allow_motion:=true` without an active operator stop path.**
-  Before driving: add a cmd_vel-timeout watchdog to `ugv_bringup` (send stop if no command
-  for ~500 ms) and/or enable the firmware heartbeat if the flashed build supports it.
-  Motion is software-locked (`allow_motion:=false`, verified re-locked after the test).
-- **No dashboard exists** — nothing listens on any web port; driving happens via ROS 2 teleop
-  over SSH. The Hangar app records the robot and is **not** planned as its control surface.
-  Intent: [operating progression](#operating-progression-orin--ros-2--rewritten-2026-07-30)
-  and `docs/NORTH_STAR.md` (G7, phrasing under owner review).
+  explicit zero was sent. The documented "3-second stale-command watchdog" does not exist in
+  the flashed firmware's current state.
+- **cmd_vel-timeout watchdog DEPLOYED (2026-07-31), not yet live re-tested:** `ugv_bringup`
+  now has `cmd_vel_timeout` (default 0.5 s) — on silence while `allow_motion` is true it
+  sends stop once. Unit tests passed on-robot; supervised crawl+kill re-gate is still
+  required before trusting it. Motion stays software-locked (`allow_motion:=false`).
+  **Do not enable `allow_motion:=true` without an active, independent operator stop path
+  already staged and running. Do not enable motion while charging / tethered, or below
+  ~10.5 V.**
+- **Brownout 2026-07-31:** pack hit ~8.8 V; Jetson went offline (Tailscale last-seen gap).
+  After charger plug-in + chassis power, Wi-Fi SSH at `.187` returned (~2 min uptime).
+  Charge before any motion session.
+- **No dashboard exists yet — cockpit direction decided 2026-07-31:** nothing listens on any web
+  port today; driving happens via ROS 2 teleop over SSH. The Hangar app records the robot and is
+  **not** its control surface. The approved standalone cockpit (foxglove_bridge + any-device
+  clients, twist_mux safety spine) is specified in
+  [`docs/plans/2026-07-31-beast-command-deck-spec.md`](plans/2026-07-31-beast-command-deck-spec.md)
+  and sequenced in [the companion plan](plans/2026-07-31-beast-command-deck-plan.md).
 
 > **Scope (owner statement 2026-07-30):** the Hangar app is an *information surface* about the
 > Beast — it records the robot; it is **not** a live teleop dashboard and no in-app control
@@ -587,27 +664,22 @@ maintenance window and a tested rollback.
 
 Do not provision or enable storage units from this section yet. Follow the [command-level implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md). Once that implementation plan is approved and its dry-run checks pass, only `beast-storage-maintenance.timer` may be enabled. Keep black-box, mission, and motion storage units disabled until the documentation PR is merged, the stacked workspace change is reviewed, and physical recording/replay validation succeeds. An interactive [storage dossier](../design/beast-storage/index.html) walks the same policy visually.
 
-### `ugv_ws` workspace provenance — truth gap (verified 2026-07-30)
+### `ugv_ws` workspace provenance (verified 2026-07-31)
 
-The Jetson runbook below records ROS 2 Humble and all 29 packages built from a Jetson-adapted
-Waveshare workspace on the Orin. That **on-robot** workspace state is not tracked in any git
-repo the Hangar can see.
+Robot code is git on the Jetson; Hangar only *records* the last-checked commit in Quick connect.
+Sync recipe: [Syncing robot code](#syncing-robot-code-ugv_ws-to-beast-01) above.
 
 | Fact | Value |
 |---|---|
 | Fork | [Coldaine/ugv_ws](https://github.com/Coldaine/ugv_ws) (fork of [waveshareteam/ugv_ws](https://github.com/waveshareteam/ugv_ws)) |
+| Branch | `beast/jetson-orin-nano-adaptation` |
 | Local clone | `D:\_projects\ugv_ws` |
-| Fork last pushed | ~2026-07-12 |
-| Upstream activity | still active (~2026-07-28) |
-| Fork contents | near-vanilla Waveshare workspace — no `deploy/storage/`; no clear Jetson-adapted 29-package evidence in that git history |
+| On-robot path | `~/beast/ugv_ws` |
+| Last live-checked | **`7d7fe3d`** (telemetry honesty comments on bringup) — re-verify with `git -C ~/beast/ugv_ws rev-parse --short HEAD` |
 
-**Live-verified 2026-07-30:** the on-robot `~/beast/ugv_ws` is at **`b709bfd`** ("Read SMART
-health through nvme-cli fallback (#4)"), with storage PRs #2–#4 merged — *ahead of* both the
-`ad274d63…` commit cited in the runbook below and the "near-vanilla" fork description above.
-Origin is `github.com/Coldaine/ugv_ws`. Hangar docs must not treat either the fork tip or this
-doc as proof of on-robot state — check the robot (`git -C ~/beast/ugv_ws log --oneline -3`).
-Before applying the [NVMe storage implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md),
-reconcile stacked workspace changes against the **live on-robot** tree.
+Hangar docs are not proof of on-robot state. Always check the robot before asserting commit or
+behavior. Before applying the [NVMe storage implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md),
+reconcile against the **live on-robot** tree.
 
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
@@ -1586,7 +1658,11 @@ No RoArm is fitted. The vendor workspace contains optional RoArm programs becaus
 Waveshare configurations, but no RoArm node or service belongs in BEAST-01's launch path. The
 physical kit is the ACCE base, stock pan-tilt 5 MP camera, OAK-D Lite, and D500 LiDAR only.
 
-The staged service is intentionally inert until the hardware session:
+> **Historical install recipe (2026-07 cutover staging) — do not run blindly.**
+> On the live robot (verified 2026-07-30+), `beast-ros-base.service` is **enabled and
+> active at boot**. The `systemctl disable --now` line below would kill the running stack.
+> Use only when intentionally reinstalling from a blank Jetson image; otherwise skip to
+> the ground-truth checks in Quick connect.
 
 ```bash
 sudo install -d -m 0755 /etc/beast
@@ -1594,10 +1670,13 @@ sudo install -m 0644 deploy/systemd/ugv.env.example /etc/beast/ugv.env
 sudo install -m 0644 deploy/systemd/beast-ros-base.service \
   /etc/systemd/system/beast-ros-base.service
 sudo systemctl daemon-reload
-sudo systemctl disable --now beast-ros-base.service
+# LIVE ROBOT: do NOT disable — service is enabled at boot with allow_motion:=false
+# sudo systemctl disable --now beast-ros-base.service
 systemd-analyze verify /etc/systemd/system/beast-ros-base.service
-systemctl is-enabled beast-ros-base.service  # disabled
-systemctl is-active beast-ros-base.service   # inactive
+# After a blank-image install only:
+# systemctl is-enabled beast-ros-base.service  # expect disabled until first enable
+# systemctl is-active beast-ros-base.service   # expect inactive until first start
+# Live robot expect: enabled + active
 ```
 
 For the first hardware session, lift and secure the tracks, leave LiDAR and autonomous nodes off,
@@ -1657,13 +1736,16 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
   --once -w 1
 ```
 
-**Test executed 2026-07-31 on the floor at 0.02 m/s: FAILED.** No heartbeat stop occurred —
-the ESP32 continued the last command for minutes until an explicit zero arrived. Whatever
-failsafe exists in `ugv_base_general` source is not active in BEAST-01's flashed firmware
-state (`ugv_bringup` init sends only `{"T":131,"cmd":1}` feedback-on; no heartbeat
-configuration is sent). Required before the next motion session: an upper-computer
-cmd_vel-timeout watchdog in `ugv_bringup`, and investigation of the firmware heartbeat
-command set. Camera verification, SLAM/Nav2, and autonomy follow only after a re-run passes.
+**Test executed 2026-07-31 on the floor at 0.02 m/s: FAILED.** No firmware heartbeat stop
+occurred — the ESP32 continued the last command for minutes until an explicit zero arrived
+(`ugv_bringup` init sends only `{"T":131,"cmd":1}` feedback-on; no heartbeat configuration
+is sent).
+
+**Mitigation deployed 2026-07-31:** Jetson-side `cmd_vel_timeout` watchdog in `ugv_bringup`
+(`a1b2822`, [Coldaine/ugv_ws#7](https://github.com/Coldaine/ugv_ws/pull/7)). Unit tests
+passed on-robot after `colcon build`; **live crawl+kill re-gate not yet run** (deferred —
+robot was charging / voltage ~9 V). Re-run Phase 2 from `.claude/skills/beast-paces/SKILL.md`
+before any keyboard teleop. Longer-term: investigate ESP32 firmware heartbeat enablement.
 
 ### Remaining physical cutover record
 
@@ -1671,14 +1753,17 @@ command set. Camera verification, SLAM/Nav2, and autonomy follow only after a re
 linked to the ESP32 over USB. `beast-ros-base.service` is enabled and runs the full stack at
 boot; battery voltage, IMU, wheel odometry, and LD19 LiDAR scans all flow; the D500's stable
 by-id path is recorded in `/etc/beast/ugv.env` (`usb-1a86_USB_Single_Serial_5970075705-if00`).
-The on-robot workspace is `b709bfd`, ahead of the commit in the runbook above.
+The on-robot workspace is `a1b2822` (`beast/jetson-orin-nano-adaptation`, includes cmd_vel
+watchdog). Charge the pack before the next motion session (brownout at ~8.8 V on 2026-07-31).
 
 Still open before the cutover is complete:
 
-1. **Lifted-track heartbeat-stop test** (procedure above) — the only gate before
-   `allow_motion:=true`.
-2. **One-frame verification** from the 5 MP pan-tilt camera (`/dev/video0`) and OAK-D Lite
-   (MyriadX enumerates on USB; DepthAI stream unverified).
+1. **Live re-gate of cmd_vel-timeout watchdog** (crawl+kill; expect self-stop ≤1 s) — required
+   before trusting `allow_motion:=true`. Firmware ESP32 heartbeat still absent.
+2. ~~**One-frame verification** from the 5 MP pan-tilt camera (`/dev/video0`) and OAK-D Lite~~ —
+   **DONE 2026-07-31**: both verified live (OAK RGB ~16 FPS + depth ~16.3 FPS over USB2, 5 MP
+   frame grabbed via v4l2-ctl). See the OAK first-light bullet in Quick connect. Remaining OAK
+   nice-to-have: USB3 cable swap for SUPER speed, and an IMU-presence check.
 3. **Mounting strut** — one side missing; bracket/standoff on the M2.5 corner holes, no drilling.
 
 Keep network identity on general LAN `192.168.0.x` + Tailscale — do **not** reclaim the Pi
