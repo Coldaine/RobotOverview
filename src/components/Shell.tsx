@@ -22,6 +22,7 @@ import {
 } from '@/lib/hangar-read-status';
 import { THEME_LABELS, THEME_MODES } from '@/lib/hangar-preferences';
 import { isNavActive } from '@/lib/nav';
+import { useCockpitEstop } from '@/lib/ros/client';
 import { InventoryDrawer } from './InventoryDrawer';
 import { BAY_ACCENT_CLASSES, BAY_ICONS } from './bay-icons';
 import { activityKindMeta, timeAgo } from '@/lib/format';
@@ -180,6 +181,7 @@ export function Shell({ children }: { readonly children: ReactNode }) {
 
       {/* ── MAIN ───────────────────────────────────────────── */}
       <div className="flex min-w-0 flex-1 flex-col">
+        <EstopHeldBanner />
         <StaticDataBanner />
         <ActivityTicker />
         <motion.main
@@ -195,6 +197,36 @@ export function Shell({ children }: { readonly children: ReactNode }) {
 
       <MobileNav />
       <InventoryDrawer />
+    </div>
+  );
+}
+
+/**
+ * An engaged e-stop outlives the cockpit route — the republish heartbeat keeps
+ * running so the robot stays locked. That is deliberate, but it means an
+ * operator can walk away from a stopped robot with nothing on screen saying so.
+ * This banner follows them across the whole app until they go back and clear it.
+ */
+function EstopHeldBanner() {
+  const estop = useCockpitEstop();
+  const pathname = usePathname();
+  if (!estop.engaged || pathname === '/cockpit') return null;
+  return (
+    <div
+      role="alert"
+      className="flex items-center gap-3 border-b border-crit/60 bg-crit/15 px-5 py-2 [background-image:repeating-linear-gradient(-45deg,transparent,transparent_10px,rgba(255,59,59,0.08)_10px,rgba(255,59,59,0.08)_20px)]"
+    >
+      <span aria-hidden="true" className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-crit" />
+      <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-crit">E-STOP HELD</span>
+      <span className="min-w-0 truncate font-mono text-[11px] text-ink-dim">
+        BEAST-01 is locked by this browser. Return to DECK to clear it.
+      </span>
+      <Link
+        href="/cockpit"
+        className="ml-auto shrink-0 rounded border border-crit/50 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-crit hover:bg-crit/10"
+      >
+        Go to DECK
+      </Link>
     </div>
   );
 }
