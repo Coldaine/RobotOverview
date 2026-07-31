@@ -5,7 +5,11 @@ owner against the design-study mockup (see [Visual language](#visual-language)).
 is sequenced in the companion plan:
 [`2026-07-31-beast-command-deck-plan.md`](2026-07-31-beast-command-deck-plan.md).
 
-**Scope decision (owner, 2026-07-31 - Updated):** The Command Deck is a **live route inside the Hangar app (`/cockpit`)** with **full teleop from day one**. This decision supersedes the previous "standalone" only stance and any pre-existing dated scope statements in `docs/beast-ops.md`. North Star G7's "live command portal" goal is now directly realized inside the Hangar. 
+**Scope decision (owner, 2026-07-31 - Updated):** The Command Deck is a route inside the
+Hangar app (`/cockpit`) with on-screen teleop controls implemented in its initial release. The
+robot remains motion-locked until the physical safety gates pass and the transport is deliberately
+deployed. This decision supersedes the previous "standalone" stance. It implements the Hangar
+side of North Star G7; the live portal is not operational until the robot-side deployment lands.
 
 **Device-agnostic by requirement:** the operator seat is *any* device — Windows/Mac/Linux desktop, tablet, or phone on the tailnet. Mobile piloting is a core use case for crawling undercroft spaces.
 
@@ -15,10 +19,10 @@ is sequenced in the companion plan:
 
 ```
                        ┌────────────────────────────── BEAST-01 (Jetson Orin) ─────────────────────────────┐
- Foxglove desktop ──┐  │  foxglove_bridge :8765 (topic + client whitelists, LAN/tailnet only)              │
- Foxglove web ──────┼──┼──▶ telemetry out: scan, TF, odom, voltage, IMU, diagnostics, OAK RGB/depth (jpeg) │
- Lichtblick ────────┘  │  ◀── client publish (whitelist only): /joy_operator, /cmd_vel_ui, PT, LED, e-stop │
- Phone (Vizanti) ──────┼──▶ vizanti_server :5000/:5001 (later; second surface, same mux)                   │
+ Hangar /cockpit ──────┼──▶ rosbridge_websocket :9090 (loopback only; Tailscale Serve terminates WSS)       │
+ desktop/tablet/phone  │  ▶ telemetry: scan, odom, voltage, IMU, diagnostics, OAK RGB/depth (jpeg)         │
+                       │  ◀ publish globs only: /cmd_vel_ui, PT, LED, e-stop; no services or actions       │
+ Vizanti (optional) ───┼──▶ vizanti_server :5000/:5001 (separate surface, same mux)                        │
                        │                                                                                    │
                        │  cmd sources ──▶ twist_mux ──▶ /cmd_vel ──▶ ugv_bringup                            │
                        │                 (priorities +      (allow_motion gate + 0.5 s cmd_vel watchdog)    │
@@ -28,27 +32,28 @@ is sequenced in the companion plan:
                        └────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-One open port (8765/tcp) until Vizanti lands (5000/5001). DDS never crosses the network
-(multicast does not traverse Tailscale); the bridge is the only transport. Firewall all cockpit
-ports to the LAN subnet + `tailscale0`.
+The cockpit bridge binds only to `127.0.0.1:9090`; Tailscale Serve is the deliberate external
+WSS boundary. In this deployment, DDS stays on the robot and rosbridge carries the cockpit
+traffic. The bridge admits exact telemetry-subscribe and command-publish globs and removes
+rosbridge service/action capabilities; it does not rely on `client_topic_whitelist`.
 
 ## Command functions
 
 | Group | Function | Wire |
 | --- | --- | --- |
-| Safety | E-stop (outranks everything) | twist_mux lock topic, priority 255 — manual toggle at first; heartbeat-required upgrade documented in the drafts |
+| Safety | E-stop (outranks everything) | twist_mux lock topic, priority 255 — engaged intent republishes every 500 ms; release sends a bounded burst |
 | Safety | Motion arm/disarm (deliberate re-gate, never a casual toggle) | `allow_motion` state surfaced; arming gated on beast-paces Phase 2 |
-| Safety | Speed caps | teleop config: 0.2 m/s default, 0.4 turbo, 1.0 rad/s |
+| Safety | Current in-app speed caps | 0.20 m/s linear, 0.40 rad/s angular; no turbo mode |
 | Drive | Robot-paired BT gamepad (survives network loss) | `joy_node` on Jetson → `/cmd_vel_joy_robot`, priority 150 |
-| Drive | Operator gamepad, hold-to-drive deadman (RB) | foxglove-joystick → `/joy_operator` → teleop_twist_joy → `/cmd_vel_joy_operator`, priority 100 |
-| Drive | On-screen teleop (Foxglove Teleop panel / Vizanti) | `/cmd_vel_ui`, priority 50 |
+| Drive | Remote operator keyboard/gamepad rung | existing robot-side tools → `/cmd_vel_joy_operator`, priority 100; `/joy_operator` is not admitted by the current browser bridge |
+| Drive | In-app on-screen teleop | `/cmd_vel_ui`, priority 50 |
 | Drive | nav2 (Phase F) | `/cmd_vel_nav`, priority 10 |
 | Gimbal | Pan/tilt aim (pan ±3.14, tilt −0.523…+1.571 rad) | `Float64MultiArray` → `/pt_joint_position_controller/commands` |
 | Gimbal | Steady mode + tilt bias | `/ugv/pt_steady_ctrl` `[mode, y_bias]` |
 | Aux | LED brightness ×2 | `/ugv/led_ctrl` `[IO4, IO5]` 0–255 |
 | Data | Bag record start/stop (mission / blackbox) | rosbag; storage per the NVMe plan when applied |
 | Data | Map save | slam_toolbox serialize + map_saver (Phase E) |
-| Autonomy | Click-to-goal, waypoints, cancel, initial pose | nav2 actions + `/set_pose` (Phase F) |
+| Autonomy | Click-to-goal, waypoints, cancel, initial pose | deferred cross-repo gap; current topic-only bridge does not expose actions/services or goal topics |
 
 **cmd_vel quirks the cockpit must respect** (from `ugv_bringup.py`, verified in source): after 5
 consecutive zero Twists further zeros are dropped; small yaw commands are force-boosted to
@@ -58,22 +63,24 @@ consecutive zero Twists further zeros are dropped; small yaw commands are force-
 
 | Zone | Contents | Source of truth |
 | --- | --- | --- |
-| Safety strip (always visible, never scrolls) | E-stop; MOTION state; active mux source + cmd age + `/cmd_vel` publisher count; watchdog state; pack volts with 10.5 V floor and 8.8 V brownout marks | `/ugv/voltage.voltage` (volts only), twist_mux diagnostics |
-| Spatial | `/scan` (with LD19's real 225–315° rear crop shown), TF, robot model, EKF pose trail, wheel-vs-rf2o comparison; later map + costmaps + path + goals | `/scan`, `/tf`, `/robot_description`, `/odom*` |
+| Safety strip (always visible, never scrolls) | E-stop; MOTION state; reconstructed active mux source + cmd age + `/cmd_vel` publisher count; watchdog state; pack volts with 10.5 V floor and 8.8 V brownout marks | `/ugv/voltage.voltage` (volts only), `/cockpit/status` observer |
+| Spatial | Current: `/scan` with LD19's real 225–315° rear crop and `/odom` pose trail. Deferred: TF, robot model, wheel-vs-rf2o comparison, map, costmaps, path, goals | current `/scan`, `/odom`; deferred topics are outside the closed bridge contract |
 | Optics | OAK RGB (jpeg-compressed), OAK depth colorized, 5 MP PT cam; FPS + link-speed chips; later NN detections overlay | `/oak/*`, PT cam launch (gap) |
-| Telemetry | Voltage sparkline w/ floor line; IMU traces (labeled uncal); diagnostics; ops log (rosout) | `/imu/data`, `/diagnostics`, `/rosout` |
+| Telemetry | Current: voltage sparkline, IMU traces (labeled uncal), diagnostics. Deferred: ops log (`/rosout`) | current `/ugv/voltage`, `/imu/raw`, `/diagnostics`; `/rosout` is outside the closed bridge contract |
 | Ops | Recording state + disk free; node/service health; bridge/link health (direct-vs-DERP) | gap publishers, below |
 | Honesty rail | SOC% fake (hidden by design) · PT joint feedback = commanded, not measured · IMU uncalibrated, not fused · ESP32 no firmware heartbeat | permanent; per rich-ui rubric, absence must be visible |
 
-## Topic contract (bridge whitelists)
+## Current topic contract (bridge publish/subscribe globs)
 
-- **Subscribe (out):** `/scan`, `/tf`, `/tf_static`, `/odom`, `/odom_wheel`, `/odom_rf2o`,
-  `/ugv/voltage`, `/imu/data`, `/joint_states`, `/diagnostics`, `/robot_description`,
-  `/oak/.*` (compressed variants in layouts), `/map` (Phase E+), `/cmd_vel` (display only).
-- **Client publish (in, exhaustive):** `/joy_operator`, `/cmd_vel_ui`,
+- **Subscribe (out, exhaustive):** `/ugv/voltage`, `/scan`, `/odom`, `/imu/raw`,
+  `/cockpit/overhead_clearance`, `/cockpit/status`, `/diagnostics`,
+  `/oak/rgb/image_raw/compressed`, `/cockpit/depth/compressed`.
+- **Client publish (in, exhaustive):** `/cmd_vel_ui`,
   `/pt_joint_position_controller/commands`, `/ugv/pt_steady_ctrl`, `/ugv/led_ctrl`,
   `/cmd_vel_estop_lock`. Nothing else. Raw image topics are never subscribed uncompressed
-  over the bridge (hundreds of Mbps stalls the WebSocket).
+  over the bridge (hundreds of Mbps stalls the WebSocket). TF, map, additional odometry,
+  robot-description, and browser gamepad topics remain planned gaps and are not implied by
+  this closed contract.
 
 ## Safety model
 
@@ -84,9 +91,10 @@ consecutive zero Twists further zeros are dropped; small yaw commands are force-
    one tick even before the watchdog acts.
 3. Network deadman is *soft* — the deadman prevents accidental commands; it does not guarantee
    stop on link loss. The watchdog does.
-4. The e-stop lock ships as a manual toggle (`timeout: 0.0`): twist_mux locks initialize
-   epoch-zero, so a heartbeat-required lock is engaged from boot until a heartbeat publisher
-   exists. The upgrade path is documented inline in the drafts.
+4. The e-stop lock uses `timeout: 0.0` in twist_mux, while the browser continuously republishes
+   engaged intent at 2 Hz and sends a bounded release burst. A disconnected browser cannot claim
+   robot confirmation; the UI must distinguish local intent from the separate cockpit-status
+   observer's reconstruction of mux state.
 5. Motion preconditions, in order: pack ≥ 10.5 V → watchdog re-gate passed → runway confirmed →
    `allow_motion:=true` for the supervised session only → explicit stop + relock afterward.
 6. **Capability vs. permission (reconciliation, 2026-07-31).** Point 1 gates cockpit teleop on
@@ -116,9 +124,8 @@ The cockpit uses the Hangar's Engineering-HUD system verbatim (`src/app/globals.
 void/hull/panel grounds, cyan `#36e0e0` telemetry accent, amber `#ffb020` command/warning
 accent, signal ok/warn/crit, JetBrains Mono labels, blueprint grid. Approved design study:
 mockup file at [`beast-command-deck-drafts/beast-command-deck.html`](beast-command-deck-drafts/beast-command-deck.html)
-(artifact: <https://claude.ai/code/artifact/2876c73f-4e76-44ca-8d41-e32458aefd04>). In Foxglove
-the language maps to a saved layout (panel arrangement 1:1 with the mockup zones); the mockup
-is the blueprint, not a web app to build.
+(artifact: <https://claude.ai/code/artifact/2876c73f-4e76-44ca-8d41-e32458aefd04>). The mockup
+is the blueprint for the in-app `/cockpit` surface.
 
 ## Gaps to build (small robot-side publishers)
 
@@ -126,5 +133,4 @@ is the blueprint, not a web app to build.
 - Wi-Fi RSSI + Tailscale direct-vs-DERP link-health topic
 - Recording start/stop service + status topic
 - 5 MP PT cam launch integration (v4l2_camera exists in `ugv_vision`, not in default bringup)
-- E-stop heartbeat publisher (upgrades the lock from manual to heartbeat-required)
 - IMU presence probe on this OAK revision (python `depthai`; keep `i_enable_imu: false` until proven)
