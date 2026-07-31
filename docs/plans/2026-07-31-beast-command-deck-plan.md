@@ -12,7 +12,7 @@ All six:
 
 1. Any device on the tailnet (desktop app, browser, phone) can open the cockpit and see live
    scan, TF, odom, voltage, IMU, and OAK RGB+depth — through exactly one robot port per surface,
-   with the bridge's client-publish whitelist enforced.
+   with the bridge's command-publish globs enforced.
 2. Every `/cmd_vel` publisher on the robot routes through twist_mux; publishing directly to
    `/cmd_vel` from a cockpit client is impossible (not merely discouraged).
 3. The beast-paces Phase 2 watchdog re-gate has passed live (crawl + kill, self-stop ≤ 1 s,
@@ -50,7 +50,7 @@ Split so each safety-relevant change is reviewable alone and no PR mixes repos:
 | --- | --- | --- | --- |
 | PR-0 | RobotOverview | This plan + spec + drafts dir + beast-ops updates (already in working tree) | docs review only |
 | PR-1 | ugv_ws | **Safety spine:** twist_mux + config, all existing publishers rerouted (`ugv_tools` keyboard/joy/behavior → mux inputs), tests proving direct `/cmd_vel` is unreachable from clients | unit tests on-robot; no cockpit yet |
-| PR-2 | ugv_ws | **Cockpit bridge:** loopback-only `rosbridge_websocket` with exact publish/subscribe globs and no service/action operations, teleop_twist_joy (operator + optional robot-pad path), `beast-cockpit.service` (disabled by default), firewall notes | bridge up read-only; publish rejected off-whitelist; services/actions unavailable |
+| PR-2 | ugv_ws | **Cockpit bridge:** loopback-only `rosbridge_websocket` with exact publish/subscribe globs and no service/action operations, `beast-cockpit.service` (disabled by default), firewall notes | bridge commissioning with motion locked; publish rejected outside the exact globs; services/actions unavailable |
 | PR-3 | ugv_ws | **OAK productization:** `beast-oak.yaml` (RGBD, sync, 480P, fps per USB tier), optional-camera arg in bringup or sibling service, IMU probe recorded | one-frame check via the new launch; USB tier recorded |
 | PR-4 | ugv_ws | **Phase E — SLAM:** slam_toolbox crawl tuning (min travel 0.10–0.15 m), map save workflow to the storage layout | map of one space saved + reloads in localization mode |
 | PR-5 | ugv_ws | **Phase F — nav2:** Beast velocity retune (≤0.15 m/s, replaces generic 0.26), depth scan via depthimage_to_laserscan as second obstacle source, collision monitor | supervised runs only; ESP32 heartbeat still absent |
@@ -67,8 +67,9 @@ supervised teleop session → mapping drive.
   profiles. Fallback recorded if the Orin L4T36 UPHY quirk bites (try other port; stay USB2 and
   keep 15 FPS profiles). Also: `pip install depthai` → IMU presence probe, recorded in ugv.env
   comment + beast-ops.
-- **Phase C — safety spine + bridge (PR-1, PR-2).** Deploy; `/cockpit` runs **read-only** until
-  Phase D passes. Verify the in-app surface from a browser and a phone.
+- **Phase C — safety spine + bridge (PR-1, PR-2).** The command controls are present, but the
+  robot remains motion-locked until Phase D passes. Verify the in-app telemetry surface from a
+  browser and a phone before any motion session.
 - **Phase D — motion re-gate (procedure, no PR).** beast-paces Phase 2 crawl+kill; expect
   self-stop ≤ 1 s; record pass/fail + stop delay in beast-ops. Only then first supervised
   cockpit teleop, all three inputs, arbitration checked.

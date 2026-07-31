@@ -5,11 +5,12 @@ last_verified: 2026-07-31
 
 # Deployment — verified facts
 
-Everything below was verified against the live cluster (`admin@homelab-target`) and
-`coldaine-homelab` on 2026-07-31 (LAN Gateway + Postgres canaries). Normalized cutover
-includes reconstruction read path, op-verb ingest, and Datacore briefings in DB with bodies.
-When this page and reality disagree, reality wins — check live state (`kubectl`, `curl`)
-before building on anything here.
+The Hangar cluster facts below were verified against `admin@homelab-target` and
+`coldaine-homelab` on 2026-07-31 (LAN Gateway + Postgres canaries). The separate cockpit section
+is a repository/deployment inventory, not a claim that the robot runtime was probed. Normalized
+cutover includes reconstruction read path, op-verb ingest, and Datacore briefings in DB with
+bodies. When this page and reality disagree, reality wins — check the named live surface before
+building on anything here.
 
 **This repo** owns the Hangar app code, `Dockerfile`, and content tooling.
 **[`coldaine-homelab`](https://github.com/Coldaine/coldaine-homelab)** owns runtime
@@ -25,8 +26,6 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
 - **Database:** Logical DB `hangar` on CloudNativePG `pg18-core` (`data-platform`).
   App env from Secret `hangar-runtime-secrets` (`HANGAR_DB_*`, `HANGAR_INGEST_TOKEN`).
   Readiness probe is `GET /api/hangar/preflight` — a Ready pod means Postgres is reachable.
-- **Cockpit Transport Env:** `BEAST_COCKPIT_WS_URL` is a server-side deployment variable (for example, `wss://beast-01.tyrannosaurus-magellanic.ts.net`) that the `/cockpit` route serializes into client props. It avoids build-time inlining but is **not a secret or an authentication boundary**; browser users can inspect it. If unset or offline, the Cockpit shows a loud disconnected state.
-- **Robot-side Service (built, not deployed):** `beast-cockpit.service` and its loopback-only `rosbridge_websocket` configuration exist in `ugv_ws`, but the service has not been deliberately installed/enabled on BEAST-01 and Tailscale Serve has not been configured for it. Deployment requires an explicit robot-side build/install, service enable, and WSS proxy step after the safety prerequisites; repository code alone does not make the cockpit live.
 - **UI spine:** Reconstructs HangarData from normalized tables at request time
   (`getHangarSpine` → `buildHangarDataFromDb`). Agents write via op-verb
   `POST /api/hangar/ingest` (Bearer `HANGAR_INGEST_TOKEN`) — verb table in
@@ -48,6 +47,18 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
   If the hostname times out on LAN, suspect a stale UDM **Local DNS Record** first (on
   2026-07-31 one pointed at dead `192.168.30.200`; fixed to `.201` same day and verified),
   not Cloudflare — the tunnel is egress-only for one hostname.
+
+## Cockpit deployment state
+
+- **Hangar transport support (unconfigured):** `BEAST_COCKPIT_WS_URL` is absent from the current
+  `coldaine-homelab` deployment. When configured, the `/cockpit` route serializes it into client
+  props. This avoids build-time inlining but is **not a secret or an authentication boundary**;
+  browser users can inspect it. If unset or offline, the Cockpit shows a loud disconnected state.
+- **Robot-side service (source ready, not deployed):** `beast-cockpit.service` and its
+  loopback-only rosbridge configuration are being landed in `ugv_ws` PR #10. They have not been
+  deliberately installed/enabled on BEAST-01, and Tailscale Serve has not been configured for
+  them. Deployment requires an explicit robot-side build/install, service enable, and WSS proxy
+  step after the safety prerequisites; repository code alone does not make the cockpit live.
 
 ## Shipping a change
 

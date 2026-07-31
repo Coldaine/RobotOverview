@@ -5,7 +5,11 @@ owner against the design-study mockup (see [Visual language](#visual-language)).
 is sequenced in the companion plan:
 [`2026-07-31-beast-command-deck-plan.md`](2026-07-31-beast-command-deck-plan.md).
 
-**Scope decision (owner, 2026-07-31 - Updated):** The Command Deck is a **live route inside the Hangar app (`/cockpit`)** with **full teleop from day one**. This decision supersedes the previous "standalone" only stance and any pre-existing dated scope statements in `docs/beast-ops.md`. North Star G7's "live command portal" goal is now directly realized inside the Hangar. 
+**Scope decision (owner, 2026-07-31 - Updated):** The Command Deck is a route inside the
+Hangar app (`/cockpit`) with on-screen teleop controls implemented in its initial release. The
+robot remains motion-locked until the physical safety gates pass and the transport is deliberately
+deployed. This decision supersedes the previous "standalone" stance. It implements the Hangar
+side of North Star G7; the live portal is not operational until the robot-side deployment lands.
 
 **Device-agnostic by requirement:** the operator seat is *any* device — Windows/Mac/Linux desktop, tablet, or phone on the tailnet. Mobile piloting is a core use case for crawling undercroft spaces.
 
@@ -29,9 +33,9 @@ is sequenced in the companion plan:
 ```
 
 The cockpit bridge binds only to `127.0.0.1:9090`; Tailscale Serve is the deliberate external
-WSS boundary. DDS never crosses the network (multicast does not traverse Tailscale). The bridge
-admits exact telemetry-subscribe and command-publish globs and removes rosbridge service/action
-capabilities; it does not rely on `client_topic_whitelist`.
+WSS boundary. In this deployment, DDS stays on the robot and rosbridge carries the cockpit
+traffic. The bridge admits exact telemetry-subscribe and command-publish globs and removes
+rosbridge service/action capabilities; it does not rely on `client_topic_whitelist`.
 
 ## Command functions
 
@@ -41,7 +45,7 @@ capabilities; it does not rely on `client_topic_whitelist`.
 | Safety | Motion arm/disarm (deliberate re-gate, never a casual toggle) | `allow_motion` state surfaced; arming gated on beast-paces Phase 2 |
 | Safety | Speed caps | teleop config: 0.2 m/s default, 0.4 turbo, 1.0 rad/s |
 | Drive | Robot-paired BT gamepad (survives network loss) | `joy_node` on Jetson → `/cmd_vel_joy_robot`, priority 150 |
-| Drive | Operator gamepad, hold-to-drive deadman (RB) | joystick client → `/joy_operator` → teleop_twist_joy → `/cmd_vel_joy_operator`, priority 100 |
+| Drive | Remote operator keyboard/gamepad rung | existing robot-side tools → `/cmd_vel_joy_operator`, priority 100; `/joy_operator` is not admitted by the current browser bridge |
 | Drive | In-app on-screen teleop | `/cmd_vel_ui`, priority 50 |
 | Drive | nav2 (Phase F) | `/cmd_vel_nav`, priority 10 |
 | Gimbal | Pan/tilt aim (pan ±3.14, tilt −0.523…+1.571 rad) | `Float64MultiArray` → `/pt_joint_position_controller/commands` |
@@ -59,22 +63,24 @@ consecutive zero Twists further zeros are dropped; small yaw commands are force-
 
 | Zone | Contents | Source of truth |
 | --- | --- | --- |
-| Safety strip (always visible, never scrolls) | E-stop; MOTION state; active mux source + cmd age + `/cmd_vel` publisher count; watchdog state; pack volts with 10.5 V floor and 8.8 V brownout marks | `/ugv/voltage.voltage` (volts only), twist_mux diagnostics |
+| Safety strip (always visible, never scrolls) | E-stop; MOTION state; reconstructed active mux source + cmd age + `/cmd_vel` publisher count; watchdog state; pack volts with 10.5 V floor and 8.8 V brownout marks | `/ugv/voltage.voltage` (volts only), `/cockpit/status` observer |
 | Spatial | `/scan` (with LD19's real 225–315° rear crop shown), TF, robot model, EKF pose trail, wheel-vs-rf2o comparison; later map + costmaps + path + goals | `/scan`, `/tf`, `/robot_description`, `/odom*` |
 | Optics | OAK RGB (jpeg-compressed), OAK depth colorized, 5 MP PT cam; FPS + link-speed chips; later NN detections overlay | `/oak/*`, PT cam launch (gap) |
 | Telemetry | Voltage sparkline w/ floor line; IMU traces (labeled uncal); diagnostics; ops log (rosout) | `/imu/raw`, `/diagnostics`, `/rosout` |
 | Ops | Recording state + disk free; node/service health; bridge/link health (direct-vs-DERP) | gap publishers, below |
 | Honesty rail | SOC% fake (hidden by design) · PT joint feedback = commanded, not measured · IMU uncalibrated, not fused · ESP32 no firmware heartbeat | permanent; per rich-ui rubric, absence must be visible |
 
-## Topic contract (bridge whitelists)
+## Current topic contract (bridge publish/subscribe globs)
 
-- **Subscribe (out):** `/scan`, `/tf`, `/tf_static`, `/odom`, `/odom_wheel`, `/odom_rf2o`,
-  `/ugv/voltage`, `/imu/raw`, `/joint_states`, `/diagnostics`, `/robot_description`,
-  `/oak/.*` (compressed variants in layouts), `/map` (Phase E+), `/cmd_vel` (display only).
-- **Client publish (in, exhaustive):** `/joy_operator`, `/cmd_vel_ui`,
+- **Subscribe (out, exhaustive):** `/ugv/voltage`, `/scan`, `/odom`, `/imu/raw`,
+  `/cockpit/overhead_clearance`, `/cockpit/status`, `/diagnostics`,
+  `/oak/rgb/image_raw/compressed`, `/cockpit/depth/compressed`.
+- **Client publish (in, exhaustive):** `/cmd_vel_ui`,
   `/pt_joint_position_controller/commands`, `/ugv/pt_steady_ctrl`, `/ugv/led_ctrl`,
   `/cmd_vel_estop_lock`. Nothing else. Raw image topics are never subscribed uncompressed
-  over the bridge (hundreds of Mbps stalls the WebSocket).
+  over the bridge (hundreds of Mbps stalls the WebSocket). TF, map, additional odometry,
+  robot-description, and browser gamepad topics remain planned gaps and are not implied by
+  this closed contract.
 
 ## Safety model
 
@@ -87,7 +93,8 @@ consecutive zero Twists further zeros are dropped; small yaw commands are force-
    stop on link loss. The watchdog does.
 4. The e-stop lock uses `timeout: 0.0` in twist_mux, while the browser continuously republishes
    engaged intent at 2 Hz and sends a bounded release burst. A disconnected browser cannot claim
-   robot confirmation; the UI must distinguish local intent from mux-reported state.
+   robot confirmation; the UI must distinguish local intent from the separate cockpit-status
+   observer's reconstruction of mux state.
 5. Motion preconditions, in order: pack ≥ 10.5 V → watchdog re-gate passed → runway confirmed →
    `allow_motion:=true` for the supervised session only → explicit stop + relock afterward.
 
