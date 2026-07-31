@@ -17,6 +17,12 @@ describe('isNavActive()', () => {
   it('does not match an unrelated route', () => {
     expect(isNavActive('/quartermaster', '/items', {})).toBe(false);
     expect(isNavActive('/datacore', '/items', {})).toBe(false);
+    expect(isNavActive('/cockpit', '/items', {})).toBe(false);
+  });
+
+  it('Cockpit matches its route and subpaths', () => {
+    expect(isNavActive('/cockpit', '/cockpit', { activePrefixes: ['/cockpit'] })).toBe(true);
+    expect(isNavActive('/cockpit/subpath', '/cockpit', { activePrefixes: ['/cockpit'] })).toBe(true);
   });
 
   it('Missions stays active on a mission detail via activePrefixes', () => {

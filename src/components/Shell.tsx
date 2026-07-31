@@ -44,6 +44,7 @@ const NAV: NavStation[] = [
   { to: '/quartermaster', label: 'Quartermaster', code: 'QM', icon: Hexagon },
   { to: '/tech-tree', label: 'Tech Tree', code: 'CAP', icon: Network },
   { to: '/datacore', label: 'Datacore', code: 'CORE', icon: ScrollText, activePrefixes: ['/datacore'] },
+  { to: '/cockpit', label: 'Cockpit', code: 'DECK', icon: Activity, activePrefixes: ['/cockpit'] },
 ];
 
 function NavItem({
