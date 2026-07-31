@@ -143,8 +143,10 @@ export function SafetyStrip() {
         </div>
 
         <div className="flex justify-between items-center mt-1.5 font-mono text-[8.5px] text-ink-dim leading-none">
-          <span>{isLowVoltage ? "LOW - CHARGE FIRST" : "Ok"}</span>
-          <span className="text-[8px] opacity-70">SOC%: FAKE (V/12.6)</span>
+          {/* No reading is not a pass. With the socket down `voltage` is 0, and
+              an unqualified "Ok" would vouch for a pack we cannot see. */}
+          <span>{voltage <= 0 ? "NO READING" : isLowVoltage ? "LOW - CHARGE FIRST" : "Ok"}</span>
+          <span className="text-[8px] opacity-70">SOC%: NOT DERIVABLE FROM VOLTS</span>
         </div>
       </div>
     </section>

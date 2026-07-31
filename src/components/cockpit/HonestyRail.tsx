@@ -11,10 +11,10 @@ export function HonestyRail() {
       </span>
 
       <div className="flex flex-wrap items-center gap-1.5 z-10 font-mono text-[9px] uppercase tracking-widest leading-none">
-        {/* SOC% FAKE */}
+        {/* SOC% — never synthesized from pack volts */}
         <span className="chip border-red-500/35 bg-red-950/20 text-red-500 py-1.5 px-3 rounded-full flex items-center gap-2">
           <span className="h-1 w-1 bg-red-500 rounded-full shadow-[0_0_4px_#ef4444]" />
-          SOC% FAKE — HIDDEN
+          SOC% NOT COMPUTED — VOLTS ONLY
         </span>
 
         {/* PT JOINT FEEDBACK */}
