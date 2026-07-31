@@ -166,7 +166,27 @@ No CI/CD to the robot. If you only edited Hangar docs/UI, the Jetson does not ch
 - **Brownout 2026-07-31:** pack hit ~8.8 V; Jetson went offline (Tailscale last-seen gap).
   After charger plug-in + chassis power, Wi-Fi SSH at `.187` returned (~2 min uptime).
   Charge before any motion session.
-- **Live Cockpit UI — Command Deck active (2026-07-31):** The Hangar app hosts a **live Command Deck route (`/cockpit`)** that connects directly to the robot's rosbridge WebSocket over Tailscale (`wss://` proxying to `9090`). Telemetry (LiDAR scan, TF, odometry, voltage, IMU, diagnostics) is fully functional, and teleop controls (headlights, gimbal, and motion) are integrated.
+- **Live Cockpit UI — Command Deck route exists (2026-07-31, code-verified only):** The Hangar
+  app hosts a **Command Deck route (`/cockpit`)** that connects to the robot's rosbridge
+  WebSocket over Tailscale (`wss://` proxying to `9090`). The earlier "fully functional /
+  teleop integrated" claim here was **wrong** and is corrected below. Ground truth as of
+  2026-07-31 (from source review of this repo and `ugv_ws@fc1c29e`; **the robot was offline —
+  Tailscale last-seen ~1 h — so none of this is live-verified**):
+  - **Two publish topics were type-dead until the round-1 review fix.** The client advertised
+    `/ugv/led_ctrl` as `Int32MultiArray` and `/ugv/pt_steady_ctrl` as `Float64MultiArray`; the
+    robot subscribes to both as `Float32MultiArray`. DDS never matched, so the headlights and
+    the steady toggle did nothing at all — silently.
+  - **`/imu/data` never existed on this robot.** `ugv_bringup` publishes `/imu/raw`. The IMU
+    panel was subscribed to a topic with no publisher and drew a synthetic sine wave in its
+    place; both are fixed.
+  - **`/scan` is not on the boot service** — `beast-cockpit.service` launches with
+    `use_lidar:=false`, so the spatial view is empty unless LiDAR is started by hand.
+  - **Drive is gated on robot arming.** The cockpit publishes `/cmd_vel_ui` only when the robot
+    reports `allow_motion == true`. `/ugv/allow_motion`, `/ugv/watchdog_state` and
+    `/cockpit/status` are **not deployed yet** (robot-side PR in flight), so motion is inert and
+    the safety strip reads UNKNOWN rather than "clear".
+  - **The e-stop cannot be confirmed yet.** The client asserts the twist_mux lock at 2 Hz, but
+    nothing publishes the mux state back, so the button sits in ASSERTING rather than LOCKED.
 - **Ports & Proxying (2026-07-31):**
   - `rosbridge_websocket` runs on port `9090` (LAN/Tailscale limit).
   - Tailscale serve proxy: `tailscale serve https:443 tcp://localhost:9090` exposes a clean Let's Encrypt `wss://beast-01.tyrannosaurus-magellanic.ts.net` endpoint.
@@ -174,7 +194,11 @@ No CI/CD to the robot. If you only edited Hangar docs/UI, the Jetson does not ch
   - `ugv_chat_ai` API: `:5000`.
   - MediaMTX: `:8554` (RTSP), `:8889` (WebRTC).
 
-> **Scope (owner statement 2026-07-31 - Updated):** The Hangar app is now a **live teleop and telemetry cockpit** in addition to being an information surface. This implements North Star G7's live command portal goal directly inside the Hangar. Driving and telemetry have moved from pure terminal environments into an integrated web cockpit accessible to any authorized tailnet device. Onboard fail-safes (stale-command watchdog, explicit stop, motor PID) remain mandatory engineering — they are not a ban on self-driving. **Dynamics note (operator, 2026-07-22):** the Beast is slow, hard-stops, and **stops in time** for terrain/obstacle reactions. Remote closed-loop from CORE-PRIME is fine. Lightweight on-device Orin inference for terrain alignment / avoidance is fine. Reject “won’t stop in time” and “avoidance must stay classical-only.”
+> **Scope (owner statement 2026-07-31 - Updated):** The Hangar app is now a **telemetry cockpit
+> with a teleop capability that is not yet live** in addition to being an information surface.
+> This is the delivery path for North Star G7's live command portal, not its completion: the
+> control surface is built and gated, and driving still happens over SSH until the robot-side
+> status/arming publishers ship and beast-paces Phase 2 passes. Onboard fail-safes (stale-command watchdog, explicit stop, motor PID) remain mandatory engineering — they are not a ban on self-driving. **Dynamics note (operator, 2026-07-22):** the Beast is slow, hard-stops, and **stops in time** for terrain/obstacle reactions. Remote closed-loop from CORE-PRIME is fine. Lightweight on-device Orin inference for terrain alignment / avoidance is fine. Reject “won’t stop in time” and “avoidance must stay classical-only.”
 
 ## Hardware chain
 

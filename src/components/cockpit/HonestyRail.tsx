@@ -1,5 +1,53 @@
 'use client';
 
+import clsx from 'clsx';
+
+// The rail exists to disclose what this cockpit CANNOT currently tell you.
+// It is only worth anything if it tracks the real gaps, so it is updated with
+// them — stale reassurance is worse than no rail at all.
+const CHIPS: Array<{ tone: 'red' | 'amber'; text: string; title: string }> = [
+  {
+    tone: 'red',
+    text: 'DRIVE GATED — ROBOT NOT ARMED',
+    title:
+      'Motion publishes only when the robot reports allow_motion=true. That publisher is not deployed yet, so drive is inert.',
+  },
+  {
+    tone: 'red',
+    text: 'STATUS PENDING ROBOT DEPLOY',
+    title:
+      '/cockpit/status, /ugv/allow_motion and /ugv/watchdog_state are not published yet — mux source, watchdog and motion state read UNKNOWN.',
+  },
+  {
+    tone: 'amber',
+    text: 'E-STOP CONFIRMATION UNAVAILABLE',
+    title:
+      'The stop is asserted at 2 Hz, but the robot cannot echo it back until /cockpit/status ships. The button stays in ASSERTING.',
+  },
+  {
+    tone: 'amber',
+    text: 'IMU = /imu/raw · UNCAL · NOT FUSED',
+    title: 'Nothing publishes /imu/data on this robot; the panel reads ugv_bringup /imu/raw.',
+  },
+  {
+    tone: 'amber',
+    text: 'LiDAR BLIND SECTOR UNVERIFIED',
+    title:
+      'The cropped 45°–134.5° sector has never been checked against a live /scan. Verify with ros2 topic echo before trusting the wedge.',
+  },
+  {
+    tone: 'amber',
+    text: 'PT JOINT FEEDBACK = COMMANDED, NOT MEASURED',
+    title: 'The crosshair shows what we asked for, not where the head actually is.',
+  },
+  {
+    tone: 'red',
+    text: 'ESP32: NO HEARTBEAT — WATCHDOG ONLY',
+    title:
+      'The ESP32 has no firmware heartbeat. The Jetson-side 0.5 s cmd_vel watchdog is the only lower backstop, and its live re-gate has not been run.',
+  },
+];
+
 export function HonestyRail() {
   return (
     <footer className="panel border-rim bg-panel/85 flex flex-wrap items-center gap-3 p-3 shadow-sm relative overflow-hidden">
@@ -11,29 +59,26 @@ export function HonestyRail() {
       </span>
 
       <div className="flex flex-wrap items-center gap-1.5 z-10 font-mono text-[9px] uppercase tracking-widest leading-none">
-        {/* SOC% FAKE */}
-        <span className="chip border-red-500/35 bg-red-950/20 text-red-500 py-1.5 px-3 rounded-full flex items-center gap-2">
-          <span className="h-1 w-1 bg-red-500 rounded-full shadow-[0_0_4px_#ef4444]" />
-          SOC% FAKE — HIDDEN
-        </span>
-
-        {/* PT JOINT FEEDBACK */}
-        <span className="chip border-amber-500/35 bg-amber-950/20 text-amber-500 py-1.5 px-3 rounded-full flex items-center gap-2">
-          <span className="h-1 w-1 bg-amber-500 rounded-full shadow-[0_0_4px_#f59e0b]" />
-          PT JOINT FEEDBACK = Commanded, not measured
-        </span>
-
-        {/* IMU UNCALIBRATED */}
-        <span className="chip border-amber-500/35 bg-amber-950/20 text-amber-500 py-1.5 px-3 rounded-full flex items-center gap-2">
-          <span className="h-1 w-1 bg-amber-500 rounded-full shadow-[0_0_4px_#f59e0b]" />
-          IMU UNCALIBRATED · ZERO COVARIANCE
-        </span>
-
-        {/* ESP32 NO FW HEARTBEAT */}
-        <span className="chip border-red-500/35 bg-red-950/20 text-red-500 py-1.5 px-3 rounded-full flex items-center gap-2">
-          <span className="h-1 w-1 bg-red-500 rounded-full shadow-[0_0_4px_#ef4444]" />
-          ESP32: NO HEARTBEAT — WATCHDOG ONLY
-        </span>
+        {CHIPS.map((chip) => (
+          <span
+            key={chip.text}
+            title={chip.title}
+            className={clsx(
+              'chip py-1.5 px-3 rounded-full flex items-center gap-2 cursor-help',
+              chip.tone === 'red'
+                ? 'border-red-500/35 bg-red-950/20 text-red-500'
+                : 'border-amber-500/35 bg-amber-950/20 text-amber-500',
+            )}
+          >
+            <span
+              className={clsx(
+                'h-1 w-1 rounded-full',
+                chip.tone === 'red' ? 'bg-red-500 shadow-[0_0_4px_#ef4444]' : 'bg-amber-500 shadow-[0_0_4px_#f59e0b]',
+              )}
+            />
+            {chip.text}
+          </span>
+        ))}
       </div>
     </footer>
   );
