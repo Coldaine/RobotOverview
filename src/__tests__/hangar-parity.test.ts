@@ -7,6 +7,7 @@ import { hangarData } from '@/data/hangar';
 import type { HangarData } from '@/data/types';
 import * as schema from '@/server/hangar/schema';
 import { buildHangarDataFromDb } from '@/server/hangar/spine';
+import { stripDatacoreCorpus } from './helpers/seed-sql';
 
 const ROOT = resolve(__dirname, '../..');
 
@@ -281,7 +282,10 @@ describe('hangar spine Postgres reconstruction parity', () => {
       readFileSync(resolve(ROOT, 'db/hangar/schema.sql'), 'utf8'),
       { expectCheckRewrites: true },
     );
-    const seedSql = prepareSqlForPgMem(readFileSync(resolve(ROOT, 'db/hangar/seed.sql'), 'utf8'));
+    const seedSql = stripDatacoreCorpus(
+      prepareSqlForPgMem(readFileSync(resolve(ROOT, 'db/hangar/seed.sql'), 'utf8')),
+      '-- (datacore corpus stripped for spine pg-mem parity)\n',
+    );
 
     for (const stmt of splitStatements(schemaSql)) mem.public.none(stmt);
     for (const stmt of splitStatements(seedSql)) mem.public.none(stmt);

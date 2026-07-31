@@ -19,8 +19,16 @@ function isTableSep(line: string): boolean {
   return /^\|?[\s:-|]+\|?$/.test(line.trim()) && line.includes('-');
 }
 
+function stripYamlFrontmatter(markdown: string): string {
+  const normalized = markdown.replace(/\r\n/g, '\n');
+  if (!normalized.startsWith('---\n')) return normalized;
+  const end = normalized.indexOf('\n---\n', 4);
+  if (end === -1) return normalized;
+  return normalized.slice(end + 5);
+}
+
 function parseBlocks(markdown: string): Block[] {
-  const lines = markdown.replace(/\r\n/g, '\n').split('\n');
+  const lines = stripYamlFrontmatter(markdown).split('\n');
   const blocks: Block[] = [];
   let i = 0;
 

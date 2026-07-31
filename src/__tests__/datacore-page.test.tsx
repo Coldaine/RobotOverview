@@ -168,6 +168,24 @@ describe('Datacore page', () => {
     expect(screen.getByRole('heading', { name: /\d+ insights?/i })).toBeInTheDocument();
   });
 
+  it('static lanes with fixture corpus still render packs under OFFLINE banner', () => {
+    render(
+      <HangarProvider>
+        <DatacoreClient
+          briefings={FIXTURE_BRIEFINGS}
+          packs={FIXTURE_PACKS}
+          briefingsSource="static"
+          packsSource="static"
+        />
+      </HangarProvider>,
+    );
+
+    expect(screen.getByText('DATACORE OFFLINE')).toBeInTheDocument();
+    expect(screen.getByText(/serving static research fixture/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Beast Vision & Capture/i })).toBeInTheDocument();
+    expect(screen.queryByText(/Research packs & briefs unavailable/i)).not.toBeInTheDocument();
+  });
+
   it('degrades per lane: briefings offline still renders packs', () => {
     render(
       <HangarProvider>
@@ -181,6 +199,6 @@ describe('Datacore page', () => {
     );
 
     expect(screen.getByText('DATACORE DEGRADED')).toBeInTheDocument();
-    expect(screen.getByText(/Briefings unavailable from Postgres — research packs still load/i)).toBeInTheDocument();
+    expect(screen.getByText(/Briefings lane static/i)).toBeInTheDocument();
   });
 });

@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { hangarData } from '@/data/hangar';
+import { DATACORE_CORPUS_BRIEFINGS } from '@/data/datacore-corpus';
 
 const ROOT = resolve(__dirname, '../..');
 const MANIFEST_PATH = resolve(ROOT, 'db/hangar/research-corpus-manifest.json');
@@ -18,6 +19,7 @@ function loadManifest(): Manifest {
 describe('research corpus insight pointers', () => {
   const manifest = loadManifest();
   const briefingIds = new Set(manifest.briefings.map((b) => b.id));
+  const corpusById = new Map(DATACORE_CORPUS_BRIEFINGS.map((b) => [b.id, b]));
 
   it('every /datacore/briefing/ insight source resolves to a manifest briefing id', () => {
     for (const insight of hangarData.insights) {
@@ -30,11 +32,26 @@ describe('research corpus insight pointers', () => {
     }
   });
 
-  it('every manifest briefing with repoPath exists on disk', () => {
+  it('every manifest briefing has a non-empty embedded corpus body', () => {
+    // repoPath is provenance only — research markdown was cut over to Postgres /
+    // datacore-corpus and may no longer exist on disk in the image.
     for (const b of manifest.briefings) {
-      if (!b.repoPath) continue;
+      const row = corpusById.get(b.id);
+      expect(row, `manifest ${b.id} missing from datacore-corpus`).toBeTruthy();
+      expect(
+        (row?.bodyMarkdown ?? '').trim().length > 0,
+        `manifest ${b.id} corpus body is empty`,
+      ).toBe(true);
+    }
+  });
+
+  it('in-repo provenance paths that are still live docs still exist on disk', () => {
+    for (const b of manifest.briefings) {
+      if (!b.repoPath?.startsWith('docs/')) continue;
       const abs = resolve(ROOT, b.repoPath);
-      expect(existsSync(abs), `manifest ${b.id} repoPath missing: ${b.repoPath}`).toBe(true);
+      expect(existsSync(abs), `manifest ${b.id} live docs repoPath missing: ${b.repoPath}`).toBe(
+        true,
+      );
     }
   });
 

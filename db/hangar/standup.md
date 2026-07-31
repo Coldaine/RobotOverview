@@ -22,14 +22,16 @@ for research, and the connected model (North Star AG1).
 
 ## Status
 
-**Normalized cutover LIVE (2026-07-31):**
+**Normalized cutover LIVE (verified 2026-07-31):**
 
 - UI read path reconstructs HangarData from normalized tables
   (`getHangarSpine` → `buildHangarDataFromDb`). Loud static fallback when Postgres is
   missing or errors.
 - Agents write via op-verb ingest (`POST /api/hangar/ingest`) — see [`AGENTS.md`](../../AGENTS.md).
-- Datacore packs/briefings render from the `briefings` table; offline returns empty and
-  pages show a **DATACORE OFFLINE** banner.
+- Datacore packs/briefings render from the `briefings` table. Fresh `seed.sql` includes the
+  full research corpus (12 briefings + packs with `body_markdown`). Offline serves
+  `src/data/datacore-corpus.ts` under a loud **DATACORE OFFLINE** banner — never an empty wall.
+- Plan briefings store bodies in Postgres too (`repo_path` is provenance only).
 - `content_snapshots` is dropped by `migrations/2026-07-31-drop-content-snapshots.sql`
   (supersedes `2026-07-30-content-snapshots.sql`).
 
@@ -46,16 +48,21 @@ On `icarus-laptop`, do not start local containers. Use the cluster DB (LAN
 
 - `schema.sql` — full rebuild DDL for normalized inventory tables.
 - `migrations/` — additive live migrations, including
-  `2026-07-31-hangar-corpus.sql` (corpus tables) and
+  `2026-07-31-hangar-corpus.sql` (corpus tables),
+  `2026-07-31-briefings-body-required.sql` (all kinds require `body_markdown`), and
   `2026-07-31-drop-content-snapshots.sql` (drop legacy snapshot table).
-- `gen-seed.ts` / `seed.sql` — fixture → normalized seed (CI / fresh-DB bootstrap).
-- `ingest-research-corpus.ts` — replayable corpus migration; embeds the research corpus
-  snapshot. Run: `npx tsx db/hangar/ingest-research-corpus.ts` with `HANGAR_DB_*`.
+- `research-corpus-registry.ts` / `gen-datacore-corpus.ts` — refresh
+  `src/data/datacore-corpus.ts` (offline fixture + seed source for bodies).
+- `gen-seed.ts` / `seed.sql` — hangar spine **and** Datacore corpus (CI / fresh-DB bootstrap).
+- `ingest-research-corpus.ts` — repair / re-land corpus on a live DB that already has the spine.
+  Run: `npx tsx db/hangar/ingest-research-corpus.ts` with `HANGAR_DB_*`. Not required for
+  first paint after a full seed apply.
 
 ## App read / write path
 
 - **Read (spine):** reconstruct from normalized tables; static fixture only on fallback.
-- **Read (Datacore):** `briefings` / `briefing_packs` via `src/server/hangar/briefings.ts`.
+- **Read (Datacore):** `briefings` / `briefing_packs` via `src/server/hangar/briefings.ts`;
+  static corpus fixture on DB failure (loud banner).
 - **Write:** op-verb ingest ([`AGENTS.md`](../../AGENTS.md)).
 - **Preflight:** `GET /api/hangar/preflight`.
 
@@ -65,17 +72,17 @@ On `icarus-laptop`, do not start local containers. Use the cluster DB (LAN
 # 1. Base schema
 psql … -f db/hangar/schema.sql
 
-# 2. Apply migrations (corpus + drop snapshot, in date order)
+# 2. Apply migrations (corpus + body-required + drop snapshot, in date order)
 psql … -f db/hangar/migrations/2026-07-31-hangar-corpus.sql
+psql … -f db/hangar/migrations/2026-07-31-briefings-body-required.sql
 psql … -f db/hangar/migrations/2026-07-31-drop-content-snapshots.sql
 # (plus any earlier additive migrations not already folded into schema.sql)
 
-# 3. Fixture → seed → apply
+# 3. Refresh corpus fixture (when research bodies change), then seed
+npx tsx db/hangar/gen-datacore-corpus.ts
 npx tsx db/hangar/gen-seed.ts --out db/hangar/seed.sql
 psql … -f db/hangar/seed.sql
-
-# 4. Replay research corpus into briefings
-doppler run -p homelab -c dev -- npx tsx db/hangar/ingest-research-corpus.ts
+# Datacore is full after this step — no separate corpus ritual required.
 ```
 
-For live DBs with data, prefer additive migrations + ingest — do not casually wipe.
+For live DBs with data, prefer additive migrations + `ingest-research-corpus.ts` — do not casually wipe.

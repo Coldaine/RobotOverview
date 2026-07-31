@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 import { newDb } from 'pg-mem';
 import pg from 'pg';
 import * as schema from '@/server/hangar/schema';
+import { stripDatacoreCorpus } from './helpers/seed-sql';
 import {
   activityLog,
   assets,
@@ -137,7 +138,9 @@ async function createTestDb(): Promise<{ db: IngestDb; pool: pg.Pool; close: () 
   mem.public.none(readFileSync(resolve(root, 'db/hangar/schema.sql'), 'utf8'));
   dropNullableCheckConstraints(mem);
 
-  const seed = readFileSync(resolve(root, 'db/hangar/seed.sql'), 'utf8');
+  const seed = stripDatacoreCorpus(
+    readFileSync(resolve(root, 'db/hangar/seed.sql'), 'utf8'),
+  );
   for (const stmt of splitSql(seed)) {
     if (/^(BEGIN|COMMIT|SET)\b/i.test(stmt)) continue;
     mem.public.none(stmt.endsWith(';') ? stmt : `${stmt};`);

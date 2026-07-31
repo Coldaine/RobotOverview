@@ -1,7 +1,10 @@
 /**
  * Seed generator — transforms the static `src/data/hangar.ts` roster into the
  * normalized `hangar` Postgres schema and emits SQL on stdout, or to --out.
+ * Also lands the Datacore research corpus from `src/data/datacore-corpus.ts`
+ * so a fresh seed paints the full knowledge wall (no separate corpus ritual).
  *
+ *   npx tsx db/hangar/gen-datacore-corpus.ts   # refresh research bodies
  *   npx tsx db/hangar/gen-seed.ts --out db/hangar/seed.sql
  *
  * Faithful + defensive: every junction row is filtered to references that
@@ -10,6 +13,10 @@
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  DATACORE_CORPUS_BRIEFINGS,
+  DATACORE_CORPUS_PACKS,
+} from '../../src/data/datacore-corpus';
 import { hangarData as H } from '../../src/data/hangar';
 
 const out: string[] = [];
@@ -45,6 +52,14 @@ const TA = (xs: unknown) =>
     : `ARRAY[${xs.map((x) => S(x)).join(',')}]::text[]`;
 const J = (v: unknown) =>
   v === null || v === undefined ? 'NULL' : `'${JSON.stringify(sanitizeJson(v)).replace(/'/g, "''")}'::jsonb`;
+
+/** Dollar-quote long markdown so quotes/`$`/newlines never break SQL (or pg-mem). */
+const DQ = (tag: string, body: string) => {
+  let t = tag.replace(/[^a-zA-Z0-9_]/g, '_');
+  if (!t) t = 'body';
+  while (body.includes(`$${t}$`)) t = `${t}_x`;
+  return `$${t}$${stripNul(body)}$${t}$`;
+};
 
 // ── id registries (for defensive filtering) ─────────────────────────────────
 const assetIds = new Set<string>([
@@ -357,6 +372,34 @@ for (const n of H.nets ?? []) {
   for (const did of n.documents ?? [])
     if (documentIds.has(did)) w(`INSERT INTO net_documents(net_id,document_id) VALUES (${S(n.id)},${S(did)}) ON CONFLICT DO NOTHING;`);
 }
+
+// ── DATACORE CORPUS (packs first without hub, briefings, then hub links) ─────
+// Markers let pg-mem tests strip this block (bodies contain `;` / `$`).
+w('\n-- >>> DATACORE_CORPUS_BEGIN');
+w('\n-- briefing_packs (hub null until briefings exist)');
+for (const p of DATACORE_CORPUS_PACKS) {
+  w(
+    `INSERT INTO briefing_packs(id,title,code,summary,hub_briefing_id,topics) VALUES (${S(p.id)},${S(p.title)},${S(p.code)},${S(p.summary)},NULL,${TA(p.topics)});`,
+  );
+}
+
+w('\n-- briefings (body_markdown for all kinds; repo_path is provenance)');
+for (const b of DATACORE_CORPUS_BRIEFINGS) {
+  if (!b.bodyMarkdown) {
+    throw new Error(`datacore-corpus briefing '${b.id}' missing bodyMarkdown — run gen-datacore-corpus.ts`);
+  }
+  w(
+    `INSERT INTO briefings(id,title,kind,summary,tags,aliases,pack_id,captured_at,href,body_markdown,repo_path) VALUES (${S(b.id)},${S(b.title)},${S(b.kind)},${S(b.summary)},${TA(b.tags)},${TA(b.aliases ?? [])},${S(b.packId ?? null)},${S(b.capturedAt)},${S(b.href)},${DQ(`b_${b.id}`, b.bodyMarkdown)},${S(b.repoPath)});`,
+  );
+}
+
+w('\n-- briefing_packs hub links');
+for (const p of DATACORE_CORPUS_PACKS) {
+  w(
+    `UPDATE briefing_packs SET hub_briefing_id = ${S(p.hubBriefingId)} WHERE id = ${S(p.id)};`,
+  );
+}
+w('\n-- <<< DATACORE_CORPUS_END');
 
 w('\nCOMMIT;');
 export const seedSql = out.join('\n') + '\n';

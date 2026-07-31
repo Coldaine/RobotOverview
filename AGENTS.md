@@ -14,8 +14,9 @@ Working on UI? Follow [`docs/rich-ui.md`](docs/rich-ui.md) — enrich surfaces, 
 
 Facts and research persist to Postgres via `POST /api/hangar/ingest` (Bearer
 `HANGAR_INGEST_TOKEN` from Doppler `homelab`/`dev`). **Never edit `src/data/hangar.ts`
-for content** — it is a CI fixture and loud offline fallback only. Types:
-`src/data/types.ts`. Schema/migrations: [`db/hangar/standup.md`](db/hangar/standup.md).
+or `src/data/datacore-corpus.ts` for live content** — they are CI fixtures and loud
+offline fallbacks only (regenerate corpus with `npx tsx db/hangar/gen-datacore-corpus.ts`).
+Types: `src/data/types.ts`. Schema/migrations: [`db/hangar/standup.md`](db/hangar/standup.md).
 Deploy facts: [`docs/deploy.md`](docs/deploy.md).
 
 ```http
@@ -26,8 +27,9 @@ Content-Type: application/json
 { "op": "<verb>", "input": { … } }
 ```
 
-Research packs/briefings render at `/datacore` from the `briefings` table; the repo holds
-code, tests, plans, and docs — never research bodies.
+Research packs/briefings render at `/datacore` from the `briefings` table (`body_markdown`
+for all kinds). Fresh seed includes the corpus; the repo holds code, tests, plans, and
+docs — never author research bodies as new markdown files.
 
 ### Op verbs
 
@@ -43,7 +45,7 @@ code, tests, plans, and docs — never research bodies.
 | `land_wishlist` | Strict full wishlist (`id`, `name`, `category`, `rationale`, `price`, `status`, …) |
 | `land_mission` | Strict full mission (`id`, `code`, `name`, `status`, `objective`, `requisitionedUnits`, `requiredLoadout`, `wishlist`, `objectives`, `constraints`, …) |
 | `land_document` | Strict full document (`id`, `title`, `kind`, `libraryPath`, `url?`, `units?`, `note?`) |
-| `land_briefing` | `{ id, title, kind: "research", summary, tags?, aliases?, packId?, capturedAt?, href?, bodyMarkdown }` — markdown body in `bodyMarkdown`; **never** write research markdown into the repo |
+| `land_briefing` | `{ id, title, kind: "research"\|"plan", summary, tags?, aliases?, packId?, capturedAt?, href?, bodyMarkdown, repoPath? }` — **always** put the full markdown in `bodyMarkdown` (plans too); `repoPath` is provenance only; **never** write research markdown into the repo |
 | `land_pack` | `{ id, title, code, summary, hubBriefingId?, topics: string[] }` |
 
 Common path — `append_insight`:

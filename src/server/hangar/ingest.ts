@@ -295,33 +295,20 @@ const linkInsightInput = z.object({
   missions: z.array(z.string()).optional(),
 });
 
-const landBriefingResearch = z.object({
+const landBriefingInput = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
-  kind: z.literal('research'),
+  kind: z.enum(['research', 'plan']),
   summary: z.string(),
   tags: z.array(z.string()).optional(),
   aliases: z.array(z.string()).optional(),
   packId: z.string().optional(),
   capturedAt: isoTimestamp.optional(),
   href: z.string().optional(),
+  /** Required for all kinds — plans store a copy; repoPath is provenance only. */
   bodyMarkdown: z.string().min(1),
+  repoPath: z.string().min(1).optional(),
 });
-
-const landBriefingPlan = z.object({
-  id: z.string().min(1),
-  title: z.string().min(1),
-  kind: z.literal('plan'),
-  summary: z.string(),
-  tags: z.array(z.string()).optional(),
-  aliases: z.array(z.string()).optional(),
-  packId: z.string().optional(),
-  capturedAt: isoTimestamp.optional(),
-  href: z.string().optional(),
-  repoPath: z.string().min(1),
-});
-
-const landBriefingInput = z.union([landBriefingResearch, landBriefingPlan]);
 
 const landPackInput = z.object({
   id: z.string().min(1),
@@ -1207,8 +1194,8 @@ export async function opLandBriefing(
   input: z.infer<typeof landBriefingInput>,
 ): Promise<string> {
   const href = input.href ?? `/datacore/briefing/${input.id}`;
-  const bodyMarkdown = input.kind === 'research' ? input.bodyMarkdown : null;
-  const repoPath = input.kind === 'plan' ? input.repoPath : null;
+  const bodyMarkdown = input.bodyMarkdown;
+  const repoPath = input.repoPath ?? null;
   await db
     .insert(briefings)
     .values({

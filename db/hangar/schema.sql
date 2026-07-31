@@ -359,11 +359,10 @@ CREATE TABLE briefings (
   pack_id       TEXT REFERENCES briefing_packs(id) ON DELETE SET NULL,
   captured_at   TEXT,
   href          TEXT NOT NULL,
-  body_markdown TEXT,
+  body_markdown TEXT NOT NULL,
   repo_path     TEXT,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  CHECK ((kind = 'research' AND body_markdown IS NOT NULL) OR (kind = 'plan' AND repo_path IS NOT NULL))
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 ALTER TABLE briefing_packs
