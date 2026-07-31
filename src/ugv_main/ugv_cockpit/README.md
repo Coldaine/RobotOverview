@@ -38,8 +38,8 @@ are simply carried on the same bridge.
 > **`/imu/raw`, not `/imu/data`.** `ugv_bringup` publishes `sensor_msgs/Imu` on
 > `imu/raw`; its `imu/data_raw` publisher is commented out and no filter node
 > republishes as `imu/data`. Nothing on this robot publishes `/imu/data`. The
-> cockpit client's matching change (`/imu/data` → `/imu/raw`) is in flight on
-> RobotOverview branch `fix/cockpit-review-round1` and lands with this glob entry.
+> cockpit client's matching change (`/imu/data` → `/imu/raw`) is **merged** on
+> RobotOverview main (#148), so this glob entry is simply correct as it stands.
 
 `cockpit_status` also consumes two topics `ugv_bringup` publishes at 2 Hz —
 `/ugv/allow_motion` (`Bool`) and `/ugv/watchdog_state` (`DiagnosticStatus`, keys
@@ -53,14 +53,20 @@ what the robot enforces rather than what the UI last sent. Both are subscribed
 > silent topic. A published `false` would render in the cockpit as a confident
 > LOCKED / OFF-LINE rather than "no publisher" — conservative-looking, and
 > therefore never investigated. See [docs/cockpit.md](../../../docs/cockpit.md).
+>
+> **This half only works with the client half.** Absence is honest only because
+> RobotOverview renders a missing key as UNKNOWN and gates drive on the
+> robot-reported `allow_motion` — merged on main in #148/#149. Do not change the
+> omission rule without checking that repo.
 
 ## Transport
 
-`rosbridge_websocket` on **127.0.0.1:9090** — loopback only, `authenticate: false`,
-`use_compression: true`, with an explicit publish/subscribe topic whitelist and
-no `rosapi_node`. `tailscale serve` fronts it and is the only path in; it also
-provisions the real Let's Encrypt cert so an HTTPS page can open a valid `wss://`
-(a plain `ws://` is blocked as mixed content):
+`cockpit_rosbridge` on **127.0.0.1:9090** — loopback only, `authenticate: false`,
+`use_compression: true`, with an explicit publish/subscribe topic whitelist, no
+`rosapi_node`, only the four topic opcodes registered, and an origin allowlist.
+`tailscale serve` fronts it and is the only *network* path in; it also provisions
+the real Let's Encrypt cert so an HTTPS page can open a valid `wss://` (a plain
+`ws://` is blocked as mixed content):
 
 ```bash
 # One-time: enable HTTPS certs for the tailnet in the admin console, then:
@@ -71,6 +77,21 @@ tailscale serve status
 
 The cockpit app then points `BEAST_COCKPIT_WS_URL` at
 `wss://beast-01.tyrannosaurus-magellanic.ts.net`.
+
+> **Reachability does not gate a browser.** rosbridge's `check_origin` returns
+> `True` unconditionally (verified, `humble` branch) and WebSocket handshakes are
+> exempt from the same-origin policy, so before this package any page in any tab
+> on a tailnet-joined machine could connect and publish. `cockpit_rosbridge`
+> replaces `check_origin` with an allowlist:
+>
+> ```bash
+> # /etc/beast/ugv.env — the origin SERVING the cockpit page, not the robot's
+> COCKPIT_ALLOWED_ORIGINS=https://hangar.example.ts.net
+> ```
+>
+> Unset denies every browser (fail closed). Clients that send no `Origin` at all
+> — non-browser tooling — are still admitted; that residual is documented in
+> [docs/cockpit.md](../../../docs/cockpit.md).
 
 **Do not widen the bind address or a glob without reading
 [docs/cockpit.md](../../../docs/cockpit.md).** An unset glob is allow-all, a

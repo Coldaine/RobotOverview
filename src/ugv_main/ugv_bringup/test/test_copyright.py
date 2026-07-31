@@ -12,8 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ament_copyright.main import main
 import pytest
+
+# The ament linters only exist inside a sourced ROS 2 environment. This suite
+# also runs as bare pytest on a plain runner (.github/workflows/spine-tests.yml,
+# which now includes ugv_bringup/test/test_jetson_safety.py in the safety gate),
+# where a module-level `from ament_copyright...` import is a COLLECTION ERROR
+# that takes the whole file down with it. Skip instead, so `colcon test` on the
+# robot still lints and CI still runs the watchdog tests that matter.
+pytest.importorskip('ament_copyright')
+
+from ament_copyright.main import main  # noqa: E402
 
 
 @pytest.mark.copyright

@@ -28,10 +28,33 @@ if importlib.util.find_spec('rclpy') is None:
     class _Placeholder:
         pass
 
+    class _Message:
+        """Enough of a generated message to be built and have fields set.
+
+        ``rclpy`` messages take keyword field values and allow attribute
+        assignment afterwards; both forms appear in ugv_bringup. Nothing here
+        validates types — these tests assert what the node PUTS in a message,
+        not that rosidl would accept it.
+        """
+
+        def __init__(self, **fields):
+            for name, value in fields.items():
+                setattr(self, name, value)
+
+    class _DiagnosticStatus(_Message):
+        # The real constants, so a test can tell OK from WARN from ERROR.
+        # Values match diagnostic_msgs/msg/DiagnosticStatus.
+        OK = 0
+        WARN = 1
+        ERROR = 2
+        STALE = 3
+
     rclpy_node.Node = _Placeholder
     rclpy_qos.DurabilityPolicy = _Placeholder
     rclpy_qos.HistoryPolicy = _Placeholder
     rclpy_qos.QoSProfile = _Placeholder
+
+    _TYPED = {'DiagnosticStatus': _DiagnosticStatus}
 
     for package, names in {
         'std_msgs.msg': ('Header', 'Bool', 'Float32MultiArray'),
@@ -46,7 +69,7 @@ if importlib.util.find_spec('rclpy') is None:
         messages = _module(package)
         parent.msg = messages
         for name in names:
-            setattr(messages, name, _Placeholder)
+            setattr(messages, name, _TYPED.get(name, _Message))
 
 if importlib.util.find_spec('serial') is None:
     serial = _module('serial')

@@ -1,10 +1,16 @@
 """The ``/cockpit/status`` wire contract — importable without ROS.
 
 Every string the browser cockpit switches on lives here as a module-level
-constant, and the rule ``cockpit_status`` uses to reproduce twist_mux's
-arbitration lives here as a pure function. Nothing in this module imports
-rclpy, numpy or cv2, so test/test_cockpit_status_contract.py can assert the
-exact bytes on a bare CI runner with no ROS installed.
+constant, and the rules the cockpit's ROS nodes apply live here as pure
+functions: twist_mux arbitration and safety-state staleness for
+``cockpit_status``, and the websocket origin policy for ``cockpit_rosbridge``.
+Nothing in this module imports rclpy, numpy, cv2 or rosbridge, so
+test/test_cockpit_status_contract.py can assert the exact bytes and exercise
+the real decision functions on a bare CI runner with no ROS installed.
+
+That is why the origin policy lives in a "wire contract" module rather than
+next to the monkeypatch that installs it: a security rule nothing can execute
+in CI is a security rule nothing checks.
 
 The indirection is the point: the display strings are compared with ``===`` on
 the client (SafetyStrip.tsx, CommandRail.tsx in Coldaine/RobotOverview), so a
@@ -258,3 +264,81 @@ def resolve_active_source(now, last_command_at, estop_engaged,
         return display, age
 
     return SOURCE_NONE, None
+
+
+# ---------------------------------------------------------------------------
+# WEBSOCKET ORIGIN POLICY
+#
+# "Only reachable over the tailnet" does NOT gate a browser. Verified against
+# RobotWebTools/rosbridge_suite, ``humble`` branch (the source ros-humble-
+# rosbridge-suite is built from), rosbridge_server/src/rosbridge_server/
+# websocket_handler.py:
+#
+#     @log_exceptions
+#     def check_origin(self, origin: str) -> bool:  # noqa: ARG002
+#         return True
+#
+# Tornado calls check_origin on every WebSocket handshake and upstream accepts
+# unconditionally. WebSocket handshakes are ALSO exempt from the same-origin
+# policy — there is no CORS preflight, and a cross-origin ``new WebSocket(...)``
+# is not blocked by the browser. So any web page loaded in any tab on a
+# tailnet-joined machine can open wss:// to the robot and start publishing.
+# Reachability gates the NETWORK; it does not gate the PAGE.
+#
+# What that actually buys an attacker here is bounded by the publish glob:
+# /cmd_vel_ui is mux rung 50, outranked by both the robot-side pad (150) and
+# the operator pad (100), and still gated by allow_motion and the watchdog. So
+# the ladder holds and this is not an arbitration bypass. It is still a drive-by
+# command surface that the documented threat model did not cover, and it is
+# cheap to close, so we close it.
+# ---------------------------------------------------------------------------
+ALLOWED_ORIGINS_ENV = 'COCKPIT_ALLOWED_ORIGINS'
+
+
+def parse_allowed_origins(raw):
+    """Parse the comma-separated allowlist into a normalised tuple.
+
+    Origins are compared case-insensitively and without a trailing slash,
+    because that is how browsers serialise the ``Origin`` header
+    (``scheme://host[:port]``, no path).
+    """
+    if not raw:
+        return ()
+    return tuple(
+        item.strip().rstrip('/').lower()
+        for item in raw.split(',')
+        if item.strip()
+    )
+
+
+def origin_is_allowed(origin, allowlist):
+    """Decide one WebSocket handshake. Replaces upstream's ``return True``.
+
+    Two deliberate decisions, both of which cut against a reflexive
+    "deny everything unknown":
+
+    ABSENT OR EMPTY ORIGIN IS ALLOWED. Browsers ALWAYS send ``Origin`` on a
+    WebSocket handshake — it is not optional and page JavaScript cannot forge
+    or suppress it. So a missing Origin means a NON-browser client: ``roslibpy``,
+    a native app, a CLI. Those are exactly the clients that already had to get
+    onto loopback through ``tailscale serve``, i.e. the trust level the old
+    model assumed for everyone. Denying them would break legitimate tooling
+    without closing the hole that matters, because the drive-by web page is the
+    one attacker who cannot omit the header. This is a documented residual: a
+    native client on a tailnet-joined machine is still admitted.
+
+    AN EMPTY ALLOWLIST DENIES EVERY BROWSER. Fail closed. This file's whole
+    reason for existing is that rosbridge's unset globs mean ALLOW-ALL and that
+    is how a config looks fine and behaves catastrophically; repeating that
+    mistake in the control written to fix it would be indefensible. An operator
+    who has not set COCKPIT_ALLOWED_ORIGINS gets a cockpit that cannot connect,
+    which is loud, immediate and diagnosable from the startup log — not a
+    cockpit that silently keeps the vulnerability.
+
+    Args:
+        origin: the ``Origin`` header, or ``None`` when absent.
+        allowlist: normalised origins from :func:`parse_allowed_origins`.
+    """
+    if origin is None or not origin.strip():
+        return True
+    return origin.strip().rstrip('/').lower() in allowlist

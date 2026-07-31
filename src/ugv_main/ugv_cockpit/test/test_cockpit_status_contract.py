@@ -273,11 +273,65 @@ def test_status_node_subscribes_every_rung_and_the_lock():
     )
 
 
-def test_status_node_and_mux_share_the_ros_clock_mode():
+def test_the_arbitration_mirror_reads_the_same_clock_as_twist_mux():
+    """Scoped to the MIRROR. The liveness stamps deliberately differ.
+
+    twist_mux expires rungs against rclcpp's ``Node::now()``, so the mirror
+    must read the ROS clock or it disagrees with the arbiter it reproduces.
+    That argument applies only to the rung stamps and the resolve call: the
+    bringup liveness stamps have no twist_mux counterpart to agree with, and
+    they use ``time.monotonic()`` on purpose, because the ROS clock is the
+    system clock and chrony steps it on this RTC-less Jetson. An earlier
+    version of this test banned ``time.monotonic()`` from the whole file, which
+    would have blocked that fix.
+    """
     status_source = read(STATUS_NODE)
     launch_source = read(COCKPIT_LAUNCH)
-    assert 'self.get_clock().now().nanoseconds' in status_source
-    assert 'time.monotonic()' not in status_source
+    tree = ast.parse(status_source, filename=STATUS_NODE)
+
+    def method(name):
+        for node in ast.walk(tree):
+            if isinstance(node, ast.FunctionDef) and node.name == name:
+                return node
+        raise AssertionError('%s defines no %s()' % (STATUS_NODE, name))
+
+    def calls_in(node):
+        found = set()
+        for child in ast.walk(node):
+            if isinstance(child, ast.Call) and isinstance(child.func, ast.Attribute):
+                found.add(child.func.attr)
+        return found
+
+    assert 'get_clock' in calls_in(method('_now_s')), (
+        '%s: _now_s() must read the ROS clock — it is what the arbitration '
+        'mirror compares against twist_mux expiry' % STATUS_NODE
+    )
+    assert 'monotonic' in calls_in(method('_liveness_now_s')), (
+        '%s: _liveness_now_s() must be monotonic. It answers an elapsed-time '
+        'question with no twist_mux counterpart, and a chrony step on the '
+        'RTC-less Jetson would otherwise blank the safety strip.' % STATUS_NODE
+    )
+
+    # The rung stamps and the resolve call are on the ROS clock.
+    assert re.search(r'_last_command_at\[key\] = self\._now_s\(\)', status_source), (
+        '%s: rung arrival stamps must use the ROS clock' % STATUS_NODE
+    )
+    mux = method('_mux_status')
+    assert 'resolve_active_source' in {
+        child.func.id for child in ast.walk(mux)
+        if isinstance(child, ast.Call) and isinstance(child.func, ast.Name)
+    }
+    assert '_now_s' in calls_in(mux) and '_liveness_now_s' not in calls_in(mux), (
+        '%s: _mux_status must resolve on the ROS clock only' % STATUS_NODE
+    )
+
+    # ...and the bringup liveness checks are not.
+    for name in ('_bringup_status', '_watchdog_status', '_is_fresh'):
+        assert '_now_s' not in calls_in(method(name)), (
+            '%s: %s() must use _liveness_now_s(), not the steppable ROS clock'
+            % (STATUS_NODE, name)
+        )
+
     assert "parameters=[{'use_sim_time': False}]" in launch_source
     assert "DeclareLaunchArgument(\n        'use_sim_time'" not in launch_source
 
@@ -787,4 +841,94 @@ def test_status_node_keeps_the_entry_even_when_the_keys_are_gone():
     assert re.search(r'UNKNOWN, key[s]? omitted', source), (
         "%s: the not-fresh branches must say the keys were omitted, so the gap "
         'is legible in `ros2 topic echo` and not only in the UI' % STATUS_NODE
+    )
+
+
+# --------------------------------------------------------------------------
+# (5) the websocket origin policy, executed rather than described
+#
+# cockpit_rosbridge.py imports rosbridge and cannot load here, which is exactly
+# why the DECISION lives in cockpit_contract. test_cockpit_bridge.py proves the
+# patch is installed; these prove the rule it installs is the right one.
+# --------------------------------------------------------------------------
+COCKPIT_ORIGIN = 'https://hangar.example.ts.net'
+
+
+def test_absent_origin_is_admitted_because_browsers_cannot_omit_it(contract):
+    """A missing Origin means a NON-browser client, and that is deliberate.
+
+    Browsers always send Origin on a WebSocket handshake; page JavaScript can
+    neither forge nor suppress it. So the drive-by web page — the attacker this
+    control exists for — always arrives WITH one. Refusing headerless clients
+    would break roslibpy and CLI tooling without closing that hole.
+
+    This is a documented residual, not an oversight: a native client on a
+    tailnet-joined machine is still admitted, at the same trust level the old
+    reachability-only model extended to everyone.
+    """
+    allowlist = contract.parse_allowed_origins(COCKPIT_ORIGIN)
+    assert contract.origin_is_allowed(None, allowlist) is True
+    assert contract.origin_is_allowed('', allowlist) is True
+    assert contract.origin_is_allowed('   ', allowlist) is True
+    # ...and still admitted when nothing is configured at all.
+    assert contract.origin_is_allowed(None, ()) is True
+
+
+def test_an_unset_allowlist_denies_every_browser(contract):
+    """Fail CLOSED. An unset glob meaning ALLOW-ALL is the bug being fixed."""
+    for origin in (
+        COCKPIT_ORIGIN,
+        'https://evil.example.com',
+        'http://localhost:3000',
+    ):
+        assert contract.origin_is_allowed(origin, ()) is False, (
+            'an unconfigured allowlist must not admit %r. rosbridge already '
+            'taught us what "unset means allow everything" costs.' % origin
+        )
+
+
+def test_only_listed_origins_are_admitted(contract):
+    allowlist = contract.parse_allowed_origins(
+        '%s, https://cockpit.example.ts.net' % COCKPIT_ORIGIN
+    )
+    assert contract.origin_is_allowed(COCKPIT_ORIGIN, allowlist) is True
+    assert contract.origin_is_allowed(
+        'https://cockpit.example.ts.net', allowlist
+    ) is True
+
+    for origin in (
+        'https://evil.example.com',
+        # Prefix/suffix lookalikes must not match — this is exact comparison,
+        # not `startswith`, for the same reason the topic globs are anchored.
+        'https://hangar.example.ts.net.evil.com',
+        'https://evil.com/?x=https://hangar.example.ts.net',
+        'https://sub.hangar.example.ts.net',
+        # Scheme is part of the origin: plain http is a different origin and a
+        # downgrade path, so it does not inherit the https entry's trust.
+        'http://hangar.example.ts.net',
+    ):
+        assert contract.origin_is_allowed(origin, allowlist) is False, (
+            '%r must not be admitted by an allowlist naming %s'
+            % (origin, COCKPIT_ORIGIN)
+        )
+
+
+def test_origin_comparison_is_case_and_trailing_slash_insensitive(contract):
+    """Browsers vary on case; an operator will paste a trailing slash."""
+    allowlist = contract.parse_allowed_origins('  HTTPS://Hangar.Example.TS.net/ ')
+    assert allowlist == ('https://hangar.example.ts.net',)
+    assert contract.origin_is_allowed(COCKPIT_ORIGIN, allowlist) is True
+    assert contract.origin_is_allowed(COCKPIT_ORIGIN + '/', allowlist) is True
+    assert contract.origin_is_allowed(
+        'HTTPS://HANGAR.EXAMPLE.TS.NET', allowlist
+    ) is True
+
+
+def test_allowlist_parsing_drops_empty_entries(contract):
+    """A trailing comma must not become an entry that matches the empty string."""
+    assert contract.parse_allowed_origins('') == ()
+    assert contract.parse_allowed_origins('   ') == ()
+    assert contract.parse_allowed_origins(',,') == ()
+    assert contract.parse_allowed_origins('%s,' % COCKPIT_ORIGIN) == (
+        COCKPIT_ORIGIN,
     )

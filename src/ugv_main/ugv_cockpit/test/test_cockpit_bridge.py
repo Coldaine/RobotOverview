@@ -355,19 +355,162 @@ def test_no_rosapi_node_is_launched(launch_tree):
     )
 
 
-def test_bridge_registers_topic_operations_only():
-    source = read(PROTOCOL_WRAPPER)
-    tree = ast.parse(source, filename=PROTOCOL_WRAPPER)
+FORBIDDEN_CAPABILITIES = (
+    'CallService',
+    'AdvertiseService',
+    'SendActionGoal',
+    'AdvertiseAction',
+)
+
+# The call in the wrapper that hands control to stock rosbridge. Every patch
+# has to be upstream of this line or it patches nothing.
+UPSTREAM_INVOCATION = 'run_path'
+
+
+@pytest.fixture(scope='module')
+def wrapper_tree():
+    return ast.parse(read(PROTOCOL_WRAPPER), filename=PROTOCOL_WRAPPER)
+
+
+def wrapper_main(wrapper_tree):
+    for node in wrapper_tree.body:
+        if isinstance(node, ast.FunctionDef) and node.name == 'main':
+            return node
+    raise AssertionError('%s defines no main()' % PROTOCOL_WRAPPER)
+
+
+def upstream_invocation_line(main_node):
+    for node in ast.walk(main_node):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if isinstance(func, ast.Attribute) and func.attr == UPSTREAM_INVOCATION:
+            return node.lineno
+    raise AssertionError(
+        '%s: main() no longer calls %s(). This test locates the hand-off to '
+        'stock rosbridge in order to prove the patches precede it — if the '
+        'hand-off mechanism changed, update UPSTREAM_INVOCATION here in the '
+        'same commit.' % (PROTOCOL_WRAPPER, UPSTREAM_INVOCATION)
+    )
+
+
+def patch_assignment_line(main_node, receiver, attribute, expected_value):
+    """Line of ``receiver.attribute = expected_value`` inside main(), or None.
+
+    An ast.Assign, not a substring: the point is that the statement EXECUTES.
+    """
+    for node in ast.walk(main_node):
+        if not isinstance(node, ast.Assign):
+            continue
+        for target in node.targets:
+            if not isinstance(target, ast.Attribute) or target.attr != attribute:
+                continue
+            if not (isinstance(target.value, ast.Name)
+                    and target.value.id == receiver):
+                continue
+            value = node.value
+            if isinstance(value, ast.Name) and value.id == expected_value:
+                return node.lineno
+    return None
+
+
+def test_bridge_registers_topic_operations_only(wrapper_tree):
+    """The tuple's CONTENTS. test_the_capability_patch_is_executed does the rest."""
     assignment = next(
-        node for node in tree.body
+        node for node in wrapper_tree.body
         if isinstance(node, ast.Assign)
         and any(isinstance(target, ast.Name) and target.id == 'TOPIC_ONLY_CAPABILITIES'
                 for target in node.targets)
     )
     names = [elt.id for elt in assignment.value.elts]
     assert names == ['Advertise', 'Publish', 'Subscribe', 'Defragment']
-    for forbidden in ('CallService', 'AdvertiseService', 'SendActionGoal'):
-        assert forbidden not in source
+
+    # Identifiers, not raw text: the module's prose names the opcodes it
+    # removes, and explaining a security control must not break the test for it.
+    referenced = {
+        node.id for node in ast.walk(wrapper_tree) if isinstance(node, ast.Name)
+    }
+    for node in ast.walk(wrapper_tree):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            referenced.update(alias.asname or alias.name for alias in node.names)
+    offenders = sorted(set(FORBIDDEN_CAPABILITIES) & referenced)
+    assert not offenders, (
+        '%s references %s as code. The wrapper exists to make those opcodes '
+        'unreachable; importing or naming one is how they come back.'
+        % (PROTOCOL_WRAPPER, offenders)
+    )
+
+
+def test_the_capability_patch_is_executed_before_upstream_runs(wrapper_tree):
+    """A correct TOPIC_ONLY_CAPABILITIES that is never assigned is decoration.
+
+    Deleting the single line
+    ``RosbridgeProtocol.rosbridge_capabilities = TOPIC_ONLY_CAPABILITIES``
+    leaves the tuple, the imports and every other assertion in this file intact
+    and green, while the bridge silently degrades to stock rosbridge with all 13
+    upstream capabilities — CallService, AdvertiseService, SendActionGoal and
+    AdvertiseAction included. That is the entire service/action boundary gone,
+    with nothing to see in a diff review but one absent line.
+    """
+    main_node = wrapper_main(wrapper_tree)
+    line = patch_assignment_line(
+        main_node, 'RosbridgeProtocol', 'rosbridge_capabilities',
+        'TOPIC_ONLY_CAPABILITIES',
+    )
+    assert line is not None, (
+        '%s: main() must contain the statement RosbridgeProtocol.'
+        'rosbridge_capabilities = TOPIC_ONLY_CAPABILITIES. Without it the '
+        'topic-only protocol is never installed and the bridge runs stock, '
+        'with the service and action opcodes registered.' % PROTOCOL_WRAPPER
+    )
+    assert line < upstream_invocation_line(main_node), (
+        '%s: the capability patch must run BEFORE control passes to upstream. '
+        'Patching afterwards patches nothing — the server is already serving.'
+        % PROTOCOL_WRAPPER
+    )
+
+
+def test_the_origin_patch_is_executed_before_upstream_runs(wrapper_tree):
+    """Tailnet reachability does not gate a browser; check_origin has to.
+
+    Upstream's ``RosbridgeWebSocket.check_origin`` returns True unconditionally
+    (rosbridge_suite humble, websocket_handler.py), and WebSocket handshakes are
+    exempt from the same-origin policy, so without this patch any page open in
+    any tab on a tailnet-joined machine can connect and publish.
+    """
+    main_node = wrapper_main(wrapper_tree)
+    line = patch_assignment_line(
+        main_node, 'RosbridgeWebSocket', 'check_origin', '_check_origin',
+    )
+    assert line is not None, (
+        '%s: main() must install the origin check with '
+        'RosbridgeWebSocket.check_origin = _check_origin. Upstream accepts '
+        'every origin, so removing this line reopens the bridge to any web '
+        'page loaded on a machine that can reach the tailnet.' % PROTOCOL_WRAPPER
+    )
+    assert line < upstream_invocation_line(main_node), (
+        '%s: the origin patch must run BEFORE upstream starts serving.'
+        % PROTOCOL_WRAPPER
+    )
+
+
+def test_origin_policy_is_delegated_to_the_ros_free_contract(wrapper_tree):
+    """The decision itself must live where a bare-pytest runner can execute it.
+
+    A security rule that only exists inside a module importing rosbridge is a
+    rule CI cannot run. cockpit_contract has no ROS imports, so
+    test_cockpit_status_contract.py exercises the real function.
+    """
+    imported = set()
+    for node in ast.walk(wrapper_tree):
+        if isinstance(node, ast.ImportFrom) and node.module:
+            if 'cockpit_contract' in node.module:
+                imported.update(alias.name for alias in node.names)
+    assert {'origin_is_allowed', 'parse_allowed_origins'} <= imported, (
+        '%s must take the origin decision from cockpit_contract, which imports '
+        'nothing from ROS and is therefore testable in CI. Inlining the policy '
+        'here makes it unexecutable on the runner.' % PROTOCOL_WRAPPER
+    )
 
 
 def test_launch_uses_the_topic_only_wrapper(launch_tree):

@@ -43,6 +43,15 @@ WHERE EACH FACT COMES FROM
     LOCKED / OFF-LINE and never once says "I cannot see the robot". The entry
     itself stays in the array with WARN and a message naming the silent topic.
 
+    CROSS-REPO — THESE TWO HALVES MUST STAY IN LOCKSTEP. Omitting a key is only
+    honest if the consumer renders absence as UNKNOWN; a client that defaults a
+    missing key to ``false`` would turn this into the same confident lie by a
+    different route, and one that defaults it to ``true`` would be far worse.
+    The matching client behaviour (absent key -> UNKNOWN, and the drive gate
+    keyed on the robot-reported ``allow_motion``) is MERGED on RobotOverview
+    main in #148/#149. Do not change the omission rule here without checking
+    that repo, and do not "simplify" it back to always emitting the keys.
+
 Host metrics
     Read straight off ``/proc`` and ``/sys``. Anything unreadable falls back to
     the value the client itself uses as its "no data" default, and the entry is
@@ -50,6 +59,7 @@ Host metrics
     visible in ``ros2 topic echo`` as well as in the cockpit.
 """
 import shutil
+import time
 
 import rclpy
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
@@ -154,9 +164,10 @@ class CockpitStatus(Node):
         self._watchdog_fired = False
         self._watchdog_at = None
 
-        # Mux rung observation uses this node's ROS clock, the same time base
-        # twist_mux uses. In simulation both nodes therefore pause and jump
-        # with /clock together instead of reporting contradictory expiry.
+        # Mux rung observation uses this node's ROS clock, because these stamps
+        # are compared against twist_mux's own expiry and twist_mux stamps with
+        # rclcpp's Node::now(). Agreeing with the arbiter we claim to mirror is
+        # the entire reason; there is no other.
         self._last_command_at = {key: None for key, _, _, _ in MUX_SOURCES}
         self._estop_engaged = False
 
@@ -205,20 +216,43 @@ class CockpitStatus(Node):
 
     def _on_allow(self, msg: Bool):
         self._allow_motion = bool(msg.data)
-        self._allow_motion_at = self._now_s()
+        self._allow_motion_at = self._liveness_now_s()
 
     def _on_watchdog(self, msg: DiagnosticStatus):
         values = {kv.key: kv.value for kv in msg.values}
         self._watchdog_armed = values.get(KEY_ARMED, 'false') == 'true'
         self._watchdog_fired = values.get(KEY_FIRED, 'false') == 'true'
-        self._watchdog_at = self._now_s()
+        self._watchdog_at = self._liveness_now_s()
 
     def _now_s(self):
+        """ROS clock — for the arbitration mirror ONLY.
+
+        twist_mux stamps arrivals with rclcpp's ``Node::now()`` and expires
+        rungs against it, so the mirror has to read the same clock or it will
+        disagree with the arbiter it exists to reproduce.
+        """
         return self.get_clock().now().nanoseconds / 1_000_000_000.0
+
+    def _liveness_now_s(self):
+        """Monotonic — for "is ugv_bringup still talking to me".
+
+        Deliberately NOT the ROS clock. These stamps have no twist_mux
+        counterpart to agree with; they answer a pure elapsed-time question,
+        and the ROS clock is the system clock, which the RTC-less Jetson lets
+        chrony STEP once it reaches a time source. A step backwards would make
+        a live bringup look stale and blank the safety strip; a step forwards
+        would do it for BRINGUP_STALE_S seconds' worth of readings at once.
+        time.monotonic() cannot step.
+
+        The mirror accepts that risk knowingly, because agreeing with twist_mux
+        matters more there. Here there is nothing to agree with, so there is no
+        reason to take it.
+        """
+        return time.monotonic()
 
     def _is_fresh(self, stamp):
         """Staleness decay, delegated to the ROS-free rule in the contract."""
-        return is_fresh(self._now_s(), stamp, BRINGUP_STALE_S)
+        return is_fresh(self._liveness_now_s(), stamp, BRINGUP_STALE_S)
 
     def _tick(self):
         arr = DiagnosticArray()
@@ -265,7 +299,7 @@ class CockpitStatus(Node):
         return mux
 
     def _bringup_status(self):
-        now = self._now_s()
+        now = self._liveness_now_s()
         fresh = is_fresh(now, self._allow_motion_at)
         allow_motion = fresh and self._allow_motion
 
@@ -300,7 +334,7 @@ class CockpitStatus(Node):
         return bringup
 
     def _watchdog_status(self):
-        now = self._now_s()
+        now = self._liveness_now_s()
         fresh = is_fresh(now, self._watchdog_at)
         armed = fresh and self._watchdog_armed
         fired = fresh and self._watchdog_fired

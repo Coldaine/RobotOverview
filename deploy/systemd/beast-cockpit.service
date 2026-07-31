@@ -25,6 +25,12 @@ Group=beast
 # command topics, but this process needs no direct serial-device access.
 SupplementaryGroups=video render plugdev
 WorkingDirectory=/home/beast/beast/ugv_ws
+# COCKPIT_ALLOWED_ORIGINS lives here. It is the origin SERVING the cockpit page
+# (the RobotOverview deployment), not this robot's hostname — the Origin header
+# carries the page's origin. Unset denies every browser, on purpose: rosbridge's
+# check_origin returns True unconditionally and WebSocket handshakes skip CORS,
+# so without an allowlist any page in any tab on a tailnet-joined machine can
+# publish to the reviewed command topics. docs/cockpit.md has the reasoning.
 EnvironmentFile=/etc/beast/ugv.env
 Environment=PYTHONUNBUFFERED=1
 # Cockpit telemetry + camera + a reviewed remote command ingress through the

@@ -12,8 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ament_flake8.main import main_with_errors
 import pytest
+
+# The ament linters only exist inside a sourced ROS 2 environment. This suite
+# also runs as bare pytest on a plain runner (.github/workflows/spine-tests.yml,
+# which now includes ugv_bringup/test/test_jetson_safety.py in the safety gate),
+# where a module-level `from ament_flake8...` import is a COLLECTION ERROR
+# that takes the whole file down with it. Skip instead, so `colcon test` on the
+# robot still lints and CI still runs the watchdog tests that matter.
+pytest.importorskip('ament_flake8')
+
+from ament_flake8.main import main_with_errors  # noqa: E402
 
 
 @pytest.mark.flake8
