@@ -37,13 +37,12 @@ export default async function BriefingPage({
   const all = await getBriefings();
   const offline = all.source !== 'postgres';
 
-  const briefing = offline
-    ? (all.briefings.find((b) => b.id === slug) ?? null)
-    : await getBriefing(slug);
-  if (!offline && !briefing) notFound();
-  if (offline && !briefing) notFound();
+  // Always resolve via getBriefing so offline list payloads can omit bodies
+  // while detail still gets the full corpus/Postgres row.
+  const briefing = await getBriefing(slug);
+  if (!briefing) notFound();
 
-  const markdown = briefing ? await getBriefingBody(briefing) : null;
+  const markdown = await getBriefingBody(briefing);
 
   return (
     <div className="space-y-6">
@@ -56,17 +55,13 @@ export default async function BriefingPage({
           Datacore
         </Link>
         <div className="font-mono text-[11px] uppercase tracking-[0.35em] text-cyan/70">
-          {briefing ? `${KIND_LABEL[briefing.kind] ?? 'Briefing'} · ${briefing.id.toUpperCase()}` : `BRIEFING · ${slug.toUpperCase()}`}
+          {`${KIND_LABEL[briefing.kind] ?? 'Briefing'} · ${briefing.id.toUpperCase()}`}
         </div>
-        <h1 className="text-xl font-semibold text-ink md:text-2xl">{briefing ? briefing.title : slug}</h1>
-        {briefing && (
-          <>
-            <p className="max-w-3xl font-mono text-xs text-ink-dim">{briefing.summary}</p>
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-dim/70">
-              {sourceLine(briefing)}
-            </p>
-          </>
-        )}
+        <h1 className="text-xl font-semibold text-ink md:text-2xl">{briefing.title}</h1>
+        <p className="max-w-3xl font-mono text-xs text-ink-dim">{briefing.summary}</p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-dim/70">
+          {sourceLine(briefing)}
+        </p>
       </header>
 
       {offline && markdown != null && (

@@ -1,5 +1,3 @@
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
 import { eq } from 'drizzle-orm';
 import {
   DATACORE_CORPUS_BRIEFINGS,
@@ -97,10 +95,12 @@ function mapPackRow(row: PackTableRow): DatacorePack | null {
 }
 
 function staticBriefingsFallback(reason: 'not-configured' | 'postgres-error'): BriefingsRead {
+  // List/search UI does not need bodies — keep the RSC → client payload small.
+  // Detail pages load full rows via getBriefing (corpus or Postgres).
   return {
     source: 'static',
     fallbackReason: reason,
-    briefings: DATACORE_CORPUS_BRIEFINGS,
+    briefings: DATACORE_CORPUS_BRIEFINGS.map((b) => ({ ...b, bodyMarkdown: null })),
   };
 }
 
@@ -199,30 +199,11 @@ export async function getBriefing(
 }
 
 /**
- * Resolve briefing markdown body. Prefer inlined `bodyMarkdown` (all kinds).
- * Legacy plan rows that only have `repoPath` may still try a guarded file read;
- * ENOENT / IO errors return null (never throw into the page).
+ * Resolve briefing markdown body from `bodyMarkdown` only.
+ * `repoPath` is provenance metadata — never read from disk at runtime.
  */
 export async function getBriefingBody(briefing: DatacoreBriefingRow): Promise<string | null> {
-  if (briefing.bodyMarkdown) {
-    return briefing.bodyMarkdown;
-  }
-
-  const repoPath = briefing.repoPath;
-  if (
-    !repoPath ||
-    repoPath.includes('..') ||
-    path.isAbsolute(repoPath) ||
-    /^[a-zA-Z]:[\\/]/.test(repoPath) ||
-    repoPath.startsWith('\\\\') ||
-    repoPath.startsWith('/')
-  ) {
-    return null;
-  }
-
-  try {
-    return await readFile(path.join(process.cwd(), repoPath), 'utf8');
-  } catch {
-    return null;
-  }
+  const raw = briefing.bodyMarkdown;
+  if (!raw?.trim()) return null;
+  return raw;
 }

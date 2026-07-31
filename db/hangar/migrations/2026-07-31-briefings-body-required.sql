@@ -7,10 +7,14 @@
 ALTER TABLE briefings DROP CONSTRAINT IF EXISTS briefings_check;
 ALTER TABLE briefings DROP CONSTRAINT IF EXISTS briefings_body_xor;
 
--- Backfill any plan rows that only have repo_path (best-effort empty marker —
--- operators should re-seed or re-land corpus for full bodies).
+-- Backfill any plan rows that only have repo_path with a loud placeholder —
+-- operators should re-seed or re-land corpus for full bodies. Never use ''
+-- (falsy) so getBriefingBody cannot treat the row as "missing then file-read".
 UPDATE briefings
-SET body_markdown = COALESCE(body_markdown, '')
-WHERE body_markdown IS NULL;
+SET body_markdown = COALESCE(
+  NULLIF(body_markdown, ''),
+  '<!-- DATACORE: body_markdown missing — re-seed or land_briefing -->'
+)
+WHERE body_markdown IS NULL OR body_markdown = '';
 
 ALTER TABLE briefings ALTER COLUMN body_markdown SET NOT NULL;

@@ -186,43 +186,35 @@ describe('briefings Postgres read-model', () => {
     expect(await getBriefingBody(FIXTURE_PLAN)).toBe(FIXTURE_PLAN.bodyMarkdown);
   });
 
-  it('getBriefingBody returns null for path traversal without throwing', async () => {
-    const sneaky: DatacoreBriefingRow = {
-      id: 'sneaky',
-      title: 'Sneaky',
-      href: '/datacore/briefing/sneaky',
-      source: '../etc/passwd',
+  it('getBriefingBody returns null when body is missing — never reads repoPath', async () => {
+    const emptyBody: DatacoreBriefingRow = {
+      id: 'empty-body',
+      title: 'Empty',
+      href: '/datacore/briefing/empty-body',
+      source: PLAN_REPO_PATH,
       kind: 'plan',
       summary: 'nope',
       tags: [],
       capturedAt: '2026-07-30',
+      bodyMarkdown: '',
+      repoPath: PLAN_REPO_PATH,
+    };
+    expect(await getBriefingBody(emptyBody)).toBeNull();
+
+    const nullBody: DatacoreBriefingRow = {
+      ...emptyBody,
+      id: 'null-body',
       bodyMarkdown: null,
       repoPath: '../etc/passwd',
     };
-    expect(await getBriefingBody(sneaky)).toBeNull();
-  });
-
-  it('getBriefingBody returns null on missing plan file instead of throwing', async () => {
-    const missing: DatacoreBriefingRow = {
-      id: 'missing-plan',
-      title: 'Missing',
-      href: '/datacore/briefing/missing-plan',
-      source: 'docs/does-not-exist.md',
-      kind: 'plan',
-      summary: 'gone',
-      tags: [],
-      capturedAt: '2026-07-30',
-      bodyMarkdown: null,
-      repoPath: 'docs/does-not-exist.md',
-    };
-    expect(await getBriefingBody(missing)).toBeNull();
+    expect(await getBriefingBody(nullBody)).toBeNull();
   });
 });
 
 describe('briefings corpus fixture + seed', () => {
   it('static corpus has the full research wall (≥12 briefings with bodies)', () => {
     expect(DATACORE_CORPUS_PACKS.length).toBeGreaterThanOrEqual(1);
-    expect(DATACORE_CORPUS_BRIEFINGS.length).toBeGreaterThanOrEqual(12);
+    expect(DATACORE_CORPUS_BRIEFINGS.length).toBe(12);
     for (const b of DATACORE_CORPUS_BRIEFINGS) {
       expect(b.bodyMarkdown?.trim().length, b.id).toBeGreaterThan(20);
     }
@@ -235,8 +227,13 @@ describe('briefings corpus fixture + seed', () => {
     expect(seed).toContain('robot-control-llms');
     expect(seed).toContain('compute-workload');
     expect(seed).toContain('body_markdown');
-    // Count INSERT INTO briefings lines — one per corpus briefing.
-    const inserts = seed.match(/^INSERT INTO briefings\(/gm) ?? [];
-    expect(inserts.length).toBeGreaterThanOrEqual(12);
+    // Count only the fenced corpus section so markdown bodies cannot inflate the tally.
+    const begin = seed.indexOf('-- >>> DATACORE_CORPUS_BEGIN');
+    const end = seed.indexOf('-- <<< DATACORE_CORPUS_END');
+    expect(begin).toBeGreaterThanOrEqual(0);
+    expect(end).toBeGreaterThan(begin);
+    const corpus = seed.slice(begin, end);
+    const inserts = corpus.match(/^INSERT INTO briefings\(/gm) ?? [];
+    expect(inserts.length).toBe(DATACORE_CORPUS_BRIEFINGS.length);
   });
 });
