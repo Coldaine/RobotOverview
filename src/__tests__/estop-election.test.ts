@@ -225,6 +225,138 @@ describe('e-stop single-writer election', () => {
     expect(getEstopState().writer).toBe(true);
   });
 
+  // ── N11 ───────────────────────────────────────────────────────────────────
+  // INVARIANT: a tab that is publishing the heartbeat is always reachable by
+  // the election. Leaving the election while the heartbeat runs is N1's failure
+  // shape re-entered through teardown.
+  it('stays in the election after unmounting WHILE HOLDING a stop', async () => {
+    openSocket();
+    await claim();
+    rosClient.setEstopLock(true);
+
+    // Route change away from /cockpit. The socket and the 2 Hz `true` survive
+    // this by design — so the channel must too.
+    release?.();
+    release = null;
+    heard.length = 0;
+
+    peer.postMessage({ k: 'hello', from: LOWER } satisfies Msg);
+    await flush();
+
+    // Unanswered here means the peer self-promotes, then cannot clear a lock
+    // this tab keeps republishing every 500 ms.
+    const mine = heard.find((m) => m.k === 'mine');
+    expect(mine).toBeTruthy();
+    expect(mine?.engaged).toBe(true);
+    expect(getEstopState().writer).toBe(true);
+    expect(rosClient.isEstopEngaged()).toBe(true);
+  });
+
+  it('does not let a peer self-promote while an unmounted tab still holds', async () => {
+    const ws = openSocket();
+    await claim();
+    rosClient.setEstopLock(true);
+    release?.();
+    release = null;
+
+    // Stand in for the peer's probe loop: ask, and only promote if unanswered.
+    let peerAnswered = false;
+    peer.onmessage = (ev: MessageEvent<Msg>) => {
+      if (ev.data.k === 'mine') peerAnswered = true;
+    };
+    peer.postMessage({ k: 'hello', from: LOWER } satisfies Msg);
+    // Past the 300 ms self-promotion grace AND past one 500 ms heartbeat beat,
+    // so the next assertion sees the republish that would overwrite a release.
+    await new Promise((r) => setTimeout(r, 700));
+
+    expect(peerAnswered).toBe(true);
+
+    // And the heartbeat really was still running throughout.
+    const sends = ws.send.mock.calls
+      .map((c) => JSON.parse(c[0]))
+      .filter((m) => m.op === 'publish' && m.topic === '/cmd_vel_estop_lock');
+    expect(sends.length).toBeGreaterThanOrEqual(2);
+    expect(sends.every((m) => m.msg.data === true)).toBe(true);
+  });
+
+  it('remounts to exactly one writer with the heartbeat uninterrupted', async () => {
+    const ws = openSocket();
+    await claim();
+    rosClient.setEstopLock(true);
+
+    release?.();
+    release = null;
+    await flush();
+
+    // Back to /cockpit. claimEstopWriter must re-arm a real teardown rather
+    // than hand back a stub over stale state.
+    ws.send.mockClear();
+    release = rosClient.claimEstopWriter();
+    await flush();
+
+    expect(getEstopState().writer).toBe(true);
+    expect(rosClient.isEstopEngaged()).toBe(true);
+
+    // A peer that tries to take over still loses to the holder.
+    peer.postMessage({ k: 'hello', from: LOWER } satisfies Msg);
+    await flush();
+    expect(getEstopState().writer).toBe(true);
+
+    const stillBeating = ws.send.mock.calls
+      .map((c) => JSON.parse(c[0]))
+      .filter((m) => m.op === 'publish' && m.topic === '/cmd_vel_estop_lock');
+    expect(stillBeating.every((m) => m.msg.data === true)).toBe(true);
+  });
+
+  it('hands back a REAL teardown on remount, not a stub over stale state', async () => {
+    const ws = openSocket();
+    await claim();
+    rosClient.setEstopLock(true);
+
+    // Leave while holding — we stay in the election (N11).
+    release?.();
+    release = null;
+    await flush();
+
+    // Come back. An early-return stub here would look fine right up until the
+    // operator clears the stop and leaves again: the no-op teardown would
+    // strand the writer role on a tab that is gone, and every peer would stay
+    // permanently read-only with no way to command the e-stop.
+    release = rosClient.claimEstopWriter();
+    await flush();
+
+    rosClient.setEstopLock(false);
+    expect(rosClient.isEstopEngaged()).toBe(false);
+
+    release?.();
+    release = null;
+    await flush();
+    heard.length = 0;
+
+    peer.postMessage({ k: 'hello', from: HIGHER } satisfies Msg);
+    await flush();
+    expect(heard.some((m) => m.k === 'mine')).toBe(false);
+    void ws;
+  });
+
+  it('STILL yields on unmount when no stop is held', async () => {
+    await claim();
+
+    release?.();
+    release = null;
+    await flush();
+
+    // The N2 recovery path must not regress into "never yields".
+    expect(heard.some((m) => m.k === 'yield')).toBe(true);
+
+    // And the tab really did leave: a later `hello` goes unanswered, so a peer
+    // is free to promote itself.
+    heard.length = 0;
+    peer.postMessage({ k: 'hello', from: HIGHER } satisfies Msg);
+    await flush();
+    expect(heard.some((m) => m.k === 'mine')).toBe(false);
+  });
+
   it('leaves clearEstopIntent out of the election entirely', async () => {
     await claim();
     peer.postMessage({ k: 'hello', from: LOWER } satisfies Msg);

@@ -631,6 +631,7 @@ const ESTOP_PROBE_GRACE_MS = 300;
 const ESTOP_PROBE_INTERVAL_MS = 1000;
 
 let estopChannel: BroadcastChannel | null = null;
+let estopPageHideHandler: (() => void) | null = null;
 let estopProbeTimer: ReturnType<typeof setInterval> | null = null;
 let estopProbeGraceTimer: ReturnType<typeof setTimeout> | null = null;
 let estopProbeAnswered = false;
@@ -715,65 +716,90 @@ function yieldEstopWriter() {
   if (getEstopState().writer && !operatorEngaged) postElection('yield');
 }
 
+function handleElectionMessage(ev: MessageEvent<EstopElectionMsg>) {
+  const m = ev.data;
+  if (!m || m.from === estopTabId) return;
+
+  if (m.k === 'hello') {
+    // Rule 1: never stand down while holding a live stop.
+    if (operatorEngaged) {
+      postElection('mine');
+      return;
+    }
+    // Rule 1 applied to the peer: a holder outranks us regardless of id.
+    // Rule 2: otherwise lowest id wins.
+    if (m.engaged || m.from < estopTabId) {
+      setWriter(false);
+    } else if (getEstopState().writer) {
+      postElection('mine');
+    }
+  } else if (m.k === 'mine') {
+    // Someone answered a probe, so an incumbent exists — do not self-promote.
+    estopProbeAnswered = true;
+    // …but a holder still does not stand down. `mine` is never replied to, so
+    // two holders (only reachable via the startup race, and safe because both
+    // assert *stop*) settle without a message loop.
+    if (!operatorEngaged) setWriter(false);
+  } else if (m.k === 'yield') {
+    // The incumbent left. Re-announce; ranking settles any tie between the
+    // remaining tabs without another timer.
+    setWriter(true);
+    postElection('hello');
+  }
+}
+
+/** Fully leave the election: no channel, no probe, no page-teardown listener. */
+function leaveEstopElection() {
+  if (estopPageHideHandler) {
+    window.removeEventListener('pagehide', estopPageHideHandler);
+    estopPageHideHandler = null;
+  }
+  stopWriterProbe();
+  estopChannel?.close();
+  estopChannel = null;
+}
+
 /**
  * Join the single-writer election for this browser. Returns a teardown that
  * hands the role back so another open tab can take it. When BroadcastChannel is
  * unavailable there is nothing to coordinate with, so this tab is the writer.
+ *
+ * ── INVARIANT ──────────────────────────────────────────────────────────────
+ * A TAB THAT IS PUBLISHING THE HEARTBEAT IS ALWAYS REACHABLE BY THE ELECTION.
+ *
+ * The socket and the 2 Hz `true` deliberately outlive an unmount, so the
+ * channel has to outlive it too. If a holder leaves the election while still
+ * heartbeating, a peer's `hello` goes unanswered, the peer self-promotes after
+ * 300 ms with `operatorEngaged === false`, and its 1.2 s release burst is
+ * overwritten by the holder's next heartbeat within 500 ms — an unclearable
+ * lock in the second tab. That is N1's failure shape re-entered through
+ * teardown, so the teardown checks the same condition rule 1 does.
  */
 function claimEstopWriter(): () => void {
   if (typeof window === 'undefined' || typeof BroadcastChannel === 'undefined') {
     setEstopState({ writer: true });
     return () => {};
   }
-  if (estopChannel) return () => {};
 
-  estopChannel = new BroadcastChannel(ESTOP_CHANNEL_NAME);
-  estopChannel.onmessage = (ev: MessageEvent<EstopElectionMsg>) => {
-    const m = ev.data;
-    if (!m || m.from === estopTabId) return;
-
-    if (m.k === 'hello') {
-      // Rule 1: never stand down while holding a live stop.
-      if (operatorEngaged) {
-        postElection('mine');
-        return;
-      }
-      // Rule 1 applied to the peer: a holder outranks us regardless of id.
-      // Rule 2: otherwise lowest id wins.
-      if (m.engaged || m.from < estopTabId) {
-        setWriter(false);
-      } else if (getEstopState().writer) {
-        postElection('mine');
-      }
-    } else if (m.k === 'mine') {
-      // Someone answered a probe, so an incumbent exists — do not self-promote.
-      estopProbeAnswered = true;
-      // …but a holder still does not stand down. `mine` is never replied to, so
-      // two holders (only reachable via the startup race, and safe because both
-      // assert *stop*) settle without a message loop.
-      if (!operatorEngaged) setWriter(false);
-    } else if (m.k === 'yield') {
-      // The incumbent left. Re-announce; ranking settles any tie between the
-      // remaining tabs without another timer.
-      setWriter(true);
-      postElection('hello');
-    }
-  };
-
-  // A closed tab never runs React teardown, and `beforeunload` is not fired
-  // reliably for it. `pagehide` is, including on mobile Safari.
-  const onPageHide = () => yieldEstopWriter();
-  window.addEventListener('pagehide', onPageHide);
-
-  setWriter(true);
+  if (!estopChannel) {
+    estopChannel = new BroadcastChannel(ESTOP_CHANNEL_NAME);
+    estopChannel.onmessage = handleElectionMessage;
+    // A closed tab never runs React teardown, and `beforeunload` is not fired
+    // reliably for it. `pagehide` is, including on mobile Safari.
+    estopPageHideHandler = () => yieldEstopWriter();
+    window.addEventListener('pagehide', estopPageHideHandler);
+    setWriter(true);
+  }
+  // Re-announce on every claim. On a first claim this is the opening bid; on a
+  // remount (we never left, because a held stop keeps us in) it re-asserts our
+  // rank. Either way the id/holder comparison settles it — no timer, and no
+  // stub teardown that would strand the role on a tab that has gone away.
   postElection('hello');
 
   return () => {
-    window.removeEventListener('pagehide', onPageHide);
+    if (operatorEngaged) return; // see INVARIANT above
     yieldEstopWriter();
-    stopWriterProbe();
-    estopChannel?.close();
-    estopChannel = null;
+    leaveEstopElection();
     // Nothing left to coordinate with from this tab's perspective.
     setEstopState({ writer: true });
   };
@@ -1224,9 +1250,9 @@ export const rosClient = {
    * is the disposer returned by `claimEstopWriter`.
    */
   resetEstopElection() {
-    stopWriterProbe();
-    estopChannel?.close();
-    estopChannel = null;
+    // Unconditional, unlike the teardown from `claimEstopWriter` — this is the
+    // seam that has to work even when a test left a stop engaged.
+    leaveEstopElection();
     setEstopState({ writer: true });
   },
 

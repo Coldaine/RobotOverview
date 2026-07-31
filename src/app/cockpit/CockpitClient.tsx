@@ -28,6 +28,11 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
     const releaseWriter = rosClient.claimEstopWriter();
 
     return () => {
+      // Safe to call unconditionally: the election teardown is itself a no-op
+      // while a stop is held, because a tab that is still publishing the
+      // heartbeat must stay reachable by the election. That invariant lives in
+      // client.ts next to the heartbeat's own lifetime, rather than depending
+      // on every call site remembering to check first.
       releaseWriter();
       if (rosClient.isEstopEngaged()) {
         // An engaged e-stop keeps the socket — and therefore its >= 1 Hz
