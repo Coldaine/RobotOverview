@@ -65,7 +65,14 @@ export function SafetyStrip() {
           : 'clear';
 
   const handleEstop = () => {
-    if (!connected || !estop.writer) return;
+    if (!connected) return;
+    if (!estop.writer) {
+      // The "other tab" may have been closed without yielding. Never let a
+      // stale claim be the last word between the operator and a stop — re-probe
+      // so the role can come back to this tab within the grace window.
+      rosClient.probeEstopWriter();
+      return;
+    }
     rosClient.setEstopLock(!(robotConfirmed || estop.engaged));
   };
 
@@ -79,7 +86,7 @@ export function SafetyStrip() {
 
   const estopCaption = {
     offline: 'offline',
-    readonly: 'held by another tab',
+    readonly: 'held by another tab · click to re-check',
     locked: estop.heartbeat ? 'robot confirmed · holding 2 hz' : 'robot confirmed · not holding',
     asserting: assertStalled
       ? 'awaiting robot confirmation — no echo'
@@ -89,7 +96,9 @@ export function SafetyStrip() {
 
   const estopBtnCls = {
     offline: 'border-zinc-600 bg-zinc-900/40 text-zinc-500 cursor-not-allowed',
-    readonly: 'border-zinc-600 bg-zinc-900/40 text-zinc-500 cursor-not-allowed',
+    // Not `disabled`: a disabled control could not run the re-probe, which is
+    // the only way back from a writer tab that closed without yielding.
+    readonly: 'border-zinc-600 bg-zinc-900/40 text-zinc-500',
     locked: 'border-emerald-500 bg-emerald-950/40 text-emerald-400 shadow-hud-green text-glow-emerald',
     // Deliberately as loud as a fault: an unconfirmed stop IS a fault.
     asserting: assertStalled
@@ -126,7 +135,7 @@ export function SafetyStrip() {
       {/* ── E-STOP BUTTON ───────────────────────── */}
       <button
         onClick={handleEstop}
-        disabled={!connected || !estop.writer}
+        disabled={!connected}
         className={clsx(
           'relative z-10 flex flex-col items-center justify-center gap-1.5 rounded-lg border px-4 py-3 font-display font-black tracking-widest text-sm transition-all shadow-inner select-none',
           estopBtnCls,

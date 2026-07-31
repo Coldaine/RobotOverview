@@ -1,6 +1,16 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import {
+  getEstopState,
+  setEstopState,
+  useCockpitEstop,
+  type CockpitEstop,
+} from './estop-store';
+
+// Re-exported so cockpit components keep importing everything from one place.
+export { useCockpitEstop };
+export type { CockpitEstop };
 
 export type ConnectionState = 'connecting' | 'connected' | 'disconnected';
 
@@ -232,25 +242,6 @@ export interface CockpitDiagnostics extends SliceMeta {
   items: DiagnosticsItem[];
 }
 
-export interface CockpitEstop {
-  /**
-   * Operator intent — the stop is latched down. Survives component unmount and
-   * socket drops; only an explicit release clears it.
-   */
-  engaged: boolean;
-  /** The >= 1 Hz `true` republish is actually running on an open socket. */
-  heartbeat: boolean;
-  /** The post-release `false` burst is still in flight. */
-  releasing: boolean;
-  /** Epoch ms the intent was latched — drives the "awaiting confirmation" gate. */
-  engagedAt: number | null;
-  /**
-   * This tab holds the single-writer role. A second cockpit tab is read-only
-   * for the e-stop so two operators cannot fight over the lock.
-   */
-  writer: boolean;
-}
-
 /** A rosbridge `op:"status"` frame — the bridge refusing or complaining. */
 export interface BridgeFault {
   /** The op id we attached, e.g. `adv:/ugv/led_ctrl`. null if unattributable. */
@@ -361,6 +352,23 @@ let odomData: OdomData = { x: null, y: null, yaw: null, linearSpeed: null, angul
 let imuData: ImuData = { ax: null, ay: null, az: null, gx: null, gy: null, gz: null };
 let clearanceData: ClearanceData = { meters: null };
 let statusData: StatusData = blankStatus();
+
+// ── DIRECT TOPIC vs AGGREGATOR PROVENANCE ───────────────────────────────────
+// `/cockpit/status` is a 1 Hz roll-up that also reports allow_motion and the
+// watchdog. When the robot has nothing real to put there it emits placeholders,
+// and those would overwrite the dedicated `/ugv/allow_motion` and
+// `/ugv/watchdog_state` topics we subscribe to precisely so we do not depend on
+// the roll-up — the aggregator would defeat its own hedge, once a second.
+//
+// So the dedicated topic wins while it is fresh, and the aggregator fills in
+// only where the dedicated topic has never published or has gone stale.
+const DIRECT_TOPIC_AUTHORITY_MS = 2000;
+let allowMotionDirectAt: number | null = null;
+let watchdogDirectAt: number | null = null;
+
+function directStillAuthoritative(at: number | null): boolean {
+  return at !== null && Date.now() - at <= DIRECT_TOPIC_AUTHORITY_MS;
+}
 let scanData: ScanData = blankScan();
 let diagnosticsData: DiagnosticsData = { items: [] };
 
@@ -372,13 +380,6 @@ let clearanceState: CockpitClearance = { ...clearanceData, ...meta.clearance };
 let statusState: CockpitStatus = { ...statusData, ...meta.status };
 let scanState: CockpitScan = { ...scanData, ...meta.scan };
 let diagnosticsState: CockpitDiagnostics = { ...diagnosticsData, ...meta.diagnostics };
-let estopState: CockpitEstop = {
-  engaged: false,
-  heartbeat: false,
-  releasing: false,
-  engagedAt: null,
-  writer: true,
-};
 let bridgeState: CockpitBridge = { faults: [], deadTopics: [] };
 
 // Listeners per category
@@ -391,7 +392,6 @@ const listeners = {
   status: new Set<() => void>(),
   diagnostics: new Set<() => void>(),
   scan: new Set<() => void>(),
-  estop: new Set<() => void>(),
   bridge: new Set<() => void>(),
 };
 
@@ -474,6 +474,8 @@ function resetSlicesForNewConnection() {
   scanData = blankScan();
   diagnosticsData = { items: [] };
   scanArrivals = [];
+  allowMotionDirectAt = null;
+  watchdogDirectAt = null;
   (Object.keys(meta) as SliceKey[]).forEach((key) => {
     meta[key] = blankMeta();
     rebuild[key]();
@@ -552,20 +554,6 @@ let estopHeartbeatTimer: ReturnType<typeof setInterval> | null = null;
 let estopReleaseTimer: ReturnType<typeof setInterval> | null = null;
 let estopReleaseSends = 0;
 
-function setEstopState(next: Partial<CockpitEstop>) {
-  const merged = { ...estopState, ...next };
-  if (
-    merged.engaged === estopState.engaged &&
-    merged.heartbeat === estopState.heartbeat &&
-    merged.releasing === estopState.releasing &&
-    merged.engagedAt === estopState.engagedAt &&
-    merged.writer === estopState.writer
-  ) {
-    return; // keep the snapshot referentially stable for useSyncExternalStore
-  }
-  estopState = merged;
-  notify('estop');
-}
 
 function publishEstopLock(value: boolean): boolean {
   return rosClient.publish(ESTOP_TOPIC, { data: value });
@@ -617,27 +605,114 @@ function startEstopHeartbeat(): boolean {
 // tab B is still republishing `true`, and the operator watches a lock they just
 // cleared refuse to clear. Elect one writer per browser via BroadcastChannel.
 //
-// RESOLUTION IS BY TAB ID, NOT BY A TIMER. A tab claims the role immediately and
-// yields the instant it hears from a peer with a lower id; the lowest id present
-// always ends up as the sole writer, and it converges in one message hop.
+// RANKING, HIGHEST FIRST:
+//   1. A tab that is actively HOLDING a stop. It never yields, whatever its id.
+//   2. Lowest tab id.
 //
-// The deliberate trade: a newly opened tab is briefly (one hop, sub-millisecond
-// in-process) a writer before it hears an incumbent. The alternative — start
-// read-only and promote after a quiet window — would leave the E-STOP BUTTON
-// DEAD for a quarter second on every single mount. A momentary double-assert is
+// Rule 1 exists because demoting the holder is worse than the collision it
+// prevents. Demotion only gates *new* commands — it cannot stop the running
+// heartbeat — so a demoted holder keeps publishing `true` while its own UI shows
+// a disabled control it cannot use, and the new writer's release burst is
+// overwritten within 500 ms. The robot ends up locked with no tab able to clear
+// it. Holding a live stop therefore outranks id.
+//
+// A tab claims the role immediately and yields the moment it hears a peer that
+// outranks it; convergence is one message hop. The deliberate trade: a newly
+// opened tab is briefly a writer before it hears an incumbent. The alternative —
+// start read-only and promote after a quiet window — leaves the E-STOP BUTTON
+// DEAD for a quarter second on every mount. A momentary double-assert is
 // harmless (both tabs assert *stop*); an unavailable stop button is not.
 const ESTOP_CHANNEL_NAME = 'beast-cockpit-estop-writer';
+// How long a re-probe waits for an incumbent to answer before self-promoting.
+const ESTOP_PROBE_GRACE_MS = 300;
+// How often a non-writer re-probes. Without this, a writer tab that is CLOSED
+// (rather than unmounted) strands every survivor as a permanent non-writer with
+// a dead e-stop button, captioned with a tab that no longer exists.
+const ESTOP_PROBE_INTERVAL_MS = 1000;
 
 let estopChannel: BroadcastChannel | null = null;
+let estopProbeTimer: ReturnType<typeof setInterval> | null = null;
+let estopProbeGraceTimer: ReturnType<typeof setTimeout> | null = null;
+let estopProbeAnswered = false;
 const estopTabId =
   typeof crypto !== 'undefined' && 'randomUUID' in crypto
     ? crypto.randomUUID()
     : `tab-${Math.random().toString(36).slice(2, 11)}`;
 
-type EstopElectionMsg = { k: 'hello' | 'mine' | 'yield'; from: string };
+type EstopElectionMsg = {
+  k: 'hello' | 'mine' | 'yield';
+  from: string;
+  /** True when the sender is actively holding a stop. Outranks `from`. */
+  engaged?: boolean;
+};
 
 function postElection(k: EstopElectionMsg['k']) {
-  estopChannel?.postMessage({ k, from: estopTabId } satisfies EstopElectionMsg);
+  estopChannel?.postMessage({
+    k,
+    from: estopTabId,
+    engaged: operatorEngaged,
+  } satisfies EstopElectionMsg);
+}
+
+function stopWriterProbe() {
+  if (estopProbeTimer) {
+    clearInterval(estopProbeTimer);
+    estopProbeTimer = null;
+  }
+  if (estopProbeGraceTimer) {
+    clearTimeout(estopProbeGraceTimer);
+    estopProbeGraceTimer = null;
+  }
+}
+
+/**
+ * While this tab is a non-writer, keep asking whether the incumbent still
+ * exists. An unanswered probe means it does not, so promote. This is what makes
+ * a closed writer tab recoverable without the operator reloading anything.
+ */
+function startWriterProbe() {
+  if (estopProbeTimer || !estopChannel) return;
+  estopProbeTimer = setInterval(() => {
+    if (getEstopState().writer) {
+      stopWriterProbe();
+      return;
+    }
+    estopProbeAnswered = false;
+    postElection('hello');
+    if (estopProbeGraceTimer) clearTimeout(estopProbeGraceTimer);
+    estopProbeGraceTimer = setTimeout(() => {
+      estopProbeGraceTimer = null;
+      if (!estopProbeAnswered && !getEstopState().writer) setWriter(true);
+    }, ESTOP_PROBE_GRACE_MS);
+  }, ESTOP_PROBE_INTERVAL_MS);
+}
+
+/** Single place that flips writer status, so the probe can't drift out of sync. */
+function setWriter(next: boolean) {
+  if (getEstopState().writer !== next) setEstopState({ writer: next });
+  if (next) stopWriterProbe();
+  else startWriterProbe();
+}
+
+/**
+ * Re-probe on demand. The UI calls this when the operator reaches for a stop
+ * button that is disabled, so a stale "held by another tab" can never be the
+ * last word between the operator and an e-stop.
+ */
+function probeEstopWriter() {
+  if (!estopChannel || getEstopState().writer) return;
+  estopProbeAnswered = false;
+  postElection('hello');
+  if (estopProbeGraceTimer) clearTimeout(estopProbeGraceTimer);
+  estopProbeGraceTimer = setTimeout(() => {
+    estopProbeGraceTimer = null;
+    if (!estopProbeAnswered && !getEstopState().writer) setWriter(true);
+  }, ESTOP_PROBE_GRACE_MS);
+}
+
+/** Hand the role back. Safe to call from unmount and from pagehide alike. */
+function yieldEstopWriter() {
+  if (getEstopState().writer && !operatorEngaged) postElection('yield');
 }
 
 /**
@@ -656,28 +731,47 @@ function claimEstopWriter(): () => void {
   estopChannel.onmessage = (ev: MessageEvent<EstopElectionMsg>) => {
     const m = ev.data;
     if (!m || m.from === estopTabId) return;
+
     if (m.k === 'hello') {
-      // Lowest id wins, so the answer is the same whoever announced first.
-      if (m.from < estopTabId) {
-        setEstopState({ writer: false });
-      } else if (estopState.writer) {
+      // Rule 1: never stand down while holding a live stop.
+      if (operatorEngaged) {
+        postElection('mine');
+        return;
+      }
+      // Rule 1 applied to the peer: a holder outranks us regardless of id.
+      // Rule 2: otherwise lowest id wins.
+      if (m.engaged || m.from < estopTabId) {
+        setWriter(false);
+      } else if (getEstopState().writer) {
         postElection('mine');
       }
     } else if (m.k === 'mine') {
-      setEstopState({ writer: false });
+      // Someone answered a probe, so an incumbent exists — do not self-promote.
+      estopProbeAnswered = true;
+      // …but a holder still does not stand down. `mine` is never replied to, so
+      // two holders (only reachable via the startup race, and safe because both
+      // assert *stop*) settle without a message loop.
+      if (!operatorEngaged) setWriter(false);
     } else if (m.k === 'yield') {
-      // The incumbent left. Re-announce; the id comparison settles any tie
-      // between the remaining tabs without another timer.
-      setEstopState({ writer: true });
+      // The incumbent left. Re-announce; ranking settles any tie between the
+      // remaining tabs without another timer.
+      setWriter(true);
       postElection('hello');
     }
   };
 
-  setEstopState({ writer: true });
+  // A closed tab never runs React teardown, and `beforeunload` is not fired
+  // reliably for it. `pagehide` is, including on mobile Safari.
+  const onPageHide = () => yieldEstopWriter();
+  window.addEventListener('pagehide', onPageHide);
+
+  setWriter(true);
   postElection('hello');
 
   return () => {
-    if (estopState.writer) postElection('yield');
+    window.removeEventListener('pagehide', onPageHide);
+    yieldEstopWriter();
+    stopWriterProbe();
     estopChannel?.close();
     estopChannel = null;
     // Nothing left to coordinate with from this tab's perspective.
@@ -723,9 +817,60 @@ function parseRosbridgeFrame(raw: string): unknown {
   try {
     return JSON.parse(raw);
   } catch {
-    const repaired = raw.replace(/(?<=[:,[\s])-?(?:NaN|Infinity)(?=\s*[,\]}])/g, 'null');
-    return JSON.parse(repaired);
+    return JSON.parse(repairNonFiniteTokens(raw));
   }
+}
+
+/** Matches a bare non-finite literal at an exact offset. Sticky, not global. */
+const NON_FINITE_TOKEN = /-?(?:NaN|Infinity)/y;
+
+/**
+ * Rewrite bare `NaN` / `Infinity` to `null`, but ONLY outside string literals.
+ *
+ * A plain regex corrupts payloads: `/diagnostics` carries operator-facing text,
+ * and a status message like "covariance NaN, using defaults" would silently
+ * become "covariance null, using defaults" — we would be editing the robot's
+ * words while claiming to repair its numbers. Scanning with string-awareness
+ * costs one pass and is exact, so it needs no per-topic allowlist to stay safe.
+ *
+ * Outside a string, a bare non-finite token is unambiguously the malformed JSON
+ * we are here to fix, so no delimiter guessing is required either.
+ */
+function repairNonFiniteTokens(raw: string): string {
+  let out = '';
+  let i = 0;
+  let inString = false;
+  while (i < raw.length) {
+    const ch = raw[i];
+    if (inString) {
+      out += ch;
+      if (ch === '\\') {
+        // Copy the escaped character verbatim so \" does not end the string.
+        i += 1;
+        if (i < raw.length) out += raw[i];
+      } else if (ch === '"') {
+        inString = false;
+      }
+      i += 1;
+      continue;
+    }
+    if (ch === '"') {
+      inString = true;
+      out += ch;
+      i += 1;
+      continue;
+    }
+    NON_FINITE_TOKEN.lastIndex = i;
+    const match = NON_FINITE_TOKEN.exec(raw);
+    if (match) {
+      out += 'null';
+      i += match[0].length;
+      continue;
+    }
+    out += ch;
+    i += 1;
+  }
+  return out;
 }
 
 function decodeImageFrame(topic: string, msg: InboundMsg): ImageFrame | null {
@@ -784,7 +929,6 @@ const serverState = {
   status: { ...blankStatus(), ...blankMeta() } as CockpitStatus,
   diagnostics: { items: [], ...blankMeta() } as CockpitDiagnostics,
   scan: { ...blankScan(), ...blankMeta() } as CockpitScan,
-  estop: { engaged: false, heartbeat: false, releasing: false, engagedAt: null, writer: true } as CockpitEstop,
   bridge: { faults: [], deadTopics: [] } as CockpitBridge,
 };
 
@@ -1010,14 +1154,14 @@ export const rosClient = {
       // Another tab owns the lock; two heartbeats fighting is the hazard this
       // guards against. Only ENGAGE is gated on being the writer — a release
       // must always be able to drop this tab's own intent.
-      if (!estopState.writer) return false;
+      if (!getEstopState().writer) return false;
       // No socket means no way to reach the mux. Refusing here is what keeps
       // the UI honest: we never latch a state we could not transmit.
       if (!live) return false;
       const armed = startEstopHeartbeat();
       if (!armed) return false;
       operatorEngaged = true;
-      setEstopState({ engaged: true, engagedAt: estopState.engagedAt ?? Date.now() });
+      setEstopState({ engaged: true, engagedAt: getEstopState().engagedAt ?? Date.now() });
       return true;
     }
 
@@ -1053,15 +1197,37 @@ export const rosClient = {
   claimEstopWriter,
 
   /**
+   * Ask again whether the incumbent writer still exists. Called when the
+   * operator reaches for a disabled stop button: a tab that closed without
+   * yielding must never be the last word between the operator and an e-stop.
+   */
+  probeEstopWriter,
+
+  /**
    * Drop operator intent and every timer WITHOUT telling the robot. Teardown
    * and test hygiene only — never use this to release a live stop, because the
    * mux would keep holding the lock with nothing left to clear it. Use
    * `setEstopLock(false)` for that.
+   *
+   * Deliberately does NOT touch writer status: clearing local intent is not a
+   * claim on the role, and silently promoting this tab would let a teardown win
+   * an election it never stood in.
    */
   clearEstopIntent() {
     operatorEngaged = false;
     stopEstopTimers();
-    setEstopState({ engaged: false, engagedAt: null, writer: true });
+    setEstopState({ engaged: false, engagedAt: null });
+  },
+
+  /**
+   * Leave the election and reset writer status. Teardown seam — the normal path
+   * is the disposer returned by `claimEstopWriter`.
+   */
+  resetEstopElection() {
+    stopWriterProbe();
+    estopChannel?.close();
+    estopChannel = null;
+    setEstopState({ writer: true });
   },
 
   registerImageCallback(topic: string, callback: (frame: ImageFrame) => void) {
@@ -1128,7 +1294,14 @@ export const rosClient = {
         break;
       }
       case '/ugv/allow_motion': {
-        statusData = { ...statusData, allowMotion: msg.data === true };
+        // A std_msgs/Bool carries a real boolean. Anything else is a malformed
+        // frame, and `=== true` would silently render that as "motion locked"
+        // instead of "we do not know".
+        statusData = {
+          ...statusData,
+          allowMotion: typeof msg.data === 'boolean' ? msg.data : null,
+        };
+        allowMotionDirectAt = Date.now();
         commit('status');
         break;
       }
@@ -1142,6 +1315,7 @@ export const rosClient = {
           watchdogArmed: safeBool(values.armed),
           watchdogFired: safeBool(values.fired),
         };
+        watchdogDirectAt = Date.now();
         commit('status');
         break;
       }
@@ -1158,8 +1332,11 @@ export const rosClient = {
             }
 
             if (d.name === 'cockpit_safety_watchdog') {
-              next.watchdogArmed = safeBool(values.armed);
-              next.watchdogFired = safeBool(values.fired);
+              // Aggregator fills in only where the dedicated topic is silent.
+              if (!directStillAuthoritative(watchdogDirectAt)) {
+                next.watchdogArmed = safeBool(values.armed);
+                next.watchdogFired = safeBool(values.fired);
+              }
             } else if (d.name === 'twist_mux') {
               // No fallback to 'NONE': absent means unknown, and "NONE" reads
               // as a positive report that nothing holds the mux.
@@ -1168,7 +1345,9 @@ export const rosClient = {
               const pubs = safeNumber(values.publisher_count);
               next.pubCount = pubs === null ? null : Math.max(0, pubs);
             } else if (d.name === 'bringup') {
-              next.allowMotion = safeBool(values.allow_motion);
+              if (!directStillAuthoritative(allowMotionDirectAt)) {
+                next.allowMotion = safeBool(values.allow_motion);
+              }
             } else if (d.name === 'system_metrics') {
               next.wifiRssi = safeNumber(values.wifi_rssi);
               next.diskFree = values.disk_free || null;
@@ -1255,113 +1434,89 @@ export const rosClient = {
   },
 };
 
-// Custom React hooks with useSyncExternalStore for granular state updates
+// ── REACT BINDINGS ──────────────────────────────────────────────────────────
+// Every subscribe/getSnapshot function below is defined ONCE at module scope.
+//
+// Passing inline arrow functions to useSyncExternalStore hands React a new
+// `subscribe` identity on every render, so React tears the subscription down and
+// rebuilds it every time — for every hook, in every mounted component. That is
+// pure overhead on the cockpit, and it stopped being cockpit-only when the shell
+// started subscribing to e-stop state on every route in the app.
+//
+// Stable identities mean React subscribes once and keeps it.
+type Unsubscribe = () => void;
+
+function makeSubscriber(key: keyof typeof listeners): (cb: () => void) => Unsubscribe {
+  return (cb) => {
+    listeners[key].add(cb);
+    return () => listeners[key].delete(cb);
+  };
+}
+
+const subscribeConnection = makeSubscriber('connection');
+const subscribeVoltage = makeSubscriber('voltage');
+const subscribeOdom = makeSubscriber('odom');
+const subscribeImu = makeSubscriber('imu');
+const subscribeClearance = makeSubscriber('clearance');
+const subscribeStatus = makeSubscriber('status');
+const subscribeDiagnostics = makeSubscriber('diagnostics');
+const subscribeBridge = makeSubscriber('bridge');
+const subscribeScan = makeSubscriber('scan');
+
+const getConnection = () => connectionState;
+const getVoltage = () => voltageState;
+const getOdom = () => odomState;
+const getImu = () => imuState;
+const getClearance = () => clearanceState;
+const getStatus = () => statusState;
+const getDiagnostics = () => diagnosticsState;
+const getBridge = () => bridgeState;
+const getScan = () => scanState;
+
+// Server snapshots are constants, so these are stable by construction.
+const getServerConnection = () => serverState.connection;
+const getServerVoltage = () => serverState.voltage;
+const getServerOdom = () => serverState.odom;
+const getServerImu = () => serverState.imu;
+const getServerClearance = () => serverState.clearance;
+const getServerStatus = () => serverState.status;
+const getServerDiagnostics = () => serverState.diagnostics;
+const getServerBridge = () => serverState.bridge;
+const getServerScan = () => serverState.scan;
+
 export function useConnectionState(): ConnectionState {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.connection.add(cb);
-      return () => listeners.connection.delete(cb);
-    },
-    () => connectionState,
-    () => serverState.connection
-  );
+  return useSyncExternalStore(subscribeConnection, getConnection, getServerConnection);
 }
 
 export function useCockpitVoltage(): CockpitVoltage {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.voltage.add(cb);
-      return () => listeners.voltage.delete(cb);
-    },
-    () => voltageState,
-    () => serverState.voltage
-  );
+  return useSyncExternalStore(subscribeVoltage, getVoltage, getServerVoltage);
 }
 
 export function useCockpitOdom(): CockpitOdom {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.odom.add(cb);
-      return () => listeners.odom.delete(cb);
-    },
-    () => odomState,
-    () => serverState.odom
-  );
+  return useSyncExternalStore(subscribeOdom, getOdom, getServerOdom);
 }
 
 export function useCockpitImu(): CockpitImu {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.imu.add(cb);
-      return () => listeners.imu.delete(cb);
-    },
-    () => imuState,
-    () => serverState.imu
-  );
+  return useSyncExternalStore(subscribeImu, getImu, getServerImu);
 }
 
 export function useCockpitOverheadClearance(): CockpitClearance {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.clearance.add(cb);
-      return () => listeners.clearance.delete(cb);
-    },
-    () => clearanceState,
-    () => serverState.clearance
-  );
+  return useSyncExternalStore(subscribeClearance, getClearance, getServerClearance);
 }
 
 export function useCockpitStatus(): CockpitStatus {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.status.add(cb);
-      return () => listeners.status.delete(cb);
-    },
-    () => statusState,
-    () => serverState.status
-  );
+  return useSyncExternalStore(subscribeStatus, getStatus, getServerStatus);
 }
 
 export function useCockpitDiagnostics(): CockpitDiagnostics {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.diagnostics.add(cb);
-      return () => listeners.diagnostics.delete(cb);
-    },
-    () => diagnosticsState,
-    () => serverState.diagnostics
-  );
+  return useSyncExternalStore(subscribeDiagnostics, getDiagnostics, getServerDiagnostics);
 }
 
-export function useCockpitEstop(): CockpitEstop {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.estop.add(cb);
-      return () => listeners.estop.delete(cb);
-    },
-    () => estopState,
-    () => serverState.estop
-  );
-}
 
 export function useCockpitBridge(): CockpitBridge {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.bridge.add(cb);
-      return () => listeners.bridge.delete(cb);
-    },
-    () => bridgeState,
-    () => serverState.bridge
-  );
+  return useSyncExternalStore(subscribeBridge, getBridge, getServerBridge);
 }
 
 export function useCockpitScan(): CockpitScan {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.scan.add(cb);
-      return () => listeners.scan.delete(cb);
-    },
-    () => scanState,
-    () => serverState.scan
-  );
+  return useSyncExternalStore(subscribeScan, getScan, getServerScan);
 }

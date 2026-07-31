@@ -9,11 +9,14 @@ import {
   useCockpitStatus,
   useCockpitEstop,
   useCockpitBridge,
+  useCockpitDiagnostics,
   ROS_SUBSCRIPTIONS,
   ROS_PUBLICATIONS,
   LIDAR_CROP_SECTOR_DEG,
 } from '@/lib/ros/client';
 import { renderHook, act } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 // Mock WebSocket
 class MockWebSocket {
@@ -272,6 +275,53 @@ describe('rosClient and hooks', () => {
       expect(voltageHook.result.current.voltage).toBeNull();
     });
 
+    // ── N6: repair numbers, never the robot's words ─────────────────────────
+    it('leaves NaN INSIDE a quoted string alone while repairing a bare one', () => {
+      openSocket();
+      const diagHook = renderHook(() => useCockpitDiagnostics());
+
+      // One frame, both cases: a bare NaN that must become null, and the same
+      // token inside operator-facing text that must survive untouched.
+      act(() => {
+        MockWebSocket.latestInstance?.triggerRaw(
+          '{"op":"publish","topic":"/diagnostics","msg":{"status":[{"name":"imu",' +
+            '"level":1,"message":"covariance NaN, using defaults",' +
+            '"values":[{"key":"bias","value":"x"}]}],' +
+            '"header":{"stamp":{"sec":NaN,"nanosec":0}}}}',
+        );
+      });
+
+      expect(diagHook.result.current.items).toHaveLength(1);
+      // A blind regex rewrites this to "covariance null, using defaults" —
+      // editing the robot's words while claiming to repair its numbers.
+      expect(diagHook.result.current.items[0].message).toBe('covariance NaN, using defaults');
+      // …and the bare token in the header still got repaired.
+      expect(diagHook.result.current.items[0].stampMs).toBeNull();
+    });
+
+    it('does not mistake an escaped quote for the end of a string', () => {
+      openSocket();
+      const diagHook = renderHook(() => useCockpitDiagnostics());
+
+      act(() => {
+        MockWebSocket.latestInstance?.triggerRaw(
+          '{"op":"publish","topic":"/diagnostics","msg":{"status":[{"name":"imu",' +
+            '"level":1,"message":"said \\"NaN\\" loudly","values":[]}],' +
+            '"header":{"stamp":{"sec":NaN,"nanosec":0}}}}',
+        );
+      });
+
+      expect(diagHook.result.current.items[0].message).toBe('said "NaN" loudly');
+    });
+
+    // ── N7: no lookbehind — it is a PARSE-time SyntaxError on iOS Safari <16.4,
+    // which would take down every route that imports this module, on a platform
+    // the spec names as a core use case.
+    it('uses no lookbehind assertions anywhere in the client', () => {
+      const source = readFileSync(resolve(process.cwd(), 'src/lib/ros/client.ts'), 'utf8');
+      expect(source).not.toMatch(/\(\?<[=!]/);
+    });
+
     it('rejects a non-finite clearance', () => {
       openSocket();
       const clearanceHook = renderHook(() => useCockpitOverheadClearance());
@@ -450,6 +500,108 @@ describe('rosClient and hooks', () => {
       expect(statusHook.result.current.allowMotion).toBe(true);
       expect(statusHook.result.current.watchdogArmed).toBe(true);
       expect(statusHook.result.current.watchdogFired).toBe(false);
+    });
+
+    // ── N4: the 1 Hz roll-up must not clobber the dedicated topics ──────────
+    it('keeps a fresh direct allow_motion over an aggregator placeholder', () => {
+      const ws = openSocket();
+      const statusHook = renderHook(() => useCockpitStatus());
+
+      act(() => {
+        ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: true } });
+      });
+      expect(statusHook.result.current.allowMotion).toBe(true);
+
+      // The robot's aggregator emits a placeholder when it has nothing real.
+      // Letting it win would defeat the very hedge those direct subscriptions
+      // exist for — once a second, silently.
+      act(() => {
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/cockpit/status',
+          msg: { status: [{ name: 'bringup', values: [{ key: 'allow_motion', value: 'false' }] }] },
+        });
+      });
+      expect(statusHook.result.current.allowMotion).toBe(true);
+    });
+
+    it('keeps a fresh direct watchdog state over an aggregator placeholder', () => {
+      const ws = openSocket();
+      const statusHook = renderHook(() => useCockpitStatus());
+
+      act(() => {
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/ugv/watchdog_state',
+          msg: { values: [{ key: 'armed', value: 'true' }, { key: 'fired', value: 'false' }] },
+        });
+      });
+      expect(statusHook.result.current.watchdogArmed).toBe(true);
+
+      act(() => {
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/cockpit/status',
+          msg: {
+            status: [
+              {
+                name: 'cockpit_safety_watchdog',
+                values: [{ key: 'armed', value: 'false' }, { key: 'fired', value: 'false' }],
+              },
+            ],
+          },
+        });
+      });
+      expect(statusHook.result.current.watchdogArmed).toBe(true);
+    });
+
+    it('lets the aggregator fill in once the direct topic has gone stale', () => {
+      const ws = openSocket();
+      const statusHook = renderHook(() => useCockpitStatus());
+
+      act(() => {
+        ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: true } });
+      });
+
+      act(() => {
+        vi.advanceTimersByTime(2500); // past the direct-topic authority window
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/cockpit/status',
+          msg: { status: [{ name: 'bringup', values: [{ key: 'allow_motion', value: 'false' }] }] },
+        });
+      });
+
+      // Deference is to a FRESH direct value, not to a permanently latched one.
+      expect(statusHook.result.current.allowMotion).toBe(false);
+    });
+
+    it('fills in from the aggregator when the direct topic never published', () => {
+      const ws = openSocket();
+      const statusHook = renderHook(() => useCockpitStatus());
+
+      act(() => {
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/cockpit/status',
+          msg: { status: [{ name: 'bringup', values: [{ key: 'allow_motion', value: 'true' }] }] },
+        });
+      });
+      expect(statusHook.result.current.allowMotion).toBe(true);
+    });
+
+    // ── N10 ─────────────────────────────────────────────────────────────────
+    it('treats a non-boolean allow_motion payload as unknown, not as locked', () => {
+      const ws = openSocket();
+      const statusHook = renderHook(() => useCockpitStatus());
+
+      act(() => {
+        ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: 'true' } });
+      });
+
+      // `msg.data === true` would render a malformed frame as a confident
+      // "robot reports motion locked".
+      expect(statusHook.result.current.allowMotion).toBeNull();
     });
 
     it('keeps the mux source verbatim and does not invent NONE', () => {

@@ -22,7 +22,9 @@ import {
 } from '@/lib/hangar-read-status';
 import { THEME_LABELS, THEME_MODES } from '@/lib/hangar-preferences';
 import { isNavActive } from '@/lib/nav';
-import { useCockpitEstop } from '@/lib/ros/client';
+// Deliberately NOT '@/lib/ros/client': the banner renders on every route, and
+// that import would pull the whole rosbridge transport into every page bundle.
+import { useCockpitEstop } from '@/lib/ros/estop-store';
 import { InventoryDrawer } from './InventoryDrawer';
 import { BAY_ACCENT_CLASSES, BAY_ICONS } from './bay-icons';
 import { activityKindMeta, timeAgo } from '@/lib/format';
