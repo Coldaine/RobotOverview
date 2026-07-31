@@ -41,6 +41,9 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
   `curl --resolve hangar.moosegoose.xyz:443:192.168.30.201 https://hangar.moosegoose.xyz/api/hangar/preflight`).
   Public Cloudflare tunnel ingress is dashboard-managed; confirm the hostname still points
   at the platform Gateway if WAN access times out.
+  If the hostname times out on LAN, suspect a stale UDM **Local DNS Record** first (on
+  2026-07-31 one pointed at dead `192.168.30.200`; fixed to `.201` same day and verified),
+  not Cloudflare — the tunnel is egress-only for one hostname.
 
 ## Shipping a change
 
