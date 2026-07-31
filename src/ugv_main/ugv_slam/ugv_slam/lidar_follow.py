@@ -33,7 +33,10 @@ class LidarFollower(Node):
         self.angle_min = None
         self.angle_increment = None
 
-        self.cmd_pub = self.create_publisher(Twist, "/cmd_vel", 10)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Self-driving demo -> the
+        # lowest rung, priority 10; any human teleop input outranks it.
+        self.cmd_pub = self.create_publisher(Twist, "/cmd_vel_nav", 10)
         self.create_subscription(LaserScan, "/scan", self.cb_scan, 10)
 
         self.timer = self.create_timer(0.05, self.control_loop)

@@ -12,6 +12,9 @@
   <depend>rviz2</depend>
   <depend>ros_gz_bridge</depend>
   <depend>ros_gz_sim</depend>
+  <!-- Command spine: bringup_gazebo.launch.py includes ugv_cockpit's
+       twist_mux.launch.py so sim uses the same arbitration ladder. -->
+  <exec_depend>ugv_cockpit</exec_depend>
   <export>
     <architecture_independent />
     <build_type>ament_cmake</build_type>

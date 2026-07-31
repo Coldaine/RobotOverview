@@ -16,11 +16,9 @@ For real-robot bringup, see [Hardware Driver](bringup.md).
 3. **`UGV_MODEL`** matches your kit.
 
 !!! warning "Safety"
-    Simulation still drives the virtual robot with **`/cmd_vel`** (teleop, SLAM mapping, Nav2). Keep the sim view clear of obstacles you care about; stop teleop or send zero velocity before switching tasks:
+    Simulation still drives the virtual robot with **`/cmd_vel`** (teleop, SLAM mapping, Nav2), arbitrated by the same [`twist_mux`](command_arbitration.md) ladder as the hardware — sources publish to `/cmd_vel_joy_operator`, `/cmd_vel_ui`, `/cmd_vel_nav`, etc. Keep the sim view clear of obstacles you care about, and press **`Ctrl+C`** in the terminal of whatever is driving before switching tasks — once no source is streaming, `twist_mux` stops publishing and no further velocity reaches the model.
 
-    ```bash
-    ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
-    ```
+    Publishing a zero to **`/cmd_vel`** by hand is **not** a stop — `twist_mux` republishes the winning source over it within milliseconds.
 
     Do not run **`bringup_lidar.launch.py`** (real hardware) and Gazebo bringup at the same time.
 

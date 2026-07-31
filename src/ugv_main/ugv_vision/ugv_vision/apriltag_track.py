@@ -108,7 +108,10 @@ class ApriltagTrackPid(Node):
             Image, '/image_raw', self.image_callback, 10)
         self.apriltag_track_pid_publisher = self.create_publisher(
             Image, '/apriltag_track_pid/result', 10)
-        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Self-driving demo -> the
+        # lowest rung, priority 10; any human teleop input outranks it.
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel_nav', 10)
 
         self.bridge = CvBridge()
         self.detector = Detector(

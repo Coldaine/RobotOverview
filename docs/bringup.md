@@ -56,7 +56,8 @@ If devices enumerate differently, edit `serial_port` in `bringup_lidar.launch.py
 
 ```mermaid
 flowchart LR
-  TELEOP[teleop / Nav2]
+  TELEOP[teleop / Nav2 / demos]
+  MUX[twist_mux]
   CMD["/cmd_vel"]
   BR[ugv_bringup]
   ESP[ESP32]
@@ -65,7 +66,7 @@ flowchart LR
   EKF[robot_localization]
   ODOM["/odom"]
 
-  TELEOP --> CMD --> BR --> ESP
+  TELEOP --> MUX --> CMD --> BR --> ESP
   LIDAR --> SCAN
   BR --> EKF
   SCAN --> EKF
@@ -80,7 +81,7 @@ EKF config: `src/ugv_main/ugv_bringup/config/ekf.yaml` — wheel velocities from
 
 | Topic | Type | Direction | Description |
 |-------|------|-----------|-------------|
-| `/cmd_vel` | `geometry_msgs/Twist` | Sub | Velocity commands |
+| `/cmd_vel` | `geometry_msgs/Twist` | Sub | Velocity commands. Published **only** by `twist_mux` — see [Command Arbitration](command_arbitration.md) |
 | `/scan` | `sensor_msgs/LaserScan` | Pub | 2D LiDAR (`base_lidar_link`) |
 | `/odom` | `nav_msgs/Odometry` | Pub | EKF-fused odometry |
 | `ugv/voltage` | `sensor_msgs/BatteryState` | Pub | Battery voltage |

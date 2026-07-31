@@ -25,6 +25,7 @@ PACKAGES=(
   vizanti_server
   ugv_msgs
   ugv_bringup
+  ugv_cockpit
   ugv_chat_ai
   ugv_description
   ugv_gazebo

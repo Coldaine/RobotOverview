@@ -28,7 +28,33 @@ def generate_launch_description():
     joy_node = Node(
         package='joy',
         executable='joy_node',
-        name='joy_node'
+        name='joy_node',
+        parameters=[{
+            # autorepeat_rate MUST stay > 0. The joy driver only emits a /joy
+            # message when SDL reports a change, and a stick held at full
+            # deflection is not a change — the OS sends nothing until it moves
+            # again. Without autorepeat, "push the stick and hold it" produces
+            # exactly ONE /joy message:
+            #
+            #   * joy_ctrl publishes one Twist on cmd_vel_joy_robot, twist_mux
+            #     expires that source 0.5 s later, and ugv_bringup's cmd_vel
+            #     watchdog stops the robot mid-command while the stick is still
+            #     pinned;
+            #   * the gimbal freezes too — joy_ctrl integrates pan/tilt once per
+            #     /joy message, so no messages means no movement.
+            #
+            # 20.0 Hz is the joy driver's own default and is comfortably above
+            # the mux's 2 Hz expiry floor (0.5 s per-source timeout), so a held
+            # stick keeps refreshing its rung and the gimbal keeps its rate.
+            #
+            # This does NOT reintroduce the twist_mux starvation failure. An
+            # idle pad autorepeats all-zero /joy messages forever, but joy_ctrl
+            # forwards only ZERO_TAIL_LIMIT (5) of them and then goes silent, so
+            # the priority-150 rung still expires and every lower rung (UI 50,
+            # nav 10) gets the floor. The zero tail is the fix for starvation;
+            # turning autorepeat off was not.
+            'autorepeat_rate': 20.0,
+        }]
     )
 
     # Joystick control node

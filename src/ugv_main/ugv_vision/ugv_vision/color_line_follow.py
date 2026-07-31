@@ -95,7 +95,10 @@ class ColorTrackPID(Node):
         super().__init__('color_track_pid')
 
         self.sub_img = self.create_subscription(Image, '/image_raw', self.image_callback, 10)
-        self.pub_cmd = self.create_publisher(Twist, '/cmd_vel', 10)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Self-driving demo -> the
+        # lowest rung, priority 10; any human teleop input outranks it.
+        self.pub_cmd = self.create_publisher(Twist, '/cmd_vel_nav', 10)
         self.pub_img = self.create_publisher(Image, '/color_track_pid/result', 10)
         self.bridge = CvBridge()
 

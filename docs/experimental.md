@@ -18,13 +18,11 @@ For the suggested reading order, see [index](index.md#suggested-reading-order).
 4. **Ollama** on the network for [Voice chat](#voice-chat) and [Web AI](#web-ai) — [Ollama](https://github.com/ollama/ollama), model **`qwen3:8b`**.
 
 !!! warning "Safety"
-    [Web AI](#web-ai) drives the chassis via **`behavior_ctrl`** → **`/cmd_vel`**. Clear the area before use.
+    [Web AI](#web-ai) drives the chassis via **`behavior_ctrl`** → **`/cmd_vel_nav`** → [`twist_mux`](command_arbitration.md) → **`/cmd_vel`**. It is on the lowest rung, so teleop can take over at any time — but clear the area before use anyway.
 
-    Emergency stop:
+    To stop it: press **`Ctrl+C`** in the terminal running **`behavior_ctrl`**. Once no source is streaming, `twist_mux` stops publishing and **`ugv_bringup`**'s 0.5 s **`cmd_vel`** watchdog stops the robot.
 
-    ```bash
-    ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
-    ```
+    Publishing a zero to **`/cmd_vel`** by hand is **not** a stop — `twist_mux` republishes the winning source over it within milliseconds.
 
 ---
 
@@ -99,7 +97,7 @@ Requires **`qwen3:8b`** (or compatible model) on the Ollama server.
 
 ## Web AI
 
-Browser chat that sends motion commands to the **`/behavior`** action. **`behavior_ctrl`** executes open-loop moves and publishes **`/cmd_vel`**.
+Browser chat that sends motion commands to the **`/behavior`** action. **`behavior_ctrl`** executes open-loop moves and publishes **`/cmd_vel_nav`** ([`twist_mux`](command_arbitration.md) priority 10).
 
 Supported behavior types: **`drive_on_heading`**, **`back_up`**, **`spin`**, **`stop`**.
 

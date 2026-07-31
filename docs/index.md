@@ -104,14 +104,14 @@ SLAM, Nav2, and demo launches **include** this stack (or **`bringup_gazebo.launc
 
 ### [3. Keyboard & Gamepad Control](teleoperation.md)
 
-Manual driving via **`/cmd_vel`** — keyboard **or** gamepad in **T1**, not both.
+Manual driving — keyboard → **`/cmd_vel_joy_operator`** (priority 100), gamepad → **`/cmd_vel_joy_robot`** (150), both arbitrated onto **`/cmd_vel`** by [`twist_mux`](command_arbitration.md). Use one in **T1**, not both.
 
 - **`keyboard_ctrl`** — drive keys **latch** until **Space** / **`k`**; pan-tilt on **`0/1/2/r`**.
 - **`teleop_twist_joy.launch.py`** — USB gamepad; right stick controls gimbal.
 
 ### [4. LiDAR Interaction](lidar.md)
 
-Laser-based motion demos in **`ugv_slam`** — **`/scan`** (and **`/odom`** for avoidance) → **`/cmd_vel`**. Not SLAM or Nav2.
+Laser-based motion demos in **`ugv_slam`** — **`/scan`** (and **`/odom`** for avoidance) → **`/cmd_vel_nav`**, the autonomy rung. Not SLAM or Nav2.
 
 - **`demo.launch.py`** — includes bringup + one demo; **`exe:=lidar_follow`**, **`lidar_guard`**, or **`lidar_obstacle_avoidance`**.
 
@@ -120,7 +120,7 @@ Laser-based motion demos in **`ugv_slam`** — **`/scan`** (and **`/odom`** for 
 USB camera and OAK-D Lite tracking in **`ugv_vision`**. **One camera type per session** — do not mix USB and OAK pipelines.
 
 - **`demo.launch.py`** — includes bringup + vision node; USB demos also start **`camera.launch.py`**.
-- Motion-tracking demos publish **`/cmd_vel`** — stop before SLAM, Nav2, or teleop.
+- Motion-tracking demos publish **`/cmd_vel_nav`** — the same rung Nav2 and the LiDAR demos use, so stop one before starting another.
 - **`cam_webrtc`**, **`cam_oak_webrtc`**, … — browser preview at `http://<robot-ip>:8889/cam/`.
 
 ### [6. Mapping](mapping.md)

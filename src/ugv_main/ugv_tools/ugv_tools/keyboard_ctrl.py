@@ -25,7 +25,8 @@ q/z : increase/decrease max speeds by 10%
 w/x : increase/decrease only linear speed by 10%
 e/c : increase/decrease only angular speed by 10%
 t/T : x and y speed switch
-s/S : stop keyboard control (publishes zero while off)
+s/S : toggle stop. Engaging it clears the latched drive, sends a short zero
+      burst, then goes quiet — releasing it needs a fresh drive key
 space key, k : stop motion (zero velocity)
 
 Control Your Pt!
@@ -75,6 +76,48 @@ speedBindings = {
 
 LOOP_PERIOD = 0.02
 
+# How many consecutive zero Twists to send after the command returns to zero,
+# before going silent. Mirrors ugv_bringup's own `zero_vel_limit = 5`.
+#
+# WHY THIS EXISTS (twist_mux starvation): twist_mux awards /cmd_vel to the
+# highest-priority source that has not expired, and *any* message — including a
+# zero Twist — refreshes that source's timestamp. keyboard_ctrl sits at priority
+# 100; if it published every 20 ms forever, it would hold the floor forever and
+# nav (10) and the UI rung (50) could never get a command through, even with the
+# operator's hands off the keyboard. Publishing a bounded tail of zeros and then
+# STOPPING lets this source expire after twist_mux's 0.5 s timeout and hands the
+# floor back down the ladder.
+#
+# The tail is not decoration: it is the command that actually stops the robot
+# (5 x 20 ms = 100 ms, well inside the 0.5 s watchdog). ugv_bringup's cmd_vel
+# watchdog is the backstop if even the tail is lost.
+ZERO_TAIL_LIMIT = 5
+
+# Keys that re-arm the zero tail — i.e. the ones that are a drive command or an
+# explicit stop. Only these may put this node back on the priority-100 rung.
+#
+# WHY THIS IS NARROW: re-arming on *any* keystroke means the pan-tilt keys
+# (0/1/2/r) and the speed-scale keys (q/z/w/x/e/c) each fire a fresh 5-zero
+# burst on cmd_vel_joy_operator. Those zeros outrank the UI (50) and nav (10)
+# rungs, so nudging the gimbal or trimming the speed while something else is
+# driving would interrupt it — and holding a pan key would pin the robot
+# stopped without ever touching a drive key. Gimbal and speed keys change no
+# velocity, so they must not claim the velocity rung.
+#
+# Space and k are zero-velocity *commands* (an explicit stop the operator asked
+# for), and s/S toggles the stop latch, so all three belong here: each one has
+# to reach the wire even if the node had already fallen silent.
+MOTION_KEYS = frozenset(moveBindings) | {" ", "k", "s", "S"}
+
+
+def _rearms_zero_tail(key):
+    """True if `key` is a motion command or an explicit stop.
+
+    See MOTION_KEYS: this is the guard on re-arming the zero tail, deliberately
+    not `if chunk` — a keystroke is not automatically drive activity.
+    """
+    return key in MOTION_KEYS
+
 
 class _TerminalSettings:
     """Save/restore TTY attributes so the shell keeps echo after exit."""
@@ -100,7 +143,10 @@ class _TerminalSettings:
 class UgvKeyboard(Node):
     def __init__(self, name):
         super().__init__(name)
-        self.pub = self.create_publisher(Twist, "cmd_vel", 1)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Keyboard teleop is the
+        # remote operator's direct drive path -> priority 100.
+        self.pub = self.create_publisher(Twist, "cmd_vel_joy_operator", 1)
         self.pub_pt_joint = self.create_publisher(
             Float64MultiArray, "pt_joint_position_controller/commands", 10
         )
@@ -163,6 +209,9 @@ def main():
     stop = False
     twist = Twist()
     quit_requested = False
+    # Start already silent: a keyboard_ctrl nobody has touched yet must not
+    # claim the priority-100 rung and mask nav/UI just by being running.
+    zero_tail = ZERO_TAIL_LIMIT
 
     try:
         term.set_cbreak()
@@ -180,6 +229,13 @@ def main():
                     xspeed_switch = not xspeed_switch
                 elif key == "s" or key == "S":
                     stop = not stop
+                    if stop:
+                        # Drop the latched command as well as gating output.
+                        # Otherwise toggling stop back off silently resumes the
+                        # speed that was latched before — the robot drives away
+                        # on a keystroke that reads as "release the stop", with
+                        # no fresh drive key from the operator.
+                        x, th = 0, 0
                     print("stop keyboard control: {}".format(stop))
                 elif key in moveBindings:
                     x = moveBindings[key][0]
@@ -229,10 +285,34 @@ def main():
                 twist.linear.y = float(speed * x)
             twist.angular.z = float(turn * th)
 
-            if not stop:
-                node.pub.publish(twist)
-            else:
-                node.pub.publish(Twist())
+            outgoing = Twist() if stop else twist
+            commanding = (
+                outgoing.linear.x != 0.0
+                or outgoing.linear.y != 0.0
+                or outgoing.angular.z != 0.0
+            )
+
+            # Re-arm the zero tail on drive/stop keys only, so a fresh Space/k
+            # always puts a stop command on the wire even if we had already
+            # fallen silent. See MOTION_KEYS: pan-tilt and speed-scale keys are
+            # excluded on purpose — they command no velocity, so they must not
+            # take the priority-100 rung back from nav or the UI.
+            if any(_rearms_zero_tail(key) for key in chunk):
+                zero_tail = 0
+
+            if commanding:
+                # Actively driving — stream at the loop rate and keep the rung.
+                node.pub.publish(outgoing)
+                zero_tail = 0
+            elif zero_tail < ZERO_TAIL_LIMIT:
+                # Command just returned to zero. Send a short, bounded burst of
+                # zeros so the robot stops by command rather than by watchdog...
+                node.pub.publish(outgoing)
+                zero_tail += 1
+            # ...then go silent. See ZERO_TAIL_LIMIT: an idle-but-publishing
+            # source at priority 100 would mask every lower twist_mux rung
+            # forever. Silence lets this source expire (0.5 s) and hands the
+            # floor back to nav / the UI.
 
             if quit_requested:
                 break

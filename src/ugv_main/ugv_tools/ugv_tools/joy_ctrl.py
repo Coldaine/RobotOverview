@@ -79,6 +79,24 @@ Xbox_360_Controller = {
 }
 
 
+# How many consecutive zero Twists to publish after the sticks return to
+# centre, before going silent. Mirrors ugv_bringup's own `zero_vel_limit = 5`
+# and keyboard_ctrl's ZERO_TAIL_LIMIT — keep all three the same number.
+#
+# WHY THIS EXISTS (twist_mux starvation): twist_mux gives /cmd_vel to the
+# highest-priority source that has not expired, and any message — a zero Twist
+# included — refreshes that source's timestamp. joy_ctrl sits at priority 150,
+# the top drive rung, and publishes once per /joy message. A pad sitting on the
+# desk still produces /joy traffic (joy_node republishes on any axis jitter, and
+# with autorepeat_rate > 0 it synthesises messages even with no input at all),
+# so without this bound an untouched gamepad would hold the floor forever and
+# nav, the UI rung and keyboard teleop would never get a command through.
+#
+# The tail still stops the robot by command; ugv_bringup's 0.5 s cmd_vel
+# watchdog is the backstop.
+ZERO_TAIL_LIMIT = 5
+
+
 def get_joystick_mapping(name):
 	if name == "SHANWAN Android Gamepad":
 		return SHANWAN_Android_Gamepad
@@ -97,12 +115,19 @@ class JoyTeleop(Node):
 		self.prev_rtrigger_pressed = False
 		self.prev_rbumper_pressed = False
 		self.Joy_active = True
+		# Consecutive zero Twists published since the sticks last moved. Starts
+		# at the limit so a joy_ctrl nobody has touched yet is already silent
+		# and does not mask lower twist_mux rungs just by being running.
+		self.zero_tail = ZERO_TAIL_LIMIT
 		self.user_name = getpass.getuser()
 		self.linear_Gear = 0.25
 		self.angular_Gear = 0.25
 		self.led_Gear = 0.0
 
-		self.pub_cmdVel = self.create_publisher(Twist, 'cmd_vel', 10)
+		# Command spine: never publish /cmd_vel directly. twist_mux owns that
+		# topic (ugv_cockpit/config/twist_mux.yaml). joy_node runs on the robot,
+		# so this is the on-site pad -> priority 150, the highest drive rung.
+		self.pub_cmdVel = self.create_publisher(Twist, 'cmd_vel_joy_robot', 10)
 		self.pub_ledCtrl = self.create_publisher(Float32MultiArray, 'ugv/led_ctrl', 10)
 		self.pub_ptJointStateCtrl = self.create_publisher(Float64MultiArray, 'pt_joint_position_controller/commands', 10)
 		self.sub_Joy = self.create_subscription(Joy, 'joy', self.buttonCallback, 10)
@@ -168,8 +193,27 @@ class JoyTeleop(Node):
 		# twist.linear.y = max(-self.yspeed_limit, min(self.yspeed_limit, y))
 		twist.angular.z = max(-self.angular_speed_limit, min(self.angular_speed_limit, angular))
 
+		commanding = (
+			twist.linear.x != 0.0
+			or twist.linear.y != 0.0
+			or twist.angular.z != 0.0
+		)
+
 		if self.Joy_active:
-			self.pub_cmdVel.publish(twist)
+			if commanding:
+				# Sticks are off centre — stream and hold the rung.
+				self.pub_cmdVel.publish(twist)
+				self.zero_tail = 0
+			elif self.zero_tail < ZERO_TAIL_LIMIT:
+				# Sticks just returned to centre. Send a bounded burst of zeros
+				# so the robot stops by command...
+				self.pub_cmdVel.publish(twist)
+				self.zero_tail += 1
+			# ...then stay silent while the pad is idle. See ZERO_TAIL_LIMIT:
+			# publishing zeros forever at priority 150 starves every lower rung.
+			# Note this deliberately skips only the Twist publish — LED and
+			# pan-tilt below still run on every /joy message, because they are
+			# not arbitrated by twist_mux.
 
 
 		rtrigger_pressed = joy_data.axes[self.mapping["RIGHT_TRIGGER"]] == -1.0

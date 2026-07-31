@@ -113,7 +113,10 @@ class OakYoloNode(Node):
         self.labelMap = ["background", "aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow",
                     "diningtable", "dog", "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train", "tvmonitor"]
 
-        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Self-driving demo -> the
+        # lowest rung, priority 10; any human teleop input outranks it.
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel_nav', 10)
 
         self.target_distance = 0.30
         self.target_yaw = 0.0

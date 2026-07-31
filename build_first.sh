@@ -49,6 +49,7 @@ apt-get install -y \
     ros-humble-rosbridge-* \
     ros-humble-rqt-* \
     ros-humble-rtabmap-* \
+    ros-humble-twist-mux \
     ros-humble-v4l2-camera \
     ros-humble-depthai-bridge-dbgsym \
     ros-humble-depthai-ros-driver \
@@ -207,7 +208,7 @@ colcon build \
 
 colcon build \
   --packages-select \
-    ugv_bringup ugv_chat_ai ugv_description ugv_gazebo \
+    ugv_bringup ugv_cockpit ugv_chat_ai ugv_description ugv_gazebo \
     ugv_nav ugv_slam ugv_tools ugv_vision ugv_voice ugv_web_app \
   --symlink-install \
   --executor sequential

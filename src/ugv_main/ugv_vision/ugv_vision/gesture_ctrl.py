@@ -90,7 +90,10 @@ class GestureCtrl(Node):
         # Create a CvBridge object for converting between ROS Image messages and OpenCV images
         self.bridge = CvBridge()
 
-        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Self-driving demo -> the
+        # lowest rung, priority 10; any human teleop input outranks it.
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel_nav', 10)
 
         self.target_yaw = 0.0
 

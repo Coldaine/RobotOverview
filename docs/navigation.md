@@ -19,11 +19,9 @@ Default map file: **`src/ugv_main/ugv_nav/maps/map.yaml`**.
 !!! warning "Safety"
     Nav2 moves the chassis autonomously once you send a goal. Clear the area and keep hands away from wheels before launching.
 
-    Emergency stop:
+    To stop it: press **`Ctrl+C`** in the terminal running **`nav.launch.py`**. Once no source is streaming, [`twist_mux`](command_arbitration.md) stops publishing and **`ugv_bringup`**'s 0.5 s **`cmd_vel`** watchdog stops the robot.
 
-    ```bash
-    ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
-    ```
+    Publishing a zero to **`/cmd_vel`** by hand is **not** a stop — `twist_mux` republishes the winning source over it within milliseconds.
 
 ---
 
@@ -43,7 +41,7 @@ Default map file: **`src/ugv_main/ugv_nav/maps/map.yaml`**.
 
 ### What is Nav2?
 
-**Saved-map mode (default):** Nav2 loads a **static map**, estimates pose (**localization**), plans a path (**global planner**), and outputs **`/cmd_vel`** (**local planner** + controllers) to drive the robot to RViz goals.
+**Saved-map mode (default):** Nav2 loads a **static map**, estimates pose (**localization**), plans a path (**global planner**), and outputs velocity (**local planner** + controllers) to drive the robot to RViz goals. That output leaves Nav2 on **`/cmd_vel_nav`** and reaches **`/cmd_vel`** through [`twist_mux`](command_arbitration.md) at priority 10 — teleop outranks it.
 
 **SLAM while navigating** (`use_slam:=true`): online SLAM Toolbox builds **`/map`** while Nav2 plans — see [SLAM while navigating](#slam-while-navigating).
 
@@ -92,7 +90,7 @@ In RViz, the laser scan should line up with walls in the map (Fixed Frame: **`ma
 2. Wait until the scan overlay matches the map.
 3. **2D Goal Pose** — click goal position and heading.
 
-Nav2 publishes **`/cmd_vel`** until the goal succeeds or is cancelled.
+Nav2 publishes **`/cmd_vel_nav`** until the goal succeeds or is cancelled; [`twist_mux`](command_arbitration.md) forwards it to **`/cmd_vel`** whenever no higher rung is driving.
 
 ---
 
@@ -126,10 +124,10 @@ Do **not** use **`use_localization:=slam_toolbox`** without a saved **`map.poseg
 | Node | Role |
 |------|------|
 | `ldlidar_node` | LiDAR → **`/scan`** |
-| `ugv_bringup` | **`/cmd_vel`** → ESP32 |
+| `ugv_bringup` | subscribes **`/cmd_vel`** → ESP32 |
 | `ekf_filter_node` | **`/odom`** (via bringup) |
 | `robot_state_publisher` | URDF / TF |
-| Nav2 stack | localization, planning, **`/cmd_vel`** |
+| Nav2 stack | localization, planning, **`/cmd_vel_nav`** (via `collision_monitor`) |
 | `robot_pose_publisher` | **`/robot_pose`** |
 | `oak_d_lite` pipeline | RTAB-Map localization only |
 | `rviz2` | RViz (`use_rviz:=true`) |
@@ -143,10 +141,12 @@ flowchart LR
   MAP[map.yaml]
   LOC[localization]
   NAV[Nav2 planner]
+  NV["/cmd_vel_nav"]
+  MUX[twist_mux]
   CV["/cmd_vel"]
   BR[ugv_bringup]
 
-  MAP --> LOC --> NAV --> CV --> BR
+  MAP --> LOC --> NAV --> NV --> MUX --> CV --> BR
 ```
 
 ---
@@ -334,7 +334,7 @@ ros2 launch ugv_nav nav.launch.py use_keepout_zones:=true use_rviz:=true
 | Robot does not move to goal | Wrong localization / map mismatch | Re-estimate pose; confirm map matches room |
 | Planner fails | Goal in obstacle or unreachable | Pick a new goal on free space |
 | Empty `/scan` | LiDAR / bringup | See [Verify before navigating](#verify-before-navigating) |
-| Jerky or no motion | Another **`/cmd_vel`** publisher | Stop teleop / LiDAR / vision demos |
+| Jerky or no motion | A higher **`twist_mux`** rung is driving (teleop), or another autonomy node shares Nav2's **`/cmd_vel_nav`** rung | Stop teleop; stop LiDAR / vision demos |
 | Cartographer / slam_toolbox nav fails | Missing sidecar file | Save **`map.pbstream`** or **`map.posegraph`** when mapping |
 | `explore_lite` idle / no goals | **`use_slam:=false`**, Nav2 not ready, or no **`/map`** yet | **`use_slam:=true`** on **T0**; wait for **`/map`**; in Gazebo match **`use_sim_time`** on **T0** and **T1** |
 | Map not growing with **`use_slam:=true`** | Wrong workflow | Confirm **`use_slam:=true`**; drive manually or run **`explore_lite`** — see [SLAM while navigating](#slam-while-navigating) |

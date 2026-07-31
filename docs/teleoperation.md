@@ -1,6 +1,8 @@
 # Keyboard & Gamepad Control
 
-Real-time driving via **`/cmd_vel`** — gamepad in **T1** (`teleop_twist_joy.launch.py`), or keyboard in **T1** (`keyboard_ctrl`). See [Launch teleop](#launch-teleop) for terminal order.
+Real-time driving — gamepad in **T1** (`teleop_twist_joy.launch.py`), or keyboard in **T1** (`keyboard_ctrl`). See [Launch teleop](#launch-teleop) for terminal order.
+
+Neither one publishes **`/cmd_vel`** directly any more: both feed **`twist_mux`**, which arbitrates every velocity source down to one **`/cmd_vel`** stream. Gamepad-on-the-robot outranks keyboard, and both outrank autonomy. See [Command Arbitration](command_arbitration.md) for the full ladder.
 
 For bringup and serial, see [Hardware Driver](bringup.md).
 
@@ -30,7 +32,12 @@ SLAM and Nav2 launches already include bringup — see [Mapping](mapping.md), [N
 
 ### One motion source at a time
 
-All of these publish **`/cmd_vel`** (or **`behavior_ctrl`** → **`/cmd_vel`**) — use **one at a time**. In terminals that are still running, press **`Ctrl+C`** before starting another.
+All of these command motion. They no longer publish **`/cmd_vel`** directly — each one feeds a [`twist_mux`](command_arbitration.md) input, and the mux picks the highest-priority source that is still talking. Running one at a time is still the habit to keep: the ladder makes the outcome *defined*, not *safe*.
+
+Two things to know before relying on it:
+
+- Teleop outranks every demo and Nav2, so you can take over at any time. But when you **stop driving**, teleop deliberately goes quiet — it sends a short burst of zero commands (5 messages) to stop the robot, then stops publishing so the rung is released. About 0.5 s later the lower-priority source has the floor again, and the robot drives off under the demo's control. **Stopping teleop is not stopping the robot.** Press **`Ctrl+C`** in the demo's terminal if you want it to stay stopped.
+- Two sources on the **same** rung (two UI surfaces, say) still interleave. That case is undefined.
 
 | | **Keyboard / gamepad** (this page) | **LiDAR demos** | **Nav2** | **Vision tracking** | **Web Teleop** | **Web AI** |
 |---|-----|-----|-----|-----|-----|-----|
@@ -39,8 +46,8 @@ All of these publish **`/cmd_vel`** (or **`behavior_ctrl`** → **`/cmd_vel`**) 
 | **Input** | Keys or gamepad sticks | `/scan` | RViz **2D Goal Pose** | Camera | Browser joystick | Chat web UI |
 | **Gimbal** | Keyboard `0/1/2/r` or right stick | — | — | Pan-tilt on some demos | — | — |
 
-**Data path (hardware):** keyboard / gamepad → **`/cmd_vel`** → **`ugv_bringup`** → ESP32 → wheels.  
-Pan-tilt: keyboard or right stick → **`pt_joint_position_controller/commands`**.
+**Data path (hardware):** keyboard → **`/cmd_vel_joy_operator`** (priority 100) / gamepad → **`/cmd_vel_joy_robot`** (priority 150) → **`twist_mux`** → **`/cmd_vel`** → **`ugv_bringup`** → ESP32 → wheels.  
+Pan-tilt: keyboard or right stick → **`pt_joint_position_controller/commands`** (not arbitrated — the mux only handles velocity).
 
 **Also not direct `/cmd_vel`:** [Navigation — explore_lite](navigation.md#autonomous-exploration-explore_lite) in **T1** sends Nav2 goals while **T0** runs `nav.launch.py use_slam:=true`. Stop keyboard, gamepad, Web Teleop, and other motion nodes before **`explore_lite`** — motion still comes from Nav2 on **T0**.
 
@@ -68,21 +75,24 @@ If the program no longer needs to run, press **`Ctrl+C`** in each terminal to cl
 
 | Node | Role |
 |------|------|
-| `joy_node` | USB gamepad → **`/joy`** (gamepad launch only) |
-| `joy_ctrl` | **`/joy`** → **`/cmd_vel`**, **`ugv/led_ctrl`**, pan-tilt (gamepad launch only) |
-| `keyboard_ctrl` | Keys → **`/cmd_vel`**, pan-tilt (keyboard only) |
+| `joy_node` | USB gamepad → **`/joy`** (gamepad launch only). Launched with **`autorepeat_rate: 20.0`** so a stick held at full deflection keeps commanding instead of expiring its own rung; the zeros an idle pad repeats are bounded by `joy_ctrl` — see [Command Arbitration](command_arbitration.md#idle-sources-let-go-of-the-floor) |
+| `joy_ctrl` | **`/joy`** → **`/cmd_vel_joy_robot`** (priority 150), **`ugv/led_ctrl`**, pan-tilt (gamepad launch only) |
+| `keyboard_ctrl` | Keys → **`/cmd_vel_joy_operator`** (priority 100), pan-tilt (keyboard only) |
 
 **Data transfer process**
 
 ```mermaid
 flowchart LR
   IN[Keyboard / gamepad]
+  MUXIN["/cmd_vel_joy_operator (100)
+/cmd_vel_joy_robot (150)"]
+  MUX[twist_mux]
   CV["/cmd_vel"]
   BR[ugv_bringup]
   ESP[ESP32]
   WH[Wheels]
 
-  IN --> CV --> BR --> ESP --> WH
+  IN --> MUXIN --> MUX --> CV --> BR --> ESP --> WH
 ```
 
 Keyboard and gamepad do **not** talk to serial directly — **`ugv_bringup`** forwards velocity to the motor board.
@@ -214,9 +224,14 @@ Publishes **`pt_joint_position_controller/commands`** — same joint names as [R
 
 ## Emergency stop
 
-```bash
-ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
-```
+Press **`Ctrl+C`** in the terminal running `keyboard_ctrl` or `teleop_twist_joy.launch.py`. Once no source is streaming, [`twist_mux`](command_arbitration.md) stops publishing and **`ugv_bringup`**'s 0.5 s **`cmd_vel`** watchdog stops the robot — so this takes up to about half a second, not instantly.
+
+**If a demo or Nav2 is also running, stop that terminal too.** Otherwise it takes the floor about 0.5 s after teleop falls silent and the robot drives on — see [One motion source at a time](#one-motion-source-at-a-time).
+
+!!! warning "Publishing zero to `/cmd_vel` by hand is not a stop"
+    `twist_mux` owns **`/cmd_vel`** and republishes the winning source over your message within milliseconds, so a `--once` publish is overwritten before it takes effect. The ladder has a dedicated e-stop rung (`cmd_vel_estop_lock`, priority 255), but **nothing publishes it yet** — it is wired and inert. See [Emergency lock](command_arbitration.md#emergency-lock).
+
+    Cutting power remains the only instant stop.
 
 ---
 
@@ -228,10 +243,10 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
 | Keyboard has no effect | Click the terminal running **`keyboard_ctrl`**; confirm bringup is running; run inside `docker exec -it` / SSH with a TTY |
 | No gamepad / `no joystick found` | Plug in USB controller before launch; check `ros2 topic echo /joy` |
 | Sticks drift | Release sticks at connect; restart `teleop_twist_joy.launch.py` |
-| Keyboard **and** gamepad both active | Stop one — both publish **`/cmd_vel`** |
+| Keyboard **and** gamepad both active | Not undefined any more, but confusing: the gamepad (**`/cmd_vel_joy_robot`**, priority 150) outranks the keyboard (**`/cmd_vel_joy_operator`**, 100), so the keyboard only gets through while the pad is idle. Stop one |
 | Robot moves when you did not touch teleop | Stop LiDAR demos / Nav2 / vision / Web Teleop / Web AI — see [One motion source at a time](#one-motion-source-at-a-time) |
 | `KeyError: 'UGV_MODEL'` | `export UGV_MODEL=...`; `source install/setup.bash`; relaunch |
-| Nav2 / SLAM still publishing | Use **`Ctrl+C`** on other launches; only one **`/cmd_vel`** source |
+| Nav2 / SLAM takes over the moment you stop driving | Expected — teleop releases its rung when idle and Nav2 (**`/cmd_vel_nav`**, priority 10) gets the floor back. Use **`Ctrl+C`** on the other launch to stop it for good |
 
 ---
 

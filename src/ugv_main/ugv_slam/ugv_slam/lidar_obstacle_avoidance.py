@@ -31,7 +31,10 @@ class ObstacleAvoidance(Node):
         self.current_y = 0.0
 
         # Publishers & Subscribers
-        self.cmd_pub = self.create_publisher(Twist, 'cmd_vel', 10)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Self-driving demo -> the
+        # lowest rung, priority 10; any human teleop input outranks it.
+        self.cmd_pub = self.create_publisher(Twist, 'cmd_vel_nav', 10)
         self.create_subscription(LaserScan, "scan", self.cb_scan, 10)
         self.create_subscription(Odometry, "odom", self.cb_odom, 10)
 

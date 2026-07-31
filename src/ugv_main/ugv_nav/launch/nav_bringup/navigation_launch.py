@@ -57,6 +57,27 @@ def generate_launch_description():
     remappings = [('/tf', 'tf'),
                   ('/tf_static', 'tf_static')]
 
+    # Command spine (ugv_cockpit): nav2 must NOT publish /cmd_vel. twist_mux is
+    # the only publisher of that topic and takes nav2's output on cmd_vel_nav at
+    # priority 10 — the lowest rung, so any human teleop outranks autonomy.
+    #
+    # The chain, after the rename below:
+    #   controller_server  --(cmd_vel -> cmd_vel_nav_raw)-->
+    #   velocity_smoother  --(cmd_vel_smoothed)----------->
+    #   collision_monitor  --(cmd_vel_out_topic: cmd_vel_nav, in params/*.yaml)-->
+    #   twist_mux          --(cmd_vel_out -> /cmd_vel)---> ugv_bringup
+    #
+    # behavior_server is the exception: it publishes Twist itself rather than
+    # feeding the controller chain, so it is remapped straight onto cmd_vel_nav
+    # (see the comment on that node below).
+    #
+    # The intermediate controller->smoother hop used to be called cmd_vel_nav.
+    # It is now cmd_vel_nav_raw so that cmd_vel_nav means exactly one thing:
+    # "the velocity nav2 has finished deciding on", i.e. the mux input. Keeping
+    # collision_monitor last preserves nav2's own stop authority ahead of the
+    # mux. Changing any of this is a safety change — see
+    # ugv_cockpit/test/test_twist_mux_spine.py.
+
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
         'use_sim_time': use_sim_time,
@@ -119,7 +140,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav_raw')]),
             Node(
                 package='nav2_smoother',
                 executable='smoother_server',
@@ -149,7 +170,21 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings),
+                # Recovery behaviours ride the nav rung too. In Humble,
+                # nav2_behaviors/timed_behavior.hpp creates its OWN Twist
+                # publisher on "cmd_vel" — it does not go through
+                # controller_server, velocity_smoother or collision_monitor. The
+                # behaviours params/*.yaml enables (spin, backup,
+                # drive_on_heading, assisted_teleop) would therefore drive the
+                # ESP32 straight past twist_mux. Remap it onto the mux input so
+                # a recovery is arbitrated like any other autonomy command and a
+                # human on a higher rung can override it mid-spin.
+                #
+                # NOTE: this joins cmd_vel_nav directly, bypassing nav2's own
+                # velocity_smoother/collision_monitor — that matches upstream,
+                # where recovery behaviours deliberately sit outside the
+                # controller chain and do their own collision checking.
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
             Node(
                 package='nav2_bt_navigator',
                 executable='bt_navigator',
@@ -180,7 +215,7 @@ def generate_launch_description():
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings +
-                        [('cmd_vel', 'cmd_vel_nav')]),
+                        [('cmd_vel', 'cmd_vel_nav_raw')]),
             Node(
                 package='nav2_collision_monitor',
                 executable='collision_monitor',
@@ -213,7 +248,7 @@ def generate_launch_description():
                 plugin='nav2_controller::ControllerServer',
                 name='controller_server',
                 parameters=[configured_params],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav_raw')]),
             ComposableNode(
                 package='nav2_smoother',
                 plugin='nav2_smoother::SmootherServer',
@@ -231,7 +266,13 @@ def generate_launch_description():
                 plugin='behavior_server::BehaviorServer',
                 name='behavior_server',
                 parameters=[configured_params],
-                remappings=remappings),
+                # Same reason as the plain-node branch above: timed_behavior.hpp
+                # publishes Twist on "cmd_vel" itself, so recovery behaviours
+                # (spin/backup/drive_on_heading/assisted_teleop) must ride the
+                # nav rung instead of reaching /cmd_vel directly. Both branches
+                # have to carry this remap — use_composition picks one at launch
+                # time and a fix in only one is a fix in neither.
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
             ComposableNode(
                 package='nav2_bt_navigator',
                 plugin='nav2_bt_navigator::BtNavigator',
@@ -250,7 +291,7 @@ def generate_launch_description():
                 name='velocity_smoother',
                 parameters=[configured_params],
                 remappings=remappings +
-                           [('cmd_vel', 'cmd_vel_nav')]),
+                           [('cmd_vel', 'cmd_vel_nav_raw')]),
             ComposableNode(
                 package='nav2_collision_monitor',
                 plugin='nav2_collision_monitor::CollisionMonitor',

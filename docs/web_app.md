@@ -25,9 +25,9 @@ For voice and LLM chat, see [Experimental](experimental.md).
 |----|--------|
 | Keep **T0** running while using the browser | **`Ctrl+C`** on **T0** while driving or mapping from the web UI |
 | Open the URL printed in the terminal (same network as the robot) | Run [Web AI](experimental.md#web-ai) and Web App at the same time |
-| Stop other **`/cmd_vel`** sources before using the **Teleop** widget | Use Web **Teleop** + keyboard/gamepad + Nav2 + LiDAR/vision motion **at the same time** |
+| Know which rung you are on before using the **Teleop** widget | Use Web **Teleop** + keyboard/gamepad + Nav2 + LiDAR/vision motion **at the same time** |
 
-The **Teleop** widget publishes **`/cmd_vel`**. See [Teleoperation — One motion source at a time](teleoperation.md#one-motion-source-at-a-time).
+The **Teleop** widget publishes **`/cmd_vel_ui`** — the UI rung, [`twist_mux`](command_arbitration.md) priority 50. Keyboard (100) and an on-robot gamepad (150) both outrank it, so browser teleop goes dead the moment someone touches those. It outranks Nav2 and the demos (10). See [Command Arbitration](command_arbitration.md) and [Teleoperation — One motion source at a time](teleoperation.md#one-motion-source-at-a-time).
 
 ### Web App vs Web AI
 
@@ -43,7 +43,7 @@ Default Vizanti web port is **5100**; rosbridge uses **5001**. Always use the UR
 
 | Goal | **T0** (robot stack) | **T1** (Web App) | Common widgets |
 |------|----------------------|------------------|----------------|
-| Teleop only | [bringup](bringup.md#launch-physical-robot) | `ros2 launch ugv_web_app bringup.launch.py` | **Teleop** → `/cmd_vel` |
+| Teleop only | [bringup](bringup.md#launch-physical-robot) | `ros2 launch ugv_web_app bringup.launch.py` | **Teleop** → `/cmd_vel_ui` → `twist_mux` |
 | Camera view | [Vision](vision.md) `demo.launch.py` (e.g. `cam_webrtc`) | same | **Image** / **WebRTC** on camera topic |
 | Mapping | [Mapping](mapping.md) SLAM launch | same | **Scan**, **Map**, **Teleop**, save map |
 | Navigation | [Navigation](navigation.md) `nav.launch.py` | same | **Map**, **Path**, **2D Goal Pose**, **Initial pose** |
@@ -130,7 +130,7 @@ Refresh the page if widgets stay empty after **T0** has been up for a few second
 |---------|--------------|-------------|
 | Page loads, no ROS data | **T0** not running or rosbridge disconnected | Start **T0**; check **Settings** / rosbridge status |
 | Empty map / no robot | Wrong **T0** for the task | SLAM or Nav launch for maps; bringup alone for teleop-only |
-| Teleop does nothing | Another **`/cmd_vel`** source or no bringup | Stop keyboard / Nav2 / demos; ensure **T0** includes **`ugv_bringup`** |
+| Teleop does nothing | A higher **`twist_mux`** rung is holding the floor (keyboard 100 / on-robot gamepad 150 vs the widget's 50), the widget is pointed at the wrong topic, or no bringup | Stop keyboard / gamepad teleop; confirm the widget's topic is **`/cmd_vel_ui`**; ensure **T0** includes **`ugv_bringup`** (which now also starts `twist_mux`) |
 | No camera widget image | Camera not publishing | Start [Vision](vision.md) demo; pick matching image topic in widget |
 | Port **5100** busy | Old Web App session | **`Ctrl+C`** prior **T1** or `pkill` stale process |
 | Confused with Web AI | Different package and port | [Web AI](experimental.md#web-ai) is **`ugv_chat_ai`** on **5000** |
