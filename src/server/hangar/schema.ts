@@ -543,7 +543,7 @@ export const briefings = pgTable('briefings', {
   packId: text('pack_id').references(() => briefingPacks.id, { onDelete: 'set null' }),
   capturedAt: text('captured_at'),
   href: text('href').notNull(),
-  bodyMarkdown: text('body_markdown'),
+  bodyMarkdown: text('body_markdown').notNull(),
   repoPath: text('repo_path'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

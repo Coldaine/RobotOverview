@@ -4,19 +4,19 @@
       "id": "robot-control-llms",
       "kind": "research",
       "href": "/datacore/briefing/robot-control-llms",
-      "repoPath": null
+      "repoPath": "content/datacore/robot-control-llms.md"
     },
     {
       "id": "compute-workload",
       "kind": "research",
       "href": "/datacore/briefing/compute-workload",
-      "repoPath": null
+      "repoPath": "content/datacore/compute-workload.md"
     },
     {
       "id": "artifact-intake",
       "kind": "research",
       "href": "/datacore/briefing/artifact-intake",
-      "repoPath": null
+      "repoPath": "keyArtifactstosort/INTAKE-REGISTER.md"
     },
     {
       "id": "wiring-model-completion",
@@ -34,43 +34,43 @@
       "id": "beast-vision",
       "kind": "research",
       "href": "/datacore/briefing/beast-vision",
-      "repoPath": null
+      "repoPath": "artifactIntake/00-MASTER-beast-vision.md"
     },
     {
       "id": "beast-splat-architecture",
       "kind": "research",
       "href": "/datacore/briefing/beast-splat-architecture",
-      "repoPath": null
+      "repoPath": "artifactIntake/01-splatting-architecture.md"
     },
     {
       "id": "beast-servo-camera",
       "kind": "research",
       "href": "/datacore/briefing/beast-servo-camera",
-      "repoPath": null
+      "repoPath": "artifactIntake/02-camera-decision.md"
     },
     {
       "id": "beast-rejected-paths",
       "kind": "research",
       "href": "/datacore/briefing/beast-rejected-paths",
-      "repoPath": null
+      "repoPath": "artifactIntake/03-rejected-paths.md"
     },
     {
       "id": "beast-lidar-open",
       "kind": "research",
       "href": "/datacore/briefing/beast-lidar-open",
-      "repoPath": null
+      "repoPath": "artifactIntake/04-lidar-open-decision.md"
     },
     {
       "id": "beast-research-method",
       "kind": "research",
       "href": "/datacore/briefing/beast-research-method",
-      "repoPath": null
+      "repoPath": "artifactIntake/05-research-method.md"
     },
     {
       "id": "beast-evidence-manifest",
       "kind": "research",
       "href": "/datacore/briefing/beast-evidence-manifest",
-      "repoPath": null
+      "repoPath": "keyArtifactstosort/reference/EVIDENCE-MANIFEST.md"
     }
   ],
   "packs": [

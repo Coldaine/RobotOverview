@@ -1,14 +1,15 @@
 ---
 title: Deployment — verified facts
-last_verified: 2026-07-30
+last_verified: 2026-07-31
 ---
 
 # Deployment — verified facts
 
 Everything below was verified against the live cluster (`admin@homelab-target`) and
-`coldaine-homelab` on 2026-07-30. Normalized cutover landed 2026-07-31 (reconstruction
-read path, op-verb ingest, briefings in DB). When this page and reality disagree, reality
-wins — check live state (`kubectl`, `curl`) before building on anything here.
+`coldaine-homelab` on 2026-07-31 (LAN Gateway + Postgres canaries). Normalized cutover
+includes reconstruction read path, op-verb ingest, and Datacore briefings in DB with bodies.
+When this page and reality disagree, reality wins — check live state (`kubectl`, `curl`)
+before building on anything here.
 
 **This repo** owns the Hangar app code, `Dockerfile`, and content tooling.
 **[`coldaine-homelab`](https://github.com/Coldaine/coldaine-homelab)** owns runtime
@@ -27,8 +28,10 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
   `POST /api/hangar/ingest` (Bearer `HANGAR_INGEST_TOKEN`) — verb table in
   [`AGENTS.md`](../AGENTS.md). Static `hangar.ts` is the offline/fixture fallback only
   (loudly indicated in the Shell when used).
-- **Datacore:** Packs/briefings read from the `briefings` table. When Postgres is
-  unavailable, briefings return empty and pages show a **DATACORE OFFLINE** banner.
+- **Datacore:** Packs/briefings read from the `briefings` table (seed includes the full
+  research corpus). Verified live: 12 briefings with non-empty `body_markdown`, including
+  plan kinds. When Postgres is unavailable, the app serves `src/data/datacore-corpus.ts`
+  under a **DATACORE OFFLINE** banner (content + loud state — not an empty wall).
 - **Build:** GitHub Actions (`.github/workflows/image.yml`) builds and publishes to GHCR
   on `main` (and PR proof tags). Shipwright is installed on the cluster but is not the
   Hangar image path today.
@@ -58,16 +61,15 @@ Token: Doppler `homelab`/`dev` → `HANGAR_INGEST_TOKEN`.
 See also [`db/hangar/standup.md`](../db/hangar/standup.md).
 
 ```bash
-# schema + migrations (corpus and snapshot-drop — paths in standup.md)
+# schema + migrations (paths in standup.md)
 psql … -f db/hangar/schema.sql
 # then apply db/hangar/migrations/* in date order (see standup.md)
 
-# Fixture → seed → apply
+# Corpus fixture (when research bodies change) → seed → apply
+npx tsx db/hangar/gen-datacore-corpus.ts
 npx tsx db/hangar/gen-seed.ts --out db/hangar/seed.sql
 psql … -f db/hangar/seed.sql
-
-# Replay research corpus into briefings
-doppler run -p homelab -c dev -- npx tsx db/hangar/ingest-research-corpus.ts
+# Datacore is full after seed — ingest-research-corpus.ts is repair/re-land only.
 ```
 
 ## Known gaps

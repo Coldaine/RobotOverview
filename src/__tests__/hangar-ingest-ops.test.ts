@@ -130,7 +130,10 @@ async function createTestDb(): Promise<{ db: IngestDb; close: () => Promise<void
   const root = resolve(process.cwd());
   mem.public.none(readFileSync(resolve(root, 'db/hangar/schema.sql'), 'utf8'));
   dropNullableCheckConstraints(mem);
-  const seed = readFileSync(resolve(root, 'db/hangar/seed.sql'), 'utf8');
+  const seed = readFileSync(resolve(root, 'db/hangar/seed.sql'), 'utf8').replace(
+    /-- >>> DATACORE_CORPUS_BEGIN[\s\S]*?-- <<< DATACORE_CORPUS_END\s*/m,
+    '-- (datacore corpus stripped for pg-mem)\n',
+  );
   for (const stmt of splitSql(seed)) {
     if (/^(BEGIN|COMMIT|SET)\b/i.test(stmt)) continue;
     mem.public.none(stmt.endsWith(';') ? stmt : `${stmt};`);

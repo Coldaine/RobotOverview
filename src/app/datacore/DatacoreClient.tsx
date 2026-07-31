@@ -40,6 +40,7 @@ export function DatacoreClient({ briefings, briefingsSource, packs, packsSource 
   const briefingsOffline = briefingsSource === 'static';
   const packsOffline = packsSource === 'static';
   const offline = briefingsOffline && packsOffline;
+  const hasFixtureCorpus = packs.length > 0 || briefings.length > 0;
 
   // Content intake — a lightweight, reversible local-notes capture (no backend).
   const [showCapture, setShowCapture] = useState(false);
@@ -84,12 +85,11 @@ export function DatacoreClient({ briefings, briefingsSource, packs, packsSource 
   }, [insights, needle, bay, conf]);
 
   const packHits = useMemo(
-    () => (packsOffline ? [] : packs.filter((p) => packMatchesQuery(p, needle, briefings))),
-    [needle, packs, briefings, packsOffline],
+    () => packs.filter((p) => packMatchesQuery(p, needle, briefings)),
+    [needle, packs, briefings],
   );
 
   const looseBriefingHits = useMemo(() => {
-    if (briefingsOffline) return [];
     const packedInHit = new Set(
       packHits.flatMap((p) => briefingsInPack(briefings, p.id).map((b) => b.id)),
     );
@@ -97,7 +97,7 @@ export function DatacoreClient({ briefings, briefingsSource, packs, packsSource 
       if (packedInHit.has(b.id)) return false;
       return briefingMatchesQuery(b, needle);
     });
-  }, [needle, packHits, briefings, briefingsOffline]);
+  }, [needle, packHits, briefings]);
 
   return (
     <div className="space-y-6">
@@ -112,10 +112,12 @@ export function DatacoreClient({ briefings, briefingsSource, packs, packsSource 
           </span>
           <span className="min-w-0 truncate font-mono text-[11px] text-ink-dim">
             {offline
-              ? 'Hangar Postgres briefings unavailable — research packs and briefs are not served from the repo.'
+              ? hasFixtureCorpus
+                ? 'Hangar Postgres unavailable — serving static research fixture.'
+                : 'Hangar Postgres briefings unavailable — no research fixture loaded.'
               : packsOffline
-                ? 'Research packs unavailable from Postgres — briefings still load.'
-                : 'Briefings unavailable from Postgres — research packs still load.'}
+                ? 'Research packs lane static — briefings still load from Postgres.'
+                : 'Briefings lane static — research packs still load from Postgres.'}
           </span>
         </div>
       )}
@@ -148,7 +150,7 @@ export function DatacoreClient({ briefings, briefingsSource, packs, packsSource 
             label: 'Knowledge Core',
             code: 'CORE',
             icon: BookOpen,
-            count: (briefingsOffline ? 0 : briefings.length) + insights.length,
+            count: briefings.length + insights.length,
           },
           { id: 'library', label: 'Hardware Library', code: 'HW', icon: CircuitBoard, count: documents.length },
           { id: 'console', label: 'BEAST Console', code: 'PLUG', icon: Plug, count: EXPECTED_CABLES.filter((c) => !c.era && c.build !== 'pi5').length },
@@ -267,7 +269,7 @@ export function DatacoreClient({ briefings, briefingsSource, packs, packsSource 
 
       {tab === 'knowledge' && (
         <>
-          {offline && (
+          {offline && !hasFixtureCorpus && (
             <div
               role="status"
               className="panel space-y-2 border-amber/40 p-4 [background-image:repeating-linear-gradient(-45deg,transparent,transparent_10px,rgba(255,176,32,0.06)_10px,rgba(255,176,32,0.06)_20px)]"
@@ -276,12 +278,12 @@ export function DatacoreClient({ briefings, briefingsSource, packs, packsSource 
                 Research packs &amp; briefs unavailable
               </div>
               <p className="font-mono text-[11px] leading-relaxed text-ink-dim">
-                Datacore is offline for Postgres-backed research content. Field insights below still load from the Hangar spine; reconnect Hangar Postgres to restore packs and briefings.
+                Datacore is offline for Postgres-backed research content and no static fixture is loaded. Field insights below still load from the Hangar spine.
               </p>
             </div>
           )}
 
-          {!packsOffline && packHits.length > 0 && (
+          {packHits.length > 0 && (
             <>
               <SectionTitle code="PACK">
                 {packHits.length} research pack{packHits.length === 1 ? '' : 's'}
@@ -357,7 +359,7 @@ export function DatacoreClient({ briefings, briefingsSource, packs, packsSource 
             </>
           )}
 
-          {!briefingsOffline && looseBriefingHits.length > 0 && (
+          {looseBriefingHits.length > 0 && (
             <>
               <SectionTitle code="BRIEF">
                 {packHits.length > 0

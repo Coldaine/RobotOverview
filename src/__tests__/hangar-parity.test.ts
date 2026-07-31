@@ -281,7 +281,10 @@ describe('hangar spine Postgres reconstruction parity', () => {
       readFileSync(resolve(ROOT, 'db/hangar/schema.sql'), 'utf8'),
       { expectCheckRewrites: true },
     );
-    const seedSql = prepareSqlForPgMem(readFileSync(resolve(ROOT, 'db/hangar/seed.sql'), 'utf8'));
+    const seedSql = prepareSqlForPgMem(readFileSync(resolve(ROOT, 'db/hangar/seed.sql'), 'utf8')).replace(
+      /-- >>> DATACORE_CORPUS_BEGIN[\s\S]*?-- <<< DATACORE_CORPUS_END\s*/m,
+      '-- (datacore corpus stripped for spine pg-mem parity)\n',
+    );
 
     for (const stmt of splitStatements(schemaSql)) mem.public.none(stmt);
     for (const stmt of splitStatements(seedSql)) mem.public.none(stmt);

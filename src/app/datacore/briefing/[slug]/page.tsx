@@ -31,14 +31,17 @@ export default async function BriefingPage({
 }) {
   const { slug } = await params;
 
-  // Distinguish "DB offline" from "unknown slug": offline renders the loud
-  // degraded panel for any slug (never a misleading 404); online + missing
-  // row is a real 404.
+  // Distinguish "DB offline" from "unknown slug": offline still serves the
+  // corpus fixture (loud banner on /datacore) so research stays readable;
+  // online + missing row is a real 404.
   const all = await getBriefings();
   const offline = all.source !== 'postgres';
 
-  const briefing = offline ? null : await getBriefing(slug);
+  const briefing = offline
+    ? (all.briefings.find((b) => b.id === slug) ?? null)
+    : await getBriefing(slug);
   if (!offline && !briefing) notFound();
+  if (offline && !briefing) notFound();
 
   const markdown = briefing ? await getBriefingBody(briefing) : null;
 
@@ -66,6 +69,18 @@ export default async function BriefingPage({
         )}
       </header>
 
+      {offline && markdown != null && (
+        <div
+          role="status"
+          className="flex items-center gap-3 border border-amber/50 bg-amber/10 px-4 py-2.5 [background-image:repeating-linear-gradient(-45deg,transparent,transparent_10px,rgba(255,176,32,0.06)_10px,rgba(255,176,32,0.06)_20px)]"
+        >
+          <span aria-hidden="true" className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-amber" />
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-amber">
+            DATACORE OFFLINE · static fixture
+          </span>
+        </div>
+      )}
+
       {markdown == null ? (
         <div
           role="status"
@@ -79,8 +94,8 @@ export default async function BriefingPage({
           </div>
           <p className="font-mono text-[11px] leading-relaxed text-ink-dim">
             {offline
-              ? 'Hangar Postgres is unreachable — this briefing lives in the database and research content is not served from the repo. Reconnect to restore it.'
-              : 'Briefing body unavailable — Postgres body missing or plan file unreadable. Research content is not served from the repo.'}
+              ? 'Hangar Postgres is unreachable and this slug is not in the static research fixture.'
+              : 'Briefing body unavailable — Postgres body missing. Research content should live in body_markdown.'}
           </p>
         </div>
       ) : (

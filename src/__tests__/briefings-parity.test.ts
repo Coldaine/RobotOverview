@@ -1,11 +1,14 @@
 import { readFileSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import type { Pool } from 'pg';
 import { newDb } from 'pg-mem';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import {
+  DATACORE_CORPUS_BRIEFINGS,
+  DATACORE_CORPUS_PACKS,
+} from '@/data/datacore-corpus';
 import type { DatacoreBriefingRow, DatacorePack } from '@/lib/datacore-model';
 import {
   getBriefing,
@@ -53,7 +56,7 @@ function patchPgMemForDrizzle(PoolCtor: {
   };
 }
 
-/** Inline fixtures — TS registry removed in Wave 3; corpus lives in Postgres. */
+/** Inline fixtures for focused unit inserts (not the full corpus). */
 const FIXTURE_PACK: DatacorePack = {
   id: 'beast-vision',
   title: 'Beast Vision & Capture',
@@ -67,7 +70,7 @@ const FIXTURE_RESEARCH: DatacoreBriefingRow = {
   id: 'beast-vision',
   title: 'Beast Vision and Capture — Research Index',
   href: '/datacore/briefing/beast-vision',
-  source: '',
+  source: 'artifactIntake/00-MASTER-beast-vision.md',
   kind: 'research',
   summary: 'Fixture research briefing with inlined body.',
   tags: ['vision', 'beast'],
@@ -75,7 +78,7 @@ const FIXTURE_RESEARCH: DatacoreBriefingRow = {
   packId: 'beast-vision',
   capturedAt: '2026-07-28',
   bodyMarkdown: '# Beast Vision\n\nFixture body.\n',
-  repoPath: null,
+  repoPath: 'artifactIntake/00-MASTER-beast-vision.md',
 };
 
 const PLAN_REPO_PATH = 'docs/plans/2026-07-30-wiring-model-completion.md';
@@ -86,11 +89,11 @@ const FIXTURE_PLAN: DatacoreBriefingRow = {
   href: '/datacore/briefing/wiring-model-completion',
   source: PLAN_REPO_PATH,
   kind: 'plan',
-  summary: 'Fixture plan briefing that reads from repo path.',
+  summary: 'Fixture plan briefing with body stored in Postgres.',
   tags: ['architecture', 'wiring'],
   aliases: ['wiring spine'],
   capturedAt: '2026-07-30',
-  bodyMarkdown: null,
+  bodyMarkdown: '# Wiring Model\n\nPlan body in DB.\n',
   repoPath: PLAN_REPO_PATH,
 };
 
@@ -108,7 +111,6 @@ describe('briefings Postgres read-model', () => {
     pool = new adapter.Pool() as Pool;
     db = drizzle(pool, { schema });
 
-    // Packs first (hub FK added after briefings exist — insert hub null, then patch).
     await db.insert(briefingPacks).values({
       id: FIXTURE_PACK.id,
       title: FIXTURE_PACK.title,
@@ -129,7 +131,7 @@ describe('briefings Postgres read-model', () => {
         packId: FIXTURE_RESEARCH.packId ?? null,
         capturedAt: FIXTURE_RESEARCH.capturedAt,
         href: FIXTURE_RESEARCH.href,
-        bodyMarkdown: FIXTURE_RESEARCH.bodyMarkdown,
+        bodyMarkdown: FIXTURE_RESEARCH.bodyMarkdown!,
         repoPath: FIXTURE_RESEARCH.repoPath,
       },
       {
@@ -142,7 +144,7 @@ describe('briefings Postgres read-model', () => {
         packId: null,
         capturedAt: FIXTURE_PLAN.capturedAt,
         href: FIXTURE_PLAN.href,
-        bodyMarkdown: null,
+        bodyMarkdown: FIXTURE_PLAN.bodyMarkdown!,
         repoPath: FIXTURE_PLAN.repoPath,
       },
     ]);
@@ -179,16 +181,12 @@ describe('briefings Postgres read-model', () => {
     expect(await getBriefing('does-not-exist', db)).toBeNull();
   });
 
-  it('getBriefingBody returns inlined markdown for research and repo file for plan', async () => {
-    const body = await getBriefingBody(FIXTURE_RESEARCH);
-    expect(body).toBe(FIXTURE_RESEARCH.bodyMarkdown);
-
-    const planBody = await getBriefingBody(FIXTURE_PLAN);
-    const fromDisk = await readFile(path.join(process.cwd(), PLAN_REPO_PATH), 'utf8');
-    expect(planBody).toBe(fromDisk);
+  it('getBriefingBody prefers bodyMarkdown for research and plan', async () => {
+    expect(await getBriefingBody(FIXTURE_RESEARCH)).toBe(FIXTURE_RESEARCH.bodyMarkdown);
+    expect(await getBriefingBody(FIXTURE_PLAN)).toBe(FIXTURE_PLAN.bodyMarkdown);
   });
 
-  it('rejects plan repoPath values containing ".."', async () => {
+  it('getBriefingBody returns null for path traversal without throwing', async () => {
     const sneaky: DatacoreBriefingRow = {
       id: 'sneaky',
       title: 'Sneaky',
@@ -202,5 +200,43 @@ describe('briefings Postgres read-model', () => {
       repoPath: '../etc/passwd',
     };
     expect(await getBriefingBody(sneaky)).toBeNull();
+  });
+
+  it('getBriefingBody returns null on missing plan file instead of throwing', async () => {
+    const missing: DatacoreBriefingRow = {
+      id: 'missing-plan',
+      title: 'Missing',
+      href: '/datacore/briefing/missing-plan',
+      source: 'docs/does-not-exist.md',
+      kind: 'plan',
+      summary: 'gone',
+      tags: [],
+      capturedAt: '2026-07-30',
+      bodyMarkdown: null,
+      repoPath: 'docs/does-not-exist.md',
+    };
+    expect(await getBriefingBody(missing)).toBeNull();
+  });
+});
+
+describe('briefings corpus fixture + seed', () => {
+  it('static corpus has the full research wall (≥12 briefings with bodies)', () => {
+    expect(DATACORE_CORPUS_PACKS.length).toBeGreaterThanOrEqual(1);
+    expect(DATACORE_CORPUS_BRIEFINGS.length).toBeGreaterThanOrEqual(12);
+    for (const b of DATACORE_CORPUS_BRIEFINGS) {
+      expect(b.bodyMarkdown?.trim().length, b.id).toBeGreaterThan(20);
+    }
+  });
+
+  it('seed.sql includes briefings with body_markdown (fresh DB paints Datacore)', () => {
+    const seed = readFileSync(path.join(process.cwd(), 'db/hangar/seed.sql'), 'utf8');
+    expect(seed).toContain('INSERT INTO briefing_packs');
+    expect(seed).toContain('INSERT INTO briefings');
+    expect(seed).toContain('robot-control-llms');
+    expect(seed).toContain('compute-workload');
+    expect(seed).toContain('body_markdown');
+    // Count INSERT INTO briefings lines — one per corpus briefing.
+    const inserts = seed.match(/^INSERT INTO briefings\(/gm) ?? [];
+    expect(inserts.length).toBeGreaterThanOrEqual(12);
   });
 });

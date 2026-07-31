@@ -1,6 +1,10 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { eq } from 'drizzle-orm';
+import {
+  DATACORE_CORPUS_BRIEFINGS,
+  DATACORE_CORPUS_PACKS,
+} from '@/data/datacore-corpus';
 import type { HangarReadStatus } from '@/lib/hangar-read-status';
 import {
   briefingById,
@@ -92,6 +96,24 @@ function mapPackRow(row: PackTableRow): DatacorePack | null {
   };
 }
 
+function staticBriefingsFallback(reason: 'not-configured' | 'postgres-error'): BriefingsRead {
+  return {
+    source: 'static',
+    fallbackReason: reason,
+    briefings: DATACORE_CORPUS_BRIEFINGS,
+  };
+}
+
+function staticPacksFallback(
+  reason: 'not-configured' | 'postgres-error',
+): PacksRead {
+  return {
+    source: 'static',
+    fallbackReason: reason,
+    packs: DATACORE_CORPUS_PACKS,
+  };
+}
+
 /** DB-injectable: load all briefings from a Hangar Drizzle client. */
 export async function loadBriefingsFromDb(db: HangarDrizzle): Promise<DatacoreBriefingRow[]> {
   const rows = await db.select().from(briefings);
@@ -130,23 +152,15 @@ export async function getBriefings(db?: HangarDrizzle): Promise<BriefingsRead> {
   try {
     const client = db ?? (await getHangarDrizzle());
     if (!client) {
-      return {
-        source: 'static',
-        fallbackReason: 'not-configured',
-        briefings: [],
-      };
+      return staticBriefingsFallback('not-configured');
     }
     return {
       source: 'postgres',
       briefings: await loadBriefingsFromDb(client),
     };
   } catch (error) {
-    console.warn('Hangar Postgres briefings read failed; Datacore offline.', error);
-    return {
-      source: 'static',
-      fallbackReason: 'postgres-error',
-      briefings: [],
-    };
+    console.warn('Hangar Postgres briefings read failed; serving Datacore corpus fixture.', error);
+    return staticBriefingsFallback('postgres-error');
   }
 }
 
@@ -155,23 +169,15 @@ export async function getPacks(db?: HangarDrizzle): Promise<PacksRead> {
   try {
     const client = db ?? (await getHangarDrizzle());
     if (!client) {
-      return {
-        source: 'static',
-        fallbackReason: 'not-configured',
-        packs: [],
-      };
+      return staticPacksFallback('not-configured');
     }
     return {
       source: 'postgres',
       packs: await loadPacksFromDb(client),
     };
   } catch (error) {
-    console.warn('Hangar Postgres packs read failed; Datacore offline.', error);
-    return {
-      source: 'static',
-      fallbackReason: 'postgres-error',
-      packs: [],
-    };
+    console.warn('Hangar Postgres packs read failed; serving Datacore corpus fixture.', error);
+    return staticPacksFallback('postgres-error');
   }
 }
 
@@ -183,40 +189,40 @@ export async function getBriefing(
   try {
     const client = db ?? (await getHangarDrizzle());
     if (!client) {
-      return null;
+      return DATACORE_CORPUS_BRIEFINGS.find((b) => b.id === id) ?? null;
     }
     return loadBriefingFromDb(client, id);
   } catch (error) {
-    console.warn('Hangar Postgres briefing read failed; Datacore offline.', error);
-    return null;
+    console.warn('Hangar Postgres briefing read failed; serving Datacore corpus fixture.', error);
+    return DATACORE_CORPUS_BRIEFINGS.find((b) => b.id === id) ?? null;
   }
 }
 
 /**
- * Resolve briefing markdown body. Research uses inlined `bodyMarkdown`;
- * plan reads `repoPath` from the repo (never caller-supplied paths).
+ * Resolve briefing markdown body. Prefer inlined `bodyMarkdown` (all kinds).
+ * Legacy plan rows that only have `repoPath` may still try a guarded file read;
+ * ENOENT / IO errors return null (never throw into the page).
  */
 export async function getBriefingBody(briefing: DatacoreBriefingRow): Promise<string | null> {
-  if (briefing.kind === 'research') {
+  if (briefing.bodyMarkdown) {
     return briefing.bodyMarkdown;
   }
 
-  if (briefing.kind === 'plan') {
-    const repoPath = briefing.repoPath;
-    // Reject anything that escapes the repo root: parent traversal, absolute
-    // POSIX paths, Windows drive paths, and UNC shares.
-    if (
-      !repoPath ||
-      repoPath.includes('..') ||
-      path.isAbsolute(repoPath) ||
-      /^[a-zA-Z]:[\\/]/.test(repoPath) ||
-      repoPath.startsWith('\\\\') ||
-      repoPath.startsWith('/')
-    ) {
-      return null;
-    }
-    return readFile(path.join(process.cwd(), repoPath), 'utf8');
+  const repoPath = briefing.repoPath;
+  if (
+    !repoPath ||
+    repoPath.includes('..') ||
+    path.isAbsolute(repoPath) ||
+    /^[a-zA-Z]:[\\/]/.test(repoPath) ||
+    repoPath.startsWith('\\\\') ||
+    repoPath.startsWith('/')
+  ) {
+    return null;
   }
 
-  return null;
+  try {
+    return await readFile(path.join(process.cwd(), repoPath), 'utf8');
+  } catch {
+    return null;
+  }
 }
