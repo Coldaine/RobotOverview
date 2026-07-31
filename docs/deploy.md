@@ -18,8 +18,10 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
 ## What runs today
 
 - **Workload:** Deployment `hangar` in namespace `hangar` (Flux `target-apps` →
-  `infra/k8s/apps/hangar/`). Image `ghcr.io/coldaine/robot-overview:latest` with
-  `imagePullPolicy: Always` (Soil-style interim; digest pin is a follow-up).
+  `infra/k8s/apps/hangar/`). Image is **digest-pinned** since 2026-07-31
+  ([coldaine-homelab PR #285](https://github.com/Coldaine/coldaine-homelab/pull/285)):
+  `ghcr.io/coldaine/robot-overview@sha256:177180e6…` (the PR #134 build, verified against
+  the running pod) with `imagePullPolicy: IfNotPresent`. `:latest` + `Always` is retired.
 - **Database:** Logical DB `hangar` on CloudNativePG `pg18-core` (`data-platform`).
   App env from Secret `hangar-runtime-secrets` (`HANGAR_DB_*`, `HANGAR_INGEST_TOKEN`).
   Readiness probe is `GET /api/hangar/preflight` — a Ready pod means Postgres is reachable.
@@ -48,11 +50,10 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
 ## Shipping a change
 
 1. Merge app code to `RobotOverview` `main` → GHA publishes a new GHCR image.
-2. With `:latest` + `Always`, restart/roll the Deployment if the node cached an old pull:
-   `kubectl -n hangar rollout restart deploy/hangar`.
-3. For digest-pinned deploys (future): bump the image ref in
-   `coldaine-homelab/infra/k8s/apps/hangar/deployment.yaml` and merge so Flux reconciles.
-4. Verify: `GET https://hangar.moosegoose.xyz/api/hangar/preflight` and Shell DATA lamp = PG.
+2. Bump the `@sha256:` image ref in `coldaine-homelab/infra/k8s/apps/hangar/deployment.yaml`
+   to the new build's digest and merge — Flux (`target-apps`, 10 min interval) reconciles and
+   rolls the Deployment. Merging code alone deploys nothing.
+3. Verify: `GET https://hangar.moosegoose.xyz/api/hangar/preflight` and Shell DATA lamp = PG.
 
 ## Agent ingest
 
@@ -79,5 +80,6 @@ psql … -f db/hangar/seed.sql
 
 - Datacore library store (`DATACORE_LIBRARY_URL` / Garage) is not wired — library "Open"
   links stay offline by design until the bucket exists.
-- Digest pinning in Git (instead of `:latest`) is deferred.
+- The pinned digest is the 2026-07-31 PR #134 build. Everything merged to `main` since then
+  is built to GHCR but **not deployed** until the next deliberate digest bump (step 2 above).
 - Shipwright `Build` for Hangar is optional future work; not required for production today.
