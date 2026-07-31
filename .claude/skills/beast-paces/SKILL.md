@@ -32,10 +32,17 @@ Prefer running these commands directly over treating this skill as a slash-comma
 
 ## Phase 0 — Preflight (no motion possible)
 
-1. `ssh -o ConnectTimeout=10 beast-01` — confirm reachable, with a bounded timeout so preflight
-   cannot hang. If it fails, follow the network recovery steps in `docs/beast-ops.md`. Do not
-   expect `ping beast-01.local` to fix addressing: it only tests reachability over mDNS and
-   does **not** renew a DHCP lease.
+1. Confirm beast-01 is reachable without letting preflight hang. `ConnectTimeout` alone only
+   bounds the TCP connect and key exchange, not authentication, so pair it with `BatchMode`
+   (fail instead of sitting on a password prompt) and an outer timeout:
+
+   ```bash
+   timeout 20 ssh -o ConnectTimeout=10 -o BatchMode=yes beast-01 true
+   ```
+
+   If it fails, follow the network recovery steps in `docs/beast-ops.md`. Do not expect
+   `ping beast-01.local` to fix addressing: it only tests reachability over mDNS and does
+   **not** renew a DHCP lease.
 2. Run both ground-truth command blocks from the Quick connect section. Confirm:
    `beast-ros-base.service` active; `/ugv/voltage` publishes a plausible 3S value
    (~9.6–12.6 V — abort below 10.5 V and tell Patrick to charge); `/scan` streaming;
@@ -45,9 +52,13 @@ Prefer running these commands directly over treating this skill as a slash-comma
    read its motion flag (`ros2 param get <node> allow_motion`); `false` is the only pass. If
    the parameter cannot be read, or reads anything else, the robot stays locked: report that
    and stop. Do not proceed to Phase 2 and do not report a clean preflight.
-4. Confirm whether a `cmd_vel` timeout watchdog is actually implemented in `~/beast/ugv_ws`
-   (the source is not in this repo, so it must be checked live). Tell Patrick what you found.
-   No watchdog → Phase 2 does not run; say so and stop after the status summary.
+4. Confirm a `cmd_vel` timeout watchdog is actually implemented — this check is **fail-closed**.
+   The source is not in this repo, so check it live, and check the build that is actually
+   running rather than just the source tree: look for the timeout in `~/beast/ugv_ws/src`,
+   confirm it is present in the installed workspace (`~/beast/ugv_ws/install`), and read the
+   live setting off the node (`ros2 param get <node> cmd_vel_timeout`). Tell Patrick exactly
+   what you found. If any of those three is missing, unreadable, or the timeout is absent or
+   disabled, the robot stays locked: Phase 2 does not run. Say so and stop after the summary.
 5. Report a one-screen status summary before anything else.
 
 ## Phase 1 — Position check (ask, don't assume)
@@ -60,9 +71,14 @@ Ask Patrick which setup he has:
 ## Phase 2 — cmd_vel-timeout gate (the safety test)
 
 Only with Patrick's explicit "go", and only if Phase 0 step 4 confirmed a `cmd_vel` timeout
-watchdog actually exists. The runbook's own lifted-track procedure in `docs/beast-ops.md` is
-the authority on this test — the steps below are the supervised wrapper around it, not a
-second copy of the expected timing. Take the pass/fail threshold from the runbook.
+watchdog actually exists. The steps below are the supervised wrapper around the runbook's
+lifted-track procedure in `docs/beast-ops.md`; read that first for context.
+
+Do **not** take the stop threshold from the runbook: its "configured three-second heartbeat
+interval" is the expectation the 2026-07-31 test disproved, and waiting three seconds on a
+robot with no proven stop is the failure this phase exists to prevent. The 2 s deadline in
+step 4 is this skill's own operator abort deadline, not a claim about the watchdog's tuning.
+Whatever timeout Phase 0 found configured, abort at 2 s regardless.
 
 1. **Stage the independent stop path first — before motion is possible at all.** In a third SSH
    session, have this exact command typed and ready, not yet run, and leave that session
@@ -98,7 +114,9 @@ second copy of the expected timing. Take the pass/fail threshold from the runboo
      '{linear: {x: 0.02}, angular: {}}'
    ```
 
-   Start at 0.02 m/s; raise only to overcome deadband, never above 0.05 m/s in this phase.
+   Start at 0.02 m/s and raise only enough to overcome motor deadband. Caps differ by setup:
+   **lifted, never above 0.05 m/s; on the floor, never above 0.02 m/s** (the Phase 1 floor
+   limit wins — do not raise the speed of a robot that is on the ground).
 4. With tracks turning steadily, kill the publisher (Ctrl+C) and have Patrick count out loud
    from zero. The tracks must stop **on their own**, with no stop command sent.
    **Observation deadline: 2 s.** The instant the count passes 2 s — or if you cannot clearly
@@ -135,14 +153,22 @@ On the floor, runway confirmed clear, Phase 2 passed, Patrick's go given:
 Run this even if the launch died on its own or the SSH session dropped — in that case open a
 fresh session and start at step 1 anyway.
 
-1. Ctrl+C the foreground launch if it is still running; `sudo systemctl start
-   beast-ros-base.service` (this restores the boot-default `allow_motion:=false` lock).
-2. Verify, in this order: service active; the bringup node's `allow_motion` parameter reads
-   `false` again (same check as Phase 0 step 3); `/cmd_vel` publisher count 0; telemetry
-   flowing. If `allow_motion` cannot be confirmed `false`, say so plainly, treat the robot as
-   unsafe, and do not report a clean finish.
-3. Write results back:
+**Stop motion before touching the service.** Restarting `beast-ros-base.service` does not stop
+a moving robot — the ESP32 holds the last velocity, so a restart can leave the tracks driving.
+
+1. Fire the staged zero from Phase 2 step 1, then confirm with Patrick that the tracks are
+   physically stopped. If they are not, have him use the hardware cut (chassis power switch)
+   immediately. Do not move on until the robot is visibly still.
+2. Ctrl+C the foreground launch and confirm no bringup process remains (so it cannot re-publish
+   or fight the service). Then `sudo systemctl start beast-ros-base.service` — this restores
+   the boot-default `allow_motion:=false` lock.
+3. Verify, in this order: robot visibly stopped; service active; the bringup node's
+   `allow_motion` parameter reads `false` again (same check as Phase 0 step 3); `/cmd_vel`
+   publisher count 0; `/odom` showing no motion; telemetry flowing. If `allow_motion` cannot be
+   confirmed `false`, or the robot is not confirmed stopped, say so plainly, treat the robot as
+   unsafe, ask Patrick to cut power, and do not report a clean finish.
+4. Write results back:
    - Update the Quick connect block in `docs/beast-ops.md` (dated) — watchdog result,
      top speeds tried, camera check outcome, any anomalies.
    - Record a durable insight via the hangar-logbook skill / `append_insight` ingest op.
-4. Give Patrick a plain-language debrief: what passed, what didn't, what's unlocked next.
+5. Give Patrick a plain-language debrief: what passed, what didn't, what's unlocked next.
