@@ -22,6 +22,13 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
     if (wsUrl) {
       rosClient.connect(wsUrl);
       return () => {
+        // An engaged e-stop keeps the socket — and therefore its >= 1 Hz
+        // republish — alive past this unmount. twist_mux drops the lock if it
+        // restarts, so the heartbeat has to outlive a route change or a Strict
+        // Mode double-invoke; tearing the socket down here would silently mute
+        // the only thing holding the robot stopped. Releasing the stop lets the
+        // next unmount disconnect normally.
+        if (rosClient.isEstopEngaged()) return;
         rosClient.disconnect();
       };
     }

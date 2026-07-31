@@ -6,6 +6,7 @@ import {
   useCockpitOdom,
   useCockpitOverheadClearance,
   useCockpitScan,
+  useCockpitEstop,
 } from '@/lib/ros/client';
 import { renderHook, act } from '@testing-library/react';
 
@@ -47,6 +48,28 @@ class MockWebSocket {
   }
 }
 
+const ESTOP_TOPIC = '/cmd_vel_estop_lock';
+
+// Every `{data: …}` value this client has put on the lock topic, in order.
+function estopPublishes(ws: MockWebSocket): boolean[] {
+  return ws.send.mock.calls
+    .map((c) => JSON.parse(c[0]))
+    .filter((m) => m.op === 'publish' && m.topic === ESTOP_TOPIC)
+    .map((m) => m.msg.data as boolean);
+}
+
+function wireOps(ws: MockWebSocket): Array<{ op: string; topic?: string }> {
+  return ws.send.mock.calls.map((c) => JSON.parse(c[0]));
+}
+
+function openSocket(url = 'wss://beast-test-url:9090'): MockWebSocket {
+  act(() => {
+    rosClient.connect(url);
+    MockWebSocket.latestInstance?.triggerOpen();
+  });
+  return MockWebSocket.latestInstance!;
+}
+
 describe('rosClient and hooks', () => {
   beforeEach(() => {
     vi.stubGlobal('WebSocket', MockWebSocket);
@@ -55,6 +78,9 @@ describe('rosClient and hooks', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    // Operator intent is module state that deliberately outlives the socket, so
+    // it has to be cleared explicitly or it bleeds into the next test.
+    rosClient.clearEstopIntent();
     rosClient.disconnect();
     MockWebSocket.latestInstance = null;
   });
@@ -189,6 +215,190 @@ describe('rosClient and hooks', () => {
       if (deg < 0) deg += 360;
       const isBlinded = deg >= 45 && deg <= 134.5;
       expect(isBlinded).toBe(false);
+    });
+  });
+
+  // ── E-STOP LOCK REPUBLISH CONTRACT ────────────────────────────────────────
+  // twist_mux takes lock topics with VOLATILE durability at `timeout: 0.0`, so
+  // a one-shot publish can lose the discovery race and the lock does not
+  // survive a mux restart. The client must hold the lock at >= 1 Hz.
+  describe('e-stop lock republish contract', () => {
+    it('republishes `true` at >= 1 Hz for as long as the stop is engaged', () => {
+      const ws = openSocket();
+      ws.send.mockClear();
+
+      act(() => {
+        expect(rosClient.setEstopLock(true)).toBe(true);
+      });
+
+      // The stop must land on the wire on the click, not one tick later.
+      expect(estopPublishes(ws)).toEqual([true]);
+
+      act(() => {
+        vi.advanceTimersByTime(2000);
+      });
+
+      const sends = estopPublishes(ws);
+      // 1 immediate + at least 2 more over 2 s satisfies the 1 Hz floor.
+      expect(sends.length).toBeGreaterThanOrEqual(3);
+      expect(sends.every((v) => v === true)).toBe(true);
+      expect(rosClient.isEstopEngaged()).toBe(true);
+    });
+
+    it('bursts `false` on release and then goes quiet', () => {
+      const ws = openSocket();
+      act(() => {
+        rosClient.setEstopLock(true);
+      });
+      ws.send.mockClear();
+
+      act(() => {
+        rosClient.setEstopLock(false);
+      });
+      expect(estopPublishes(ws)).toEqual([false]);
+
+      act(() => {
+        vi.advanceTimersByTime(2000);
+      });
+
+      const burst = estopPublishes(ws);
+      expect(burst.length).toBeGreaterThanOrEqual(3);
+      expect(burst.every((v) => v === false)).toBe(true);
+      expect(rosClient.isEstopEngaged()).toBe(false);
+
+      // Burst over — nothing keeps talking on the lock topic.
+      ws.send.mockClear();
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
+      expect(estopPublishes(ws)).toHaveLength(0);
+    });
+
+    it('re-advertises and resumes the heartbeat on reconnect', () => {
+      openSocket();
+      act(() => {
+        rosClient.setEstopLock(true);
+      });
+      const firstSocket = MockWebSocket.latestInstance!;
+
+      act(() => {
+        firstSocket.triggerClose();
+      });
+
+      // Nothing should be published into a dead socket.
+      firstSocket.send.mockClear();
+      act(() => {
+        vi.advanceTimersByTime(900);
+      });
+      expect(estopPublishes(firstSocket)).toHaveLength(0);
+
+      act(() => {
+        vi.advanceTimersByTime(300); // backoff elapses, new socket constructed
+      });
+      const secondSocket = MockWebSocket.latestInstance!;
+      expect(secondSocket).not.toBe(firstSocket);
+
+      act(() => {
+        secondSocket.triggerOpen();
+      });
+
+      // The mux may have restarted while we were gone, so the lock is asserted
+      // immediately — and only after the publisher is advertised.
+      const ops = wireOps(secondSocket);
+      const advertiseIdx = ops.findIndex((m) => m.op === 'advertise' && m.topic === ESTOP_TOPIC);
+      const publishIdx = ops.findIndex((m) => m.op === 'publish' && m.topic === ESTOP_TOPIC);
+      expect(advertiseIdx).toBeGreaterThanOrEqual(0);
+      expect(publishIdx).toBeGreaterThan(advertiseIdx);
+      expect(estopPublishes(secondSocket)).toEqual([true]);
+
+      // And the heartbeat keeps running on the new socket.
+      act(() => {
+        vi.advanceTimersByTime(2000);
+      });
+      expect(estopPublishes(secondSocket).length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('leaves no timers behind once the release burst finishes', () => {
+      const ws = openSocket();
+
+      act(() => {
+        rosClient.setEstopLock(true);
+      });
+      expect(vi.getTimerCount()).toBeGreaterThan(0);
+
+      act(() => {
+        rosClient.setEstopLock(false);
+        vi.advanceTimersByTime(3000);
+      });
+
+      // No heartbeat, no release burst, no reconnect backoff pending.
+      expect(vi.getTimerCount()).toBe(0);
+
+      ws.send.mockClear();
+      act(() => {
+        vi.advanceTimersByTime(5000);
+      });
+      expect(ws.send).not.toHaveBeenCalled();
+    });
+
+    it('is idempotent — a second engage does not stack a second heartbeat', () => {
+      openSocket();
+
+      act(() => {
+        rosClient.setEstopLock(true);
+      });
+      const timers = vi.getTimerCount();
+
+      act(() => {
+        rosClient.setEstopLock(true);
+      });
+      expect(vi.getTimerCount()).toBe(timers);
+    });
+
+    it('refuses to latch the lock when the socket is down', () => {
+      // No connect at all: nothing can reach the mux, so the client must not
+      // claim the robot is locked.
+      expect(rosClient.setEstopLock(true)).toBe(false);
+      expect(rosClient.isEstopEngaged()).toBe(false);
+      expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it('reports heartbeat honestly and keeps holding after the React tree unmounts', () => {
+      const ws = openSocket();
+      const hook = renderHook(() => useCockpitEstop());
+
+      expect(hook.result.current.engaged).toBe(false);
+
+      act(() => {
+        rosClient.setEstopLock(true);
+      });
+      expect(hook.result.current.engaged).toBe(true);
+      expect(hook.result.current.heartbeat).toBe(true);
+
+      // A dropped socket must stop claiming a live heartbeat, while intent
+      // (what reconnect will re-assert) stays latched.
+      act(() => {
+        ws.triggerClose();
+      });
+      expect(hook.result.current.heartbeat).toBe(false);
+      expect(hook.result.current.engaged).toBe(true);
+
+      act(() => {
+        vi.advanceTimersByTime(1200);
+        MockWebSocket.latestInstance?.triggerOpen();
+      });
+      const live = MockWebSocket.latestInstance!;
+      expect(hook.result.current.heartbeat).toBe(true);
+
+      // The heartbeat is client state, not effect state: unmounting the whole
+      // cockpit must not mute an engaged stop.
+      hook.unmount();
+      live.send.mockClear();
+      act(() => {
+        vi.advanceTimersByTime(2000);
+      });
+      expect(estopPublishes(live).length).toBeGreaterThanOrEqual(2);
+      expect(estopPublishes(live).every((v) => v === true)).toBe(true);
     });
   });
 });
