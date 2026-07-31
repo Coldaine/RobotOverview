@@ -1,17 +1,30 @@
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { BriefingMarkdown } from '@/components/datacore/BriefingMarkdown';
 
-describe('BriefingMarkdown', () => {
-  it('renders the compute-workload briefing without dropping key sections', () => {
-    const markdown = readFileSync(
-      path.join(process.cwd(), 'content/datacore/compute-workload.md'),
-      'utf8',
-    );
+/** Inline fixture — research markdown now lives in Postgres, not content/datacore/. */
+const FIXTURE_MARKDOWN = `# Compute Workload Sizing — Orin NX vs AGX Orin
 
-    render(<BriefingMarkdown markdown={markdown} />);
+## Start with an objective tree and quantified requirements
+
+Target latency under **29.13 ms** at peak.
+
+## Make a resource-allocation matrix by hardware engine
+
+AGX Orin advertises **275 TOPS**.
+
+## A particularly good Orin NX visualization: OmniNxt
+
+Pipeline diagram placeholder.
+
+## The concrete artifact set I would trust
+
+Benchmark logs and power traces.
+`;
+
+describe('BriefingMarkdown', () => {
+  it('renders briefing markdown without dropping key sections', () => {
+    render(<BriefingMarkdown markdown={FIXTURE_MARKDOWN} />);
 
     expect(
       screen.getByRole('heading', {

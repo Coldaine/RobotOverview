@@ -71,6 +71,7 @@ CREATE TABLE wishlist_meta (
   risk_note             TEXT,
   for_asset_id          TEXT REFERENCES assets(id) ON DELETE SET NULL,
   for_mission_id        TEXT,                   -- FK added after missions exists
+  source                TEXT,
   FOREIGN KEY (asset_id, asset_lifecycle)
     REFERENCES assets(id, lifecycle) ON DELETE CASCADE
 );
@@ -163,7 +164,8 @@ CREATE TABLE missions (
   name        TEXT NOT NULL,
   status      mission_status NOT NULL,
   objective   TEXT,
-  environment TEXT
+  environment TEXT,
+  required_loadout TEXT[] NOT NULL DEFAULT '{}'
 );
 CREATE TABLE mission_requisitions (
   mission_id TEXT NOT NULL REFERENCES missions(id) ON DELETE CASCADE,
@@ -197,7 +199,8 @@ CREATE TABLE capabilities (
   id          TEXT PRIMARY KEY,
   name        TEXT NOT NULL,
   description TEXT,
-  unlocked    BOOLEAN NOT NULL DEFAULT false
+  unlocked    BOOLEAN NOT NULL DEFAULT false,
+  bay         TEXT REFERENCES groups(id) ON DELETE SET NULL
 );
 CREATE TABLE capability_deps (
   capability_id TEXT NOT NULL REFERENCES capabilities(id) ON DELETE CASCADE,
@@ -217,7 +220,8 @@ CREATE TABLE insights (
   body        TEXT,
   confidence  confidence_level,
   source      TEXT,
-  captured_at TIMESTAMPTZ
+  captured_at TIMESTAMPTZ,
+  bay         TEXT REFERENCES groups(id) ON DELETE SET NULL
 );
 CREATE TABLE insight_assets (                    -- explicit junctions (revision #8)
   insight_id TEXT NOT NULL REFERENCES insights(id) ON DELETE CASCADE,
@@ -312,5 +316,58 @@ CREATE INDEX idx_assignments_asset_iface ON loadout_assignments(asset_id, interf
 CREATE INDEX idx_terminals_asset    ON terminals(asset_id);
 CREATE INDEX idx_net_terminals_term ON net_terminals(terminal_id);
 CREATE INDEX idx_document_assets_asset ON document_assets(asset_id);
+
+-- ── CORPUS (shortcuts, hangar meta, briefings) ───────────────────────────────
+CREATE TABLE asset_shortcuts (
+  asset_id    TEXT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
+  shortcut_id TEXT NOT NULL,
+  position    INTEGER NOT NULL,
+  label       TEXT NOT NULL,
+  type        TEXT NOT NULL CHECK (type IN ('url','command')),
+  url         TEXT,
+  command     TEXT,
+  note        TEXT,
+  PRIMARY KEY (asset_id, position),
+  UNIQUE (asset_id, shortcut_id),
+  CHECK ((type = 'url' AND url IS NOT NULL) OR (type = 'command' AND command IS NOT NULL))
+);
+
+CREATE TABLE hangar_meta (
+  id       TEXT PRIMARY KEY CHECK (id = 'hangar'),
+  title    TEXT NOT NULL,
+  operator TEXT NOT NULL,
+  codename TEXT NOT NULL,
+  updated  TEXT NOT NULL
+);
+
+CREATE TABLE briefing_packs (
+  id              TEXT PRIMARY KEY,
+  title           TEXT NOT NULL,
+  code            TEXT NOT NULL,
+  summary         TEXT NOT NULL,
+  hub_briefing_id TEXT,
+  topics          TEXT[] NOT NULL DEFAULT '{}'
+);
+
+CREATE TABLE briefings (
+  id            TEXT PRIMARY KEY,
+  title         TEXT NOT NULL,
+  kind          TEXT NOT NULL CHECK (kind IN ('research','plan')),
+  summary       TEXT NOT NULL,
+  tags          TEXT[] NOT NULL DEFAULT '{}',
+  aliases       TEXT[] NOT NULL DEFAULT '{}',
+  pack_id       TEXT REFERENCES briefing_packs(id) ON DELETE SET NULL,
+  captured_at   TEXT,
+  href          TEXT NOT NULL,
+  body_markdown TEXT,
+  repo_path     TEXT,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CHECK ((kind = 'research' AND body_markdown IS NOT NULL) OR (kind = 'plan' AND repo_path IS NOT NULL))
+);
+
+ALTER TABLE briefing_packs
+  ADD CONSTRAINT briefing_packs_hub_fk
+    FOREIGN KEY (hub_briefing_id) REFERENCES briefings(id) ON DELETE SET NULL;
 
 COMMIT;

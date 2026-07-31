@@ -12,27 +12,67 @@ Working on UI? Follow [`docs/rich-ui.md`](docs/rich-ui.md) — enrich surfaces, 
 
 ## Content workflow
 
-**Postgres is canonical.** Facts that appear in the Hangar UI are written through the
-ingest API against the live app / database — not by editing TypeScript.
+Facts and research persist to Postgres via `POST /api/hangar/ingest` (Bearer
+`HANGAR_INGEST_TOKEN` from Doppler `homelab`/`dev`). **Never edit `src/data/hangar.ts`
+for content** — it is a CI fixture and loud offline fallback only. Types:
+`src/data/types.ts`. Schema/migrations: [`db/hangar/standup.md`](db/hangar/standup.md).
+Deploy facts: [`docs/deploy.md`](docs/deploy.md).
 
 ```http
-POST https://hangar.moosegoose.xyz/api/hangar/ingest
+POST /api/hangar/ingest
 Authorization: Bearer $HANGAR_INGEST_TOKEN
 Content-Type: application/json
 
-{ "entity": "<kind>", "record": { "id": "…", … } }
+{ "op": "<verb>", "input": { … } }
 ```
 
-Kinds: `unit` · `item` · `mission` · `wishlist` · `capability` · `insight` ·
-`activity` · `terminal` · `net` · `document`. Token lives in Doppler
-(`homelab`/`dev` → `HANGAR_INGEST_TOKEN`). See [`docs/deploy.md`](docs/deploy.md).
+Research packs/briefings render at `/datacore` from the `briefings` table; the repo holds
+code, tests, plans, and docs — never research bodies.
 
-`src/data/hangar.ts` is a **fixture / offline fallback** and bootstrap source for
-`npm run hangar:seed-spine`. Do not treat it as the agent write mouth. Types live in
-`src/data/types.ts`; integrity tests still guard the fixture shape. Schema/migrations
-live in `db/hangar/`. If the UI is on static fallback, that state must be loudly visible.
+### Op verbs
 
-Research notes may still land in `content/` or intake dirs; **Hangar facts go through ingest.**
+| Op | Input shape |
+| --- | --- |
+| `append_insight` | `{ id, title, body, confidence: "high"\|"medium"\|"low", source?, bay?, capturedAt?, units?, missions?, tags? }` |
+| `append_activity` | `{ id, kind: "acquired"\|"price-drop"\|"shipped"\|"insight"\|"mission"\|"researched", text, at? }` |
+| `patch_status` | `{ target: "unit"\|"item"\|"wishlist", id, status }` |
+| `assign_loadout` | `{ hostAssetId, slot, assetId: string\|null }` |
+| `link_insight` | `{ insightId, units?, missions? }` |
+| `land_unit` | Strict full unit record (`id`, `name`, `bay`, `class`, `status`, `summary`, `specs`, …) |
+| `land_item` | Strict full inventory item (`id`, `name`, `bay`, `category`, `status`, `summary`, `description`, `specs`, …) |
+| `land_wishlist` | Strict full wishlist (`id`, `name`, `category`, `rationale`, `price`, `status`, …) |
+| `land_mission` | Strict full mission (`id`, `code`, `name`, `status`, `objective`, `requisitionedUnits`, `requiredLoadout`, `wishlist`, `objectives`, `constraints`, …) |
+| `land_document` | Strict full document (`id`, `title`, `kind`, `libraryPath`, `url?`, `units?`, `note?`) |
+| `land_briefing` | `{ id, title, kind: "research", summary, tags?, aliases?, packId?, capturedAt?, href?, bodyMarkdown }` — markdown body in `bodyMarkdown`; **never** write research markdown into the repo |
+| `land_pack` | `{ id, title, code, summary, hubBriefingId?, topics: string[] }` |
+
+Common path — `append_insight`:
+
+```json
+{
+  "op": "append_insight",
+  "input": {
+    "id": "ins-beast-uart-5v-hazard",
+    "title": "40-pin 5 V on UART pins will kill the Orin",
+    "body": "Jetson Orin NX UART pins are 1.8 V. Do not land kit 5 V UART wiring on those pads.",
+    "confidence": "high",
+    "source": "Waveshare UGV Beast schematic + Jetson Orin NX pinmux",
+    "bay": "robotics",
+    "units": ["beast-01"],
+    "missions": ["msn-orin-cutover"],
+    "tags": ["wiring", "safety", "orin"]
+  }
+}
+```
+
+### Errors
+
+Agents must read the response and fix the payload — do not retry blind.
+
+- **400** — Zod validation (`issues` lists field errors)
+- **401 / 503** — auth (`Unauthorized` / `HANGAR_INGEST_TOKEN` not configured) or DB unavailable
+- **404** — missing entity (named `id` / `insightId` in body)
+- **409** — bad refs or invalid status (named ids in `missingUnits`, `missingMissions`, `missingAssets`, `allowed`, …)
 
 ## Where docs live
 
@@ -42,7 +82,7 @@ Update the owner doc, not wherever is convenient:
 - repo structure ("where does X live") -> `README.md`
 - verified deploy/runtime facts and gaps -> `docs/deploy.md`
 - BEAST operating facts -> `docs/beast-ops.md`
-- data/backend shape, seed, migrations, read-cutover status -> `db/hangar/standup.md`
+- data/backend shape, migrations, corpus + cutover status -> `db/hangar/standup.md`
 - rich UI reasoning rubric -> `docs/rich-ui.md`
 - agent/process rules -> this file
 

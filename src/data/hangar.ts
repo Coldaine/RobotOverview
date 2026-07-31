@@ -1012,8 +1012,7 @@ export const hangarData: HangarData = {
       units: ['beast', 'workstation', 'orin-nano', 'jetson-thor'],
       missions: ['undercroft'],
       confidence: 'high',
-      source:
-        'content/datacore/robot-control-llms.md; https://huggingface.co/blog/nvidia/cosmos3edge',
+      source: '/datacore/briefing/robot-control-llms',
       capturedAt: '2026-07-22',
     },
     {
@@ -1025,7 +1024,7 @@ export const hangarData: HangarData = {
       units: ['beast', 'workstation', 'orin-nano'],
       missions: ['undercroft'],
       confidence: 'high',
-      source: 'content/datacore/robot-control-llms.md#what-we-would-actually-have-it-do-on-beast-01',
+      source: '/datacore/briefing/robot-control-llms',
       capturedAt: '2026-07-22',
     },
     {
@@ -1084,8 +1083,7 @@ export const hangarData: HangarData = {
       units: ['orin-nano', 'beast', 'workstation'],
       missions: ['undercroft'],
       confidence: 'high',
-      source:
-        'content/datacore/robot-control-llms.md#6-orin-nano-8gb--what-else-is-actually-sota-adjacent-and-fits',
+      source: '/datacore/briefing/robot-control-llms',
       capturedAt: '2026-07-22',
     },
     {
