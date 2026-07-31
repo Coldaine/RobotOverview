@@ -7,6 +7,7 @@ import {
   useCockpitOverheadClearance,
   useCockpitScan,
   useCockpitStatus,
+  useCockpitDiagnostics,
   useCockpitEstop,
   useCockpitBridge,
   ROS_SUBSCRIPTIONS,
@@ -487,6 +488,23 @@ describe('rosClient and hooks', () => {
       expect(voltageHook.result.current.voltage).toBeNull();
     });
 
+    it('repairs bare NaN without rewriting the same token inside robot text', () => {
+      openSocket();
+      const diagnosticsHook = renderHook(() => useCockpitDiagnostics());
+
+      act(() => {
+        MockWebSocket.latestInstance?.triggerRaw(
+          '{"op":"publish","topic":"/diagnostics","msg":{"status":[{"name":"imu",' +
+            '"level":1,"message":"covariance NaN, using defaults","values":[]}],' +
+            '"header":{"stamp":{"sec":NaN,"nanosec":0}}}}',
+        );
+      });
+
+      expect(diagnosticsHook.result.current.items[0].message)
+        .toBe('covariance NaN, using defaults');
+      expect(diagnosticsHook.result.current.items[0].stampMs).toBeNull();
+    });
+
     it('expires arming and mux fields even while unrelated status stays fresh', () => {
       const ws = openSocket();
       const statusHook = renderHook(() => useCockpitStatus());
@@ -564,6 +582,43 @@ describe('rosClient and hooks', () => {
 
       expect(statusHook.result.current.hasReceived).toBe(true);
       expect(statusHook.result.current.allowMotion).toBeNull();
+    });
+
+    it('keeps a fresh direct allow_motion value over an aggregator placeholder', () => {
+      const ws = openSocket();
+      const statusHook = renderHook(() => useCockpitStatus());
+
+      act(() => {
+        ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: true } });
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/cockpit/status',
+          msg: {
+            status: [{ name: 'bringup', values: [{ key: 'allow_motion', value: 'false' }] }],
+          },
+        });
+      });
+
+      expect(statusHook.result.current.allowMotion).toBe(true);
+    });
+
+    it('allows the aggregator to fill in after the direct safety value expires', () => {
+      const ws = openSocket();
+      const statusHook = renderHook(() => useCockpitStatus());
+
+      act(() => {
+        ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: true } });
+        vi.advanceTimersByTime(2250);
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/cockpit/status',
+          msg: {
+            status: [{ name: 'bringup', values: [{ key: 'allow_motion', value: 'false' }] }],
+          },
+        });
+      });
+
+      expect(statusHook.result.current.allowMotion).toBe(false);
     });
 
     it('keeps the mux source verbatim and does not invent NONE', () => {
@@ -654,7 +709,7 @@ describe('rosClient and hooks', () => {
       act(() => {
         // Empty string sorts below every generated non-empty tab id.
         channel.deliver({ k: 'mine', from: '' });
-        vi.advanceTimersByTime(1500);
+        vi.advanceTimersByTime(200);
       });
 
       expect(estopHook.result.current.writer).toBe(false);
@@ -709,7 +764,7 @@ describe('rosClient and hooks', () => {
         to: '',
         releasePending: true,
       }));
-      act(() => vi.advanceTimersByTime(1000));
+      act(() => vi.advanceTimersByTime(200));
       expect(estopPublishes(ws).filter((value) => value === false)).toHaveLength(beforeHandoff);
 
       act(() => {
