@@ -12,7 +12,9 @@ beast-ros-base.service:
   * rosbridge_websocket -> :9090 (tailscale serve proxies to wss://)
 
 LiDAR (/scan), odom, voltage, IMU and diagnostics come from beast-ros-base and
-are simply exposed through the same bridge. This launch adds no motion path.
+are simply exposed through the same bridge. The bridge is also an intentional
+remote command ingress, restricted to the existing mux, actuator, and e-stop
+topics; it adds no route around the mux, motion gate, or watchdog.
 """
 import os
 

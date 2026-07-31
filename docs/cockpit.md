@@ -82,9 +82,10 @@ rosbridge 2.0.7 force-appends `/rosapi/*` to any non-empty `services_glob`, so
 refusing rosapi by configuration alone is impossible; that append would otherwise
 admit graph and parameter services outside this cockpit's required surface. The
 topic-only wrapper is the real denial, while omitting rosapi avoids publishing an
-unneeded sensitive service surface in the first place. This preserves the "this
-package adds no motion path" claim. Not starting the node is the only real denial. The
-shipped cockpit uses only advertise / publish / subscribe, so nothing is lost.
+unneeded sensitive service surface in the first place. This closes the service and
+action API; it does **not** make the bridge read-only. The reviewed topic-publish globs
+remain an intentional remote command ingress through the existing mux/gate/watchdog
+path. The shipped cockpit uses only advertise / publish / subscribe, so nothing is lost.
 
 ---
 

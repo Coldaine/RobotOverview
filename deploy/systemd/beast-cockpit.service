@@ -21,13 +21,14 @@ Type=simple
 User=beast
 Group=beast
 # No `dialout`: this unit never touches the ESP32 serial link. video/render/
-# plugdev are for the OAK-D over USB. Least privilege for a unit whose whole
-# claim is that it adds no motion path.
+# plugdev are for the OAK-D over USB. The bridge does admit the reviewed remote
+# command topics, but this process needs no direct serial-device access.
 SupplementaryGroups=video render plugdev
 WorkingDirectory=/home/beast/beast/ugv_ws
 EnvironmentFile=/etc/beast/ugv.env
 Environment=PYTHONUNBUFFERED=1
-# Cockpit only: telemetry + camera + bridge. No motion path is added here.
+# Cockpit telemetry + camera + a reviewed remote command ingress through the
+# existing mux/gate/watchdog path. No direct /cmd_vel or serial bypass.
 ExecStart=/bin/bash -lc 'source /opt/ros/humble/setup.bash && source /home/beast/beast/ugv_ws/install/setup.bash && exec ros2 launch ugv_cockpit cockpit.launch.py use_camera:=true use_bridge:=true'
 KillSignal=SIGINT
 TimeoutStopSec=15

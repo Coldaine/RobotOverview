@@ -5,10 +5,11 @@ Exposes BEAST-01's live telemetry and OAK-D optics to the browser cockpit over a
 single rosbridge WebSocket, and adds the three derived topics the cockpit needs
 that no stock topic provides.
 
-This package adds **no motion path of its own**, but it does stand up the
+This package adds a **remote command ingress**, by design: it stands up the
 rosbridge WebSocket the cockpit uses to *publish* command topics (`/cmd_vel_ui`,
 gimbal, LED, e-stop lock) — so it owns the boundary that keeps a browser on the
-priority-50 mux rung and off `/cmd_vel` entirely. There is no authentication on
+existing priority-50 mux rung and off `/cmd_vel` entirely. It adds no bypass
+around the existing mux, motion gate, or watchdog. There is no authentication on
 that socket. Motion safety rests on four things, in order:
 
 1. the **loopback bind + topic whitelist** in `launch/rosbridge.launch.py`,
