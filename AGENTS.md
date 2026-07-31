@@ -60,12 +60,15 @@ Common path — `append_insight`:
     "confidence": "high",
     "source": "Waveshare UGV Beast schematic + Jetson Orin NX pinmux",
     "bay": "robotics",
-    "units": ["beast-01"],
-    "missions": ["msn-orin-cutover"],
+    "units": ["beast"],
     "tags": ["wiring", "safety", "orin"]
   }
 }
 ```
+
+`units` / `missions` must name existing entity ids or the API returns 409. The flagship
+unit's id is `beast` (`BEAST-01` is its callsign, not its id); mission ids are short slugs
+(`undercroft`, `perimeter-mapping`, `pool-deck-patrol`), not `MSN-*` codes.
 
 ### Errors
 
