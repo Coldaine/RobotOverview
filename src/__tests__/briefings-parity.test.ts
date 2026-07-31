@@ -6,17 +6,12 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import type { Pool } from 'pg';
 import { newDb } from 'pg-mem';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import {
-  DATACORE_BRIEFINGS,
-  DATACORE_PACKS,
-  type DatacorePack,
-} from '@/data/datacore-briefings';
+import type { DatacoreBriefingRow, DatacorePack } from '@/lib/datacore-model';
 import {
   getBriefing,
   getBriefingBody,
   getBriefings,
   getPacks,
-  type DatacoreBriefingRow,
 } from '@/server/hangar/briefings';
 import type { HangarDrizzle } from '@/server/hangar/drizzle';
 import * as schema from '@/server/hangar/schema';
@@ -58,32 +53,50 @@ function patchPgMemForDrizzle(PoolCtor: {
   };
 }
 
-async function expectedBriefingRows(): Promise<DatacoreBriefingRow[]> {
-  return Promise.all(
-    DATACORE_BRIEFINGS.map(async (b) => {
-      const bodyMarkdown =
-        b.kind === 'research'
-          ? await readFile(path.join(process.cwd(), b.source), 'utf8')
-          : null;
-      return {
-        ...b,
-        bodyMarkdown,
-        // Always seed repo_path so domain `source` round-trips (no source column).
-        repoPath: b.source,
-      };
-    }),
-  );
-}
+/** Inline fixtures — TS registry removed in Wave 3; corpus lives in Postgres. */
+const FIXTURE_PACK: DatacorePack = {
+  id: 'beast-vision',
+  title: 'Beast Vision & Capture',
+  code: 'RND-BEAST-VISION',
+  summary: 'Fixture pack for read-model parity.',
+  hubBriefingId: 'beast-vision',
+  topics: ['vision', 'splat'],
+};
 
-function expectedPacks(): DatacorePack[] {
-  return DATACORE_PACKS.map((p) => ({ ...p }));
-}
+const FIXTURE_RESEARCH: DatacoreBriefingRow = {
+  id: 'beast-vision',
+  title: 'Beast Vision and Capture — Research Index',
+  href: '/datacore/briefing/beast-vision',
+  source: '',
+  kind: 'research',
+  summary: 'Fixture research briefing with inlined body.',
+  tags: ['vision', 'beast'],
+  aliases: ['rnd-beast-vision'],
+  packId: 'beast-vision',
+  capturedAt: '2026-07-28',
+  bodyMarkdown: '# Beast Vision\n\nFixture body.\n',
+  repoPath: null,
+};
 
-describe('briefings Postgres read-model parity with TS registry', () => {
+const PLAN_REPO_PATH = 'docs/plans/2026-07-30-wiring-model-completion.md';
+
+const FIXTURE_PLAN: DatacoreBriefingRow = {
+  id: 'wiring-model-completion',
+  title: 'Finish the Wiring Model — One Spine, Two Eyes',
+  href: '/datacore/briefing/wiring-model-completion',
+  source: PLAN_REPO_PATH,
+  kind: 'plan',
+  summary: 'Fixture plan briefing that reads from repo path.',
+  tags: ['architecture', 'wiring'],
+  aliases: ['wiring spine'],
+  capturedAt: '2026-07-30',
+  bodyMarkdown: null,
+  repoPath: PLAN_REPO_PATH,
+};
+
+describe('briefings Postgres read-model', () => {
   let db: HangarDrizzle;
   let pool: Pool;
-  let expectedBriefings: DatacoreBriefingRow[];
-  let expectedPackList: DatacorePack[];
 
   beforeAll(async () => {
     const mem = newDb({ autoCreateForeignKeyIndices: true });
@@ -95,102 +108,83 @@ describe('briefings Postgres read-model parity with TS registry', () => {
     pool = new adapter.Pool() as Pool;
     db = drizzle(pool, { schema });
 
-    expectedBriefings = await expectedBriefingRows();
-    expectedPackList = expectedPacks();
-
     // Packs first (hub FK added after briefings exist — insert hub null, then patch).
-    await db.insert(briefingPacks).values(
-      DATACORE_PACKS.map((p) => ({
-        id: p.id,
-        title: p.title,
-        code: p.code,
-        summary: p.summary,
-        hubBriefingId: null,
-        topics: p.topics,
-      })),
-    );
+    await db.insert(briefingPacks).values({
+      id: FIXTURE_PACK.id,
+      title: FIXTURE_PACK.title,
+      code: FIXTURE_PACK.code,
+      summary: FIXTURE_PACK.summary,
+      hubBriefingId: null,
+      topics: FIXTURE_PACK.topics,
+    });
 
-    await db.insert(schema.briefings).values(
-      await Promise.all(
-        DATACORE_BRIEFINGS.map(async (b) => {
-          const bodyMarkdown =
-            b.kind === 'research'
-              ? await readFile(path.join(process.cwd(), b.source), 'utf8')
-              : null;
-          return {
-            id: b.id,
-            title: b.title,
-            kind: b.kind,
-            summary: b.summary,
-            tags: b.tags,
-            aliases: b.aliases ?? [],
-            packId: b.packId ?? null,
-            capturedAt: b.capturedAt,
-            href: b.href,
-            bodyMarkdown,
-            repoPath: b.source,
-          };
-        }),
-      ),
-    );
+    await db.insert(schema.briefings).values([
+      {
+        id: FIXTURE_RESEARCH.id,
+        title: FIXTURE_RESEARCH.title,
+        kind: FIXTURE_RESEARCH.kind,
+        summary: FIXTURE_RESEARCH.summary,
+        tags: FIXTURE_RESEARCH.tags,
+        aliases: FIXTURE_RESEARCH.aliases ?? [],
+        packId: FIXTURE_RESEARCH.packId ?? null,
+        capturedAt: FIXTURE_RESEARCH.capturedAt,
+        href: FIXTURE_RESEARCH.href,
+        bodyMarkdown: FIXTURE_RESEARCH.bodyMarkdown,
+        repoPath: FIXTURE_RESEARCH.repoPath,
+      },
+      {
+        id: FIXTURE_PLAN.id,
+        title: FIXTURE_PLAN.title,
+        kind: FIXTURE_PLAN.kind,
+        summary: FIXTURE_PLAN.summary,
+        tags: FIXTURE_PLAN.tags,
+        aliases: FIXTURE_PLAN.aliases ?? [],
+        packId: null,
+        capturedAt: FIXTURE_PLAN.capturedAt,
+        href: FIXTURE_PLAN.href,
+        bodyMarkdown: null,
+        repoPath: FIXTURE_PLAN.repoPath,
+      },
+    ]);
 
-    for (const p of DATACORE_PACKS) {
-      await db
-        .update(briefingPacks)
-        .set({ hubBriefingId: p.hubBriefingId })
-        .where(eq(briefingPacks.id, p.id));
-    }
+    await db
+      .update(briefingPacks)
+      .set({ hubBriefingId: FIXTURE_PACK.hubBriefingId })
+      .where(eq(briefingPacks.id, FIXTURE_PACK.id));
   });
 
   afterAll(async () => {
     await pool.end();
   });
 
-  it('getBriefings matches registry ids, fields, and research markdown bodies', async () => {
+  it('getBriefings returns seeded rows from Postgres', async () => {
     const result = await getBriefings(db);
     expect(result.source).toBe('postgres');
     const byId = new Map(result.briefings.map((r) => [r.id, r]));
 
-    expect(result.briefings).toHaveLength(expectedBriefings.length);
-    for (const expected of expectedBriefings) {
-      expect(byId.get(expected.id)).toEqual(expected);
-    }
+    expect(result.briefings).toHaveLength(2);
+    expect(byId.get(FIXTURE_RESEARCH.id)).toEqual(FIXTURE_RESEARCH);
+    expect(byId.get(FIXTURE_PLAN.id)).toEqual(FIXTURE_PLAN);
   });
 
-  it('getPacks matches registry packs', async () => {
+  it('getPacks returns seeded packs', async () => {
     const result = await getPacks(db);
     expect(result.source).toBe('postgres');
-    const byId = new Map(result.packs.map((p) => [p.id, p]));
-
-    expect(result.packs).toHaveLength(expectedPackList.length);
-    for (const expected of expectedPackList) {
-      expect(byId.get(expected.id)).toEqual(expected);
-    }
+    expect(result.packs).toEqual([FIXTURE_PACK]);
   });
 
-  it('getBriefing returns each registry briefing by id', async () => {
-    for (const expected of expectedBriefings) {
-      const row = await getBriefing(expected.id, db);
-      expect(row).toEqual(expected);
-    }
+  it('getBriefing returns each seeded briefing by id', async () => {
+    expect(await getBriefing(FIXTURE_RESEARCH.id, db)).toEqual(FIXTURE_RESEARCH);
+    expect(await getBriefing(FIXTURE_PLAN.id, db)).toEqual(FIXTURE_PLAN);
     expect(await getBriefing('does-not-exist', db)).toBeNull();
   });
 
   it('getBriefingBody returns inlined markdown for research and repo file for plan', async () => {
-    for (const expected of expectedBriefings) {
-      if (expected.kind !== 'research') continue;
-      const body = await getBriefingBody(expected);
-      expect(body).toBe(expected.bodyMarkdown);
-      expect(body).toEqual(await readFile(path.join(process.cwd(), expected.source), 'utf8'));
-    }
+    const body = await getBriefingBody(FIXTURE_RESEARCH);
+    expect(body).toBe(FIXTURE_RESEARCH.bodyMarkdown);
 
-    const plan = expectedBriefings.find((b) => b.id === 'wiring-model-completion');
-    expect(plan).toBeDefined();
-    expect(plan!.kind).toBe('plan');
-    expect(plan!.source).toBe('docs/plans/2026-07-30-wiring-model-completion.md');
-
-    const planBody = await getBriefingBody(plan!);
-    const fromDisk = await readFile(path.join(process.cwd(), plan!.source), 'utf8');
+    const planBody = await getBriefingBody(FIXTURE_PLAN);
+    const fromDisk = await readFile(path.join(process.cwd(), PLAN_REPO_PATH), 'utf8');
     expect(planBody).toBe(fromDisk);
   });
 

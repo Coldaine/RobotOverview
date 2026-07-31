@@ -1,20 +1,38 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { eq } from 'drizzle-orm';
+import type { HangarReadStatus } from '@/lib/hangar-read-status';
 import {
-  DATACORE_BRIEFINGS,
-  DATACORE_PACKS,
+  briefingById,
+  briefingMatchesQuery,
+  briefingSearchHaystack,
+  briefingsInPack,
+  packById,
+  packMatchesQuery,
+  packSearchHaystack,
   type BriefingKind,
   type DatacoreBriefing,
+  type DatacoreBriefingRow,
   type DatacorePack,
-} from '@/data/datacore-briefings';
-import type { HangarReadStatus } from '@/lib/hangar-read-status';
+} from '@/lib/datacore-model';
 import { getHangarDrizzle, type HangarDrizzle } from './drizzle';
 import { briefingPacks, briefings } from './schema';
 
-export type DatacoreBriefingRow = DatacoreBriefing & {
-  bodyMarkdown: string | null;
-  repoPath: string | null;
+export type {
+  BriefingKind,
+  DatacoreBriefing,
+  DatacoreBriefingRow,
+  DatacorePack,
+};
+
+export {
+  briefingById,
+  briefingMatchesQuery,
+  briefingSearchHaystack,
+  briefingsInPack,
+  packById,
+  packMatchesQuery,
+  packSearchHaystack,
 };
 
 export type BriefingsRead = HangarReadStatus & {
@@ -74,25 +92,6 @@ function mapPackRow(row: PackTableRow): DatacorePack | null {
   };
 }
 
-/**
- * WAVE 3 DELETE THIS FUNCTION (and call sites + `@/data/datacore-briefings` import).
- * Temporary static fallback while the TS registry still exists; Wave 3 swaps this
- * for an offline state when the registry is removed.
- */
-export function staticRegistryFallback(): {
-  briefings: DatacoreBriefingRow[];
-  packs: DatacorePack[];
-} {
-  return {
-    briefings: DATACORE_BRIEFINGS.map((b) => ({
-      ...b,
-      bodyMarkdown: null,
-      repoPath: b.source,
-    })),
-    packs: DATACORE_PACKS.map((p) => ({ ...p })),
-  };
-}
-
 /** DB-injectable: load all briefings from a Hangar Drizzle client. */
 export async function loadBriefingsFromDb(db: HangarDrizzle): Promise<DatacoreBriefingRow[]> {
   const rows = await db.select().from(briefings);
@@ -134,7 +133,7 @@ export async function getBriefings(db?: HangarDrizzle): Promise<BriefingsRead> {
       return {
         source: 'static',
         fallbackReason: 'not-configured',
-        briefings: staticRegistryFallback().briefings,
+        briefings: [],
       };
     }
     return {
@@ -142,11 +141,11 @@ export async function getBriefings(db?: HangarDrizzle): Promise<BriefingsRead> {
       briefings: await loadBriefingsFromDb(client),
     };
   } catch (error) {
-    console.warn('Hangar Postgres briefings read failed; falling back to static registry.', error);
+    console.warn('Hangar Postgres briefings read failed; Datacore offline.', error);
     return {
       source: 'static',
       fallbackReason: 'postgres-error',
-      briefings: staticRegistryFallback().briefings,
+      briefings: [],
     };
   }
 }
@@ -159,7 +158,7 @@ export async function getPacks(db?: HangarDrizzle): Promise<PacksRead> {
       return {
         source: 'static',
         fallbackReason: 'not-configured',
-        packs: staticRegistryFallback().packs,
+        packs: [],
       };
     }
     return {
@@ -167,11 +166,11 @@ export async function getPacks(db?: HangarDrizzle): Promise<PacksRead> {
       packs: await loadPacksFromDb(client),
     };
   } catch (error) {
-    console.warn('Hangar Postgres packs read failed; falling back to static registry.', error);
+    console.warn('Hangar Postgres packs read failed; Datacore offline.', error);
     return {
       source: 'static',
       fallbackReason: 'postgres-error',
-      packs: staticRegistryFallback().packs,
+      packs: [],
     };
   }
 }
@@ -184,12 +183,12 @@ export async function getBriefing(
   try {
     const client = db ?? (await getHangarDrizzle());
     if (!client) {
-      return staticRegistryFallback().briefings.find((b) => b.id === id) ?? null;
+      return null;
     }
     return loadBriefingFromDb(client, id);
   } catch (error) {
-    console.warn('Hangar Postgres briefing read failed; falling back to static registry.', error);
-    return staticRegistryFallback().briefings.find((b) => b.id === id) ?? null;
+    console.warn('Hangar Postgres briefing read failed; Datacore offline.', error);
+    return null;
   }
 }
 
@@ -209,58 +208,4 @@ export async function getBriefingBody(briefing: DatacoreBriefingRow): Promise<st
   }
 
   return null;
-}
-
-// ── Search helpers (mirror of @/data/datacore-briefings; operate on row type) ─
-
-export function briefingById(
-  allBriefings: DatacoreBriefingRow[],
-  id: string,
-): DatacoreBriefingRow | undefined {
-  return allBriefings.find((b) => b.id === id);
-}
-
-export function packById(allPacks: DatacorePack[], id: string): DatacorePack | undefined {
-  return allPacks.find((p) => p.id === id);
-}
-
-export function briefingsInPack(
-  allBriefings: DatacoreBriefingRow[],
-  packId: string,
-): DatacoreBriefingRow[] {
-  return allBriefings.filter((b) => b.packId === packId);
-}
-
-/** Lowercased haystack for Datacore Knowledge Core search. */
-export function briefingSearchHaystack(b: DatacoreBriefingRow): string {
-  return [
-    b.id,
-    b.title,
-    b.summary,
-    b.kind,
-    b.tags.join(' '),
-    (b.aliases ?? []).join(' '),
-    b.packId ?? '',
-  ]
-    .join(' ')
-    .toLowerCase();
-}
-
-export function packSearchHaystack(p: DatacorePack): string {
-  return [p.id, p.title, p.code, p.summary, p.topics.join(' ')].join(' ').toLowerCase();
-}
-
-export function briefingMatchesQuery(b: DatacoreBriefingRow, needle: string): boolean {
-  if (!needle) return true;
-  return briefingSearchHaystack(b).includes(needle);
-}
-
-export function packMatchesQuery(
-  p: DatacorePack,
-  needle: string,
-  allBriefings: DatacoreBriefingRow[],
-): boolean {
-  if (!needle) return true;
-  if (packSearchHaystack(p).includes(needle)) return true;
-  return briefingsInPack(allBriefings, p.id).some((b) => briefingMatchesQuery(b, needle));
 }

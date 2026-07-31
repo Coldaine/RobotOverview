@@ -1,0 +1,81 @@
+{
+  "briefings": [
+    {
+      "id": "robot-control-llms",
+      "kind": "research",
+      "href": "/datacore/briefing/robot-control-llms",
+      "repoPath": null
+    },
+    {
+      "id": "compute-workload",
+      "kind": "research",
+      "href": "/datacore/briefing/compute-workload",
+      "repoPath": null
+    },
+    {
+      "id": "artifact-intake",
+      "kind": "research",
+      "href": "/datacore/briefing/artifact-intake",
+      "repoPath": null
+    },
+    {
+      "id": "wiring-model-completion",
+      "kind": "plan",
+      "href": "/datacore/briefing/wiring-model-completion",
+      "repoPath": "docs/plans/2026-07-30-wiring-model-completion.md"
+    },
+    {
+      "id": "cad-assets",
+      "kind": "plan",
+      "href": "/datacore/briefing/cad-assets",
+      "repoPath": "docs/hardware-library.md"
+    },
+    {
+      "id": "beast-vision",
+      "kind": "research",
+      "href": "/datacore/briefing/beast-vision",
+      "repoPath": null
+    },
+    {
+      "id": "beast-splat-architecture",
+      "kind": "research",
+      "href": "/datacore/briefing/beast-splat-architecture",
+      "repoPath": null
+    },
+    {
+      "id": "beast-servo-camera",
+      "kind": "research",
+      "href": "/datacore/briefing/beast-servo-camera",
+      "repoPath": null
+    },
+    {
+      "id": "beast-rejected-paths",
+      "kind": "research",
+      "href": "/datacore/briefing/beast-rejected-paths",
+      "repoPath": null
+    },
+    {
+      "id": "beast-lidar-open",
+      "kind": "research",
+      "href": "/datacore/briefing/beast-lidar-open",
+      "repoPath": null
+    },
+    {
+      "id": "beast-research-method",
+      "kind": "research",
+      "href": "/datacore/briefing/beast-research-method",
+      "repoPath": null
+    },
+    {
+      "id": "beast-evidence-manifest",
+      "kind": "research",
+      "href": "/datacore/briefing/beast-evidence-manifest",
+      "repoPath": null
+    }
+  ],
+  "packs": [
+    {
+      "id": "beast-vision"
+    }
+  ]
+}
