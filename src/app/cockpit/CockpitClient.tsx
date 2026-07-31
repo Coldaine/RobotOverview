@@ -1,15 +1,19 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { rosClient, useConnectionState, useCockpitBridge } from '@/lib/ros/client';
-import { ConnectionStateBadge } from '@/components/cockpit/ConnectionState';
-import { SafetyStrip } from '@/components/cockpit/SafetyStrip';
-import { SpatialView } from '@/components/cockpit/SpatialView';
-import { OpticsWall } from '@/components/cockpit/OpticsWall';
-import { CommandRail } from '@/components/cockpit/CommandRail';
-import { TelemetryRow } from '@/components/cockpit/TelemetryRow';
-import { HonestyRail } from '@/components/cockpit/HonestyRail';
-import { Activity, AlertTriangle } from 'lucide-react';
+import { useEffect } from "react";
+import {
+  rosClient,
+  useConnectionState,
+  useCockpitBridge,
+} from "@/lib/ros/client";
+import { ConnectionStateBadge } from "@/components/cockpit/ConnectionState";
+import { SafetyStrip } from "@/components/cockpit/SafetyStrip";
+import { SpatialView } from "@/components/cockpit/SpatialView";
+import { OpticsWall } from "@/components/cockpit/OpticsWall";
+import { CommandRail } from "@/components/cockpit/CommandRail";
+import { TelemetryRow } from "@/components/cockpit/TelemetryRow";
+import { HonestyRail } from "@/components/cockpit/HonestyRail";
+import { Activity, AlertTriangle } from "lucide-react";
 
 interface CockpitClientProps {
   wsUrl: string;
@@ -51,10 +55,10 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
     const warn = (e: BeforeUnloadEvent) => {
       if (!rosClient.isEstopEngaged()) return;
       e.preventDefault();
-      e.returnValue = '';
+      e.returnValue = "";
     };
-    window.addEventListener('beforeunload', warn);
-    return () => window.removeEventListener('beforeunload', warn);
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
   }, []);
 
   if (!wsUrl) {
@@ -62,19 +66,24 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
       <div className="flex h-[80vh] flex-col items-center justify-center p-6 text-center">
         <div className="panel select-none border-crit/50 bg-crit/10 px-8 py-10 shadow-hud-red text-glow-crit max-w-md">
           <Activity className="mx-auto h-12 w-12 text-crit animate-pulse mb-4" />
-          <h1 className="font-display text-xl uppercase tracking-widest text-crit mb-3">COCKPIT DEGRADED</h1>
+          <h1 className="font-display text-xl uppercase tracking-widest text-crit mb-3">
+            COCKPIT DEGRADED
+          </h1>
           <p className="font-mono text-sm text-ink-dim leading-relaxed">
-            The environment variable <code className="text-crit">BEAST_COCKPIT_WS_URL</code> is not configured.
+            The environment variable{" "}
+            <code className="text-crit">BEAST_COCKPIT_WS_URL</code> is not
+            configured.
           </p>
           <p className="font-mono text-xs text-ink-dim mt-4">
-            Add this secret in Doppler or your local environment to enable the live Command Deck.
+            Add this secret in Doppler or your local environment to enable the
+            live Command Deck.
           </p>
         </div>
       </div>
     );
   }
 
-  const errors = bridge.faults.filter((f) => f.level === 'error');
+  const errors = bridge.faults.filter((f) => f.level === "error");
 
   return (
     <div className="flex flex-col gap-4 px-4 py-3 pb-24 md:px-6">
@@ -83,11 +92,14 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
         <div className="flex items-center gap-3">
           <Activity className="h-6 w-6 text-cyan animate-pulse" />
           <h1 className="font-display text-xl font-bold tracking-[0.22em] text-ink uppercase">
-            BEAST-01 <span className="text-cyan text-glow-cyan">{'//'} COMMAND DECK</span>
+            BEAST-01{" "}
+            <span className="text-cyan text-glow-cyan">
+              {"//"} COMMAND DECK
+            </span>
           </h1>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {connectionState !== 'connected' && (
+          {connectionState !== "connected" && (
             <span className="chip border-crit/40 bg-crit/5 text-crit px-3 py-1 font-mono text-[10px] tracking-wider animate-pulse">
               ROBOT UNREACHABLE
             </span>
@@ -107,12 +119,14 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
         >
           <div className="flex items-center gap-2 font-display text-[11px] font-bold uppercase tracking-[0.16em] text-red-400">
             <AlertTriangle className="h-3.5 w-3.5" />
-            rosbridge refused {errors.length} operation{errors.length === 1 ? '' : 's'}
+            rosbridge refused {errors.length} operation
+            {errors.length === 1 ? "" : "s"}
           </div>
           <ul className="flex flex-col gap-1 font-mono text-[10px] text-red-300/90">
             {errors.slice(0, 4).map((f, i) => (
               <li key={`${f.id}-${i}`} className="truncate">
-                <b className="mr-1.5">{f.topic ?? f.id ?? 'unattributed'}</b>— {f.msg}
+                <b className="mr-1.5">{f.topic ?? f.id ?? "unattributed"}</b>—{" "}
+                {f.msg}
               </li>
             ))}
           </ul>

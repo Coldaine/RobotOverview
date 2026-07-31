@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from "react";
 import {
   getEstopState,
   setEstopState,
   useCockpitEstop,
   type CockpitEstop,
-} from './estop-store';
+} from "./estop-store";
 
 export { useCockpitEstop };
 export type { CockpitEstop };
 
-export type ConnectionState = 'connecting' | 'connected' | 'disconnected';
+export type ConnectionState = "connecting" | "connected" | "disconnected";
 
 // ── ROBOT-SIDE MESSAGE-TYPE CONTRACT ────────────────────────────────────────
 // Verified against Coldaine/ugv_ws@fc1c29e. These strings are not cosmetic: DDS
@@ -27,39 +27,51 @@ export type ConnectionState = 'connecting' | 'connected' | 'disconnected';
 //                            are different robot-side subscribers.)
 //   /imu/raw                 sensor_msgs/msg/Imu (nothing publishes /imu/data)
 export const ROS_SUBSCRIPTIONS = [
-  { topic: '/ugv/voltage', type: 'sensor_msgs/msg/BatteryState' },
-  { topic: '/scan', type: 'sensor_msgs/msg/LaserScan' },
-  { topic: '/odom', type: 'nav_msgs/msg/Odometry' },
+  { topic: "/ugv/voltage", type: "sensor_msgs/msg/BatteryState" },
+  { topic: "/scan", type: "sensor_msgs/msg/LaserScan" },
+  { topic: "/odom", type: "nav_msgs/msg/Odometry" },
   // ugv_bringup publishes /imu/raw. /imu/data has no publisher on this robot.
-  { topic: '/imu/raw', type: 'sensor_msgs/msg/Imu' },
-  { topic: '/cockpit/overhead_clearance', type: 'std_msgs/msg/Float32' },
-  { topic: '/cockpit/status', type: 'diagnostic_msgs/msg/DiagnosticArray' },
-  { topic: '/diagnostics', type: 'diagnostic_msgs/msg/DiagnosticArray' },
+  { topic: "/imu/raw", type: "sensor_msgs/msg/Imu" },
+  { topic: "/cockpit/overhead_clearance", type: "std_msgs/msg/Float32" },
+  { topic: "/cockpit/status", type: "diagnostic_msgs/msg/DiagnosticArray" },
+  { topic: "/diagnostics", type: "diagnostic_msgs/msg/DiagnosticArray" },
   // Dedicated safety topics. NOT YET DEPLOYED on the robot (robot-side PR in
   // flight) — until then these produce nothing and every field they feed must
   // render UNKNOWN, never a cleared/false default.
-  { topic: '/ugv/allow_motion', type: 'std_msgs/msg/Bool' },
-  { topic: '/ugv/watchdog_state', type: 'diagnostic_msgs/msg/DiagnosticStatus' },
-  { topic: '/oak/rgb/image_raw/compressed', type: 'sensor_msgs/msg/CompressedImage' },
-  { topic: '/cockpit/depth/compressed', type: 'sensor_msgs/msg/CompressedImage' },
+  { topic: "/ugv/allow_motion", type: "std_msgs/msg/Bool" },
+  {
+    topic: "/ugv/watchdog_state",
+    type: "diagnostic_msgs/msg/DiagnosticStatus",
+  },
+  {
+    topic: "/oak/rgb/image_raw/compressed",
+    type: "sensor_msgs/msg/CompressedImage",
+  },
+  {
+    topic: "/cockpit/depth/compressed",
+    type: "sensor_msgs/msg/CompressedImage",
+  },
 ] as const;
 
 export const ROS_PUBLICATIONS = [
-  { topic: '/cmd_vel_ui', type: 'geometry_msgs/msg/Twist' },
-  { topic: '/ugv/led_ctrl', type: 'std_msgs/msg/Float32MultiArray' },
-  { topic: '/pt_joint_position_controller/commands', type: 'std_msgs/msg/Float64MultiArray' },
-  { topic: '/ugv/pt_steady_ctrl', type: 'std_msgs/msg/Float32MultiArray' },
-  { topic: '/cmd_vel_estop_lock', type: 'std_msgs/msg/Bool' },
+  { topic: "/cmd_vel_ui", type: "geometry_msgs/msg/Twist" },
+  { topic: "/ugv/led_ctrl", type: "std_msgs/msg/Float32MultiArray" },
+  {
+    topic: "/pt_joint_position_controller/commands",
+    type: "std_msgs/msg/Float64MultiArray",
+  },
+  { topic: "/ugv/pt_steady_ctrl", type: "std_msgs/msg/Float32MultiArray" },
+  { topic: "/cmd_vel_estop_lock", type: "std_msgs/msg/Bool" },
 ] as const;
 
 export const IMAGE_TOPICS = [
-  '/oak/rgb/image_raw/compressed',
-  '/cockpit/depth/compressed',
+  "/oak/rgb/image_raw/compressed",
+  "/cockpit/depth/compressed",
 ] as const;
 
 // Streams worth silencing when the cockpit is not on screen but the socket has
 // to stay open (an engaged e-stop). Bandwidth, not safety.
-export const HEAVY_TOPICS = ['/scan', ...IMAGE_TOPICS] as const;
+export const HEAVY_TOPICS = ["/scan", ...IMAGE_TOPICS] as const;
 
 // ── LiDAR BLIND-SECTOR CROP ─────────────────────────────────────────────────
 // The single source of truth for the cropped sector. The scan parser deletes
@@ -86,7 +98,10 @@ export const LIDAR_CROP_SECTOR_DEG = { startDeg: 45, endDeg: 134.5 } as const;
  * per unit range — exactly the transform SpatialView applies to scan points, so
  * anything drawn through it lands where the matching points would.
  */
-export function rosBearingToCanvasOffset(angleRad: number): { dx: number; dy: number } {
+export function rosBearingToCanvasOffset(angleRad: number): {
+  dx: number;
+  dy: number;
+} {
   // x = r·cos(θ) forward, y = r·sin(θ) left; canvas px = Cx − y, py = Cy − x.
   return { dx: -Math.sin(angleRad), dy: -Math.cos(angleRad) };
 }
@@ -245,7 +260,7 @@ export interface CockpitDiagnostics extends SliceMeta {
 export interface BridgeFault {
   /** The op id we attached, e.g. `adv:/ugv/led_ctrl`. null if unattributable. */
   id: string | null;
-  level: 'error' | 'warning';
+  level: "error" | "warning";
   msg: string;
   at: number;
   /** Topic parsed out of `id`, when the fault is attributable to one. */
@@ -264,7 +279,7 @@ const MAX_BRIDGE_FAULTS = 12;
 // empty, or garbage strings that must never render as NaN. Returns null (not a
 // fallback number) so callers render UNKNOWN instead of a plausible lie.
 function safeNumber(value: string | undefined): number | null {
-  if (value === undefined || value === null || value === '') return null;
+  if (value === undefined || value === null || value === "") return null;
   const n = Number(value);
   return Number.isFinite(n) ? n : null;
 }
@@ -275,21 +290,22 @@ function safeNumber(value: string | undefined): number | null {
  * real reading of zero.
  */
 function finite(value: unknown): number | null {
-  if (typeof value !== 'number') return null;
+  if (typeof value !== "number") return null;
   return Number.isFinite(value) ? value : null;
 }
 
 function safeBool(value: string | undefined): boolean | null {
-  if (value === 'true') return true;
-  if (value === 'false') return false;
+  if (value === "true") return true;
+  if (value === "false") return false;
   return null;
 }
 
-function stampToMs(header: InboundMsg['header']): number | null {
+function stampToMs(header: InboundMsg["header"]): number | null {
   const sec = header?.stamp?.sec;
   const nanosec = header?.stamp?.nanosec;
-  if (typeof sec !== 'number' || !Number.isFinite(sec)) return null;
-  const ns = typeof nanosec === 'number' && Number.isFinite(nanosec) ? nanosec : 0;
+  if (typeof sec !== "number" || !Number.isFinite(sec)) return null;
+  const ns =
+    typeof nanosec === "number" && Number.isFinite(nanosec) ? nanosec : 0;
   return sec * 1000 + ns / 1e6;
 }
 
@@ -347,11 +363,24 @@ function blankScan(): ScanData {
 }
 
 let voltageData: VoltageData = { voltage: null };
-let odomData: OdomData = { x: null, y: null, yaw: null, linearSpeed: null, angularSpeed: null };
-let imuData: ImuData = { ax: null, ay: null, az: null, gx: null, gy: null, gz: null };
+let odomData: OdomData = {
+  x: null,
+  y: null,
+  yaw: null,
+  linearSpeed: null,
+  angularSpeed: null,
+};
+let imuData: ImuData = {
+  ax: null,
+  ay: null,
+  az: null,
+  gx: null,
+  gy: null,
+  gz: null,
+};
 let clearanceData: ClearanceData = { meters: null };
 let statusData: StatusData = blankStatus();
-type StatusGroup = 'mux' | 'allowMotion' | 'watchdog' | 'system';
+type StatusGroup = "mux" | "allowMotion" | "watchdog" | "system";
 let statusGroupAt: Record<StatusGroup, number | null> = {
   mux: null,
   allowMotion: null,
@@ -368,14 +397,17 @@ function directSafetyIsFresh(at: number | null): boolean {
 let scanData: ScanData = blankScan();
 let diagnosticsData: DiagnosticsData = { items: [] };
 
-let connectionState: ConnectionState = 'disconnected';
+let connectionState: ConnectionState = "disconnected";
 let voltageState: CockpitVoltage = { ...voltageData, ...meta.voltage };
 let odomState: CockpitOdom = { ...odomData, ...meta.odom };
 let imuState: CockpitImu = { ...imuData, ...meta.imu };
 let clearanceState: CockpitClearance = { ...clearanceData, ...meta.clearance };
 let statusState: CockpitStatus = { ...statusData, ...meta.status };
 let scanState: CockpitScan = { ...scanData, ...meta.scan };
-let diagnosticsState: CockpitDiagnostics = { ...diagnosticsData, ...meta.diagnostics };
+let diagnosticsState: CockpitDiagnostics = {
+  ...diagnosticsData,
+  ...meta.diagnostics,
+};
 let bridgeState: CockpitBridge = { faults: [], deadTopics: [] };
 
 // Listeners per category
@@ -400,19 +432,19 @@ function notify(category: keyof typeof listeners) {
 const rebuild: Record<SliceKey, () => void> = {
   voltage: () => {
     voltageState = { ...voltageData, ...meta.voltage };
-    notify('voltage');
+    notify("voltage");
   },
   odom: () => {
     odomState = { ...odomData, ...meta.odom };
-    notify('odom');
+    notify("odom");
   },
   imu: () => {
     imuState = { ...imuData, ...meta.imu };
-    notify('imu');
+    notify("imu");
   },
   clearance: () => {
     clearanceState = { ...clearanceData, ...meta.clearance };
-    notify('clearance');
+    notify("clearance");
   },
   status: () => {
     const now = Date.now();
@@ -422,10 +454,10 @@ const rebuild: Record<SliceKey, () => void> = {
       now - statusGroupAt[group]! <= FRESHNESS_MS.status;
     const next: CockpitStatus = {
       ...statusData,
-      ...(!fresh('mux') && { muxSource: null, cmdAge: null, pubCount: null }),
-      ...(!fresh('allowMotion') && { allowMotion: null }),
-      ...(!fresh('watchdog') && { watchdogArmed: null, watchdogFired: null }),
-      ...(!fresh('system') && {
+      ...(!fresh("mux") && { muxSource: null, cmdAge: null, pubCount: null }),
+      ...(!fresh("allowMotion") && { allowMotion: null }),
+      ...(!fresh("watchdog") && { watchdogArmed: null, watchdogFired: null }),
+      ...(!fresh("system") && {
         wifiRssi: null,
         diskFree: null,
         cpuTemp: null,
@@ -433,20 +465,21 @@ const rebuild: Record<SliceKey, () => void> = {
       }),
       ...meta.status,
     };
-    const changed = (Object.keys(next) as Array<keyof CockpitStatus>)
-      .some((key) => next[key] !== statusState[key]);
+    const changed = (Object.keys(next) as Array<keyof CockpitStatus>).some(
+      (key) => next[key] !== statusState[key],
+    );
     if (changed) {
       statusState = next;
-      notify('status');
+      notify("status");
     }
   },
   diagnostics: () => {
     diagnosticsState = { ...diagnosticsData, ...meta.diagnostics };
-    notify('diagnostics');
+    notify("diagnostics");
   },
   scan: () => {
     scanState = { ...scanData, ...meta.scan };
-    notify('scan');
+    notify("scan");
   },
 };
 
@@ -461,7 +494,8 @@ function tickStaleness() {
   const now = Date.now();
   (Object.keys(meta) as SliceKey[]).forEach((key) => {
     const m = meta[key];
-    const stale = m.receivedAt === null ? m.stale : now - m.receivedAt > FRESHNESS_MS[key];
+    const stale =
+      m.receivedAt === null ? m.stale : now - m.receivedAt > FRESHNESS_MS[key];
     if (stale !== m.stale) {
       meta[key] = { ...m, stale };
       rebuild[key]();
@@ -489,11 +523,22 @@ function markAllStale() {
 /** A new connection: "has this topic ever published?" restarts from zero. */
 function resetSlicesForNewConnection() {
   voltageData = { voltage: null };
-  odomData = { x: null, y: null, yaw: null, linearSpeed: null, angularSpeed: null };
+  odomData = {
+    x: null,
+    y: null,
+    yaw: null,
+    linearSpeed: null,
+    angularSpeed: null,
+  };
   imuData = { ax: null, ay: null, az: null, gx: null, gy: null, gz: null };
   clearanceData = { meters: null };
   statusData = blankStatus();
-  statusGroupAt = { mux: null, allowMotion: null, watchdog: null, system: null };
+  statusGroupAt = {
+    mux: null,
+    allowMotion: null,
+    watchdog: null,
+    system: null,
+  };
   allowMotionDirectAt = null;
   watchdogDirectAt = null;
   scanData = blankScan();
@@ -504,7 +549,7 @@ function resetSlicesForNewConnection() {
     rebuild[key]();
   });
   bridgeState = { faults: [], deadTopics: [] };
-  notify('bridge');
+  notify("bridge");
 }
 
 // Ref for reactive-image-rendering callbacks that bypass React state
@@ -517,7 +562,7 @@ let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let stalenessTimer: ReturnType<typeof setInterval> | null = null;
 let reconnectDelay = 1000;
 const MAX_RECONNECT_DELAY = 10000;
-let lastWsUrl = '';
+let lastWsUrl = "";
 let heavyStreamsPaused = false;
 let scanArrivals: number[] = [];
 
@@ -563,14 +608,14 @@ let scanArrivals: number[] = [];
 // CONFIRMATION: latching intent is NOT proof the robot is stopped. Only
 // `/cockpit/status` reporting `active_source == 'E-STOP lock'` is. The UI must
 // distinguish "we are asserting" from "the robot confirmed" — see SafetyStrip.
-const ESTOP_TOPIC = '/cmd_vel_estop_lock';
+const ESTOP_TOPIC = "/cmd_vel_estop_lock";
 const ESTOP_HEARTBEAT_MS = 500; // 2 Hz — contract floor is 1 Hz
 const ESTOP_RELEASE_INTERVAL_MS = 400;
 const ESTOP_RELEASE_SENDS = 4; // ~1.2 s of `false` before going quiet
 /** How long an unconfirmed assertion stays quiet before it reads as a failure. */
 export const ESTOP_CONFIRM_GRACE_MS = 2000;
 /** twist_mux reports this exact string (U+00B7 middle dot elsewhere in the set). */
-export const ESTOP_MUX_SOURCE = 'E-STOP lock';
+export const ESTOP_MUX_SOURCE = "E-STOP lock";
 
 let operatorEngaged = false;
 let estopHeartbeatTimer: ReturnType<typeof setInterval> | null = null;
@@ -681,7 +726,7 @@ function startEstopHeartbeat(): boolean {
 // read-only and promote after a quiet window — would leave the E-STOP BUTTON
 // DEAD for a quarter second on every single mount. A momentary double-assert is
 // harmless (both tabs assert *stop*); an unavailable stop button is not.
-const ESTOP_CHANNEL_NAME = 'beast-cockpit-estop-writer';
+const ESTOP_CHANNEL_NAME = "beast-cockpit-estop-writer";
 const COMMAND_ELECTION_SETTLE_MS = 250;
 const ESTOP_PROBE_GRACE_MS = 300;
 const ESTOP_PROBE_INTERVAL_MS = 1000;
@@ -693,19 +738,19 @@ let estopProbeGraceTimer: ReturnType<typeof setTimeout> | null = null;
 let estopProbeAnswered = false;
 let estopPageHideHandler: (() => void) | null = null;
 const estopTabId =
-  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+  typeof crypto !== "undefined" && "randomUUID" in crypto
     ? crypto.randomUUID()
     : `tab-${Math.random().toString(36).slice(2, 11)}`;
 
 type EstopElectionMsg = {
-  k: 'hello' | 'mine' | 'yield' | 'handoff';
+  k: "hello" | "mine" | "yield" | "handoff";
   from: string;
   to?: string;
   engagedAt?: number | null;
   releasePending?: boolean;
 };
 
-function postElection(k: EstopElectionMsg['k']) {
+function postElection(k: EstopElectionMsg["k"]) {
   estopChannel?.postMessage({ k, from: estopTabId } satisfies EstopElectionMsg);
 }
 
@@ -733,7 +778,7 @@ function stopWriterProbe() {
 function probeEstopWriter() {
   if (!estopChannel || getEstopState().writer) return;
   estopProbeAnswered = false;
-  postElection('hello');
+  postElection("hello");
   if (estopProbeGraceTimer) clearTimeout(estopProbeGraceTimer);
   estopProbeGraceTimer = setTimeout(() => {
     estopProbeGraceTimer = null;
@@ -741,7 +786,7 @@ function probeEstopWriter() {
       stopWriterProbe();
       setEstopState({ writer: true });
       settleCommandWriter();
-      postElection('hello');
+      postElection("hello");
     }
   }, ESTOP_PROBE_GRACE_MS);
 }
@@ -756,7 +801,7 @@ function handoffWriter(to: string) {
   const releasePending = getEstopState().releasing || estopReleasePending;
   if (operatorEngaged || releasePending) {
     estopChannel?.postMessage({
-      k: 'handoff',
+      k: "handoff",
       from: estopTabId,
       to,
       engagedAt: getEstopState().engagedAt,
@@ -777,10 +822,11 @@ function handoffWriter(to: string) {
 }
 
 function releaseEstopWriterClaim() {
-  if (getEstopState().writer) postElection('yield');
+  if (getEstopState().writer) postElection("yield");
   stopWriterProbe();
   revokeCommandReady();
-  if (estopPageHideHandler) window.removeEventListener('pagehide', estopPageHideHandler);
+  if (estopPageHideHandler)
+    window.removeEventListener("pagehide", estopPageHideHandler);
   estopPageHideHandler = null;
   estopChannel?.close();
   estopChannel = null;
@@ -794,7 +840,10 @@ function releaseEstopWriterClaim() {
  * unavailable there is nothing to coordinate with, so this tab is the writer.
  */
 function claimEstopWriter(): () => void {
-  if (typeof window === 'undefined' || typeof BroadcastChannel === 'undefined') {
+  if (
+    typeof window === "undefined" ||
+    typeof BroadcastChannel === "undefined"
+  ) {
     setEstopState({ writer: true, commandReady: true });
     return () => {};
   }
@@ -807,26 +856,39 @@ function claimEstopWriter(): () => void {
   estopChannel.onmessage = (ev: MessageEvent<EstopElectionMsg>) => {
     const m = ev.data;
     if (!m || m.from === estopTabId) return;
-    if (m.k === 'hello') {
+    if (m.k === "hello") {
       // Lowest id wins, so the answer is the same whoever announced first.
       if (m.from < estopTabId) {
         handoffWriter(m.from);
       } else if (getEstopState().writer) {
-        postElection('mine');
+        postElection("mine");
       }
-    } else if (m.k === 'mine') {
+    } else if (m.k === "mine") {
       estopProbeAnswered = true;
       if (m.from < estopTabId) {
         handoffWriter(m.from);
       } else if (getEstopState().writer) {
-        postElection('mine');
+        postElection("mine");
       }
-    } else if (m.k === 'handoff' && m.to === estopTabId) {
+    } else if (m.k === "handoff" && m.to === estopTabId) {
       stopWriterProbe();
       operatorEngaged = !m.releasePending;
-      setEstopState(m.releasePending
-        ? { writer: true, engaged: false, heartbeat: false, releasing: true, engagedAt: null }
-        : { writer: true, engaged: true, releasing: false, engagedAt: m.engagedAt ?? Date.now() });
+      setEstopState(
+        m.releasePending
+          ? {
+              writer: true,
+              engaged: false,
+              heartbeat: false,
+              releasing: true,
+              engagedAt: null,
+            }
+          : {
+              writer: true,
+              engaged: true,
+              releasing: false,
+              engagedAt: m.engagedAt ?? Date.now(),
+            },
+      );
       settleCommandWriter();
       if (m.releasePending) {
         if (socket?.readyState === WebSocket.OPEN) startEstopReleaseBurst();
@@ -834,26 +896,30 @@ function claimEstopWriter(): () => void {
       } else if (socket?.readyState === WebSocket.OPEN) {
         startEstopHeartbeat();
       }
-    } else if (m.k === 'yield') {
+    } else if (m.k === "yield") {
       // The incumbent left. Re-announce; the id comparison settles any tie
       // between the remaining tabs without another timer.
       setEstopState({ writer: true });
       stopWriterProbe();
       settleCommandWriter();
-      postElection('hello');
+      postElection("hello");
     }
   };
 
   estopPageHideHandler = () => {
-    if (getEstopState().writer && !operatorEngaged && !getEstopState().releasing) {
-      postElection('yield');
+    if (
+      getEstopState().writer &&
+      !operatorEngaged &&
+      !getEstopState().releasing
+    ) {
+      postElection("yield");
     }
   };
-  window.addEventListener('pagehide', estopPageHideHandler);
+  window.addEventListener("pagehide", estopPageHideHandler);
 
   setEstopState({ writer: true });
   settleCommandWriter();
-  postElection('hello');
+  postElection("hello");
 
   return releaseEstopWriterClaim;
 }
@@ -864,7 +930,7 @@ function claimEstopWriter(): () => void {
 // A glob-whitelisted bridge denies unlisted topics EXACTLY this way and
 // otherwise silently. Without ids on our ops the message is unattributable, so
 // every advertise/subscribe/publish carries one.
-function opId(kind: 'sub' | 'unsub' | 'adv' | 'pub', topic: string): string {
+function opId(kind: "sub" | "unsub" | "adv" | "pub", topic: string): string {
   return `${kind}:${topic}`;
 }
 
@@ -874,15 +940,20 @@ function topicFromOpId(id: string | null): string | null {
   return m ? m[1] : null;
 }
 
-function recordBridgeFault(level: 'error' | 'warning', msg: string, id: string | null) {
+function recordBridgeFault(
+  level: "error" | "warning",
+  msg: string,
+  id: string | null,
+) {
   const topic = topicFromOpId(id);
   const fault: BridgeFault = { id, level, msg, at: Date.now(), topic };
   const faults = [fault, ...bridgeState.faults].slice(0, MAX_BRIDGE_FAULTS);
-  const deadTopics = level === 'error' && topic && !bridgeState.deadTopics.includes(topic)
-    ? [...bridgeState.deadTopics, topic]
-    : bridgeState.deadTopics;
+  const deadTopics =
+    level === "error" && topic && !bridgeState.deadTopics.includes(topic)
+      ? [...bridgeState.deadTopics, topic]
+      : bridgeState.deadTopics;
   bridgeState = { faults, deadTopics };
-  notify('bridge');
+  notify("bridge");
 }
 
 /**
@@ -904,14 +975,14 @@ const NON_FINITE_TOKEN = /-?(?:NaN|Infinity)/y;
 
 /** Rewrite bare non-finite literals without touching operator-facing strings. */
 function repairNonFiniteTokens(raw: string): string {
-  let out = '';
+  let out = "";
   let i = 0;
   let inString = false;
   while (i < raw.length) {
     const ch = raw[i];
     if (inString) {
       out += ch;
-      if (ch === '\\') {
+      if (ch === "\\") {
         i += 1;
         if (i < raw.length) out += raw[i];
       } else if (ch === '"') {
@@ -929,7 +1000,7 @@ function repairNonFiniteTokens(raw: string): string {
     NON_FINITE_TOKEN.lastIndex = i;
     const match = NON_FINITE_TOKEN.exec(raw);
     if (match) {
-      out += 'null';
+      out += "null";
       i += match[0].length;
       continue;
     }
@@ -940,12 +1011,12 @@ function repairNonFiniteTokens(raw: string): string {
 }
 
 function decodeImageFrame(topic: string, msg: InboundMsg): ImageFrame | null {
-  if (typeof msg.data !== 'string' || msg.data.length === 0) return null;
+  if (typeof msg.data !== "string" || msg.data.length === 0) return null;
   // Whitelist the format token — it lands in an <img> source. Not an XSS sink
   // (src, not innerHTML), but keeps a malformed value from silently producing a
   // broken frame.
-  const raw = (msg.format || 'jpeg').toLowerCase();
-  const format = raw.includes('png') ? 'png' : 'jpeg';
+  const raw = (msg.format || "jpeg").toLowerCase();
+  const format = raw.includes("png") ? "png" : "jpeg";
   const mime = `image/${format}`;
 
   // Latency from the message stamp. This is robot clock vs browser clock, so it
@@ -990,10 +1061,25 @@ function releaseImageUrls() {
 
 // SSR compatible Server Snapshots (stable references)
 const serverState = {
-  connection: 'disconnected' as ConnectionState,
+  connection: "disconnected" as ConnectionState,
   voltage: { voltage: null, ...blankMeta() } as CockpitVoltage,
-  odom: { x: null, y: null, yaw: null, linearSpeed: null, angularSpeed: null, ...blankMeta() } as CockpitOdom,
-  imu: { ax: null, ay: null, az: null, gx: null, gy: null, gz: null, ...blankMeta() } as CockpitImu,
+  odom: {
+    x: null,
+    y: null,
+    yaw: null,
+    linearSpeed: null,
+    angularSpeed: null,
+    ...blankMeta(),
+  } as CockpitOdom,
+  imu: {
+    ax: null,
+    ay: null,
+    az: null,
+    gx: null,
+    gy: null,
+    gz: null,
+    ...blankMeta(),
+  } as CockpitImu,
   clearance: { meters: null, ...blankMeta() } as CockpitClearance,
   status: { ...blankStatus(), ...blankMeta() } as CockpitStatus,
   diagnostics: { items: [], ...blankMeta() } as CockpitDiagnostics,
@@ -1003,7 +1089,7 @@ const serverState = {
 
 export const rosClient = {
   connect(url: string) {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     if (socket && lastWsUrl === url) {
       if (socket.readyState === WebSocket.OPEN) {
         // The socket outlived the component (an engaged e-stop keeps it up).
@@ -1041,10 +1127,10 @@ export const rosClient = {
       socket = null;
     }
     heavyStreamsPaused = false;
-    if (connectionState !== 'disconnected') {
-      connectionState = 'disconnected';
+    if (connectionState !== "disconnected") {
+      connectionState = "disconnected";
       markAllStale();
-      notify('connection');
+      notify("connection");
     }
   },
 
@@ -1062,46 +1148,46 @@ export const rosClient = {
 
   initiateConnection(url: string) {
     if (reconnectTimer) clearTimeout(reconnectTimer);
-    connectionState = 'connecting';
-    notify('connection');
+    connectionState = "connecting";
+    notify("connection");
 
     try {
       socket = new WebSocket(url);
     } catch (e) {
-      console.error('WebSocket connection failed:', e);
+      console.error("WebSocket connection failed:", e);
       this.handleScheduleReconnect(url);
       return;
     }
 
     socket.onopen = () => {
-      connectionState = 'connected';
+      connectionState = "connected";
       reconnectDelay = 1000;
       heavyStreamsPaused = false;
       resetSlicesForNewConnection();
-      notify('connection');
+      notify("connection");
       this.advertiseAndSubscribe();
       this.startStalenessTicker();
     };
 
     socket.onclose = () => {
-      connectionState = 'disconnected';
+      connectionState = "disconnected";
       // Hold the timers while the socket is down so the UI stops claiming a
       // live heartbeat; advertiseAndSubscribe restarts it on the next open.
       suspendEstopTimers();
       this.stopStalenessTicker();
       markAllStale();
-      notify('connection');
+      notify("connection");
       this.handleScheduleReconnect(url);
     };
 
     socket.onerror = () => {
-      connectionState = 'disconnected';
+      connectionState = "disconnected";
       // Same reasoning as onclose: a socket in error is not carrying a
       // heartbeat, so stop claiming one.
       suspendEstopTimers();
       this.stopStalenessTicker();
       markAllStale();
-      notify('connection');
+      notify("connection");
     };
 
     socket.onmessage = (event) => {
@@ -1113,16 +1199,25 @@ export const rosClient = {
           level?: string;
           id?: string;
         };
-        if (data.op === 'publish' && data.topic) {
+        if (data.op === "publish" && data.topic) {
           this.handleInboundPublish(data.topic, data.msg as InboundMsg);
-        } else if (data.op === 'status') {
-          const level = data.level === 'error' ? 'error' : data.level === 'warning' ? 'warning' : null;
+        } else if (data.op === "status") {
+          const level =
+            data.level === "error"
+              ? "error"
+              : data.level === "warning"
+                ? "warning"
+                : null;
           if (level) {
-            recordBridgeFault(level, String((data as { msg?: unknown }).msg ?? ''), data.id ?? null);
+            recordBridgeFault(
+              level,
+              String((data as { msg?: unknown }).msg ?? ""),
+              data.id ?? null,
+            );
           }
         }
       } catch (err) {
-        console.error('Error parsing WebSocket message:', err);
+        console.error("Error parsing WebSocket message:", err);
       }
     };
   },
@@ -1141,30 +1236,38 @@ export const rosClient = {
 
     // Ask the bridge to actually tell us about refusals. Default `level: none`
     // means a glob-whitelisted bridge denies our topics in total silence.
-    socket.send(JSON.stringify({ op: 'set_level', level: 'warning' }));
+    socket.send(JSON.stringify({ op: "set_level", level: "warning" }));
 
     ROS_SUBSCRIPTIONS.forEach(({ topic, type }) => {
-      if (heavyStreamsPaused && (HEAVY_TOPICS as readonly string[]).includes(topic)) return;
+      if (
+        heavyStreamsPaused &&
+        (HEAVY_TOPICS as readonly string[]).includes(topic)
+      )
+        return;
       const isImage = (IMAGE_TOPICS as readonly string[]).includes(topic);
-      socket?.send(JSON.stringify({
-        op: 'subscribe',
-        id: opId('sub', topic),
-        topic,
-        type,
-        throttle_rate: isImage ? 100 : 50,
-        // Never buffer video: one frame deep means a slow link drops frames
-        // instead of queueing a growing lag behind the robot.
-        ...(isImage ? { queue_length: 1 } : {}),
-      }));
+      socket?.send(
+        JSON.stringify({
+          op: "subscribe",
+          id: opId("sub", topic),
+          topic,
+          type,
+          throttle_rate: isImage ? 100 : 50,
+          // Never buffer video: one frame deep means a slow link drops frames
+          // instead of queueing a growing lag behind the robot.
+          ...(isImage ? { queue_length: 1 } : {}),
+        }),
+      );
     });
 
     ROS_PUBLICATIONS.forEach(({ topic, type }) => {
-      socket?.send(JSON.stringify({
-        op: 'advertise',
-        id: opId('adv', topic),
-        topic,
-        type,
-      }));
+      socket?.send(
+        JSON.stringify({
+          op: "advertise",
+          id: opId("adv", topic),
+          topic,
+          type,
+        }),
+      );
     });
 
     // Contract: every (re)connect must re-assert a held stop immediately. The
@@ -1189,18 +1292,22 @@ export const rosClient = {
     releaseImageUrls();
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
     HEAVY_TOPICS.forEach((topic) => {
-      socket?.send(JSON.stringify({ op: 'unsubscribe', id: opId('unsub', topic), topic }));
+      socket?.send(
+        JSON.stringify({ op: "unsubscribe", id: opId("unsub", topic), topic }),
+      );
     });
   },
 
   publish(topic: string, msg: unknown): boolean {
     if (!socket || socket.readyState !== WebSocket.OPEN) return false;
-    socket.send(JSON.stringify({
-      op: 'publish',
-      id: opId('pub', topic),
-      topic,
-      msg,
-    }));
+    socket.send(
+      JSON.stringify({
+        op: "publish",
+        id: opId("pub", topic),
+        topic,
+        msg,
+      }),
+    );
     return true;
   },
 
@@ -1218,7 +1325,7 @@ export const rosClient = {
    * set. Both directions are idempotent.
    */
   setEstopLock(engaged: boolean): boolean {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === "undefined") return false;
     // Another tab owns the lock. If an invariant break left this tab with an
     // old heartbeat, a local release must silence it without publishing a
     // competing `false` against the current writer.
@@ -1247,7 +1354,10 @@ export const rosClient = {
       const armed = startEstopHeartbeat();
       if (!armed) return false;
       operatorEngaged = true;
-      setEstopState({ engaged: true, engagedAt: getEstopState().engagedAt ?? Date.now() });
+      setEstopState({
+        engaged: true,
+        engagedAt: getEstopState().engagedAt ?? Date.now(),
+      });
       return true;
     }
 
@@ -1311,12 +1421,12 @@ export const rosClient = {
     }
 
     switch (topic) {
-      case '/ugv/voltage': {
+      case "/ugv/voltage": {
         voltageData = { voltage: finite(msg.voltage) };
-        commit('voltage');
+        commit("voltage");
         break;
       }
-      case '/odom': {
+      case "/odom": {
         const qz = finite(msg.pose?.pose?.orientation?.z) ?? 0;
         const qw = finite(msg.pose?.pose?.orientation?.w) ?? 1;
         odomData = {
@@ -1326,10 +1436,10 @@ export const rosClient = {
           linearSpeed: finite(msg.twist?.twist?.linear?.x),
           angularSpeed: finite(msg.twist?.twist?.angular?.z),
         };
-        commit('odom');
+        commit("odom");
         break;
       }
-      case '/imu/raw': {
+      case "/imu/raw": {
         imuData = {
           ax: finite(msg.linear_acceleration?.x),
           ay: finite(msg.linear_acceleration?.y),
@@ -1338,25 +1448,25 @@ export const rosClient = {
           gy: finite(msg.angular_velocity?.y),
           gz: finite(msg.angular_velocity?.z),
         };
-        commit('imu');
+        commit("imu");
         break;
       }
-      case '/cockpit/overhead_clearance': {
+      case "/cockpit/overhead_clearance": {
         clearanceData = { meters: finite(msg.data) };
-        commit('clearance');
+        commit("clearance");
         break;
       }
-      case '/ugv/allow_motion': {
+      case "/ugv/allow_motion": {
         statusData = {
           ...statusData,
-          allowMotion: typeof msg.data === 'boolean' ? msg.data : null,
+          allowMotion: typeof msg.data === "boolean" ? msg.data : null,
         };
         allowMotionDirectAt = Date.now();
         statusGroupAt.allowMotion = allowMotionDirectAt;
-        commit('status');
+        commit("status");
         break;
       }
-      case '/ugv/watchdog_state': {
+      case "/ugv/watchdog_state": {
         const values: Record<string, string> = {};
         (msg.values ?? []).forEach((kv) => {
           values[kv.key] = kv.value;
@@ -1368,10 +1478,10 @@ export const rosClient = {
         };
         watchdogDirectAt = Date.now();
         statusGroupAt.watchdog = watchdogDirectAt;
-        commit('status');
+        commit("status");
         break;
       }
-      case '/cockpit/status': {
+      case "/cockpit/status": {
         const next: StatusData = { ...statusData };
         const diagArray = msg.status;
         if (diagArray && Array.isArray(diagArray)) {
@@ -1383,13 +1493,13 @@ export const rosClient = {
               });
             }
 
-            if (d.name === 'cockpit_safety_watchdog') {
+            if (d.name === "cockpit_safety_watchdog") {
               if (!directSafetyIsFresh(watchdogDirectAt)) {
                 next.watchdogArmed = safeBool(values.armed);
                 next.watchdogFired = safeBool(values.fired);
                 statusGroupAt.watchdog = Date.now();
               }
-            } else if (d.name === 'twist_mux') {
+            } else if (d.name === "twist_mux") {
               // No fallback to 'NONE': absent means unknown, and "NONE" reads
               // as a positive report that nothing holds the mux.
               next.muxSource = values.active_source ?? null;
@@ -1397,12 +1507,12 @@ export const rosClient = {
               const pubs = safeNumber(values.publisher_count);
               next.pubCount = pubs === null ? null : Math.max(0, pubs);
               statusGroupAt.mux = Date.now();
-            } else if (d.name === 'bringup') {
+            } else if (d.name === "bringup") {
               if (!directSafetyIsFresh(allowMotionDirectAt)) {
                 next.allowMotion = safeBool(values.allow_motion);
                 statusGroupAt.allowMotion = Date.now();
               }
-            } else if (d.name === 'system_metrics') {
+            } else if (d.name === "system_metrics") {
               next.wifiRssi = safeNumber(values.wifi_rssi);
               next.diskFree = values.disk_free || null;
               next.cpuTemp = safeNumber(values.cpu_temp);
@@ -1412,10 +1522,10 @@ export const rosClient = {
           });
         }
         statusData = next;
-        commit('status');
+        commit("status");
         break;
       }
-      case '/diagnostics': {
+      case "/diagnostics": {
         const rawDiags = msg.status;
         if (rawDiags && Array.isArray(rawDiags)) {
           // One header stamp covers the whole array — that is the robot's own
@@ -1430,20 +1540,20 @@ export const rosClient = {
                 });
               }
               return {
-                name: d.name ?? 'unknown',
-                message: d.message ?? '',
+                name: d.name ?? "unknown",
+                message: d.message ?? "",
                 level: finite(d.level) ?? 0,
-                hardware_id: d.hardware_id ?? '',
+                hardware_id: d.hardware_id ?? "",
                 values,
                 stampMs,
               };
             }),
           };
-          commit('diagnostics');
+          commit("diagnostics");
         }
         break;
       }
-      case '/scan': {
+      case "/scan": {
         const ranges = msg.ranges;
         if (!ranges || !Array.isArray(ranges)) break;
 
@@ -1458,7 +1568,13 @@ export const rosClient = {
           const r = ranges[i];
           // `null` arrives from the NaN/Infinity repair above; Number(null) is
           // 0, so the explicit null check has to come first.
-          if (r === null || r === undefined || !Number.isFinite(r) || r < rangeMin || r > rangeMax) {
+          if (
+            r === null ||
+            r === undefined ||
+            !Number.isFinite(r) ||
+            r < rangeMin ||
+            r > rangeMax
+          ) {
             continue;
           }
 
@@ -1466,11 +1582,19 @@ export const rosClient = {
           let normDeg = ((angle * 180.0) / Math.PI) % 360;
           if (normDeg < 0) normDeg += 360;
 
-          if (normDeg >= LIDAR_CROP_SECTOR_DEG.startDeg && normDeg <= LIDAR_CROP_SECTOR_DEG.endDeg) {
+          if (
+            normDeg >= LIDAR_CROP_SECTOR_DEG.startDeg &&
+            normDeg <= LIDAR_CROP_SECTOR_DEG.endDeg
+          ) {
             continue; // inside the blind sector — see LIDAR_CROP_SECTOR_DEG
           }
 
-          points.push({ range: r, angle, x: r * Math.cos(angle), y: r * Math.sin(angle) });
+          points.push({
+            range: r,
+            angle,
+            x: r * Math.cos(angle),
+            y: r * Math.sin(angle),
+          });
         }
 
         // Measure the real scan rate instead of printing a nominal one.
@@ -1478,11 +1602,20 @@ export const rosClient = {
         scanArrivals = [...scanArrivals, now].slice(-8);
         const intervalMs =
           scanArrivals.length >= 2
-            ? (scanArrivals[scanArrivals.length - 1] - scanArrivals[0]) / (scanArrivals.length - 1)
+            ? (scanArrivals[scanArrivals.length - 1] - scanArrivals[0]) /
+              (scanArrivals.length - 1)
             : null;
 
-        scanData = { points, angleMin, angleMax, angleIncrement, rangeMin, rangeMax, intervalMs };
-        commit('scan');
+        scanData = {
+          points,
+          angleMin,
+          angleMax,
+          angleIncrement,
+          rangeMin,
+          rangeMax,
+          intervalMs,
+        };
+        commit("scan");
         break;
       }
     }
@@ -1497,7 +1630,7 @@ export function useConnectionState(): ConnectionState {
       return () => listeners.connection.delete(cb);
     },
     () => connectionState,
-    () => serverState.connection
+    () => serverState.connection,
   );
 }
 
@@ -1508,7 +1641,7 @@ export function useCockpitVoltage(): CockpitVoltage {
       return () => listeners.voltage.delete(cb);
     },
     () => voltageState,
-    () => serverState.voltage
+    () => serverState.voltage,
   );
 }
 
@@ -1519,7 +1652,7 @@ export function useCockpitOdom(): CockpitOdom {
       return () => listeners.odom.delete(cb);
     },
     () => odomState,
-    () => serverState.odom
+    () => serverState.odom,
   );
 }
 
@@ -1530,7 +1663,7 @@ export function useCockpitImu(): CockpitImu {
       return () => listeners.imu.delete(cb);
     },
     () => imuState,
-    () => serverState.imu
+    () => serverState.imu,
   );
 }
 
@@ -1541,7 +1674,7 @@ export function useCockpitOverheadClearance(): CockpitClearance {
       return () => listeners.clearance.delete(cb);
     },
     () => clearanceState,
-    () => serverState.clearance
+    () => serverState.clearance,
   );
 }
 
@@ -1552,7 +1685,7 @@ export function useCockpitStatus(): CockpitStatus {
       return () => listeners.status.delete(cb);
     },
     () => statusState,
-    () => serverState.status
+    () => serverState.status,
   );
 }
 
@@ -1563,7 +1696,7 @@ export function useCockpitDiagnostics(): CockpitDiagnostics {
       return () => listeners.diagnostics.delete(cb);
     },
     () => diagnosticsState,
-    () => serverState.diagnostics
+    () => serverState.diagnostics,
   );
 }
 
@@ -1574,7 +1707,7 @@ export function useCockpitBridge(): CockpitBridge {
       return () => listeners.bridge.delete(cb);
     },
     () => bridgeState,
-    () => serverState.bridge
+    () => serverState.bridge,
   );
 }
 
@@ -1585,6 +1718,6 @@ export function useCockpitScan(): CockpitScan {
       return () => listeners.scan.delete(cb);
     },
     () => scanState,
-    () => serverState.scan
+    () => serverState.scan,
   );
 }

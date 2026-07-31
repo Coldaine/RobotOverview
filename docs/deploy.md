@@ -25,7 +25,17 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
 - **Database:** Logical DB `hangar` on CloudNativePG `pg18-core` (`data-platform`).
   App env from Secret `hangar-runtime-secrets` (`HANGAR_DB_*`, `HANGAR_INGEST_TOKEN`).
   Readiness probe is `GET /api/hangar/preflight` — a Ready pod means Postgres is reachable.
-- **Cockpit Transport Env:** `BEAST_COCKPIT_WS_URL` is a plain server-side environment variable (e.g. `wss://beast-01.tyrannosaurus-magellanic.ts.net`). It is fetched by the `/cockpit` server route and passed down securely to client-side components to avoid build-time inlining. If unset or offline, the Cockpit degrades gracefully to a loud disconnected state.
+- **Cockpit Transport Env:** `BEAST_COCKPIT_WS_URL` is a plain server-side environment variable
+  (e.g. `wss://beast-01.tyrannosaurus-magellanic.ts.net`). Using a non-`NEXT_PUBLIC_` name keeps
+  it out of the **build** — it is read at request time, so the value is not baked into a static
+  bundle and can change without a rebuild. **It is not secret.** The `/cockpit` server route
+  threads it into a client component, so it is serialized into the RSC payload of a
+  world-loadable page: anyone who can load `/cockpit` can read the robot's WebSocket URL. The
+  actual access control is (a) tailnet reachability — the `wss://` endpoint only resolves and
+  only accepts connections from inside the tailnet — and (b) the robot-side rosbridge topic
+  glob whitelist (in flight), which bounds what a connected client may do. Treat the URL as
+  public and the tailnet as the perimeter. If unset or offline, the Cockpit degrades gracefully
+  to a loud disconnected state.
 - **Robot-side Service:** `beast-cockpit.service` runs on the Jetson, managing the `rosbridge_websocket` server on port `9090` and the custom depth colorizer, status aggregator, and overhead clearance nodes. It is proxied to `wss://` via `tailscale serve`.
 - **UI spine:** Reconstructs HangarData from normalized tables at request time
   (`getHangarSpine` → `buildHangarDataFromDb`). Agents write via op-verb

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   rosClient,
   useConnectionState,
@@ -13,8 +13,8 @@ import {
   ROS_SUBSCRIPTIONS,
   ROS_PUBLICATIONS,
   LIDAR_CROP_SECTOR_DEG,
-} from '@/lib/ros/client';
-import { renderHook, act } from '@testing-library/react';
+} from "@/lib/ros/client";
+import { renderHook, act } from "@testing-library/react";
 
 // Mock WebSocket
 class MockWebSocket {
@@ -77,21 +77,23 @@ class MockBroadcastChannel {
   }
 }
 
-const ESTOP_TOPIC = '/cmd_vel_estop_lock';
+const ESTOP_TOPIC = "/cmd_vel_estop_lock";
 
 // Every `{data: …}` value this client has put on the lock topic, in order.
 function estopPublishes(ws: MockWebSocket): boolean[] {
   return ws.send.mock.calls
     .map((c) => JSON.parse(c[0]))
-    .filter((m) => m.op === 'publish' && m.topic === ESTOP_TOPIC)
+    .filter((m) => m.op === "publish" && m.topic === ESTOP_TOPIC)
     .map((m) => m.msg.data as boolean);
 }
 
-function wireOps(ws: MockWebSocket): Array<{ op: string; topic?: string; type?: string; id?: string }> {
+function wireOps(
+  ws: MockWebSocket,
+): Array<{ op: string; topic?: string; type?: string; id?: string }> {
   return ws.send.mock.calls.map((c) => JSON.parse(c[0]));
 }
 
-function openSocket(url = 'wss://beast-test-url:9090'): MockWebSocket {
+function openSocket(url = "wss://beast-test-url:9090"): MockWebSocket {
   act(() => {
     rosClient.connect(url);
     MockWebSocket.latestInstance?.triggerOpen();
@@ -99,9 +101,9 @@ function openSocket(url = 'wss://beast-test-url:9090'): MockWebSocket {
   return MockWebSocket.latestInstance!;
 }
 
-describe('rosClient and hooks', () => {
+describe("rosClient and hooks", () => {
   beforeEach(() => {
-    vi.stubGlobal('WebSocket', MockWebSocket);
+    vi.stubGlobal("WebSocket", MockWebSocket);
     vi.useFakeTimers();
   });
 
@@ -116,38 +118,40 @@ describe('rosClient and hooks', () => {
     vi.unstubAllGlobals();
   });
 
-  it('manages connection state and reconnect backoff correctly', () => {
+  it("manages connection state and reconnect backoff correctly", () => {
     const { result } = renderHook(() => useConnectionState());
-    expect(result.current).toBe('disconnected');
+    expect(result.current).toBe("disconnected");
 
     act(() => {
-      rosClient.connect('wss://beast-test-url:9090');
+      rosClient.connect("wss://beast-test-url:9090");
     });
 
-    expect(result.current).toBe('connecting');
+    expect(result.current).toBe("connecting");
     expect(MockWebSocket.latestInstance).toBeTruthy();
 
     act(() => {
       MockWebSocket.latestInstance?.triggerOpen();
     });
 
-    expect(result.current).toBe('connected');
+    expect(result.current).toBe("connected");
 
-    const subscribeCalls = wireOps(MockWebSocket.latestInstance!).filter((c) => c.op === 'subscribe');
-    expect(subscribeCalls.some((s) => s.topic === '/scan')).toBe(true);
+    const subscribeCalls = wireOps(MockWebSocket.latestInstance!).filter(
+      (c) => c.op === "subscribe",
+    );
+    expect(subscribeCalls.some((s) => s.topic === "/scan")).toBe(true);
 
     // Close and test reconnect
     act(() => {
       MockWebSocket.latestInstance?.triggerClose();
     });
 
-    expect(result.current).toBe('disconnected');
+    expect(result.current).toBe("disconnected");
 
     act(() => {
       vi.advanceTimersByTime(1100);
     });
 
-    expect(result.current).toBe('connecting');
+    expect(result.current).toBe("connecting");
   });
 
   it("manages topic slice snapshot identity and doesn't trigger unrelated notifications", () => {
@@ -161,8 +165,8 @@ describe('rosClient and hooks', () => {
 
     act(() => {
       MockWebSocket.latestInstance?.triggerMessage({
-        op: 'publish',
-        topic: '/ugv/voltage',
+        op: "publish",
+        topic: "/ugv/voltage",
         msg: { voltage: 11.5 },
       });
     });
@@ -179,47 +183,48 @@ describe('rosClient and hooks', () => {
   // matches and the control is silently dead — the exact failure that left the
   // headlights and the steady toggle inert. Pin every string against
   // ugv_ws@fc1c29e so a "harmonising" edit has to break a test to land.
-  describe('message-type contract', () => {
+  describe("message-type contract", () => {
     const EXPECTED_SUBSCRIPTIONS: Record<string, string> = {
-      '/ugv/voltage': 'sensor_msgs/msg/BatteryState',
-      '/scan': 'sensor_msgs/msg/LaserScan',
-      '/odom': 'nav_msgs/msg/Odometry',
-      '/imu/raw': 'sensor_msgs/msg/Imu',
-      '/cockpit/overhead_clearance': 'std_msgs/msg/Float32',
-      '/cockpit/status': 'diagnostic_msgs/msg/DiagnosticArray',
-      '/diagnostics': 'diagnostic_msgs/msg/DiagnosticArray',
-      '/ugv/allow_motion': 'std_msgs/msg/Bool',
-      '/ugv/watchdog_state': 'diagnostic_msgs/msg/DiagnosticStatus',
-      '/oak/rgb/image_raw/compressed': 'sensor_msgs/msg/CompressedImage',
-      '/cockpit/depth/compressed': 'sensor_msgs/msg/CompressedImage',
+      "/ugv/voltage": "sensor_msgs/msg/BatteryState",
+      "/scan": "sensor_msgs/msg/LaserScan",
+      "/odom": "nav_msgs/msg/Odometry",
+      "/imu/raw": "sensor_msgs/msg/Imu",
+      "/cockpit/overhead_clearance": "std_msgs/msg/Float32",
+      "/cockpit/status": "diagnostic_msgs/msg/DiagnosticArray",
+      "/diagnostics": "diagnostic_msgs/msg/DiagnosticArray",
+      "/ugv/allow_motion": "std_msgs/msg/Bool",
+      "/ugv/watchdog_state": "diagnostic_msgs/msg/DiagnosticStatus",
+      "/oak/rgb/image_raw/compressed": "sensor_msgs/msg/CompressedImage",
+      "/cockpit/depth/compressed": "sensor_msgs/msg/CompressedImage",
     };
 
     const EXPECTED_PUBLICATIONS: Record<string, string> = {
-      '/cmd_vel_ui': 'geometry_msgs/msg/Twist',
+      "/cmd_vel_ui": "geometry_msgs/msg/Twist",
       // Robot subscriber is Float32MultiArray. Int32MultiArray never matches.
-      '/ugv/led_ctrl': 'std_msgs/msg/Float32MultiArray',
+      "/ugv/led_ctrl": "std_msgs/msg/Float32MultiArray",
       // ros2_control controller — genuinely Float64. Do NOT harmonise with the
       // Float32 topic above; they are different robot-side subscribers.
-      '/pt_joint_position_controller/commands': 'std_msgs/msg/Float64MultiArray',
-      '/ugv/pt_steady_ctrl': 'std_msgs/msg/Float32MultiArray',
-      '/cmd_vel_estop_lock': 'std_msgs/msg/Bool',
+      "/pt_joint_position_controller/commands":
+        "std_msgs/msg/Float64MultiArray",
+      "/ugv/pt_steady_ctrl": "std_msgs/msg/Float32MultiArray",
+      "/cmd_vel_estop_lock": "std_msgs/msg/Bool",
     };
 
-    it('declares exactly the robot-side topic set', () => {
-      expect(Object.fromEntries(ROS_SUBSCRIPTIONS.map((s) => [s.topic, s.type]))).toEqual(
-        EXPECTED_SUBSCRIPTIONS,
-      );
-      expect(Object.fromEntries(ROS_PUBLICATIONS.map((p) => [p.topic, p.type]))).toEqual(
-        EXPECTED_PUBLICATIONS,
-      );
+    it("declares exactly the robot-side topic set", () => {
+      expect(
+        Object.fromEntries(ROS_SUBSCRIPTIONS.map((s) => [s.topic, s.type])),
+      ).toEqual(EXPECTED_SUBSCRIPTIONS);
+      expect(
+        Object.fromEntries(ROS_PUBLICATIONS.map((p) => [p.topic, p.type])),
+      ).toEqual(EXPECTED_PUBLICATIONS);
     });
 
-    it('puts those exact types on the wire, with attributable ids', () => {
+    it("puts those exact types on the wire, with attributable ids", () => {
       const ws = openSocket();
       const ops = wireOps(ws);
 
       Object.entries(EXPECTED_SUBSCRIPTIONS).forEach(([topic, type]) => {
-        const op = ops.find((o) => o.op === 'subscribe' && o.topic === topic);
+        const op = ops.find((o) => o.op === "subscribe" && o.topic === topic);
         expect(op, `no subscribe for ${topic}`).toBeTruthy();
         expect(op!.type).toBe(type);
         // Without ids, a glob-whitelist denial is unattributable.
@@ -227,39 +232,43 @@ describe('rosClient and hooks', () => {
       });
 
       Object.entries(EXPECTED_PUBLICATIONS).forEach(([topic, type]) => {
-        const op = ops.find((o) => o.op === 'advertise' && o.topic === topic);
+        const op = ops.find((o) => o.op === "advertise" && o.topic === topic);
         expect(op, `no advertise for ${topic}`).toBeTruthy();
         expect(op!.type).toBe(type);
         expect(op!.id).toBe(`adv:${topic}`);
       });
     });
 
-    it('never subscribes /imu/data — nothing publishes it on this robot', () => {
+    it("never subscribes /imu/data — nothing publishes it on this robot", () => {
       const ws = openSocket();
       const topics = wireOps(ws).map((o) => o.topic);
-      expect(topics).not.toContain('/imu/data');
-      expect(topics).toContain('/imu/raw');
+      expect(topics).not.toContain("/imu/data");
+      expect(topics).toContain("/imu/raw");
     });
 
-    it('caps the image subscriptions at one queued frame', () => {
+    it("caps the image subscriptions at one queued frame", () => {
       const ws = openSocket();
       const images = wireOps(ws).filter(
-        (o) => o.op === 'subscribe' && typeof o.topic === 'string' && o.topic.includes('compressed'),
+        (o) =>
+          o.op === "subscribe" &&
+          typeof o.topic === "string" &&
+          o.topic.includes("compressed"),
       ) as Array<{ queue_length?: number }>;
       expect(images).toHaveLength(2);
       images.forEach((op) => expect(op.queue_length).toBe(1));
     });
 
-    it('reports negative clock skew as unknown and revokes replaced image URLs', () => {
-      vi.setSystemTime(new Date('2026-07-31T20:00:00Z'));
-      const createObjectURL = vi.fn()
-        .mockReturnValueOnce('blob:first')
-        .mockReturnValueOnce('blob:second');
+    it("reports negative clock skew as unknown and revokes replaced image URLs", () => {
+      vi.setSystemTime(new Date("2026-07-31T20:00:00Z"));
+      const createObjectURL = vi
+        .fn()
+        .mockReturnValueOnce("blob:first")
+        .mockReturnValueOnce("blob:second");
       const revokeObjectURL = vi.fn();
-      vi.stubGlobal('URL', { createObjectURL, revokeObjectURL });
+      vi.stubGlobal("URL", { createObjectURL, revokeObjectURL });
       const frames: Array<{ src: string; latencyMs: number | null }> = [];
       const unregister = rosClient.registerImageCallback(
-        '/oak/rgb/image_raw/compressed',
+        "/oak/rgb/image_raw/compressed",
         (frame) => frames.push(frame),
       );
       const ws = openSocket();
@@ -267,36 +276,36 @@ describe('rosClient and hooks', () => {
 
       act(() => {
         ws.triggerMessage({
-          op: 'publish',
-          topic: '/oak/rgb/image_raw/compressed',
+          op: "publish",
+          topic: "/oak/rgb/image_raw/compressed",
           msg: {
-            data: 'AQID',
-            format: 'jpeg',
+            data: "AQID",
+            format: "jpeg",
             header: { stamp: { sec: browserNowSec + 5, nanosec: 0 } },
           },
         });
         ws.triggerMessage({
-          op: 'publish',
-          topic: '/oak/rgb/image_raw/compressed',
+          op: "publish",
+          topic: "/oak/rgb/image_raw/compressed",
           msg: {
-            data: 'BAUG',
-            format: 'jpeg',
+            data: "BAUG",
+            format: "jpeg",
             header: { stamp: { sec: browserNowSec, nanosec: 0 } },
           },
         });
       });
 
-      expect(frames[0]).toEqual({ src: 'blob:first', latencyMs: null });
-      expect(frames[1]).toEqual({ src: 'blob:second', latencyMs: 0 });
-      expect(revokeObjectURL).toHaveBeenCalledWith('blob:first');
+      expect(frames[0]).toEqual({ src: "blob:first", latencyMs: null });
+      expect(frames[1]).toEqual({ src: "blob:second", latencyMs: 0 });
+      expect(revokeObjectURL).toHaveBeenCalledWith("blob:first");
 
       unregister();
-      expect(revokeObjectURL).toHaveBeenCalledWith('blob:second');
+      expect(revokeObjectURL).toHaveBeenCalledWith("blob:second");
     });
 
-    it('raises the bridge status level so refusals are not silent', () => {
+    it("raises the bridge status level so refusals are not silent", () => {
       const ws = openSocket();
-      expect(wireOps(ws).some((o) => o.op === 'set_level')).toBe(true);
+      expect(wireOps(ws).some((o) => o.op === "set_level")).toBe(true);
     });
   });
 
@@ -304,8 +313,8 @@ describe('rosClient and hooks', () => {
   // rosbridge emits float NaN/Infinity as BARE tokens, which are not valid JSON.
   // These payloads are raw strings on purpose: JSON.stringify would turn them
   // into `null` and the test would prove nothing.
-  describe('non-finite defence (raw wire payloads)', () => {
-    it('survives bare NaN/Infinity tokens instead of dropping the whole frame', () => {
+  describe("non-finite defence (raw wire payloads)", () => {
+    it("survives bare NaN/Infinity tokens instead of dropping the whole frame", () => {
       openSocket();
       const scanHook = renderHook(() => useCockpitScan());
 
@@ -319,10 +328,12 @@ describe('rosClient and hooks', () => {
       // The frame parsed at all (the old client threw in JSON.parse and lost it)
       // and the non-finite bins were dropped rather than rendered.
       expect(scanHook.result.current.hasReceived).toBe(true);
-      expect(scanHook.result.current.points.map((p) => p.range)).toEqual([1.0, 2.0]);
+      expect(scanHook.result.current.points.map((p) => p.range)).toEqual([
+        1.0, 2.0,
+      ]);
     });
 
-    it('renders a NaN voltage as unknown, not as zero volts', () => {
+    it("renders a NaN voltage as unknown, not as zero volts", () => {
       openSocket();
       const voltageHook = renderHook(() => useCockpitVoltage());
 
@@ -335,7 +346,7 @@ describe('rosClient and hooks', () => {
       expect(voltageHook.result.current.voltage).toBeNull();
     });
 
-    it('rejects a non-finite clearance', () => {
+    it("rejects a non-finite clearance", () => {
       openSocket();
       const clearanceHook = renderHook(() => useCockpitOverheadClearance());
 
@@ -350,15 +361,15 @@ describe('rosClient and hooks', () => {
   });
 
   // ── LiDAR CROP ────────────────────────────────────────────────────────────
-  describe('LiDAR blind-sector crop', () => {
+  describe("LiDAR blind-sector crop", () => {
     // 360 bins starting at 0 rad with a 1° increment, so bin index == bearing in
     // degrees and sector membership is exact rather than approximate.
     const send360 = () => {
       const ranges = Array(360).fill(2.0);
       act(() => {
         MockWebSocket.latestInstance?.triggerMessage({
-          op: 'publish',
-          topic: '/scan',
+          op: "publish",
+          topic: "/scan",
           msg: {
             ranges,
             angle_min: 0,
@@ -374,7 +385,7 @@ describe('rosClient and hooks', () => {
     const degreesOf = (points: Array<{ angle: number }>) =>
       points.map((p) => Math.round((p.angle * 180) / Math.PI));
 
-    it('drops exactly the declared sector and keeps everything else', () => {
+    it("drops exactly the declared sector and keeps everything else", () => {
       openSocket();
       const scanHook = renderHook(() => useCockpitScan());
       send360();
@@ -383,7 +394,10 @@ describe('rosClient and hooks', () => {
       const expectedDropped: number[] = [];
       const expectedRetained: number[] = [];
       for (let deg = 0; deg < 360; deg++) {
-        (deg >= startDeg && deg <= endDeg ? expectedDropped : expectedRetained).push(deg);
+        (deg >= startDeg && deg <= endDeg
+          ? expectedDropped
+          : expectedRetained
+        ).push(deg);
       }
 
       const retained = degreesOf(scanHook.result.current.points);
@@ -400,7 +414,7 @@ describe('rosClient and hooks', () => {
       expect(retained).toContain(135);
     });
 
-    it('measures the scan rate from arrivals rather than asserting a nominal one', () => {
+    it("measures the scan rate from arrivals rather than asserting a nominal one", () => {
       openSocket();
       const scanHook = renderHook(() => useCockpitScan());
 
@@ -416,15 +430,15 @@ describe('rosClient and hooks', () => {
   });
 
   // ── STALENESS ─────────────────────────────────────────────────────────────
-  describe('staleness', () => {
-    it('marks a slice stale once its freshness budget lapses', () => {
+  describe("staleness", () => {
+    it("marks a slice stale once its freshness budget lapses", () => {
       openSocket();
       const voltageHook = renderHook(() => useCockpitVoltage());
 
       act(() => {
         MockWebSocket.latestInstance?.triggerMessage({
-          op: 'publish',
-          topic: '/ugv/voltage',
+          op: "publish",
+          topic: "/ugv/voltage",
           msg: { voltage: 11.5 },
         });
       });
@@ -438,13 +452,17 @@ describe('rosClient and hooks', () => {
       expect(voltageHook.result.current.voltage).toBe(11.5);
     });
 
-    it('marks every slice stale the instant the socket closes', () => {
+    it("marks every slice stale the instant the socket closes", () => {
       const ws = openSocket();
       const voltageHook = renderHook(() => useCockpitVoltage());
       const scanHook = renderHook(() => useCockpitScan());
 
       act(() => {
-        ws.triggerMessage({ op: 'publish', topic: '/ugv/voltage', msg: { voltage: 11.5 } });
+        ws.triggerMessage({
+          op: "publish",
+          topic: "/ugv/voltage",
+          msg: { voltage: 11.5 },
+        });
       });
       expect(voltageHook.result.current.stale).toBe(false);
 
@@ -457,7 +475,7 @@ describe('rosClient and hooks', () => {
       expect(scanHook.result.current.stale).toBe(true);
     });
 
-    it('reports UNKNOWN (not a default) for a topic that never published', () => {
+    it("reports UNKNOWN (not a default) for a topic that never published", () => {
       openSocket();
       const statusHook = renderHook(() => useCockpitStatus());
 
@@ -469,12 +487,16 @@ describe('rosClient and hooks', () => {
       expect(statusHook.result.current.watchdogArmed).toBeNull();
     });
 
-    it('clears has-received when a new connection opens', () => {
+    it("clears has-received when a new connection opens", () => {
       const ws = openSocket();
       const voltageHook = renderHook(() => useCockpitVoltage());
 
       act(() => {
-        ws.triggerMessage({ op: 'publish', topic: '/ugv/voltage', msg: { voltage: 11.5 } });
+        ws.triggerMessage({
+          op: "publish",
+          topic: "/ugv/voltage",
+          msg: { voltage: 11.5 },
+        });
       });
       expect(voltageHook.result.current.hasReceived).toBe(true);
 
@@ -488,7 +510,7 @@ describe('rosClient and hooks', () => {
       expect(voltageHook.result.current.voltage).toBeNull();
     });
 
-    it('repairs bare NaN without rewriting the same token inside robot text', () => {
+    it("repairs bare NaN without rewriting the same token inside robot text", () => {
       openSocket();
       const diagnosticsHook = renderHook(() => useCockpitDiagnostics());
 
@@ -500,40 +522,49 @@ describe('rosClient and hooks', () => {
         );
       });
 
-      expect(diagnosticsHook.result.current.items[0].message)
-        .toBe('covariance NaN, using defaults');
+      expect(diagnosticsHook.result.current.items[0].message).toBe(
+        "covariance NaN, using defaults",
+      );
       expect(diagnosticsHook.result.current.items[0].stampMs).toBeNull();
     });
 
-    it('expires arming and mux fields even while unrelated status stays fresh', () => {
+    it("expires arming and mux fields even while unrelated status stays fresh", () => {
       const ws = openSocket();
       const statusHook = renderHook(() => useCockpitStatus());
 
       act(() => {
         ws.triggerMessage({
-          op: 'publish',
-          topic: '/cockpit/status',
+          op: "publish",
+          topic: "/cockpit/status",
           msg: {
             status: [
-              { name: 'bringup', values: [{ key: 'allow_motion', value: 'true' }] },
-              { name: 'twist_mux', values: [{ key: 'active_source', value: 'E-STOP lock' }] },
+              {
+                name: "bringup",
+                values: [{ key: "allow_motion", value: "true" }],
+              },
+              {
+                name: "twist_mux",
+                values: [{ key: "active_source", value: "E-STOP lock" }],
+              },
             ],
           },
         });
       });
       expect(statusHook.result.current.allowMotion).toBe(true);
-      expect(statusHook.result.current.muxSource).toBe('E-STOP lock');
+      expect(statusHook.result.current.muxSource).toBe("E-STOP lock");
 
       act(() => {
         vi.advanceTimersByTime(1500);
         ws.triggerMessage({
-          op: 'publish',
-          topic: '/cockpit/status',
+          op: "publish",
+          topic: "/cockpit/status",
           msg: {
-            status: [{
-              name: 'system_metrics',
-              values: [{ key: 'wifi_rssi', value: '-55' }],
-            }],
+            status: [
+              {
+                name: "system_metrics",
+                values: [{ key: "wifi_rssi", value: "-55" }],
+              },
+            ],
           },
         });
         vi.advanceTimersByTime(750);
@@ -547,21 +578,25 @@ describe('rosClient and hooks', () => {
   });
 
   // ── ROBOT-REPORTED SAFETY STATE ───────────────────────────────────────────
-  describe('status parsing', () => {
-    it('reads allow_motion and the watchdog from their dedicated topics', () => {
+  describe("status parsing", () => {
+    it("reads allow_motion and the watchdog from their dedicated topics", () => {
       const ws = openSocket();
       const statusHook = renderHook(() => useCockpitStatus());
 
       act(() => {
-        ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: true } });
         ws.triggerMessage({
-          op: 'publish',
-          topic: '/ugv/watchdog_state',
+          op: "publish",
+          topic: "/ugv/allow_motion",
+          msg: { data: true },
+        });
+        ws.triggerMessage({
+          op: "publish",
+          topic: "/ugv/watchdog_state",
           msg: {
-            name: 'cockpit_safety_watchdog',
+            name: "cockpit_safety_watchdog",
             values: [
-              { key: 'armed', value: 'true' },
-              { key: 'fired', value: 'false' },
+              { key: "armed", value: "true" },
+              { key: "fired", value: "false" },
             ],
           },
         });
@@ -572,29 +607,42 @@ describe('rosClient and hooks', () => {
       expect(statusHook.result.current.watchdogFired).toBe(false);
     });
 
-    it('treats malformed allow_motion as unknown, not a definite false report', () => {
+    it("treats malformed allow_motion as unknown, not a definite false report", () => {
       const ws = openSocket();
       const statusHook = renderHook(() => useCockpitStatus());
 
       act(() => {
-        ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: null } });
+        ws.triggerMessage({
+          op: "publish",
+          topic: "/ugv/allow_motion",
+          msg: { data: null },
+        });
       });
 
       expect(statusHook.result.current.hasReceived).toBe(true);
       expect(statusHook.result.current.allowMotion).toBeNull();
     });
 
-    it('keeps a fresh direct allow_motion value over an aggregator placeholder', () => {
+    it("keeps a fresh direct allow_motion value over an aggregator placeholder", () => {
       const ws = openSocket();
       const statusHook = renderHook(() => useCockpitStatus());
 
       act(() => {
-        ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: true } });
         ws.triggerMessage({
-          op: 'publish',
-          topic: '/cockpit/status',
+          op: "publish",
+          topic: "/ugv/allow_motion",
+          msg: { data: true },
+        });
+        ws.triggerMessage({
+          op: "publish",
+          topic: "/cockpit/status",
           msg: {
-            status: [{ name: 'bringup', values: [{ key: 'allow_motion', value: 'false' }] }],
+            status: [
+              {
+                name: "bringup",
+                values: [{ key: "allow_motion", value: "false" }],
+              },
+            ],
           },
         });
       });
@@ -602,18 +650,27 @@ describe('rosClient and hooks', () => {
       expect(statusHook.result.current.allowMotion).toBe(true);
     });
 
-    it('allows the aggregator to fill in after the direct safety value expires', () => {
+    it("allows the aggregator to fill in after the direct safety value expires", () => {
       const ws = openSocket();
       const statusHook = renderHook(() => useCockpitStatus());
 
       act(() => {
-        ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: true } });
+        ws.triggerMessage({
+          op: "publish",
+          topic: "/ugv/allow_motion",
+          msg: { data: true },
+        });
         vi.advanceTimersByTime(2250);
         ws.triggerMessage({
-          op: 'publish',
-          topic: '/cockpit/status',
+          op: "publish",
+          topic: "/cockpit/status",
           msg: {
-            status: [{ name: 'bringup', values: [{ key: 'allow_motion', value: 'false' }] }],
+            status: [
+              {
+                name: "bringup",
+                values: [{ key: "allow_motion", value: "false" }],
+              },
+            ],
           },
         });
       });
@@ -621,22 +678,22 @@ describe('rosClient and hooks', () => {
       expect(statusHook.result.current.allowMotion).toBe(false);
     });
 
-    it('keeps the mux source verbatim and does not invent NONE', () => {
+    it("keeps the mux source verbatim and does not invent NONE", () => {
       const ws = openSocket();
       const statusHook = renderHook(() => useCockpitStatus());
 
       act(() => {
         ws.triggerMessage({
-          op: 'publish',
-          topic: '/cockpit/status',
+          op: "publish",
+          topic: "/cockpit/status",
           msg: {
             status: [
               {
-                name: 'twist_mux',
+                name: "twist_mux",
                 values: [
-                  { key: 'active_source', value: 'E-STOP lock' },
-                  { key: 'command_age', value: '-1' },
-                  { key: 'publisher_count', value: '2' },
+                  { key: "active_source", value: "E-STOP lock" },
+                  { key: "command_age", value: "-1" },
+                  { key: "publisher_count", value: "2" },
                 ],
               },
             ],
@@ -644,38 +701,43 @@ describe('rosClient and hooks', () => {
         });
       });
 
-      expect(statusHook.result.current.muxSource).toBe('E-STOP lock');
+      expect(statusHook.result.current.muxSource).toBe("E-STOP lock");
       expect(statusHook.result.current.cmdAge).toBe(-1); // robot's "unknown"
       expect(statusHook.result.current.pubCount).toBe(2);
     });
   });
 
   // ── ROSBRIDGE STATUS FRAMES ───────────────────────────────────────────────
-  describe('bridge status frames', () => {
-    it('attributes an error frame to the topic whose op was refused', () => {
+  describe("bridge status frames", () => {
+    it("attributes an error frame to the topic whose op was refused", () => {
       const ws = openSocket();
       const bridgeHook = renderHook(() => useCockpitBridge());
 
       act(() => {
         ws.triggerMessage({
-          op: 'status',
-          level: 'error',
-          msg: 'Topic /ugv/led_ctrl is not in the whitelist',
-          id: 'adv:/ugv/led_ctrl',
+          op: "status",
+          level: "error",
+          msg: "Topic /ugv/led_ctrl is not in the whitelist",
+          id: "adv:/ugv/led_ctrl",
         });
       });
 
-      expect(bridgeHook.result.current.deadTopics).toContain('/ugv/led_ctrl');
-      expect(bridgeHook.result.current.faults[0].level).toBe('error');
-      expect(bridgeHook.result.current.faults[0].topic).toBe('/ugv/led_ctrl');
+      expect(bridgeHook.result.current.deadTopics).toContain("/ugv/led_ctrl");
+      expect(bridgeHook.result.current.faults[0].level).toBe("error");
+      expect(bridgeHook.result.current.faults[0].topic).toBe("/ugv/led_ctrl");
     });
 
-    it('records a warning without declaring the control dead', () => {
+    it("records a warning without declaring the control dead", () => {
       const ws = openSocket();
       const bridgeHook = renderHook(() => useCockpitBridge());
 
       act(() => {
-        ws.triggerMessage({ op: 'status', level: 'warning', msg: 'slow subscriber', id: 'sub:/scan' });
+        ws.triggerMessage({
+          op: "status",
+          level: "warning",
+          msg: "slow subscriber",
+          id: "sub:/scan",
+        });
       });
 
       expect(bridgeHook.result.current.faults).toHaveLength(1);
@@ -687,9 +749,9 @@ describe('rosClient and hooks', () => {
   // twist_mux takes lock topics with VOLATILE durability at `timeout: 0.0`, so
   // a one-shot publish can lose the discovery race and the lock does not
   // survive a mux restart. The client must hold the lock at >= 1 Hz.
-  describe('e-stop lock republish contract', () => {
-    it('settles one command writer and stops a losing tab heartbeat after handoff', () => {
-      vi.stubGlobal('BroadcastChannel', MockBroadcastChannel);
+  describe("e-stop lock republish contract", () => {
+    it("settles one command writer and stops a losing tab heartbeat after handoff", () => {
+      vi.stubGlobal("BroadcastChannel", MockBroadcastChannel);
       const ws = openSocket();
       const estopHook = renderHook(() => useCockpitEstop());
       const releaseWriter = rosClient.claimEstopWriter();
@@ -703,12 +765,14 @@ describe('rosClient and hooks', () => {
         rosClient.setEstopLock(true);
         vi.advanceTimersByTime(1000);
       });
-      expect(estopPublishes(ws).filter(Boolean).length).toBeGreaterThanOrEqual(3);
+      expect(estopPublishes(ws).filter(Boolean).length).toBeGreaterThanOrEqual(
+        3,
+      );
 
       const beforeLoss = estopPublishes(ws).length;
       act(() => {
         // Empty string sorts below every generated non-empty tab id.
-        channel.deliver({ k: 'mine', from: '' });
+        channel.deliver({ k: "mine", from: "" });
         vi.advanceTimersByTime(200);
       });
 
@@ -716,17 +780,19 @@ describe('rosClient and hooks', () => {
       expect(estopHook.result.current.commandReady).toBe(false);
       expect(estopHook.result.current.heartbeat).toBe(false);
       expect(estopPublishes(ws)).toHaveLength(beforeLoss);
-      expect(channel.postMessage).toHaveBeenCalledWith(expect.objectContaining({
-        k: 'handoff',
-        to: '',
-      }));
+      expect(channel.postMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          k: "handoff",
+          to: "",
+        }),
+      );
 
       releaseWriter();
       MockBroadcastChannel.latestInstance = null;
     });
 
-    it('gives a remounted cockpit a working teardown for an inherited election channel', () => {
-      vi.stubGlobal('BroadcastChannel', MockBroadcastChannel);
+    it("gives a remounted cockpit a working teardown for an inherited election channel", () => {
+      vi.stubGlobal("BroadcastChannel", MockBroadcastChannel);
       const firstRelease = rosClient.claimEstopWriter();
       const channel = MockBroadcastChannel.latestInstance!;
       const remountedRelease = rosClient.claimEstopWriter();
@@ -740,8 +806,8 @@ describe('rosClient and hooks', () => {
       expect(channel.close).toHaveBeenCalledOnce();
     });
 
-    it('hands an in-flight release burst to the winning tab', () => {
-      vi.stubGlobal('BroadcastChannel', MockBroadcastChannel);
+    it("hands an in-flight release burst to the winning tab", () => {
+      vi.stubGlobal("BroadcastChannel", MockBroadcastChannel);
       const ws = openSocket();
       const releaseWriter = rosClient.claimEstopWriter();
       const channel = MockBroadcastChannel.latestInstance!;
@@ -755,29 +821,41 @@ describe('rosClient and hooks', () => {
         .map(([message]) => message as { from?: string })
         .find((message) => message.from)?.from;
       expect(ownId).toBeTruthy();
-      const beforeHandoff = estopPublishes(ws).filter((value) => value === false).length;
+      const beforeHandoff = estopPublishes(ws).filter(
+        (value) => value === false,
+      ).length;
 
-      act(() => channel.deliver({ k: 'mine', from: '' }));
+      act(() => channel.deliver({ k: "mine", from: "" }));
 
-      expect(channel.postMessage).toHaveBeenCalledWith(expect.objectContaining({
-        k: 'handoff',
-        to: '',
-        releasePending: true,
-      }));
+      expect(channel.postMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          k: "handoff",
+          to: "",
+          releasePending: true,
+        }),
+      );
       act(() => vi.advanceTimersByTime(200));
-      expect(estopPublishes(ws).filter((value) => value === false)).toHaveLength(beforeHandoff);
+      expect(
+        estopPublishes(ws).filter((value) => value === false),
+      ).toHaveLength(beforeHandoff);
 
       act(() => {
-        channel.deliver({ k: 'handoff', from: '', to: ownId, releasePending: true });
+        channel.deliver({
+          k: "handoff",
+          from: "",
+          to: ownId,
+          releasePending: true,
+        });
         vi.advanceTimersByTime(1000);
       });
-      expect(estopPublishes(ws).filter((value) => value === false).length)
-        .toBeGreaterThan(beforeHandoff);
+      expect(
+        estopPublishes(ws).filter((value) => value === false).length,
+      ).toBeGreaterThan(beforeHandoff);
 
       releaseWriter();
     });
 
-    it('republishes `true` at >= 1 Hz for as long as the stop is engaged', () => {
+    it("republishes `true` at >= 1 Hz for as long as the stop is engaged", () => {
       const ws = openSocket();
       ws.send.mockClear();
 
@@ -799,7 +877,7 @@ describe('rosClient and hooks', () => {
       expect(rosClient.isEstopEngaged()).toBe(true);
     });
 
-    it('bursts `false` on release and then goes quiet', () => {
+    it("bursts `false` on release and then goes quiet", () => {
       const ws = openSocket();
       act(() => {
         rosClient.setEstopLock(true);
@@ -828,7 +906,7 @@ describe('rosClient and hooks', () => {
       expect(estopPublishes(ws)).toHaveLength(0);
     });
 
-    it('re-advertises and resumes the heartbeat on reconnect', () => {
+    it("re-advertises and resumes the heartbeat on reconnect", () => {
       openSocket();
       act(() => {
         rosClient.setEstopLock(true);
@@ -859,8 +937,12 @@ describe('rosClient and hooks', () => {
       // The mux may have restarted while we were gone, so the lock is asserted
       // immediately — and only after the publisher is advertised.
       const ops = wireOps(secondSocket);
-      const advertiseIdx = ops.findIndex((m) => m.op === 'advertise' && m.topic === ESTOP_TOPIC);
-      const publishIdx = ops.findIndex((m) => m.op === 'publish' && m.topic === ESTOP_TOPIC);
+      const advertiseIdx = ops.findIndex(
+        (m) => m.op === "advertise" && m.topic === ESTOP_TOPIC,
+      );
+      const publishIdx = ops.findIndex(
+        (m) => m.op === "publish" && m.topic === ESTOP_TOPIC,
+      );
       expect(advertiseIdx).toBeGreaterThanOrEqual(0);
       expect(publishIdx).toBeGreaterThan(advertiseIdx);
       expect(estopPublishes(secondSocket)).toEqual([true]);
@@ -872,7 +954,7 @@ describe('rosClient and hooks', () => {
       expect(estopPublishes(secondSocket).length).toBeGreaterThanOrEqual(3);
     });
 
-    it('leaves no e-stop timers behind once the release burst finishes', () => {
+    it("leaves no e-stop timers behind once the release burst finishes", () => {
       const ws = openSocket();
       // Baseline excludes the always-on staleness ticker, which is a property of
       // being connected rather than of the e-stop.
@@ -898,7 +980,7 @@ describe('rosClient and hooks', () => {
       expect(estopPublishes(ws)).toHaveLength(0);
     });
 
-    it('is idempotent — a second engage does not stack a second heartbeat', () => {
+    it("is idempotent — a second engage does not stack a second heartbeat", () => {
       openSocket();
 
       act(() => {
@@ -912,7 +994,7 @@ describe('rosClient and hooks', () => {
       expect(vi.getTimerCount()).toBe(timers);
     });
 
-    it('refuses to latch the lock when the socket is down', () => {
+    it("refuses to latch the lock when the socket is down", () => {
       // No connect at all: nothing can reach the mux, so the client must not
       // claim the robot is locked.
       expect(rosClient.setEstopLock(true)).toBe(false);
@@ -920,7 +1002,7 @@ describe('rosClient and hooks', () => {
       expect(vi.getTimerCount()).toBe(0);
     });
 
-    it('queues a disconnected release and bursts false after reconnect', () => {
+    it("queues a disconnected release and bursts false after reconnect", () => {
       const ws = openSocket();
       act(() => {
         rosClient.setEstopLock(true);
@@ -940,10 +1022,12 @@ describe('rosClient and hooks', () => {
       expect(estopPublishes(reconnected)).toEqual([false]);
       act(() => vi.advanceTimersByTime(2000));
       expect(estopPublishes(reconnected)).toHaveLength(4);
-      expect(estopPublishes(reconnected).every((value) => value === false)).toBe(true);
+      expect(
+        estopPublishes(reconnected).every((value) => value === false),
+      ).toBe(true);
     });
 
-    it('stamps when intent latched so the UI can escalate an unconfirmed stop', () => {
+    it("stamps when intent latched so the UI can escalate an unconfirmed stop", () => {
       openSocket();
       const hook = renderHook(() => useCockpitEstop());
 
@@ -951,7 +1035,7 @@ describe('rosClient and hooks', () => {
       act(() => {
         rosClient.setEstopLock(true);
       });
-      expect(hook.result.current.engagedAt).toBeTypeOf('number');
+      expect(hook.result.current.engagedAt).toBeTypeOf("number");
 
       act(() => {
         rosClient.setEstopLock(false);
@@ -959,7 +1043,7 @@ describe('rosClient and hooks', () => {
       expect(hook.result.current.engagedAt).toBeNull();
     });
 
-    it('reports heartbeat honestly and keeps holding after the React tree unmounts', () => {
+    it("reports heartbeat honestly and keeps holding after the React tree unmounts", () => {
       const ws = openSocket();
       const hook = renderHook(() => useCockpitEstop());
 
@@ -999,8 +1083,8 @@ describe('rosClient and hooks', () => {
   });
 
   // ── RETURNING TO A COCKPIT THAT NEVER DISCONNECTED ────────────────────────
-  describe('reconnecting to a live socket', () => {
-    it('re-subscribes instead of early-returning on an already-open socket', () => {
+  describe("reconnecting to a live socket", () => {
+    it("re-subscribes instead of early-returning on an already-open socket", () => {
       const ws = openSocket();
       ws.send.mockClear();
 
@@ -1008,17 +1092,17 @@ describe('rosClient and hooks', () => {
       // to the cockpit with an e-stop held. Previously this returned bare and
       // left the remounted page with no subscriptions.
       act(() => {
-        rosClient.connect('wss://beast-test-url:9090');
+        rosClient.connect("wss://beast-test-url:9090");
       });
 
       const topics = wireOps(ws)
-        .filter((o) => o.op === 'subscribe')
+        .filter((o) => o.op === "subscribe")
         .map((o) => o.topic);
-      expect(topics).toContain('/scan');
-      expect(topics).toContain('/cockpit/status');
+      expect(topics).toContain("/scan");
+      expect(topics).toContain("/cockpit/status");
     });
 
-    it('unsubscribes the heavy streams without dropping the socket', () => {
+    it("unsubscribes the heavy streams without dropping the socket", () => {
       const ws = openSocket();
       ws.send.mockClear();
 
@@ -1027,10 +1111,14 @@ describe('rosClient and hooks', () => {
       });
 
       const unsubscribed = wireOps(ws)
-        .filter((o) => o.op === 'unsubscribe')
+        .filter((o) => o.op === "unsubscribe")
         .map((o) => o.topic);
       expect(unsubscribed).toEqual(
-        expect.arrayContaining(['/scan', '/oak/rgb/image_raw/compressed', '/cockpit/depth/compressed']),
+        expect.arrayContaining([
+          "/scan",
+          "/oak/rgb/image_raw/compressed",
+          "/cockpit/depth/compressed",
+        ]),
       );
       expect(ws.close).not.toHaveBeenCalled();
     });

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   rosClient,
   useCockpitStatus,
@@ -8,7 +8,7 @@ import {
   useCockpitBridge,
   useConnectionState,
   ESTOP_MUX_SOURCE,
-} from '@/lib/ros/client';
+} from "@/lib/ros/client";
 import {
   Sliders,
   Lightbulb,
@@ -16,8 +16,8 @@ import {
   Move,
   Sparkles,
   Ban,
-} from 'lucide-react';
-import clsx from 'clsx';
+} from "lucide-react";
+import clsx from "clsx";
 
 // ── DRIVE INTENT ────────────────────────────────────────────────────────────
 // Held intent, not edge-triggered pulses. A button press sets the intent and a
@@ -35,7 +35,8 @@ const PAN_MAX = 3.14;
 const TILT_MIN = -0.523;
 const TILT_MAX = 1.571;
 
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.min(hi, Math.max(lo, v));
 
 type DriveIntent = { linearX: number; angularZ: number };
 
@@ -64,45 +65,49 @@ export function CommandRail() {
   const driveIntentRef = useRef<DriveIntent | null>(null);
   const driveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const connected = connection === 'connected';
+  const connected = connection === "connected";
   const estopHolding = estop.engaged || status.muxSource === ESTOP_MUX_SOURCE;
   // The BroadcastChannel election covers the whole command surface, not only
   // e-stop. Otherwise two tabs could still race velocity, lights, and gimbal
   // commands while claiming to have elected one controller.
   const commandWriter = estop.writer;
-  const commandSurfaceEnabled = connected && commandWriter && estop.commandReady;
+  const commandSurfaceEnabled =
+    connected && commandWriter && estop.commandReady;
 
   // ── B11: MOTION GATE ──────────────────────────────────────────────────────
   // The cockpit ships the drive capability, but motion stays inert until the
   // ROBOT says it is armed. `allowMotion === null` means no publisher has ever
   // told us — that is UNKNOWN, and unknown is not permission.
   const driveGateReason: string | null = !connected
-    ? 'robot unreachable'
+    ? "robot unreachable"
     : !commandWriter
-      ? 'another tab owns the command surface'
+      ? "another tab owns the command surface"
       : !estop.commandReady
-        ? 'controller election settling'
-    : estopHolding
-      ? 'E-STOP engaged'
-      : !status.hasReceived || status.stale
-        ? 'robot safety status is unavailable or stale'
-      : status.allowMotion === null
-        ? 'no allow_motion publisher — unknown'
-        : status.allowMotion === false
-          ? 'robot reports motion locked'
-          : bridge.deadTopics.includes('/cmd_vel_ui')
-            ? 'bridge refused /cmd_vel_ui'
-            : null;
+        ? "controller election settling"
+        : estopHolding
+          ? "E-STOP engaged"
+          : !status.hasReceived || status.stale
+            ? "robot safety status is unavailable or stale"
+            : status.allowMotion === null
+              ? "no allow_motion publisher — unknown"
+              : status.allowMotion === false
+                ? "robot reports motion locked"
+                : bridge.deadTopics.includes("/cmd_vel_ui")
+                  ? "bridge refused /cmd_vel_ui"
+                  : null;
   const driveEnabled = driveGateReason === null;
 
   const isDead = (topic: string) => bridge.deadTopics.includes(topic);
 
-  const publishTwist = useCallback((linearX: number, angularZ: number): boolean => {
-    return rosClient.publish('/cmd_vel_ui', {
-      linear: { x: linearX, y: 0.0, z: 0.0 },
-      angular: { x: 0.0, y: 0.0, z: angularZ },
-    });
-  }, []);
+  const publishTwist = useCallback(
+    (linearX: number, angularZ: number): boolean => {
+      return rosClient.publish("/cmd_vel_ui", {
+        linear: { x: linearX, y: 0.0, z: 0.0 },
+        angular: { x: 0.0, y: 0.0, z: angularZ },
+      });
+    },
+    [],
+  );
 
   /**
    * Release the drive. Publishes exactly ONE zero Twist and then goes silent.
@@ -133,7 +138,9 @@ export function CommandRail() {
       driveIntentRef.current = { linearX, angularZ };
       setDriving(true);
       if (!publishTwist(linearX, angularZ)) {
-        setFault('drive: /cmd_vel_ui publish failed — command did not leave the browser');
+        setFault(
+          "drive: /cmd_vel_ui publish failed — command did not leave the browser",
+        );
         clearDriveIntent();
         return;
       }
@@ -143,7 +150,7 @@ export function CommandRail() {
           const intent = driveIntentRef.current;
           if (!intent) return;
           if (!publishTwist(intent.linearX, intent.angularZ)) {
-            setFault('drive: socket closed mid-command — intent cleared');
+            setFault("drive: socket closed mid-command — intent cleared");
             clearDriveIntent();
           }
         }, DRIVE_PUBLISH_MS);
@@ -166,33 +173,34 @@ export function CommandRail() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const tag = document.activeElement?.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
       // Key auto-repeat would restart the intent dozens of times a second and
       // re-fire the immediate publish; the held interval already covers it.
       if (e.repeat) return;
 
       switch (e.key.toLowerCase()) {
-        case 'w':
+        case "w":
           setDriveIntent(LINEAR_STEP, 0);
           break;
-        case 's':
+        case "s":
           setDriveIntent(-LINEAR_STEP, 0);
           break;
-        case 'a':
+        case "a":
           setDriveIntent(0, ANGULAR_STEP);
           break;
-        case 'd':
+        case "d":
           setDriveIntent(0, -ANGULAR_STEP);
           break;
-        case ' ':
-        case 'escape':
+        case " ":
+        case "escape":
           clearDriveIntent();
           break;
       }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if (['w', 'a', 's', 'd'].includes(e.key.toLowerCase())) clearDriveIntent();
+      if (["w", "a", "s", "d"].includes(e.key.toLowerCase()))
+        clearDriveIntent();
     };
 
     // A keyup that lands on another window never reaches us, so the intent would
@@ -200,20 +208,20 @@ export function CommandRail() {
     // cancelled pointers all mean "we are no longer in control" — release.
     const handleRelease = () => clearDriveIntent();
     const handleVisibility = () => {
-      if (document.visibilityState === 'hidden') clearDriveIntent();
+      if (document.visibilityState === "hidden") clearDriveIntent();
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-    window.addEventListener('blur', handleRelease);
-    window.addEventListener('pointercancel', handleRelease);
-    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("blur", handleRelease);
+    window.addEventListener("pointercancel", handleRelease);
+    document.addEventListener("visibilitychange", handleVisibility);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
-      window.removeEventListener('blur', handleRelease);
-      window.removeEventListener('pointercancel', handleRelease);
-      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener("blur", handleRelease);
+      window.removeEventListener("pointercancel", handleRelease);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [setDriveIntent, clearDriveIntent]);
 
@@ -229,22 +237,24 @@ export function CommandRail() {
     onPointerCancel: () => clearDriveIntent(),
     onPointerLeave: () => clearDriveIntent(),
     onLostPointerCapture: () => clearDriveIntent(),
-    style: { touchAction: 'none' as const },
+    style: { touchAction: "none" as const },
   });
 
   // ── LED / GIMBAL PUBLISHERS (M3: honour the return value) ──────────────────
   const updateLEDs = (nextIo4: number, nextIo5: number) => {
     if (!commandSurfaceEnabled) {
-      setFault('LED: another tab owns the command surface or the robot is unreachable');
+      setFault(
+        "LED: another tab owns the command surface or the robot is unreachable",
+      );
       return;
     }
     const prev = { io4, io5 };
     setIo4(nextIo4);
     setIo5(nextIo5);
-    if (!rosClient.publish('/ugv/led_ctrl', { data: [nextIo4, nextIo5] })) {
+    if (!rosClient.publish("/ugv/led_ctrl", { data: [nextIo4, nextIo5] })) {
       setIo4(prev.io4);
       setIo5(prev.io5);
-      setFault('LED: /ugv/led_ctrl publish failed — sliders reverted');
+      setFault("LED: /ugv/led_ctrl publish failed — sliders reverted");
       return;
     }
     setFault(null);
@@ -252,22 +262,25 @@ export function CommandRail() {
 
   const updateGimbal = (nextPan: number, nextTilt: number) => {
     if (!commandSurfaceEnabled) {
-      setFault('Gimbal: another tab owns the command surface or the robot is unreachable');
+      setFault(
+        "Gimbal: another tab owns the command surface or the robot is unreachable",
+      );
       return;
     }
     const roundedPan = Math.round(clamp(nextPan, PAN_MIN, PAN_MAX) * 100) / 100;
-    const roundedTilt = Math.round(clamp(nextTilt, TILT_MIN, TILT_MAX) * 100) / 100;
+    const roundedTilt =
+      Math.round(clamp(nextTilt, TILT_MIN, TILT_MAX) * 100) / 100;
     const prev = { pan, tilt };
     setPan(roundedPan);
     setTilt(roundedTilt);
     if (
-      !rosClient.publish('/pt_joint_position_controller/commands', {
+      !rosClient.publish("/pt_joint_position_controller/commands", {
         data: [roundedPan, roundedTilt],
       })
     ) {
       setPan(prev.pan);
       setTilt(prev.tilt);
-      setFault('Gimbal: publish failed — crosshair reverted');
+      setFault("Gimbal: publish failed — crosshair reverted");
       return;
     }
     setFault(null);
@@ -277,15 +290,21 @@ export function CommandRail() {
 
   const toggleSteady = () => {
     if (!commandSurfaceEnabled) {
-      setFault('Steady: another tab owns the command surface or the robot is unreachable');
+      setFault(
+        "Steady: another tab owns the command surface or the robot is unreachable",
+      );
       return;
     }
     const nextSteady = !steady;
     setSteady(nextSteady);
     // Steady command maps: [mode, y_bias]. Float32MultiArray robot-side.
-    if (!rosClient.publish('/ugv/pt_steady_ctrl', { data: [nextSteady ? 1.0 : 0.0, 0.0] })) {
+    if (
+      !rosClient.publish("/ugv/pt_steady_ctrl", {
+        data: [nextSteady ? 1.0 : 0.0, 0.0],
+      })
+    ) {
       setSteady(steady);
-      setFault('Steady: /ugv/pt_steady_ctrl publish failed — toggle reverted');
+      setFault("Steady: /ugv/pt_steady_ctrl publish failed — toggle reverted");
       return;
     }
     setFault(null);
@@ -299,24 +318,49 @@ export function CommandRail() {
     if (!box || box.width === 0 || box.height === 0) return;
     const fx = clamp((clientX - box.left) / box.width, 0, 1);
     const fy = clamp((clientY - box.top) / box.height, 0, 1);
-    updateGimbal(PAN_MIN + fx * (PAN_MAX - PAN_MIN), TILT_MAX - fy * (TILT_MAX - TILT_MIN));
+    updateGimbal(
+      PAN_MIN + fx * (PAN_MAX - PAN_MIN),
+      TILT_MAX - fy * (TILT_MAX - TILT_MIN),
+    );
   };
 
   const gimbalDraggingRef = useRef(false);
-  const gimbalDead = !commandSurfaceEnabled || isDead('/pt_joint_position_controller/commands');
+  const gimbalDead =
+    !commandSurfaceEnabled || isDead("/pt_joint_position_controller/commands");
 
   const rungState = (source: string) => {
-    if (status.muxSource === null) return { label: 'UNKNOWN', active: false, unknown: true };
+    if (status.muxSource === null)
+      return { label: "UNKNOWN", active: false, unknown: true };
     const active = status.muxSource === source;
-    return { label: active ? 'ACTIVE' : 'IDLE', active, unknown: false };
+    return { label: active ? "ACTIVE" : "IDLE", active, unknown: false };
   };
 
   const rungs = [
-    { pri: 255, name: 'E-STOP Lock', source: ESTOP_MUX_SOURCE, tone: 'red' as const },
-    { pri: 150, name: 'BT Pad · Robot', source: 'BT pad · robot', tone: 'cyan' as const },
-    { pri: 100, name: 'Operator Pad', source: 'Operator pad', tone: 'cyan' as const },
-    { pri: 50, name: 'UI Teleop (WASD)', source: 'UI teleop', tone: 'emerald' as const },
-    { pri: 10, name: 'nav2', source: 'nav2', tone: 'cyan' as const },
+    {
+      pri: 255,
+      name: "E-STOP Lock",
+      source: ESTOP_MUX_SOURCE,
+      tone: "red" as const,
+    },
+    {
+      pri: 150,
+      name: "BT Pad · Robot",
+      source: "BT pad · robot",
+      tone: "cyan" as const,
+    },
+    {
+      pri: 100,
+      name: "Operator Pad",
+      source: "Operator pad",
+      tone: "cyan" as const,
+    },
+    {
+      pri: 50,
+      name: "UI Teleop (WASD)",
+      source: "UI teleop",
+      tone: "emerald" as const,
+    },
+    { pri: 10, name: "nav2", source: "nav2", tone: "cyan" as const },
   ];
 
   return (
@@ -324,8 +368,10 @@ export function CommandRail() {
       {/* ── TWIST_MUX LADDER ─────────────────────── */}
       <section className="panel border-rim bg-panel/85 flex flex-col p-4 shadow-md">
         <h2 className="font-display text-[11px] font-bold tracking-[0.16em] text-cyan uppercase flex items-center gap-1.5 leading-none mb-3">
-          <Sliders className="h-3.5 w-3.5" /> twist_mux ladder{' '}
-          <span className="text-ink-dim/70 font-normal font-mono text-[9.5px]">→ /cmd_vel</span>
+          <Sliders className="h-3.5 w-3.5" /> twist_mux ladder{" "}
+          <span className="text-ink-dim/70 font-normal font-mono text-[9.5px]">
+            → /cmd_vel
+          </span>
         </h2>
 
         <div className="flex flex-col gap-1.5">
@@ -335,34 +381,38 @@ export function CommandRail() {
               <div
                 key={r.pri}
                 className={clsx(
-                  'grid grid-cols-[36px_1fr_auto] gap-2 items-center border border-rim/60 rounded-md px-3 py-1.5 bg-hull/40 font-mono text-xs',
+                  "grid grid-cols-[36px_1fr_auto] gap-2 items-center border border-rim/60 rounded-md px-3 py-1.5 bg-hull/40 font-mono text-xs",
                   state.active &&
-                    r.tone === 'red' &&
-                    'border-red-500/50 bg-red-950/20 text-glow-red text-red-400',
+                    r.tone === "red" &&
+                    "border-red-500/50 bg-red-950/20 text-glow-red text-red-400",
                   state.active &&
-                    r.tone === 'cyan' &&
-                    'border-cyan-500/50 bg-cyan-950/20 text-glow-cyan text-cyan-400 font-bold',
+                    r.tone === "cyan" &&
+                    "border-cyan-500/50 bg-cyan-950/20 text-glow-cyan text-cyan-400 font-bold",
                   state.active &&
-                    r.tone === 'emerald' &&
-                    'border-emerald-500/50 bg-emerald-950/20 text-glow-emerald text-emerald-400 font-bold',
+                    r.tone === "emerald" &&
+                    "border-emerald-500/50 bg-emerald-950/20 text-glow-emerald text-emerald-400 font-bold",
                 )}
               >
                 <span className="font-extrabold text-ink-dim/70">{r.pri}</span>
                 <span className="tracking-wide">{r.name}</span>
                 <span
                   className={clsx(
-                    'font-bold text-[9px] uppercase tracking-widest',
+                    "font-bold text-[9px] uppercase tracking-widest",
                     state.unknown
-                      ? 'text-ink-dim/50'
+                      ? "text-ink-dim/50"
                       : state.active
-                        ? r.tone === 'red'
-                          ? 'text-red-500 animate-pulse'
-                          : r.tone === 'emerald'
-                            ? 'text-emerald-400'
-                            : 'text-cyan'
-                        : 'text-zinc-600',
+                        ? r.tone === "red"
+                          ? "text-red-500 animate-pulse"
+                          : r.tone === "emerald"
+                            ? "text-emerald-400"
+                            : "text-cyan"
+                        : "text-zinc-600",
                   )}
-                  title={state.unknown ? '/cockpit/status has no publisher yet' : undefined}
+                  title={
+                    state.unknown
+                      ? "/cockpit/status has no publisher yet"
+                      : undefined
+                  }
                 >
                   {state.label}
                 </span>
@@ -373,7 +423,8 @@ export function CommandRail() {
 
         {status.muxSource === null && (
           <p className="font-mono text-[9px] text-ink-dim/70 mt-2 leading-snug">
-            Ladder state is UNKNOWN — /cockpit/status is not published by the robot yet.
+            Ladder state is UNKNOWN — /cockpit/status is not published by the
+            robot yet.
           </p>
         )}
       </section>
@@ -391,7 +442,8 @@ export function CommandRail() {
           >
             <Ban className="h-3.5 w-3.5 shrink-0" />
             <span>
-              <b className="uppercase tracking-wider">Drive disabled</b> — {driveGateReason}
+              <b className="uppercase tracking-wider">Drive disabled</b> —{" "}
+              {driveGateReason}
             </span>
           </div>
         )}
@@ -405,12 +457,14 @@ export function CommandRail() {
                 {...holdProps(LINEAR_STEP, 0)}
                 disabled={!driveEnabled}
                 className={clsx(
-                  'btn border rounded-lg aspect-square text-md flex items-center justify-center select-none',
+                  "btn border rounded-lg aspect-square text-md flex items-center justify-center select-none",
                   driveEnabled
-                    ? 'border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2'
-                    : 'border-rim/40 bg-panel-2/30 text-zinc-600 cursor-not-allowed',
+                    ? "border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2"
+                    : "border-rim/40 bg-panel-2/30 text-zinc-600 cursor-not-allowed",
                 )}
-                title={driveEnabled ? 'Forward (W)' : `Disabled — ${driveGateReason}`}
+                title={
+                  driveEnabled ? "Forward (W)" : `Disabled — ${driveGateReason}`
+                }
               >
                 ▲
               </button>
@@ -420,12 +474,14 @@ export function CommandRail() {
                 {...holdProps(0, ANGULAR_STEP)}
                 disabled={!driveEnabled}
                 className={clsx(
-                  'btn border rounded-lg aspect-square text-md flex items-center justify-center select-none',
+                  "btn border rounded-lg aspect-square text-md flex items-center justify-center select-none",
                   driveEnabled
-                    ? 'border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2'
-                    : 'border-rim/40 bg-panel-2/30 text-zinc-600 cursor-not-allowed',
+                    ? "border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2"
+                    : "border-rim/40 bg-panel-2/30 text-zinc-600 cursor-not-allowed",
                 )}
-                title={driveEnabled ? 'Left (A)' : `Disabled — ${driveGateReason}`}
+                title={
+                  driveEnabled ? "Left (A)" : `Disabled — ${driveGateReason}`
+                }
               >
                 ◀
               </button>
@@ -440,12 +496,14 @@ export function CommandRail() {
                 {...holdProps(0, -ANGULAR_STEP)}
                 disabled={!driveEnabled}
                 className={clsx(
-                  'btn border rounded-lg aspect-square text-md flex items-center justify-center select-none',
+                  "btn border rounded-lg aspect-square text-md flex items-center justify-center select-none",
                   driveEnabled
-                    ? 'border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2'
-                    : 'border-rim/40 bg-panel-2/30 text-zinc-600 cursor-not-allowed',
+                    ? "border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2"
+                    : "border-rim/40 bg-panel-2/30 text-zinc-600 cursor-not-allowed",
                 )}
-                title={driveEnabled ? 'Right (D)' : `Disabled — ${driveGateReason}`}
+                title={
+                  driveEnabled ? "Right (D)" : `Disabled — ${driveGateReason}`
+                }
               >
                 ▶
               </button>
@@ -455,12 +513,14 @@ export function CommandRail() {
                 {...holdProps(-LINEAR_STEP, 0)}
                 disabled={!driveEnabled}
                 className={clsx(
-                  'btn border rounded-lg aspect-square text-md flex items-center justify-center select-none',
+                  "btn border rounded-lg aspect-square text-md flex items-center justify-center select-none",
                   driveEnabled
-                    ? 'border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2'
-                    : 'border-rim/40 bg-panel-2/30 text-zinc-600 cursor-not-allowed',
+                    ? "border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2"
+                    : "border-rim/40 bg-panel-2/30 text-zinc-600 cursor-not-allowed",
                 )}
-                title={driveEnabled ? 'Reverse (S)' : `Disabled — ${driveGateReason}`}
+                title={
+                  driveEnabled ? "Reverse (S)" : `Disabled — ${driveGateReason}`
+                }
               >
                 ▼
               </button>
@@ -468,7 +528,9 @@ export function CommandRail() {
             </div>
 
             <div className="text-center font-mono text-[8.5px] uppercase tracking-widest font-bold mt-3 leading-none">
-              <span className={driveEnabled ? 'text-amber-500/80' : 'text-zinc-600'}>
+              <span
+                className={driveEnabled ? "text-amber-500/80" : "text-zinc-600"}
+              >
                 Keyboard: WASD · Spc
               </span>
               <div className="text-zinc-500 font-normal scale-90 mt-1">
@@ -506,12 +568,18 @@ export function CommandRail() {
               onLostPointerCapture={() => {
                 gimbalDraggingRef.current = false;
               }}
-              style={{ touchAction: 'none' }}
+              style={{ touchAction: "none" }}
               className={clsx(
-                'gimbal aspect-video border border-rim/60 rounded-lg relative bg-[linear-gradient(rgba(54,224,224,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(54,224,224,0.06)_1px,transparent_1px)] bg-[size:16px_16px] bg-hull/75 flex items-center justify-center',
-                gimbalDead ? 'opacity-40 cursor-not-allowed' : 'cursor-crosshair',
+                "gimbal aspect-video border border-rim/60 rounded-lg relative bg-[linear-gradient(rgba(54,224,224,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(54,224,224,0.06)_1px,transparent_1px)] bg-[size:16px_16px] bg-hull/75 flex items-center justify-center",
+                gimbalDead
+                  ? "opacity-40 cursor-not-allowed"
+                  : "cursor-crosshair",
               )}
-              title={gimbalDead ? 'Bridge refused the gimbal topic' : 'Drag to aim the pan-tilt head'}
+              title={
+                gimbalDead
+                  ? "Bridge refused the gimbal topic"
+                  : "Drag to aim the pan-tilt head"
+              }
             >
               {/* The tilt range is ASYMMETRIC (-0.523 … +1.571 rad), so neutral
                   does NOT sit at the vertical midpoint — it sits where 0 rad
@@ -520,11 +588,13 @@ export function CommandRail() {
                   and lying about where the head is pointing. */}
               <div
                 className="pointer-events-none absolute left-0 right-0 border-t border-dashed border-ink-dim/25"
-                style={{ top: `${((TILT_MAX - 0) / (TILT_MAX - TILT_MIN)) * 100}%` }}
+                style={{
+                  top: `${((TILT_MAX - 0) / (TILT_MAX - TILT_MIN)) * 100}%`,
+                }}
               />
               <div
                 className="pointer-events-none absolute top-0 bottom-0 border-l border-dashed border-ink-dim/25"
-                style={{ left: '50%' }}
+                style={{ left: "50%" }}
               />
 
               <div
@@ -547,7 +617,9 @@ export function CommandRail() {
                 tilt {TILT_MIN.toFixed(2)}
               </span>
               <span className="pointer-events-none absolute bottom-1.5 left-2 font-mono text-[7px] text-ink-dim/70 leading-none">
-                {gimbalDead ? 'P: — · T: —' : `P: ${pan.toFixed(2)} · T: ${tilt.toFixed(2)} rad`}
+                {gimbalDead
+                  ? "P: — · T: —"
+                  : `P: ${pan.toFixed(2)} · T: ${tilt.toFixed(2)} rad`}
               </span>
             </div>
 
@@ -563,23 +635,25 @@ export function CommandRail() {
               </button>
               <button
                 onClick={toggleSteady}
-                disabled={!commandSurfaceEnabled || isDead('/ugv/pt_steady_ctrl')}
+                disabled={
+                  !commandSurfaceEnabled || isDead("/ugv/pt_steady_ctrl")
+                }
                 className={clsx(
-                  'border rounded px-1.5 py-0.5 font-mono text-[9px] select-none flex items-center gap-1 uppercase',
-                  !commandSurfaceEnabled || isDead('/ugv/pt_steady_ctrl')
-                    ? 'border-rim/40 text-zinc-600 cursor-not-allowed'
+                  "border rounded px-1.5 py-0.5 font-mono text-[9px] select-none flex items-center gap-1 uppercase",
+                  !commandSurfaceEnabled || isDead("/ugv/pt_steady_ctrl")
+                    ? "border-rim/40 text-zinc-600 cursor-not-allowed"
                     : steady
-                      ? 'border-emerald-500/50 bg-emerald-900/10 text-emerald-400'
-                      : 'bg-panel-2/40 border-rim hover:border-cyan/40 hover:text-cyan text-ink-dim',
+                      ? "border-emerald-500/50 bg-emerald-900/10 text-emerald-400"
+                      : "bg-panel-2/40 border-rim hover:border-cyan/40 hover:text-cyan text-ink-dim",
                 )}
                 title="Toggle steady mode"
               >
-                <Sparkles className="h-3 w-3" />{' '}
-                {!commandSurfaceEnabled || isDead('/ugv/pt_steady_ctrl')
-                  ? 'Unavailable'
+                <Sparkles className="h-3 w-3" />{" "}
+                {!commandSurfaceEnabled || isDead("/ugv/pt_steady_ctrl")
+                  ? "Unavailable"
                   : steady
-                    ? 'Steady On'
-                    : 'Steady Off'}
+                    ? "Steady On"
+                    : "Steady Off"}
               </button>
             </div>
           </div>
@@ -595,11 +669,13 @@ export function CommandRail() {
       {/* ── LED LIGHT RAIL CONTROLLERS ───────────── */}
       <section className="panel border-rim bg-panel/85 flex flex-col p-4 shadow-md gap-3.5">
         <h2 className="font-display text-[11px] font-bold tracking-[0.16em] text-cyan uppercase flex items-center gap-1.5 leading-none">
-          <Lightbulb className="h-3.5 w-3.5" /> LED rail{' '}
-          <span className="text-ink-dim/70 font-normal font-mono text-[9.5px]">/ugv/led_ctrl</span>
+          <Lightbulb className="h-3.5 w-3.5" /> LED rail{" "}
+          <span className="text-ink-dim/70 font-normal font-mono text-[9.5px]">
+            /ugv/led_ctrl
+          </span>
         </h2>
 
-        {isDead('/ugv/led_ctrl') && (
+        {isDead("/ugv/led_ctrl") && (
           <p className="rounded border border-red-500/40 bg-red-950/25 px-2.5 py-1.5 font-mono text-[9.5px] text-red-400">
             Bridge refused /ugv/led_ctrl — headlights are dead.
           </p>
@@ -608,37 +684,45 @@ export function CommandRail() {
         <div className="flex flex-col gap-2.5 font-mono text-[10.5px]">
           {/* IO4 LED Chassis Headlight */}
           <div className="grid grid-cols-[40px_1fr_40px] gap-2 items-center">
-            <span className="hud-label text-[9px] uppercase leading-none text-ink-dim/80">IO4</span>
+            <span className="hud-label text-[9px] uppercase leading-none text-ink-dim/80">
+              IO4
+            </span>
             <input
               type="range"
               min="0"
               max="255"
               value={io4}
-              disabled={!commandSurfaceEnabled || isDead('/ugv/led_ctrl')}
+              disabled={!commandSurfaceEnabled || isDead("/ugv/led_ctrl")}
               onChange={(e) => updateLEDs(Number(e.target.value), io5)}
               className="accent-amber bg-transparent w-full cursor-pointer h-1 rounded-full select-none disabled:cursor-not-allowed"
               title="Chassis headlights PWM duty"
             />
             <span className="text-right text-glow-amber text-amber font-bold leading-none select-none">
-              {isDead('/ugv/led_ctrl') ? '---' : io4.toString().padStart(3, '0')}
+              {isDead("/ugv/led_ctrl")
+                ? "---"
+                : io4.toString().padStart(3, "0")}
             </span>
           </div>
 
           {/* IO5 LED Spotlight PT */}
           <div className="grid grid-cols-[40px_1fr_40px] gap-2 items-center">
-            <span className="hud-label text-[9px] uppercase leading-none text-ink-dim/80">IO5</span>
+            <span className="hud-label text-[9px] uppercase leading-none text-ink-dim/80">
+              IO5
+            </span>
             <input
               type="range"
               min="0"
               max="255"
               value={io5}
-              disabled={!commandSurfaceEnabled || isDead('/ugv/led_ctrl')}
+              disabled={!commandSurfaceEnabled || isDead("/ugv/led_ctrl")}
               onChange={(e) => updateLEDs(io4, Number(e.target.value))}
               className="accent-amber bg-transparent w-full cursor-pointer h-1 rounded-full select-none disabled:cursor-not-allowed"
               title="Pan-tilt spotlight PWM duty"
             />
             <span className="text-right text-glow-amber text-amber font-bold leading-none select-none">
-              {isDead('/ugv/led_ctrl') ? '---' : io5.toString().padStart(3, '0')}
+              {isDead("/ugv/led_ctrl")
+                ? "---"
+                : io5.toString().padStart(3, "0")}
             </span>
           </div>
         </div>

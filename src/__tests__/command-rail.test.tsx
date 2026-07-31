@@ -1,6 +1,6 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CommandRail } from '@/components/cockpit/CommandRail';
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { CommandRail } from "@/components/cockpit/CommandRail";
 
 const mocks = vi.hoisted(() => ({
   publish: vi.fn<(topic: string, message: unknown) => boolean>(() => true),
@@ -9,10 +9,10 @@ const mocks = vi.hoisted(() => ({
   allowMotion: true as boolean | null,
 }));
 
-vi.mock('@/lib/ros/client', () => ({
-  ESTOP_MUX_SOURCE: 'E-STOP lock',
+vi.mock("@/lib/ros/client", () => ({
+  ESTOP_MUX_SOURCE: "E-STOP lock",
   rosClient: { publish: mocks.publish },
-  useConnectionState: () => 'connected',
+  useConnectionState: () => "connected",
   useCockpitBridge: () => ({ faults: [], deadTopics: [] }),
   useCockpitEstop: () => ({
     engaged: false,
@@ -23,7 +23,7 @@ vi.mock('@/lib/ros/client', () => ({
     commandReady: mocks.commandReady,
   }),
   useCockpitStatus: () => ({
-    muxSource: 'NONE',
+    muxSource: "NONE",
     commandAge: null,
     publisherCount: 1,
     watchdogArmed: true,
@@ -42,7 +42,7 @@ vi.mock('@/lib/ros/client', () => ({
 type Twist = { linear: { x: number }; angular: { z: number } };
 
 function twistPublishes() {
-  return mocks.publish.mock.calls.filter(([topic]) => topic === '/cmd_vel_ui');
+  return mocks.publish.mock.calls.filter(([topic]) => topic === "/cmd_vel_ui");
 }
 
 function movingPublishes() {
@@ -52,7 +52,7 @@ function movingPublishes() {
   });
 }
 
-describe('CommandRail control lifecycle', () => {
+describe("CommandRail control lifecycle", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     mocks.publish.mockClear();
@@ -66,17 +66,17 @@ describe('CommandRail control lifecycle', () => {
     vi.useRealTimers();
   });
 
-  it('publishes held intent at 10 Hz and exactly one zero on release', () => {
+  it("publishes held intent at 10 Hz and exactly one zero on release", () => {
     render(<CommandRail />);
     act(() => vi.advanceTimersByTime(250));
     mocks.publish.mockClear();
 
-    fireEvent.keyDown(window, { key: 'w', repeat: false });
+    fireEvent.keyDown(window, { key: "w", repeat: false });
     expect(movingPublishes()).toHaveLength(1);
     act(() => vi.advanceTimersByTime(300));
     expect(movingPublishes()).toHaveLength(4);
 
-    fireEvent.keyUp(window, { key: 'w' });
+    fireEvent.keyUp(window, { key: "w" });
     const zeroes = twistPublishes().filter(([, message]) => {
       const twist = message as Twist;
       return twist.linear.x === 0 && twist.angular.z === 0;
@@ -88,11 +88,11 @@ describe('CommandRail control lifecycle', () => {
     expect(twistPublishes()).toHaveLength(5);
   });
 
-  it('stops a held pointer intent when the pointer leaves', () => {
+  it("stops a held pointer intent when the pointer leaves", () => {
     render(<CommandRail />);
     act(() => vi.advanceTimersByTime(250));
     mocks.publish.mockClear();
-    const forward = screen.getByTitle('Forward (W)') as HTMLButtonElement;
+    const forward = screen.getByTitle("Forward (W)") as HTMLButtonElement;
     forward.setPointerCapture = vi.fn();
 
     fireEvent.pointerDown(forward, { pointerId: 7 });
@@ -105,19 +105,21 @@ describe('CommandRail control lifecycle', () => {
     expect(twistPublishes()).toHaveLength(4);
   });
 
-  it('keeps all command controls inert in a non-writer tab', () => {
+  it("keeps all command controls inert in a non-writer tab", () => {
     mocks.writer = false;
     render(<CommandRail />);
     act(() => vi.advanceTimersByTime(500));
     mocks.publish.mockClear();
 
-    fireEvent.keyDown(window, { key: 'w', repeat: false });
-    fireEvent.change(screen.getByTitle('Chassis headlights PWM duty'), {
-      target: { value: '128' },
+    fireEvent.keyDown(window, { key: "w", repeat: false });
+    fireEvent.change(screen.getByTitle("Chassis headlights PWM duty"), {
+      target: { value: "128" },
     });
-    fireEvent.click(screen.getByTitle('Center Gimbal'));
+    fireEvent.click(screen.getByTitle("Center Gimbal"));
 
     expect(mocks.publish).not.toHaveBeenCalled();
-    expect(screen.getAllByText(/another tab owns the command surface/i).length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText(/another tab owns the command surface/i).length,
+    ).toBeGreaterThan(0);
   });
 });
