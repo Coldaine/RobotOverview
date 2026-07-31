@@ -66,6 +66,11 @@ export function CommandRail() {
 
   const connected = connection === 'connected';
   const estopHolding = estop.engaged || status.muxSource === ESTOP_MUX_SOURCE;
+  // The BroadcastChannel election covers the whole command surface, not only
+  // e-stop. Otherwise two tabs could still race velocity, lights, and gimbal
+  // commands while claiming to have elected one controller.
+  const commandWriter = estop.writer;
+  const commandSurfaceEnabled = connected && commandWriter && estop.commandReady;
 
   // ── B11: MOTION GATE ──────────────────────────────────────────────────────
   // The cockpit ships the drive capability, but motion stays inert until the
@@ -73,8 +78,14 @@ export function CommandRail() {
   // told us — that is UNKNOWN, and unknown is not permission.
   const driveGateReason: string | null = !connected
     ? 'robot unreachable'
+    : !commandWriter
+      ? 'another tab owns the command surface'
+      : !estop.commandReady
+        ? 'controller election settling'
     : estopHolding
       ? 'E-STOP engaged'
+      : !status.hasReceived || status.stale
+        ? 'robot safety status is unavailable or stale'
       : status.allowMotion === null
         ? 'no allow_motion publisher — unknown'
         : status.allowMotion === false
@@ -216,12 +227,17 @@ export function CommandRail() {
     },
     onPointerUp: () => clearDriveIntent(),
     onPointerCancel: () => clearDriveIntent(),
+    onPointerLeave: () => clearDriveIntent(),
     onLostPointerCapture: () => clearDriveIntent(),
     style: { touchAction: 'none' as const },
   });
 
   // ── LED / GIMBAL PUBLISHERS (M3: honour the return value) ──────────────────
   const updateLEDs = (nextIo4: number, nextIo5: number) => {
+    if (!commandSurfaceEnabled) {
+      setFault('LED: another tab owns the command surface or the robot is unreachable');
+      return;
+    }
     const prev = { io4, io5 };
     setIo4(nextIo4);
     setIo5(nextIo5);
@@ -235,6 +251,10 @@ export function CommandRail() {
   };
 
   const updateGimbal = (nextPan: number, nextTilt: number) => {
+    if (!commandSurfaceEnabled) {
+      setFault('Gimbal: another tab owns the command surface or the robot is unreachable');
+      return;
+    }
     const roundedPan = Math.round(clamp(nextPan, PAN_MIN, PAN_MAX) * 100) / 100;
     const roundedTilt = Math.round(clamp(nextTilt, TILT_MIN, TILT_MAX) * 100) / 100;
     const prev = { pan, tilt };
@@ -256,6 +276,10 @@ export function CommandRail() {
   const resetGimbal = () => updateGimbal(0.0, 0.0);
 
   const toggleSteady = () => {
+    if (!commandSurfaceEnabled) {
+      setFault('Steady: another tab owns the command surface or the robot is unreachable');
+      return;
+    }
     const nextSteady = !steady;
     setSteady(nextSteady);
     // Steady command maps: [mode, y_bias]. Float32MultiArray robot-side.
@@ -279,7 +303,7 @@ export function CommandRail() {
   };
 
   const gimbalDraggingRef = useRef(false);
-  const gimbalDead = isDead('/pt_joint_position_controller/commands');
+  const gimbalDead = !commandSurfaceEnabled || isDead('/pt_joint_position_controller/commands');
 
   const rungState = (source: string) => {
     if (status.muxSource === null) return { label: 'UNKNOWN', active: false, unknown: true };
@@ -523,7 +547,7 @@ export function CommandRail() {
                 tilt {TILT_MIN.toFixed(2)}
               </span>
               <span className="pointer-events-none absolute bottom-1.5 left-2 font-mono text-[7px] text-ink-dim/70 leading-none">
-                P: {pan.toFixed(2)} · T: {tilt.toFixed(2)} rad
+                {gimbalDead ? 'P: — · T: —' : `P: ${pan.toFixed(2)} · T: ${tilt.toFixed(2)} rad`}
               </span>
             </div>
 
@@ -531,6 +555,7 @@ export function CommandRail() {
             <div className="flex items-center justify-between gap-1 mt-1">
               <button
                 onClick={resetGimbal}
+                disabled={gimbalDead}
                 className="border border-rim bg-panel-2/40 hover:border-cyan/40 hover:text-cyan rounded px-2 py-0.5 font-mono text-[9px] select-none flex items-center gap-1 text-ink-dim uppercase"
                 title="Center Gimbal"
               >
@@ -538,10 +563,10 @@ export function CommandRail() {
               </button>
               <button
                 onClick={toggleSteady}
-                disabled={isDead('/ugv/pt_steady_ctrl')}
+                disabled={!commandSurfaceEnabled || isDead('/ugv/pt_steady_ctrl')}
                 className={clsx(
                   'border rounded px-1.5 py-0.5 font-mono text-[9px] select-none flex items-center gap-1 uppercase',
-                  isDead('/ugv/pt_steady_ctrl')
+                  !commandSurfaceEnabled || isDead('/ugv/pt_steady_ctrl')
                     ? 'border-rim/40 text-zinc-600 cursor-not-allowed'
                     : steady
                       ? 'border-emerald-500/50 bg-emerald-900/10 text-emerald-400'
@@ -549,7 +574,12 @@ export function CommandRail() {
                 )}
                 title="Toggle steady mode"
               >
-                <Sparkles className="h-3 w-3" /> {steady ? 'Steady On' : 'Steady Off'}
+                <Sparkles className="h-3 w-3" />{' '}
+                {!commandSurfaceEnabled || isDead('/ugv/pt_steady_ctrl')
+                  ? 'Unavailable'
+                  : steady
+                    ? 'Steady On'
+                    : 'Steady Off'}
               </button>
             </div>
           </div>
@@ -584,13 +614,13 @@ export function CommandRail() {
               min="0"
               max="255"
               value={io4}
-              disabled={isDead('/ugv/led_ctrl')}
+              disabled={!commandSurfaceEnabled || isDead('/ugv/led_ctrl')}
               onChange={(e) => updateLEDs(Number(e.target.value), io5)}
               className="accent-amber bg-transparent w-full cursor-pointer h-1 rounded-full select-none disabled:cursor-not-allowed"
               title="Chassis headlights PWM duty"
             />
             <span className="text-right text-glow-amber text-amber font-bold leading-none select-none">
-              {io4.toString().padStart(3, '0')}
+              {isDead('/ugv/led_ctrl') ? '---' : io4.toString().padStart(3, '0')}
             </span>
           </div>
 
@@ -602,13 +632,13 @@ export function CommandRail() {
               min="0"
               max="255"
               value={io5}
-              disabled={isDead('/ugv/led_ctrl')}
+              disabled={!commandSurfaceEnabled || isDead('/ugv/led_ctrl')}
               onChange={(e) => updateLEDs(io4, Number(e.target.value))}
               className="accent-amber bg-transparent w-full cursor-pointer h-1 rounded-full select-none disabled:cursor-not-allowed"
               title="Pan-tilt spotlight PWM duty"
             />
             <span className="text-right text-glow-amber text-amber font-bold leading-none select-none">
-              {io5.toString().padStart(3, '0')}
+              {isDead('/ugv/led_ctrl') ? '---' : io5.toString().padStart(3, '0')}
             </span>
           </div>
         </div>

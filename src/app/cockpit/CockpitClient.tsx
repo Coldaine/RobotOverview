@@ -28,8 +28,7 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
     const releaseWriter = rosClient.claimEstopWriter();
 
     return () => {
-      releaseWriter();
-      if (rosClient.isEstopEngaged()) {
+      if (rosClient.shouldKeepEstopTransport()) {
         // An engaged e-stop keeps the socket — and therefore its >= 1 Hz
         // republish — alive past this unmount. twist_mux drops the lock if it
         // restarts, so the heartbeat has to outlive a route change or a Strict
@@ -41,6 +40,7 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
         rosClient.releaseHeavyStreams();
         return;
       }
+      releaseWriter();
       rosClient.disconnect();
     };
   }, [wsUrl]);

@@ -114,7 +114,7 @@ export interface InboundMsg {
   message?: string;
   level?: number;
   values?: Array<{ key: string; value: string }>;
-  ranges?: number[];
+  ranges?: Array<number | null>;
   angle_min?: number;
   angle_max?: number;
   angle_increment?: number;
@@ -246,9 +246,11 @@ export interface CockpitEstop {
   engagedAt: number | null;
   /**
    * This tab holds the single-writer role. A second cockpit tab is read-only
-   * for the e-stop so two operators cannot fight over the lock.
+   * so two operators cannot fight over motion, actuators, or the e-stop lock.
    */
   writer: boolean;
+  /** The election had a quiet window; non-safety commands may now publish. */
+  commandReady: boolean;
 }
 
 /** A rosbridge `op:"status"` frame — the bridge refusing or complaining. */
@@ -361,6 +363,13 @@ let odomData: OdomData = { x: null, y: null, yaw: null, linearSpeed: null, angul
 let imuData: ImuData = { ax: null, ay: null, az: null, gx: null, gy: null, gz: null };
 let clearanceData: ClearanceData = { meters: null };
 let statusData: StatusData = blankStatus();
+type StatusGroup = 'mux' | 'allowMotion' | 'watchdog' | 'system';
+let statusGroupAt: Record<StatusGroup, number | null> = {
+  mux: null,
+  allowMotion: null,
+  watchdog: null,
+  system: null,
+};
 let scanData: ScanData = blankScan();
 let diagnosticsData: DiagnosticsData = { items: [] };
 
@@ -378,6 +387,7 @@ let estopState: CockpitEstop = {
   releasing: false,
   engagedAt: null,
   writer: true,
+  commandReady: false,
 };
 let bridgeState: CockpitBridge = { faults: [], deadTopics: [] };
 
@@ -419,8 +429,30 @@ const rebuild: Record<SliceKey, () => void> = {
     notify('clearance');
   },
   status: () => {
-    statusState = { ...statusData, ...meta.status };
-    notify('status');
+    const now = Date.now();
+    const fresh = (group: StatusGroup) =>
+      !meta.status.stale &&
+      statusGroupAt[group] !== null &&
+      now - statusGroupAt[group]! <= FRESHNESS_MS.status;
+    const next: CockpitStatus = {
+      ...statusData,
+      ...(!fresh('mux') && { muxSource: null, cmdAge: null, pubCount: null }),
+      ...(!fresh('allowMotion') && { allowMotion: null }),
+      ...(!fresh('watchdog') && { watchdogArmed: null, watchdogFired: null }),
+      ...(!fresh('system') && {
+        wifiRssi: null,
+        diskFree: null,
+        cpuTemp: null,
+        gpuTemp: null,
+      }),
+      ...meta.status,
+    };
+    const changed = (Object.keys(next) as Array<keyof CockpitStatus>)
+      .some((key) => next[key] !== statusState[key]);
+    if (changed) {
+      statusState = next;
+      notify('status');
+    }
   },
   diagnostics: () => {
     diagnosticsState = { ...diagnosticsData, ...meta.diagnostics };
@@ -449,6 +481,10 @@ function tickStaleness() {
       rebuild[key]();
     }
   });
+  // Safety fields have independent publishers. Re-evaluate their individual
+  // deadlines even when unrelated status traffic keeps the aggregate slice
+  // fresh; the comparison in rebuild avoids no-op React notifications.
+  rebuild.status();
 }
 
 /**
@@ -471,6 +507,7 @@ function resetSlicesForNewConnection() {
   imuData = { ax: null, ay: null, az: null, gx: null, gy: null, gz: null };
   clearanceData = { meters: null };
   statusData = blankStatus();
+  statusGroupAt = { mux: null, allowMotion: null, watchdog: null, system: null };
   scanData = blankScan();
   diagnosticsData = { items: [] };
   scanArrivals = [];
@@ -551,6 +588,7 @@ let operatorEngaged = false;
 let estopHeartbeatTimer: ReturnType<typeof setInterval> | null = null;
 let estopReleaseTimer: ReturnType<typeof setInterval> | null = null;
 let estopReleaseSends = 0;
+let estopReleasePending = false;
 
 function setEstopState(next: Partial<CockpitEstop>) {
   const merged = { ...estopState, ...next };
@@ -559,7 +597,8 @@ function setEstopState(next: Partial<CockpitEstop>) {
     merged.heartbeat === estopState.heartbeat &&
     merged.releasing === estopState.releasing &&
     merged.engagedAt === estopState.engagedAt &&
-    merged.writer === estopState.writer
+    merged.writer === estopState.writer &&
+    merged.commandReady === estopState.commandReady
   ) {
     return; // keep the snapshot referentially stable for useSyncExternalStore
   }
@@ -585,12 +624,56 @@ function stopEstopRelease() {
     estopReleaseTimer = null;
   }
   estopReleaseSends = 0;
+  estopReleasePending = false;
   setEstopState({ releasing: false });
+}
+
+function suspendEstopRelease() {
+  if (estopReleaseTimer) clearInterval(estopReleaseTimer);
+  estopReleaseTimer = null;
+  estopReleaseSends = 0;
+  estopReleasePending = true;
+  setEstopState({ releasing: true });
 }
 
 function stopEstopTimers() {
   stopEstopHeartbeat();
   stopEstopRelease();
+}
+
+function suspendEstopTimers() {
+  stopEstopHeartbeat();
+  if (estopState.releasing || estopReleasePending) suspendEstopRelease();
+  else stopEstopRelease();
+}
+
+function startEstopReleaseBurst(): boolean {
+  stopEstopHeartbeat();
+  if (estopReleaseTimer) clearInterval(estopReleaseTimer);
+  estopReleaseTimer = null;
+  estopReleaseSends = 0;
+
+  const sent = publishEstopLock(false);
+  if (!sent) {
+    suspendEstopRelease();
+    return false;
+  }
+
+  estopReleasePending = false;
+  estopReleaseSends = 1;
+  setEstopState({ engaged: false, releasing: true, engagedAt: null });
+  estopReleaseTimer = setInterval(() => {
+    if (estopReleaseSends >= ESTOP_RELEASE_SENDS) {
+      stopEstopRelease();
+      return;
+    }
+    if (!publishEstopLock(false)) {
+      suspendEstopRelease();
+      return;
+    }
+    estopReleaseSends += 1;
+  }, ESTOP_RELEASE_INTERVAL_MS);
+  return true;
 }
 
 // Assert the lock now, then hold it. Idempotent — a second engage reuses the
@@ -627,17 +710,72 @@ function startEstopHeartbeat(): boolean {
 // DEAD for a quarter second on every single mount. A momentary double-assert is
 // harmless (both tabs assert *stop*); an unavailable stop button is not.
 const ESTOP_CHANNEL_NAME = 'beast-cockpit-estop-writer';
+const COMMAND_ELECTION_SETTLE_MS = 250;
 
 let estopChannel: BroadcastChannel | null = null;
+let commandReadyTimer: ReturnType<typeof setTimeout> | null = null;
 const estopTabId =
   typeof crypto !== 'undefined' && 'randomUUID' in crypto
     ? crypto.randomUUID()
     : `tab-${Math.random().toString(36).slice(2, 11)}`;
 
-type EstopElectionMsg = { k: 'hello' | 'mine' | 'yield'; from: string };
+type EstopElectionMsg = {
+  k: 'hello' | 'mine' | 'yield' | 'handoff';
+  from: string;
+  to?: string;
+  engagedAt?: number | null;
+  releasePending?: boolean;
+};
 
 function postElection(k: EstopElectionMsg['k']) {
   estopChannel?.postMessage({ k, from: estopTabId } satisfies EstopElectionMsg);
+}
+
+function revokeCommandReady() {
+  if (commandReadyTimer) clearTimeout(commandReadyTimer);
+  commandReadyTimer = null;
+  setEstopState({ commandReady: false });
+}
+
+function settleCommandWriter() {
+  revokeCommandReady();
+  commandReadyTimer = setTimeout(() => {
+    commandReadyTimer = null;
+    if (estopState.writer) setEstopState({ commandReady: true });
+  }, COMMAND_ELECTION_SETTLE_MS);
+}
+
+/** Transfer a held stop before this tab relinquishes command ownership. */
+function handoffWriter(to: string) {
+  const releasePending = estopState.releasing || estopReleasePending;
+  if (operatorEngaged || releasePending) {
+    estopChannel?.postMessage({
+      k: 'handoff',
+      from: estopTabId,
+      to,
+      engagedAt: estopState.engagedAt,
+      releasePending,
+    } satisfies EstopElectionMsg);
+  }
+  operatorEngaged = false;
+  stopEstopTimers();
+  revokeCommandReady();
+  setEstopState({
+    writer: false,
+    engaged: false,
+    heartbeat: false,
+    releasing: false,
+    engagedAt: null,
+  });
+}
+
+function releaseEstopWriterClaim() {
+  if (estopState.writer) postElection('yield');
+  revokeCommandReady();
+  estopChannel?.close();
+  estopChannel = null;
+  // Nothing left to coordinate with from this tab's perspective.
+  setEstopState({ writer: true, commandReady: false });
 }
 
 /**
@@ -647,10 +785,13 @@ function postElection(k: EstopElectionMsg['k']) {
  */
 function claimEstopWriter(): () => void {
   if (typeof window === 'undefined' || typeof BroadcastChannel === 'undefined') {
-    setEstopState({ writer: true });
+    setEstopState({ writer: true, commandReady: true });
     return () => {};
   }
-  if (estopChannel) return () => {};
+  // A held stop deliberately keeps this channel alive across a route change.
+  // A remounted cockpit must still receive the real teardown so it can close
+  // the inherited channel after the operator releases the stop.
+  if (estopChannel) return releaseEstopWriterClaim;
 
   estopChannel = new BroadcastChannel(ESTOP_CHANNEL_NAME);
   estopChannel.onmessage = (ev: MessageEvent<EstopElectionMsg>) => {
@@ -659,30 +800,42 @@ function claimEstopWriter(): () => void {
     if (m.k === 'hello') {
       // Lowest id wins, so the answer is the same whoever announced first.
       if (m.from < estopTabId) {
-        setEstopState({ writer: false });
+        handoffWriter(m.from);
       } else if (estopState.writer) {
         postElection('mine');
       }
     } else if (m.k === 'mine') {
-      setEstopState({ writer: false });
+      if (m.from < estopTabId) {
+        handoffWriter(m.from);
+      } else if (estopState.writer) {
+        postElection('mine');
+      }
+    } else if (m.k === 'handoff' && m.to === estopTabId) {
+      operatorEngaged = !m.releasePending;
+      setEstopState(m.releasePending
+        ? { writer: true, engaged: false, heartbeat: false, releasing: true, engagedAt: null }
+        : { writer: true, engaged: true, releasing: false, engagedAt: m.engagedAt ?? Date.now() });
+      settleCommandWriter();
+      if (m.releasePending) {
+        if (socket?.readyState === WebSocket.OPEN) startEstopReleaseBurst();
+        else suspendEstopRelease();
+      } else if (socket?.readyState === WebSocket.OPEN) {
+        startEstopHeartbeat();
+      }
     } else if (m.k === 'yield') {
       // The incumbent left. Re-announce; the id comparison settles any tie
       // between the remaining tabs without another timer.
       setEstopState({ writer: true });
+      settleCommandWriter();
       postElection('hello');
     }
   };
 
   setEstopState({ writer: true });
+  settleCommandWriter();
   postElection('hello');
 
-  return () => {
-    if (estopState.writer) postElection('yield');
-    estopChannel?.close();
-    estopChannel = null;
-    // Nothing left to coordinate with from this tab's perspective.
-    setEstopState({ writer: true });
-  };
+  return releaseEstopWriterClaim;
 }
 
 // ── ROSBRIDGE STATUS FRAMES ─────────────────────────────────────────────────
@@ -741,7 +894,10 @@ function decodeImageFrame(topic: string, msg: InboundMsg): ImageFrame | null {
   // is only meaningful while both track NTP — treat it as an indicator, not a
   // measurement, and never let a negative skew read as "fresh".
   const stamp = stampToMs(msg.header);
-  const latencyMs = stamp === null ? null : Math.max(0, Date.now() - stamp);
+  const delta = stamp === null ? null : Date.now() - stamp;
+  // A robot clock ahead of the browser is clock skew, not a zero-latency
+  // frame. Unknown keeps the UI from blessing it as fresh.
+  const latencyMs = delta === null || delta < 0 ? null : delta;
 
   // Object URLs beat data: URLs here — a data URL re-encodes ~30 KB of base64
   // into a fresh string on every frame and pins it in the DOM attribute.
@@ -784,7 +940,14 @@ const serverState = {
   status: { ...blankStatus(), ...blankMeta() } as CockpitStatus,
   diagnostics: { items: [], ...blankMeta() } as CockpitDiagnostics,
   scan: { ...blankScan(), ...blankMeta() } as CockpitScan,
-  estop: { engaged: false, heartbeat: false, releasing: false, engagedAt: null, writer: true } as CockpitEstop,
+  estop: {
+    engaged: false,
+    heartbeat: false,
+    releasing: false,
+    engagedAt: null,
+    writer: true,
+    commandReady: false,
+  } as CockpitEstop,
   bridge: { faults: [], deadTopics: [] } as CockpitBridge,
 };
 
@@ -874,7 +1037,7 @@ export const rosClient = {
       connectionState = 'disconnected';
       // Hold the timers while the socket is down so the UI stops claiming a
       // live heartbeat; advertiseAndSubscribe restarts it on the next open.
-      stopEstopTimers();
+      suspendEstopTimers();
       this.stopStalenessTicker();
       markAllStale();
       notify('connection');
@@ -885,7 +1048,7 @@ export const rosClient = {
       connectionState = 'disconnected';
       // Same reasoning as onclose: a socket in error is not carrying a
       // heartbeat, so stop claiming one.
-      stopEstopTimers();
+      suspendEstopTimers();
       this.stopStalenessTicker();
       markAllStale();
       notify('connection');
@@ -960,6 +1123,8 @@ export const rosClient = {
     // exists before the first message.
     if (operatorEngaged) {
       startEstopHeartbeat();
+    } else if (estopReleasePending) {
+      startEstopReleaseBurst();
     }
   },
 
@@ -1014,8 +1179,9 @@ export const rosClient = {
     if (!live) {
       if (engaged) return false;
       operatorEngaged = false;
-      stopEstopTimers();
-      setEstopState({ engaged: false, engagedAt: null });
+      stopEstopHeartbeat();
+      suspendEstopRelease();
+      setEstopState({ engaged: false, engagedAt: null, releasing: true });
       return false;
     }
 
@@ -1028,25 +1194,16 @@ export const rosClient = {
     }
 
     operatorEngaged = false;
-    stopEstopHeartbeat();
-    const sent = publishEstopLock(false);
-    estopReleaseSends = sent ? 1 : 0;
-    if (!estopReleaseTimer) {
-      estopReleaseTimer = setInterval(() => {
-        if (estopReleaseSends >= ESTOP_RELEASE_SENDS || !publishEstopLock(false)) {
-          stopEstopRelease();
-          return;
-        }
-        estopReleaseSends += 1;
-      }, ESTOP_RELEASE_INTERVAL_MS);
-    }
-    setEstopState({ engaged: false, releasing: true, engagedAt: null });
-    return sent;
+    return startEstopReleaseBurst();
   },
 
   /** Operator intent, readable outside React (e.g. unmount teardown checks). */
   isEstopEngaged(): boolean {
     return operatorEngaged;
+  },
+
+  shouldKeepEstopTransport(): boolean {
+    return operatorEngaged || estopReleasePending || estopState.releasing;
   },
 
   claimEstopWriter,
@@ -1127,7 +1284,11 @@ export const rosClient = {
         break;
       }
       case '/ugv/allow_motion': {
-        statusData = { ...statusData, allowMotion: msg.data === true };
+        statusData = {
+          ...statusData,
+          allowMotion: typeof msg.data === 'boolean' ? msg.data : null,
+        };
+        statusGroupAt.allowMotion = Date.now();
         commit('status');
         break;
       }
@@ -1141,6 +1302,7 @@ export const rosClient = {
           watchdogArmed: safeBool(values.armed),
           watchdogFired: safeBool(values.fired),
         };
+        statusGroupAt.watchdog = Date.now();
         commit('status');
         break;
       }
@@ -1159,6 +1321,7 @@ export const rosClient = {
             if (d.name === 'cockpit_safety_watchdog') {
               next.watchdogArmed = safeBool(values.armed);
               next.watchdogFired = safeBool(values.fired);
+              statusGroupAt.watchdog = Date.now();
             } else if (d.name === 'twist_mux') {
               // No fallback to 'NONE': absent means unknown, and "NONE" reads
               // as a positive report that nothing holds the mux.
@@ -1166,13 +1329,16 @@ export const rosClient = {
               next.cmdAge = safeNumber(values.command_age);
               const pubs = safeNumber(values.publisher_count);
               next.pubCount = pubs === null ? null : Math.max(0, pubs);
+              statusGroupAt.mux = Date.now();
             } else if (d.name === 'bringup') {
               next.allowMotion = safeBool(values.allow_motion);
+              statusGroupAt.allowMotion = Date.now();
             } else if (d.name === 'system_metrics') {
               next.wifiRssi = safeNumber(values.wifi_rssi);
               next.diskFree = values.disk_free || null;
               next.cpuTemp = safeNumber(values.cpu_temp);
               next.gpuTemp = safeNumber(values.gpu_temp);
+              statusGroupAt.system = Date.now();
             }
           });
         }

@@ -60,6 +60,22 @@ class MockWebSocket {
   }
 }
 
+class MockBroadcastChannel {
+  static latestInstance: MockBroadcastChannel | null = null;
+  onmessage: ((event: { data: unknown }) => void) | null = null;
+  postMessage = vi.fn();
+  close = vi.fn();
+
+  constructor(name: string) {
+    void name;
+    MockBroadcastChannel.latestInstance = this;
+  }
+
+  deliver(data: unknown) {
+    this.onmessage?.({ data });
+  }
+}
+
 const ESTOP_TOPIC = '/cmd_vel_estop_lock';
 
 // Every `{data: …}` value this client has put on the lock topic, in order.
@@ -95,6 +111,8 @@ describe('rosClient and hooks', () => {
     rosClient.clearEstopIntent();
     rosClient.disconnect();
     MockWebSocket.latestInstance = null;
+    MockBroadcastChannel.latestInstance = null;
+    vi.unstubAllGlobals();
   });
 
   it('manages connection state and reconnect backoff correctly', () => {
@@ -229,6 +247,50 @@ describe('rosClient and hooks', () => {
       ) as Array<{ queue_length?: number }>;
       expect(images).toHaveLength(2);
       images.forEach((op) => expect(op.queue_length).toBe(1));
+    });
+
+    it('reports negative clock skew as unknown and revokes replaced image URLs', () => {
+      vi.setSystemTime(new Date('2026-07-31T20:00:00Z'));
+      const createObjectURL = vi.fn()
+        .mockReturnValueOnce('blob:first')
+        .mockReturnValueOnce('blob:second');
+      const revokeObjectURL = vi.fn();
+      vi.stubGlobal('URL', { createObjectURL, revokeObjectURL });
+      const frames: Array<{ src: string; latencyMs: number | null }> = [];
+      const unregister = rosClient.registerImageCallback(
+        '/oak/rgb/image_raw/compressed',
+        (frame) => frames.push(frame),
+      );
+      const ws = openSocket();
+      const browserNowSec = Math.floor(Date.now() / 1000);
+
+      act(() => {
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/oak/rgb/image_raw/compressed',
+          msg: {
+            data: 'AQID',
+            format: 'jpeg',
+            header: { stamp: { sec: browserNowSec + 5, nanosec: 0 } },
+          },
+        });
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/oak/rgb/image_raw/compressed',
+          msg: {
+            data: 'BAUG',
+            format: 'jpeg',
+            header: { stamp: { sec: browserNowSec, nanosec: 0 } },
+          },
+        });
+      });
+
+      expect(frames[0]).toEqual({ src: 'blob:first', latencyMs: null });
+      expect(frames[1]).toEqual({ src: 'blob:second', latencyMs: 0 });
+      expect(revokeObjectURL).toHaveBeenCalledWith('blob:first');
+
+      unregister();
+      expect(revokeObjectURL).toHaveBeenCalledWith('blob:second');
     });
 
     it('raises the bridge status level so refusals are not silent', () => {
@@ -424,6 +486,46 @@ describe('rosClient and hooks', () => {
       expect(voltageHook.result.current.hasReceived).toBe(false);
       expect(voltageHook.result.current.voltage).toBeNull();
     });
+
+    it('expires arming and mux fields even while unrelated status stays fresh', () => {
+      const ws = openSocket();
+      const statusHook = renderHook(() => useCockpitStatus());
+
+      act(() => {
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/cockpit/status',
+          msg: {
+            status: [
+              { name: 'bringup', values: [{ key: 'allow_motion', value: 'true' }] },
+              { name: 'twist_mux', values: [{ key: 'active_source', value: 'E-STOP lock' }] },
+            ],
+          },
+        });
+      });
+      expect(statusHook.result.current.allowMotion).toBe(true);
+      expect(statusHook.result.current.muxSource).toBe('E-STOP lock');
+
+      act(() => {
+        vi.advanceTimersByTime(1500);
+        ws.triggerMessage({
+          op: 'publish',
+          topic: '/cockpit/status',
+          msg: {
+            status: [{
+              name: 'system_metrics',
+              values: [{ key: 'wifi_rssi', value: '-55' }],
+            }],
+          },
+        });
+        vi.advanceTimersByTime(750);
+      });
+
+      expect(statusHook.result.current.stale).toBe(false);
+      expect(statusHook.result.current.wifiRssi).toBe(-55);
+      expect(statusHook.result.current.allowMotion).toBeNull();
+      expect(statusHook.result.current.muxSource).toBeNull();
+    });
   });
 
   // ── ROBOT-REPORTED SAFETY STATE ───────────────────────────────────────────
@@ -450,6 +552,18 @@ describe('rosClient and hooks', () => {
       expect(statusHook.result.current.allowMotion).toBe(true);
       expect(statusHook.result.current.watchdogArmed).toBe(true);
       expect(statusHook.result.current.watchdogFired).toBe(false);
+    });
+
+    it('treats malformed allow_motion as unknown, not a definite false report', () => {
+      const ws = openSocket();
+      const statusHook = renderHook(() => useCockpitStatus());
+
+      act(() => {
+        ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: null } });
+      });
+
+      expect(statusHook.result.current.hasReceived).toBe(true);
+      expect(statusHook.result.current.allowMotion).toBeNull();
     });
 
     it('keeps the mux source verbatim and does not invent NONE', () => {
@@ -519,6 +633,95 @@ describe('rosClient and hooks', () => {
   // a one-shot publish can lose the discovery race and the lock does not
   // survive a mux restart. The client must hold the lock at >= 1 Hz.
   describe('e-stop lock republish contract', () => {
+    it('settles one command writer and stops a losing tab heartbeat after handoff', () => {
+      vi.stubGlobal('BroadcastChannel', MockBroadcastChannel);
+      const ws = openSocket();
+      const estopHook = renderHook(() => useCockpitEstop());
+      const releaseWriter = rosClient.claimEstopWriter();
+      const channel = MockBroadcastChannel.latestInstance!;
+
+      expect(estopHook.result.current.commandReady).toBe(false);
+      act(() => vi.advanceTimersByTime(250));
+      expect(estopHook.result.current.commandReady).toBe(true);
+
+      act(() => {
+        rosClient.setEstopLock(true);
+        vi.advanceTimersByTime(1000);
+      });
+      expect(estopPublishes(ws).filter(Boolean).length).toBeGreaterThanOrEqual(3);
+
+      const beforeLoss = estopPublishes(ws).length;
+      act(() => {
+        // Empty string sorts below every generated non-empty tab id.
+        channel.deliver({ k: 'mine', from: '' });
+        vi.advanceTimersByTime(1500);
+      });
+
+      expect(estopHook.result.current.writer).toBe(false);
+      expect(estopHook.result.current.commandReady).toBe(false);
+      expect(estopHook.result.current.heartbeat).toBe(false);
+      expect(estopPublishes(ws)).toHaveLength(beforeLoss);
+      expect(channel.postMessage).toHaveBeenCalledWith(expect.objectContaining({
+        k: 'handoff',
+        to: '',
+      }));
+
+      releaseWriter();
+      MockBroadcastChannel.latestInstance = null;
+    });
+
+    it('gives a remounted cockpit a working teardown for an inherited election channel', () => {
+      vi.stubGlobal('BroadcastChannel', MockBroadcastChannel);
+      const firstRelease = rosClient.claimEstopWriter();
+      const channel = MockBroadcastChannel.latestInstance!;
+      const remountedRelease = rosClient.claimEstopWriter();
+
+      expect(channel.close).not.toHaveBeenCalled();
+      remountedRelease();
+      expect(channel.close).toHaveBeenCalledOnce();
+
+      // The original callback is idempotent after the inherited channel closes.
+      firstRelease();
+      expect(channel.close).toHaveBeenCalledOnce();
+    });
+
+    it('hands an in-flight release burst to the winning tab', () => {
+      vi.stubGlobal('BroadcastChannel', MockBroadcastChannel);
+      const ws = openSocket();
+      const releaseWriter = rosClient.claimEstopWriter();
+      const channel = MockBroadcastChannel.latestInstance!;
+
+      act(() => {
+        vi.advanceTimersByTime(250);
+        rosClient.setEstopLock(true);
+        rosClient.setEstopLock(false);
+      });
+      const ownId = channel.postMessage.mock.calls
+        .map(([message]) => message as { from?: string })
+        .find((message) => message.from)?.from;
+      expect(ownId).toBeTruthy();
+      const beforeHandoff = estopPublishes(ws).filter((value) => value === false).length;
+
+      act(() => channel.deliver({ k: 'mine', from: '' }));
+
+      expect(channel.postMessage).toHaveBeenCalledWith(expect.objectContaining({
+        k: 'handoff',
+        to: '',
+        releasePending: true,
+      }));
+      act(() => vi.advanceTimersByTime(1000));
+      expect(estopPublishes(ws).filter((value) => value === false)).toHaveLength(beforeHandoff);
+
+      act(() => {
+        channel.deliver({ k: 'handoff', from: '', to: ownId, releasePending: true });
+        vi.advanceTimersByTime(1000);
+      });
+      expect(estopPublishes(ws).filter((value) => value === false).length)
+        .toBeGreaterThan(beforeHandoff);
+
+      releaseWriter();
+    });
+
     it('republishes `true` at >= 1 Hz for as long as the stop is engaged', () => {
       const ws = openSocket();
       ws.send.mockClear();
@@ -662,7 +865,7 @@ describe('rosClient and hooks', () => {
       expect(vi.getTimerCount()).toBe(0);
     });
 
-    it('drops release intent while disconnected and does not reassert on reconnect', () => {
+    it('queues a disconnected release and bursts false after reconnect', () => {
       const ws = openSocket();
       act(() => {
         rosClient.setEstopLock(true);
@@ -678,7 +881,11 @@ describe('rosClient and hooks', () => {
         vi.advanceTimersByTime(1200);
         MockWebSocket.latestInstance?.triggerOpen();
       });
-      expect(estopPublishes(MockWebSocket.latestInstance!)).toHaveLength(0);
+      const reconnected = MockWebSocket.latestInstance!;
+      expect(estopPublishes(reconnected)).toEqual([false]);
+      act(() => vi.advanceTimersByTime(2000));
+      expect(estopPublishes(reconnected)).toHaveLength(4);
+      expect(estopPublishes(reconnected).every((value) => value === false)).toBe(true);
     });
 
     it('stamps when intent latched so the UI can escalate an unconfirmed stop', () => {

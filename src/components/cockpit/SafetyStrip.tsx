@@ -39,7 +39,8 @@ export function SafetyStrip() {
   //   LOCKED      — the robot reports the lock (green, and only then)
   // ASSERTING past the grace window is styled as loudly as a failure, because
   // that is what it is: the operator pressed stop and nothing came back.
-  const robotConfirmed = status.muxSource === ESTOP_MUX_SOURCE;
+  const robotConfirmed =
+    status.hasReceived && !status.stale && status.muxSource === ESTOP_MUX_SOURCE;
   const intentLatched = connected && estop.engaged;
 
   // Re-render across the grace boundary so "ASSERTING" escalates on its own.

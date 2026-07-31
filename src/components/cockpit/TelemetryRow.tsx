@@ -31,6 +31,7 @@ export function TelemetryRow() {
   const imuCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const voltHistoryRef = useRef<number[]>([]);
+  const lastVoltSampleAtRef = useRef<number | null>(null);
   const imuHistoryRef = useRef<{ x: number; y: number; z: number }[]>([]);
 
   const voltage = volts.voltage;
@@ -43,10 +44,15 @@ export function TelemetryRow() {
   // ~10.45 V is indistinguishable from a real pack reading to anyone glancing
   // at the panel.
   useEffect(() => {
-    if (voltage !== null) {
+    if (
+      voltage !== null &&
+      volts.receivedAt !== null &&
+      volts.receivedAt !== lastVoltSampleAtRef.current
+    ) {
       const arr = voltHistoryRef.current;
       arr.push(voltage);
       if (arr.length > HISTORY) arr.shift();
+      lastVoltSampleAtRef.current = volts.receivedAt;
     }
 
     const canvas = voltCanvasRef.current;
@@ -108,7 +114,7 @@ export function TelemetryRow() {
       ctx.font = '9px monospace';
       ctx.fillText('NO VOLTAGE DATA', 8, H / 2);
     }
-  }, [voltage, voltLive]);
+  }, [voltage, voltLive, volts.receivedAt]);
 
   // ── IMU SPARKLINE ─────────────────────────────────────────────────────────
   // Same rule as voltage: no invented "quiet stationary waves". A stationary
