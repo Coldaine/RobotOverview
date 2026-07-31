@@ -1728,16 +1728,10 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
   --once -w 1
 ```
 
-**Test executed 2026-07-31 on the floor at 0.02 m/s: FAILED.** No firmware heartbeat stop
-occurred — the ESP32 continued the last command for minutes until an explicit zero arrived
-(`ugv_bringup` init sends only `{"T":131,"cmd":1}` feedback-on; no heartbeat configuration
-is sent).
-
-**Mitigation deployed 2026-07-31:** Jetson-side `cmd_vel_timeout` watchdog in `ugv_bringup`
-(`a1b2822`, [Coldaine/ugv_ws#7](https://github.com/Coldaine/ugv_ws/pull/7)). Unit tests
-passed on-robot after `colcon build`; **live crawl+kill re-gate not yet run** (deferred —
-robot was charging / voltage ~9 V). Re-run Phase 2 from `.claude/skills/beast-paces/SKILL.md`
-before any keyboard teleop. Longer-term: investigate ESP32 firmware heartbeat enablement.
+**Status (2026-07-31):** The Jetson-side `cmd_vel_timeout` watchdog is implemented in `ugv_bringup`
+([Coldaine/ugv_ws#7](https://github.com/Coldaine/ugv_ws/pull/7)), but a physical crawl+kill
+safety check has not yet been witnessed by the operator. Motion is currently disabled 
+by default until the owner confirms a live shakedown.
 
 ### Remaining physical cutover record
 
