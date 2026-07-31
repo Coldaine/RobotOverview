@@ -185,6 +185,12 @@ No CI/CD to the robot. If you only edited Hangar docs/UI, the Jetson does not ch
   `/ugv/watchdog_state` land with `ugv_ws` PR #10 and are not on the robot yet. Until they are,
   the cockpit's safety strip reads UNKNOWN, drive stays gated (unknown is not permission), and
   the e-stop sits in ASSERTING because nothing echoes the mux lock back.
+- **Lesson — a wrong message type is a silent dead control (2026-07-31):** the first cockpit
+  build advertised `/ugv/led_ctrl` as `Int32MultiArray` and `/ugv/pt_steady_ctrl` as
+  `Float64MultiArray`; `ugv_bringup` subscribes to both as `Float32MultiArray`. DDS simply never
+  matches mismatched types — no error, on either side — so the headlights and the steady toggle
+  did nothing while the UI looked healthy. Fixed in RobotOverview #148. When adding any control,
+  check the subscriber's declared type in `ugv_bringup.py`, not the topic name.
 
 > **Scope (owner statement 2026-07-31 - Updated):** The Hangar app is intended to be a
 > **teleop and telemetry cockpit** in addition to an information surface, implementing North Star
