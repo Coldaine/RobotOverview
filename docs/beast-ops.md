@@ -166,23 +166,15 @@ No CI/CD to the robot. If you only edited Hangar docs/UI, the Jetson does not ch
 - **Brownout 2026-07-31:** pack hit ~8.8 V; Jetson went offline (Tailscale last-seen gap).
   After charger plug-in + chassis power, Wi-Fi SSH at `.187` returned (~2 min uptime).
   Charge before any motion session.
-- **No dashboard exists yet — cockpit direction decided 2026-07-31:** nothing listens on any web
-  port today; driving happens via ROS 2 teleop over SSH. The Hangar app records the robot and is
-  **not** its control surface. The approved standalone cockpit (foxglove_bridge + any-device
-  clients, twist_mux safety spine) is specified in
-  [`docs/plans/2026-07-31-beast-command-deck-spec.md`](plans/2026-07-31-beast-command-deck-spec.md)
-  and sequenced in [the companion plan](plans/2026-07-31-beast-command-deck-plan.md).
+- **Live Cockpit UI — Command Deck active (2026-07-31):** The Hangar app hosts a **live Command Deck route (`/cockpit`)** that connects directly to the robot's rosbridge WebSocket over Tailscale (`wss://` proxying to `9090`). Telemetry (LiDAR scan, TF, odometry, voltage, IMU, diagnostics) is fully functional, and teleop controls (headlights, gimbal, and motion) are integrated.
+- **Ports & Proxying (2026-07-31):**
+  - `rosbridge_websocket` runs on port `9090` (LAN/Tailscale limit).
+  - Tailscale serve proxy: `tailscale serve https:443 tcp://localhost:9090` exposes a clean Let's Encrypt `wss://beast-01.tyrannosaurus-magellanic.ts.net` endpoint.
+  - Vizanti web app: `:5100` (Flask), `:5001` (rosbridge-vizanti).
+  - `ugv_chat_ai` API: `:5000`.
+  - MediaMTX: `:8554` (RTSP), `:8889` (WebRTC).
 
-> **Scope (owner statement 2026-07-30):** the Hangar app is an *information surface* about the
-> Beast — it records the robot; it is **not** a live teleop dashboard and no in-app control
-> surface is planned near-term (at most a future link, separately; North Star G7's broader
-> "command portal" phrasing awaits an owner decision). Driving happens with ROS 2 tooling over
-> SSH. Autonomy remains in scope on the robot itself (2026-07-22). Onboard
-> fail-safes (stale-command watchdog, explicit stop, motor PID) remain mandatory engineering —
-> they are not a ban on self-driving. **Dynamics note (operator, 2026-07-22):** the Beast is
-> slow, hard-stops, and **stops in time** for terrain/obstacle reactions. Remote closed-loop
-> from CORE-PRIME is fine. Lightweight on-device Orin inference for terrain alignment /
-> avoidance is fine. Reject “won’t stop in time” and “avoidance must stay classical-only.”
+> **Scope (owner statement 2026-07-31 - Updated):** The Hangar app is now a **live teleop and telemetry cockpit** in addition to being an information surface. This implements North Star G7's live command portal goal directly inside the Hangar. Driving and telemetry have moved from pure terminal environments into an integrated web cockpit accessible to any authorized tailnet device. Onboard fail-safes (stale-command watchdog, explicit stop, motor PID) remain mandatory engineering — they are not a ban on self-driving. **Dynamics note (operator, 2026-07-22):** the Beast is slow, hard-stops, and **stops in time** for terrain/obstacle reactions. Remote closed-loop from CORE-PRIME is fine. Lightweight on-device Orin inference for terrain alignment / avoidance is fine. Reject “won’t stop in time” and “avoidance must stay classical-only.”
 
 ## Hardware chain
 

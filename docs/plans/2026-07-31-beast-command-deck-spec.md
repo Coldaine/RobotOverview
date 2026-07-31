@@ -5,15 +5,9 @@ owner against the design-study mockup (see [Visual language](#visual-language)).
 is sequenced in the companion plan:
 [`2026-07-31-beast-command-deck-plan.md`](2026-07-31-beast-command-deck-plan.md).
 
-**Scope decision (owner, 2026-07-31):** the Command Deck is a **standalone cockpit**, not a
-Hangar app surface. The 2026-07-30 statement stands — the Hangar records the robot and links
-out; it does not drive it. North Star G7's "live command portal" is satisfied by a robot-served
-bridge plus interchangeable clients. Folding any of this into the Hangar app is a separate,
-later decision.
+**Scope decision (owner, 2026-07-31 - Updated):** The Command Deck is a **live route inside the Hangar app (`/cockpit`)** with **full teleop from day one**. This decision supersedes the previous "standalone" only stance and any pre-existing dated scope statements in `docs/beast-ops.md`. North Star G7's "live command portal" goal is now directly realized inside the Hangar. 
 
-**Device-agnostic by requirement:** the operator seat is *any* device — Windows/Mac/Linux
-desktop (Foxglove app), any browser (Foxglove web or Lichtblick, open-source), any phone on the
-tailnet (Vizanti, served by the robot). Nothing in this spec may assume a Windows workstation.
+**Device-agnostic by requirement:** the operator seat is *any* device — Windows/Mac/Linux desktop, tablet, or phone on the tailnet. Mobile piloting is a core use case for crawling undercroft spaces.
 
 ---
 
