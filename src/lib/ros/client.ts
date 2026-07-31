@@ -462,9 +462,17 @@ export const rosClient = {
    */
   setEstopLock(engaged: boolean): boolean {
     if (typeof window === 'undefined') return false;
-    // No socket means no way to reach the mux. Refusing here is what keeps the
-    // UI honest: we never latch a state we could not transmit.
-    if (!socket || socket.readyState !== WebSocket.OPEN) return false;
+    const live = !!socket && socket.readyState === WebSocket.OPEN;
+    // No socket means no way to reach the mux. Refusing to ENGAGE here keeps
+    // the UI honest. A refused RELEASE must still drop local intent or the
+    // next reconnect would re-assert a lock the operator already cleared.
+    if (!live) {
+      if (engaged) return false;
+      operatorEngaged = false;
+      stopEstopTimers();
+      setEstopState({ engaged: false });
+      return false;
+    }
 
     if (engaged) {
       const armed = startEstopHeartbeat();

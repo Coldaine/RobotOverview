@@ -363,6 +363,25 @@ describe('rosClient and hooks', () => {
       expect(vi.getTimerCount()).toBe(0);
     });
 
+    it('drops local intent when a release cannot reach the mux', () => {
+      const ws = openSocket();
+      act(() => {
+        rosClient.setEstopLock(true);
+        ws.triggerClose();
+      });
+
+      act(() => {
+        expect(rosClient.setEstopLock(false)).toBe(false);
+      });
+      expect(rosClient.isEstopEngaged()).toBe(false);
+
+      act(() => {
+        vi.advanceTimersByTime(1200);
+        MockWebSocket.latestInstance?.triggerOpen();
+      });
+      expect(estopPublishes(MockWebSocket.latestInstance!)).toHaveLength(0);
+    });
+
     it('reports heartbeat honestly and keeps holding after the React tree unmounts', () => {
       const ws = openSocket();
       const hook = renderHook(() => useCockpitEstop());
