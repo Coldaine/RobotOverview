@@ -6,14 +6,12 @@ name: Command Spine Tests
 # nav2 node capable of emitting velocity is routed off /cmd_vel, that no file in
 # the tree reintroduces a direct /cmd_vel publisher, that the rosbridge topic
 # whitelist admits exactly the shipped cockpit's topics and binds loopback only,
-# and that the /cockpit/status strings still match what the cockpit renders.
+# that the /cockpit/status strings still match what the cockpit renders, and
+# that the robot-side motion gate/watchdog sends exactly one stop on timeout.
 #
-# It never imports rclpy or starts a node — it parses source, YAML and launch
-# files and exercises the pure-logic modules (depth maths, the arbitration
-# mirror, the wire-string contract) directly — so it runs on a bare
-# ubuntu-latest runner with pip-installable packages only. No ROS, no colcon,
-# no container. That is the whole point: the safety check must be cheap enough
-# to run on every push, not only on the robot.
+# It never starts a node. The watchdog harness supplies minimal import stubs on
+# runners without ROS, while the cockpit tests parse source, YAML and launch
+# files and exercise pure logic directly. No colcon or container is required.
 
 on:
   pull_request:
@@ -52,4 +50,10 @@ jobs:
         run: pip install pytest pyyaml numpy opencv-python-headless
 
       - name: Run command spine and cockpit bridge tests
-        run: python -m pytest src/ugv_main/ugv_cockpit/test -q
+        env:
+          PYTHONPATH: src/ugv_main/ugv_bringup
+        run: >-
+          python -m pytest
+          src/ugv_main/ugv_cockpit/test
+          src/ugv_main/ugv_bringup/test/test_jetson_safety.py
+          -q

@@ -52,9 +52,9 @@ mux unbypassable from a browser.**
 |---|---|---|
 | `/cmd_vel_ui` | `geometry_msgs/Twist` | The mux's **priority-50 rung**. A pad at the robot (150) or an operator pad (100) always outranks it |
 | `/cmd_vel_estop_lock` | `std_msgs/Bool` | Remote priority-255 lock control: `true` stops; `false` releases the lock and may expose the next live source |
-| `/ugv/led_ctrl` | `std_msgs/Int32MultiArray` | Lights |
+| `/ugv/led_ctrl` | `std_msgs/Float32MultiArray` | Lights |
 | `/pt_joint_position_controller/commands` | `std_msgs/Float64MultiArray` | Pan-tilt |
-| `/ugv/pt_steady_ctrl` | `std_msgs/Float64MultiArray` | Pan-tilt levelling |
+| `/ugv/pt_steady_ctrl` | `std_msgs/Float32MultiArray` | Pan-tilt levelling |
 
 **Not admitted, deliberately:** `/cmd_vel` (the mux output), `/cmd_vel_joy_robot`,
 `/cmd_vel_joy_operator`, `/cmd_vel_nav`, `/cmd_vel_nav_raw`, `/cmd_vel_smoothed`. A
