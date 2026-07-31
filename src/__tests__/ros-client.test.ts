@@ -814,7 +814,7 @@ describe('rosClient and hooks', () => {
       expect(vi.getTimerCount()).toBe(0);
     });
 
-    it('drops local intent when a release cannot reach the mux', () => {
+    it('drops release intent while disconnected and does not reassert on reconnect', () => {
       const ws = openSocket();
       act(() => {
         rosClient.setEstopLock(true);
