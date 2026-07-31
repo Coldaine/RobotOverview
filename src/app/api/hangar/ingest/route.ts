@@ -1,7 +1,10 @@
 import {
   assertIngestAuthorized,
   IngestAuthError,
-  ingestHangarEntity,
+  IngestConflictError,
+  IngestNotFoundError,
+  IngestUnavailableError,
+  ingestHangarOp,
   parseIngestBody,
 } from '@/server/hangar/ingest';
 import { ZodError } from 'zod';
@@ -13,11 +16,20 @@ export async function POST(request: Request) {
     assertIngestAuthorized(request.headers.get('authorization'));
     const raw = await request.json();
     const body = parseIngestBody(raw);
-    const result = await ingestHangarEntity(body);
+    const result = await ingestHangarOp(body);
     return Response.json(result, { status: 200 });
   } catch (error) {
     if (error instanceof IngestAuthError) {
       return Response.json({ ok: false, error: error.message }, { status: error.status });
+    }
+    if (error instanceof IngestUnavailableError) {
+      return Response.json({ ok: false, error: error.message }, { status: 503 });
+    }
+    if (error instanceof IngestNotFoundError) {
+      return Response.json({ ok: false, ...error.body }, { status: 404 });
+    }
+    if (error instanceof IngestConflictError) {
+      return Response.json({ ok: false, ...error.body }, { status: 409 });
     }
     if (error instanceof ZodError) {
       return Response.json(
