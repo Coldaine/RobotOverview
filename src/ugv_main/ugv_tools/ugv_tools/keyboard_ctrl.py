@@ -25,7 +25,7 @@ q/z : increase/decrease max speeds by 10%
 w/x : increase/decrease only linear speed by 10%
 e/c : increase/decrease only angular speed by 10%
 t/T : x and y speed switch
-s/S : stop keyboard control (publishes zero while off)
+s/S : stop keyboard control (sends a short zero burst, then goes quiet)
 space key, k : stop motion (zero velocity)
 
 Control Your Pt!
@@ -74,6 +74,23 @@ speedBindings = {
 }
 
 LOOP_PERIOD = 0.02
+
+# How many consecutive zero Twists to send after the command returns to zero,
+# before going silent. Mirrors ugv_bringup's own `zero_vel_limit = 5`.
+#
+# WHY THIS EXISTS (twist_mux starvation): twist_mux awards /cmd_vel to the
+# highest-priority source that has not expired, and *any* message — including a
+# zero Twist — refreshes that source's timestamp. keyboard_ctrl sits at priority
+# 100; if it published every 20 ms forever, it would hold the floor forever and
+# nav (10) and the UI rung (50) could never get a command through, even with the
+# operator's hands off the keyboard. Publishing a bounded tail of zeros and then
+# STOPPING lets this source expire after twist_mux's 0.5 s timeout and hands the
+# floor back down the ladder.
+#
+# The tail is not decoration: it is the command that actually stops the robot
+# (5 x 20 ms = 100 ms, well inside the 0.5 s watchdog). ugv_bringup's cmd_vel
+# watchdog is the backstop if even the tail is lost.
+ZERO_TAIL_LIMIT = 5
 
 
 class _TerminalSettings:
@@ -166,6 +183,9 @@ def main():
     stop = False
     twist = Twist()
     quit_requested = False
+    # Start already silent: a keyboard_ctrl nobody has touched yet must not
+    # claim the priority-100 rung and mask nav/UI just by being running.
+    zero_tail = ZERO_TAIL_LIMIT
 
     try:
         term.set_cbreak()
@@ -232,10 +252,32 @@ def main():
                 twist.linear.y = float(speed * x)
             twist.angular.z = float(turn * th)
 
-            if not stop:
-                node.pub.publish(twist)
-            else:
-                node.pub.publish(Twist())
+            outgoing = Twist() if stop else twist
+            commanding = (
+                outgoing.linear.x != 0.0
+                or outgoing.linear.y != 0.0
+                or outgoing.angular.z != 0.0
+            )
+
+            # Any keypress counts as activity: re-arm the zero tail so a fresh
+            # Space/k always puts a stop command on the wire even if we had
+            # already fallen silent.
+            if chunk:
+                zero_tail = 0
+
+            if commanding:
+                # Actively driving — stream at the loop rate and keep the rung.
+                node.pub.publish(outgoing)
+                zero_tail = 0
+            elif zero_tail < ZERO_TAIL_LIMIT:
+                # Command just returned to zero. Send a short, bounded burst of
+                # zeros so the robot stops by command rather than by watchdog...
+                node.pub.publish(outgoing)
+                zero_tail += 1
+            # ...then go silent. See ZERO_TAIL_LIMIT: an idle-but-publishing
+            # source at priority 100 would mask every lower twist_mux rung
+            # forever. Silence lets this source expire (0.5 s) and hands the
+            # floor back to nav / the UI.
 
             if quit_requested:
                 break

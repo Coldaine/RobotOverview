@@ -48,12 +48,32 @@ docs' old advice — "stop every other motion source first" — was the only pro
 
 Now the ladder resolves it. You can leave a LiDAR demo running and take over with the
 keyboard: the keyboard is priority 100, the demo is priority 10, so the keyboard wins
-for as long as you keep sending. Stop typing for 0.5 s and the demo gets the floor
-back — which means **"I stopped driving" is not the same as "the robot stopped."**
-Stop the demo, or engage the lock, if you want it to stay stopped.
+for as long as you keep sending. Stop driving and the demo gets the floor back about
+0.5 s later — which means **"I stopped driving" is not the same as "the robot
+stopped."** Stop the demo, or engage the lock, if you want it to stay stopped.
 
 Running two sources at the *same* priority (two UI surfaces, say) is still undefined —
 they interleave. One source per rung at a time.
+
+### Idle sources let go of the floor
+
+The handover above only works because **an idle teleop source stops publishing.** This
+is a real constraint on every velocity source, not an implementation detail:
+
+> twist_mux gives `/cmd_vel` to the highest-priority source that has not expired, and
+> **any** message refreshes that source's timer — including a zero Twist. A node that
+> streams zeros while idle therefore holds its rung forever and starves everything
+> below it, with nothing visibly wrong.
+
+So `keyboard_ctrl` and `joy_ctrl` both send a **bounded tail of zeros** when their
+input returns to neutral — `ZERO_TAIL_LIMIT = 5` messages, matching `ugv_bringup`'s own
+`zero_vel_limit` — and then **go silent** until you touch the controls again. The tail
+is what stops the robot by command; the silence is what releases the rung. `joy_node`
+is launched with `autorepeat_rate: 0.0` for the same reason, so a gamepad left plugged
+in does not manufacture 20 Hz of zeros on its own.
+
+Any new velocity source must follow the same rule: **stream while commanding, fall
+silent while idle.**
 
 ## Nav2's path to the mux
 
@@ -83,6 +103,26 @@ timeout would read as *already expired*, i.e. **engaged from the moment the node
 starts**, and stay engaged until something publishes a heartbeat. Nothing publishes
 this topic yet, so a non-zero timeout would ship a robot that can never be commanded.
 
+!!! danger "Publish the lock repeatedly — `--once` is not enough"
+    `twist_mux` subscribes to lock topics with **volatile** durability (upstream
+    behaviour; we cannot change it). Two things follow, and every e-stop client has to
+    design around both:
+
+    - **A single `--once` publish can be lost.** Volatile delivery only reaches
+      subscriptions that are already matched when the message is sent, so a publisher
+      that connects and immediately publishes can lose the race with discovery — and
+      the e-stop silently does nothing.
+    - **The lock does not survive a `twist_mux` restart.** Nothing is latched, so a mux
+      that crashes or is relaunched comes back with the lock **released**, whatever was
+      published before.
+
+    **Contract: an e-stop client MUST re-publish the lock state at ≥ 1 Hz for as long
+    as the stop is engaged**, not once on the button press. The repetition is what
+    makes engagement survive both the matching race and a mux restart.
+
+    This cannot be enforced in config: with `timeout: 0.0`, `twist_mux` never treats
+    silence on this topic as engagement.
+
 !!! note "Standing gap"
     Because nothing publishes `cmd_vel_estop_lock` yet, the lock is currently
     **inert** — the topic is wired so the contract is fixed before any client exists.
@@ -100,6 +140,11 @@ this topic yet, so a non-zero timeout would ship a robot that can never be comma
 | `test/test_twist_mux_spine.py` | Fails if anyone reintroduces a direct `/cmd_vel` publisher |
 
 Requires `ros-humble-twist-mux` (installed by `build_first.sh`).
+
+The node is launched **without `respawn`**, deliberately. If `twist_mux` dies, `/cmd_vel`
+has no publisher at all and `ugv_bringup`'s watchdog stops the robot — the fail-closed
+direction. Auto-respawning would bring the arbiter back in a fresh state with the
+e-stop lock released, which is strictly worse than stopping and making someone look.
 
 ```bash
 colcon test --packages-select ugv_cockpit

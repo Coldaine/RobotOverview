@@ -131,6 +131,40 @@ twist_mux:
     # timeout: 0.5 to get the fail-locked behavior above for free — no code
     # change needed, just this value.
     #
+    # -------------------------------------------------------------------
+    # CLIENT CONTRACT — an e-stop client MUST publish periodically.
+    # -------------------------------------------------------------------
+    # twist_mux subscribes to lock topics with VOLATILE durability and a
+    # small depth (LockTopicHandle, topic_handle.hpp — it uses plain
+    # rclcpp subscription defaults, not TRANSIENT_LOCAL). That is upstream
+    # behaviour we do not control, and it has two consequences that any
+    # client engaging this lock has to design around:
+    #
+    #   1. A single `ros2 topic pub --once ... true` is NOT reliable.
+    #      With volatile durability the message is only delivered to
+    #      subscriptions that are already matched at the instant it is
+    #      sent. A publisher that connects and immediately publishes can
+    #      lose the race with discovery/matching, and the e-stop silently
+    #      does nothing — the worst possible failure for this control.
+    #   2. The lock state does NOT survive a twist_mux restart. There is
+    #      no latched/transient-local value for a restarting twist_mux to
+    #      pick up, so a mux that crashes and comes back (or is relaunched
+    #      with bringup) starts with the lock RELEASED, regardless of what
+    #      was published before. An engaged e-stop can therefore quietly
+    #      un-engage itself under the operator.
+    #
+    # THEREFORE: e-stop clients MUST re-publish the lock state periodically
+    # (at least 1 Hz) for the whole time the stop is engaged — not once on
+    # the button press. The periodic publish is what makes engagement
+    # robust against both the matching race and a mux restart. Releasing
+    # should likewise publish `false` repeatedly (or simply stop the engaged
+    # stream only after a confirmed release).
+    #
+    # This is a contract on the CLIENT because it cannot be enforced here:
+    # `timeout: 0.0` means twist_mux itself never treats silence on this
+    # topic as engagement (see the epoch-zero discussion above). Documented
+    # in docs/command_arbitration.md#emergency-lock.
+    #
     # NOTE (standing gap): nothing publishes cmd_vel_estop_lock yet, so the
     # lock is inert until PR-2 adds the cockpit's e-stop control to the
     # bridge's client-publish whitelist. It is wired here so the topic

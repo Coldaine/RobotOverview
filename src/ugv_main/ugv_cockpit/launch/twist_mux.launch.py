@@ -81,6 +81,19 @@ def generate_launch_description():
         # "cmd_vel_out" (not a parameter — see twist_mux.cpp). Remap it to
         # the exact topic ugv_bringup already subscribes to.
         remappings=[('cmd_vel_out', '/cmd_vel')],
+        # DELIBERATELY NO `respawn=`. Every velocity source in the workspace
+        # publishes to a mux input, so if twist_mux dies /cmd_vel simply has
+        # no publisher and the robot stops (ugv_bringup's 0.5 s cmd_vel
+        # watchdog sees the silence and sends a stop). That is the
+        # fail-closed direction, and it is the behaviour we want on a crash:
+        # a mux crash is a safety event, not a hiccup to paper over.
+        #
+        # Auto-respawning would instead bring the arbiter back up in a fresh,
+        # empty state — notably with the e-stop lock RELEASED, since lock
+        # state does not survive a restart (see the client contract in
+        # config/twist_mux.yaml). A robot that resumes accepting commands
+        # after an unnoticed crash of its own arbiter is strictly worse than
+        # one that stops and makes the operator look.
     )
 
     return LaunchDescription([

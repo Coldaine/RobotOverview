@@ -11,6 +11,12 @@
   <maintainer email="pmaclyman@gmail.com">Coldaine</maintainer>
   <license>Apache-2.0</license>
 
+  <!-- Same test_depends as the sibling ament_python packages (ugv_tools,
+       ugv_bringup, …) so `colcon test` runs the standard ament linters here
+       too, plus the two this package's own suite actually imports. -->
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
   <test_depend>python3-yaml</test_depend>
 

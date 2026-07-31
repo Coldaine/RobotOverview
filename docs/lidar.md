@@ -1,6 +1,6 @@
 # LiDAR Interaction
 
-Interactive demos in **`ugv_slam`** that use `/scan` to drive the robot — follow, guard, and obstacle avoidance. These are **not** SLAM or Nav2; they publish `/cmd_vel` directly from laser data.
+Interactive demos in **`ugv_slam`** that use `/scan` to drive the robot — follow, guard, and obstacle avoidance. These are **not** SLAM or Nav2; they compute velocity straight from laser data and publish it on `/cmd_vel_nav`, the autonomy rung of [`twist_mux`](command_arbitration.md) (priority 10 — any human teleop outranks them).
 
 **`demo.launch.py`** starts the full base stack (**`bringup_lidar.launch.py`** on hardware) plus **one** demo node — no separate bringup terminal.
 
@@ -34,7 +34,7 @@ These are interactive laser demos — **not** SLAM or Nav2.
 
 ### One motion source at a time
 
-These demos publish **`/cmd_vel`** — run **only one** motion publisher at a time. In terminals that are still running, press **`Ctrl+C`** before starting another. See [Teleoperation — One motion source at a time](teleoperation.md#one-motion-source-at-a-time).
+These demos all publish **`/cmd_vel_nav`** — they share one [`twist_mux`](command_arbitration.md) rung, so two of them running at once still interleave with no defined winner. Run **only one** at a time; in terminals that are still running, press **`Ctrl+C`** before starting another. Teleop outranks them all. See [Teleoperation — One motion source at a time](teleoperation.md#one-motion-source-at-a-time).
 
 ### Demo overview
 
@@ -65,9 +65,9 @@ Each demo below uses the same launch file; only **`exe`** changes.
 | `rf2o_laser_odometry` | Laser scan → odometry input for EKF |
 | `odom_publisher` | Wheel odometry → EKF (`use_ekf:=true`, default) |
 | `ekf_filter_node` | Fuse wheel + laser → **`/odom`** (`use_ekf:=true`, default) |
-| `ugv_bringup` | **`/cmd_vel`** → ESP32; IMU, battery |
+| `ugv_bringup` | subscribes **`/cmd_vel`** → ESP32; IMU, battery |
 | `robot_state_publisher` | URDF / TF |
-| `lidar_follow` / `lidar_guard` / `lidar_obstacle_avoidance` | **`exe`** demo — **`/scan`** → **`/cmd_vel`** (avoidance also uses **`/odom`**) |
+| `lidar_follow` / `lidar_guard` / `lidar_obstacle_avoidance` | **`exe`** demo — **`/scan`** → **`/cmd_vel_nav`** (avoidance also uses **`/odom`**) |
 | `rviz2` | RViz (`use_rviz:=true`) |
 
 **Data path:**
@@ -77,11 +77,13 @@ flowchart LR
   LIDAR[ldlidar_node]
   SC["/scan"]
   DEMO["lidar_* (exe)"]
+  NAV["/cmd_vel_nav"]
+  MUX[twist_mux]
   CV["/cmd_vel"]
   BR[ugv_bringup]
   ESP[ESP32]
 
-  LIDAR --> SC --> DEMO --> CV --> BR --> ESP
+  LIDAR --> SC --> DEMO --> NAV --> MUX --> CV --> BR --> ESP
 ```
 
 Same stack as [Mapping](mapping.md) SLAM launches. Details: [Hardware Driver](bringup.md).
@@ -127,7 +129,7 @@ ros2 launch ugv_slam demo.launch.py exe:=lidar_follow use_rviz:=true
 | Item | Value |
 |------|-------|
 | Subscribes | `/scan` (`sensor_msgs/LaserScan`) |
-| Publishes | `/cmd_vel` |
+| Publishes | `/cmd_vel_nav` (twist_mux priority 10) |
 | Target distance | 0.2 m (effective range ~0.1–0.5 m) |
 | Control rate | 20 Hz |
 
@@ -146,7 +148,7 @@ ros2 launch ugv_slam demo.launch.py exe:=lidar_guard use_rviz:=true
 | Item | Value |
 |------|-------|
 | Subscribes | `/scan` |
-| Publishes | `/cmd_vel` (angular only) |
+| Publishes | `/cmd_vel_nav` (angular only; twist_mux priority 10) |
 
 Useful for verifying scan direction and PID tuning in RViz (Fixed Frame: `odom` or `base_link`).
 
@@ -163,7 +165,7 @@ ros2 launch ugv_slam demo.launch.py exe:=lidar_obstacle_avoidance use_rviz:=true
 | Item | Value |
 |------|-------|
 | Subscribes | `/scan`, `/odom` |
-| Publishes | `/cmd_vel` |
+| Publishes | `/cmd_vel_nav` (twist_mux priority 10) |
 | `safe_dist` | 0.30 m |
 | Front sector | ±30° (60° total) |
 | Forward speed | 0.20 m/s |
@@ -181,7 +183,8 @@ ros2 launch ugv_slam demo.launch.py exe:=lidar_obstacle_avoidance use_rviz:=true
 | No reaction to obstacles | Empty `/scan` | Check LiDAR, `LDLIDAR_MODEL`, `/dev/ttyACM0` |
 | Avoid only turns, never forward | No `/odom` | `ros2 topic echo /odom --once` |
 | Jerky motion | Object too close/far | Adjust scene; follow targets ~0.2 m |
-| Conflicts with teleop / Nav2 / vision | Multiple `/cmd_vel` sources | Stop other motion nodes first — see [One motion source at a time](#one-motion-source-at-a-time) |
+| Demo stops responding while someone drives | Teleop outranks it — the demo is on `/cmd_vel_nav` (priority 10) | Expected; stop the teleop node to give the demo the floor back |
+| Conflicts with Nav2 or a vision demo | They share the `/cmd_vel_nav` rung, so two of them interleave | Stop the other motion node first — see [One motion source at a time](#one-motion-source-at-a-time) |
 
 ---
 

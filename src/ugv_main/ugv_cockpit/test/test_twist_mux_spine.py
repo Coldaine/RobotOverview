@@ -25,6 +25,7 @@ Run: ``colcon test --packages-select ugv_cockpit`` on the robot, or
 ``python3 -m pytest src/ugv_main/ugv_cockpit/test`` from the workspace root.
 """
 
+import ast
 import os
 import re
 
@@ -87,7 +88,12 @@ NAV2_PARAM_FILES = (
 # --------------------------------------------------------------------------
 # Static scan
 # --------------------------------------------------------------------------
-SCANNED_SUFFIXES = ('.py', '.cpp', '.hpp', '.h', '.cc', '.js', '.yaml', '.yml', '.xml')
+# '.sh' is here because a shell script is a perfectly good way to smuggle a
+# /cmd_vel publisher back in (`ros2 topic pub /cmd_vel ...` in a demo or service
+# wrapper) and it would otherwise sail past a scan that only reads source files.
+SCANNED_SUFFIXES = (
+    '.py', '.cpp', '.hpp', '.h', '.cc', '.js', '.yaml', '.yml', '.xml', '.sh',
+)
 
 SKIPPED_DIR_NAMES = frozenset({
     '.git', '__pycache__', 'build', 'install', 'log', 'node_modules', 'site',
@@ -107,9 +113,24 @@ CMD_VEL_PUBLISHER_PATTERNS = (
     # launch remapping whose TARGET is cmd_vel: ('cmd_vel_out', '/cmd_vel')
     (re.compile(r"\(\s*['\"][^'\"]+['\"]\s*,\s*['\"]/?cmd_vel['\"]\s*\)"),
      'launch remapping onto cmd_vel'),
-    # nav2 / collision_monitor style output parameter
-    (re.compile(r"cmd_vel_out_topic\s*:\s*['\"]/?cmd_vel['\"]"),
+    # nav2 / collision_monitor style output parameter, YAML form:
+    #   cmd_vel_out_topic: "cmd_vel"   or   cmd_vel_out_topic: cmd_vel
+    # The trailing lookahead is what keeps this off the legitimate
+    # `cmd_vel_out_topic: cmd_vel_nav`.
+    (re.compile(r"cmd_vel_out_topic\s*:\s*['\"]?/?cmd_vel(?![\w/])"),
      'nav2 cmd_vel_out_topic'),
+    # ...and the Python-dict / launch-parameter form, where the KEY is quoted:
+    #   {'cmd_vel_out_topic': 'cmd_vel'}
+    # The YAML pattern above cannot see this one — the quote after the key
+    # breaks its `cmd_vel_out_topic\s*:` anchor — so a param set from a launch
+    # file instead of a yaml file would slip straight through.
+    (re.compile(r"['\"]cmd_vel_out_topic['\"]\s*:\s*['\"]/?cmd_vel['\"]"),
+     'nav2 cmd_vel_out_topic (python dict form)'),
+    # Shell scripts: `ros2 topic pub /cmd_vel geometry_msgs/msg/Twist ...`.
+    # Docs deliberately teach this as a manual stop, and docs are not scanned;
+    # a script in src/ that does it is a publisher the spine cannot see.
+    (re.compile(r"ros2\s+topic\s+pub\b[^\n]*?(?<![\w/])/?cmd_vel(?![\w/])"),
+     'shell publish onto cmd_vel'),
     # web clients (Vizanti, roslibjs): topic = "/cmd_vel" / name: "/cmd_vel"
     (re.compile(r"topic\s*=\s*['\"]/?cmd_vel['\"]"),
      'web client publishing on cmd_vel'),
@@ -165,6 +186,18 @@ def scanned_files():
                 continue
             absolute = os.path.join(dirpath, name)
             yield os.path.relpath(absolute, root).replace(os.sep, '/'), absolute
+
+    # Top-level operator scripts (ros2.sh, save_map.sh, build_*.sh). These are
+    # the shell scripts in this repo that actually run ROS commands — the ones
+    # under src/ are udev and model-export helpers — so scanning only src/
+    # would make the .sh suffix above almost a no-op. Non-recursive: everything
+    # nested at the root that matters is either src/ (above) or not ours.
+    for name in sorted(os.listdir(root)):
+        if not name.endswith('.sh'):
+            continue
+        absolute = os.path.join(root, name)
+        if os.path.isfile(absolute):
+            yield name, absolute
 
 
 @pytest.fixture(scope='module')
@@ -350,6 +383,333 @@ def test_ugv_bringup_still_consumes_cmd_vel():
     """The mux output has to land on the topic the ESP32 bridge listens to."""
     source = read('src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py')
     assert 'create_subscription(Twist, "cmd_vel"' in source
+
+
+# --------------------------------------------------------------------------
+# Launch-level audit of the nav2 bringup.
+#
+# The scan above is per-line and only sees a remapping that *targets* cmd_vel.
+# It is blind to the opposite and much likelier mistake: a nav2 node that
+# publishes Twist on its default "cmd_vel" and is simply never remapped at all.
+# That is how behavior_server shipped straight past the mux — nav2_behaviors'
+# timed_behavior.hpp creates its own Twist publisher on "cmd_vel", so a node
+# carrying only the tf remappings reaches /cmd_vel directly.
+#
+# So: enumerate every Node/ComposableNode in navigation_launch.py and force
+# each one into a named bucket. A nav2 package nobody has classified fails the
+# test rather than silently defaulting to "probably harmless".
+# --------------------------------------------------------------------------
+NAV2_LAUNCH_FILE = 'src/ugv_main/ugv_nav/launch/nav_bringup/navigation_launch.py'
+
+# Velocity-capable: these packages can put a geometry_msgs/Twist on the wire.
+# Each must be accounted for below.
+VELOCITY_CAPABLE_NAV2_PACKAGES = frozenset({
+    'nav2_controller',          # controller_server — the main control loop
+    'nav2_velocity_smoother',   # smooths controller output
+    'nav2_collision_monitor',   # nav2's last-chance veto
+    'nav2_behaviors',           # spin / backup / drive_on_heading / assisted_teleop
+})
+
+# Velocity-capable AND routed by a launch remapping on "cmd_vel".
+NAV2_PACKAGES_NEEDING_CMD_VEL_REMAP = frozenset({
+    'nav2_controller',
+    'nav2_velocity_smoother',
+    'nav2_behaviors',
+})
+
+# Velocity-capable but routed by a PARAMETER, not a remapping:
+# collision_monitor's output topic is `cmd_vel_out_topic` in params/*.yaml,
+# already asserted by test_nav2_final_hop_feeds_the_mux_not_cmd_vel. Listing it
+# here is the explicit claim "yes, this one publishes velocity, and here is
+# where its routing is checked instead".
+NAV2_PACKAGES_ROUTED_BY_PARAM = frozenset({
+    'nav2_collision_monitor',
+})
+
+# No velocity output at all — action servers, map/localisation, lifecycle. These
+# must NOT carry a cmd_vel remapping; one appearing here means either the node
+# grew a velocity path or someone pasted a remap into the wrong block.
+# nav2_smoother is the PATH smoother (smoother_server), not velocity_smoother.
+NAV2_PACKAGES_WITHOUT_VELOCITY = frozenset({
+    'nav2_planner',             # planner_server — produces paths
+    'nav2_bt_navigator',        # behaviour tree, issues actions
+    'nav2_smoother',            # smoother_server — smooths PATHS, not velocity
+    'nav2_waypoint_follower',   # sequences navigate_to_pose goals
+    'nav2_map_server',          # map / map_saver
+    'nav2_amcl',                # localisation
+    'nav2_lifecycle_manager',   # lifecycle transitions only
+})
+
+# Where a nav2 cmd_vel remapping is allowed to land: an internal nav2 hop, or
+# the mux input. Never bare cmd_vel — that is twist_mux's output.
+ALLOWED_NAV2_CMD_VEL_TARGETS = frozenset({'cmd_vel_nav_raw', 'cmd_vel_nav'})
+
+_LAUNCH_NODE_CALLS = ('Node', 'ComposableNode')
+
+
+def _call_name(node):
+    func = node.func
+    if isinstance(func, ast.Name):
+        return func.id
+    if isinstance(func, ast.Attribute):
+        return func.attr
+    return None
+
+
+def launch_node_calls(relative_path):
+    """Every Node(...)/ComposableNode(...) call in a launch file.
+
+    Returns a list of (call_name, {keyword: unparsed_source}). Parsing the AST
+    rather than slicing text means indentation, comments, argument order and
+    line wrapping cannot fool it — the previous text-level checks in this file
+    would happily miss a remapping split across lines.
+    """
+    tree = ast.parse(read(relative_path), filename=relative_path)
+    calls = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        name = _call_name(node)
+        if name not in _LAUNCH_NODE_CALLS:
+            continue
+        kwargs = {}
+        for keyword in node.keywords:
+            if keyword.arg is None:
+                continue  # **kwargs — nothing we can classify
+            kwargs[keyword.arg] = ast.unparse(keyword.value)
+        calls.append((name, kwargs))
+    return calls
+
+
+def _package_of(kwargs):
+    raw = kwargs.get('package')
+    if raw is None:
+        return None
+    return raw.strip('\'"')
+
+
+def _cmd_vel_remap_targets(kwargs):
+    """Targets of any ('cmd_vel', X) pair in this call's remappings."""
+    remappings = kwargs.get('remappings', '')
+    return re.findall(
+        r"\(\s*['\"]/?cmd_vel['\"]\s*,\s*['\"]/?([A-Za-z0-9_/]+)['\"]\s*\)",
+        remappings,
+    )
+
+
+def test_every_nav2_launch_node_is_classified():
+    """A nav2 package nobody has thought about must not slip in silently."""
+    known = (
+        VELOCITY_CAPABLE_NAV2_PACKAGES
+        | NAV2_PACKAGES_WITHOUT_VELOCITY
+    )
+    unknown = set()
+    for _, kwargs in launch_node_calls(NAV2_LAUNCH_FILE):
+        package = _package_of(kwargs)
+        if package is not None and package not in known:
+            unknown.add(package)
+    assert not unknown, (
+        '%s launches nav2 packages this test has never classified: %s. Decide '
+        'whether each one can publish geometry_msgs/Twist and add it to '
+        'VELOCITY_CAPABLE_NAV2_PACKAGES (and one of the routing sets) or to '
+        'NAV2_PACKAGES_WITHOUT_VELOCITY.' % (NAV2_LAUNCH_FILE, sorted(unknown))
+    )
+
+
+def test_velocity_capable_sets_partition_cleanly():
+    """The two routing sets must together be exactly the velocity-capable set."""
+    assert (
+        NAV2_PACKAGES_NEEDING_CMD_VEL_REMAP | NAV2_PACKAGES_ROUTED_BY_PARAM
+        == VELOCITY_CAPABLE_NAV2_PACKAGES
+    )
+    assert not (
+        NAV2_PACKAGES_NEEDING_CMD_VEL_REMAP & NAV2_PACKAGES_ROUTED_BY_PARAM
+    )
+    assert not (
+        VELOCITY_CAPABLE_NAV2_PACKAGES & NAV2_PACKAGES_WITHOUT_VELOCITY
+    )
+
+
+def test_every_velocity_capable_nav2_node_is_routed_off_cmd_vel():
+    """The test that would have caught behavior_server."""
+    missing = []
+    misrouted = []
+    for call_name, kwargs in launch_node_calls(NAV2_LAUNCH_FILE):
+        package = _package_of(kwargs)
+        if package not in NAV2_PACKAGES_NEEDING_CMD_VEL_REMAP:
+            continue
+        targets = _cmd_vel_remap_targets(kwargs)
+        if not targets:
+            missing.append('%s(package=%s)' % (call_name, package))
+            continue
+        for target in targets:
+            if target.lstrip('/') not in ALLOWED_NAV2_CMD_VEL_TARGETS:
+                misrouted.append(
+                    '%s(package=%s) remaps cmd_vel -> %r'
+                    % (call_name, package, target)
+                )
+
+    assert not missing, (
+        'these nav2 nodes publish geometry_msgs/Twist on their default '
+        '"cmd_vel" topic and carry no remapping, so they reach /cmd_vel '
+        'directly and bypass twist_mux entirely: %s\nAdd '
+        "('cmd_vel', 'cmd_vel_nav') (or 'cmd_vel_nav_raw' for an internal nav2 "
+        'hop) to their remappings in %s.' % (missing, NAV2_LAUNCH_FILE)
+    )
+    assert not misrouted, (
+        'nav2 cmd_vel remappings must land on an internal nav2 hop or the mux '
+        'input, never on /cmd_vel itself: %s' % misrouted
+    )
+
+
+def test_both_nav2_launch_branches_carry_the_same_routing():
+    """use_composition picks ONE branch, so a fix in one is a fix in neither."""
+    seen = {}
+    for call_name, kwargs in launch_node_calls(NAV2_LAUNCH_FILE):
+        package = _package_of(kwargs)
+        if package in NAV2_PACKAGES_NEEDING_CMD_VEL_REMAP:
+            seen.setdefault(package, []).append(
+                (call_name, tuple(_cmd_vel_remap_targets(kwargs)))
+            )
+
+    for package in sorted(NAV2_PACKAGES_NEEDING_CMD_VEL_REMAP):
+        entries = seen.get(package, [])
+        branches = {call_name for call_name, _ in entries}
+        assert branches == set(_LAUNCH_NODE_CALLS), (
+            '%s must appear in BOTH the plain-Node and the ComposableNode '
+            'branch of %s (found: %s)' % (package, NAV2_LAUNCH_FILE, sorted(branches))
+        )
+        targets = {target for _, target in entries}
+        assert len(targets) == 1, (
+            '%s is remapped differently in the two branches of %s: %s. '
+            'use_composition selects one at launch time, so they must agree.'
+            % (package, NAV2_LAUNCH_FILE, sorted(targets))
+        )
+
+
+def test_non_velocity_nav2_nodes_carry_no_cmd_vel_remap():
+    """A cmd_vel remap on a node with no velocity output is a paste error."""
+    stray = []
+    for call_name, kwargs in launch_node_calls(NAV2_LAUNCH_FILE):
+        package = _package_of(kwargs)
+        if package not in NAV2_PACKAGES_WITHOUT_VELOCITY:
+            continue
+        targets = _cmd_vel_remap_targets(kwargs)
+        if targets:
+            stray.append(
+                '%s(package=%s) -> %s' % (call_name, package, targets)
+            )
+    assert not stray, (
+        'these nav2 nodes are on the no-velocity allowlist but carry a cmd_vel '
+        'remapping — either the allowlist is wrong or the remap is: %s' % stray
+    )
+
+
+def test_collision_monitor_is_routed_by_param_not_remap():
+    """Documents WHY collision_monitor is exempt from the remap requirement."""
+    for call_name, kwargs in launch_node_calls(NAV2_LAUNCH_FILE):
+        if _package_of(kwargs) not in NAV2_PACKAGES_ROUTED_BY_PARAM:
+            continue
+        assert not _cmd_vel_remap_targets(kwargs), (
+            '%s: collision_monitor takes its output topic from '
+            'cmd_vel_out_topic in params/*.yaml (asserted by '
+            'test_nav2_final_hop_feeds_the_mux_not_cmd_vel). A launch remapping '
+            'here would be a second, competing source of truth.' % call_name
+        )
+
+
+# --------------------------------------------------------------------------
+# Idle sources must let go of the twist_mux floor.
+#
+# twist_mux awards /cmd_vel to the highest-priority source that has not
+# expired, and ANY message refreshes that source's timer — a zero Twist
+# included. A teleop node that publishes zeros while idle therefore pins its
+# rung forever and starves everything below it. Both teleop nodes send a
+# bounded tail of zeros (so the robot stops by command) and then go silent (so
+# the rung is released).
+# --------------------------------------------------------------------------
+ZERO_TAIL_SOURCES = (
+    'src/ugv_main/ugv_tools/ugv_tools/keyboard_ctrl.py',
+    'src/ugv_main/ugv_tools/ugv_tools/joy_ctrl.py',
+)
+
+# Same number as ugv_bringup's own `zero_vel_limit = 5`, asserted below.
+EXPECTED_ZERO_TAIL_LIMIT = 5
+
+JOY_LAUNCH_FILE = 'src/ugv_main/ugv_tools/launch/teleop_twist_joy.launch.py'
+
+
+@pytest.mark.parametrize('relative_path', ZERO_TAIL_SOURCES)
+def test_teleop_declares_a_named_zero_tail_limit(relative_path):
+    """Named constant, identical in both files, so this test is not regex bait."""
+    source = read(relative_path)
+    match = re.search(
+        r'^ZERO_TAIL_LIMIT\s*=\s*(\d+)\s*$', source, re.MULTILINE
+    )
+    assert match, (
+        '%s must declare a module-level `ZERO_TAIL_LIMIT = <n>`: the bound on '
+        'how many zero Twists it sends before going silent. Without it an idle '
+        'teleop node holds its twist_mux rung forever and every lower rung '
+        '(UI 50, nav 10) is starved.' % relative_path
+    )
+    assert int(match.group(1)) == EXPECTED_ZERO_TAIL_LIMIT, (
+        '%s: keep ZERO_TAIL_LIMIT at %d, matching ugv_bringup\'s zero_vel_limit'
+        % (relative_path, EXPECTED_ZERO_TAIL_LIMIT)
+    )
+
+
+@pytest.mark.parametrize('relative_path', ZERO_TAIL_SOURCES)
+def test_teleop_actually_uses_the_zero_tail_limit(relative_path):
+    """The constant has to gate a publish, not just sit there."""
+    source = read(relative_path)
+    uses = len(re.findall(r'(?<!^)ZERO_TAIL_LIMIT', source, re.MULTILINE))
+    assert uses >= 2, (
+        '%s declares ZERO_TAIL_LIMIT but barely references it — the bound must '
+        'actually gate the publish (a counter compared against it) and be '
+        'reset when a real command arrives.' % relative_path
+    )
+    assert re.search(r'<\s*ZERO_TAIL_LIMIT', source), (
+        '%s: expected a `... < ZERO_TAIL_LIMIT` guard around the zero publish'
+        % relative_path
+    )
+
+
+def test_zero_tail_limit_matches_bringup_zero_vel_limit():
+    source = read('src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py')
+    match = re.search(r'self\.zero_vel_limit\s*=\s*(\d+)', source)
+    assert match, 'ugv_bringup no longer declares zero_vel_limit'
+    assert int(match.group(1)) == EXPECTED_ZERO_TAIL_LIMIT, (
+        'ugv_bringup changed zero_vel_limit; the teleop zero tails mirror it '
+        'deliberately, so move ZERO_TAIL_LIMIT in the same commit'
+    )
+
+
+def test_joy_node_does_not_autorepeat_an_idle_gamepad():
+    """joy_node's default 20 Hz autorepeat is a starvation source by itself.
+
+    With autorepeat_rate > 0 the driver re-sends the last pad state forever, so
+    a gamepad sitting untouched on a desk keeps joy_ctrl's priority-150 rung
+    alive and nothing below it can ever reach the motors.
+    """
+    joy_nodes = [
+        kwargs for _, kwargs in launch_node_calls(JOY_LAUNCH_FILE)
+        if _package_of(kwargs) == 'joy'
+    ]
+    assert joy_nodes, '%s no longer launches the joy driver' % JOY_LAUNCH_FILE
+    for kwargs in joy_nodes:
+        parameters = kwargs.get('parameters', '')
+        match = re.search(
+            r"['\"]autorepeat_rate['\"]\s*:\s*([0-9.]+)", parameters
+        )
+        assert match, (
+            '%s: joy_node must set autorepeat_rate explicitly. Its default '
+            '(20.0 Hz in Humble) synthesises /joy messages for an idle pad, '
+            'which pins the top twist_mux rung.' % JOY_LAUNCH_FILE
+        )
+        assert float(match.group(1)) == 0.0, (
+            '%s: autorepeat_rate must be 0.0 — publish /joy only on real pad '
+            'state changes.' % JOY_LAUNCH_FILE
+        )
 
 
 # --------------------------------------------------------------------------

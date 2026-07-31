@@ -70,7 +70,18 @@ def launch_setup(context, *args, **kwargs):
     if use_localization_text=='rtabmap':
         rviz_config = 'nav_3d'
 
-    # Include the bringup_lidar launch description
+    # Include the bringup_lidar launch description.
+    #
+    # WARNING (BEAST-01): bringup_lidar.launch.py now also starts the command
+    # spine (ugv_cockpit/launch/twist_mux.launch.py). On BEAST-01 the base stack
+    # normally already runs as beast-ros-base.service, so launching this file
+    # on top of a live service starts a SECOND twist_mux — two arbiters
+    # publishing the same /cmd_vel from independent views of the ladder, which
+    # is exactly the multi-publisher condition the spine exists to remove
+    # (the e-stop lock only masks sources in the mux that receives it).
+    # Stop the service first (`sudo systemctl stop beast-ros-base`) or launch
+    # nav2 alone against the running base. There is no guard here: ROS 2 lets
+    # duplicate nodes coexist, so this is a comment, not an assertion.
     bringup_lidar_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('ugv_bringup'), 'launch', 'bringup_lidar.launch.py')),
         launch_arguments={

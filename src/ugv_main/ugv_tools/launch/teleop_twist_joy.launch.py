@@ -28,7 +28,26 @@ def generate_launch_description():
     joy_node = Node(
         package='joy',
         executable='joy_node',
-        name='joy_node'
+        name='joy_node',
+        parameters=[{
+            # autorepeat_rate: 0.0 == "only publish /joy when the pad actually
+            # changes". The joy driver's default (20.0 Hz in Humble) re-sends
+            # the last state forever, so an idle gamepad left plugged into the
+            # Jetson produces 20 messages/s of all-zeros.
+            #
+            # That is the twist_mux starvation failure: joy_ctrl is the
+            # top drive rung (priority 150), and any message — zeros included —
+            # refreshes its timestamp, so the source never expires and every
+            # lower rung (UI 50, nav 10) is masked for as long as the pad is
+            # connected. joy_ctrl's ZERO_TAIL_LIMIT bounds the zeros it forwards;
+            # this setting stops them being manufactured in the first place.
+            #
+            # Safety note: this does NOT weaken stopping. Releasing the sticks
+            # is a real state change, so joy_node still emits it immediately and
+            # joy_ctrl still sends its zero tail. Silence afterwards is the
+            # intent, and ugv_bringup's 0.5 s cmd_vel watchdog is the backstop.
+            'autorepeat_rate': 0.0,
+        }]
     )
 
     # Joystick control node

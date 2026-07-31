@@ -1,0 +1,43 @@
+name: Command Spine Tests
+
+# The ugv_cockpit suite is the merge gate for the BEAST-01 command spine: it
+# proves the twist_mux priority ladder is exactly as specified, that the e-stop
+# lock is 255/manual, that every nav2 node capable of emitting velocity is
+# routed off /cmd_vel, and that no file in the tree reintroduces a direct
+# /cmd_vel publisher.
+#
+# It is entirely STATIC — it reads and parses source, YAML and launch files and
+# never imports rclpy or starts a node — so it runs on a bare ubuntu-latest
+# runner with nothing but pytest and pyyaml. No ROS, no colcon, no container.
+# That is the whole point: the safety check must be cheap enough to run on
+# every push, not only on the robot.
+
+on:
+  pull_request:
+  push:
+    branches:
+      - feat/safety-spine-twist-mux
+      - 'beast/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  spine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          # Matches Humble / Ubuntu 22.04 on the robot, so a syntax or stdlib
+          # difference shows up here rather than during colcon test on BEAST-01.
+          python-version: '3.10'
+
+      - name: Install test dependencies
+        run: pip install pytest pyyaml
+
+      - name: Run command spine tests
+        run: python -m pytest src/ugv_main/ugv_cockpit/test -q

@@ -90,6 +90,21 @@ holonomicSwapCheckbox.addEventListener('change', saveSettings);
 if (settings.hasOwnProperty('{uniqueID}')) {
 	const loaded_data = settings['{uniqueID}'];
 	topic = loaded_data.topic;
+
+	// BEAST-01 command spine migration. Settings live in the BROWSER's local
+	// storage, so any operator who used this widget before the spine landed
+	// still has "/cmd_vel" saved and would go straight back to publishing on
+	// twist_mux's own output topic — fighting the mux instead of feeding it.
+	// Rewrite it onto the UI rung (twist_mux priority 50).
+	// See src/ugv_main/ugv_cockpit/config/twist_mux.yaml.
+	// The actual saveSettings() is deferred to the end of this block: calling
+	// it here would persist the *defaults* of every field not yet read out of
+	// loaded_data below, silently wiping the operator's saved widget config.
+	const migrated_off_cmd_vel = (topic == "/cmd_vel" || topic == "cmd_vel");
+	if(migrated_off_cmd_vel){
+		topic = "/cmd_vel_ui";
+	}
+
 	module_type = loaded_data.module_type;
     steady_mode = loaded_data.steady_mode;
 
@@ -106,6 +121,14 @@ if (settings.hasOwnProperty('{uniqueID}')) {
 	linearVelValue.textContent = linearVelSlider.value;
 	angularVelValue.textContent = angularVelSlider.value;
 	accelValue.textContent = accelSlider.value;
+
+	// Persist the /cmd_vel -> /cmd_vel_ui rewrite decided above, now that every
+	// other field has been restored from loaded_data and saveSettings() will
+	// round-trip them unchanged.
+	if(migrated_off_cmd_vel){
+		status.setWarn("Stored topic /cmd_vel migrated to /cmd_vel_ui (twist_mux UI rung)");
+		saveSettings();
+	}
 }else{
 	saveSettings();
 }
@@ -138,8 +161,18 @@ function saveSettings() {
 
 // Topic and connections
 
+// BEAST-01 command spine: /cmd_vel is twist_mux's OUTPUT, not an input. It shows
+// up in get_topics() like any other Twist topic, so without this filter the
+// operator can simply re-select it from the dropdown and undo the migration
+// above — publishing into the mux's own output and fighting it for the ESP32.
+// Keeping it out of the options list makes the UI rung (/cmd_vel_ui,
+// twist_mux priority 50) the only thing this widget can drive.
+// See src/ugv_main/ugv_cockpit/config/twist_mux.yaml.
+const SPINE_BLOCKED_TOPICS = ["/cmd_vel", "cmd_vel"];
+
 async function loadTopics(){
 	let result = await rosbridge.get_topics("geometry_msgs/msg/Twist");
+	result = result.filter(element => !SPINE_BLOCKED_TOPICS.includes(element));
 	let topiclist = "";
 	result.forEach(element => {
 		topiclist += "<option value='"+element+"'>"+element+"</option>"

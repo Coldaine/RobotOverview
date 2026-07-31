@@ -186,6 +186,16 @@ def launch_setup(context, *args, **kwargs):
     # hardware arbitrate identically and no teleop node needs a sim-only topic.
     # use_sim_time must be true here or every source expires against /clock.
     # See src/ugv_main/ugv_cockpit/config/twist_mux.yaml.
+    #
+    # Expected sim-only quirk: for roughly the first 0.5 s of simulated time,
+    # arbitration is quiet. Source expiry is `now - last_received > timeout`, and
+    # under sim time `now` starts near zero while every source's last-received
+    # stamp initialises at zero — so until /clock has advanced past the 0.5 s
+    # timeout, sources can read as expired and commands appear to be dropped.
+    # It clears itself once the clock passes 0.5 s. If teleop looks dead for an
+    # instant right after `bringup_gazebo.launch.py` comes up, this is why —
+    # it is not a ladder misconfiguration, and it does not happen on hardware
+    # where wall time is already far past zero.
     twist_mux_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(

@@ -36,7 +36,7 @@ All of these command motion. They no longer publish **`/cmd_vel`** directly — 
 
 Two things to know before relying on it:
 
-- Teleop outranks every demo and Nav2, so you can take over at any time. But when you **stop** sending, the lower-priority source gets the floor back after 0.5 s — releasing the keys is not a stop. Press **`Ctrl+C`** in the demo's terminal if you want it to stay stopped.
+- Teleop outranks every demo and Nav2, so you can take over at any time. But when you **stop driving**, teleop deliberately goes quiet — it sends a short burst of zero commands (5 messages) to stop the robot, then stops publishing so the rung is released. About 0.5 s later the lower-priority source has the floor again, and the robot drives off under the demo's control. **Stopping teleop is not stopping the robot.** Press **`Ctrl+C`** in the demo's terminal if you want it to stay stopped.
 - Two sources on the **same** rung (two UI surfaces, say) still interleave. That case is undefined.
 
 | | **Keyboard / gamepad** (this page) | **LiDAR demos** | **Nav2** | **Vision tracking** | **Web Teleop** | **Web AI** |
@@ -75,21 +75,24 @@ If the program no longer needs to run, press **`Ctrl+C`** in each terminal to cl
 
 | Node | Role |
 |------|------|
-| `joy_node` | USB gamepad → **`/joy`** (gamepad launch only) |
-| `joy_ctrl` | **`/joy`** → **`/cmd_vel`**, **`ugv/led_ctrl`**, pan-tilt (gamepad launch only) |
-| `keyboard_ctrl` | Keys → **`/cmd_vel`**, pan-tilt (keyboard only) |
+| `joy_node` | USB gamepad → **`/joy`** (gamepad launch only). Launched with **`autorepeat_rate: 0.0`** so an idle pad publishes nothing — see [Command Arbitration](command_arbitration.md#idle-sources-let-go-of-the-floor) |
+| `joy_ctrl` | **`/joy`** → **`/cmd_vel_joy_robot`** (priority 150), **`ugv/led_ctrl`**, pan-tilt (gamepad launch only) |
+| `keyboard_ctrl` | Keys → **`/cmd_vel_joy_operator`** (priority 100), pan-tilt (keyboard only) |
 
 **Data transfer process**
 
 ```mermaid
 flowchart LR
   IN[Keyboard / gamepad]
+  MUXIN["/cmd_vel_joy_operator (100)
+/cmd_vel_joy_robot (150)"]
+  MUX[twist_mux]
   CV["/cmd_vel"]
   BR[ugv_bringup]
   ESP[ESP32]
   WH[Wheels]
 
-  IN --> CV --> BR --> ESP --> WH
+  IN --> MUXIN --> MUX --> CV --> BR --> ESP --> WH
 ```
 
 Keyboard and gamepad do **not** talk to serial directly — **`ugv_bringup`** forwards velocity to the motor board.
@@ -235,10 +238,10 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
 | Keyboard has no effect | Click the terminal running **`keyboard_ctrl`**; confirm bringup is running; run inside `docker exec -it` / SSH with a TTY |
 | No gamepad / `no joystick found` | Plug in USB controller before launch; check `ros2 topic echo /joy` |
 | Sticks drift | Release sticks at connect; restart `teleop_twist_joy.launch.py` |
-| Keyboard **and** gamepad both active | Stop one — both publish **`/cmd_vel`** |
+| Keyboard **and** gamepad both active | Not undefined any more, but confusing: the gamepad (**`/cmd_vel_joy_robot`**, priority 150) outranks the keyboard (**`/cmd_vel_joy_operator`**, 100), so the keyboard only gets through while the pad is idle. Stop one |
 | Robot moves when you did not touch teleop | Stop LiDAR demos / Nav2 / vision / Web Teleop / Web AI — see [One motion source at a time](#one-motion-source-at-a-time) |
 | `KeyError: 'UGV_MODEL'` | `export UGV_MODEL=...`; `source install/setup.bash`; relaunch |
-| Nav2 / SLAM still publishing | Use **`Ctrl+C`** on other launches; only one **`/cmd_vel`** source |
+| Nav2 / SLAM takes over the moment you stop driving | Expected — teleop releases its rung when idle and Nav2 (**`/cmd_vel_nav`**, priority 10) gets the floor back. Use **`Ctrl+C`** on the other launch to stop it for good |
 
 ---
 

@@ -6,7 +6,10 @@ package_name = 'ugv_cockpit'
 
 setup(
     name=package_name,
-    version='0.0.0',
+    # Keep in lockstep with <version> in package.xml — ament reads the manifest,
+    # pip/setuptools reads this, and a mismatch means the installed dist reports
+    # a different version than the package it came from.
+    version='0.0.1',
     packages=find_packages(exclude=['test']),
     data_files=[
         ('share/ament_index/resource_index/packages',
