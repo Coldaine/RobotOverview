@@ -43,11 +43,9 @@ Landed and tested — do not redo:
 | Twin Type-C bridges corrected CP2102 → CH343P; callouts 6/7 identified | `hangar.ts` |
 | Traced connectivity extraction: 108 path edges, JSON + CSV + MD | `keyArtifactstosort/Artifacts/ros-driver/current/ros_driver_traced_connectivity_v1/` |
 
-**The half-fed state (the reason this merged plan exists):** the console is fed from
-`wiring.ts`; **The Board is not** — `ConnectedTwin.tsx` still reads `hangar.ts` nets directly.
-`grain` was never added to `Net`; `netsAtGrain` exists nowhere. A fact is written once for one
-view and separately for the other — the original problem, half-solved, which is worse than
-either endpoint. **Phase 1 closes this and goes first. Do not half-land anything further.**
+**The half-fed state (closed 2026-07-30):** Phase 1 landed — `MODULE_NETS` + `WIRING_LINKS`
+live in `src/data/wiring.ts`; `hangarData.nets` is a reference to `MODULE_NETS`; Live Plug draws
+`WIRING_LINKS` directly (no `CableDef` copy). Overlap aliases + CI in `wiring.test.ts`.
 
 **Already answered but not yet in the app:** the traced connectivity artifact answers Q1 — the
 host-header 5 V is on post-M2 `5V_MAIN`. It lives in the artifact store in a format no plan
@@ -55,18 +53,11 @@ specified; Phase 3 lands it as `internal`-grain nets.
 
 ---
 
-## Phase 1 — Spine: The Board consumes the wiring surface
+## Phase 1 — Spine: The Board consumes the wiring surface — DONE 2026-07-30
 
 - **Input:** `src/lib/twin.ts`, `src/data/wiring.ts`, `hangar.ts` `nets[]`.
-- **Do:** add `grain` and `parentNet?` to `Net` in `types.ts`. Tag the existing 11 nets
-  `module`. Emit `netsAtGrain(grain)` in `wiring.ts`, consumed by both `twin.ts` and the
-  console, so neither view reads a wiring collection the other cannot see.
-- **Grains:** `module` (board-to-board trunk — The Board), `connector` (one physical cable —
-  Live Plug), `internal` (intra-board rail, e.g. `VDD5V`, the M2 gate — net-inspector detail on
-  demand). A `connector` net names its parent `module` net.
-- **Done when:** The Board renders identically before and after, `wiring.test.ts` asserts both
-  views draw from the same call, `task check` passes. **Care:** the only phase that can regress
-  a working UI — snapshot both views first.
+- **Done:** `grain` on `Net`; `MODULE_NETS` + `netsAtGrain`; Board via `hangarData.nets === MODULE_NETS`;
+  Console via `EXPECTED_CABLES` re-export of `WIRING_LINKS`; `BENCH_TERMINAL_ALIAS` + overlap tests.
 
 ## Phase 2 — Extract the corpus
 

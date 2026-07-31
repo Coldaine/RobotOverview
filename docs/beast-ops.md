@@ -5,8 +5,102 @@ read its telemetry, and program it. The catalog entry for the unit lives in
 `src/data/hangar.ts` (`id: 'beast'`). Facts below carry the date they were last verified;
 re-verify against the live robot before relying on anything stale.
 
-> The Hangar is growing an in-app command portal to the Beast (telemetry, video, teleop, and
-> autonomous / learned policies — North Star G7, autonomy in scope as of 2026-07-22). Onboard
+## Quick connect (verified 2026-07-30)
+
+Turn on the chassis switch (it powers the Jetson too), wait ~2 minutes for boot, then:
+
+```bash
+ssh beast-01        # LAN — resolves beast-01.local via mDNS, survives DHCP drift
+ssh beast-01-ts     # Tailscale 100.107.16.72 — works from anywhere, only needed off-LAN
+```
+
+**All ways in (each verified working 2026-07-31):**
+
+| # | Path | Address | Notes |
+|---|---|---|---|
+| 1 | `ssh beast-01` | `beast-01.local` (mDNS) | Preferred on LAN; IP-agnostic |
+| 2 | Direct Ethernet | `192.168.0.166` | DHCP but has held stable |
+| 3 | Direct Wi-Fi | `192.168.0.187` | DHCP, **drifts** — resolve via `ping beast-01.local` |
+| 4 | `ssh beast-01-ts` | `100.107.16.72` (Tailscale) | Permanent address; works off-LAN |
+| 5 | sudo password | Doppler **`homelab`/`dev`** → `BEAST_JETSON_ADMIN_PASSWORD` | Older runbook text says `secrets_managment/dev` — that project name is wrong |
+| 6 | USB gadget (fallback) | `192.168.55.1` | Point-to-point USB cable to the Orin, last-resort recovery |
+
+Wi-Fi power save is **disabled** (persistent, set 2026-07-31 — it caused laggy/flaky Wi-Fi SSH)
+and the stale `beast-staging-wifi` profile no longer autoconnects.
+
+Rebuild the SSH aliases on any machine (key: `hephastus_ed25519`; its public half is in Doppler
+`homelab`/`dev` as `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`):
+
+```text
+Host beast-01
+    HostName beast-01.local
+    HostKeyAlias beast-01
+    User beast
+    IdentityFile ~/.ssh/hephastus_ed25519
+    IdentitiesOnly yes
+
+Host beast-01-ts
+    HostName 100.107.16.72
+    User beast
+    IdentityFile ~/.ssh/hephastus_ed25519
+    IdentitiesOnly yes
+```
+
+Both aliases use the `hephastus_ed25519` key; sudo password is in Doppler `homelab`/`dev`.
+Host-key fingerprint: `SHA256:S5qCj4JsuBRSxfXgB//sAyNmDKWNSIOJtA6vUcu1XkI` — if SSH complains
+on a fresh IP, verify against that before accepting. Wi-Fi IP is DHCP and drifts (`.187` on
+2026-07-30); Ethernet has held `.166`. If neither alias answers: the robot is off, still
+booting, or got a new lease — resolve with `ping beast-01.local`. Full detail: [Network](#network).
+
+**Ground-truth check — run this before trusting any status claim in this file** (per the
+"Robot ground truth" rule in `AGENTS.md`; this doc drifts because hardware sessions happen
+outside the repo loop):
+
+```bash
+ssh beast-01 'systemctl is-active beast-ros-base.service; cat /etc/beast/ugv.env; \
+  ls /dev/ttyACM* /dev/video* 2>/dev/null; ss -tlnp 2>/dev/null | grep LISTEN; lsusb'
+```
+
+```bash
+ssh beast-01 'source /opt/ros/humble/setup.bash && source ~/beast/ugv_ws/install/setup.bash && \
+  timeout 10 ros2 topic list && timeout 12 ros2 topic echo /ugv/voltage --once | head -8 && \
+  timeout 10 ros2 topic info /cmd_vel --verbose | grep count'
+```
+
+First command: service state, configured serial ports, devices, listening ports. Second:
+live topics, battery telemetry (proves the ESP32 link end-to-end), and whether anything is
+publishing drive commands. Update this block, dated, whenever a session learns a robot fact.
+
+- **What's on it (live-verified 2026-07-30):** JetPack 6.2.2 (R36.5), ROS 2 Humble,
+  `ugv_ws` at `b709bfd` (includes storage PRs #2–#4 — ahead of the commit recorded below).
+  `beast-ros-base.service` is **enabled and runs at boot** with `use_lidar:=true`,
+  `allow_motion:=false`: base driver, LD19 LiDAR (~10 Hz scans), pan-tilt `ros2_control`,
+  wheel + rf2o odometry, and EKF are all up; battery/IMU telemetry flows.
+- **ESP32 link is USB, not GPIO jumpers:** the driver board talks to the Orin over
+  `/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00` (→ `ttyACM0`); the LiDAR is
+  the `…5970075705` sibling (→ `ttyACM1`). Both set in `/etc/beast/ugv.env`. The pins-8/10
+  UART-jumper plan in the sections below is **superseded** — keep only its back-feed rule:
+  never leave the driver-board USB connected to a powered Jetson with the chassis switch off.
+- **⚠️ HEARTBEAT-STOP TEST FAILED (2026-07-31): the ESP32 does NOT auto-stop on command
+  silence.** Supervised floor test: after the `/cmd_vel` publisher was killed mid-crawl, the
+  ESP32 kept executing the last command (0.02 m/s) for **minutes** — ~1 m of creep — until an
+  explicit zero was sent. `ugv_bringup.py` is purely event-driven (no re-send timer, no
+  cmd_vel timeout), so serial silence = ESP32 latches last command indefinitely. The
+  documented "3-second stale-command watchdog" does not exist in the flashed firmware's
+  current state. **Do not enable `allow_motion:=true` without an active operator stop path.**
+  Before driving: add a cmd_vel-timeout watchdog to `ugv_bringup` (send stop if no command
+  for ~500 ms) and/or enable the firmware heartbeat if the flashed build supports it.
+  Motion is software-locked (`allow_motion:=false`, verified re-locked after the test).
+- **No dashboard exists** — nothing listens on any web port; driving happens via ROS 2 teleop
+  over SSH. The Hangar app records the robot and is **not** planned as its control surface.
+  Intent: [operating progression](#operating-progression-orin--ros-2--rewritten-2026-07-30)
+  and `docs/NORTH_STAR.md` (G7, phrasing under owner review).
+
+> **Scope (owner statement 2026-07-30):** the Hangar app is an *information surface* about the
+> Beast — it records the robot; it is **not** a live teleop dashboard and no in-app control
+> surface is planned near-term (at most a future link, separately; North Star G7's broader
+> "command portal" phrasing awaits an owner decision). Driving happens with ROS 2 tooling over
+> SSH. Autonomy remains in scope on the robot itself (2026-07-22). Onboard
 > fail-safes (stale-command watchdog, explicit stop, motor PID) remain mandatory engineering —
 > they are not a ban on self-driving. **Dynamics note (operator, 2026-07-22):** the Beast is
 > slow, hard-stops, and **stops in time** for terrain/obstacle reactions. Remote closed-loop
@@ -15,41 +109,48 @@ re-verify against the live robot before relying on anything stale.
 
 ## Hardware chain
 
-> **Cutover status 2026-07-28 — OP-ORIN-POWER (was OP-ORIN-GAP):** Jetson Orin Nano Super is
-> **physically fitted and network-verified.** Powered from the pack through a barrel-jack pigtail
-> already wired into the UPS Module 3S board — not through the driver board's USB-C, so the
-> OP-BEAST-BACKFEED path is not in the power loop for this boot. Live-confirmed by SSH 2026-07-28:
-> hostname `beast-01`, `R36 (release), REVISION: 5.0` (JetPack 6.2.2), GPU `Orin (nvgpu)`, up on
-> LAN (`192.168.0.166`), Wi-Fi (`192.168.0.251`), and Tailscale (`100.107.16.72`) simultaneously.
-> Remaining before this counts as a full cutover: the ESP32 UART jumper link (pins 8/10 + GND, see
-> below) is not yet wired/confirmed, so there is no motor/servo/telemetry control surface yet — only
-> host boot and network. Mechanical follow-up: one side of the host mounting struts is missing;
-> do not drill the Orin carrier board to improvise a mount — see the "Mounting" note under Open
-> questions.
+> **Cutover status 2026-07-30 — CONTROL SURFACE LIVE (supersedes 2026-07-28 "no control
+> surface").** The ESP32 link runs over the driver board's USB-C into the Orin — enumerates as
+> `/dev/ttyACM0`, pinned by-id in `/etc/beast/ugv.env`. The pins-8/10 GPIO jumper plan was never
+> executed and is **retired** (kept below only as an alternative path). `beast-ros-base.service`
+> is enabled and brings up the full stack at boot: base driver, LD19 LiDAR (`/dev/ttyACM1`,
+> ~10 Hz scans), pan-tilt `ros2_control`, wheel + rf2o odometry, EKF. Battery/IMU telemetry
+> verified flowing. Motion is software-locked (`allow_motion:=false`; `ugv_bringup.py` rejects
+> non-zero `/cmd_vel`). Remaining for full cutover: supervised lifted-track heartbeat-stop test,
+> one-frame verification of the 5 MP camera and OAK-D Lite, and the missing host mounting strut.
+>
+> *Power (2026-07-28, still current):* Orin is powered from the pack through the barrel-jack
+> pigtail wired into the UPS Module 3S board — not through the driver board's USB-C, so the
+> OP-BEAST-BACKFEED path is not in the power loop. Mechanical: one side of the host mounting
+> struts is missing; do not drill the Orin carrier board — see "Mounting" under Open questions.
 
 ```
-Target (Orin cutover):
-Browser / Hangar / CORE-PRIME  ──LAN──▶  Jetson Orin Nano Super (upper computer)
+Current (live-verified 2026-07-30):
+SSH / ROS 2 tooling  ──LAN/Tailscale──▶  Jetson Orin Nano Super (upper computer)
                                               │  ROS 2 / policy / camera / LiDAR
-                                              ▼  JSON over UART @115200
+                                              ▼  JSON @115200 over USB-CDC (/dev/ttyACM0)
                                             ESP32 (lower computer)  ──▶ motors · servos · IMU · voltage
 
 Previous (retired 2026-07-22):
 Browser  ──HTTP/WebSocket──▶  Raspberry Pi 5 + ugv_rpi  ──UART──▶  ESP32
 ```
 
-- **Upper computer (target):** Jetson Orin Nano Super — vision, ROS 2, teleop, on-device and/or
-  offboard policy inference. **Not yet installed in the chassis.**
+- **Upper computer (current):** Jetson Orin Nano Super — vision, ROS 2, teleop, on-device and/or
+  offboard policy inference. **Fitted, networked, and linked to the ESP32 over USB — live-verified
+  2026-07-30** (motion held by `allow_motion:=false` pending the heartbeat-stop test).
 - **Upper computer (previous):** Raspberry Pi 5 + Waveshare `ugv_rpi` — removed; kept as spare.
 - **Lower computer:** ESP32 — motion (PID), stock pan-tilt servo bus, sensor feedback, stop.
 - **Identifying the ESP32 link on the driver board:** the board has two USB-C ports. The **left**
   one — silkscreen `USB`, next to the DC jack, callout 6 on Waveshare's labeled diagram — is the
-  ESP32/host port and enumerates as `/dev/ttyUSB0`. The right one (silkscreen `LIDAR`, callout 7)
-  is the board's own LiDAR UART→USB bridge and is unused on BEAST, which runs the D500 through the
-  Audio HAT's LiDAR socket. Diagram: `public/datacore/beast-driver-board-callouts.png`, surfaced at
-  Datacore → BEAST Console → Reference.
+  ESP32/host port; on the live robot it enumerates as **`/dev/ttyACM0`** (by-id
+  `usb-1a86_USB_Single_Serial_5B5E130201-if00`, verified 2026-07-30 — an earlier `ttyUSB0`
+  claim was wrong). The right one (silkscreen `LIDAR`, callout 7) is the board's own LiDAR
+  UART→USB bridge. The live LiDAR is `/dev/ttyACM1` (by-id `…5970075705`); **which physical
+  socket it enters through (driver-board `LIDAR` port vs Audio HAT socket) is unverified** —
+  trace before relying on either claim. Diagram:
+  `public/datacore/beast-driver-board-callouts.png`, surfaced at Datacore → BEAST Console → Reference.
 - **Chassis dynamics:** slow tracked base; hard-stops and stops in time for lightweight
-  onboard terrain alignment / obstacle avoidance once Orin is fitted.
+  onboard terrain alignment / obstacle avoidance.
 
 ## Power domain — OP-BEAST-BACKFEED
 
@@ -127,7 +228,13 @@ leading explanation for the popping, and it is **not** an overcurrent trip.
   is an **SSS1629A5 USB** codec: "supports USB interface communication, driver-free, plug and play."
   There is no I²S, no GPIO audio, and no shared host bus. The 40-pin is power + UART pass-through only.
 
-### The host ↔ ESP32 link is GPIO UART, not USB
+### Retired plan: GPIO-UART host link (never executed — live link is USB)
+
+> **Superseded 2026-07-30:** BEAST-01's deployed host↔ESP32 link is the driver board's USB-C
+> (`/dev/ttyACM0`). The GPIO-UART analysis below was the planned escape from OP-BEAST-BACKFEED;
+> the actual resolution was powering the Orin from the pack's barrel-jack lead instead, which
+> keeps the USB back-feed path out of the power loop. Kept as reference for any future jumper
+> build — nothing below is a live task.
 
 `ugv_jetson/app.py` opens the lower computer as:
 
@@ -167,7 +274,8 @@ That is the complete host interface — power, I²C, UART, grounds — matching 
 of the 40-pin as *"communicating via serial port or IIC, and powering the host computer."* Nothing
 past pin 10 matters to a host.
 
-> ⚠️ **UNRESOLVED AND IMPORTANT: are the two 5 V conductors populated in the *Jetson* harness?**
+> ⚠️ **UNRESOLVED (retired plan — academic unless a factory harness piece is ever reused): are
+> the two 5 V conductors populated in the *Jetson* harness?**
 > If they are, the official Orin build bonds the driver board's buck to the Orin's 40-pin 5 V pins —
 > which are **outputs**. That is a second back-feed path, independent of the USB-C one, and removing
 > the USB-C would not fix it. NVIDIA's blocker stops current flowing *into* the Orin; it does not
@@ -271,7 +379,8 @@ against them:**
    damage the developer kit carrier board, Jetson Orin Nano, or peripheral device."
 4. **Nothing on the Orin's 40-pin *power* pins.** Pins 2/4 (5 V) and 1/17 (3V3) are outputs; bonding
    them to the buck puts two regulated 5 V sources on one node with no protection between them.
-   Pins 8/10 + a GND are the exception — that UART link is the vendor-intended connection.
+   Pins 8/10 + a GND are the exception — that UART link is the vendor-intended connection
+   (not used on BEAST-01: the live host↔ESP32 link is USB, `/dev/ttyACM0`).
 5. The driver board ↔ Audio HAT 40-pin joint **stays mated** — it is the stack backbone.
 
 ### Open questions
@@ -288,12 +397,12 @@ against them:**
   an adhesive/foam standoff or a small printed bracket landing on those holes first; check whether
   Waveshare sells the missing strut as a spare part (candidate line item for the support email in
   `keyArtifactstosort/reference/` / scratchpad).
-- **ESP32 UART jumper link not yet wired.** Host boot and network are confirmed; the pins 8/10 + GND
-  jumpers from the Orin's 40-pin header to the driver board are the next step before motor/servo/
-  telemetry control exists. Still open beneath this: whether the vendor's factory 2×5 harness (for
-  the *Pi* build) populates the two 5 V positions — irrelevant now that the Orin's link is hand-built
-  from TX/RX/GND jumpers per the operating rules above, but worth resolving before reusing any
-  factory harness piece.
+- **~~ESP32 UART jumper link not yet wired~~ — RESOLVED 2026-07-30, differently than planned.**
+  The live robot runs the ESP32 link over the driver board's USB-C (`/dev/ttyACM0` by-id in
+  `/etc/beast/ugv.env`); no GPIO jumpers were ever fitted and none are needed. The back-feed
+  operating rule stands: never leave that USB cable connected to a powered Jetson with the
+  chassis switch off. The factory 2×5 harness 5 V question stays academic unless someone reuses
+  that harness piece.
 
 ### Resolved 2026-07-28 — OP-ORIN-POWER
 
@@ -312,26 +421,25 @@ against them:**
 | Fact | Value | Verified |
 |---|---|---|
 | Hostname (Orin) | `beast-01` | ✅ SSH 2026-07-28 |
-| LAN IP (Orin) | `192.168.0.166` (`enP8p1s0`, DHCP) | ✅ SSH 2026-07-28 — **note: `192.168.0.x`, not the Pi-era `192.168.20.x` robot VLAN** |
-| Wi-Fi IP (Orin) | `192.168.0.251` (`wlP1p1s0`, DHCP) | ✅ SSH 2026-07-28 |
+| LAN IP (Orin) | `192.168.0.166` (`enP8p1s0`, DHCP) | ✅ SSH 2026-07-28 — general LAN `192.168.0.x` |
+| Wi-Fi IP (Orin) | `192.168.0.187` (`wlP1p1s0`, DHCP — drifts; was `.251` on 07-28) | ✅ SSH 2026-07-30 |
 | Tailscale IP (Orin) | `100.107.16.72`, tailnet hostname `beast-01`, permanent | ✅ see `[[beast-jetson-ssh-access]]` memory; SSH alias `beast-01-ts` |
 | SSH access | `ssh beast-01-ts` (Tailscale, preferred) or `ssh beast-01` (LAN) | ✅ key-only, `hephastus_ed25519` |
-| Hostname (former Pi) | `beast.local` | ⚠️ did not resolve from `icarus-laptop` on 2026-07-01 — historical |
-| IP (former Pi) | `192.168.20.184` | Historical — Pi is retired, this address is not the Orin's |
-| DHCP reservation | fixed IP held on the UDM for beast identity | ⚠️ still needs to move to the Orin's MAC — currently plain DHCP on `192.168.0.x`, not the reserved `192.168.20.x` robot VLAN identity |
-| Source VLAN | CastleMooseGoose → robot VLAN (`192.168.20.x`) | ⚠️ the Orin is **not** currently on this VLAN — landed on the general `192.168.0.x` network instead; confirm whether that's intended before relying on VLAN-scoped firewall rules |
+| Hostname (former Pi) | `beast.local` | Historical — Pi retired |
+| IP (former Pi) | `192.168.20.184` | Historical — Pi retired; **not** an Orin target |
+| Network policy | **Stay on general LAN `192.168.0.x` + Tailscale** | ✅ Operator decision 2026-07-30 — **robot VLAN `192.168.20.x` rejected** (zero upside; firewall friction and agents chasing a dead identity). Optional UDM reservation only on `192.168.0.x`, never on `20.x`. |
 
-Former Pi endpoints below (`192.168.20.184:*`) are historical and will 404/timeout — the Orin has
-not been moved to the robot VLAN identity or had its control-UI software stack verified yet. Only
-SSH (above) is currently confirmed live on the Orin.
+Former Pi endpoints below (`192.168.20.184:*`) are historical and will 404/timeout. Do not migrate
+Orin onto the Pi-era robot VLAN. Only SSH (above) is currently confirmed live on the Orin — Control
+UI / Jupyter / video resume after UART + an Orin control stack.
 
 ## Services & dashboards
 
 | URL | What | Notes |
 |---|---|---|
-| `http://192.168.20.184:5000` | **Control UI** (drive, FPV, gimbal) | Use Google Chrome. Open in a normal browser — works fine. |
-| `http://192.168.20.184:8888` | **JupyterLab** | Interactive lesson notebooks (302 → `/lab?`). The programming on-ramp. |
-| `http://192.168.20.184:5000/video_feed` | Raw MJPEG camera stream | Long-lived stream; inspect headers/frames with a client that can abort cleanly. |
+| *(none live)* | **Control UI** (drive, FPV, gimbal) | Pi-era `http://192.168.20.184:5000` **retired**. No Orin web teleop yet. |
+| *(none live)* | **JupyterLab** | Pi-era `http://192.168.20.184:8888` **retired**. |
+| *(none live)* | Raw MJPEG camera stream | Pi-era `/video_feed` **retired**. |
 
 ### Video recovery note — OP-VIDEO-RELOCK
 
@@ -378,9 +486,12 @@ Key payloads:
 | Stop | `{"T":1,"L":0,"R":0}` | App fires this on load. |
 | Gimbal | `{"T":<cmd_gimbal_ctrl>,"X":..,"Y":..,"SPD":0,"ACC":128}` | T-code from `config.yaml`. |
 
-**Safety:** a stale-command watchdog on the Beast auto-stops the tracks if no command
-arrives within its timeout, so a single nudge then silence is self-safing. Still: lift the
-tracks or ensure clear runway before any motion command, and send an explicit stop after.
+**Safety:** ~~a stale-command watchdog on the Beast auto-stops the tracks if no command
+arrives within its timeout, so a single nudge then silence is self-safing~~ — **FALSE.
+Physically tested 2026-07-31: the watchdog did not fire.** The ESP32 latched the last
+non-zero command for minutes after command silence. Treat the platform as having NO
+lower-level failsafe until one is implemented and re-tested. Always have an explicit stop
+path live before any motion command, and send an explicit stop after.
 
 Repeatable safe probe from this repo:
 
@@ -490,11 +601,13 @@ repo the Hangar can see.
 | Upstream activity | still active (~2026-07-28) |
 | Fork contents | near-vanilla Waveshare workspace — no `deploy/storage/`; no clear Jetson-adapted 29-package evidence in that git history |
 
-The Orin may still hold the adapted build at `~/beast/ugv_ws` (commit `ad274d63…` cited below),
-but Hangar docs must not treat the Coldaine fork tip as proof of on-robot state. Before applying
-the [NVMe storage implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md),
-reconcile stacked workspace changes against the **live on-robot** `ugv_ws` tree — not the fork
-alone.
+**Live-verified 2026-07-30:** the on-robot `~/beast/ugv_ws` is at **`b709bfd`** ("Read SMART
+health through nvme-cli fallback (#4)"), with storage PRs #2–#4 merged — *ahead of* both the
+`ad274d63…` commit cited in the runbook below and the "near-vanilla" fork description above.
+Origin is `github.com/Coldaine/ugv_ws`. Hangar docs must not treat either the fork tip or this
+doc as proof of on-robot state — check the robot (`git -C ~/beast/ugv_ws log --oneline -3`).
+Before applying the [NVMe storage implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md),
+reconcile stacked workspace changes against the **live on-robot** tree.
 
 ## Jetson migration and flash runbook — OP-JETSON-FLASH
 
@@ -731,8 +844,9 @@ Audited after the successful flash on 2026-07-11:
   `6d5535d5455a47f19012d4f62a13d9ac`. A reflash or restored root filesystem can legitimately
   regenerate both. Accept a changed key only over the physically controlled point-to-point USB
   link, then immediately persist the new fingerprint in `known_hosts` and this runbook.
-- Doppler `secrets_managment/dev` now contains `BEAST_JETSON_ADMIN_PASSWORD` and
-  `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`. The encrypted administrator value is applied to the
+- Doppler contains `BEAST_JETSON_ADMIN_PASSWORD` and
+  `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY` — in project **`homelab`/`dev`** (verified by live
+  sudo 2026-07-31; this paragraph originally said `secrets_managment/dev`, which is wrong). The encrypted administrator value is applied to the
   restored NVMe and a fresh `sudo -S -k` proof passed. The existing
   `PVE_EVO_X2_ROOT_PASSWORD` enabled the Proxmox work, and the existing
   `UDM_WIFI_MOOSEGOOSEIOT` credential configured the staging WLAN. No secret value belongs in this
@@ -740,8 +854,9 @@ Audited after the successful flash on 2026-07-11:
 - The normal L4T USB gadget is reachable at `192.168.55.1`; onboard Ethernet `enP8p1s0` and Wi-Fi
   `wlP1p1s0` is connected to `MooseGooseIOT` by DHCP at staging address `192.168.20.251`; Ethernet
   `enP8p1s0` is down. The network-map identity `beast` / `192.168.20.184` still belongs to the
-  Pi-hosted BEAST-01. At cutover, move the DHCP reservation/DNS identity to the selected Jetson MAC;
-  never configure `.184` on both hosts.
+  Pi-hosted BEAST-01. **Do not** move that VLAN identity onto the Orin — operator policy (2026-07-30)
+  keeps Orin on general LAN `192.168.0.x` + Tailscale (`beast-01-ts`). Retire the Pi reservation when
+  convenient; optional new reservation only on `192.168.0.x`.
 - Timezone is `America/Chicago`, NTP is active, and `System clock synchronized` reports `yes` after
   reboot.
 - R36.5's local `/etc/nvpmodel.conf` proves mode 0 is `15W`, mode 1 is `25W`, and mode 2 is
@@ -1376,6 +1491,12 @@ CUDA major-version change rather than copying it from another architecture.
 
 ### Jetson UART gate and Beast software
 
+> **Superseded 2026-07-30:** the deployed ESP32 link is the driver board's **USB-C**
+> (`UGV_SERIAL_PORT` by-id → `/dev/ttyACM0`), not `/dev/ttyTHS1`. The GPIO-UART material below
+> (loopback test, DMA regression, nvgetty) applies only if someone later builds the jumper
+> alternative. The ROS install, workspace, and acceptance-test procedures below remain valid —
+> substitute the USB serial port, and note the service is now **enabled and running**, not staged.
+
 The current Waveshare architecture already puts wheel control, encoders, IMU, battery telemetry,
 servo handling, and the motor stop on the ESP32 lower computer. Do not port Raspberry Pi GPIO,
 I2C, PWM, or motor-control code that the Beast does not use. The Jetson replaces the Pi as the ROS
@@ -1536,22 +1657,32 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
   --once -w 1
 ```
 
-The lower-level failsafe exists in current `ugv_base_general`; it still requires this physical
-validation. Camera, LiDAR, SLAM/Nav2, and web control follow only after the chassis gate.
+**Test executed 2026-07-31 on the floor at 0.02 m/s: FAILED.** No heartbeat stop occurred —
+the ESP32 continued the last command for minutes until an explicit zero arrived. Whatever
+failsafe exists in `ugv_base_general` source is not active in BEAST-01's flashed firmware
+state (`ugv_bringup` init sends only `{"T":131,"cmd":1}` feedback-on; no heartbeat
+configuration is sent). Required before the next motion session: an upper-computer
+cmd_vel-timeout watchdog in `ugv_bringup`, and investigation of the firmware heartbeat
+command set. Camera verification, SLAM/Nav2, and autonomy follow only after a re-run passes.
 
 ### Remaining physical cutover record
 
-Credentials, native packages, JetPack, Docker/CUDA, ROS 2, the 29-package build, and the disabled
-zero-motion service are complete. **Pi is already off the robot (2026-07-22);** the active work is
-fitting the Orin into the empty host mount and bringing sensors/UART live. Do not infer camera or
-LiDAR behavior from a detached bench USB inventory.
+**Live-verified 2026-07-30:** the Orin is seated, powered from the pack's barrel-jack lead, and
+linked to the ESP32 over USB. `beast-ros-base.service` is enabled and runs the full stack at
+boot; battery voltage, IMU, wheel odometry, and LD19 LiDAR scans all flow; the D500's stable
+by-id path is recorded in `/etc/beast/ugv.env` (`usb-1a86_USB_Single_Serial_5970075705-if00`).
+The on-robot workspace is `b709bfd`, ahead of the commit in the runbook above.
 
-Before declaring the Beast compute cutover complete: seat and power the Orin in the chassis, record
-the onboard UART loopback result, then capture zero-motion voltage, IMU, and odometry with ACCE
-hardware connected (power removed while wiring). Identify the D500's stable `/dev/serial/by-id`
-path, verify one frame stream from the 5 MP camera and OAK-D Lite, and complete the lifted-track
-heartbeat-stop test above. Only then enable the staged service and move the `beast` DHCP/DNS
-identity onto the Orin MAC (former Pi identity `192.168.20.184` is offline mid-gap).
+Still open before the cutover is complete:
+
+1. **Lifted-track heartbeat-stop test** (procedure above) — the only gate before
+   `allow_motion:=true`.
+2. **One-frame verification** from the 5 MP pan-tilt camera (`/dev/video0`) and OAK-D Lite
+   (MyriadX enumerates on USB; DepthAI stream unverified).
+3. **Mounting strut** — one side missing; bracket/standoff on the M2.5 corner holes, no drilling.
+
+Keep network identity on general LAN `192.168.0.x` + Tailscale — do **not** reclaim the Pi
+robot-VLAN address `192.168.20.184`.
 
 ### Research references
 

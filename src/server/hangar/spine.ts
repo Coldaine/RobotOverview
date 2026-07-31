@@ -800,6 +800,7 @@ export async function buildHangarDataFromDb(db: HangarDrizzle): Promise<HangarDa
       id: row.id,
       name: row.name,
       kind,
+      grain: 'module',
       terminals: terminalsByNet.get(row.id) ?? [],
     };
     if (row.carries) net.carries = row.carries;

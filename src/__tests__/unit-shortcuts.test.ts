@@ -11,11 +11,11 @@ describe('unit shortcut presentation semantics', () => {
     id: 'ssh',
     label: 'SSH',
     type: 'command',
-    command: 'ssh ws@192.168.20.184',
+    command: 'ssh beast-01',
   };
 
   it('returns the executable value and label for command shortcuts', () => {
-    expect(unitShortcutValue(commandShortcut)).toBe('ssh ws@192.168.20.184');
+    expect(unitShortcutValue(commandShortcut)).toBe('ssh beast-01');
     expect(unitShortcutKindLabel(commandShortcut)).toBe('Command');
     expect(unitShortcutIconKind(commandShortcut)).toBe('terminal');
   });
@@ -25,10 +25,10 @@ describe('unit shortcut presentation semantics', () => {
       id: 'control-ui',
       label: 'Control UI',
       type: 'url',
-      url: 'http://192.168.20.184:5000',
+      url: 'http://example.test:5000',
     };
 
-    expect(unitShortcutValue(shortcut)).toBe('http://192.168.20.184:5000');
+    expect(unitShortcutValue(shortcut)).toBe('http://example.test:5000');
     expect(unitShortcutKindLabel(shortcut)).toBe('External');
     expect(unitShortcutIconKind(shortcut)).toBe('monitor');
   });
@@ -39,7 +39,7 @@ describe('unit shortcut presentation semantics', () => {
         id: 'jupyterlab',
         label: 'JupyterLab',
         type: 'url',
-        url: 'http://192.168.20.184:8888',
+        url: 'http://example.test:8888',
       }),
     ).toBe('book');
 
@@ -48,7 +48,7 @@ describe('unit shortcut presentation semantics', () => {
         id: 'camera-stream',
         label: 'Camera stream',
         type: 'url',
-        url: 'http://192.168.20.184:5000/video_feed',
+        url: 'http://example.test:5000/video_feed',
       }),
     ).toBe('camera');
   });

@@ -2,19 +2,21 @@
 
 import { io as createSocketClient } from 'socket.io-client';
 
-const DEFAULT_HOST = 'http://192.168.20.184:5000';
 const DEFAULT_TIMEOUT_MS = 8000;
 const DEFAULT_NUDGE_MS = 400;
 const DEFAULT_NUDGE_SPEED = 0.2;
 
 function usage() {
   return [
-    'Usage: npm run beast:probe -- [options]',
+    'Usage: npm run beast:probe -- --host <url> [options]',
+    '   or: BEAST_HOST=<url> npm run beast:probe -- [options]',
     '',
-    'Safe by default: probes BEAST-01, sends a zero-speed stop, and reads telemetry.',
+    'Safe by default: probes a live BEAST web UI, sends a zero-speed stop, and reads telemetry.',
+    'The Pi-era Control UI (192.168.20.184:5000) is retired — there is no default host until',
+    'an Orin control stack exists. Pass --host or set BEAST_HOST explicitly.',
     '',
     'Options:',
-    '  --host <url>                 Robot web UI base URL. Default: BEAST_HOST or http://192.168.20.184:5000',
+    '  --host <url>                 Robot web UI base URL (required unless BEAST_HOST is set)',
     '  --timeout-ms <ms>            Socket timeout. Default: 8000',
     '  --no-stop                    Probe without sending the zero-speed stop command',
     '  --nudge                      Send a brief low-speed movement, then stop',
@@ -28,7 +30,7 @@ function usage() {
 
 function parseArgs(argv) {
   const options = {
-    host: process.env.BEAST_HOST || DEFAULT_HOST,
+    host: process.env.BEAST_HOST || null,
     timeoutMs: DEFAULT_TIMEOUT_MS,
     sendStop: true,
     nudge: false,
@@ -90,6 +92,13 @@ function parseArgs(argv) {
 
   if (options.nudge && (!options.withRobot || !options.clearRunway)) {
     throw new Error('--nudge requires --i-am-with-the-robot and --clear-runway-confirmed');
+  }
+
+  if (!options.host) {
+    throw new Error(
+      'No control UI host: pass --host <url> or set BEAST_HOST. ' +
+        'The Pi-era default (192.168.20.184:5000) was removed — Orin teleop is not live yet.',
+    );
   }
 
   options.host = normalizeHost(options.host);
