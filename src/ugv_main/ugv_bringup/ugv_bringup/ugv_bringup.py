@@ -134,10 +134,10 @@ class ugv_bringup(Node):
             history=HistoryPolicy.KEEP_LAST,
         )
         self.allow_motion_publisher_ = self.create_publisher(
-            Bool, 'ugv/allow_motion', safety_qos
+            Bool, '/ugv/allow_motion', safety_qos
         )
         self.watchdog_state_publisher_ = self.create_publisher(
-            DiagnosticStatus, 'ugv/watchdog_state', safety_qos
+            DiagnosticStatus, '/ugv/watchdog_state', safety_qos
         )
 
         # Initialize the base controller with the UART port and baud rate

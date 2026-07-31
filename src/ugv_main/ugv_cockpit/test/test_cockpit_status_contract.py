@@ -261,13 +261,13 @@ def test_status_node_and_mux_share_the_ros_clock_mode():
 def test_bringup_publishes_the_safety_state_the_cockpit_gates_on():
     """The arming link: the robot reports what it enforces, not what the UI sent."""
     source = read(BRINGUP_NODE)
-    assert "create_publisher(\n            Bool, 'ugv/allow_motion'" in source or \
-        "Bool, 'ugv/allow_motion'" in source, (
+    assert "create_publisher(\n            Bool, '/ugv/allow_motion'" in source or \
+        "Bool, '/ugv/allow_motion'" in source, (
             '%s must publish /ugv/allow_motion (std_msgs/Bool) so the cockpit '
             'can gate its drive controls on the robot-reported value'
             % BRINGUP_NODE
         )
-    assert "'ugv/watchdog_state'" in source, (
+    assert "'/ugv/watchdog_state'" in source, (
         '%s must publish /ugv/watchdog_state (DiagnosticStatus with armed/fired)'
         % BRINGUP_NODE
     )
@@ -282,6 +282,10 @@ def test_bringup_publishes_the_safety_state_the_cockpit_gates_on():
 def test_status_node_consumes_the_bringup_safety_topics():
     source = read(STATUS_NODE)
     assert 'ALLOW_MOTION_TOPIC' in source and 'WATCHDOG_STATE_TOPIC' in source
+    assert 'DurabilityPolicy.TRANSIENT_LOCAL' in source, (
+        '%s must receive the latest latched safety state when it joins late'
+        % STATUS_NODE
+    )
 
 
 def test_status_node_lets_stale_safety_state_decay_to_the_safe_default():

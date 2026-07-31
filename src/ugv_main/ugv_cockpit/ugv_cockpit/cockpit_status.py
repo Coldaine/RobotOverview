@@ -49,6 +49,7 @@ import rclpy
 from diagnostic_msgs.msg import DiagnosticArray, DiagnosticStatus, KeyValue
 from geometry_msgs.msg import Twist
 from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile
 from std_msgs.msg import Bool
 
 from ugv_cockpit.cockpit_contract import (
@@ -157,9 +158,16 @@ class CockpitStatus(Node):
         self._estop_engaged = False
 
         self._pub = self.create_publisher(DiagnosticArray, STATUS_TOPIC, 1)
-        self.create_subscription(Bool, ALLOW_MOTION_TOPIC, self._on_allow, 1)
+        safety_qos = QoSProfile(
+            depth=1,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            history=HistoryPolicy.KEEP_LAST,
+        )
         self.create_subscription(
-            DiagnosticStatus, WATCHDOG_STATE_TOPIC, self._on_watchdog, 1
+            Bool, ALLOW_MOTION_TOPIC, self._on_allow, safety_qos
+        )
+        self.create_subscription(
+            DiagnosticStatus, WATCHDOG_STATE_TOPIC, self._on_watchdog, safety_qos
         )
 
         # Read-only taps on the arbitration inputs. Depth 10 and default
