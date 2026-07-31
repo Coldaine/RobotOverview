@@ -20,7 +20,7 @@ side of North Star G7; the live portal is not operational until the robot-side d
 ```
                        ┌────────────────────────────── BEAST-01 (Jetson Orin) ─────────────────────────────┐
  Hangar /cockpit ──────┼──▶ rosbridge_websocket :9090 (loopback only; Tailscale Serve terminates WSS)       │
- desktop/tablet/phone  │  ▶ telemetry: scan, TF, odom, voltage, IMU, diagnostics, OAK RGB/depth (jpeg)     │
+ desktop/tablet/phone  │  ▶ telemetry: scan, odom, voltage, IMU, diagnostics, OAK RGB/depth (jpeg)         │
                        │  ◀ publish globs only: /cmd_vel_ui, PT, LED, e-stop; no services or actions       │
  Vizanti (optional) ───┼──▶ vizanti_server :5000/:5001 (separate surface, same mux)                        │
                        │                                                                                    │
@@ -43,7 +43,7 @@ rosbridge service/action capabilities; it does not rely on `client_topic_whiteli
 | --- | --- | --- |
 | Safety | E-stop (outranks everything) | twist_mux lock topic, priority 255 — engaged intent republishes every 500 ms; release sends a bounded burst |
 | Safety | Motion arm/disarm (deliberate re-gate, never a casual toggle) | `allow_motion` state surfaced; arming gated on beast-paces Phase 2 |
-| Safety | Speed caps | teleop config: 0.2 m/s default, 0.4 turbo, 1.0 rad/s |
+| Safety | Current in-app speed caps | 0.20 m/s linear, 0.40 rad/s angular; no turbo mode |
 | Drive | Robot-paired BT gamepad (survives network loss) | `joy_node` on Jetson → `/cmd_vel_joy_robot`, priority 150 |
 | Drive | Remote operator keyboard/gamepad rung | existing robot-side tools → `/cmd_vel_joy_operator`, priority 100; `/joy_operator` is not admitted by the current browser bridge |
 | Drive | In-app on-screen teleop | `/cmd_vel_ui`, priority 50 |
@@ -53,7 +53,7 @@ rosbridge service/action capabilities; it does not rely on `client_topic_whiteli
 | Aux | LED brightness ×2 | `/ugv/led_ctrl` `[IO4, IO5]` 0–255 |
 | Data | Bag record start/stop (mission / blackbox) | rosbag; storage per the NVMe plan when applied |
 | Data | Map save | slam_toolbox serialize + map_saver (Phase E) |
-| Autonomy | Click-to-goal, waypoints, cancel, initial pose | nav2 actions + `/set_pose` (Phase F) |
+| Autonomy | Click-to-goal, waypoints, cancel, initial pose | deferred cross-repo gap; current topic-only bridge does not expose actions/services or goal topics |
 
 **cmd_vel quirks the cockpit must respect** (from `ugv_bringup.py`, verified in source): after 5
 consecutive zero Twists further zeros are dropped; small yaw commands are force-boosted to
@@ -64,7 +64,7 @@ consecutive zero Twists further zeros are dropped; small yaw commands are force-
 | Zone | Contents | Source of truth |
 | --- | --- | --- |
 | Safety strip (always visible, never scrolls) | E-stop; MOTION state; reconstructed active mux source + cmd age + `/cmd_vel` publisher count; watchdog state; pack volts with 10.5 V floor and 8.8 V brownout marks | `/ugv/voltage.voltage` (volts only), `/cockpit/status` observer |
-| Spatial | `/scan` (with LD19's real 225–315° rear crop shown), TF, robot model, EKF pose trail, wheel-vs-rf2o comparison; later map + costmaps + path + goals | `/scan`, `/tf`, `/robot_description`, `/odom*` |
+| Spatial | Current: `/scan` with LD19's real 225–315° rear crop and `/odom` pose trail. Deferred: TF, robot model, wheel-vs-rf2o comparison, map, costmaps, path, goals | current `/scan`, `/odom`; deferred topics are outside the closed bridge contract |
 | Optics | OAK RGB (jpeg-compressed), OAK depth colorized, 5 MP PT cam; FPS + link-speed chips; later NN detections overlay | `/oak/*`, PT cam launch (gap) |
 | Telemetry | Voltage sparkline w/ floor line; IMU traces (labeled uncal); diagnostics; ops log (rosout) | `/imu/raw`, `/diagnostics`, `/rosout` |
 | Ops | Recording state + disk free; node/service health; bridge/link health (direct-vs-DERP) | gap publishers, below |

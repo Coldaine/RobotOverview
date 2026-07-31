@@ -6,41 +6,30 @@ PR-sized chunks across **two repos** — `Coldaine/ugv_ws` (robot-side, safety-r
 repo (the in-app `/cockpit` command surface and docs). The owner will split phases into per-PR plan
 docs as they are picked up.
 
-## Done condition
+## Current workstream done condition
 
 All six:
 
-1. Any device on the tailnet (desktop app, browser, phone) can open the cockpit and see live
-   scan, TF, odom, voltage, IMU, and OAK RGB+depth — through exactly one robot port per surface,
-   with the bridge's command-publish globs enforced.
+1. The Hangar client and robot-side bridge source agree on the exact scan, odom, voltage, IMU,
+   diagnostics, and OAK RGB+depth contract, using loopback rosbridge with exact publish/subscribe
+   globs. Runtime access remains a deliberate deployment step outside this repository workstream.
 2. Every `/cmd_vel` publisher on the robot routes through twist_mux; publishing directly to
    `/cmd_vel` from a cockpit client is impossible (not merely discouraged).
-3. The beast-paces Phase 2 watchdog re-gate has passed live (crawl + kill, self-stop ≤ 1 s,
-   recorded in `docs/beast-ops.md`) before the first cockpit teleop session.
-4. All three teleop inputs work through the mux ladder: robot-paired BT pad, operator gamepad
-   with deadman, on-screen teleop — each verified to lose arbitration to the higher source.
-5. OAK runs at SUPER (USB3) or a dated decision records staying at USB2; a slam_toolbox map of
-   one real space is saved (serialized posegraph + .pgm) and renders in the cockpit.
+3. Deployment docs keep the first cockpit teleop session blocked on the beast-paces Phase 2
+   watchdog re-gate (crawl + kill, self-stop ≤ 1 s) and never claim that unrun gate passed.
+4. Existing robot-side gamepad/keyboard inputs and the on-screen UI route through the documented
+   mux ladder; the robot-reported motion gate remains authoritative.
+5. OAK configuration is productized for the recorded USB tier; the SLAM save/reload workflow and
+   the retuned Nav2/depth/collision-monitor configuration are landed and testable without arming
+   the physical robot.
 6. The honesty rail ships: fake SOC hidden, PT open-loop and IMU-uncal labels visible, ESP32
    heartbeat gap stated on the safety strip.
 
-## Where things stand (verified 2026-07-31)
+## Where things stand
 
-Done tonight — do not redo:
-
-| Landed | Evidence |
-| --- | --- |
-| OAK-D Lite first light; camera cutover gate closed | `USB SPEED: HIGH`, RGB ~16 FPS, depth ~16.3 FPS 16UC1 aligned; `docs/beast-ops.md` Quick connect bullet |
-| 5 MP PT cam one-frame verification | v4l2-ctl grab, same bullet |
-| TF audit: URDF OAK macro correct, `/scan` frame correct | tf2_echo `base_link → oak_rgb_camera_optical_frame` |
-| rf2o "duplicate node" diagnosed cosmetic (one process, two in-process names; ~10 Hz single-rate) | same bullet |
-| Baseline bag (13 topics, 417 MB) | `~/beast-acceptance/bags/oak-baseline-20260731` on the robot |
-| Cockpit config drafts (twist_mux, teleop, bridge, combined launch, README) | [`beast-command-deck-drafts/`](beast-command-deck-drafts/) — staging copies; land in ugv_ws PRs, then delete per promote-then-delete |
-| Approved visual mockup | [`beast-command-deck-drafts/beast-command-deck.html`](beast-command-deck-drafts/beast-command-deck.html) |
-| Research base: OAK bringup, fusion sizing, cockpit tooling, ugv_ws inventory | four-lane research 2026-07-31; conclusions folded into the spec |
-
-Standing constraints: motion software-locked; watchdog deployed but not live re-gated; ESP32 has
-no firmware heartbeat; pack was at the 10.5 V floor — charge before any motion phase.
+The dated robot facts, hardware evidence, and current safety constraints live in the Quick connect
+block of [`docs/beast-ops.md`](../beast-ops.md). Do not copy that volatile state into this plan.
+Repository status is reflected by the PR series below.
 
 ## Recommended PR series
 
@@ -55,6 +44,11 @@ Split so each safety-relevant change is reviewable alone and no PR mixes repos:
 | PR-4 | ugv_ws | **Phase E — SLAM:** slam_toolbox crawl tuning (min travel 0.10–0.15 m), map save workflow to the storage layout | map of one space saved + reloads in localization mode |
 | PR-5 | ugv_ws | **Phase F — nav2:** Beast velocity retune (≤0.15 m/s, replaces generic 0.26), depth scan via depthimage_to_laserscan as second obstacle source, collision monitor | supervised runs only; ESP32 heartbeat still absent |
 | PR-6 | RobotOverview | **Superseded:** the command surface landed directly in the Hangar as `/cockpit`; no separate link-out or Foxglove layout is planned | complete in-app implementation, then deploy only after PR-2 and the physical safety gates |
+
+Deferred portal gaps are **not** hidden inside PR-3 through PR-5: TF/map rendering in the browser,
+browser gamepad transport, and goal/cancel/initial-pose controls need separate cross-repo design and
+review. The current topic-only bridge intentionally removes rosbridge action/service operations and
+does not admit those topics. They are not current-workstream done conditions.
 
 Interleaved non-PR gates (hardware/procedure, tracked in `docs/beast-ops.md`): charge pack →
 USB3 cable swap + `USB SPEED: SUPER` re-check → beast-paces Phase 2 watchdog re-gate →
@@ -73,8 +67,8 @@ supervised teleop session → mapping drive.
 - **Phase D — motion re-gate (procedure, no PR).** beast-paces Phase 2 crawl+kill; expect
   self-stop ≤ 1 s; record pass/fail + stop delay in beast-ops. Only then first supervised
   cockpit teleop, all three inputs, arbitration checked.
-- **Phase E — mapping (PR-4).** Drive a loop; save serialized posegraph + .pgm; render map in
-  cockpit; replay bags through RTAB-Map offline as an experiment (no live commitment).
+- **Phase E — mapping (PR-4).** Land the tuned save/reload workflow for a serialized posegraph +
+  map image. A physical mapping run and browser map rendering remain separately gated/deferred.
 - **Phase F — obstacle-aware nav (PR-5).** nav2 with static map + `/scan` + depth-derived scan;
   supervised only while the ESP32 heartbeat gap stands.
 
