@@ -175,6 +175,16 @@ No CI/CD to the robot. If you only edited Hangar docs/UI, the Jetson does not ch
   `tailscale serve` step will expose WSS only after install/build and the safety prerequisites.
   Existing separate surfaces remain Vizanti `:5100`/`:5001`, `ugv_chat_ai` `:5000`, and
   MediaMTX `:8554`/`:8889`; verify them live before relying on them.
+- **LiDAR is off in the boot service (2026-07-31, source-verified):** `beast-ros-base.service`
+  runs `bringup_lidar.launch.py use_lidar:=false use_rviz:=false allow_motion:=false`, so `/scan`
+  has no publisher until someone relaunches by hand. Any cockpit spatial view — and the Phase 0
+  `/scan` ground-truth check — is empty on a stock boot for that reason, not because the LD19
+  failed. (An earlier revision of this doc attributed this to `beast-cockpit.service`; that was
+  wrong, and that service is not installed at all.)
+- **Robot-reported status is not deployed:** `/cockpit/status`, `/ugv/allow_motion` and
+  `/ugv/watchdog_state` land with `ugv_ws` PR #10 and are not on the robot yet. Until they are,
+  the cockpit's safety strip reads UNKNOWN, drive stays gated (unknown is not permission), and
+  the e-stop sits in ASSERTING because nothing echoes the mux lock back.
 
 > **Scope (owner statement 2026-07-31 - Updated):** The Hangar app is intended to be a
 > **teleop and telemetry cockpit** in addition to an information surface, implementing North Star

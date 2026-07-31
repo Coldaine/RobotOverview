@@ -53,7 +53,11 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
 - **Hangar transport support (unconfigured):** `BEAST_COCKPIT_WS_URL` is absent from the current
   `coldaine-homelab` deployment. When configured, the `/cockpit` route serializes it into client
   props. This avoids build-time inlining but is **not a secret or an authentication boundary**;
-  browser users can inspect it. If unset or offline, the Cockpit shows a loud disconnected state.
+  browser users can inspect it. The actual access control is (a) tailnet reachability — the
+  `wss://` endpoint only resolves and only accepts connections from inside the tailnet — and
+  (b) the robot-side rosbridge topic glob whitelist, which bounds what a connected client may
+  publish. **Treat the URL as public and the tailnet as the perimeter.** If unset or offline,
+  the Cockpit shows a loud disconnected state.
 - **Robot-side service (source ready, not deployed):** `beast-cockpit.service` and its
   loopback-only rosbridge configuration are being landed in `ugv_ws` PR #10. They have not been
   deliberately installed/enabled on BEAST-01, and Tailscale Serve has not been configured for
