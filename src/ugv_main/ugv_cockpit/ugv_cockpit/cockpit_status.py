@@ -31,11 +31,17 @@ WHERE EACH FACT COMES FROM
 ``allow_motion``, ``armed``, ``fired``
     Mirrored from ``/ugv/allow_motion`` (std_msgs/Bool) and
     ``/ugv/watchdog_state`` (diagnostic_msgs/DiagnosticStatus), both published
-    by ugv_bringup, which is the only process that can observe them. If those
-    topics go silent — bringup down, or a build without them — the values
-    revert to their safe defaults after :data:`BRINGUP_STALE_S` rather than
-    latching the last good reading. A cockpit that shows "motion armed" because
-    bringup died two minutes ago is worse than one that shows "unknown".
+    by ugv_bringup, which is the only process that can observe them.
+
+    These three keys are OMITTED ENTIRELY until the first real message arrives,
+    and omitted again once the last one ages past :data:`BRINGUP_STALE_S`. The
+    client renders a missing key as "unknown" and a present one as a reading it
+    can trust, so publishing ``false`` before ugv_bringup has ever spoken would
+    have the strip stating a fact it does not have — and stating the
+    conservative-looking one, which is what makes it dangerous: on a robot
+    where these publishers are not deployed yet, the panel reads a confident
+    LOCKED / OFF-LINE and never once says "I cannot see the robot". The entry
+    itself stays in the array with WARN and a message naming the silent topic.
 
 Host metrics
     Read straight off ``/proc`` and ``/sys``. Anything unreadable falls back to
@@ -54,6 +60,7 @@ from std_msgs.msg import Bool
 
 from ugv_cockpit.cockpit_contract import (
     ALLOW_MOTION_TOPIC,
+    BRINGUP_STALE_S,
     DIAG_BRINGUP,
     DIAG_SYSTEM_METRICS,
     DIAG_TWIST_MUX,
@@ -61,7 +68,6 @@ from ugv_cockpit.cockpit_contract import (
     ESTOP_LOCK_TOPIC,
     EXPECTED_MUX_PUBLISHERS,
     KEY_ACTIVE_SOURCE,
-    KEY_ALLOW_MOTION,
     KEY_ARMED,
     KEY_COMMAND_AGE,
     KEY_CPU_TEMP,
@@ -75,15 +81,12 @@ from ugv_cockpit.cockpit_contract import (
     SOURCE_TIMEOUT_S,
     STATUS_TOPIC,
     WATCHDOG_STATE_TOPIC,
-    boolean,
+    bringup_key_values,
     format_command_age,
+    is_fresh,
     resolve_active_source,
+    watchdog_key_values,
 )
-
-# An arming/watchdog message older than this is treated as no message at all.
-# Long enough to ride out a missed tick at ugv_bringup's 2 Hz, short enough
-# that a dead bringup shows up on the safety strip within a few seconds.
-BRINGUP_STALE_S = 3.0
 
 # The values the cockpit client falls back to when a metric key is missing.
 # Reusing them keeps an unreadable sensor rendering identically whether the key
@@ -214,7 +217,8 @@ class CockpitStatus(Node):
         return self.get_clock().now().nanoseconds / 1_000_000_000.0
 
     def _is_fresh(self, stamp):
-        return stamp is not None and (self._now_s() - stamp) <= BRINGUP_STALE_S
+        """Staleness decay, delegated to the ROS-free rule in the contract."""
+        return is_fresh(self._now_s(), stamp, BRINGUP_STALE_S)
 
     def _tick(self):
         arr = DiagnosticArray()
@@ -243,8 +247,15 @@ class CockpitStatus(Node):
             DiagnosticStatus.OK if pub_count == EXPECTED_MUX_PUBLISHERS
             else DiagnosticStatus.WARN
         )
+        # '(mirrored)' is on the wire on purpose: this entry is named
+        # `twist_mux` but is NOT published by twist_mux, and anyone reading
+        # `ros2 topic echo /diagnostics` deserves to know they are looking at an
+        # outside reconstruction rather than the arbiter's own account of
+        # itself. The client renders the keys, not this string, so saying so
+        # costs nothing and breaks nothing.
         mux.message = (
-            f'{display}, {pub_count} publisher(s) on {self._cmd_vel_topic}'
+            f'{display}, {pub_count} publisher(s) on {self._cmd_vel_topic} '
+            '(mirrored)'
         )
         mux.values = [
             KeyValue(key=KEY_ACTIVE_SOURCE, value=display),
@@ -254,7 +265,8 @@ class CockpitStatus(Node):
         return mux
 
     def _bringup_status(self):
-        fresh = self._is_fresh(self._allow_motion_at)
+        now = self._now_s()
+        fresh = is_fresh(now, self._allow_motion_at)
         allow_motion = fresh and self._allow_motion
 
         bringup = DiagnosticStatus(name=DIAG_BRINGUP, hardware_id='ugv_bringup')
@@ -262,20 +274,34 @@ class CockpitStatus(Node):
             bringup.level = DiagnosticStatus.WARN
             bringup.message = (
                 f'no {ALLOW_MOTION_TOPIC} in {BRINGUP_STALE_S:.0f}s — '
-                'reporting motion locked'
+                'allow_motion UNKNOWN, key omitted'
             )
         else:
-            bringup.level = (
-                DiagnosticStatus.WARN if allow_motion else DiagnosticStatus.OK
-            )
+            # OK either way. An armed robot is a normal, intended operating
+            # state, not a fault, and publishing WARN for it has two costs:
+            # every session that actually drives sits at WARN from the moment
+            # motion is enabled, which is how operators learn to stop reading
+            # the colour; and any consumer that aggregates DiagnosticStatus
+            # levels (rqt_robot_monitor, an alerting rule, a future summary
+            # entry) inherits that permanent WARN and can no longer surface a
+            # real one. The arming state is what `allow_motion` and the message
+            # are for — the LEVEL is reserved for "something is wrong".
+            bringup.level = DiagnosticStatus.OK
             bringup.message = 'motion armed' if allow_motion else 'motion locked'
+        # No key at all until ugv_bringup has actually said something, and none
+        # again once it goes quiet — see bringup_key_values. 'false' here would
+        # be the cockpit asserting a fact it does not have.
         bringup.values = [
-            KeyValue(key=KEY_ALLOW_MOTION, value=boolean(allow_motion)),
+            KeyValue(key=key, value=value)
+            for key, value in bringup_key_values(
+                now, self._allow_motion_at, self._allow_motion
+            )
         ]
         return bringup
 
     def _watchdog_status(self):
-        fresh = self._is_fresh(self._watchdog_at)
+        now = self._now_s()
+        fresh = is_fresh(now, self._watchdog_at)
         armed = fresh and self._watchdog_armed
         fired = fresh and self._watchdog_fired
 
@@ -289,14 +315,16 @@ class CockpitStatus(Node):
             watchdog.level = DiagnosticStatus.WARN
             watchdog.message = (
                 f'no {WATCHDOG_STATE_TOPIC} in {BRINGUP_STALE_S:.0f}s — '
-                'watchdog state unknown'
+                'armed/fired UNKNOWN, keys omitted'
             )
         else:
             watchdog.level = DiagnosticStatus.OK
             watchdog.message = 'watchdog armed' if armed else 'no live command to watch'
         watchdog.values = [
-            KeyValue(key=KEY_ARMED, value=boolean(armed)),
-            KeyValue(key=KEY_FIRED, value=boolean(fired)),
+            KeyValue(key=key, value=value)
+            for key, value in watchdog_key_values(
+                now, self._watchdog_at, self._watchdog_armed, self._watchdog_fired
+            )
         ]
         return watchdog
 

@@ -36,14 +36,22 @@ are simply carried on the same bridge.
 
 > **`/imu/raw`, not `/imu/data`.** `ugv_bringup` publishes `sensor_msgs/Imu` on
 > `imu/raw`; its `imu/data_raw` publisher is commented out and no filter node
-> republishes as `imu/data`. Nothing on this robot publishes `/imu/data`.
+> republishes as `imu/data`. Nothing on this robot publishes `/imu/data`. The
+> cockpit client's matching change (`/imu/data` → `/imu/raw`) is in flight on
+> RobotOverview branch `fix/cockpit-review-round1` and lands with this glob entry.
 
 `cockpit_status` also consumes two topics `ugv_bringup` publishes at 2 Hz —
 `/ugv/allow_motion` (`Bool`) and `/ugv/watchdog_state` (`DiagnosticStatus`, keys
 `armed` / `fired` / `watching` / `timeout`) — so the cockpit's drive gate reflects
-what the robot enforces rather than what the UI last sent. Both are aged out
-after 3 s, so a dead `ugv_bringup` decays to "motion locked" instead of latching
-a stale "armed".
+what the robot enforces rather than what the UI last sent. Both are subscribed
+`TRANSIENT_LOCAL` to match the publishers, and both are aged out after 3 s.
+
+> **Aged out means the key is omitted, not published as `false`.** Before the
+> first message and after 3 s of silence, `allow_motion` / `armed` / `fired` are
+> absent from `/cockpit/status` entirely; the entries stay, at WARN, naming the
+> silent topic. A published `false` would render in the cockpit as a confident
+> LOCKED / OFF-LINE rather than "no publisher" — conservative-looking, and
+> therefore never investigated. See [docs/cockpit.md](../../../docs/cockpit.md).
 
 ## Transport
 

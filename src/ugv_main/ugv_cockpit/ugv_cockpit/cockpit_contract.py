@@ -111,6 +111,63 @@ ESTOP_LOCK_PRIORITY = 255
 # number on purpose — see config/twist_mux.yaml.
 SOURCE_TIMEOUT_S = 0.5
 
+# An arming/watchdog message older than this is treated as no message at all.
+# Long enough to ride out a missed tick at ugv_bringup's 2 Hz, short enough that
+# a dead bringup shows up on the safety strip within a few seconds. Lives here
+# rather than in cockpit_status so the decay rule can be exercised with an
+# injected clock on a runner with no rclpy.
+BRINGUP_STALE_S = 3.0
+
+
+def is_fresh(now, stamp, stale_s=BRINGUP_STALE_S):
+    """Is a mirrored safety-state stamp still worth believing?
+
+    ``stamp`` is ``None`` until the first message arrives, which is NOT fresh:
+    a cockpit that has never heard from ugv_bringup must show that it does not
+    know, not a default. Both arguments are on the caller's clock — no time
+    source is read here, so a test can drive the decay deterministically.
+    """
+    return stamp is not None and (now - stamp) <= stale_s
+
+
+# ---------------------------------------------------------------------------
+# ABSENCE IS A VALUE. The two builders below return NO PAIRS AT ALL until a
+# real message has been mirrored, and go back to returning none once that
+# message ages past BRINGUP_STALE_S.
+#
+# This is a wire-level distinction, not a cosmetic one. The client renders a
+# MISSING key as "unknown" and a PRESENT key as a reading it can trust, so
+# emitting `allow_motion: 'false'` before ugv_bringup has ever spoken is the
+# cockpit stating, confidently, a fact it does not have — on a robot where
+# these publishers simply are not deployed yet, the strip reads a definite
+# LOCKED / OFF-LINE and never once says "I cannot see the robot".
+#
+# 'false' is the conservative rendering, which is exactly what makes it
+# dangerous: it looks correct, so nobody investigates. Same rule the host
+# metrics already follow (an unreadable thermal zone must not render as a cold
+# SoC) and the same rule ugv_bringup follows in publishing what it ENFORCES
+# rather than what was configured. Missing data gets reported as missing.
+#
+# The entry itself stays in the array either way, with WARN and a message
+# naming the silent topic, so the gap is visible in `ros2 topic echo` too.
+# ---------------------------------------------------------------------------
+def bringup_key_values(now, stamp, allow_motion, stale_s=BRINGUP_STALE_S):
+    """(key, value) pairs for the ``bringup`` entry. Empty when not fresh."""
+    if not is_fresh(now, stamp, stale_s):
+        return ()
+    return ((KEY_ALLOW_MOTION, boolean(allow_motion)),)
+
+
+def watchdog_key_values(now, stamp, armed, fired, stale_s=BRINGUP_STALE_S):
+    """(key, value) pairs for the watchdog entry. Empty when not fresh.
+
+    Both keys appear together or not at all: they come from one message, so
+    there is no state in which one is known and the other is not.
+    """
+    if not is_fresh(now, stamp, stale_s):
+        return ()
+    return ((KEY_ARMED, boolean(armed)), (KEY_FIRED, boolean(fired)))
+
 # The topic twist_mux publishes on, i.e. the one whose publisher count the
 # cockpit renders as "/cmd_vel publishers". Exactly 1 is healthy.
 MUX_OUTPUT_TOPIC = '/cmd_vel'
@@ -160,13 +217,33 @@ def resolve_active_source(now, last_command_at, estop_engaged,
     Honesty note: this is an OBSERVER's reconstruction, not twist_mux's own
     state. cockpit_status is a separate DDS subscriber, so its arrival stamps
     can differ from twist_mux's by message-delivery jitter, and it cannot see
-    twist_mux's internals at all. twist_mux's own ``/diagnostics`` output does
-    not close that gap: it publishes ``current priority`` as a bare integer
-    that (a) is refreshed only inside ``hasPriority``, i.e. when a command
-    arrives, so it goes stale rather than falling to zero when every source
-    stops, and (b) collapses to 0 both for "nothing active" and for "lock
-    engaged, all sources masked" — the two states the cockpit most needs to
-    tell apart.
+    twist_mux's internals at all.
+
+    Why mirror instead of reading twist_mux's own ``/diagnostics`` (corrected
+    against ros-teleop/twist_mux, ``humble`` branch — an earlier revision of
+    this docstring got both of these facts wrong):
+
+      * ``updateDiagnostics`` runs on a 1 Hz wall timer
+        (``DIAGNOSTICS_PERIOD = 1s`` in twist_mux_diagnostics.hpp), NOT only
+        when a command arrives. It does not go stale on silence.
+      * ``getLockPriority()`` returns 255 while the estop lock is engaged and 0
+        otherwise, so lock-engaged and idle ARE distinguishable.
+
+    The real reasons the diagnostics cannot drive a safety strip:
+
+      * ``current priority`` is the LOCK priority, not the winning source's.
+        It carries no information about which velocity rung holds the floor —
+        the single fact ``active_source`` exists to report. Four rungs all map
+        to the same published number.
+      * The per-topic ``velocity <name>`` keys do expose masked/unmasked, but
+        only at 1 Hz and only as formatted human-readable strings. That is half
+        the rate of this node's 2 Hz publish (so the strip would lag its own
+        cadence by a whole tick) and it would make the cockpit's arbitration
+        display depend on parsing upstream's diagnostic prose, which is not a
+        wire contract and can be reworded in any release.
+
+    Mirroring the documented arbitration rule over the same topics is coarser
+    in no dimension and does not depend on upstream's presentation strings.
     """
     if estop_engaged:
         return SOURCE_ESTOP, None

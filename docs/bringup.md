@@ -93,10 +93,22 @@ EKF config: `src/ugv_main/ugv_bringup/config/ekf.yaml` — wheel velocities from
 !!! note "Why the watchdog has to publish this itself"
     Nothing outside this node can observe whether the watchdog has fired: the stop it
     sends the ESP32 is byte-identical to an operator's stop, so no external watcher
-    could tell them apart from `/cmd_vel`. `armed` means "the stop-on-silence
-    protection is live on the motion path" (motion allowed **and** `cmd_vel_timeout >
-    0`); `watching` is the transient per-command flag, which flips on every zero
-    command and is therefore not what a status panel should display.
+    could tell them apart from `/cmd_vel`. `watching` is the transient per-command
+    flag, which flips on every zero command and is therefore not what a status panel
+    should display.
+
+!!! warning "`armed` does not mean “motion is allowed”"
+    `armed` answers exactly one question: **will the automatic stop happen?** It is
+    true when the stop-on-silence timer exists, is not cancelled, and
+    `cmd_vel_timeout > 0` — **independent of `allow_motion`**. A locked robot with a
+    live watchdog reports `armed: true`, and the entry level is `OK`.
+
+    It used to AND in `allow_motion`, which made "not armed" the normal resting state
+    of a parked robot. A warning an operator sees every day is a warning they stop
+    reading, so a genuine watchdog failure would have arrived on screen looking exactly
+    like every other day. `allow_motion` is published on its own topic and rendered as
+    its own field in the cockpit; `armed: false` must always mean *nothing will stop
+    this robot automatically*.
 
 ---
 

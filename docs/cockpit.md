@@ -68,11 +68,27 @@ that outranks the person standing next to the robot.
 `/oak/rgb/image_raw/compressed`. Telemetry only — nothing here can move anything — but
 the list stays closed so a client cannot enumerate and read whatever a later PR adds.
 
-!!! note "`/imu/raw`, not `/imu/data`"
+!!! note "`/imu/raw`, not `/imu/data` — and the client change lands with this one"
     `ugv_bringup` publishes `sensor_msgs/Imu` on **`imu/raw`**; its `imu/data_raw`
     publisher is commented out and no filter node republishes as `imu/data`. Nothing on
     this robot publishes `/imu/data`, so whitelisting it would be dead config that
     reads as a working feed.
+
+    **The shipped cockpit client does not yet subscribe `/imu/raw`.** At RobotOverview
+    HEAD today it still asks for `/imu/data`, which this glob denies. The client fix
+    (`/imu/data` → `/imu/raw`) is in flight on RobotOverview branch
+    `fix/cockpit-review-round1` and merges before this PR: **this glob entry and that
+    client change land together**, and neither is correct alone. Until both are in, the
+    cockpit's IMU feed is silently empty — a denied subscribe returns no error to the
+    browser.
+
+!!! note "The client's `/ugv/led_ctrl` and `/ugv/pt_steady_ctrl` types are also being fixed"
+    The table above gives the types `ugv_bringup.py` actually subscribes
+    (`Float32MultiArray`, matching [`bringup.md`](bringup.md#key-topics)). The shipped
+    cockpit still advertises `Int32MultiArray` / `Float64MultiArray`; that correction is
+    on the same `fix/cockpit-review-round1` branch. No whitelist entry changes — a topic
+    type mismatch is not a security boundary — but until it merges, lights and pan-tilt
+    levelling from the browser should be treated as unproven.
 
 ### Services and actions
 
@@ -128,6 +144,14 @@ to) by reading its source, not its documentation.
 ---
 
 ## Commissioning check — prove the boundary is live
+
+!!! warning "NOT YET RUN on hardware (2026-07-31)"
+    This check has never been executed on BEAST-01. **The whitelist boundary is
+    unproven until it passes there.** Everything above is read from rosbridge's source
+    and asserted by `test/test_cockpit_bridge.py`, which is a static check of the
+    config — it cannot observe a running server rejecting a real publish. Treat the
+    bridge as unverified in the meantime. **Strike this warning when the check has been
+    run and passed.**
 
 Run once after installing, and again after any change to the globs.
 
@@ -249,9 +273,13 @@ lets `cockpit_status` notice that `ugv_bringup` has died.
 - **`allow_motion`** is the value the node latched at startup and enforces in
   `cmd_vel_callback` — not the parameter server's current value, which nothing
   re-reads. Publishing the *enforced* value is what makes the gate honest.
-- **`armed`** means "the stop-on-silence protection is live on the motion path", i.e.
-  motion is allowed *and* `cmd_vel_timeout > 0`. With motion locked there is no motion
-  path to protect, and the cockpit shows that separately.
+- **`armed`** answers exactly one question: *will the automatic stop happen?* True when
+  the stop-on-silence timer exists, is not cancelled, and `cmd_vel_timeout > 0` —
+  **independent of `allow_motion`**. A locked robot with a live watchdog reports
+  `armed: true`, and the entry level is `OK`. It used to AND in `allow_motion`, which
+  made amber "not armed" the resting state of a parked robot; a warning seen every day
+  is a warning nobody reads, and a real watchdog failure would have arrived looking
+  exactly like normal. `allow_motion` has its own topic and its own field in the strip.
 - **`watching`** is the transient internal flag — a non-zero command is in flight and
   the next tick will time it. It flips on every zero command, which is why `armed` is
   the stable value the UI reads.
@@ -260,9 +288,21 @@ lets `cockpit_status` notice that `ugv_bringup` has died.
   Nothing outside `ugv_bringup` could observe this: the stop the watchdog sends is
   byte-identical to an operator's, so no external watcher could tell them apart.
 
-`cockpit_status` ages both topics out after 3 s. A dead `ugv_bringup` therefore decays
-to "motion locked / watchdog unknown" instead of latching "motion armed" from two
-minutes ago.
+!!! danger "Unknown is published as an ABSENT key, never as `false`"
+    `cockpit_status` ages both topics out after 3 s — but what it does at the end of
+    that window is **omit `allow_motion`, `armed` and `fired` entirely**, not publish
+    them as `false`. They are equally absent *before* the first message ever arrives.
+
+    The client renders a missing key as **unknown** and a present key as a reading it
+    can trust. `false` is the conservative-looking rendering, and that is exactly what
+    makes it the wrong one: on a robot where these publishers are not deployed yet, a
+    published `false` shows a confident **LOCKED / OFF-LINE** that never once says *I
+    cannot see the robot* — and nobody investigates a panel that looks correct.
+
+    The `bringup` and `cockpit_safety_watchdog` entries themselves stay in the array
+    either way, at **WARN**, with a message naming the silent topic, so the gap is
+    legible in `ros2 topic echo /cockpit/status` as well as in the UI. Same rule the
+    host metrics follow (an unreadable thermal zone must not render as a cold SoC).
 
 ---
 
@@ -273,19 +313,39 @@ no parameter.
 
 | Entry | Key | Where it comes from |
 |---|---|---|
-| `cockpit_safety_watchdog` | `armed`, `fired` | `/ugv/watchdog_state`, aged out after 3 s |
+| `cockpit_safety_watchdog` | `armed`, `fired` | `/ugv/watchdog_state`. **Keys omitted** before the first message and again once it is 3 s stale |
 | `twist_mux` | `active_source` | Derived by mirroring the ladder over the four rung topics + the lock |
 | | `command_age` | Seconds since the winning source's last message; `-1` when nothing is driving |
 | | `publisher_count` | Publishers on `/cmd_vel`. Healthy is exactly 1 |
-| `bringup` | `allow_motion` | `/ugv/allow_motion`, aged out after 3 s |
+| `bringup` | `allow_motion` | `/ugv/allow_motion`. **Key omitted** before the first message and again once it is 3 s stale |
 | `system_metrics` | `wifi_rssi`, `disk_free`, `cpu_temp`, `gpu_temp` | `/proc/net/wireless`, `statvfs`, Jetson thermal zones |
 
 `active_source` is an **outside reconstruction** of twist_mux's rule (highest
-non-expired rung, 0.5 s expiry, an engaged lock masks everything). twist_mux's own
-`/diagnostics` output cannot be used instead: it publishes `current priority` as a bare
-integer that only refreshes when a command arrives — so it goes stale rather than
-falling to zero on silence — and that collapses to `0` both for "nothing active" and
-for "lock engaged", exactly the two states the cockpit most needs to tell apart.
+non-expired rung, 0.5 s expiry, an engaged lock masks everything). The published
+message is suffixed `(mirrored)` so `ros2 topic echo` discloses that an entry named
+`twist_mux` is not published by twist_mux.
+
+!!! note "Why not just read twist_mux's own `/diagnostics`?"
+    Checked against `ros-teleop/twist_mux`, `humble` branch. Two things an earlier
+    draft of this page asserted are **false**, and are corrected here:
+    `updateDiagnostics` runs on a **1 Hz wall timer** (`DIAGNOSTICS_PERIOD = 1s`), not
+    only when a command arrives, so it does *not* go stale on silence; and
+    `getLockPriority()` returns **255** while the e-stop lock is engaged and 0
+    otherwise, so lock-engaged and idle *are* distinguishable.
+
+    The actual reasons it cannot drive this strip:
+
+    - `current priority` is the **lock** priority, not the winning source's. It says
+      nothing about *which rung holds the floor* — the one fact `active_source` exists
+      to report. All four rungs publish the same number.
+    - The per-topic `velocity <name>` keys do expose masked/unmasked, but only at 1 Hz
+      and only as formatted human-readable strings. That is half this node's 2 Hz
+      publish rate, and it would make the cockpit's arbitration display depend on
+      parsing upstream's diagnostic prose — not a wire contract, and rewordable in any
+      release.
+
+    Mirroring the documented arbitration rule over the same topics is coarser in no
+    dimension and does not depend on upstream's presentation strings.
 
 Unreadable host metrics still emit the client's own fallback value (so the string
 parses), but the entry level goes to **WARN** and its message names them, so the gap is

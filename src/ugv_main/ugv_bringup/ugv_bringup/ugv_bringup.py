@@ -121,6 +121,13 @@ class ugv_bringup(Node):
         # no outside watcher could tell them apart from /cmd_vel.
         self._cmd_vel_watchdog_fired = False
 
+        # Initialize the base controller with the UART port and baud rate
+        self.base_controller = BaseController(serial_port_name, baud_rate)
+        request_data = json.dumps({"T":131,"cmd":1}) + "\n"
+        self.base_controller.send_command(request_data.encode())
+        if not self.allow_motion:
+            self.send_stop_command()
+
         # Safety state for the cockpit. These two topics exist so the browser
         # cockpit can gate its drive controls on what the ROBOT reports rather
         # than on what the UI last sent — see ugv_cockpit/cockpit_status.py and
@@ -128,6 +135,13 @@ class ugv_bringup(Node):
         # connects between ticks gets the current state immediately instead of
         # rendering "unknown" for up to half a second; the periodic republish
         # below is what lets a consumer detect that this node has died.
+        #
+        # ORDERING IS LOAD-BEARING: these two create_publisher calls come AFTER
+        # the serial port is open and the startup stop has been sent. Creating a
+        # publisher can raise (QoS/RMW/name errors), and a raise here before the
+        # stop would leave a robot whose ESP32 is still latching whatever
+        # velocity it held at power-on, with no node alive to stop it. Telemetry
+        # for the cockpit is never allowed to precede the robot's own safing.
         safety_qos = QoSProfile(
             depth=1,
             durability=DurabilityPolicy.TRANSIENT_LOCAL,
@@ -140,12 +154,6 @@ class ugv_bringup(Node):
             DiagnosticStatus, '/ugv/watchdog_state', safety_qos
         )
 
-        # Initialize the base controller with the UART port and baud rate
-        self.base_controller = BaseController(serial_port_name, baud_rate)
-        request_data = json.dumps({"T":131,"cmd":1}) + "\n"
-        self.base_controller.send_command(request_data.encode())
-        if not self.allow_motion:
-            self.send_stop_command()
         # Timer to periodically execute the feedback loop
         self.feedback_thread = threading.Thread(target=self.feedback_loop_thread, daemon=True)
         self.feedback_thread.start()
@@ -170,40 +178,72 @@ class ugv_bringup(Node):
             actually enforces in cmd_vel_callback — not the parameter server's
             current value, which nothing re-reads. Publishing the enforced
             value is what makes the cockpit's gate honest.
-          * `armed` means "the stop-on-silence protection is live on the motion
-            path", i.e. motion is allowed AND the timeout is positive. With
-            allow_motion false there is no motion path to protect, and the
-            cockpit already shows that separately.
+          * `armed` means exactly "the automatic stop-on-silence WILL happen":
+            the watchdog timer exists, is not cancelled, and has a positive
+            timeout. Deliberately INDEPENDENT of allow_motion. The old
+            definition ANDed in allow_motion, which made amber "not armed" the
+            normal resting state of a parked robot — and a state an operator
+            sees every day is a state they stop reading, so a real watchdog
+            failure would have arrived looking exactly like Tuesday. The UI
+            renders allow_motion separately from its own entry; this key
+            answers one question only, and false must always mean "nothing will
+            stop this robot automatically".
           * `watching` is the transient internal flag: a non-zero command is in
             flight and the next tick will time it. It flips on every zero
             command, which is why `armed` is the stable value the UI reads.
           * `fired` latches the watchdog's own stop until something drives
             again.
-        """
-        self.allow_motion_publisher_.publish(Bool(data=bool(self.allow_motion)))
 
-        status = DiagnosticStatus()
-        status.name = 'cmd_vel_watchdog'
-        status.hardware_id = 'ugv_bringup'
-        armed = bool(self.allow_motion) and self.cmd_vel_timeout > 0.0
-        if self._cmd_vel_watchdog_fired:
-            status.level = DiagnosticStatus.ERROR
-            status.message = 'watchdog stopped the robot; no command since'
-        elif armed:
-            status.level = DiagnosticStatus.OK
-            status.message = 'armed'
-        else:
-            status.level = DiagnosticStatus.WARN
-            status.message = 'not armed (motion locked or timeout disabled)'
-        status.values = [
-            KeyValue(key='armed', value=str(armed).lower()),
-            KeyValue(key='fired', value=str(self._cmd_vel_watchdog_fired).lower()),
-            KeyValue(
-                key='watching', value=str(self._cmd_vel_watchdog_armed).lower()
-            ),
-            KeyValue(key='timeout', value=f'{self.cmd_vel_timeout:.2f}'),
-        ]
-        self.watchdog_state_publisher_.publish(status)
+        The whole body is wrapped: this runs on the same single-threaded
+        executor as _cmd_vel_watchdog_tick, and main() is a bare rclpy.spin, so
+        an exception escaping here would kill the process and take the only
+        automatic stop on the robot down with it. Losing a telemetry tick is
+        survivable; losing the watchdog is not.
+        """
+        try:
+            self.allow_motion_publisher_.publish(
+                Bool(data=bool(self.allow_motion))
+            )
+
+            status = DiagnosticStatus()
+            status.name = 'cmd_vel_watchdog'
+            status.hardware_id = 'ugv_bringup'
+            armed = (
+                self.cmd_vel_timeout > 0.0
+                and self._cmd_vel_watchdog_timer is not None
+                and not self._cmd_vel_watchdog_timer.is_canceled()
+            )
+            if self._cmd_vel_watchdog_fired:
+                status.level = DiagnosticStatus.ERROR
+                status.message = 'watchdog stopped the robot; no command since'
+            elif armed:
+                # OK whether or not motion is allowed: a parked robot with a
+                # live watchdog is healthy, not a warning. WARN is reserved for
+                # the one case that is genuinely wrong — no automatic stop.
+                status.level = DiagnosticStatus.OK
+                status.message = (
+                    'armed; motion allowed' if self.allow_motion
+                    else 'armed; motion locked'
+                )
+            else:
+                status.level = DiagnosticStatus.WARN
+                status.message = 'NOT armed — no automatic stop on cmd_vel silence'
+            status.values = [
+                KeyValue(key='armed', value=str(armed).lower()),
+                KeyValue(
+                    key='fired', value=str(self._cmd_vel_watchdog_fired).lower()
+                ),
+                KeyValue(
+                    key='watching', value=str(self._cmd_vel_watchdog_armed).lower()
+                ),
+                KeyValue(key='timeout', value=f'{self.cmd_vel_timeout:.2f}'),
+            ]
+            self.watchdog_state_publisher_.publish(status)
+        except Exception as exc:
+            self.get_logger().warning(
+                f'safety state publish failed: {exc}',
+                throttle_duration_sec=5.0,
+            )
 
     def set_ugv_version(self):
         model = os.getenv("UGV_MODEL", "ugv_rover")
@@ -394,21 +434,46 @@ class ugv_bringup(Node):
             self._cmd_vel_watchdog_fired = False
 
     def _cmd_vel_watchdog_tick(self):
-        if not self.allow_motion or not self._cmd_vel_watchdog_armed:
+        """Stop the robot when nobody has driven it for cmd_vel_timeout.
+
+        This is the ONLY automatic stop on BEAST-01 — the ESP32 latches the
+        last velocity it was given and has no firmware timeout of its own. Two
+        rules follow from that and are not negotiable:
+
+          1. send_stop_command() runs FIRST, before any bookkeeping, logging or
+             publishing. Everything after it is reporting; the stop itself must
+             not sit behind a line that can raise.
+          2. Nothing propagates out of here. main() is a bare rclpy.spin on a
+             single-threaded executor with no exception handling, so an
+             exception escaping this callback would tear down the process and
+             with it the only thing that stops this robot.
+        """
+        try:
+            if not self.allow_motion or not self._cmd_vel_watchdog_armed:
+                return
+            if self._last_cmd_vel_time is None:
+                return
+            if (time.monotonic() - self._last_cmd_vel_time) < self.cmd_vel_timeout:
+                return
+            self.send_stop_command()
+            self._cmd_vel_watchdog_armed = False
+            self._cmd_vel_watchdog_fired = True
+            self.get_logger().warning(
+                f'cmd_vel watchdog stop after {self.cmd_vel_timeout:.2f}s silence'
+            )
+            # Report it immediately rather than waiting up to 0.5 s for the next
+            # heartbeat: this is the one transition the cockpit must not lag on.
+            # Last, and after the log line: the forensic record of the stop is
+            # worth more than the cockpit's half-second head start, and
+            # _publish_safety_state touches the DDS stack, which is the part of
+            # this sequence most likely to fail.
+            self._publish_safety_state()
+        except Exception as exc:
+            self.get_logger().error(
+                f'cmd_vel watchdog tick failed: {exc}',
+                throttle_duration_sec=5.0,
+            )
             return
-        if self._last_cmd_vel_time is None:
-            return
-        if (time.monotonic() - self._last_cmd_vel_time) < self.cmd_vel_timeout:
-            return
-        self.send_stop_command()
-        self._cmd_vel_watchdog_armed = False
-        self._cmd_vel_watchdog_fired = True
-        # Report it immediately rather than waiting up to 0.5 s for the next
-        # heartbeat: this is the one transition the cockpit must not lag on.
-        self._publish_safety_state()
-        self.get_logger().warning(
-            f'cmd_vel watchdog stop after {self.cmd_vel_timeout:.2f}s silence'
-        )
 
     def send_stop_command(self):
         data = json.dumps({'T': '13', 'X': 0.0, 'Z': 0.0}) + "\n"

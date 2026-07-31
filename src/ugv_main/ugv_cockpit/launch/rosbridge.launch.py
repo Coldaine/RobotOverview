@@ -102,8 +102,14 @@ TOPICS_PUB_GLOB = (
 #
 # /imu/raw, not /imu/data: ugv_bringup publishes Imu on "imu/raw" (its
 # imu/data_raw publisher is commented out and no filter node republishes as
-# imu/data), so /imu/data does not exist on this robot. The cockpit client
-# subscribes /imu/raw to match.
+# imu/data), so /imu/data does not exist on this robot.
+#
+# CROSS-REPO: the shipped cockpit client does NOT subscribe /imu/raw yet. At
+# Coldaine/RobotOverview HEAD today it still asks for /imu/data, which this glob
+# denies — silently, like every rosbridge denial. The client fix (/imu/data ->
+# /imu/raw) is in flight on RobotOverview branch fix/cockpit-review-round1 and
+# merges before this PR: THIS ENTRY AND THAT CLIENT CHANGE LAND TOGETHER, and
+# neither is correct on its own.
 TOPICS_SUB_GLOB = (
     '[/ugv/voltage, /scan, /odom, /imu/raw, /cockpit/overhead_clearance, '
     '/cockpit/status, /diagnostics, /oak/rgb/image_raw/compressed, '

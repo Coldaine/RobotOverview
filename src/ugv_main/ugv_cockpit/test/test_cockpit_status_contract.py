@@ -22,6 +22,7 @@ drive gate honest: ugv_bringup publishes what it actually enforces, and
 cockpit_status consumes it instead of guessing.
 """
 
+import ast
 import importlib.util
 import os
 import re
@@ -145,7 +146,30 @@ def test_mux_source_table_matches_twist_mux_yaml(contract):
     lock = params['locks']['estop']
     assert contract.ESTOP_LOCK_TOPIC == lock['topic']
     assert contract.ESTOP_LOCK_PRIORITY == lock['priority']
-    assert contract.SOURCE_TIMEOUT_S == next(iter(params['topics'].values()))['timeout']
+
+
+def test_every_rung_expires_on_the_same_timeout_the_mirror_uses(contract):
+    """SOURCE_TIMEOUT_S is applied to ALL rungs, so it must match ALL of them.
+
+    resolve_active_source takes a single ``timeout_s`` and applies it to every
+    entry in MUX_SOURCES. Checking only the first rung would let a rung with a
+    different timeout in twist_mux.yaml pass review: the mirror would then age
+    that rung out on the wrong schedule and report the wrong source — early or
+    late — for the difference between the two values.
+    """
+    params = yaml.safe_load(read(TWIST_MUX_CONFIG))['twist_mux']['ros__parameters']
+    mismatched = {
+        name: entry['timeout']
+        for name, entry in params['topics'].items()
+        if entry['timeout'] != contract.SOURCE_TIMEOUT_S
+    }
+    assert not mismatched, (
+        'these twist_mux rungs expire on a different timeout than the mirror '
+        'applies (SOURCE_TIMEOUT_S=%s): %s. resolve_active_source uses one '
+        'timeout for every rung, so the cockpit would report the wrong active '
+        'source for the difference.' % (contract.SOURCE_TIMEOUT_S, mismatched)
+    )
+    assert params['topics'], 'twist_mux.yaml declares no rungs at all'
 
 
 def test_mux_policy_cannot_be_replaced_without_a_code_review():
@@ -288,7 +312,7 @@ def test_status_node_consumes_the_bringup_safety_topics():
     )
 
 
-def test_status_node_lets_stale_safety_state_decay_to_the_safe_default():
+def test_status_node_lets_stale_safety_state_decay_out_of_the_message():
     """A dead bringup must not leave 'motion armed' latched on the safety strip."""
     source = read(STATUS_NODE)
     assert 'BRINGUP_STALE_S' in source, (
@@ -297,4 +321,470 @@ def test_status_node_lets_stale_safety_state_decay_to_the_safe_default():
     )
     assert re.search(r'_is_fresh', source), (
         '%s: the staleness check must gate the published values' % STATUS_NODE
+    )
+    assert 'bringup_key_values' in source and 'watchdog_key_values' in source, (
+        '%s must build allow_motion / armed / fired through the contract '
+        'builders, which OMIT the keys when there is nothing to report. '
+        'Constructing KeyValue directly reintroduces a confident "false" for '
+        'state the node has never received.' % STATUS_NODE
+    )
+
+
+# --------------------------------------------------------------------------
+# (4) both ends of the safety wire, read out of ugv_bringup's own syntax
+#
+# test_jetson_safety.py exercises the watchdog's BEHAVIOUR against a harness.
+# These check the structural invariants that a behavioural test cannot see:
+# that the topic strings on the two ends of the wire agree, that the stop is
+# ordered ahead of everything that can raise, that the callback cannot take the
+# process down, and that a timer actually fires the tick.
+# --------------------------------------------------------------------------
+WATCHDOG_TICK = '_cmd_vel_watchdog_tick'
+WATCHDOG_TIMER_PERIOD_S = 0.1
+
+
+@pytest.fixture(scope='module')
+def bringup_tree():
+    return ast.parse(read(BRINGUP_NODE), filename=BRINGUP_NODE)
+
+
+def self_calls_in_source_order(function_node):
+    """Every ``self.NAME(...)`` under a function, ordered by source position.
+
+    ``ast.walk`` is breadth-first, so it cannot answer "which call happens
+    first". Sorting on (lineno, col_offset) can, and it survives the whole body
+    being re-indented into a ``try:`` — which is exactly the change these
+    assertions have to keep working across.
+
+    ``self.get_logger().warning(...)`` contributes ``get_logger`` only: the
+    outer call's receiver is a Call, not ``self``.
+    """
+    found = []
+    for node in ast.walk(function_node):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if not isinstance(func, ast.Attribute):
+            continue
+        if not (isinstance(func.value, ast.Name) and func.value.id == 'self'):
+            continue
+        found.append((node.lineno, node.col_offset, func.attr))
+    return [(lineno, attr) for lineno, _col, attr in sorted(found)]
+
+
+def function_def(tree, name):
+    for node in ast.walk(tree):
+        if isinstance(node, ast.FunctionDef) and node.name == name:
+            return node
+    raise AssertionError('%s defines no %s()' % (BRINGUP_NODE, name))
+
+
+def statements(function_node):
+    """A function's statements with a leading docstring dropped."""
+    body = list(function_node.body)
+    if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant):
+        body = body[1:]
+    return body
+
+
+def executable_body(function_node):
+    """The statements that really run, seeing through a whole-body ``try:``."""
+    body = statements(function_node)
+    if len(body) == 1 and isinstance(body[0], ast.Try):
+        return list(body[0].body)
+    return body
+
+
+# (a) ------------------------------------------------------------------
+def test_bringup_publishes_on_exactly_the_topics_the_contract_names(
+    bringup_tree, contract
+):
+    """Both ends of the wire, compared to each other rather than to a literal.
+
+    cockpit_status subscribes ALLOW_MOTION_TOPIC / WATCHDOG_STATE_TOPIC.
+    ugv_bringup names its topics in its own ``create_publisher`` calls. Nothing
+    in the build connects those two facts: rename one side and the cockpit
+    subscribes a topic that has no publisher, which looks exactly like a
+    ugv_bringup that has died — the safety strip decays to "motion locked /
+    watchdog unknown" and reports a healthy robot as a dead one, forever, with
+    no error anywhere.
+    """
+    published = {}
+    for node in ast.walk(bringup_tree):
+        if not isinstance(node, ast.Assign):
+            continue
+        call = node.value
+        if not isinstance(call, ast.Call):
+            continue
+        func = call.func
+        if not (isinstance(func, ast.Attribute) and func.attr == 'create_publisher'):
+            continue
+        if len(call.args) < 2 or not isinstance(call.args[1], ast.Constant):
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Attribute):
+                published[target.attr] = call.args[1].value
+
+    for attribute, expected in (
+        ('allow_motion_publisher_', contract.ALLOW_MOTION_TOPIC),
+        ('watchdog_state_publisher_', contract.WATCHDOG_STATE_TOPIC),
+    ):
+        assert attribute in published, (
+            '%s no longer assigns self.%s from a create_publisher call with a '
+            'literal topic name, so nothing checks that the cockpit is '
+            'subscribing the topic it actually publishes' % (BRINGUP_NODE, attribute)
+        )
+        # Relative names resolve into the root namespace this node runs in.
+        resolved = '/' + published[attribute].lstrip('/')
+        assert resolved == expected, (
+            'ugv_bringup publishes %r but cockpit_contract tells cockpit_status '
+            'to subscribe %r. The cockpit would then see a topic with no '
+            'publisher, which it reports as a DEAD ugv_bringup.'
+            % (resolved, expected)
+        )
+
+
+# (b) ------------------------------------------------------------------
+def test_watchdog_stop_precedes_every_other_statement_in_the_tick(bringup_tree):
+    """The stop goes out first. Everything after it is only reporting.
+
+    This is the robot's ONLY automatic stop — the ESP32 latches the last
+    velocity it was given and has no timeout of its own. So the ordering inside
+    the tick is a safety property, not a style preference:
+
+      * the cheap guards run first, or the robot is stopped on every tick;
+      * ``send_stop_command()`` is the first thing after them, so no line that
+        can raise (logging, DDS publishing) sits between deciding to stop and
+        actually stopping;
+      * ``_publish_safety_state()`` — which touches the DDS stack and is the
+        most failure-prone step here — comes last.
+    """
+    tick = function_def(bringup_tree, WATCHDOG_TICK)
+    calls = self_calls_in_source_order(tick)
+    names = [attr for _lineno, attr in calls]
+
+    assert 'send_stop_command' in names, (
+        '%s() no longer calls send_stop_command(). Nothing else on this robot '
+        'stops it when cmd_vel goes silent.' % WATCHDOG_TICK
+    )
+    assert names[0] == 'send_stop_command', (
+        '%s(): send_stop_command() must be the FIRST call in the tick, not %r. '
+        'Anything ahead of it is a statement that can raise between deciding to '
+        'stop and stopping.' % (WATCHDOG_TICK, names[0])
+    )
+
+    assert '_publish_safety_state' in names, (
+        '%s() must report the stop it just issued — the fired latch is not '
+        'observable from outside this process' % WATCHDOG_TICK
+    )
+    assert names.index('send_stop_command') < names.index('_publish_safety_state'), (
+        '%s(): the robot must be stopped before the cockpit is told about it. '
+        'Publishing first puts a DDS call on the path to the stop.' % WATCHDOG_TICK
+    )
+
+    # The guards must still come first, or the tick stops the robot every 0.1 s.
+    bare_return_guards = [
+        node for node in executable_body(tick) if isinstance(node, ast.If)
+        if len(node.body) == 1
+        and isinstance(node.body[0], ast.Return)
+        and node.body[0].value is None
+    ]
+    assert len(bare_return_guards) >= 3, (
+        '%s() should keep its early-out guards (motion allowed, watchdog armed, '
+        'a command seen, timeout not yet elapsed); found %d'
+        % (WATCHDOG_TICK, len(bare_return_guards))
+    )
+    stop_line = next(line for line, attr in calls if attr == 'send_stop_command')
+    assert max(node.lineno for node in bare_return_guards) < stop_line, (
+        '%s(): send_stop_command() sits above the guards, so the tick would '
+        'stop the robot on every fire of a 0.1 s timer' % WATCHDOG_TICK
+    )
+
+
+def test_watchdog_tick_cannot_take_the_process_down(bringup_tree):
+    """An exception escaping this callback kills the watchdog with the process.
+
+    ``main()`` is a bare ``rclpy.spin`` on a single-threaded executor with no
+    exception handling, so there is nothing above this frame to catch anything.
+    """
+    tick = function_def(bringup_tree, WATCHDOG_TICK)
+    body = statements(tick)
+    assert len(body) == 1 and isinstance(body[0], ast.Try), (
+        '%s() must wrap its whole body in try/except: rclpy.spin is '
+        'single-threaded with no handler above it, so anything that escapes '
+        'here takes down the only automatic stop the robot has' % WATCHDOG_TICK
+    )
+    assert any(
+        handler.type is None
+        or (isinstance(handler.type, ast.Name) and handler.type.id == 'Exception')
+        for handler in body[0].handlers
+    ), (
+        '%s(): the handler must catch Exception, not a narrow subclass'
+        % WATCHDOG_TICK
+    )
+
+
+# (c) ------------------------------------------------------------------
+def test_the_watchdog_timer_is_actually_created(bringup_tree):
+    """Correct tick logic that nothing calls is not a watchdog.
+
+    A 0.1 s period against the 0.5 s ``cmd_vel_timeout`` bounds the overshoot
+    past the timeout to one tick. Slowing the timer silently widens the window
+    in which a robot that has lost its operator keeps driving.
+    """
+    periods = []
+    for node in ast.walk(bringup_tree):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if not (isinstance(func, ast.Attribute) and func.attr == 'create_timer'):
+            continue
+        if len(node.args) < 2:
+            continue
+        callback = node.args[1]
+        if not isinstance(callback, ast.Attribute) or callback.attr != WATCHDOG_TICK:
+            continue
+        if not (isinstance(callback.value, ast.Name) and callback.value.id == 'self'):
+            continue
+        if isinstance(node.args[0], ast.Constant):
+            periods.append(node.args[0].value)
+
+    assert periods, (
+        '%s never calls create_timer(..., self.%s). The tick can be perfect and '
+        'the robot still never stops, because nothing fires it.'
+        % (BRINGUP_NODE, WATCHDOG_TICK)
+    )
+    assert periods == [WATCHDOG_TIMER_PERIOD_S], (
+        'the cmd_vel watchdog must be driven by exactly one %ss timer, found '
+        '%s. The period bounds how far past cmd_vel_timeout the robot keeps '
+        'the last velocity.' % (WATCHDOG_TIMER_PERIOD_S, periods)
+    )
+
+
+def test_safety_publishers_come_after_the_startup_stop(bringup_tree):
+    """Telemetry must never be created ahead of the robot's own safing.
+
+    ``create_publisher`` can raise — a bad QoS combination, an RMW error, an
+    invalid name. If it raises before the startup ``send_stop_command()``, the
+    node dies with the ESP32 still latching whatever velocity it held at
+    power-on and nothing alive to clear it.
+    """
+    init = function_def(bringup_tree, '__init__')
+    calls = self_calls_in_source_order(init)
+    names = [attr for _lineno, attr in calls]
+
+    assert 'send_stop_command' in names and 'create_publisher' in names
+    first_stop = names.index('send_stop_command')
+    safety_publisher_lines = [
+        line for line, attr in calls if attr == 'create_publisher'
+    ]
+    stop_line = calls[first_stop][0]
+    late = [line for line in safety_publisher_lines if line > stop_line]
+    assert len(late) >= 2, (
+        '__init__ must create the two cockpit safety publishers AFTER the '
+        'startup stop. create_publisher can raise, and a raise ahead of the '
+        'stop leaves the ESP32 latching its power-on velocity with no node '
+        'alive to stop it.'
+    )
+
+
+# (d) ------------------------------------------------------------------
+class FakeClock:
+    """A clock the test moves by hand, so no assertion depends on wall time."""
+
+    def __init__(self, start=1000.0):
+        self.t = start
+
+    def now(self):
+        return self.t
+
+    def advance(self, seconds):
+        self.t += seconds
+        return self.t
+
+
+def test_freshest_highest_rung_wins_and_expires_on_a_driven_clock(contract):
+    """Priority first, then expiry — stepped through on an injected clock."""
+    clock = FakeClock()
+    stamps = {key: None for key, _, _, _ in contract.MUX_SOURCES}
+
+    # Nothing has ever published.
+    assert contract.resolve_active_source(
+        clock.now(), stamps, False
+    )[0] == contract.SOURCE_NONE
+
+    # The UI takes the floor, then the robot-side pad outranks it at the same
+    # instant despite the UI being just as fresh.
+    stamps['ui'] = clock.now()
+    assert contract.resolve_active_source(
+        clock.now(), stamps, False
+    )[0] == contract.SOURCE_UI
+
+    stamps['joy_robot'] = clock.now()
+    display, age = contract.resolve_active_source(clock.now(), stamps, False)
+    assert display == contract.SOURCE_JOY_ROBOT
+    assert age == pytest.approx(0.0)
+
+    # The pad goes quiet. It holds the floor right up to the timeout...
+    clock.advance(contract.SOURCE_TIMEOUT_S)
+    display, age = contract.resolve_active_source(clock.now(), stamps, False)
+    assert display == contract.SOURCE_JOY_ROBOT
+    assert age == pytest.approx(contract.SOURCE_TIMEOUT_S)
+
+    # ...and the instant it expires the UI — equally stale — expires with it,
+    # because both stopped at the same time. Nothing is driving.
+    clock.advance(0.001)
+    assert contract.resolve_active_source(
+        clock.now(), stamps, False
+    )[0] == contract.SOURCE_NONE
+
+    # A single fresh UI message now wins outright: the pad is still expired.
+    stamps['ui'] = clock.now()
+    display, age = contract.resolve_active_source(clock.now(), stamps, False)
+    assert display == contract.SOURCE_UI
+    assert age == pytest.approx(0.0)
+
+
+def test_engaged_lock_masks_every_rung_however_fresh(contract):
+    """Priority 255 beats a command that arrived this instant."""
+    clock = FakeClock()
+    stamps = {key: clock.now() for key, _, _, _ in contract.MUX_SOURCES}
+
+    display, age = contract.resolve_active_source(clock.now(), stamps, True)
+    assert display == contract.SOURCE_ESTOP
+    assert age is None, (
+        'nothing is on the floor while the lock is engaged, so there is no '
+        'command age — a number here would render as a live command'
+    )
+
+    # Releasing hands the floor straight back to the highest fresh rung, with
+    # no clock movement: the lock masks, it does not expire anything.
+    display, age = contract.resolve_active_source(clock.now(), stamps, False)
+    assert display == contract.SOURCE_JOY_ROBOT
+    assert age == pytest.approx(0.0)
+
+
+def test_safety_state_decays_to_the_safe_default_after_bringup_stale_s(contract):
+    """A dead ugv_bringup must read as locked, not as whatever it last said.
+
+    This is the exact expression cockpit_status evaluates
+    (``fresh and self._allow_motion``), driven by a clock the test controls,
+    rather than a grep for the constant's name.
+    """
+    clock = FakeClock()
+
+    # Never heard from bringup at all: not fresh, so locked.
+    assert contract.is_fresh(clock.now(), None) is False
+
+    # bringup reports motion ARMED.
+    stamp = clock.now()
+    reported_allow_motion = True
+    assert contract.is_fresh(clock.now(), stamp) is True
+    assert (contract.is_fresh(clock.now(), stamp) and reported_allow_motion) is True
+
+    # It keeps reading armed while the message is inside the window, boundary
+    # included — one missed 2 Hz tick must not blank the strip.
+    clock.advance(contract.BRINGUP_STALE_S)
+    assert contract.is_fresh(clock.now(), stamp) is True
+    assert (contract.is_fresh(clock.now(), stamp) and reported_allow_motion) is True
+
+    # bringup dies. Past the window the LAST GOOD VALUE IS DISCARDED, not held:
+    # a strip showing "motion armed" from a process that died two minutes ago is
+    # worse than one showing "unknown".
+    clock.advance(0.001)
+    assert contract.is_fresh(clock.now(), stamp) is False
+    assert (contract.is_fresh(clock.now(), stamp) and reported_allow_motion) is False
+
+    # Same rule, same window, for the watchdog's armed/fired pair.
+    for reported in (True, False):
+        assert (contract.is_fresh(clock.now(), stamp) and reported) is False
+
+
+def test_safety_keys_are_absent_until_bringup_has_actually_spoken(contract):
+    """Unknown must cross the wire as a MISSING key, never as ``'false'``.
+
+    The client renders an absent key as "unknown" and a present one as a
+    reading it can trust. Emitting ``allow_motion: 'false'`` before
+    ``/ugv/allow_motion`` has ever produced a message is the cockpit asserting
+    a fact it does not have — and asserting the conservative-looking one, which
+    is precisely what makes it dangerous: on a robot where these publishers are
+    not deployed, the strip shows a confident LOCKED / OFF-LINE forever and
+    never says "I cannot see the robot".
+    """
+    clock = FakeClock()
+
+    assert contract.bringup_key_values(clock.now(), None, False) == ()
+    assert contract.bringup_key_values(clock.now(), None, True) == ()
+    assert contract.watchdog_key_values(clock.now(), None, False, False) == ()
+    assert contract.watchdog_key_values(clock.now(), None, True, True) == ()
+
+
+def test_safety_keys_appear_on_receipt_and_disappear_again_when_stale(contract):
+    """Present -> absent, driven by an injected clock rather than wall time."""
+    clock = FakeClock()
+    stamp = clock.now()
+
+    assert contract.bringup_key_values(clock.now(), stamp, True) == (
+        ('allow_motion', 'true'),
+    )
+    assert contract.bringup_key_values(clock.now(), stamp, False) == (
+        ('allow_motion', 'false'),
+    )
+    assert contract.watchdog_key_values(clock.now(), stamp, True, False) == (
+        ('armed', 'true'), ('fired', 'false'),
+    )
+
+    # Inside the window, boundary included: one missed 2 Hz tick must not blank
+    # a strip that is being read while the robot drives.
+    clock.advance(contract.BRINGUP_STALE_S)
+    assert contract.bringup_key_values(clock.now(), stamp, True) == (
+        ('allow_motion', 'true'),
+    )
+    assert len(contract.watchdog_key_values(clock.now(), stamp, True, True)) == 2
+
+    # Past it, the keys GO AWAY. Not 'false' — away. A reading the node can no
+    # longer justify must stop being on the wire at all.
+    clock.advance(0.001)
+    assert contract.bringup_key_values(clock.now(), stamp, True) == ()
+    assert contract.watchdog_key_values(clock.now(), stamp, True, True) == ()
+
+    # A fresh message brings them straight back.
+    stamp = clock.now()
+    assert contract.bringup_key_values(clock.now(), stamp, True) == (
+        ('allow_motion', 'true'),
+    )
+    assert len(contract.watchdog_key_values(clock.now(), stamp, False, True)) == 2
+
+
+def test_safety_key_names_are_the_ones_the_client_reads(contract):
+    """The builders must emit the declared keys, not near-misses."""
+    clock = FakeClock()
+    stamp = clock.now()
+
+    emitted = [key for key, _ in contract.bringup_key_values(clock.now(), stamp, True)]
+    assert emitted == list(contract.DIAG_KEYS[contract.DIAG_BRINGUP])
+
+    emitted = [
+        key for key, _ in contract.watchdog_key_values(clock.now(), stamp, True, True)
+    ]
+    assert emitted == list(contract.DIAG_KEYS[contract.DIAG_WATCHDOG])
+
+
+def test_status_node_keeps_the_entry_even_when_the_keys_are_gone():
+    """Absent keys, present entry: the WARN and its message are the signal.
+
+    Dropping the whole DiagnosticStatus would make a dead ugv_bringup
+    indistinguishable from a cockpit_status that simply is not reporting on it.
+    """
+    source = read(STATUS_NODE)
+    assert re.search(r'DiagnosticStatus\(name=DIAG_BRINGUP', source), (
+        '%s must always emit the bringup entry, whether or not it has data for '
+        'its keys' % STATUS_NODE
+    )
+    assert re.search(r'DiagnosticStatus\(\s*name=DIAG_WATCHDOG', source), (
+        '%s must always emit the watchdog entry' % STATUS_NODE
+    )
+    assert re.search(r'UNKNOWN, key[s]? omitted', source), (
+        "%s: the not-fresh branches must say the keys were omitted, so the gap "
+        'is legible in `ros2 topic echo` and not only in the UI' % STATUS_NODE
     )
