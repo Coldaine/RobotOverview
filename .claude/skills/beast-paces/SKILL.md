@@ -46,8 +46,11 @@ Prefer running these commands directly over treating this skill as a slash-comma
 2. Run both ground-truth command blocks from the Quick connect section. Confirm:
    `beast-ros-base.service` active; `/ugv/voltage` publishes a plausible 3S value
    (~9.6–12.6 V — abort below 10.5 V and tell Patrick to charge); `/scan` streaming;
-   `/cmd_vel` has 0 publishers.
-3. Confirm the **motion lock itself**. Service state and a zero publisher count are only
+   `/cmd_vel` has no unexpected publisher (`ros2 topic info /cmd_vel --verbose`): before the
+   twist_mux safety spine (ugv_ws PR #8) is deployed that means 0 publishers; after it,
+   exactly one, the `twist_mux` node. Anything else — any other node, or `twist_mux` plus
+   others — is a fail: stop.
+3. Confirm the **motion lock itself**. Service state and a clean publisher check are only
    snapshots — neither proves motion is locked. Find the bringup node (`ros2 node list`) and
    read its motion flag (`ros2 param get <node> allow_motion`); `false` is the only pass. If
    the parameter cannot be read, or reads anything else, the robot stays locked: report that
@@ -79,6 +82,13 @@ interval" is the expectation the 2026-07-31 test disproved, and waiting three se
 robot with no proven stop is the failure this phase exists to prevent. The 2 s deadline in
 step 4 is this skill's own operator abort deadline, not a claim about the watchdog's tuning.
 Whatever timeout Phase 0 found configured, abort at 2 s regardless.
+
+Post-spine note: once the twist_mux safety spine (ugv_ws PR #8) is deployed, publishing
+directly to `/cmd_vel` bypasses the mux — that is intentional here and stays correct: this
+phase gates the driver's own watchdog in isolation, and the staged stop in step 1 still
+reaches the driver the same way. After a pass, an optional extra crawl+kill via `/cmd_vel_ui`
+(the mux's on-screen-teleop rung) also proves mux arbitration and its 0.5 s source timeout.
+The direct `/cmd_vel` test remains the required gate.
 
 1. **Stage the independent stop path first — before motion is possible at all.** In a third SSH
    session, have this exact command typed and ready, not yet run, and leave that session
@@ -163,8 +173,9 @@ a moving robot — the ESP32 holds the last velocity, so a restart can leave the
    or fight the service). Then `sudo systemctl start beast-ros-base.service` — this restores
    the boot-default `allow_motion:=false` lock.
 3. Verify, in this order: robot visibly stopped; service active; the bringup node's
-   `allow_motion` parameter reads `false` again (same check as Phase 0 step 3); `/cmd_vel`
-   publisher count 0; `/odom` showing no motion; telemetry flowing. If `allow_motion` cannot be
+   `allow_motion` parameter reads `false` again (same check as Phase 0 step 3); the
+   `/cmd_vel` publisher check from Phase 0 step 2 is clean (0 pre-spine; only `twist_mux`
+   post-spine); `/odom` showing no motion; telemetry flowing. If `allow_motion` cannot be
    confirmed `false`, or the robot is not confirmed stopped, say so plainly, treat the robot as
    unsafe, ask Patrick to cut power, and do not report a clean finish.
 4. Write results back:
