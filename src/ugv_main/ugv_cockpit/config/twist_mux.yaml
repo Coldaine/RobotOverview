@@ -165,10 +165,11 @@ twist_mux:
     # topic as engagement (see the epoch-zero discussion above). Documented
     # in docs/command_arbitration.md#emergency-lock.
     #
-    # NOTE (standing gap): nothing publishes cmd_vel_estop_lock yet, so the
-    # lock is inert until PR-2 adds the cockpit's e-stop control to the
-    # bridge's client-publish whitelist. It is wired here so the topic
-    # contract is fixed before any client exists.
+    # The cockpit bridge's client-publish whitelist admits this topic
+    # (launch/rosbridge.launch.py, TOPICS_PUB_GLOB), so the web cockpit's
+    # e-stop control is a real publisher of it. No node in THIS workspace
+    # publishes it: the client is a browser, and the ">= 1 Hz while engaged"
+    # contract above is on that client, not on anything here.
     locks:
       estop:
         topic: cmd_vel_estop_lock

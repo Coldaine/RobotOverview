@@ -40,6 +40,10 @@ fi
 # ---------- ROS 2 packages ----------
 echo
 echo "[2/6] Installing ROS 2 packages..."
+# ros-humble-rosbridge-suite is listed explicitly as well as via the
+# ros-humble-rosbridge-* glob: ugv_cockpit's cockpit bridge depends on it by
+# name (deploy/systemd/beast-cockpit.service, docs/cockpit.md), and that
+# dependency should survive anyone tightening the inherited wildcard.
 apt-get install -y \
     ros-humble-cartographer-* \
     ros-humble-desktop-* \
@@ -47,6 +51,7 @@ apt-get install -y \
     ros-humble-position-controllers \
     ros-humble-nav2-* \
     ros-humble-rosbridge-* \
+    ros-humble-rosbridge-suite \
     ros-humble-rqt-* \
     ros-humble-rtabmap-* \
     ros-humble-twist-mux \

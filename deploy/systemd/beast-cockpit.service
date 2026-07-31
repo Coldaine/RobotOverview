@@ -1,3 +1,15 @@
+# DISABLED BY DEFAULT, ON PURPOSE.
+#
+# Starting this unit opens a rosbridge websocket that can publish onto the
+# robot's command topics. There is no authentication on it; the boundary is the
+# loopback bind + the topic whitelist in ugv_cockpit/launch/rosbridge.launch.py
+# + tailscale serve. `systemctl enable` is an operator decision, not part of
+# installing the workspace.
+#
+# docs/cockpit.md has the whitelist, the commissioning check that proves it is
+# enforced (denials are SILENT to the client), and the tailscale serve command.
+# Port 9090 is loopback-only, so no firewall hole is needed or wanted.
+
 [Unit]
 Description=BEAST-01 Command Deck cockpit (OAK + rosbridge + cockpit nodes)
 Wants=network-online.target beast-ros-base.service
@@ -8,11 +20,21 @@ ConditionPathExists=/home/beast/beast/ugv_ws/install/setup.bash
 Type=simple
 User=beast
 Group=beast
-SupplementaryGroups=dialout video render plugdev
+# No `dialout`: this unit never touches the ESP32 serial link. video/render/
+# plugdev are for the OAK-D over USB. The bridge does admit the reviewed remote
+# command topics, but this process needs no direct serial-device access.
+SupplementaryGroups=video render plugdev
 WorkingDirectory=/home/beast/beast/ugv_ws
+# COCKPIT_ALLOWED_ORIGINS lives here. It is the origin SERVING the cockpit page
+# (the RobotOverview deployment), not this robot's hostname — the Origin header
+# carries the page's origin. Unset denies every browser, on purpose: rosbridge's
+# check_origin returns True unconditionally and WebSocket handshakes skip CORS,
+# so without an allowlist any page in any tab on a tailnet-joined machine can
+# publish to the reviewed command topics. docs/cockpit.md has the reasoning.
 EnvironmentFile=/etc/beast/ugv.env
 Environment=PYTHONUNBUFFERED=1
-# Cockpit only: telemetry + camera + bridge. No motion path is added here.
+# Cockpit telemetry + camera + a reviewed remote command ingress through the
+# existing mux/gate/watchdog path. No direct /cmd_vel or serial bypass.
 ExecStart=/bin/bash -lc 'source /opt/ros/humble/setup.bash && source /home/beast/beast/ugv_ws/install/setup.bash && exec ros2 launch ugv_cockpit cockpit.launch.py use_camera:=true use_bridge:=true'
 KillSignal=SIGINT
 TimeoutStopSec=15

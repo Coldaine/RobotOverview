@@ -24,6 +24,7 @@ nav:
     - Hardware Driver: bringup.md
     - Keyboard & Gamepad Control: teleoperation.md
     - Command Arbitration: command_arbitration.md
+    - Web Cockpit Bridge: cockpit.md
     - LiDAR Interaction: lidar.md
     - Vision: vision.md
     - Mapping: mapping.md

@@ -134,11 +134,16 @@ this topic yet, so a non-zero timeout would ship a robot that can never be comma
     This cannot be enforced in config: with `timeout: 0.0`, `twist_mux` never treats
     silence on this topic as engagement.
 
-!!! note "Standing gap"
-    Because nothing publishes `cmd_vel_estop_lock` yet, the lock is currently
-    **inert** — the topic is wired so the contract is fixed before any client exists.
-    When a heartbeat publisher lands, changing `timeout` to `0.5` turns this into a
-    fail-locked e-stop with no code change.
+!!! note "Who publishes it"
+    The [web cockpit](cockpit.md) is the only publisher: its e-stop control reaches this
+    topic through the bridge's client-publish whitelist. **No node in this workspace
+    publishes it**, so the ≥ 1 Hz contract above is a contract on the browser.
+
+    Nothing here republishes the lock on the client's behalf, deliberately — a robot-side
+    "keep the stop engaged" daemon would keep it engaged after the operator's link died,
+    which is the right answer for a stop but makes releasing it depend on a process the
+    operator cannot see. When a real heartbeat publisher lands, changing `timeout` to
+    `0.5` turns this into a fail-locked e-stop with no code change.
 
 ## Package
 

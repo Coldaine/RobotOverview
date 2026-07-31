@@ -26,7 +26,10 @@
   <depend>python3-numpy</depend>
 
   <exec_depend>rosbridge_server</exec_depend>
-  <exec_depend>rosapi</exec_depend>
+  <exec_depend>rosbridge_library</exec_depend>
+  <!-- NO rosapi. cockpit_rosbridge also removes every service and action
+       capability from the upstream protocol, so rosapi cannot leak in from
+       another node in the same ROS domain. -->
   <exec_depend>depthai_ros_driver</exec_depend>
   <exec_depend>ugv_vision</exec_depend>
   <exec_depend>twist_mux</exec_depend>

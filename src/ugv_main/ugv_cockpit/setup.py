@@ -27,6 +27,7 @@ setup(
             'depth_colorizer = ugv_cockpit.depth_colorizer:main',
             'overhead_clearance = ugv_cockpit.overhead_clearance:main',
             'cockpit_status = ugv_cockpit.cockpit_status:main',
+            'cockpit_rosbridge = ugv_cockpit.cockpit_rosbridge:main',
         ],
     },
 )

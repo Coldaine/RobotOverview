@@ -17,6 +17,9 @@
   <depend>sensor_msgs</depend>
   <depend>nav_msgs</depend>
   <depend>tf2_ros</depend>
+  <!-- /ugv/watchdog_state is a DiagnosticStatus: the cockpit's safety strip
+       reads armed/fired from it (see ugv_cockpit/cockpit_status.py). -->
+  <depend>diagnostic_msgs</depend>
   <!-- Command spine: bringup_lidar.launch.py includes ugv_cockpit's
        twist_mux.launch.py, which owns the only /cmd_vel publisher. -->
   <exec_depend>ugv_cockpit</exec_depend>

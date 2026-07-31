@@ -20,8 +20,10 @@ What this file does NOT do:
     twist_mux never publishes a stop of its own — on source silence it
     simply stops emitting. The watchdog is the only thing in the chain
     guaranteed to notice silence and act on it.
-  * It does not open a network port. The cockpit bridge (foxglove_bridge)
-    and the operator teleop path land in PR-2.
+  * It does not open a network port. That is rosbridge.launch.py in this
+    same package — a rosbridge websocket bound to loopback with an explicit
+    topic whitelist — and it is deliberately NOT included by bringup. See
+    docs/cockpit.md.
 """
 
 import os
@@ -39,17 +41,6 @@ def generate_launch_description():
         get_package_share_directory('ugv_cockpit'),
         'config',
         'twist_mux.yaml',
-    )
-
-    twist_mux_config_arg = DeclareLaunchArgument(
-        'twist_mux_config',
-        default_value=default_config,
-        description=(
-            'Path to the twist_mux ros__parameters file that declares the '
-            'command priority ladder. Overriding this replaces the safety '
-            'arbitration policy — do not point it at anything that has not '
-            'been through the same review as the default.'
-        ),
     )
 
     use_sim_time_arg = DeclareLaunchArgument(
@@ -70,7 +61,7 @@ def generate_launch_description():
         # keep matching. A rename here silently drops the whole ladder.
         output='screen',
         parameters=[
-            LaunchConfiguration('twist_mux_config'),
+            default_config,
             {
                 'use_sim_time': ParameterValue(
                     LaunchConfiguration('use_sim_time'), value_type=bool
@@ -97,7 +88,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        twist_mux_config_arg,
         use_sim_time_arg,
         twist_mux_node,
     ])

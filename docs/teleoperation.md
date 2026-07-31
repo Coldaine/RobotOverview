@@ -229,7 +229,7 @@ Press **`Ctrl+C`** in the terminal running `keyboard_ctrl` or `teleop_twist_joy.
 **If a demo or Nav2 is also running, stop that terminal too.** Otherwise it takes the floor about 0.5 s after teleop falls silent and the robot drives on — see [One motion source at a time](#one-motion-source-at-a-time).
 
 !!! warning "Publishing zero to `/cmd_vel` by hand is not a stop"
-    `twist_mux` owns **`/cmd_vel`** and republishes the winning source over your message within milliseconds, so a `--once` publish is overwritten before it takes effect. The ladder has a dedicated e-stop rung (`cmd_vel_estop_lock`, priority 255), but **nothing publishes it yet** — it is wired and inert. See [Emergency lock](command_arbitration.md#emergency-lock).
+    `twist_mux` owns **`/cmd_vel`** and republishes the winning source over your message within milliseconds, so a `--once` publish is overwritten before it takes effect. Use the ladder's dedicated e-stop rung instead (`cmd_vel_estop_lock`, priority 255), which the [web cockpit](cockpit.md) drives — and note that a `--once` publish does not engage that either: it must be republished at **≥ 1 Hz** while engaged. See [Emergency lock](command_arbitration.md#emergency-lock).
 
     Cutting power remains the only instant stop.
 

@@ -5,12 +5,22 @@ Exposes BEAST-01's live telemetry and OAK-D optics to the browser cockpit over a
 single rosbridge WebSocket, and adds the three derived topics the cockpit needs
 that no stock topic provides.
 
-This package adds **no motion path**. Drive arbitration (twist_mux) and the
-arming service live in their own safety-isolated packages/PRs. It does, however,
-stand up the rosbridge WebSocket the cockpit uses to *advertise* command topics
-(`/cmd_vel_ui`, gimbal, LED, e-stop lock); motion safety therefore rests on the
-base arming gate + the cmd_vel-timeout watchdog and on Tailscale ACLs gating the
-bridge — never on this package alone.
+This package adds a **remote command ingress**, by design: it stands up the
+rosbridge WebSocket the cockpit uses to *publish* command topics (`/cmd_vel_ui`,
+gimbal, LED, e-stop lock) — so it owns the boundary that keeps a browser on the
+existing priority-50 mux rung and off `/cmd_vel` entirely. It adds no bypass
+around the existing mux, motion gate, or watchdog. There is no authentication on
+that socket. Motion safety rests on four things, in order:
+
+1. the **loopback bind + topic whitelist** in `launch/rosbridge.launch.py`,
+2. `twist_mux` arbitration ([Command Arbitration](../../../docs/command_arbitration.md)),
+3. `ugv_bringup`'s `allow_motion` gate, and
+4. `ugv_bringup`'s 0.5 s `cmd_vel` timeout watchdog.
+
+The full security model, the rosbridge enforcement details, and the
+commissioning check that proves the whitelist is live are in
+[docs/cockpit.md](../../../docs/cockpit.md). Read that before changing a glob:
+every way of getting one wrong fails **silently**.
 
 ## What it publishes
 
@@ -18,30 +28,76 @@ bridge — never on this package alone.
 |---|---|---|
 | `depth_colorizer` | `/cockpit/depth/compressed` (`CompressedImage`, JPEG ~6 Hz) | Raw 16UC1 depth (~614 KB/frame) is unusable in a browser; clip → TURBO colormap → JPEG. |
 | `overhead_clearance` | `/cockpit/overhead_clearance` (`Float32`, m) | "Will I fit under this duct?" — image-space min on the top depth band. Mission Undercroft's defining question. |
-| `cockpit_status` | `/cockpit/status` (`DiagnosticArray`) | Active mux source, `/cmd_vel` publisher count, disk free, Jetson temps, Wi-Fi RSSI. |
+| `cockpit_status` | `/cockpit/status` (`DiagnosticArray`) | Active mux source and command age, `/cmd_vel` publisher count, arming + watchdog state, disk free, Jetson temps, Wi-Fi RSSI. |
 
-The RADAR (`/scan`), odom, `/ugv/voltage`, `/imu/data`, `/diagnostics`, and
+`/scan`, `/odom`, `/ugv/voltage`, `/imu/raw`, `/diagnostics`,
+`/ugv/allow_motion`, `/ugv/watchdog_state`, and
 `/oak/rgb/image_raw/compressed` come from `beast-ros-base` + the OAK launch and
 are simply carried on the same bridge.
 
+> **`/imu/raw`, not `/imu/data`.** `ugv_bringup` publishes `sensor_msgs/Imu` on
+> `imu/raw`; its `imu/data_raw` publisher is commented out and no filter node
+> republishes as `imu/data`. Nothing on this robot publishes `/imu/data`. The
+> cockpit client's matching change (`/imu/data` → `/imu/raw`) is **merged** on
+> RobotOverview main (#148), so this glob entry is simply correct as it stands.
+
+`cockpit_status` also consumes two topics `ugv_bringup` publishes at 2 Hz —
+`/ugv/allow_motion` (`Bool`) and `/ugv/watchdog_state` (`DiagnosticStatus`, keys
+`armed` / `fired` / `watching` / `timeout`) — so the cockpit's drive gate reflects
+what the robot enforces rather than what the UI last sent. Both are subscribed
+`TRANSIENT_LOCAL` to match the publishers, and both are aged out after 3 s.
+
+> **Aged out means the key is omitted, not published as `false`.** Before the
+> first message and after 3 s of silence, `allow_motion` / `armed` / `fired` are
+> absent from `/cockpit/status` entirely; the entries stay, at WARN, naming the
+> silent topic. A published `false` would render in the cockpit as a confident
+> LOCKED / OFF-LINE rather than "no publisher" — conservative-looking, and
+> therefore never investigated. See [docs/cockpit.md](../../../docs/cockpit.md).
+>
+> **This half only works with the client half.** Absence is honest only because
+> RobotOverview renders a missing key as UNKNOWN and gates drive on the
+> robot-reported `allow_motion` — merged on main in #148/#149. Do not change the
+> omission rule without checking that repo.
+
 ## Transport
 
-`rosbridge_websocket` on **port 9090** (`authenticate: false`,
-`use_compression: true`). Bind LAN/tailnet only — **never expose publicly**;
-Tailscale ACLs are the access control.
-
-`tailscale serve` provisions the real Let's Encrypt cert so an HTTPS page can
-open a valid `wss://` (a plain `ws://` is blocked as mixed content):
+`cockpit_rosbridge` on **127.0.0.1:9090** — loopback only, `authenticate: false`,
+`use_compression: true`, with an explicit publish/subscribe topic whitelist, no
+`rosapi_node`, only the four topic opcodes registered, and an origin allowlist.
+`tailscale serve` fronts it and is the only *network* path in; it also provisions
+the real Let's Encrypt cert so an HTTPS page can open a valid `wss://` (a plain
+`ws://` is blocked as mixed content):
 
 ```bash
 # One-time: enable HTTPS certs for the tailnet in the admin console, then:
-sudo tailscale serve --bg --https=443 tcp://localhost:9090
+sudo tailscale serve --bg --https=443 http://127.0.0.1:9090
 # Confirm it survives reboot:
 tailscale serve status
 ```
 
 The cockpit app then points `BEAST_COCKPIT_WS_URL` at
 `wss://beast-01.tyrannosaurus-magellanic.ts.net`.
+
+> **Reachability does not gate a browser.** rosbridge's `check_origin` returns
+> `True` unconditionally (verified, `humble` branch) and WebSocket handshakes are
+> exempt from the same-origin policy, so before this package any page in any tab
+> on a tailnet-joined machine could connect and publish. `cockpit_rosbridge`
+> replaces `check_origin` with an allowlist:
+>
+> ```bash
+> # /etc/beast/ugv.env — the origin SERVING the cockpit page, not the robot's
+> COCKPIT_ALLOWED_ORIGINS=https://hangar.example.ts.net
+> ```
+>
+> Unset denies every browser (fail closed). Clients that send no `Origin` at all
+> — non-browser tooling — are still admitted; that residual is documented in
+> [docs/cockpit.md](../../../docs/cockpit.md).
+
+**Do not widen the bind address or a glob without reading
+[docs/cockpit.md](../../../docs/cockpit.md).** An unset glob is allow-all, a
+double-quoted entry matches nothing, and rosbridge denies publishes *silently* —
+the browser's button still looks like it worked. `test/test_cockpit_bridge.py`
+is the merge gate on all of it.
 
 ## Run it
 
@@ -59,15 +115,27 @@ bandwidth and power are only spent when someone is actually watching.
 ## Service
 
 `deploy/systemd/beast-cockpit.service` runs the full cockpit `Wants=`/`After=`
-`beast-ros-base.service`. Install:
+`beast-ros-base.service`. It ships **disabled**: installing the workspace must
+not open a control socket. Install it, then decide separately whether to enable
+it.
 
 ```bash
-sudo cp deploy/systemd/beast-cockpit.service /etc/systemd/system/
+sudo install -D -m 0644 deploy/systemd/beast-cockpit.service \
+  /etc/systemd/system/beast-cockpit.service
 sudo systemctl daemon-reload
-sudo systemctl enable --now beast-cockpit.service
+
+sudo systemctl start beast-cockpit.service          # this session only
+sudo systemctl enable --now beast-cockpit.service   # every boot — a decision
+sudo systemctl disable --now beast-cockpit.service  # close it again
+
 systemctl status beast-cockpit.service
 ros2 topic list | grep cockpit   # expect the three /cockpit/* topics
 ```
+
+Then run the commissioning check in
+[docs/cockpit.md](../../../docs/cockpit.md#commissioning-check-prove-the-boundary-is-live):
+a broken whitelist is invisible from the browser, so this is the only thing that
+distinguishes "enforced" from "looks enforced".
 
 ## Dependencies
 
