@@ -66,7 +66,7 @@ consecutive zero Twists further zeros are dropped; small yaw commands are force-
 | Safety strip (always visible, never scrolls) | E-stop; MOTION state; reconstructed active mux source + cmd age + `/cmd_vel` publisher count; watchdog state; pack volts with 10.5 V floor and 8.8 V brownout marks | `/ugv/voltage.voltage` (volts only), `/cockpit/status` observer |
 | Spatial | Current: `/scan` with LD19's real 225–315° rear crop and `/odom` pose trail. Deferred: TF, robot model, wheel-vs-rf2o comparison, map, costmaps, path, goals | current `/scan`, `/odom`; deferred topics are outside the closed bridge contract |
 | Optics | OAK RGB (jpeg-compressed), OAK depth colorized, 5 MP PT cam; FPS + link-speed chips; later NN detections overlay | `/oak/*`, PT cam launch (gap) |
-| Telemetry | Voltage sparkline w/ floor line; IMU traces (labeled uncal); diagnostics; ops log (rosout) | `/imu/raw`, `/diagnostics`, `/rosout` |
+| Telemetry | Current: voltage sparkline, IMU traces (labeled uncal), diagnostics. Deferred: ops log (`/rosout`) | current `/ugv/voltage`, `/imu/raw`, `/diagnostics`; `/rosout` is outside the closed bridge contract |
 | Ops | Recording state + disk free; node/service health; bridge/link health (direct-vs-DERP) | gap publishers, below |
 | Honesty rail | SOC% fake (hidden by design) · PT joint feedback = commanded, not measured · IMU uncalibrated, not fused · ESP32 no firmware heartbeat | permanent; per rich-ui rubric, absence must be visible |
 
