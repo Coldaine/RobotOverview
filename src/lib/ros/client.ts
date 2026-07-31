@@ -155,7 +155,7 @@ const listeners = {
 const imageCallbacks = new Map<string, (url: string) => void>();
 
 let socket: WebSocket | null = null;
-let reconnectTimer: NodeJS.Timeout | null = null;
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let reconnectDelay = 1000;
 const MAX_RECONNECT_DELAY = 10000;
 let lastWsUrl = '';
@@ -210,8 +210,8 @@ const ESTOP_RELEASE_INTERVAL_MS = 400;
 const ESTOP_RELEASE_SENDS = 4; // ~1.2 s of `false` before going quiet
 
 let operatorEngaged = false;
-let estopHeartbeatTimer: NodeJS.Timeout | null = null;
-let estopReleaseTimer: NodeJS.Timeout | null = null;
+let estopHeartbeatTimer: ReturnType<typeof setInterval> | null = null;
+let estopReleaseTimer: ReturnType<typeof setInterval> | null = null;
 let estopReleaseSends = 0;
 
 function setEstopState(next: Partial<CockpitEstop>) {
@@ -510,7 +510,7 @@ export const rosClient = {
 
   callService(serviceName: string, args: unknown) {
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
-    const callId = `call_${Math.random().toString(36).substr(2, 9)}`;
+    const callId = `call_${Math.random().toString(36).slice(2, 11)}`;
     const triggerMsg = JSON.stringify({
       op: 'call_service',
       service: serviceName,
