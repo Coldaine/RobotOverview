@@ -488,8 +488,8 @@ const imageCallbacks = new Map<string, (frame: ImageFrame) => void>();
 const imageObjectUrls = new Map<string, string>();
 
 let socket: WebSocket | null = null;
-let reconnectTimer: NodeJS.Timeout | null = null;
-let stalenessTimer: NodeJS.Timeout | null = null;
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+let stalenessTimer: ReturnType<typeof setInterval> | null = null;
 let reconnectDelay = 1000;
 const MAX_RECONNECT_DELAY = 10000;
 let lastWsUrl = '';
@@ -548,8 +548,8 @@ export const ESTOP_CONFIRM_GRACE_MS = 2000;
 export const ESTOP_MUX_SOURCE = 'E-STOP lock';
 
 let operatorEngaged = false;
-let estopHeartbeatTimer: NodeJS.Timeout | null = null;
-let estopReleaseTimer: NodeJS.Timeout | null = null;
+let estopHeartbeatTimer: ReturnType<typeof setInterval> | null = null;
+let estopReleaseTimer: ReturnType<typeof setInterval> | null = null;
 let estopReleaseSends = 0;
 
 function setEstopState(next: Partial<CockpitEstop>) {
@@ -1007,9 +1007,17 @@ export const rosClient = {
     // Another tab owns the lock; two heartbeats fighting is the hazard this
     // guards against.
     if (!estopState.writer) return false;
-    // No socket means no way to reach the mux. Refusing here is what keeps the
-    // UI honest: we never latch a state we could not transmit.
-    if (!socket || socket.readyState !== WebSocket.OPEN) return false;
+    const live = !!socket && socket.readyState === WebSocket.OPEN;
+    // No socket means no way to reach the mux. Refusing to ENGAGE keeps the UI
+    // honest. A refused RELEASE must still drop local intent or reconnect would
+    // re-assert a lock the operator already cleared.
+    if (!live) {
+      if (engaged) return false;
+      operatorEngaged = false;
+      stopEstopTimers();
+      setEstopState({ engaged: false, engagedAt: null });
+      return false;
+    }
 
     if (engaged) {
       const armed = startEstopHeartbeat();

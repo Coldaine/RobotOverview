@@ -662,6 +662,25 @@ describe('rosClient and hooks', () => {
       expect(vi.getTimerCount()).toBe(0);
     });
 
+    it('drops release intent while disconnected and does not reassert on reconnect', () => {
+      const ws = openSocket();
+      act(() => {
+        rosClient.setEstopLock(true);
+        ws.triggerClose();
+      });
+
+      act(() => {
+        expect(rosClient.setEstopLock(false)).toBe(false);
+      });
+      expect(rosClient.isEstopEngaged()).toBe(false);
+
+      act(() => {
+        vi.advanceTimersByTime(1200);
+        MockWebSocket.latestInstance?.triggerOpen();
+      });
+      expect(estopPublishes(MockWebSocket.latestInstance!)).toHaveLength(0);
+    });
+
     it('stamps when intent latched so the UI can escalate an unconfirmed stop', () => {
       openSocket();
       const hook = renderHook(() => useCockpitEstop());
