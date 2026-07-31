@@ -3,7 +3,7 @@
 Proposed work, written to be executed by an agent that was not present when the plan was written.
 A plan here is a work order, not a record of reasoning: it names inputs, what to do, what to emit,
 and how to tell when it is done. Executed plans are deleted, not archived — git history is the
-archive. Research briefings are not plans; they live in `content/datacore/`.
+archive. Research briefings are not plans; they live in the Datacore `briefings` table.
 
 **Code is truth.** A plan describes intended work; it never governs. If a plan and the code
 disagree, the code is right and the plan is stale.
@@ -17,10 +17,10 @@ disagree, the code is right and the plan is stale.
 
 ## Related, outside this directory
 
-- `keyArtifactstosort/INTAKE-REGISTER.md` — identity index for `keyArtifactstosort/`
-  (what each file *is*)
+- Datacore briefings `artifact-intake` / `beast-evidence-manifest` — identity index and
+  evidence register for `keyArtifactstosort/` (formerly markdown registers; read in Datacore)
 - `keyArtifactstosort/Artifacts/ros-driver/` — traced-connectivity extraction outputs
   (the executed work of the deleted enumeration plan; Phase 3 of the wiring plan lands it)
-- `keyArtifactstosort/agents.md` — **nothing in that directory may be deleted**
-- `content/datacore/robot-control-llms.md` — robot-control LLM research (RND-ROBOT-LLM),
-  cited from `hangar.ts` insights
+- `keyArtifactstosort/agents.md` — binaries-only retention for that tree
+- Robot-control LLM research (RND-ROBOT-LLM) lives as a Datacore briefing in Postgres,
+  not as repo markdown

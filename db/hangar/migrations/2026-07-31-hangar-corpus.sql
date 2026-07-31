@@ -60,6 +60,24 @@ ALTER TABLE insights ADD COLUMN bay TEXT;
 ALTER TABLE capabilities ADD COLUMN bay TEXT;
 ALTER TABLE wishlist_meta ADD COLUMN source TEXT;
 
+-- Live enum drift: this DB was seeded from a pre-2026-07-12 schema snapshot
+-- ('in-mission' present but unused; 'inventory' and 'integrating' missing).
+-- Run as separate statements outside this file's transaction if your PG
+-- version rejects ADD VALUE inside one.
+ALTER TYPE asset_status ADD VALUE IF NOT EXISTS 'inventory';
+ALTER TYPE asset_status ADD VALUE IF NOT EXISTS 'integrating';
+
+-- The live DB predates mission_after_actions (canonical since June schema).
+CREATE TABLE IF NOT EXISTS mission_after_actions (
+  id         SERIAL PRIMARY KEY,
+  mission_id TEXT NOT NULL REFERENCES missions(id) ON DELETE CASCADE,
+  position   INTEGER NOT NULL CHECK (position >= 0),
+  text       TEXT NOT NULL,
+  UNIQUE (mission_id, position)
+);
+ALTER TABLE mission_after_actions OWNER TO hangar;
+GRANT ALL ON TABLE mission_after_actions TO hangar;
+
 ALTER TABLE asset_shortcuts OWNER TO hangar;
 GRANT ALL ON TABLE asset_shortcuts TO hangar;
 

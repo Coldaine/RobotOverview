@@ -6,13 +6,13 @@ last_verified: 2026-07-30
 # Deployment — verified facts
 
 Everything below was verified against the live cluster (`admin@homelab-target`) and
-`coldaine-homelab` on 2026-07-30. When this page and reality disagree, reality wins —
-check live state (`kubectl`, `curl`) before building on anything here.
+`coldaine-homelab` on 2026-07-30. Normalized cutover landed 2026-07-31 (reconstruction
+read path, op-verb ingest, briefings in DB). When this page and reality disagree, reality
+wins — check live state (`kubectl`, `curl`) before building on anything here.
 
 **This repo** owns the Hangar app code, `Dockerfile`, and content tooling.
 **[`coldaine-homelab`](https://github.com/Coldaine/coldaine-homelab)** owns runtime
 manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation.
-`coldaine-k8cluster` is a frozen pre-reset snapshot — not the deploy owner.
 
 ## What runs today
 
@@ -22,10 +22,13 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
 - **Database:** Logical DB `hangar` on CloudNativePG `pg18-core` (`data-platform`).
   App env from Secret `hangar-runtime-secrets` (`HANGAR_DB_*`, `HANGAR_INGEST_TOKEN`).
   Readiness probe is `GET /api/hangar/preflight` — a Ready pod means Postgres is reachable.
-- **UI spine:** Postgres table `content_snapshots` (`id=hangar`) holds the HangarData JSON
-  the UI reads. Agents write via `POST /api/hangar/ingest` (Bearer `HANGAR_INGEST_TOKEN`),
-  not by editing TypeScript. Static `hangar.ts` is the offline/fixture fallback only
+- **UI spine:** Reconstructs HangarData from normalized tables at request time
+  (`getHangarSpine` → `buildHangarDataFromDb`). Agents write via op-verb
+  `POST /api/hangar/ingest` (Bearer `HANGAR_INGEST_TOKEN`) — verb table in
+  [`AGENTS.md`](../AGENTS.md). Static `hangar.ts` is the offline/fixture fallback only
   (loudly indicated in the Shell when used).
+- **Datacore:** Packs/briefings read from the `briefings` table. When Postgres is
+  unavailable, briefings return empty and pages show a **DATACORE OFFLINE** banner.
 - **Build:** GitHub Actions (`.github/workflows/image.yml`) builds and publishes to GHCR
   on `main` (and PR proof tags). Shipwright is installed on the cluster but is not the
   Hangar image path today.
@@ -47,22 +50,24 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
 
 ## Agent ingest
 
-```http
-POST /api/hangar/ingest
-Authorization: Bearer <HANGAR_INGEST_TOKEN>
-Content-Type: application/json
+Op-verb API (`{ "op", "input" }`); auth, shapes, and errors in [`AGENTS.md`](../AGENTS.md).
+Token: Doppler `homelab`/`dev` → `HANGAR_INGEST_TOKEN`.
 
-{ "entity": "insight", "record": { "id": "…", "title": "…", "body": "…", … } }
-```
+## Fresh-environment bootstrap
 
-Entity kinds: `unit`, `item`, `mission`, `wishlist`, `capability`, `insight`,
-`activity`, `terminal`, `net`, `document`. Upserts into the Postgres spine snapshot.
-
-Bootstrap / refresh from the TypeScript fixture (operators only):
+See also [`db/hangar/standup.md`](../db/hangar/standup.md).
 
 ```bash
-# after applying db/hangar/migrations/2026-07-30-content-snapshots.sql
-doppler run -p homelab -c dev -- npm run hangar:seed-spine
+# schema + migrations (corpus and snapshot-drop — paths in standup.md)
+psql … -f db/hangar/schema.sql
+# then apply db/hangar/migrations/* in date order (see standup.md)
+
+# Fixture → seed → apply
+npx tsx db/hangar/gen-seed.ts --out db/hangar/seed.sql
+psql … -f db/hangar/seed.sql
+
+# Replay research corpus into briefings
+doppler run -p homelab -c dev -- npx tsx db/hangar/ingest-research-corpus.ts
 ```
 
 ## Known gaps

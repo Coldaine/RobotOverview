@@ -334,31 +334,55 @@ type LandPlan = {
 };
 
 /** Read repo-relative path from disk, or from git HEAD if already deleted. */
+// Files deleted from the working tree AND from HEAD (Wave 3) still exist in
+// history — resolve the last commit that contained the path.
+function gitRevWithFile(rel: string): string | null {
+  const p = rel.replace(/\\/g, '/');
+  try {
+    execFileSync('git', ['cat-file', '-e', `HEAD:${p}`], { cwd: ROOT, stdio: 'ignore' });
+    return 'HEAD';
+  } catch {
+    // not at HEAD — fall through to history search
+  }
+  try {
+    // Most recent commit touching the path may be its deletion — walk history
+    // until a commit where the file actually exists.
+    const shas = execFileSync('git', ['log', '--format=%H', '--', p], {
+      cwd: ROOT,
+      encoding: 'utf8',
+    })
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    for (const sha of shas) {
+      try {
+        execFileSync('git', ['cat-file', '-e', `${sha}:${p}`], { cwd: ROOT, stdio: 'ignore' });
+        return sha;
+      } catch {
+        // deleted/absent in this commit — keep walking
+      }
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function readRepoText(rel: string): string {
   const abs = path.resolve(ROOT, rel);
   if (existsSync(abs)) return readFileSync(abs, 'utf8');
-  try {
-    return execFileSync('git', ['show', `HEAD:${rel.replace(/\\/g, '/')}`], {
-      cwd: ROOT,
-      encoding: 'utf8',
-      maxBuffer: 16 * 1024 * 1024,
-    });
-  } catch {
-    throw new Error(`Missing source file (disk + git HEAD): ${rel}`);
-  }
+  const rev = gitRevWithFile(rel);
+  if (!rev) throw new Error(`Missing source file (disk + git history): ${rel}`);
+  return execFileSync('git', ['show', `${rev}:${rel.replace(/\\/g, '/')}`], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    maxBuffer: 16 * 1024 * 1024,
+  });
 }
 
 function sourceExists(rel: string): boolean {
   if (existsSync(path.resolve(ROOT, rel))) return true;
-  try {
-    execFileSync('git', ['cat-file', '-e', `HEAD:${rel.replace(/\\/g, '/')}`], {
-      cwd: ROOT,
-      stdio: 'ignore',
-    });
-    return true;
-  } catch {
-    return false;
-  }
+  return gitRevWithFile(rel) !== null;
 }
 
 function buildLandPlans(): LandPlan[] {
