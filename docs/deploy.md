@@ -25,8 +25,8 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
 - **Database:** Logical DB `hangar` on CloudNativePG `pg18-core` (`data-platform`).
   App env from Secret `hangar-runtime-secrets` (`HANGAR_DB_*`, `HANGAR_INGEST_TOKEN`).
   Readiness probe is `GET /api/hangar/preflight` — a Ready pod means Postgres is reachable.
-- **Cockpit Transport Env:** `BEAST_COCKPIT_WS_URL` is a plain server-side environment variable (e.g. `wss://beast-01.tyrannosaurus-magellanic.ts.net`). It is fetched by the `/cockpit` server route and passed down securely to client-side components to avoid build-time inlining. If unset or offline, the Cockpit degrades gracefully to a loud disconnected state.
-- **Robot-side Service:** `beast-cockpit.service` runs on the Jetson, managing the `rosbridge_websocket` server on port `9090` and the custom depth colorizer, status aggregator, and overhead clearance nodes. It is proxied to `wss://` via `tailscale serve`.
+- **Cockpit Transport Env:** `BEAST_COCKPIT_WS_URL` is a server-side deployment variable (for example, `wss://beast-01.tyrannosaurus-magellanic.ts.net`) that the `/cockpit` route serializes into client props. It avoids build-time inlining but is **not a secret or an authentication boundary**; browser users can inspect it. If unset or offline, the Cockpit shows a loud disconnected state.
+- **Robot-side Service (built, not deployed):** `beast-cockpit.service` and its loopback-only `rosbridge_websocket` configuration exist in `ugv_ws`, but the service has not been deliberately installed/enabled on BEAST-01 and Tailscale Serve has not been configured for it. Deployment requires an explicit robot-side build/install, service enable, and WSS proxy step after the safety prerequisites; repository code alone does not make the cockpit live.
 - **UI spine:** Reconstructs HangarData from normalized tables at request time
   (`getHangarSpine` → `buildHangarDataFromDb`). Agents write via op-verb
   `POST /api/hangar/ingest` (Bearer `HANGAR_INGEST_TOKEN`) — verb table in

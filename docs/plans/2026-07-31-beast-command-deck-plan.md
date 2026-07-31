@@ -3,7 +3,7 @@
 **Status:** ACTIVE — 2026-07-31. Companion to the approved
 [cockpit spec](2026-07-31-beast-command-deck-spec.md). This plan sequences the work into
 PR-sized chunks across **two repos** — `Coldaine/ugv_ws` (robot-side, safety-relevant) and this
-repo (docs, later an optional link-out surface). The owner will split phases into per-PR plan
+repo (the in-app `/cockpit` command surface and docs). The owner will split phases into per-PR plan
 docs as they are picked up.
 
 ## Done condition
@@ -50,11 +50,11 @@ Split so each safety-relevant change is reviewable alone and no PR mixes repos:
 | --- | --- | --- | --- |
 | PR-0 | RobotOverview | This plan + spec + drafts dir + beast-ops updates (already in working tree) | docs review only |
 | PR-1 | ugv_ws | **Safety spine:** twist_mux + config, all existing publishers rerouted (`ugv_tools` keyboard/joy/behavior → mux inputs), tests proving direct `/cmd_vel` is unreachable from clients | unit tests on-robot; no cockpit yet |
-| PR-2 | ugv_ws | **Cockpit bridge:** foxglove_bridge launch + both whitelists, teleop_twist_joy (operator + optional robot-pad path), `beast-cockpit.service` (disabled by default), firewall notes | bridge up read-only; client-publish rejected off-whitelist |
+| PR-2 | ugv_ws | **Cockpit bridge:** loopback-only `rosbridge_websocket` with exact publish/subscribe globs and no service/action operations, teleop_twist_joy (operator + optional robot-pad path), `beast-cockpit.service` (disabled by default), firewall notes | bridge up read-only; publish rejected off-whitelist; services/actions unavailable |
 | PR-3 | ugv_ws | **OAK productization:** `beast-oak.yaml` (RGBD, sync, 480P, fps per USB tier), optional-camera arg in bringup or sibling service, IMU probe recorded | one-frame check via the new launch; USB tier recorded |
 | PR-4 | ugv_ws | **Phase E — SLAM:** slam_toolbox crawl tuning (min travel 0.10–0.15 m), map save workflow to the storage layout | map of one space saved + reloads in localization mode |
 | PR-5 | ugv_ws | **Phase F — nav2:** Beast velocity retune (≤0.15 m/s, replaces generic 0.26), depth scan via depthimage_to_laserscan as second obstacle source, collision monitor | supervised runs only; ESP32 heartbeat still absent |
-| PR-6 | RobotOverview | Optional, later: unit-page link-out chip to the cockpit; Foxglove layout JSON checked in | only after PR-2 is live |
+| PR-6 | RobotOverview | **Superseded:** the command surface landed directly in the Hangar as `/cockpit`; no separate link-out or Foxglove layout is planned | complete in-app implementation, then deploy only after PR-2 and the physical safety gates |
 
 Interleaved non-PR gates (hardware/procedure, tracked in `docs/beast-ops.md`): charge pack →
 USB3 cable swap + `USB SPEED: SUPER` re-check → beast-paces Phase 2 watchdog re-gate →
@@ -67,9 +67,8 @@ supervised teleop session → mapping drive.
   profiles. Fallback recorded if the Orin L4T36 UPHY quirk bites (try other port; stay USB2 and
   keep 15 FPS profiles). Also: `pip install depthai` → IMU presence probe, recorded in ugv.env
   comment + beast-ops.
-- **Phase C — safety spine + bridge (PR-1, PR-2).** Deploy; cockpit runs **read-only** until
-  Phase D passes. Build the Foxglove layout against the mockup zones; verify from a browser and
-  a phone, not only the desktop app.
+- **Phase C — safety spine + bridge (PR-1, PR-2).** Deploy; `/cockpit` runs **read-only** until
+  Phase D passes. Verify the in-app surface from a browser and a phone.
 - **Phase D — motion re-gate (procedure, no PR).** beast-paces Phase 2 crawl+kill; expect
   self-stop ≤ 1 s; record pass/fail + stop delay in beast-ops. Only then first supervised
   cockpit teleop, all three inputs, arbitration checked.
@@ -80,10 +79,8 @@ supervised teleop session → mapping drive.
 
 ## Rejected approaches (do not re-litigate)
 
-- **Hangar-integrated portal now** — contradicts the 2026-07-30 scope statement; revisit only as
-  PR-6's link-out or a deliberate later decision.
-- **Custom roslibjs/web cockpit** — builds a worse Foxglove; Vizanti already exists in-tree for
-  the phone case.
+- **Standalone link-out as the Hangar command surface** — superseded by the owner's 2026-07-31
+  decision and the implemented in-app `/cockpit` route.
 - **Native Windows ROS 2 / RViz-as-cockpit** — painful install, DDS-over-Tailscale unsolved;
   RViz-in-WSL2 + zenoh stays a back-pocket debug tool only.
 - **Isaac ROS (nvblox/cuVSLAM) on this robot** — container-mandatory, RAM-heavy, duplicates what
