@@ -75,7 +75,7 @@ If the program no longer needs to run, press **`Ctrl+C`** in each terminal to cl
 
 | Node | Role |
 |------|------|
-| `joy_node` | USB gamepad → **`/joy`** (gamepad launch only). Launched with **`autorepeat_rate: 0.0`** so an idle pad publishes nothing — see [Command Arbitration](command_arbitration.md#idle-sources-let-go-of-the-floor) |
+| `joy_node` | USB gamepad → **`/joy`** (gamepad launch only). Launched with **`autorepeat_rate: 20.0`** so a stick held at full deflection keeps commanding instead of expiring its own rung; the zeros an idle pad repeats are bounded by `joy_ctrl` — see [Command Arbitration](command_arbitration.md#idle-sources-let-go-of-the-floor) |
 | `joy_ctrl` | **`/joy`** → **`/cmd_vel_joy_robot`** (priority 150), **`ugv/led_ctrl`**, pan-tilt (gamepad launch only) |
 | `keyboard_ctrl` | Keys → **`/cmd_vel_joy_operator`** (priority 100), pan-tilt (keyboard only) |
 
@@ -224,9 +224,14 @@ Publishes **`pt_joint_position_controller/commands`** — same joint names as [R
 
 ## Emergency stop
 
-```bash
-ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
-```
+Press **`Ctrl+C`** in the terminal running `keyboard_ctrl` or `teleop_twist_joy.launch.py`. Once no source is streaming, [`twist_mux`](command_arbitration.md) stops publishing and **`ugv_bringup`**'s 0.5 s **`cmd_vel`** watchdog stops the robot — so this takes up to about half a second, not instantly.
+
+**If a demo or Nav2 is also running, stop that terminal too.** Otherwise it takes the floor about 0.5 s after teleop falls silent and the robot drives on — see [One motion source at a time](#one-motion-source-at-a-time).
+
+!!! warning "Publishing zero to `/cmd_vel` by hand is not a stop"
+    `twist_mux` owns **`/cmd_vel`** and republishes the winning source over your message within milliseconds, so a `--once` publish is overwritten before it takes effect. The ladder has a dedicated e-stop rung (`cmd_vel_estop_lock`, priority 255), but **nothing publishes it yet** — it is wired and inert. See [Emergency lock](command_arbitration.md#emergency-lock).
+
+    Cutting power remains the only instant stop.
 
 ---
 

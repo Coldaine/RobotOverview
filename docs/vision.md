@@ -20,11 +20,9 @@ Voice / Ollama / Web AI are optional — see [Experimental](experimental.md).
 3. USB camera **or** OAK-D Lite connected — **one camera type per session** (see [Before you start](#before-you-start)).
 
 !!! warning "Safety"
-    Lift the robot before motion-tracking nodes. Stop with zero **`/cmd_vel`** when done:
+    Lift the robot before motion-tracking nodes. To stop motion, press **`Ctrl+C`** in the terminal running the tracking node. Once no source is streaming, [`twist_mux`](command_arbitration.md) stops publishing and **`ugv_bringup`**'s 0.5 s **`cmd_vel`** watchdog stops the robot.
 
-    ```bash
-    ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
-    ```
+    Publishing a zero to **`/cmd_vel`** by hand is **not** a stop — `twist_mux` republishes the winning source over it within milliseconds.
 
 ---
 

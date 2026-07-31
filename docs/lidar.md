@@ -13,11 +13,9 @@ For 2D mapping, see [Mapping](mapping.md). For camera tracking, see [Vision](vis
 3. Robot powered on; clear floor area around the robot.
 
 !!! warning "Safety"
-    Lift the robot when testing guard/follow logic on a bench. Stop motion when done:
+    Lift the robot when testing guard/follow logic on a bench. To stop motion, press **`Ctrl+C`** in the terminal running the demo. Once no source is streaming, [`twist_mux`](command_arbitration.md) stops publishing and **`ugv_bringup`**'s 0.5 s **`cmd_vel`** watchdog stops the robot.
 
-    ```bash
-    ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
-    ```
+    Publishing a zero to **`/cmd_vel`** by hand is **not** a stop — `twist_mux` republishes the winning source over it within milliseconds.
 
 ---
 

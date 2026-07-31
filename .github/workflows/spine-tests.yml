@@ -16,6 +16,10 @@ on:
   pull_request:
   push:
     branches:
+      # The integration branches, so the gate keeps running after a merge and
+      # not only on the feature branch that introduced it.
+      - ros2-humble-develop
+      - main
       - feat/safety-spine-twist-mux
       - 'beast/**'
   workflow_dispatch:

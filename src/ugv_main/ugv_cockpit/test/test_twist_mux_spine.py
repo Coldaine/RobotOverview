@@ -127,8 +127,9 @@ CMD_VEL_PUBLISHER_PATTERNS = (
     (re.compile(r"['\"]cmd_vel_out_topic['\"]\s*:\s*['\"]/?cmd_vel['\"]"),
      'nav2 cmd_vel_out_topic (python dict form)'),
     # Shell scripts: `ros2 topic pub /cmd_vel geometry_msgs/msg/Twist ...`.
-    # Docs deliberately teach this as a manual stop, and docs are not scanned;
-    # a script in src/ that does it is a publisher the spine cannot see.
+    # The docs no longer teach this — post-spine it is ineffective anyway, since
+    # twist_mux republishes the winning source over a one-shot message — but a
+    # script in src/ that does it is a publisher the spine cannot see.
     (re.compile(r"ros2\s+topic\s+pub\b[^\n]*?(?<![\w/])/?cmd_vel(?![\w/])"),
      'shell publish onto cmd_vel'),
     # web clients (Vizanti, roslibjs): topic = "/cmd_vel" / name: "/cmd_vel"
@@ -638,6 +639,14 @@ EXPECTED_ZERO_TAIL_LIMIT = 5
 
 JOY_LAUNCH_FILE = 'src/ugv_main/ugv_tools/launch/teleop_twist_joy.launch.py'
 
+# joy_node must re-send pad state faster than twist_mux's 0.5 s per-source
+# timeout (a 2 Hz floor), or a held stick expires its own rung. 4 Hz is a
+# deliberate margin above that floor; the launch file ships the driver default
+# of 20 Hz.
+MIN_JOY_AUTOREPEAT_HZ = 4.0
+
+KEYBOARD_CTRL = 'src/ugv_main/ugv_tools/ugv_tools/keyboard_ctrl.py'
+
 
 @pytest.mark.parametrize('relative_path', ZERO_TAIL_SOURCES)
 def test_teleop_declares_a_named_zero_tail_limit(relative_path):
@@ -684,12 +693,239 @@ def test_zero_tail_limit_matches_bringup_zero_vel_limit():
     )
 
 
-def test_joy_node_does_not_autorepeat_an_idle_gamepad():
-    """joy_node's default 20 Hz autorepeat is a starvation source by itself.
+# Keys keyboard_ctrl handles that command no velocity. Re-arming the zero tail
+# on any of these would let a gimbal nudge or a speed trim interrupt whatever
+# is driving on a lower rung.
+KEYBOARD_NON_MOTION_KEYS = frozenset({
+    '0', '1', '2', 'r',                     # pan-tilt
+    'q', 'z', 'w', 'x', 'e', 'c',           # speed scaling
+    'Q', 'Z', 'W', 'X', 'E', 'C',
+    't', 'T',                               # x/y speed switch
+})
 
-    With autorepeat_rate > 0 the driver re-sends the last pad state forever, so
-    a gamepad sitting untouched on a desk keeps joy_ctrl's priority-150 rung
-    alive and nothing below it can ever reach the motors.
+# Zero-velocity commands: an explicit operator stop must still reach the wire
+# even when the node has already fallen silent, so these re-arm the tail.
+KEYBOARD_STOP_KEYS = frozenset({' ', 'k', 's', 'S'})
+
+
+def _module_level_value(tree, name):
+    """The AST node assigned to module-level `name`, or None."""
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Name) and target.id == name:
+                return node.value
+    return None
+
+
+def _resolve_key_set(tree, expr, origin):
+    """Evaluate a tiny set expression statically.
+
+    Understands set/list/tuple literals, ``frozenset(<module-level dict>)`` and
+    ``|`` unions — enough to read MOTION_KEYS without importing the module
+    (keyboard_ctrl imports rclpy and termios, neither of which exists on the CI
+    runner this suite is designed to run on).
+    """
+    if isinstance(expr, ast.BinOp) and isinstance(expr.op, ast.BitOr):
+        return (_resolve_key_set(tree, expr.left, origin)
+                | _resolve_key_set(tree, expr.right, origin))
+    if isinstance(expr, ast.Call) and isinstance(expr.func, ast.Name) \
+            and expr.func.id in {'frozenset', 'set'}:
+        if not expr.args:
+            return set()
+        arg = expr.args[0]
+        if isinstance(arg, ast.Name):
+            referenced = _module_level_value(tree, arg.id)
+            assert referenced is not None, (
+                '%s: MOTION_KEYS refers to %s, which is not assigned at module '
+                'level' % (origin, arg.id)
+            )
+            value = ast.literal_eval(referenced)
+            return set(value)
+        return _resolve_key_set(tree, arg, origin)
+    if isinstance(expr, (ast.Set, ast.List, ast.Tuple)):
+        return {ast.literal_eval(element) for element in expr.elts}
+    raise AssertionError(
+        '%s: cannot statically resolve the key set `%s`. Keep MOTION_KEYS a '
+        'plain union of literals and frozenset(<dict>) so this test can read '
+        'it without importing rclpy.' % (origin, ast.unparse(expr))
+    )
+
+
+def _keyboard_tree():
+    return ast.parse(read(KEYBOARD_CTRL), filename=KEYBOARD_CTRL)
+
+
+def test_keyboard_declares_a_motion_key_set():
+    """Only drive/stop keys may re-arm the zero tail, and the set is named.
+
+    `if chunk: zero_tail = 0` treats every keystroke as drive activity, so a
+    pan-tilt key (0/1/2/r) or a speed trim (q/z/w/x/e/c) fires a fresh 5-zero
+    burst on the priority-100 rung. Those zeros outrank the UI (50) and nav (10)
+    rungs, so a gimbal nudge interrupts autonomy — and holding a pan key pins
+    the robot stopped without the operator ever touching a drive key.
+    """
+    tree = _keyboard_tree()
+    motion_keys_expr = _module_level_value(tree, 'MOTION_KEYS')
+    assert motion_keys_expr is not None, (
+        '%s must declare a module-level MOTION_KEYS: the set of keys that '
+        'count as a velocity command or an explicit stop.' % KEYBOARD_CTRL
+    )
+    motion_keys = _resolve_key_set(tree, motion_keys_expr, KEYBOARD_CTRL)
+
+    move_bindings = _module_level_value(tree, 'moveBindings')
+    assert move_bindings is not None, '%s lost moveBindings' % KEYBOARD_CTRL
+    expected = set(ast.literal_eval(move_bindings)) | set(KEYBOARD_STOP_KEYS)
+    assert motion_keys == expected, (
+        '%s: MOTION_KEYS must be exactly the moveBindings keys plus %s. '
+        'Missing: %s. Unexpected: %s'
+        % (
+            KEYBOARD_CTRL, sorted(KEYBOARD_STOP_KEYS),
+            sorted(expected - motion_keys), sorted(motion_keys - expected),
+        )
+    )
+    intruders = motion_keys & KEYBOARD_NON_MOTION_KEYS
+    assert not intruders, (
+        '%s: %s command no velocity (pan-tilt / speed trim / axis switch) and '
+        'must not re-arm the zero tail — see MOTION_KEYS.'
+        % (KEYBOARD_CTRL, sorted(intruders))
+    )
+
+
+def test_keyboard_rearm_is_gated_on_the_motion_key_set():
+    """The guard has to consult MOTION_KEYS, not the raw keystroke buffer."""
+    tree = _keyboard_tree()
+
+    predicate = next(
+        (node for node in tree.body
+         if isinstance(node, ast.FunctionDef) and node.name == '_rearms_zero_tail'),
+        None,
+    )
+    assert predicate is not None, (
+        '%s must define `_rearms_zero_tail(key)` — the named predicate this '
+        'test asserts on, so the rule is readable rather than an inline '
+        'condition that drifts.' % KEYBOARD_CTRL
+    )
+    assert 'MOTION_KEYS' in ast.unparse(predicate), (
+        '%s: _rearms_zero_tail must decide from MOTION_KEYS' % KEYBOARD_CTRL
+    )
+
+    main_fn = next(
+        (node for node in tree.body
+         if isinstance(node, ast.FunctionDef) and node.name == 'main'),
+        None,
+    )
+    assert main_fn is not None, '%s lost its main()' % KEYBOARD_CTRL
+
+    guards = []
+    for node in ast.walk(main_fn):
+        if not isinstance(node, ast.If):
+            continue
+        for statement in node.body:
+            if not isinstance(statement, ast.Assign):
+                continue
+            targets = [
+                t.id for t in statement.targets if isinstance(t, ast.Name)
+            ]
+            if 'zero_tail' in targets and ast.unparse(statement.value) == '0':
+                guards.append(ast.unparse(node.test))
+
+    assert guards, (
+        '%s: no `zero_tail = 0` re-arm found at all — the zero tail can no '
+        'longer be re-armed, so a stop keypress after the node fell silent '
+        'would never reach the wire.' % KEYBOARD_CTRL
+    )
+    # `if commanding:` is the streaming path, not the keystroke re-arm.
+    rearm_guards = [guard for guard in guards if guard != 'commanding']
+    assert rearm_guards, (
+        '%s: the keystroke re-arm disappeared; only the `commanding` reset is '
+        'left.' % KEYBOARD_CTRL
+    )
+    for guard in rearm_guards:
+        assert '_rearms_zero_tail' in guard or 'MOTION_KEYS' in guard, (
+            '%s: the zero-tail re-arm is guarded by `%s`. It must consult '
+            '_rearms_zero_tail / MOTION_KEYS instead — a bare `if chunk:` '
+            'treats a gimbal or speed key as drive activity and lets it seize '
+            'the priority-100 rung from nav and the UI.'
+            % (KEYBOARD_CTRL, guard)
+        )
+
+
+def test_keyboard_stop_toggle_clears_the_latched_command():
+    """Engaging s/S must drop the latched x/th, not just gate the output.
+
+    Drive keys latch, so toggling stop off would otherwise resume the previous
+    speed with no fresh keypress — the robot drives away on the keystroke that
+    reads as "release the stop".
+    """
+    tree = _keyboard_tree()
+    main_fn = next(
+        node for node in ast.walk(tree)
+        if isinstance(node, ast.FunctionDef) and node.name == 'main'
+    )
+    stop_branches = [
+        node for node in ast.walk(main_fn)
+        if isinstance(node, ast.If)
+        and re.search(r"key == ['\"][sS]['\"]", ast.unparse(node.test))
+    ]
+    assert stop_branches, (
+        '%s no longer handles the s/S stop toggle' % KEYBOARD_CTRL
+    )
+    for branch in stop_branches:
+        body = '\n'.join(ast.unparse(node) for node in branch.body)
+        assert re.search(r'\bstop\b', body), (
+            '%s: s/S branch no longer toggles `stop`' % KEYBOARD_CTRL
+        )
+        zeroed = set()
+        for node in ast.walk(branch):
+            if not isinstance(node, ast.Assign):
+                continue
+            for target in node.targets:
+                if not isinstance(target, ast.Tuple):
+                    continue
+                names = [e.id for e in target.elts if isinstance(e, ast.Name)]
+                values = node.value
+                if not isinstance(values, ast.Tuple):
+                    continue
+                if all(
+                    isinstance(v, ast.Constant) and v.value == 0
+                    for v in values.elts
+                ):
+                    zeroed.update(names)
+        assert {'x', 'th'} <= zeroed, (
+            '%s: engaging the s/S stop must also zero the latched x/th (found '
+            '%s), so releasing it requires a new motion keypress instead of '
+            'silently resuming the previous speed.'
+            % (KEYBOARD_CTRL, sorted(zeroed) or 'nothing')
+        )
+
+
+def test_joy_node_autorepeats_fast_enough_to_hold_its_rung():
+    """joy_node must keep re-sending pad state, and fast enough to beat expiry.
+
+    Both directions of this parameter are a real failure, which is why the
+    value is pinned here rather than left to the driver:
+
+      * ``autorepeat_rate: 0.0`` (off) breaks *held-stick* driving. The joy
+        driver only emits /joy on a state change, and a stick pinned at full
+        deflection is not a change — SDL reports nothing more. joy_ctrl
+        therefore publishes once, twist_mux expires cmd_vel_joy_robot 0.5 s
+        later, and ugv_bringup's cmd_vel watchdog stops the robot while the
+        operator is still pushing. The gimbal freezes for the same reason:
+        joy_ctrl integrates pan/tilt once per /joy message.
+      * Any rate at or below 2 Hz has the same effect more slowly — the source
+        has to refresh faster than the mux's 0.5 s per-source timeout to stay
+        the winner. MIN_JOY_AUTOREPEAT_HZ keeps a margin above that floor.
+
+    Leaving it undeclared happens to work (the Humble default is 20.0 Hz), but
+    the declaration is required anyway: this value is load-bearing for both
+    driving and the gimbal, so it must be visible in the launch file and
+    covered by this test rather than inherited silently.
+
+    Starvation by an *idle* pad — the reason this was briefly set to 0.0 — is
+    handled by joy_ctrl's ZERO_TAIL_LIMIT, asserted above: autorepeated zeros
+    are forwarded 5 times and then the node goes silent, so the rung expires.
     """
     joy_nodes = [
         kwargs for _, kwargs in launch_node_calls(JOY_LAUNCH_FILE)
@@ -702,13 +938,19 @@ def test_joy_node_does_not_autorepeat_an_idle_gamepad():
             r"['\"]autorepeat_rate['\"]\s*:\s*([0-9.]+)", parameters
         )
         assert match, (
-            '%s: joy_node must set autorepeat_rate explicitly. Its default '
-            '(20.0 Hz in Humble) synthesises /joy messages for an idle pad, '
-            'which pins the top twist_mux rung.' % JOY_LAUNCH_FILE
+            '%s: joy_node must declare autorepeat_rate explicitly. The value '
+            'decides whether a held stick keeps driving and whether the gimbal '
+            'keeps moving, so it belongs in the launch file where a reader can '
+            'see it — not inherited from the driver default.' % JOY_LAUNCH_FILE
         )
-        assert float(match.group(1)) == 0.0, (
-            '%s: autorepeat_rate must be 0.0 — publish /joy only on real pad '
-            'state changes.' % JOY_LAUNCH_FILE
+        assert float(match.group(1)) >= MIN_JOY_AUTOREPEAT_HZ, (
+            '%s: autorepeat_rate must be >= %s Hz. At %s Hz a stick held at '
+            'full deflection stops producing /joy messages, cmd_vel_joy_robot '
+            'expires after %s s, and the robot stops mid-command.'
+            % (
+                JOY_LAUNCH_FILE, MIN_JOY_AUTOREPEAT_HZ, match.group(1),
+                SOURCE_TIMEOUT_S,
+            )
         )
 
 

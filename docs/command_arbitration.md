@@ -68,9 +68,20 @@ is a real constraint on every velocity source, not an implementation detail:
 So `keyboard_ctrl` and `joy_ctrl` both send a **bounded tail of zeros** when their
 input returns to neutral — `ZERO_TAIL_LIMIT = 5` messages, matching `ugv_bringup`'s own
 `zero_vel_limit` — and then **go silent** until you touch the controls again. The tail
-is what stops the robot by command; the silence is what releases the rung. `joy_node`
-is launched with `autorepeat_rate: 0.0` for the same reason, so a gamepad left plugged
-in does not manufacture 20 Hz of zeros on its own.
+is what stops the robot by command; the silence is what releases the rung.
+
+That bound is the whole fix, which is why `joy_node` keeps its **`autorepeat_rate: 20.0`**.
+An idle pad does autorepeat all-zero `/joy` messages forever, but `joy_ctrl` forwards
+only five of them and then stops, so the rung expires anyway. Turning autorepeat off
+would break driving instead: the driver only emits `/joy` on a state change, and a
+stick held at full deflection is not a change — so a held stick would produce one
+message, expire its own rung 0.5 s later, and stop the robot mid-command. The pan-tilt
+gimbal would freeze for the same reason, since `joy_ctrl` steps it once per `/joy`
+message.
+
+`keyboard_ctrl` applies the same rule to keystrokes: only a drive key, `Space`/`k`, or
+the `s`/`S` stop toggle re-arms its zero tail. Gimbal and speed-trim keys command no
+velocity, so they must not pull the priority-100 rung back from nav or the UI.
 
 Any new velocity source must follow the same rule: **stream while commanding, fall
 silent while idle.**

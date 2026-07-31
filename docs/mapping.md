@@ -21,11 +21,9 @@ For `/scan` and the base stack, see [Hardware Driver](bringup.md).
 !!! warning "Safety"
     The robot moves while you teleop during mapping. Clear the area and keep hands away from wheels before driving.
 
-    Stop motion when done:
+    To stop motion, press **`Ctrl+C`** in the terminal running teleop. Once no source is streaming, [`twist_mux`](command_arbitration.md) stops publishing and **`ugv_bringup`**'s 0.5 s **`cmd_vel`** watchdog stops the robot.
 
-    ```bash
-    ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
-    ```
+    Publishing a zero to **`/cmd_vel`** by hand is **not** a stop — `twist_mux` republishes the winning source over it within milliseconds.
 
 ---
 

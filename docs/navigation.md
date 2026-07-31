@@ -19,11 +19,9 @@ Default map file: **`src/ugv_main/ugv_nav/maps/map.yaml`**.
 !!! warning "Safety"
     Nav2 moves the chassis autonomously once you send a goal. Clear the area and keep hands away from wheels before launching.
 
-    Emergency stop:
+    To stop it: press **`Ctrl+C`** in the terminal running **`nav.launch.py`**. Once no source is streaming, [`twist_mux`](command_arbitration.md) stops publishing and **`ugv_bringup`**'s 0.5 s **`cmd_vel`** watchdog stops the robot.
 
-    ```bash
-    ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
-    ```
+    Publishing a zero to **`/cmd_vel`** by hand is **not** a stop — `twist_mux` republishes the winning source over it within milliseconds.
 
 ---
 

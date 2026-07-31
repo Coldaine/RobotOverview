@@ -30,23 +30,30 @@ def generate_launch_description():
         executable='joy_node',
         name='joy_node',
         parameters=[{
-            # autorepeat_rate: 0.0 == "only publish /joy when the pad actually
-            # changes". The joy driver's default (20.0 Hz in Humble) re-sends
-            # the last state forever, so an idle gamepad left plugged into the
-            # Jetson produces 20 messages/s of all-zeros.
+            # autorepeat_rate MUST stay > 0. The joy driver only emits a /joy
+            # message when SDL reports a change, and a stick held at full
+            # deflection is not a change — the OS sends nothing until it moves
+            # again. Without autorepeat, "push the stick and hold it" produces
+            # exactly ONE /joy message:
             #
-            # That is the twist_mux starvation failure: joy_ctrl is the
-            # top drive rung (priority 150), and any message — zeros included —
-            # refreshes its timestamp, so the source never expires and every
-            # lower rung (UI 50, nav 10) is masked for as long as the pad is
-            # connected. joy_ctrl's ZERO_TAIL_LIMIT bounds the zeros it forwards;
-            # this setting stops them being manufactured in the first place.
+            #   * joy_ctrl publishes one Twist on cmd_vel_joy_robot, twist_mux
+            #     expires that source 0.5 s later, and ugv_bringup's cmd_vel
+            #     watchdog stops the robot mid-command while the stick is still
+            #     pinned;
+            #   * the gimbal freezes too — joy_ctrl integrates pan/tilt once per
+            #     /joy message, so no messages means no movement.
             #
-            # Safety note: this does NOT weaken stopping. Releasing the sticks
-            # is a real state change, so joy_node still emits it immediately and
-            # joy_ctrl still sends its zero tail. Silence afterwards is the
-            # intent, and ugv_bringup's 0.5 s cmd_vel watchdog is the backstop.
-            'autorepeat_rate': 0.0,
+            # 20.0 Hz is the joy driver's own default and is comfortably above
+            # the mux's 2 Hz expiry floor (0.5 s per-source timeout), so a held
+            # stick keeps refreshing its rung and the gimbal keeps its rate.
+            #
+            # This does NOT reintroduce the twist_mux starvation failure. An
+            # idle pad autorepeats all-zero /joy messages forever, but joy_ctrl
+            # forwards only ZERO_TAIL_LIMIT (5) of them and then goes silent, so
+            # the priority-150 rung still expires and every lower rung (UI 50,
+            # nav 10) gets the floor. The zero tail is the fix for starvation;
+            # turning autorepeat off was not.
+            'autorepeat_rate': 20.0,
         }]
     )
 

@@ -20,11 +20,9 @@ For the suggested reading order, see [index](index.md#suggested-reading-order).
 !!! warning "Safety"
     [Web AI](#web-ai) drives the chassis via **`behavior_ctrl`** → **`/cmd_vel_nav`** → [`twist_mux`](command_arbitration.md) → **`/cmd_vel`**. It is on the lowest rung, so teleop can take over at any time — but clear the area before use anyway.
 
-    Emergency stop:
+    To stop it: press **`Ctrl+C`** in the terminal running **`behavior_ctrl`**. Once no source is streaming, `twist_mux` stops publishing and **`ugv_bringup`**'s 0.5 s **`cmd_vel`** watchdog stops the robot.
 
-    ```bash
-    ros2 topic pub /cmd_vel geometry_msgs/msg/Twist --once
-    ```
+    Publishing a zero to **`/cmd_vel`** by hand is **not** a stop — `twist_mux` republishes the winning source over it within milliseconds.
 
 ---
 
