@@ -119,8 +119,9 @@ describe('rosClient and hooks', () => {
     });
 
     // Voltage hook should see new value, but odom hook MUST stay referentially stable!
+    // Only real volts are carried — an inbound `percentage` is ignored, never surfaced.
     expect(voltageHook.result.current.voltage).toBe(11.5);
-    expect(voltageHook.result.current.percentage).toBe(91); // v / 12.6 = 11.5/12.6 = 91%
+    expect(voltageHook.result.current).not.toHaveProperty('percentage');
     expect(voltageHook.result.current).not.toBe(initialVoltage);
     expect(odomHook.result.current).toBe(initialOdom); // REFERENTIALLY EQUAL
   });
@@ -149,7 +150,6 @@ describe('rosClient and hooks', () => {
     });
 
     expect(voltageHook.result.current.voltage).toBe(0);
-    expect(voltageHook.result.current.percentage).toBe(0);
     expect(clearanceHook.result.current).toBe(0);
   });
 

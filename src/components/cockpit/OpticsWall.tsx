@@ -59,7 +59,7 @@ export function OpticsWall() {
   }, []);
 
   // Determine safety limits for overhead clearance
-  // Mission Undercroft duct clearance floor. Below 0.18m is critical, below 0.28m is warning
+  // Mission Undercroft duct clearance floor. Below 0.16m is critical, below 0.28m is warning
   const clearanceStatus = (() => {
     if (clearance <= 0 || clearance > 5.0) return { label: 'UNKNOWN', cls: 'text-ink-dim border-rim/60 bg-panel-2/20' };
     if (clearance < 0.16) return { label: 'CRITICAL', cls: 'text-rose-400 border-rose-500/30 bg-rose-500/10 animate-pulse text-glow-red' };
@@ -85,7 +85,7 @@ export function OpticsWall() {
 
       <div className="grid grid-cols-2 gap-3 flex-1">
         {/* ── OAK RGB FEED (WIDE) ────────────────── */}
-        <div className="relative rounded-lg overflow-hidden border border-rim/70 bg-hull aspect-[21/9] col-span-2 flex items-center justify-center group group-hover:scale-[1.01]">
+        <div className="relative rounded-lg overflow-hidden border border-rim/70 bg-hull aspect-[21/9] col-span-2 flex items-center justify-center transition-transform hover:scale-[1.01]">
           {/* Scanline sheen */}
           <div className="pointer-events-none absolute inset-0 z-20 bg-[repeating-linear-gradient(0deg,rgba(0,0,0,0.15)_0_1px,transparent_1px_3px)] opacity-30" />
           

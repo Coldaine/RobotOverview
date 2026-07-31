@@ -39,7 +39,6 @@ export interface InboundMsg {
 
 export interface CockpitVoltage {
   voltage: number;
-  percentage: number;
 }
 
 export interface CockpitOdom {
@@ -106,7 +105,7 @@ function safeNumber(value: string | undefined, fallback: number): number {
 
 // Memory-only stores for each topic
 let connectionState: ConnectionState = 'disconnected';
-let voltageState: CockpitVoltage = { voltage: 0, percentage: 0 };
+let voltageState: CockpitVoltage = { voltage: 0 };
 let odomState: CockpitOdom = { x: 0, y: 0, yaw: 0, linearSpeed: 0, angularSpeed: 0 };
 let imuState: CockpitImu = { ax: 0, ay: 0, az: 0, gx: 0, gy: 0, gz: 0 };
 let overheadClearance: number = 0;
@@ -137,6 +136,63 @@ const listeners = {
   scan: new Set<() => void>(),
 };
 
+// Hoisted stable references for useSyncExternalStore
+const subscribeConnection = (cb: () => void) => {
+  listeners.connection.add(cb);
+  return () => listeners.connection.delete(cb);
+};
+const getConnSnap = () => connectionState;
+const getConnServerSnap = () => serverState.connection;
+
+const subscribeVoltage = (cb: () => void) => {
+  listeners.voltage.add(cb);
+  return () => listeners.voltage.delete(cb);
+};
+const getVoltSnap = () => voltageState;
+const getVoltServerSnap = () => serverState.voltage;
+
+const subscribeOdom = (cb: () => void) => {
+  listeners.odom.add(cb);
+  return () => listeners.odom.delete(cb);
+};
+const getOdomSnap = () => odomState;
+const getOdomServerSnap = () => serverState.odom;
+
+const subscribeImu = (cb: () => void) => {
+  listeners.imu.add(cb);
+  return () => listeners.imu.delete(cb);
+};
+const getImuSnap = () => imuState;
+const getImuServerSnap = () => serverState.imu;
+
+const subscribeClearance = (cb: () => void) => {
+  listeners.clearance.add(cb);
+  return () => listeners.clearance.delete(cb);
+};
+const getClearanceSnap = () => overheadClearance;
+const getClearanceServerSnap = () => serverState.clearance;
+
+const subscribeStatus = (cb: () => void) => {
+  listeners.status.add(cb);
+  return () => listeners.status.delete(cb);
+};
+const getStatusSnap = () => statusState;
+const getStatusServerSnap = () => serverState.status;
+
+const subscribeDiag = (cb: () => void) => {
+  listeners.diagnostics.add(cb);
+  return () => listeners.diagnostics.delete(cb);
+};
+const getDiagSnap = () => diagnosticsState;
+const getDiagServerSnap = () => serverState.diagnostics;
+
+const subscribeScan = (cb: () => void) => {
+  listeners.scan.add(cb);
+  return () => listeners.scan.delete(cb);
+};
+const getScanSnap = () => scanState;
+const getScanServerSnap = () => serverState.scan;
+
 // Ref for reactive-image-rendering callbacks that bypass React state
 const imageCallbacks = new Map<string, (url: string) => void>();
 
@@ -155,7 +211,7 @@ function notify(category: keyof typeof listeners) {
 // SSR compatible Server Snapshots (stable references)
 const serverState = {
   connection: 'disconnected' as ConnectionState,
-  voltage: { voltage: 0, percentage: 0 } as CockpitVoltage,
+  voltage: { voltage: 0 } as CockpitVoltage,
   odom: { x: 0, y: 0, yaw: 0, linearSpeed: 0, angularSpeed: 0 } as CockpitOdom,
   imu: { ax: 0, ay: 0, az: 0, gx: 0, gy: 0, gz: 0 } as CockpitImu,
   clearance: 0,
@@ -194,16 +250,35 @@ export const rosClient = {
       reconnectTimer = null;
     }
     if (socket) {
+      socket.onopen = null;
       socket.onclose = null;
       socket.onerror = null;
       socket.onmessage = null;
       socket.close();
       socket = null;
     }
+
+    // Reset all state to safely handle disconnected screens
+    voltageState = { voltage: 0 };
+    odomState = { x: 0, y: 0, yaw: 0, linearSpeed: 0, angularSpeed: 0 };
+    imuState = { ax: 0, ay: 0, az: 0, gx: 0, gy: 0, gz: 0 };
+    overheadClearance = 0;
+    statusState = { ...serverState.status };
+    diagnosticsState = [];
+    scanState = { points: [], angleMin: 0, angleMax: 0, angleIncrement: 0, rangeMin: 0, rangeMax: 0 };
+
     if (connectionState !== 'disconnected') {
       connectionState = 'disconnected';
       notify('connection');
     }
+
+    notify('voltage');
+    notify('odom');
+    notify('imu');
+    notify('clearance');
+    notify('status');
+    notify('diagnostics');
+    notify('scan');
   },
 
   initiateConnection(url: string) {
@@ -314,7 +389,7 @@ export const rosClient = {
 
   callService(serviceName: string, args: unknown) {
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
-    const callId = `call_${Math.random().toString(36).substr(2, 9)}`;
+    const callId = `call_${Math.random().toString(36).slice(2, 11)}`;
     const triggerMsg = JSON.stringify({
       op: 'call_service',
       service: serviceName,
@@ -341,12 +416,10 @@ export const rosClient = {
     if (imageCallbacks.has(topic)) {
       const cb = imageCallbacks.get(topic);
       if (cb && msg.data) {
-        // Whitelist the format token — it lands in an <img> data URI. Not an XSS
-        // sink (src, not innerHTML), but keeps a malformed value from silently
-        // producing a broken frame.
+        // Normalize MIME type based on format field
         const raw = (msg.format || 'jpeg').toLowerCase();
-        const format = raw.includes('png') ? 'png' : 'jpeg';
-        cb(`data:image/${format};base64,${msg.data}`);
+        const mimeType = raw.includes('png') ? 'image/png' : 'image/jpeg';
+        cb(`data:${mimeType};base64,${msg.data}`);
       }
       return; // Handled, bypass React
     }
@@ -354,28 +427,31 @@ export const rosClient = {
     switch (topic) {
       case '/ugv/voltage': {
         const v = Number(msg.voltage);
-        // Pack voltage: clamp fake percentage for display safety
-        const p = isNaN(v) ? 0 : Math.max(0, Math.min(100, Math.round((v / 12.6) * 100)));
         voltageState = {
-          voltage: isNaN(v) ? 0 : v,
-          percentage: p,
+          voltage: Number.isFinite(v) ? v : 0,
         };
         notify('voltage');
         break;
       }
       case '/odom': {
-        const x = Number(msg.pose?.pose?.position?.x ?? 0);
-        const y = Number(msg.pose?.pose?.position?.y ?? 0);
+        let x = Number(msg.pose?.pose?.position?.x ?? 0);
+        let y = Number(msg.pose?.pose?.position?.y ?? 0);
         
         // Convert quaternion to yaw angle
         const qz = msg.pose?.pose?.orientation?.z ?? 0;
         const qw = msg.pose?.pose?.orientation?.w ?? 1;
-        const yaw = 2.0 * Math.atan2(qz, qw);
+        let yaw = 2.0 * Math.atan2(qz, qw);
 
-        const linearSpeed = Number(msg.twist?.twist?.linear?.x ?? 0);
-        const angularSpeed = Number(msg.twist?.twist?.angular?.z ?? 0);
+        let linearSpeed = Number(msg.twist?.twist?.linear?.x ?? 0);
+        let angularSpeed = Number(msg.twist?.twist?.angular?.z ?? 0);
 
-        odomState = { x: isNaN(x) ? 0 : x, y: isNaN(y) ? 0 : y, yaw: isNaN(yaw) ? 0 : yaw, linearSpeed, angularSpeed };
+        x = Number.isFinite(x) ? x : 0;
+        y = Number.isFinite(y) ? y : 0;
+        yaw = Number.isFinite(yaw) ? yaw : 0;
+        linearSpeed = Number.isFinite(linearSpeed) ? linearSpeed : 0;
+        angularSpeed = Number.isFinite(angularSpeed) ? angularSpeed : 0;
+
+        odomState = { x, y, yaw, linearSpeed, angularSpeed };
         notify('odom');
         break;
       }
@@ -514,89 +590,33 @@ export const rosClient = {
 
 // Custom React hooks with useSyncExternalStore for granular state updates
 export function useConnectionState(): ConnectionState {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.connection.add(cb);
-      return () => listeners.connection.delete(cb);
-    },
-    () => connectionState,
-    () => serverState.connection
-  );
+  return useSyncExternalStore(subscribeConnection, getConnSnap, getConnServerSnap);
 }
 
 export function useCockpitVoltage(): CockpitVoltage {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.voltage.add(cb);
-      return () => listeners.voltage.delete(cb);
-    },
-    () => voltageState,
-    () => serverState.voltage
-  );
+  return useSyncExternalStore(subscribeVoltage, getVoltSnap, getVoltServerSnap);
 }
 
 export function useCockpitOdom(): CockpitOdom {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.odom.add(cb);
-      return () => listeners.odom.delete(cb);
-    },
-    () => odomState,
-    () => serverState.odom
-  );
+  return useSyncExternalStore(subscribeOdom, getOdomSnap, getOdomServerSnap);
 }
 
 export function useCockpitImu(): CockpitImu {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.imu.add(cb);
-      return () => listeners.imu.delete(cb);
-    },
-    () => imuState,
-    () => serverState.imu
-  );
+  return useSyncExternalStore(subscribeImu, getImuSnap, getImuServerSnap);
 }
 
 export function useCockpitOverheadClearance(): number {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.clearance.add(cb);
-      return () => listeners.clearance.delete(cb);
-    },
-    () => overheadClearance,
-    () => serverState.clearance
-  );
+  return useSyncExternalStore(subscribeClearance, getClearanceSnap, getClearanceServerSnap);
 }
 
 export function useCockpitStatus(): CockpitStatus {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.status.add(cb);
-      return () => listeners.status.delete(cb);
-    },
-    () => statusState,
-    () => serverState.status
-  );
+  return useSyncExternalStore(subscribeStatus, getStatusSnap, getStatusServerSnap);
 }
 
 export function useCockpitDiagnostics(): DiagnosticsItem[] {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.diagnostics.add(cb);
-      return () => listeners.diagnostics.delete(cb);
-    },
-    () => diagnosticsState,
-    () => serverState.diagnostics
-  );
+  return useSyncExternalStore(subscribeDiag, getDiagSnap, getDiagServerSnap);
 }
 
 export function useCockpitScan(): CockpitScan {
-  return useSyncExternalStore(
-    (cb) => {
-      listeners.scan.add(cb);
-      return () => listeners.scan.delete(cb);
-    },
-    () => scanState,
-    () => serverState.scan
-  );
+  return useSyncExternalStore(subscribeScan, getScanSnap, getScanServerSnap);
 }
