@@ -1,0 +1,28 @@
+# OAK-D cockpit variant of oak_d_lite.yaml.
+# Difference from the vision default: RGB IS published (the cockpit needs
+# /oak/rgb/image_raw/compressed) and stereo depth stays aligned to RGB so the
+# depth_colorizer and overhead_clearance nodes see the same frame geometry.
+/oak:
+  ros__parameters:
+    camera:
+      i_enable_ir: false
+      i_nn_type: none
+    pipeline_gen:
+      i_enable_imu: false
+    rgb:
+      i_publish_topic: true
+      i_low_bandwidth: true
+      i_low_bandwidth_quality: 60
+      i_width: 640
+      i_height: 480
+      i_fps: 15.0
+      i_keep_preview_aspect_ratio: false
+    stereo:
+      i_publish_topic: true
+      i_align_depth: true
+      i_board_socket_id: 0
+      i_height: 480
+      i_width: 640
+      i_lr_check: true
+      i_subpixel: true
+      i_extended_disp: true

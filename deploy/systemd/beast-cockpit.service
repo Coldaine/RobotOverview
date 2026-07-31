@@ -1,0 +1,24 @@
+[Unit]
+Description=BEAST-01 Command Deck cockpit (OAK + rosbridge + cockpit nodes)
+Wants=network-online.target beast-ros-base.service
+After=network-online.target beast-ros-base.service
+ConditionPathExists=/home/beast/beast/ugv_ws/install/setup.bash
+
+[Service]
+Type=simple
+User=beast
+Group=beast
+SupplementaryGroups=dialout video render plugdev
+WorkingDirectory=/home/beast/beast/ugv_ws
+EnvironmentFile=/etc/beast/ugv.env
+Environment=PYTHONUNBUFFERED=1
+# Cockpit only: telemetry + camera + bridge. No motion path is added here.
+ExecStart=/bin/bash -lc 'source /opt/ros/humble/setup.bash && source /home/beast/beast/ugv_ws/install/setup.bash && exec ros2 launch ugv_cockpit cockpit.launch.py use_camera:=true use_bridge:=true'
+KillSignal=SIGINT
+TimeoutStopSec=15
+Restart=on-failure
+RestartSec=5
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

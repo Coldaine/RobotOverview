@@ -2,26 +2,33 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>ugv_cockpit</name>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
   <description>
-    BEAST-01 command spine. Owns the twist_mux arbitration layer that every velocity
-    source must route through; twist_mux is the only publisher of /cmd_vel, which is
-    the topic ugv_bringup subscribes to.
+    BEAST-01 Command Deck cockpit: depth colorizer, overhead-clearance measure,
+    status aggregator, and the twist_mux orchestration layer.
   </description>
   <maintainer email="pmaclyman@gmail.com">Coldaine</maintainer>
   <license>Apache-2.0</license>
 
-  <!-- Same test_depends as the sibling ament_python packages (ugv_tools,
-       ugv_bringup, …) so `colcon test` runs the standard ament linters here
-       too, plus the two this package's own suite actually imports. -->
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
   <test_depend>python3-yaml</test_depend>
 
-  <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>python3-opencv</depend>
+  <depend>python3-numpy</depend>
+
+  <exec_depend>rosbridge_server</exec_depend>
+  <exec_depend>rosapi</exec_depend>
+  <exec_depend>depthai_ros_driver</exec_depend>
+  <exec_depend>ugv_vision</exec_depend>
   <exec_depend>twist_mux</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
