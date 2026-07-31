@@ -120,6 +120,20 @@ def generate_launch_description():
             LaunchConfiguration('use_ekf'), "' == 'true'",
         ])),
     )
+    # Command spine — twist_mux is the ONLY publisher of /cmd_vel, and /cmd_vel
+    # is what bringup_node below subscribes to. Included unconditionally and
+    # with no enabling argument on purpose: every velocity source in this
+    # workspace publishes to a mux input topic now, so a bringup without the
+    # spine has no path to the motors at all. That is the fail-closed direction.
+    # Ladder + timeouts: ugv_cockpit/config/twist_mux.yaml.
+    #
+    # This does not weaken allow_motion or the cmd_vel_timeout watchdog below —
+    # both still sit downstream of the mux and are unchanged.
+    twist_mux_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(get_package_share_directory('ugv_cockpit'), 'launch', 'twist_mux.launch.py')
+        ),
+    )
     # Define the nodes to be launched                                     
     bringup_node = Node(
         package='ugv_bringup',
@@ -170,6 +184,7 @@ def generate_launch_description():
         robot_state_launch,
         laser_bringup_launch,
         rf2o_laser_odometry_launch,
+        twist_mux_launch,
         bringup_node,
         base_node,
         ekf_node,        

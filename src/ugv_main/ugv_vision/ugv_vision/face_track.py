@@ -86,7 +86,10 @@ class GestureCtrl(Node):
         self.gesture_ctrl_publisher = self.create_publisher(Image, '/gesture_ctrl/result', 10)
 
         self.face_detector = UltraFaceNcnn(thisPath + '/models/ultraface-ncnn/RFB-320.param',thisPath + '/models/ultraface-ncnn/RFB-320.bin', input_size=(320,240), threshold=0.7, nms_threshold=0.3)
-        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Self-driving demo -> the
+        # lowest rung, priority 10; any human teleop input outranks it.
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel_nav', 10)
 
         self.target_distance = 0.5
         self.target_yaw = 0.0

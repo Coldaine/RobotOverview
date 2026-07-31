@@ -111,8 +111,12 @@ if (settings.hasOwnProperty('{uniqueID}')) {
 }
 
 if(topic == ""){
-	topic = "/cmd_vel";
-	status.setWarn("No topic found, defaulting to /cmd_vel");
+	// BEAST-01 command spine: /cmd_vel belongs to twist_mux alone. A browser
+	// teleop widget is a UI surface, so it defaults onto the UI rung
+	// (twist_mux priority 50) exactly like the Foxglove Teleop panel does.
+	// See src/ugv_main/ugv_cockpit/config/twist_mux.yaml.
+	topic = "/cmd_vel_ui";
+	status.setWarn("No topic found, defaulting to /cmd_vel_ui (twist_mux UI rung)");
 	saveSettings();
 }
 

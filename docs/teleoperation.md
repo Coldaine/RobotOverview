@@ -1,6 +1,8 @@
 # Keyboard & Gamepad Control
 
-Real-time driving via **`/cmd_vel`** — gamepad in **T1** (`teleop_twist_joy.launch.py`), or keyboard in **T1** (`keyboard_ctrl`). See [Launch teleop](#launch-teleop) for terminal order.
+Real-time driving — gamepad in **T1** (`teleop_twist_joy.launch.py`), or keyboard in **T1** (`keyboard_ctrl`). See [Launch teleop](#launch-teleop) for terminal order.
+
+Neither one publishes **`/cmd_vel`** directly any more: both feed **`twist_mux`**, which arbitrates every velocity source down to one **`/cmd_vel`** stream. Gamepad-on-the-robot outranks keyboard, and both outrank autonomy. See [Command Arbitration](command_arbitration.md) for the full ladder.
 
 For bringup and serial, see [Hardware Driver](bringup.md).
 
@@ -30,7 +32,12 @@ SLAM and Nav2 launches already include bringup — see [Mapping](mapping.md), [N
 
 ### One motion source at a time
 
-All of these publish **`/cmd_vel`** (or **`behavior_ctrl`** → **`/cmd_vel`**) — use **one at a time**. In terminals that are still running, press **`Ctrl+C`** before starting another.
+All of these command motion. They no longer publish **`/cmd_vel`** directly — each one feeds a [`twist_mux`](command_arbitration.md) input, and the mux picks the highest-priority source that is still talking. Running one at a time is still the habit to keep: the ladder makes the outcome *defined*, not *safe*.
+
+Two things to know before relying on it:
+
+- Teleop outranks every demo and Nav2, so you can take over at any time. But when you **stop** sending, the lower-priority source gets the floor back after 0.5 s — releasing the keys is not a stop. Press **`Ctrl+C`** in the demo's terminal if you want it to stay stopped.
+- Two sources on the **same** rung (two UI surfaces, say) still interleave. That case is undefined.
 
 | | **Keyboard / gamepad** (this page) | **LiDAR demos** | **Nav2** | **Vision tracking** | **Web Teleop** | **Web AI** |
 |---|-----|-----|-----|-----|-----|-----|
@@ -39,8 +46,8 @@ All of these publish **`/cmd_vel`** (or **`behavior_ctrl`** → **`/cmd_vel`**) 
 | **Input** | Keys or gamepad sticks | `/scan` | RViz **2D Goal Pose** | Camera | Browser joystick | Chat web UI |
 | **Gimbal** | Keyboard `0/1/2/r` or right stick | — | — | Pan-tilt on some demos | — | — |
 
-**Data path (hardware):** keyboard / gamepad → **`/cmd_vel`** → **`ugv_bringup`** → ESP32 → wheels.  
-Pan-tilt: keyboard or right stick → **`pt_joint_position_controller/commands`**.
+**Data path (hardware):** keyboard → **`/cmd_vel_joy_operator`** (priority 100) / gamepad → **`/cmd_vel_joy_robot`** (priority 150) → **`twist_mux`** → **`/cmd_vel`** → **`ugv_bringup`** → ESP32 → wheels.  
+Pan-tilt: keyboard or right stick → **`pt_joint_position_controller/commands`** (not arbitrated — the mux only handles velocity).
 
 **Also not direct `/cmd_vel`:** [Navigation — explore_lite](navigation.md#autonomous-exploration-explore_lite) in **T1** sends Nav2 goals while **T0** runs `nav.launch.py use_slam:=true`. Stop keyboard, gamepad, Web Teleop, and other motion nodes before **`explore_lite`** — motion still comes from Nav2 on **T0**.
 

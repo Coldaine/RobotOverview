@@ -100,7 +100,10 @@ class _TerminalSettings:
 class UgvKeyboard(Node):
     def __init__(self, name):
         super().__init__(name)
-        self.pub = self.create_publisher(Twist, "cmd_vel", 1)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Keyboard teleop is the
+        # remote operator's direct drive path -> priority 100.
+        self.pub = self.create_publisher(Twist, "cmd_vel_joy_operator", 1)
         self.pub_pt_joint = self.create_publisher(
             Float64MultiArray, "pt_joint_position_controller/commands", 10
         )

@@ -131,7 +131,10 @@ class ColorTrackPID(Node):
         )
         self._load_colors_from_json()
 
-        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Self-driving demo -> the
+        # lowest rung, priority 10; any human teleop input outranks it.
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel_nav', 10)
 
         self.ball_diameter = 0.038
         self.target_distance = 0.2

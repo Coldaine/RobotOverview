@@ -17,6 +17,9 @@
   <depend>sensor_msgs</depend>
   <depend>nav_msgs</depend>
   <depend>tf2_ros</depend>
+  <!-- Command spine: bringup_lidar.launch.py includes ugv_cockpit's
+       twist_mux.launch.py, which owns the only /cmd_vel publisher. -->
+  <exec_depend>ugv_cockpit</exec_depend>
   <exec_depend>python3-netifaces</exec_depend>
   <exec_depend>python3-numpy</exec_depend>
   <exec_depend>python3-serial</exec_depend>

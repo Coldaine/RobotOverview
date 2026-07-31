@@ -102,7 +102,10 @@ class JoyTeleop(Node):
 		self.angular_Gear = 0.25
 		self.led_Gear = 0.0
 
-		self.pub_cmdVel = self.create_publisher(Twist, 'cmd_vel', 10)
+		# Command spine: never publish /cmd_vel directly. twist_mux owns that
+		# topic (ugv_cockpit/config/twist_mux.yaml). joy_node runs on the robot,
+		# so this is the on-site pad -> priority 150, the highest drive rung.
+		self.pub_cmdVel = self.create_publisher(Twist, 'cmd_vel_joy_robot', 10)
 		self.pub_ledCtrl = self.create_publisher(Float32MultiArray, 'ugv/led_ctrl', 10)
 		self.pub_ptJointStateCtrl = self.create_publisher(Float64MultiArray, 'pt_joint_position_controller/commands', 10)
 		self.sub_Joy = self.create_subscription(Joy, 'joy', self.buttonCallback, 10)

@@ -182,8 +182,22 @@ def launch_setup(context, *args, **kwargs):
         output="screen"
     )
 
+    # Command spine — same twist_mux ladder as the physical robot, so sim and
+    # hardware arbitrate identically and no teleop node needs a sim-only topic.
+    # use_sim_time must be true here or every source expires against /clock.
+    # See src/ugv_main/ugv_cockpit/config/twist_mux.yaml.
+    twist_mux_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('ugv_cockpit'), 'launch', 'twist_mux.launch.py'
+            )
+        ),
+        launch_arguments={'use_sim_time': 'true'}.items(),
+    )
+
     nodes = [        
         robot_state_publisher_node,
+        twist_mux_launch,
     ]
 
     if GZ_VERSION == 'classic':

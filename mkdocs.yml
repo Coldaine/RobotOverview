@@ -23,6 +23,7 @@ nav:
     - Robot Description: description.md
     - Hardware Driver: bringup.md
     - Keyboard & Gamepad Control: teleoperation.md
+    - Command Arbitration: command_arbitration.md
     - LiDAR Interaction: lidar.md
     - Vision: vision.md
     - Mapping: mapping.md

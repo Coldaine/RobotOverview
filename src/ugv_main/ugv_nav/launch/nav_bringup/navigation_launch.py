@@ -57,6 +57,23 @@ def generate_launch_description():
     remappings = [('/tf', 'tf'),
                   ('/tf_static', 'tf_static')]
 
+    # Command spine (ugv_cockpit): nav2 must NOT publish /cmd_vel. twist_mux is
+    # the only publisher of that topic and takes nav2's output on cmd_vel_nav at
+    # priority 10 — the lowest rung, so any human teleop outranks autonomy.
+    #
+    # The chain, after the rename below:
+    #   controller_server  --(cmd_vel -> cmd_vel_nav_raw)-->
+    #   velocity_smoother  --(cmd_vel_smoothed)----------->
+    #   collision_monitor  --(cmd_vel_out_topic: cmd_vel_nav, in params/*.yaml)-->
+    #   twist_mux          --(cmd_vel_out -> /cmd_vel)---> ugv_bringup
+    #
+    # The intermediate controller->smoother hop used to be called cmd_vel_nav.
+    # It is now cmd_vel_nav_raw so that cmd_vel_nav means exactly one thing:
+    # "the velocity nav2 has finished deciding on", i.e. the mux input. Keeping
+    # collision_monitor last preserves nav2's own stop authority ahead of the
+    # mux. Changing any of this is a safety change — see
+    # ugv_cockpit/test/test_twist_mux_spine.py.
+
     # Create our own temporary YAML files that include substitutions
     param_substitutions = {
         'use_sim_time': use_sim_time,
@@ -119,7 +136,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav_raw')]),
             Node(
                 package='nav2_smoother',
                 executable='smoother_server',
@@ -180,7 +197,7 @@ def generate_launch_description():
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
                 remappings=remappings +
-                        [('cmd_vel', 'cmd_vel_nav')]),
+                        [('cmd_vel', 'cmd_vel_nav_raw')]),
             Node(
                 package='nav2_collision_monitor',
                 executable='collision_monitor',
@@ -213,7 +230,7 @@ def generate_launch_description():
                 plugin='nav2_controller::ControllerServer',
                 name='controller_server',
                 parameters=[configured_params],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
+                remappings=remappings + [('cmd_vel', 'cmd_vel_nav_raw')]),
             ComposableNode(
                 package='nav2_smoother',
                 plugin='nav2_smoother::SmootherServer',
@@ -250,7 +267,7 @@ def generate_launch_description():
                 name='velocity_smoother',
                 parameters=[configured_params],
                 remappings=remappings +
-                           [('cmd_vel', 'cmd_vel_nav')]),
+                           [('cmd_vel', 'cmd_vel_nav_raw')]),
             ComposableNode(
                 package='nav2_collision_monitor',
                 plugin='nav2_collision_monitor::CollisionMonitor',

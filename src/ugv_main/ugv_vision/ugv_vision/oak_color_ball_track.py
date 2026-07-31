@@ -127,7 +127,10 @@ class OakYoloNode(Node):
                                      self.get_parameter("upper_a").value, 
                                      self.get_parameter("upper_b").value])
 
-        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel', 10)
+        # Command spine: never publish /cmd_vel directly. twist_mux owns that
+        # topic (ugv_cockpit/config/twist_mux.yaml). Self-driving demo -> the
+        # lowest rung, priority 10; any human teleop input outranks it.
+        self.cmd_vel_pub = self.create_publisher(Twist, '/cmd_vel_nav', 10)
 
         self.target_distance = 0.25
         self.target_yaw = 0.0
