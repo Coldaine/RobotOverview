@@ -17,12 +17,12 @@
  * the Pi from the bottom; the HAT + driver pair stays mated.
  */
 
-import { WIRING_LINKS } from '@/data/wiring';
+import { WIRING_LINKS, type WiringLink } from '@/data/wiring';
 import type { Build, PortCategory } from '@/data/types';
 
 // Build and PortCategory are facts about the robot and live in the data spine.
 // Re-exported here so existing console imports keep working unchanged.
-export type { Build, PortCategory };
+export type { Build, PortCategory, WiringLink };
 
 export const CAT: Record<PortCategory, { label: string; color: string }> = {
   power: { label: 'Power', color: 'var(--color-signal-crit)' },
@@ -91,16 +91,6 @@ export interface PeripheralDef {
   h: number;
   detail: string;
   /** 'future' = planned hardware not yet on the robot (OAK-D Pro, 360S…) */
-  era?: 'future';
-  /** absent = present in both builds */
-  build?: Build;
-}
-
-export interface CableDef {
-  from: string;
-  to: string;
-  cat: PortCategory;
-  label: string;
   era?: 'future';
   /** absent = present in both builds */
   build?: Build;
@@ -520,18 +510,8 @@ export const NODE_INDEX: Record<string, BenchNode> = Object.fromEntries([
   ]),
 ]);
 
-/** Canonical loom, one entry per physical cable. No `build` = both builds. */
-/**
- * The loom, projected for the bench view. `parentNet` and `documents` are spine
- * bookkeeping and are deliberately dropped here — the view draws cables, it does
- * not carry provenance. Edit {@link WIRING_LINKS}, never this.
- */
-export const EXPECTED_CABLES: CableDef[] = WIRING_LINKS.map((link) => {
-  const cable: CableDef = { from: link.from, to: link.to, cat: link.cat, label: link.label };
-  if (link.build) cable.build = link.build;
-  if (link.era) cable.era = link.era;
-  return cable;
-});
+/** Canonical loom — Live Plug draws {@link WIRING_LINKS} directly. */
+export { WIRING_LINKS as EXPECTED_CABLES };
 
 export type StepKind = 'unplug' | 'new' | 'move' | 'check';
 
@@ -613,7 +593,7 @@ export const CONVERSION_STEPS: ConversionStep[] = [
 ];
 
 /** Port endpoints on a cable (one or both ends may be ports). */
-export function cablePortEnds(cable: CableDef): string[] {
+export function cablePortEnds(cable: WiringLink): string[] {
   const ends: string[] = [];
   const from = NODE_INDEX[cable.from];
   const to = NODE_INDEX[cable.to];
@@ -627,13 +607,13 @@ export function cablePortEnds(cable: CableDef): string[] {
  * is a port, otherwise `to`). Loom *status* uses {@link cableStatus} so either
  * port end can record the plug.
  */
-export function cableOwner(cable: CableDef): string | null {
+export function cableOwner(cable: WiringLink): string | null {
   return cablePortEnds(cable)[0] ?? null;
 }
 
 /** Aggregate loom state: plugged > planned > empty across either port end. */
 export function cableStatus(
-  cable: CableDef,
+  cable: WiringLink,
   ports: Record<string, { status?: string }>,
 ): 'empty' | 'planned' | 'plugged' {
   const ends = cablePortEnds(cable);

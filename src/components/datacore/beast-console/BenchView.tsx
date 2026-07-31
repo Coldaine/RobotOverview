@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import {
   BOARDS, PORTS, PERIPHERALS, EXPECTED_CABLES, NODE_INDEX, CAT, cableOwner, cableStatus,
   CONVERSION_STEPS, STEP_KIND_META,
-  type Build, type BoardDef, type PortDef, type PeripheralDef, type CableDef, type PortSide,
+  type Build, type BoardDef, type PortDef, type PeripheralDef, type WiringLink, type PortSide,
 } from './bench-data';
 import { useConsoleStore, consoleActions, type PortRecord, type PortStatus } from './console-store';
 import { Segmented, SPRING, SPRING_SOFT } from './ConsoleUi';
@@ -49,7 +49,7 @@ function cablePath(fromId: string, toId: string): string {
 const FUTURE = '#c084fc';
 
 function Cable({ cable, ports, dim, highlight }: {
-  cable: CableDef;
+  cable: WiringLink;
   ports: Record<string, PortRecord>;
   dim: boolean;
   highlight: boolean;

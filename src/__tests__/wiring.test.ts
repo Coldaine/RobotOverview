@@ -1,11 +1,23 @@
 import { describe, it, expect } from 'vitest';
 import { hangarData } from '@/data/hangar';
-import { WIRING_LINKS, linksForNet, orphanLinks } from '@/data/wiring';
+import {
+  WIRING_LINKS,
+  MODULE_NETS,
+  BENCH_TERMINAL_ALIAS,
+  linksForNet,
+  orphanLinks,
+  netsAtGrain,
+} from '@/data/wiring';
 import { EXPECTED_CABLES, NODE_INDEX } from '@/components/datacore/beast-console/bench-data';
 import { BOARD_PORTS } from '@/components/datacore/DriverBoardSchematic';
 
 describe('wiring surface', () => {
-  const netIds = new Set(hangarData.nets.map((n) => n.id));
+  const netIds = new Set(netsAtGrain('module').map((n) => n.id));
+
+  it('hangarData.nets is the module-grain spine (single source)', () => {
+    expect(hangarData.nets).toBe(MODULE_NETS);
+    expect(hangarData.nets.every((n) => n.grain === 'module')).toBe(true);
+  });
 
   it('every link endpoint resolves to a board port or a peripheral', () => {
     WIRING_LINKS.forEach((link) => {
@@ -39,26 +51,8 @@ describe('wiring surface', () => {
     });
   });
 
-  // The console renders from this projection. If it ever stops matching the
-  // surface, Live Plug is drawing a loom nothing else agrees with.
-  it('the console loom is a faithful projection of the wiring surface', () => {
-    expect(EXPECTED_CABLES.length).toBe(WIRING_LINKS.length);
-    EXPECTED_CABLES.forEach((cable, i) => {
-      const link = WIRING_LINKS[i];
-      expect(cable.from).toBe(link.from);
-      expect(cable.to).toBe(link.to);
-      expect(cable.cat).toBe(link.cat);
-      expect(cable.label).toBe(link.label);
-      expect(cable.build).toBe(link.build);
-      expect(cable.era).toBe(link.era);
-    });
-  });
-
-  it('the console loom carries no spine bookkeeping', () => {
-    EXPECTED_CABLES.forEach((cable) => {
-      expect('parentNet' in cable, `${cable.from} → ${cable.to} leaked parentNet into the view`).toBe(false);
-      expect('documents' in cable, `${cable.from} → ${cable.to} leaked documents into the view`).toBe(false);
-    });
+  it('the console loom is the wiring surface (no parallel CableDef copy)', () => {
+    expect(EXPECTED_CABLES).toBe(WIRING_LINKS);
   });
 
   it('linksForNet returns exactly the strands of a trunk', () => {
@@ -75,6 +69,64 @@ describe('wiring surface', () => {
       orphans.length,
       `orphan strands: ${orphans.map((o) => `${o.from}→${o.to}`).join(', ')}`,
     ).toBe(7);
+  });
+});
+
+describe('Board ↔ Console terminal overlap', () => {
+  const hangarTerminalIds = new Set(hangarData.terminals.map((t) => t.id));
+
+  it('every aliased Board terminal exists in hangar terminals', () => {
+    Object.values(BENCH_TERMINAL_ALIAS).forEach((boardId) => {
+      expect(
+        hangarTerminalIds.has(boardId),
+        `alias targets missing Board terminal "${boardId}"`,
+      ).toBe(true);
+    });
+  });
+
+  it('every aliased Live Plug id exists in the console NODE_INDEX', () => {
+    Object.keys(BENCH_TERMINAL_ALIAS).forEach((benchId) => {
+      expect(
+        NODE_INDEX[benchId],
+        `alias source missing Live Plug node "${benchId}"`,
+      ).toBeDefined();
+    });
+  });
+
+  it('overlap pairs agree by name for known physical connectors', () => {
+    expect(BENCH_TERMINAL_ALIAS['drv-esp32-usb']).toBe('gdb-usb-esp32');
+    expect(BENCH_TERMINAL_ALIAS['jet-barrel']).toBe('orin-dc-in');
+    expect(BENCH_TERMINAL_ALIAS['drv-dcin']).toBe('gdb-power-in');
+    expect(BENCH_TERMINAL_ALIAS['pi-40pin']).toBe('pi5-40pin');
+  });
+
+  it('named loom ends with a parentNet land on that module net via alias', () => {
+    // Only assert unambiguous single-net peripherals / power taps — multi-role
+    // hubs (40-pin stack mate) intentionally span more than one module trunk.
+    const cases: Array<{ bench: string; net: string }> = [
+      { bench: 'jet-barrel', net: 'net-battery-rail' },
+      { bench: 'drv-dcin', net: 'net-battery-rail' },
+      { bench: 'ups-out1', net: 'net-battery-rail' },
+      { bench: 'motor-l', net: 'net-motor-left' },
+      { bench: 'drv-m1', net: 'net-motor-left' },
+      { bench: 'pantilt', net: 'net-servo-bus' },
+      { bench: 'drv-servo', net: 'net-servo-bus' },
+      { bench: 'oled', net: 'net-oled-i2c' },
+      { bench: 'drv-i2c', net: 'net-oled-i2c' },
+      { bench: 'camera', net: 'net-camera' },
+      { bench: 'oakd', net: 'net-oak-camera' },
+      { bench: 'jet-40pin', net: 'net-host-uart' },
+    ];
+    for (const { bench, net: netId } of cases) {
+      const boardId = BENCH_TERMINAL_ALIAS[bench];
+      const net = MODULE_NETS.find((n) => n.id === netId);
+      expect(boardId, `missing alias for ${bench}`).toBeDefined();
+      expect(net, `missing net ${netId}`).toBeDefined();
+      expect(
+        net!.terminals.includes(boardId!),
+        `${bench} → ${boardId} should sit on ${netId}`,
+      ).toBe(true);
+    }
   });
 });
 

@@ -37,7 +37,7 @@ export function ConnectedTwin({ variant = 'full' }: { variant?: 'full' | 'previe
   const reducedMotion = useReducedMotion();
 
   const [mode, setMode] = useState<ViewMode>('board');
-  const [host, setHost] = useState<ActiveHost>('pi5');
+  const [host, setHost] = useState<ActiveHost>('orin');
   const [layers, setLayers] = useState<Set<NetKind>>(new Set(ALL_KINDS));
   const [hoveredTerminal, setHoveredTerminal] = useState<string | null>(null);
   const [hoveredNet, setHoveredNet] = useState<string | null>(null);

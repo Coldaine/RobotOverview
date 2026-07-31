@@ -40,17 +40,10 @@ describe('Unit detail command shortcuts', () => {
     renderUnitDetail('beast');
 
     expect(screen.getByText('Command Shortcuts')).toBeInTheDocument();
-    expect(screen.getByText('Control UI')).toBeInTheDocument();
-    expect(screen.getByText('http://192.168.20.184:5000')).toBeInTheDocument();
-    expect(screen.getByText('JupyterLab')).toBeInTheDocument();
-    expect(screen.getByText('http://192.168.20.184:8888')).toBeInTheDocument();
-    expect(screen.getByText('Camera stream')).toBeInTheDocument();
-    expect(screen.getByText('http://192.168.20.184:5000/video_feed')).toBeInTheDocument();
     expect(screen.getByText('SSH')).toBeInTheDocument();
-    expect(screen.getByText('ssh ws@192.168.20.184')).toBeInTheDocument();
-    const controlLink = screen.getByRole('link', { name: 'Open Control UI' });
-    expect(controlLink).toHaveAttribute('target', '_blank');
-    expect(controlLink).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(screen.getByText('ssh beast-01')).toBeInTheDocument();
+    expect(screen.queryByText('Control UI')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Open Control UI/i })).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Copy SSH' })).toBeInTheDocument();
   });
 
@@ -67,7 +60,7 @@ describe('Unit detail command shortcuts', () => {
 
     expect(screen.queryByText('Command Shortcuts')).not.toBeInTheDocument();
     expect(screen.queryByText('Control UI')).not.toBeInTheDocument();
-    expect(screen.queryByText('ssh ws@192.168.20.184')).not.toBeInTheDocument();
+    expect(screen.queryByText('ssh beast-01')).not.toBeInTheDocument();
   });
 
   it('does not render BEAST-only system surfaces for other flagship units', () => {

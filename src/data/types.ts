@@ -311,10 +311,17 @@ export interface Terminal {
   note?: string;
 }
 
+export const NET_GRAINS = ['module', 'connector', 'internal'] as const;
+export type NetGrain = (typeof NET_GRAINS)[number];
+
 export interface Net {
   id: string; // e.g. 'net-servo-bus'
   name: string; // 'ST3215 Serial Servo Bus'
   kind: NetKind;
+  /** module = Board trunks; connector = one cable; internal = intra-board rail */
+  grain: NetGrain;
+  /** connector/internal → parent module net id */
+  parentNet?: string;
   carries?: string; // '11.1V pack rail' | 'UART 115200 8N1' | 'I²C' ...
   terminals: string[]; // terminal ids joined by this net (≥2)
   documents?: string[]; // document ids that prove this wiring
