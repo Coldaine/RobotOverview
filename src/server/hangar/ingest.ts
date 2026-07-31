@@ -20,6 +20,12 @@ import {
 import { and, eq, inArray, ne } from 'drizzle-orm';
 import { z } from 'zod';
 import { getHangarDrizzle, type HangarDrizzle } from './drizzle';
+import { isTrimmedHttpUrl } from './validators';
+
+const httpUrl = z.string().refine(isTrimmedHttpUrl, 'must be an http(s) URL');
+const isoTimestamp = z
+  .string()
+  .refine((v) => !Number.isNaN(new Date(v).getTime()), 'must be an ISO timestamp');
 import {
   activityLog,
   assetCapabilities,
@@ -114,7 +120,7 @@ const powerSchema = z.object({
 });
 const sourceRecordSchema = z.object({
   label: z.string(),
-  url: z.string(),
+  url: httpUrl,
   accessedAt: z.string(),
   kind: z.enum(SOURCE_RECORD_KINDS),
 });
@@ -136,7 +142,7 @@ const unitShortcutSchema = z.union([
     id: z.string(),
     label: z.string(),
     type: z.literal('url'),
-    url: z.string(),
+    url: httpUrl,
     note: z.string().optional(),
   }),
   z.object({
@@ -168,7 +174,7 @@ const unitRecordSchema = z.object({
   insights: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
   shortcuts: z.array(unitShortcutSchema).optional(),
-  links: z.array(z.object({ label: z.string(), url: z.string() })).optional(),
+  links: z.array(z.object({ label: z.string(), url: httpUrl })).optional(),
   acquired: z.string().optional(),
   horizon: z.string().optional(),
   provenance: z.enum(PROVENANCE_KINDS).optional(),
@@ -246,7 +252,7 @@ const documentRecordSchema = z.object({
   title: z.string().min(1),
   kind: z.enum(DOCUMENT_KINDS),
   libraryPath: z.string().min(1),
-  url: z.string().optional(),
+  url: httpUrl.optional(),
   units: z.array(z.string()).optional(),
   note: z.string().optional(),
 });
@@ -258,7 +264,7 @@ const appendInsightInput = z.object({
   confidence: z.enum(INSIGHT_CONFIDENCE_LEVELS),
   source: z.string().optional(),
   bay: bayIdSchema.optional(),
-  capturedAt: z.string().optional(),
+  capturedAt: isoTimestamp.optional(),
   units: z.array(z.string()).optional(),
   missions: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
@@ -268,7 +274,7 @@ const appendActivityInput = z.object({
   id: z.string().min(1),
   kind: z.enum(ACTIVITY_KINDS),
   text: z.string().min(1),
-  at: z.string().optional(),
+  at: isoTimestamp.optional(),
 });
 
 const patchStatusInput = z.object({
@@ -297,7 +303,7 @@ const landBriefingResearch = z.object({
   tags: z.array(z.string()).optional(),
   aliases: z.array(z.string()).optional(),
   packId: z.string().optional(),
-  capturedAt: z.string().optional(),
+  capturedAt: isoTimestamp.optional(),
   href: z.string().optional(),
   bodyMarkdown: z.string().min(1),
 });
@@ -310,7 +316,7 @@ const landBriefingPlan = z.object({
   tags: z.array(z.string()).optional(),
   aliases: z.array(z.string()).optional(),
   packId: z.string().optional(),
-  capturedAt: z.string().optional(),
+  capturedAt: isoTimestamp.optional(),
   href: z.string().optional(),
   repoPath: z.string().min(1),
 });

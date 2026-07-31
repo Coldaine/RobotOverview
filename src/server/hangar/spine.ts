@@ -854,7 +854,11 @@ export async function getHangarSpine(): Promise<HangarSpineRead> {
     }
 
     return { source: 'postgres', data };
-  } catch {
+  } catch (error) {
+    console.error(
+      'hangar spine: reconstruction failed, serving static fallback:',
+      error instanceof Error ? error.message : error,
+    );
     return staticFallback('postgres-error');
   }
 }

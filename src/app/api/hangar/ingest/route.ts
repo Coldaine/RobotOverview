@@ -37,7 +37,9 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-    const message = error instanceof Error ? error.message : String(error);
-    return Response.json({ ok: false, error: message }, { status: 500 });
+    // Unmapped failures (driver errors, FK violations) expose constraint and
+    // table names via error.message — log server-side, answer generic.
+    console.error('hangar ingest: unhandled failure', error);
+    return Response.json({ ok: false, error: 'Ingest failed' }, { status: 500 });
   }
 }
