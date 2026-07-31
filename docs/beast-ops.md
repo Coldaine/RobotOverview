@@ -160,7 +160,9 @@ No CI/CD to the robot. If you only edited Hangar docs/UI, the Jetson does not ch
   now has `cmd_vel_timeout` (default 0.5 s) — on silence while `allow_motion` is true it
   sends stop once. Unit tests passed on-robot; supervised crawl+kill re-gate is still
   required before trusting it. Motion stays software-locked (`allow_motion:=false`).
-  **Do not enable motion while charging / tethered, or below ~10.5 V.**
+  **Do not enable `allow_motion:=true` without an active, independent operator stop path
+  already staged and running. Do not enable motion while charging / tethered, or below
+  ~10.5 V.**
 - **Brownout 2026-07-31:** pack hit ~8.8 V; Jetson went offline (Tailscale last-seen gap).
   After charger plug-in + chassis power, Wi-Fi SSH at `.187` returned (~2 min uptime).
   Charge before any motion session.
