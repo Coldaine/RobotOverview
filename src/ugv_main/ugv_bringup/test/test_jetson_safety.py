@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import json
+import time
 from types import MethodType, SimpleNamespace
 
 from ugv_bringup.ugv_bringup import (
@@ -34,16 +35,23 @@ def velocity(linear, angular):
     )
 
 
-def motion_harness(allow_motion):
+def motion_harness(allow_motion, cmd_vel_timeout=0.5):
+    logger = RecordingLogger()
     harness = SimpleNamespace(
         allow_motion=allow_motion,
+        cmd_vel_timeout=cmd_vel_timeout,
         _motion_reject_warned=False,
+        _last_cmd_vel_time=None,
+        _cmd_vel_watchdog_armed=False,
         base_controller=RecordingController(),
         zero_vel_count=0,
         zero_vel_limit=5,
-        get_logger=lambda: RecordingLogger(),
+        get_logger=lambda: logger,
     )
     harness.send_stop_command = MethodType(ugv_bringup.send_stop_command, harness)
+    harness._cmd_vel_watchdog_tick = MethodType(
+        ugv_bringup._cmd_vel_watchdog_tick, harness
+    )
     return harness
 
 
@@ -83,3 +91,49 @@ def test_motion_gate_allows_command_after_explicit_enable():
     ugv_bringup.cmd_vel_callback(harness, velocity(0.05, 0.25))
 
     assert harness.base_controller.commands == [{'T': '13', 'X': 0.05, 'Z': 0.25}]
+    assert harness._cmd_vel_watchdog_armed is True
+
+
+def test_cmd_vel_watchdog_sends_one_stop_after_timeout(monkeypatch):
+    harness = motion_harness(allow_motion=True, cmd_vel_timeout=0.5)
+    clock = {'now': 1000.0}
+    monkeypatch.setattr(time, 'monotonic', lambda: clock['now'])
+
+    ugv_bringup.cmd_vel_callback(harness, velocity(0.02, 0.0))
+    assert harness._cmd_vel_watchdog_armed is True
+    assert harness.base_controller.commands == [{'T': '13', 'X': 0.02, 'Z': 0.0}]
+
+    clock['now'] = 1000.4
+    harness._cmd_vel_watchdog_tick()
+    assert harness.base_controller.commands == [{'T': '13', 'X': 0.02, 'Z': 0.0}]
+    assert harness._cmd_vel_watchdog_armed is True
+
+    clock['now'] = 1000.6
+    harness._cmd_vel_watchdog_tick()
+    assert harness.base_controller.commands == [
+        {'T': '13', 'X': 0.02, 'Z': 0.0},
+        {'T': '13', 'X': 0.0, 'Z': 0.0},
+    ]
+    assert harness._cmd_vel_watchdog_armed is False
+
+    clock['now'] = 1001.5
+    harness._cmd_vel_watchdog_tick()
+    assert len(harness.base_controller.commands) == 2
+
+
+def test_cmd_vel_watchdog_resets_timer_on_fresh_command(monkeypatch):
+    harness = motion_harness(allow_motion=True, cmd_vel_timeout=0.5)
+    clock = {'now': 1000.0}
+    monkeypatch.setattr(time, 'monotonic', lambda: clock['now'])
+
+    ugv_bringup.cmd_vel_callback(harness, velocity(0.02, 0.0))
+    clock['now'] = 1000.4
+    ugv_bringup.cmd_vel_callback(harness, velocity(0.02, 0.0))
+    clock['now'] = 1000.7
+    harness._cmd_vel_watchdog_tick()
+
+    assert harness._cmd_vel_watchdog_armed is True
+    assert harness.base_controller.commands == [
+        {'T': '13', 'X': 0.02, 'Z': 0.0},
+        {'T': '13', 'X': 0.02, 'Z': 0.0},
+    ]

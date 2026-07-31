@@ -84,12 +84,16 @@ class ugv_bringup(Node):
         self.declare_parameter('wifi_interface', '')
         self.declare_parameter('ethernet_interface', '')
         self.declare_parameter('allow_motion', False)
+        self.declare_parameter('cmd_vel_timeout', 0.5)
         serial_port_name = self.get_parameter('serial_port').value
         baud_rate = self.get_parameter('baud_rate').value
         self.wifi_interface = self.get_parameter('wifi_interface').value
         self.ethernet_interface = self.get_parameter('ethernet_interface').value
         self.allow_motion = self.get_parameter('allow_motion').value
+        self.cmd_vel_timeout = float(self.get_parameter('cmd_vel_timeout').value)
         self._motion_reject_warned = False
+        self._last_cmd_vel_time = None
+        self._cmd_vel_watchdog_armed = False
                         
         # Initialize the base controller with the UART port and baud rate
         self.base_controller = BaseController(serial_port_name, baud_rate)
@@ -102,6 +106,8 @@ class ugv_bringup(Node):
         self.feedback_thread.start()
         self.ip_thread = threading.Thread(target=self.ip_thread_func, daemon=True)
         self.ip_thread.start()
+        # Stale-cmd_vel watchdog: ESP32 latches last velocity with no firmware timeout
+        self._cmd_vel_watchdog_timer = self.create_timer(0.1, self._cmd_vel_watchdog_tick)
 
         self.set_ugv_version()
 
@@ -254,6 +260,8 @@ class ugv_bringup(Node):
                 self.send_stop_command()
             return
 
+        self._last_cmd_vel_time = time.monotonic()
+
         if linear_velocity == 0.0 and angular_velocity == 0.0:
             self.zero_vel_count += 1
             if self.zero_vel_count > self.zero_vel_limit:
@@ -271,6 +279,22 @@ class ugv_bringup(Node):
         # Send the velocity data to the UGV as a JSON string
         data = json.dumps({'T': '13', 'X': linear_velocity, 'Z': angular_velocity}) + "\n"
         self.base_controller.send_command(data.encode())
+        self._cmd_vel_watchdog_armed = not (
+            linear_velocity == 0.0 and angular_velocity == 0.0
+        )
+
+    def _cmd_vel_watchdog_tick(self):
+        if not self.allow_motion or not self._cmd_vel_watchdog_armed:
+            return
+        if self._last_cmd_vel_time is None:
+            return
+        if (time.monotonic() - self._last_cmd_vel_time) < self.cmd_vel_timeout:
+            return
+        self.send_stop_command()
+        self._cmd_vel_watchdog_armed = False
+        self.get_logger().warning(
+            f'cmd_vel watchdog stop after {self.cmd_vel_timeout:.2f}s silence'
+        )
 
     def send_stop_command(self):
         data = json.dumps({'T': '13', 'X': 0.0, 'Z': 0.0}) + "\n"
