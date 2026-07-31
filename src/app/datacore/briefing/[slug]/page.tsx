@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { BriefingMarkdown } from '@/components/datacore/BriefingMarkdown';
-import { getBriefing, getBriefingBody } from '@/server/hangar/briefings';
+import { getBriefing, getBriefingBody, getBriefings } from '@/server/hangar/briefings';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,10 +31,16 @@ export default async function BriefingPage({
 }) {
   const { slug } = await params;
 
-  const briefing = await getBriefing(slug);
-  if (!briefing) notFound();
+  // Distinguish "DB offline" from "unknown slug": offline renders the loud
+  // degraded panel for any slug (never a misleading 404); online + missing
+  // row is a real 404.
+  const all = await getBriefings();
+  const offline = all.source !== 'postgres';
 
-  const markdown = await getBriefingBody(briefing);
+  const briefing = offline ? null : await getBriefing(slug);
+  if (!offline && !briefing) notFound();
+
+  const markdown = briefing ? await getBriefingBody(briefing) : null;
 
   return (
     <div className="space-y-6">
@@ -47,13 +53,17 @@ export default async function BriefingPage({
           Datacore
         </Link>
         <div className="font-mono text-[11px] uppercase tracking-[0.35em] text-cyan/70">
-          {KIND_LABEL[briefing.kind] ?? 'Briefing'} · {briefing.id.toUpperCase()}
+          {briefing ? `${KIND_LABEL[briefing.kind] ?? 'Briefing'} · ${briefing.id.toUpperCase()}` : `BRIEFING · ${slug.toUpperCase()}`}
         </div>
-        <h1 className="text-xl font-semibold text-ink md:text-2xl">{briefing.title}</h1>
-        <p className="max-w-3xl font-mono text-xs text-ink-dim">{briefing.summary}</p>
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-dim/70">
-          {sourceLine(briefing)}
-        </p>
+        <h1 className="text-xl font-semibold text-ink md:text-2xl">{briefing ? briefing.title : slug}</h1>
+        {briefing && (
+          <>
+            <p className="max-w-3xl font-mono text-xs text-ink-dim">{briefing.summary}</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-ink-dim/70">
+              {sourceLine(briefing)}
+            </p>
+          </>
+        )}
       </header>
 
       {markdown == null ? (
@@ -68,7 +78,9 @@ export default async function BriefingPage({
             </span>
           </div>
           <p className="font-mono text-[11px] leading-relaxed text-ink-dim">
-            Briefing body unavailable — Postgres body missing or plan file unreadable. Research content is not served from the repo.
+            {offline
+              ? 'Hangar Postgres is unreachable — this briefing lives in the database and research content is not served from the repo. Reconnect to restore it.'
+              : 'Briefing body unavailable — Postgres body missing or plan file unreadable. Research content is not served from the repo.'}
           </p>
         </div>
       ) : (

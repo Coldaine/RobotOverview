@@ -500,6 +500,7 @@ export const assetShortcuts = pgTable(
     assetId: text('asset_id')
       .notNull()
       .references(() => assets.id, { onDelete: 'cascade' }),
+    shortcutId: text('shortcut_id').notNull(),
     position: integer('position').notNull(),
     label: text('label').notNull(),
     type: text('type').notNull(),
@@ -507,7 +508,10 @@ export const assetShortcuts = pgTable(
     command: text('command'),
     note: text('note'),
   },
-  (t) => [primaryKey({ columns: [t.assetId, t.position] })],
+  (t) => [
+    primaryKey({ columns: [t.assetId, t.position] }),
+    unique('asset_shortcuts_id_key').on(t.assetId, t.shortcutId),
+  ],
 );
 
 export const hangarMeta = pgTable('hangar_meta', {

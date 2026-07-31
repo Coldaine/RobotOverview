@@ -114,11 +114,11 @@ for (const u of H.units) {
   (u.shortcuts ?? []).forEach((sc, position) => {
     if (sc.type === 'url') {
       w(
-        `INSERT INTO asset_shortcuts(asset_id,position,label,type,url,command,note) VALUES (${S(u.id)},${position},${S(sc.label)},'url',${S(sc.url)},NULL,${S(sc.note)});`,
+        `INSERT INTO asset_shortcuts(asset_id,shortcut_id,position,label,type,url,command,note) VALUES (${S(u.id)},${S(sc.id)},${position},${S(sc.label)},'url',${S(sc.url)},NULL,${S(sc.note)});`,
       );
     } else {
       w(
-        `INSERT INTO asset_shortcuts(asset_id,position,label,type,url,command,note) VALUES (${S(u.id)},${position},${S(sc.label)},'command',NULL,${S(sc.command)},${S(sc.note)});`,
+        `INSERT INTO asset_shortcuts(asset_id,shortcut_id,position,label,type,url,command,note) VALUES (${S(u.id)},${S(sc.id)},${position},${S(sc.label)},'command',NULL,${S(sc.command)},${S(sc.note)});`,
       );
     }
   });

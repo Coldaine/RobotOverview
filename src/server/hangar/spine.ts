@@ -597,7 +597,9 @@ export async function buildHangarDataFromDb(db: HangarDrizzle): Promise<HangarDa
     for (const sc of shortcutsByAsset.get(asset.id) ?? []) {
       const type = tryEnum(sc.type, UNIT_SHORTCUT_TYPES, 'shortcut type', `${asset.id}/${sc.position}`);
       if (!type) continue;
-      const id = shortcutIdFromLabel(sc.label);
+      // shortcut_id is canonical since the corpus migration; label-slug only
+      // covers rows seeded before identity existed.
+      const id = sc.shortcutId ?? shortcutIdFromLabel(sc.label);
       if (type === 'url') {
         if (!sc.url || !isTrimmedHttpUrl(sc.url)) {
           console.warn(`hangar spine: skip url shortcut on "${asset.id}" position ${sc.position}`);

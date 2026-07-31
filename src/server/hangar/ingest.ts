@@ -289,7 +289,7 @@ const linkInsightInput = z.object({
   missions: z.array(z.string()).optional(),
 });
 
-const landBriefingInput = z.object({
+const landBriefingResearch = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
   kind: z.literal('research'),
@@ -301,6 +301,21 @@ const landBriefingInput = z.object({
   href: z.string().optional(),
   bodyMarkdown: z.string().min(1),
 });
+
+const landBriefingPlan = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1),
+  kind: z.literal('plan'),
+  summary: z.string(),
+  tags: z.array(z.string()).optional(),
+  aliases: z.array(z.string()).optional(),
+  packId: z.string().optional(),
+  capturedAt: z.string().optional(),
+  href: z.string().optional(),
+  repoPath: z.string().min(1),
+});
+
+const landBriefingInput = z.union([landBriefingResearch, landBriefingPlan]);
 
 const landPackInput = z.object({
   id: z.string().min(1),
@@ -871,6 +886,7 @@ export async function opLandUnit(db: IngestDb, unit: Unit): Promise<string> {
       if (sc.type === 'url') {
         await t.insert(assetShortcuts).values({
           assetId: unit.id,
+          shortcutId: sc.id,
           position,
           label: sc.label,
           type: 'url',
@@ -881,6 +897,7 @@ export async function opLandUnit(db: IngestDb, unit: Unit): Promise<string> {
       } else {
         await t.insert(assetShortcuts).values({
           assetId: unit.id,
+          shortcutId: sc.id,
           position,
           label: sc.label,
           type: 'command',
@@ -1184,6 +1201,8 @@ export async function opLandBriefing(
   input: z.infer<typeof landBriefingInput>,
 ): Promise<string> {
   const href = input.href ?? `/datacore/briefing/${input.id}`;
+  const bodyMarkdown = input.kind === 'research' ? input.bodyMarkdown : null;
+  const repoPath = input.kind === 'plan' ? input.repoPath : null;
   await db
     .insert(briefings)
     .values({
@@ -1196,7 +1215,8 @@ export async function opLandBriefing(
       packId: input.packId ?? null,
       capturedAt: input.capturedAt ?? null,
       href,
-      bodyMarkdown: input.bodyMarkdown,
+      bodyMarkdown,
+      repoPath,
       updatedAt: new Date(),
     })
     .onConflictDoUpdate({
@@ -1210,7 +1230,8 @@ export async function opLandBriefing(
         packId: input.packId ?? null,
         capturedAt: input.capturedAt ?? null,
         href,
-        bodyMarkdown: input.bodyMarkdown,
+        bodyMarkdown,
+        repoPath,
         updatedAt: new Date(),
       },
     });

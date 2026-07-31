@@ -203,7 +203,18 @@ export async function getBriefingBody(briefing: DatacoreBriefingRow): Promise<st
 
   if (briefing.kind === 'plan') {
     const repoPath = briefing.repoPath;
-    if (!repoPath || repoPath.includes('..')) return null;
+    // Reject anything that escapes the repo root: parent traversal, absolute
+    // POSIX paths, Windows drive paths, and UNC shares.
+    if (
+      !repoPath ||
+      repoPath.includes('..') ||
+      path.isAbsolute(repoPath) ||
+      /^[a-zA-Z]:[\\/]/.test(repoPath) ||
+      repoPath.startsWith('\\\\') ||
+      repoPath.startsWith('/')
+    ) {
+      return null;
+    }
     return readFile(path.join(process.cwd(), repoPath), 'utf8');
   }
 

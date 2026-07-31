@@ -11,6 +11,7 @@ import {
   insightAssets,
   insightMissions,
   insights,
+  missionAfterActions,
   missionConstraints,
   missionObjectives,
   missionRequisitions,
@@ -235,6 +236,14 @@ describe('hangar ingest land/link ops (pg-mem)', () => {
       .from(missionConstraints)
       .where(eq(missionConstraints.missionId, id));
     expect(cons).toHaveLength(2);
+
+    const after = await db
+      .select()
+      .from(missionAfterActions)
+      .where(eq(missionAfterActions.missionId, id));
+    expect(after).toHaveLength(1);
+    expect(after[0]?.position).toBe(0);
+    expect(after[0]?.text).toBe('note one');
   });
 
   it('land_briefing upserts research row with body', async () => {

@@ -81,6 +81,7 @@ function renderDatacore() {
         briefings={FIXTURE_BRIEFINGS}
         packs={FIXTURE_PACKS}
         briefingsSource="postgres"
+        packsSource="postgres"
       />
     </HangarProvider>,
   );
@@ -154,10 +155,10 @@ describe('Datacore page', () => {
     expect(screen.queryByRole('option', { name: 'High' })).not.toBeInTheDocument();
   });
 
-  it('shows DATACORE OFFLINE banner and hides packs when briefingsSource is static', () => {
+  it('shows DATACORE OFFLINE banner and hides packs when both lanes are static', () => {
     render(
       <HangarProvider>
-        <DatacoreClient briefings={[]} packs={[]} briefingsSource="static" />
+        <DatacoreClient briefings={[]} packs={[]} briefingsSource="static" packsSource="static" />
       </HangarProvider>,
     );
 
@@ -165,5 +166,21 @@ describe('Datacore page', () => {
     expect(screen.queryByRole('heading', { name: /Beast Vision & Capture/i })).not.toBeInTheDocument();
     expect(screen.getByText(/Research packs & briefs unavailable/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /\d+ insights?/i })).toBeInTheDocument();
+  });
+
+  it('degrades per lane: briefings offline still renders packs', () => {
+    render(
+      <HangarProvider>
+        <DatacoreClient
+          briefings={[]}
+          briefingsSource="static"
+          packs={FIXTURE_PACKS}
+          packsSource="postgres"
+        />
+      </HangarProvider>,
+    );
+
+    expect(screen.getByText('DATACORE DEGRADED')).toBeInTheDocument();
+    expect(screen.getByText(/Briefings unavailable from Postgres — research packs still load/i)).toBeInTheDocument();
   });
 });

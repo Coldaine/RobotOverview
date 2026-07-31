@@ -200,7 +200,7 @@ CREATE TABLE capabilities (
   name        TEXT NOT NULL,
   description TEXT,
   unlocked    BOOLEAN NOT NULL DEFAULT false,
-  bay         TEXT
+  bay         TEXT REFERENCES groups(id) ON DELETE SET NULL
 );
 CREATE TABLE capability_deps (
   capability_id TEXT NOT NULL REFERENCES capabilities(id) ON DELETE CASCADE,
@@ -221,7 +221,7 @@ CREATE TABLE insights (
   confidence  confidence_level,
   source      TEXT,
   captured_at TIMESTAMPTZ,
-  bay         TEXT
+  bay         TEXT REFERENCES groups(id) ON DELETE SET NULL
 );
 CREATE TABLE insight_assets (                    -- explicit junctions (revision #8)
   insight_id TEXT NOT NULL REFERENCES insights(id) ON DELETE CASCADE,
@@ -319,14 +319,16 @@ CREATE INDEX idx_document_assets_asset ON document_assets(asset_id);
 
 -- ── CORPUS (shortcuts, hangar meta, briefings) ───────────────────────────────
 CREATE TABLE asset_shortcuts (
-  asset_id TEXT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
-  position INTEGER NOT NULL,
-  label    TEXT NOT NULL,
-  type     TEXT NOT NULL CHECK (type IN ('url','command')),
-  url      TEXT,
-  command  TEXT,
-  note     TEXT,
+  asset_id    TEXT NOT NULL REFERENCES assets(id) ON DELETE CASCADE,
+  shortcut_id TEXT NOT NULL,
+  position    INTEGER NOT NULL,
+  label       TEXT NOT NULL,
+  type        TEXT NOT NULL CHECK (type IN ('url','command')),
+  url         TEXT,
+  command     TEXT,
+  note        TEXT,
   PRIMARY KEY (asset_id, position),
+  UNIQUE (asset_id, shortcut_id),
   CHECK ((type = 'url' AND url IS NOT NULL) OR (type = 'command' AND command IS NOT NULL))
 );
 

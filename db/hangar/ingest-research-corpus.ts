@@ -347,7 +347,7 @@ function gitRevWithFile(rel: string): string | null {
   try {
     // Most recent commit touching the path may be its deletion — walk history
     // until a commit where the file actually exists.
-    const shas = execFileSync('git', ['log', '--format=%H', '--', p], {
+    const shas = execFileSync('git', ['log', '--follow', '--format=%H', '--', p], {
       cwd: ROOT,
       encoding: 'utf8',
     })
@@ -413,59 +413,6 @@ function buildLandPlans(): LandPlan[] {
   return plans;
 }
 
-/**
- * SA-4 `opLandBriefing` only accepts kind:'research' + bodyMarkdown.
- * Plan rows need repo_path and null body — equivalent upsert until the op grows.
- */
-async function landPlanBriefing(
-  db: HangarDrizzle,
-  input: {
-    id: string;
-    title: string;
-    summary: string;
-    tags: string[];
-    aliases?: string[];
-    packId?: string;
-    capturedAt?: string;
-    href: string;
-    repoPath: string;
-  },
-): Promise<string> {
-  await db
-    .insert(briefings)
-    .values({
-      id: input.id,
-      title: input.title,
-      kind: 'plan',
-      summary: input.summary,
-      tags: input.tags,
-      aliases: input.aliases ?? [],
-      packId: input.packId ?? null,
-      capturedAt: input.capturedAt ?? null,
-      href: input.href,
-      bodyMarkdown: null,
-      repoPath: input.repoPath,
-      updatedAt: new Date(),
-    })
-    .onConflictDoUpdate({
-      target: briefings.id,
-      set: {
-        title: input.title,
-        kind: 'plan',
-        summary: input.summary,
-        tags: input.tags,
-        aliases: input.aliases ?? [],
-        packId: input.packId ?? null,
-        capturedAt: input.capturedAt ?? null,
-        href: input.href,
-        bodyMarkdown: null,
-        repoPath: input.repoPath,
-        updatedAt: new Date(),
-      },
-    });
-  return input.id;
-}
-
 function writeManifest(landPlans: LandPlan[]): Manifest {
   const manifest: Manifest = {
     briefings: landPlans.map((p) => ({
@@ -514,9 +461,10 @@ async function landAll(db: HangarDrizzle, landPlans: LandPlan[]): Promise<void> 
       if (!plan.repoPath) {
         throw new Error(`Plan briefing '${plan.id}' missing repoPath`);
       }
-      await landPlanBriefing(db, {
+      await opLandBriefing(db, {
         id: plan.id,
         title: plan.title,
+        kind: 'plan',
         summary: plan.summary,
         tags: plan.tags,
         aliases: plan.aliases,
@@ -545,7 +493,6 @@ async function main(): Promise<void> {
   const dryRun = process.argv.includes('--dry-run');
   const landPlans = buildLandPlans();
   const bytes = landPlans.reduce((n, p) => n + p.bytes, 0);
-  writeManifest(landPlans);
 
   if (dryRun) {
     console.log(
@@ -567,13 +514,6 @@ async function main(): Promise<void> {
         2,
       ),
     );
-    console.log(
-      JSON.stringify({
-        packs: CORPUS_PACKS.length,
-        briefings: landPlans.length,
-        bytes,
-      }),
-    );
     return;
   }
 
@@ -585,10 +525,17 @@ async function main(): Promise<void> {
   }
 
   try {
-    await landAll(db, landPlans);
+    // Single tx: pack-hub links (phase 3) must not be left NULL by an abort
+    // between phases — mapPackRow drops hub-less packs silently.
+    await db.transaction(async (tx) => {
+      await landAll(tx as unknown as HangarDrizzle, landPlans);
+    });
   } finally {
     await closeHangarPoolForTests();
   }
+
+  // Manifest reflects actually-landed state — write only after success.
+  writeManifest(landPlans);
 
   console.log(
     JSON.stringify({

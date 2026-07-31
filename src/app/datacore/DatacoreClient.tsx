@@ -26,17 +26,20 @@ type DatacoreTab = 'knowledge' | 'library' | 'console';
 
 export type DatacoreClientProps = {
   briefings: DatacoreBriefingRow[];
-  packs: DatacorePack[];
   briefingsSource: HangarReadSource;
+  packs: DatacorePack[];
+  packsSource: HangarReadSource;
 };
 
-export function DatacoreClient({ briefings, packs, briefingsSource }: DatacoreClientProps) {
+export function DatacoreClient({ briefings, briefingsSource, packs, packsSource }: DatacoreClientProps) {
   const { data, insights, documents, unit, mission, addLocalInsight, removeLocalInsight } = useHangar();
   const [tab, setTab] = useState<DatacoreTab>('knowledge');
   const [q, setQ] = useState('');
   const [bay, setBay] = useState<'all' | string>('all');
   const [conf, setConf] = useState<ConfidenceFilter>('all');
-  const offline = briefingsSource === 'static';
+  const briefingsOffline = briefingsSource === 'static';
+  const packsOffline = packsSource === 'static';
+  const offline = briefingsOffline && packsOffline;
 
   // Content intake — a lightweight, reversible local-notes capture (no backend).
   const [showCapture, setShowCapture] = useState(false);
@@ -81,12 +84,12 @@ export function DatacoreClient({ briefings, packs, briefingsSource }: DatacoreCl
   }, [insights, needle, bay, conf]);
 
   const packHits = useMemo(
-    () => (offline ? [] : packs.filter((p) => packMatchesQuery(p, needle, briefings))),
-    [needle, packs, briefings, offline],
+    () => (packsOffline ? [] : packs.filter((p) => packMatchesQuery(p, needle, briefings))),
+    [needle, packs, briefings, packsOffline],
   );
 
   const looseBriefingHits = useMemo(() => {
-    if (offline) return [];
+    if (briefingsOffline) return [];
     const packedInHit = new Set(
       packHits.flatMap((p) => briefingsInPack(briefings, p.id).map((b) => b.id)),
     );
@@ -94,21 +97,25 @@ export function DatacoreClient({ briefings, packs, briefingsSource }: DatacoreCl
       if (packedInHit.has(b.id)) return false;
       return briefingMatchesQuery(b, needle);
     });
-  }, [needle, packHits, briefings, offline]);
+  }, [needle, packHits, briefings, briefingsOffline]);
 
   return (
     <div className="space-y-6">
-      {offline && (
+      {(briefingsOffline || packsOffline) && (
         <div
           role="status"
           className="flex items-center gap-3 border border-amber/50 bg-amber/10 px-4 py-2.5 [background-image:repeating-linear-gradient(-45deg,transparent,transparent_10px,rgba(255,176,32,0.06)_10px,rgba(255,176,32,0.06)_20px)]"
         >
           <span aria-hidden="true" className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-amber" />
           <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-amber">
-            DATACORE OFFLINE
+            DATACORE {offline ? 'OFFLINE' : 'DEGRADED'}
           </span>
           <span className="min-w-0 truncate font-mono text-[11px] text-ink-dim">
-            Hangar Postgres briefings unavailable — research packs and briefs are not served from the repo.
+            {offline
+              ? 'Hangar Postgres briefings unavailable — research packs and briefs are not served from the repo.'
+              : packsOffline
+                ? 'Research packs unavailable from Postgres — briefings still load.'
+                : 'Briefings unavailable from Postgres — research packs still load.'}
           </span>
         </div>
       )}
@@ -141,7 +148,7 @@ export function DatacoreClient({ briefings, packs, briefingsSource }: DatacoreCl
             label: 'Knowledge Core',
             code: 'CORE',
             icon: BookOpen,
-            count: (offline ? 0 : briefings.length) + insights.length,
+            count: (briefingsOffline ? 0 : briefings.length) + insights.length,
           },
           { id: 'library', label: 'Hardware Library', code: 'HW', icon: CircuitBoard, count: documents.length },
           { id: 'console', label: 'BEAST Console', code: 'PLUG', icon: Plug, count: EXPECTED_CABLES.filter((c) => !c.era && c.build !== 'pi5').length },
@@ -274,7 +281,7 @@ export function DatacoreClient({ briefings, packs, briefingsSource }: DatacoreCl
             </div>
           )}
 
-          {!offline && packHits.length > 0 && (
+          {!packsOffline && packHits.length > 0 && (
             <>
               <SectionTitle code="PACK">
                 {packHits.length} research pack{packHits.length === 1 ? '' : 's'}
@@ -350,7 +357,7 @@ export function DatacoreClient({ briefings, packs, briefingsSource }: DatacoreCl
             </>
           )}
 
-          {!offline && looseBriefingHits.length > 0 && (
+          {!briefingsOffline && looseBriefingHits.length > 0 && (
             <>
               <SectionTitle code="BRIEF">
                 {packHits.length > 0

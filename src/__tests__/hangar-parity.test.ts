@@ -11,8 +11,8 @@ import { buildHangarDataFromDb } from '@/server/hangar/spine';
 const ROOT = resolve(__dirname, '../..');
 
 /** pg-mem treats `NULL IN (...)` as CHECK failure; Postgres allows NULL. */
-function prepareSqlForPgMem(sql: string): string {
-  return sql
+function prepareSqlForPgMem(sql: string, opts: { expectCheckRewrites?: boolean } = {}): string {
+  const out = sql
     .replace(/BEGIN;\s*/gi, '')
     .replace(/COMMIT;\s*/gi, '')
     .replace(/SET client_min_messages\s*=\s*warning;\s*/gi, '')
@@ -24,6 +24,17 @@ function prepareSqlForPgMem(sql: string): string {
       /provenance\s+TEXT CHECK \(provenance IN \('owner','inferred','open'\)\)/g,
       "provenance     TEXT CHECK (provenance IS NULL OR provenance IN ('owner','inferred','open'))",
     );
+  // Fail closed for the schema file: if schema.sql is reformatted, these
+  // rewrites must not no-op silently. The seed file legitimately has no CHECKs.
+  if (opts.expectCheckRewrites) {
+    if (!out.includes('power_rail IS NULL OR power_rail IN')) {
+      throw new Error('prepareSqlForPgMem: power_rail CHECK rewrite did not apply');
+    }
+    if (!out.includes('provenance IS NULL OR provenance IN')) {
+      throw new Error('prepareSqlForPgMem: provenance CHECK rewrite did not apply');
+    }
+  }
+  return out;
 }
 
 function splitStatements(sql: string): string[] {
@@ -268,6 +279,7 @@ describe('hangar spine Postgres reconstruction parity', () => {
     const mem = newDb({ autoCreateForeignKeyIndices: true });
     const schemaSql = prepareSqlForPgMem(
       readFileSync(resolve(ROOT, 'db/hangar/schema.sql'), 'utf8'),
+      { expectCheckRewrites: true },
     );
     const seedSql = prepareSqlForPgMem(readFileSync(resolve(ROOT, 'db/hangar/seed.sql'), 'utf8'));
 
