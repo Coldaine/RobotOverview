@@ -86,7 +86,8 @@ def launch_setup(context, *args, **kwargs):
         PythonLaunchDescriptionSource(os.path.join(get_package_share_directory('ugv_bringup'), 'launch', 'bringup_lidar.launch.py')),
         launch_arguments={
             'use_rviz': LaunchConfiguration('use_rviz'),
-            'rviz_config': rviz_config, 
+            'rviz_config': rviz_config,
+            'allow_motion': LaunchConfiguration('allow_motion'),
         }.items(),
         condition=UnlessCondition(use_sim_time)   
     )
@@ -128,7 +129,10 @@ def launch_setup(context, *args, **kwargs):
     # Include the robot_pose_publisher launch description
     robot_pose_publisher_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(
         [os.path.join(get_package_share_directory('robot_pose_publisher'), 'launch'),
-         '/robot_pose_publisher_launch.py'])
+         '/robot_pose_publisher_launch.py']),
+        launch_arguments={
+            'use_sim_time': use_sim_time,
+        }.items(),
     ) 
     
     if use_localization_text=='rtabmap':
@@ -157,6 +161,15 @@ def generate_launch_description():
         DeclareLaunchArgument('use_sim_time',default_value='false',description='Use simulation/Gazebo clock'),
         DeclareLaunchArgument('use_slam',default_value='false',description='Whether run a SLAM'),
         DeclareLaunchArgument('use_rviz', default_value='false',description='Whether to launch RViz2'),
+        DeclareLaunchArgument(
+            'allow_motion',
+            default_value='false',
+            description=(
+                'Forwarded to bringup_lidar; keep false until Set 1 motion re-gate. '
+                'Never stack this launch on a live beast-ros-base (second twist_mux) — '
+                'stop the service first.'
+            ),
+        ),
         DeclareLaunchArgument('use_localplan', default_value='teb', description='Choose which localplan to use: dwa,teb,rpp,mppi'),
         DeclareLaunchArgument('use_localization', default_value='amcl', description='Choose which localization to use: amcl,emcl,cartographer,slam_toolbox,rtabmap'),
         DeclareLaunchArgument('use_keepout_zones', default_value='false', description='Enable Nav2 keepout zones'),

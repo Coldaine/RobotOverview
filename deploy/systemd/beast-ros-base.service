@@ -12,7 +12,7 @@ SupplementaryGroups=dialout video render
 WorkingDirectory=/home/beast/beast/ugv_ws
 EnvironmentFile=/etc/beast/ugv.env
 Environment=PYTHONUNBUFFERED=1
-ExecStart=/bin/bash -lc 'source /opt/ros/humble/setup.bash && source /home/beast/beast/ugv_ws/install/setup.bash && exec ros2 launch ugv_bringup bringup_lidar.launch.py use_lidar:=false use_rviz:=false allow_motion:=false'
+ExecStart=/bin/bash -lc 'source /opt/ros/humble/setup.bash && source /home/beast/beast/ugv_ws/install/setup.bash && exec ros2 launch ugv_bringup bringup_lidar.launch.py use_lidar:=true use_rviz:=false allow_motion:=false'
 KillSignal=SIGINT
 TimeoutStopSec=15
 Restart=on-failure

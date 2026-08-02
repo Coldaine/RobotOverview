@@ -84,6 +84,9 @@ class ugv_bringup(Node):
         super().__init__('ugv_bringup')
         # Publishers for IMU data, magnetic field data, odometry, and voltage
         # self.imu_data_raw_publisher_ = self.create_publisher(Imu, "imu/data_raw", 20)
+        # Canonical topic is imu/data (EKF / rf2o / odom_publisher / cockpit).
+        # imu/raw is a same-payload alias for acceptance scripts that still echo it.
+        self.imu_data_publisher_ = self.create_publisher(Imu, "imu/data", 20)
         self.imu_data_raw_publisher_ = self.create_publisher(Imu, "imu/raw", 20)
         self.imu_mag_publisher_ = self.create_publisher(MagneticField, "imu/mag", 20)
         self.odom_publisher_ = self.create_publisher(Float32MultiArray, "odom/odom_raw", 20)
@@ -384,7 +387,19 @@ class ugv_bringup(Node):
         msg.angular_velocity.y = 3.1415926 * float(imu_raw_data["gy"]) / (16.4 * 180)
         msg.angular_velocity.z = 3.1415926 * float(imu_raw_data["gz"]) / (16.4 * 180)
                    
-        self.imu_data_raw_publisher_.publish(msg)  # Publish the IMU data
+        # REP-145: orientation_covariance[0] < 0 means orientation is not provided.
+        msg.orientation_covariance[0] = -1.0
+        # Conservative diagonal cov so EKF does not treat gyros as perfect.
+        msg.angular_velocity_covariance[0] = 0.02
+        msg.angular_velocity_covariance[4] = 0.02
+        msg.angular_velocity_covariance[8] = 0.02
+        msg.linear_acceleration_covariance[0] = 0.04
+        msg.linear_acceleration_covariance[4] = 0.04
+        msg.linear_acceleration_covariance[8] = 0.04
+
+        if hasattr(self, "imu_data_publisher_"):
+            self.imu_data_publisher_.publish(msg)
+        self.imu_data_raw_publisher_.publish(msg)
         
     # Publish magnetic field data to the ROS topic "imu/mag"
     def publish_imu_mag(self):

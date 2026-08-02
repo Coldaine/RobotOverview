@@ -101,8 +101,11 @@ class OdomPublisher(Node):
         cosy = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
         return math.atan2(siny, cosy)
 
-    # IMU callback
+    # IMU callback — only use orientation when a filter provides it (REP-145).
     def handle_imu(self, msg: Imu):
+        if msg.orientation_covariance[0] < 0.0:
+            # Raw board IMU has no orientation; keep wheel-integrated yaw.
+            return
         yaw = self.quat_to_yaw(msg.orientation)
         self.yaw_imu = yaw
         self.imu_valid = True

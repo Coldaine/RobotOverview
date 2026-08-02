@@ -2,10 +2,11 @@
 import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import EnvironmentVariable, LaunchConfiguration
 from launch_ros.actions import Node
 from launch.conditions import IfCondition
 from ament_index_python.packages import get_package_share_directory
+
 
 def launch_setup(context, *args, **kwargs):
     LDLIDAR_MODEL = os.environ.get('LDLIDAR_MODEL', 'ld19').lower()
@@ -69,10 +70,31 @@ def generate_launch_description():
         DeclareLaunchArgument('frame_id', default_value='base_lidar_link'),
         DeclareLaunchArgument('port_name', default_value='/dev/ttyACM0'),
         DeclareLaunchArgument('laser_scan_dir', default_value='true'),
-        DeclareLaunchArgument('enable_angle_crop_func', default_value='true'),
-        DeclareLaunchArgument('angle_crop_min', default_value='225.0'),
-        DeclareLaunchArgument('angle_crop_max', default_value='315.0'),
-        DeclareLaunchArgument('bins', default_value='480'),
+        # bins/crop defaults come from /etc/beast/ugv.env (see ugv.env.example).
+        DeclareLaunchArgument(
+            'enable_angle_crop_func',
+            default_value=EnvironmentVariable(
+                'UGV_LIDAR_ENABLE_ANGLE_CROP', default_value='true'
+            ),
+        ),
+        DeclareLaunchArgument(
+            'angle_crop_min',
+            default_value=EnvironmentVariable(
+                'UGV_LIDAR_ANGLE_CROP_MIN', default_value='225.0'
+            ),
+        ),
+        DeclareLaunchArgument(
+            'angle_crop_max',
+            default_value=EnvironmentVariable(
+                'UGV_LIDAR_ANGLE_CROP_MAX', default_value='315.0'
+            ),
+        ),
+        DeclareLaunchArgument(
+            'bins',
+            default_value=EnvironmentVariable(
+                'UGV_LIDAR_BINS', default_value='480'
+            ),
+        ),
         DeclareLaunchArgument('use_rviz', default_value='false'),
         OpaqueFunction(function=launch_setup)
     ])

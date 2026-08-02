@@ -22,6 +22,8 @@
 #include "ros2_api.h"
 #include "ldlidar_driver.h"
 
+#include <cmath>
+
 void  ToLaserscanMessagePublish(ldlidar::Points2D& src, double lidar_spin_freq, LaserScanSetting& setting,
   rclcpp::Node::SharedPtr& node, rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr& lidarpub);
 
@@ -185,6 +187,7 @@ void  ToLaserscanMessagePublish(ldlidar::Points2D& src,  double lidar_spin_freq,
   rclcpp::Time start_scan_time;
   static rclcpp::Time end_scan_time;
   static bool first_scan = true;
+  static int expected_bins = 0;
 
   int beam_size = 0;
 
@@ -192,6 +195,13 @@ void  ToLaserscanMessagePublish(ldlidar::Points2D& src,  double lidar_spin_freq,
     beam_size = setting.bins;
   } else {
     beam_size = static_cast<int>(src.size());
+  }
+
+  if (beam_size < 2) {
+    RCLCPP_ERROR_THROTTLE(
+      node->get_logger(), *node->get_clock(), 5000,
+      "LaserScan bin count %d is invalid (need >= 2)", beam_size);
+    return;
   }
 
   start_scan_time = node->now();
@@ -202,10 +212,26 @@ void  ToLaserscanMessagePublish(ldlidar::Points2D& src,  double lidar_spin_freq,
     end_scan_time = start_scan_time;
     return;
   }
-  // Adjust the parameters according to the demand
-  angle_min = 0;
-  angle_max = (2 * M_PI);
-  angle_increment = (angle_max - angle_min) / (float)(beam_size -1);
+
+  // Publish [0, 2π): N equal bins, angle_increment = 2π/N, no duplicated 0/360 sample.
+  // (Previously used 2π/(N-1) with angle_max = 2π, which slam_toolbox rejects.)
+  constexpr float kTwoPi = static_cast<float>(2.0 * M_PI);
+  angle_min = 0.0f;
+  angle_increment = kTwoPi / static_cast<float>(beam_size);
+  angle_max = angle_min + static_cast<float>(beam_size - 1) * angle_increment;
+
+  if (expected_bins == 0) {
+    expected_bins = beam_size;
+    RCLCPP_INFO(
+      node->get_logger(),
+      "Fixed LaserScan bin count: %d (angle_increment=2π/bins, range [0, 2π))",
+      expected_bins);
+  } else if (beam_size != expected_bins) {
+    RCLCPP_ERROR_THROTTLE(
+      node->get_logger(), *node->get_clock(), 2000,
+      "LaserScan bin count changed: expected %d, got %d", expected_bins, beam_size);
+  }
+
   // Calculate the number of scanning points
   if (lidar_spin_freq > 0) {
     sensor_msgs::msg::LaserScan output;
@@ -216,11 +242,7 @@ void  ToLaserscanMessagePublish(ldlidar::Points2D& src,  double lidar_spin_freq,
     output.range_min = setting.range_min;
     output.range_max = setting.range_max;
     output.angle_increment = angle_increment;
-    if (beam_size <= 1) {
-      output.time_increment = 0;
-    } else {
-      output.time_increment = static_cast<float>(scan_time / (double)(beam_size - 1));
-    }
+    output.time_increment = static_cast<float>(scan_time / static_cast<double>(beam_size));
     output.scan_time = scan_time;
     // First fill all the data with Nan
     output.ranges.assign(beam_size, std::numeric_limits<float>::quiet_NaN());
@@ -253,39 +275,54 @@ void  ToLaserscanMessagePublish(ldlidar::Points2D& src,  double lidar_spin_freq,
       }
 
       float angle = ANGLE_TO_RADIAN(dir_angle); // Lidar angle unit form degree transform to radian
-      int index = static_cast<int>(ceil((angle - angle_min) / angle_increment));
-      if (index < beam_size) {
-        if (index < 0) {
-          RCLCPP_ERROR(node->get_logger(), "error index: %d, beam_size: %d, angle: %f, output.angle_min: %f, output.angle_increment: %f", 
-            index, beam_size, angle, angle_min, angle_increment);
-        }
+      // Normalize into [0, 2π) so a 360° sample lands in bin 0, not past the last bin.
+      while (angle >= kTwoPi) {
+        angle -= kTwoPi;
+      }
+      while (angle < 0.0f) {
+        angle += kTwoPi;
+      }
+      int index = static_cast<int>(std::floor(angle / angle_increment));
+      if (index < 0) {
+        index = 0;
+      } else if (index >= beam_size) {
+        index = beam_size - 1;
+      }
 
-        if (setting.laser_scan_dir) {
-          int index_anticlockwise = beam_size - index - 1;
-          // If the current content is Nan, it is assigned directly
-          if (std::isnan(output.ranges[index_anticlockwise])) {
-            output.ranges[index_anticlockwise] = range;
-          } else { // Otherwise, only when the distance is less than the current
-                    //   value, it can be re assigned
-            if (range < output.ranges[index_anticlockwise]) {
-                output.ranges[index_anticlockwise] = range;
-            }
-          }
-          output.intensities[index_anticlockwise] = intensity;
-        } else {
-          // If the current content is Nan, it is assigned directly
-          if (std::isnan(output.ranges[index])) {
-            output.ranges[index] = range;
-          } else { // Otherwise, only when the distance is less than the current
+      if (setting.laser_scan_dir) {
+        int index_anticlockwise = beam_size - index - 1;
+        // If the current content is Nan, it is assigned directly
+        if (std::isnan(output.ranges[index_anticlockwise])) {
+          output.ranges[index_anticlockwise] = range;
+        } else { // Otherwise, only when the distance is less than the current
                   //   value, it can be re assigned
-            if (range < output.ranges[index]) {
-              output.ranges[index] = range;
-            }
+          if (range < output.ranges[index_anticlockwise]) {
+              output.ranges[index_anticlockwise] = range;
           }
-          output.intensities[index] = intensity;
         }
+        output.intensities[index_anticlockwise] = intensity;
+      } else {
+        // If the current content is Nan, it is assigned directly
+        if (std::isnan(output.ranges[index])) {
+          output.ranges[index] = range;
+        } else { // Otherwise, only when the distance is less than the current
+                //   value, it can be re assigned
+          if (range < output.ranges[index]) {
+            output.ranges[index] = range;
+          }
+        }
+        output.intensities[index] = intensity;
       }
     }
+
+    if (static_cast<int>(output.ranges.size()) != expected_bins) {
+      RCLCPP_ERROR(
+        node->get_logger(),
+        "Refusing to publish LaserScan with %zu ranges (expected %d bins)",
+        output.ranges.size(), expected_bins);
+      return;
+    }
+
     lidarpub->publish(output);
     end_scan_time = start_scan_time;
   } 

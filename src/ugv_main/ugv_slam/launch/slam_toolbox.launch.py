@@ -22,15 +22,27 @@ def generate_launch_description():
                                      description='Whether to launch RViz2')
 
     use_slam_arg = DeclareLaunchArgument('use_slam', default_value='sync',
-                                     description='which slam to launch') 
+                                     description='which slam to launch')
+
+    allow_motion_arg = DeclareLaunchArgument(
+        'allow_motion', default_value='false',
+        description=(
+            'Forwarded to bringup_lidar; keep false until Set 1 motion re-gate'
+        ),
+    )
 
     # Include launch description for bringup_lidar.launch.py
+    #
+    # WARNING (BEAST-01): do not stack this on a live beast-ros-base.service —
+    # that starts a second twist_mux. Stop the service first or run SLAM against
+    # the existing base without re-including bringup.
     bringup_lidar_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(
         [os.path.join(get_package_share_directory('ugv_bringup'), 'launch'),
          '/bringup_lidar.launch.py']),
         launch_arguments={
             'use_rviz': LaunchConfiguration('use_rviz'),
             'rviz_config': 'slam_2d',
+            'allow_motion': LaunchConfiguration('allow_motion'),
         }.items(),
         condition=UnlessCondition(LaunchConfiguration('use_sim_time'))
     )
@@ -68,14 +80,18 @@ def generate_launch_description():
     # Include launch description for robot_pose_publisher_launch.py
     robot_pose_publisher_launch = IncludeLaunchDescription(PythonLaunchDescriptionSource(
         [os.path.join(get_package_share_directory('robot_pose_publisher'), 'launch'),
-         '/robot_pose_publisher_launch.py'])
-    ) 
+         '/robot_pose_publisher_launch.py']),
+        launch_arguments={
+            'use_sim_time': LaunchConfiguration('use_sim_time'),
+        }.items(),
+    )
         
     # Return launch description
     return LaunchDescription([
         use_sim_time_arg,
         use_rviz_arg,
         use_slam_arg,
+        allow_motion_arg,
         bringup_lidar_launch, 
         bringup_gazebo_launch,
         robot_pose_publisher_launch,

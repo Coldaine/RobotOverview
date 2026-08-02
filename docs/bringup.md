@@ -85,7 +85,8 @@ EKF config: `src/ugv_main/ugv_bringup/config/ekf.yaml` — wheel velocities from
 | `/scan` | `sensor_msgs/LaserScan` | Pub | 2D LiDAR (`base_lidar_link`) |
 | `/odom` | `nav_msgs/Odometry` | Pub | EKF-fused odometry |
 | `ugv/voltage` | `sensor_msgs/BatteryState` | Pub | Battery voltage |
-| `imu/raw` | `sensor_msgs/Imu` | Pub | IMU from motor board. **There is no `/imu/data`** — the `imu/data_raw` publisher is commented out and no filter republishes it |
+| `imu/data` | `sensor_msgs/Imu` | Pub | Canonical IMU from motor board (accel/gyro; `orientation_covariance[0]=-1`, no filter). EKF `imu0` fuses yaw rate |
+| `imu/raw` | `sensor_msgs/Imu` | Pub | Same payload alias of `imu/data` (acceptance / beast-ops echo scripts) |
 | `ugv/led_ctrl` | `std_msgs/Float32MultiArray` | Sub | LED brightness |
 | `ugv/allow_motion` | `std_msgs/Bool` | Pub | The arming gate this node actually enforces, 2 Hz, latched. Consumed by the [cockpit](cockpit.md#safety-state-the-cockpit-gates-on) so the browser gates drive controls on the robot's answer, not the UI's |
 | `ugv/watchdog_state` | `diagnostic_msgs/DiagnosticStatus` | Pub | `cmd_vel` watchdog: `armed`, `fired`, `watching`, `timeout`. 2 Hz, latched, plus an immediate republish the moment the watchdog stops the robot |
