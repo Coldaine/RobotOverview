@@ -126,11 +126,16 @@ export default function HangarHub() {
               </Link>
               <div className="h-px flex-1 bg-gradient-to-r from-rim to-transparent" />
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <motion.div
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05 } } }}
+              initial="hidden"
+              animate="show"
+              className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
+            >
               {units.map((u, i) => (
                 <UnitCard key={u.id} unit={u} index={i} dim={spotlightUnits.size > 0 && !spotlightUnits.has(u.id)} />
               ))}
-            </div>
+            </motion.div>
           </section>
         );
       })}

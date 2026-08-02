@@ -19,25 +19,13 @@ export interface CockpitEstop {
    * socket drops; only an explicit release clears it.
    */
   engaged: boolean;
-  /** The >= 1 Hz `true` republish is actually running on an open socket. */
-  heartbeat: boolean;
-  /** The post-release `false` burst is still in flight. */
-  releasing: boolean;
-  /** Epoch ms the intent was latched — drives the "awaiting confirmation" gate. */
+  /** Epoch ms the intent was latched. */
   engagedAt: number | null;
-  /**
-   * This tab holds the single-writer role. A second cockpit tab is read-only
-   * for the e-stop so two operators cannot fight over the lock.
-   */
-  writer: boolean;
 }
 
 const BLANK: CockpitEstop = {
   engaged: false,
-  heartbeat: false,
-  releasing: false,
   engagedAt: null,
-  writer: true,
 };
 
 /** Server render has no socket and no operator, so nothing is ever engaged. */
@@ -54,10 +42,7 @@ export function setEstopState(next: Partial<CockpitEstop>) {
   const merged = { ...estopState, ...next };
   if (
     merged.engaged === estopState.engaged &&
-    merged.heartbeat === estopState.heartbeat &&
-    merged.releasing === estopState.releasing &&
-    merged.engagedAt === estopState.engagedAt &&
-    merged.writer === estopState.writer
+    merged.engagedAt === estopState.engagedAt
   ) {
     return; // keep the snapshot referentially stable for useSyncExternalStore
   }

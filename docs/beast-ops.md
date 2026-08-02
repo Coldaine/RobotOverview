@@ -10,27 +10,29 @@ re-verify against the live robot before relying on anything stale.
 Turn on the chassis switch (it powers the Jetson too), wait ~2 minutes for boot, then:
 
 ```bash
-ssh beast-01        # LAN — HostName beast-01.local; on Windows mDNS often fails — use Wi-Fi IP
-ssh beast-01-ts     # Tailscale 100.107.16.72 — needs Tailscale up on the Jetson after boot
-# Fallback: ssh -i ~/.ssh/hephastus_ed25519 -o HostKeyAlias=beast-01 beast@192.168.0.187
+ssh beast-01        # mDNS: beast-01.local; currently resolves to Wi-Fi 192.168.0.187
+ssh beast-01-ts     # Tailscale: 100.107.16.72
+# Direct Wi-Fi fallback when mDNS fails:
+ssh -i ~/.ssh/hephastus_ed25519 -o HostKeyAlias=beast-01 beast@192.168.0.187
 ```
 
-**All ways in (2026-07-31):**
+**All documented paths (verified 2026-07-31):**
 
 | # | Path | Address | Notes |
 |---|---|---|---|
-| 1 | `ssh beast-01` | `beast-01.local` (mDNS) | Preferred when mDNS works; Windows often cannot resolve `.local` |
-| 2 | Direct Ethernet | `192.168.0.166` | DHCP; down when cable unplugged |
-| 3 | Direct Wi-Fi | `192.168.0.187` | DHCP, **drifts** — live-verified after brownout reboot 2026-07-31 |
-| 4 | `ssh beast-01-ts` | `100.107.16.72` (Tailscale) | Offline until Tailscale comes up post-boot |
-| 5 | sudo password | Doppler **`homelab`/`dev`** → `BEAST_JETSON_ADMIN_PASSWORD` | Older runbook text says `secrets_managment/dev` — that project name is wrong |
-| 6 | USB gadget (fallback) | `192.168.55.1` | Point-to-point USB cable to the Orin, last-resort recovery |
+| 1 | `ssh beast-01` | `beast-01.local` → `192.168.0.187` (mDNS/Wi-Fi) | **Verified working**; Windows may fail to resolve `.local` |
+| 2 | Direct Wi-Fi | `192.168.0.187` (`wlP1p1s0`) | **Verified working**; DHCP address and may drift |
+| 3 | `ssh beast-01-ts` | `100.107.16.72` (`tailscale0`) | **Verified working**; Tailscale daemon is up |
+| 4 | Direct Ethernet | `192.168.0.166` (`enP8p1s0`) | **Verified working**; current wired fallback and preferred route when cable is connected |
+| 5 | USB gadget fallback | `192.168.55.1` (`usb0`) | **Not reachable now**; USB gadget interface is down |
 
-Wi-Fi power save is **disabled** (persistent, set 2026-07-31 — it caused laggy/flaky Wi-Fi SSH)
-and the stale `beast-staging-wifi` profile no longer autoconnects.
+The current Wi-Fi association is SSID **`CastleMooseGoose`**. Wi-Fi power save is **disabled**
+(persistent, set 2026-07-31 — it caused laggy/flaky Wi-Fi SSH). The old
+`beast-staging-wifi` / `MooseGooseIOT` profile was deleted from NetworkManager on 2026-08-02
+through the verified Docker-root recovery path; only the corrected profile remains.
 
-Rebuild the SSH aliases on any machine (key: `hephastus_ed25519`; its public half is in Doppler
-`homelab`/`dev` as `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`):
+Rebuild the SSH aliases on any machine (key: `hephastus_ed25519`; this workstation's matching
+public half is in Doppler as `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY_DESKTOP`):
 
 ```text
 Host beast-01
@@ -47,11 +49,55 @@ Host beast-01-ts
     IdentitiesOnly yes
 ```
 
-Both aliases use the `hephastus_ed25519` key; sudo password is in Doppler `homelab`/`dev`.
-Host-key fingerprint: `SHA256:S5qCj4JsuBRSxfXgB//sAyNmDKWNSIOJtA6vUcu1XkI` — if SSH complains
-on a fresh IP, verify against that before accepting. Wi-Fi IP is DHCP and drifts (`.187` on
-2026-07-30); Ethernet has held `.166`. If neither alias answers: the robot is off, still
-booting, or got a new lease — resolve with `ping beast-01.local`. Full detail: [Network](#network).
+Both aliases use the `hephastus_ed25519` key. The live Beast accepts this key in
+`~/.ssh/authorized_keys` (fingerprint `SHA256:JO1fqfONgHgr5JUCdL1pyN6qHjaRc4dR+v7DDVMEZ6A`),
+so no key installation was needed during the 2026-08-02 verification. Host-key fingerprint:
+`SHA256:S5qCj4JsuBRSxfXgB//sAyNmDKWNSIOJtA6vUcu1XkI`.
+
+### Credential map (Doppler)
+
+All Beast-related credential records are in Doppler project **`homelab`**, config **`dev`**.
+Do not copy their values into this repository, shell history, or chat.
+
+| Need | Doppler secret | Current use |
+|---|---|---|
+| Routine SSH from this workstation | `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY_DESKTOP` | Matching public half for local `~/.ssh/hephastus_ed25519`; this is the key that authenticated successfully |
+| Alternate operator key | `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY` | Separate operator-key record; it is not this workstation's key, and its installation was not needed for this verification |
+| `sudo` and recovery login | `BEAST_JETSON_ADMIN_PASSWORD` | Current password for the Jetson `beast` account; reset and live-verified 2026-08-02; not needed for key-only SSH |
+| Current Wi-Fi association | `CASTLEMOOSEGOOSE_WIFI_PSK` | PSK for the live `CastleMooseGoose` SSID |
+| Tailnet administration/re-enrollment | `TAILSCALE_API_TOKEN` | Not needed for routine `ssh beast-01-ts`; only for Tailscale API or re-enrollment work |
+| Existing Beast access record | `BEAST_JETSON_SSH_ACCESS` | Connection and credential-name reference; not needed by the verified key-based paths |
+
+No token is required for the Ethernet or USB paths themselves. Ethernet is currently working;
+the USB path is unavailable because its Beast interface is down, not because SSH credentials are
+missing.
+
+If neither working alias answers, the robot is off, still booting, Tailscale is down, or Wi-Fi
+received a new DHCP lease. Resolve the current Wi-Fi address with `ping beast-01.local` or the
+current router lease. Full detail: [Network](#network).
+
+### Wi-Fi failure diagnosis (verified 2026-08-02)
+
+- The retained NetworkManager/syslog history shows the prior Wi-Fi failures were attempts to
+  activate the obsolete `beast-staging-wifi` profile for SSID `MooseGooseIOT` on the retired
+  `192.168.20.x` network. The access point rejected associations, the supplicant timed out,
+  DHCP lost its lease, and NetworkManager retried the same profile.
+- The active `CastleMooseGoose` profile is the corrected profile: autoconnect is enabled, no BSSID
+  is pinned, and `802-11-wireless.powersave=2` (disabled). It currently uses an Intel AX210 with
+  `iwlwifi`, 5 GHz channel 100, and a strong approximately `-31 dBm` signal.
+- A Wi-Fi-only test while Ethernet was connected sent 20 gateway pings and 20 workstation pings
+  with **0% packet loss**. No current-boot Wi-Fi disconnect, association reject, DHCP loss, or
+  firmware reset was observed.
+- When both links are up, NetworkManager prefers Ethernet (`enP8p1s0`, route metric 100) over
+  Wi-Fi (`wlP1p1s0`, route metric 600). This is intentional and does not disable Wi-Fi; unplugging
+  Ethernet leaves Wi-Fi as the default route.
+- The Doppler `BEAST_JETSON_ADMIN_PASSWORD` value was reset and live-verified through the existing
+  Docker-root path after the old value failed. The new value is synchronized in both
+  `homelab/dev` and `homelab/dev_personal`; `sudo` now succeeds without changing key-only SSH.
+- A global Doppler audit covered 10 projects and 15 configs. No other secret name containing
+  `JETSON`, `ORIN`, `UGV`, `WAVESHARE`, or `NVIDIA` represented an administrator password. The
+  only Beast-specific password record is `homelab/dev:BEAST_JETSON_ADMIN_PASSWORD` (mirrored in
+  `homelab/dev_personal`). Operator public-key and access-reference records are documented above.
 
 **Ground-truth check — run this before trusting any status claim in this file** (per the
 "Robot ground truth" rule in `AGENTS.md`; this doc drifts because hardware sessions happen
@@ -291,7 +337,7 @@ assumes the pack is on.
 | State matrix: FAN-2507, speakers, LiDAR, HAT chips "stay dark until the pack is on" | ❌ All are on the back-fed rail and come up with the pack **off**. |
 | "The stack fan not spinning with the pack off is correct, not a failure" | ❌ Backwards. On a back-fed rail the fan should spin. |
 | `v4l2-ctl --list-devices` should show two cameras | ❌ Shows one. OAK-D is a MyriadX over DepthAI/XLink, never UVC. |
-| Wi-Fi antennas "unverified" | ✅ Confirmed — `wlP1p1s0` holds `192.168.0.251`. |
+| Wi-Fi antennas "unverified" | ✅ Confirmed — `wlP1p1s0` is live; current address is `192.168.0.187` (the older `.251` lease is historical). |
 | Pan-tilt camera "likely" | ✅ Confirmed — `0abd:8050`, `/dev/video0`. |
 
 ### Vendor limits that constrain this
@@ -516,26 +562,29 @@ against them:**
 
 | Fact | Value | Verified |
 |---|---|---|
-| Hostname (Orin) | `beast-01` | ✅ SSH 2026-07-28 |
-| LAN IP (Orin) | `192.168.0.166` (`enP8p1s0`, DHCP) | ✅ SSH 2026-07-28 — general LAN `192.168.0.x` |
-| Wi-Fi IP (Orin) | `192.168.0.187` (`wlP1p1s0`, DHCP — drifts; was `.251` on 07-28) | ✅ SSH 2026-07-30 |
-| Tailscale IP (Orin) | `100.107.16.72`, tailnet hostname `beast-01`, permanent | ✅ see `[[beast-jetson-ssh-access]]` memory; SSH alias `beast-01-ts` |
-| SSH access | `ssh beast-01-ts` (Tailscale, preferred) or `ssh beast-01` (LAN) | ✅ key-only, `hephastus_ed25519` |
+| Hostname (Orin) | `beast-01` | ✅ SSH 2026-08-02 |
+| Wi-Fi IP (Orin) | `192.168.0.187` (`wlP1p1s0`, DHCP; currently SSID `CastleMooseGoose`) | ✅ SSH 2026-08-02; address may drift |
+| Tailscale IP (Orin) | `100.107.16.72` (`tailscale0`), tailnet hostname `beast-01` | ✅ SSH 2026-08-02; alias `beast-01-ts` |
+| mDNS path | `beast-01.local` → `192.168.0.187` | ✅ SSH 2026-08-02 |
+| Ethernet fallback | `192.168.0.166` (`enP8p1s0`) | ✅ SSH and ICMP working 2026-08-02; route metric 100 |
+| USB gadget fallback | `192.168.55.1` (`usb0`) | ❌ TCP/22 failed 2026-08-02; interface is down |
+| SSH access | `ssh beast-01`, direct Wi-Fi IP, or `ssh beast-01-ts` | ✅ key-only with local `hephastus_ed25519` |
 | Hostname (former Pi) | `beast.local` | Historical — Pi retired |
 | IP (former Pi) | `192.168.20.184` | Historical — Pi retired; **not** an Orin target |
 | Network policy | **Stay on general LAN `192.168.0.x` + Tailscale** | ✅ Operator decision 2026-07-30 — **robot VLAN `192.168.20.x` rejected** (zero upside; firewall friction and agents chasing a dead identity). Optional UDM reservation only on `192.168.0.x`, never on `20.x`. |
 
 Former Pi endpoints below (`192.168.20.184:*`) are historical and will 404/timeout. Do not migrate
-Orin onto the Pi-era robot VLAN. Only SSH (above) is currently confirmed live on the Orin — Control
-UI / Jupyter / video resume after UART + an Orin control stack.
+Orin onto the Pi-era robot VLAN. The current Orin path is Wi-Fi or Tailscale; Ethernet and USB are
+recovery fallbacks that require the physical link/interface to be brought up first.
 
 ## Services & dashboards
 
 | URL | What | Notes |
 |---|---|---|
-| *(none live)* | **Control UI** (drive, FPV, gimbal) | Pi-era `http://192.168.20.184:5000` **retired**. No Orin web teleop yet. |
-| *(none live)* | **JupyterLab** | Pi-era `http://192.168.20.184:8888` **retired**. |
-| *(none live)* | Raw MJPEG camera stream | Pi-era `/video_feed` **retired**. |
+| `wss://beast-01.tyrannosaurus-magellanic.ts.net` | **Command Deck / rosbridge** | Current Orin cockpit transport over Tailscale; proxied from Jetson port `9090`. |
+| `http://192.168.20.184:5000` | **Control UI** | Historical Pi endpoint; retired and not an Orin target. |
+| `http://192.168.20.184:8888` | **JupyterLab** | Historical Pi endpoint; retired and not an Orin target. |
+| `http://192.168.20.184:5000/video_feed` | Raw MJPEG camera stream | Historical Pi endpoint; retired and not an Orin target. |
 
 ### Video recovery note — OP-VIDEO-RELOCK
 
@@ -925,29 +974,30 @@ a separate sudoers rule.
 
 Audited after the successful flash on 2026-07-11:
 
-- `beast` accepts the local `laptop-extra@coldaine-fleet` Ed25519 key with fingerprint
-  `SHA256:6DUbgRuhTmZ/uTVXpLN/VPf2gPoiFIy2WPBXfaBRp4k`. This is **not** the
-  `SSH_PUBKEY_PATRICK_DESKTOP` key. Its public half is now persisted in Doppler as
-  `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`; the working private key remains only on the local
-  workstation.
+- `beast` accepts the local `hephastus_ed25519` Ed25519 key with fingerprint
+  `SHA256:JO1fqfONgHgr5JUCdL1pyN6qHjaRc4dR+v7DDVMEZ6A`. This workstation's public half is
+  persisted in Doppler as `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY_DESKTOP`; the working private
+  key remains only on the local workstation. The separate `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`
+  record is an alternate operator key and is not the key used by this workstation.
 - The current Jetson's ED25519 SSH host-key fingerprint is
   `SHA256:S5qCj4JsuBRSxfXgB//sAyNmDKWNSIOJtA6vUcu1XkI`; machine ID is
   `6d5535d5455a47f19012d4f62a13d9ac`. A reflash or restored root filesystem can legitimately
   regenerate both. Accept a changed key only over the physically controlled point-to-point USB
   link, then immediately persist the new fingerprint in `known_hosts` and this runbook.
-- Doppler contains `BEAST_JETSON_ADMIN_PASSWORD` and
-  `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY` — in project **`homelab`/`dev`** (verified by live
-  sudo 2026-07-31; this paragraph originally said `secrets_managment/dev`, which is wrong). The encrypted administrator value is applied to the
-  restored NVMe and a fresh `sudo -S -k` proof passed. The existing
-  `PVE_EVO_X2_ROOT_PASSWORD` enabled the Proxmox work, and the existing
-  `UDM_WIFI_MOOSEGOOSEIOT` credential configured the staging WLAN. No secret value belongs in this
-  runbook, logs, shell history, or process output.
-- The normal L4T USB gadget is reachable at `192.168.55.1`; onboard Ethernet `enP8p1s0` and Wi-Fi
-  `wlP1p1s0` is connected to `MooseGooseIOT` by DHCP at staging address `192.168.20.251`; Ethernet
-  `enP8p1s0` is down. The network-map identity `beast` / `192.168.20.184` still belongs to the
+- Doppler contains the Beast access records in project **`homelab`/`dev`**: `BEAST_JETSON_ADMIN_PASSWORD`,
+  `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`, `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY_DESKTOP`,
+  `BEAST_JETSON_SSH_ACCESS`, and `TAILSCALE_API_TOKEN`. The live Wi-Fi PSK is
+  `CASTLEMOOSEGOOSE_WIFI_PSK` for SSID `CastleMooseGoose`. No secret value belongs in this runbook,
+  logs, shell history, or process output. `BEAST_JETSON_ADMIN_PASSWORD` is the current
+  `beast`-account sudo/recovery password, reset and verified 2026-08-02; routine SSH uses the
+  local private key. `TAILSCALE_API_TOKEN` is for API/re-enrollment work, not routine tailnet SSH.
+- Current live network state (verified 2026-08-02): `wlP1p1s0` is up at `192.168.0.187`,
+  `tailscale0` is up at `100.107.16.72`, `enP8p1s0` is up at `192.168.0.166`, and `usb0` is down.
+  The normal
+  L4T USB gadget address remains the historical fallback `192.168.55.1`, but it was not reachable
+  in this boot. The network-map identity `beast` / `192.168.20.184` still belongs to the retired
   Pi-hosted BEAST-01. **Do not** move that VLAN identity onto the Orin — operator policy (2026-07-30)
-  keeps Orin on general LAN `192.168.0.x` + Tailscale (`beast-01-ts`). Retire the Pi reservation when
-  convenient; optional new reservation only on `192.168.0.x`.
+  keeps Orin on general LAN `192.168.0.x` + Tailscale (`beast-01-ts`).
 - Timezone is `America/Chicago`, NTP is active, and `System clock synchronized` reports `yes` after
   reboot.
 - R36.5's local `/etc/nvpmodel.conf` proves mode 0 is `15W`, mode 1 is `25W`, and mode 2 is

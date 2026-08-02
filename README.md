@@ -7,6 +7,7 @@ Tailwind 4). Flagship unit: BEAST-01, a Waveshare UGV Beast. **The UI is the pro
 - Intent (nearly frozen): [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md)
 - Agent routing: [`AGENTS.md`](AGENTS.md)
 - Deploy (live cluster facts): [`docs/deploy.md`](docs/deploy.md)
+- Beast access and operating facts: [`docs/beast-ops.md`](docs/beast-ops.md)
 
 ## How the pieces fit
 

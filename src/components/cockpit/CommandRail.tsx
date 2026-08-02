@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   rosClient,
@@ -67,18 +68,17 @@ export function CommandRail() {
   const connected = connection === 'connected';
   const estopHolding = estop.engaged || status.muxSource === ESTOP_MUX_SOURCE;
 
-  // ── B11: MOTION GATE ──────────────────────────────────────────────────────
-  // The cockpit ships the drive capability, but motion stays inert until the
-  // ROBOT says it is armed. `allowMotion === null` means no publisher has ever
-  // told us — that is UNKNOWN, and unknown is not permission.
+  // ── MOTION GATE: PHYSICAL TETHER & CHARGING LOCK ─────────────────────────
+  // Motion is disabled ONLY if the robot is charging or plugged into Ethernet
+  // (to prevent tearing cables out), or if software E-STOP is engaged.
   const driveGateReason: string | null = !connected
     ? 'robot unreachable'
     : estopHolding
       ? 'E-STOP engaged'
-      : status.allowMotion === null
-        ? 'no allow_motion publisher — unknown'
-        : status.allowMotion === false
-          ? 'robot reports motion locked'
+      : status.isCharging === true
+        ? 'motion locked — robot is charging'
+        : status.isEthernetConnected === true
+          ? 'motion locked — Ethernet tether connected'
           : bridge.deadTopics.includes('/cmd_vel_ui')
             ? 'bridge refused /cmd_vel_ui'
             : null;
@@ -377,7 +377,8 @@ export function CommandRail() {
           <div className="flex flex-col justify-between">
             <div className="grid grid-cols-3 grid-rows-3 gap-1.5 justify-center max-w-[120px] mx-auto">
               <span className="blank bg-transparent" />
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9, y: 2 }}
                 {...holdProps(LINEAR_STEP, 0)}
                 disabled={!driveEnabled}
                 className={clsx(
@@ -389,10 +390,11 @@ export function CommandRail() {
                 title={driveEnabled ? 'Forward (W)' : `Disabled — ${driveGateReason}`}
               >
                 ▲
-              </button>
+              </motion.button>
               <span className="blank bg-transparent" />
 
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9, y: 2 }}
                 {...holdProps(0, ANGULAR_STEP)}
                 disabled={!driveEnabled}
                 className={clsx(
@@ -404,15 +406,17 @@ export function CommandRail() {
                 title={driveEnabled ? 'Left (A)' : `Disabled — ${driveGateReason}`}
               >
                 ◀
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9, y: 2 }}
                 onClick={() => clearDriveIntent()}
                 className="btn border border-red-500/50 text-red-500 hover:bg-red-500/10 rounded-lg aspect-square text-sm flex items-center justify-center font-bold select-none"
                 title="Stop (Space) — releases intent; the robot's 0.5 s watchdog is the guarantee"
               >
                 ■
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9, y: 2 }}
                 {...holdProps(0, -ANGULAR_STEP)}
                 disabled={!driveEnabled}
                 className={clsx(
@@ -424,10 +428,11 @@ export function CommandRail() {
                 title={driveEnabled ? 'Right (D)' : `Disabled — ${driveGateReason}`}
               >
                 ▶
-              </button>
+              </motion.button>
 
               <span className="blank bg-transparent" />
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9, y: 2 }}
                 {...holdProps(-LINEAR_STEP, 0)}
                 disabled={!driveEnabled}
                 className={clsx(
@@ -439,7 +444,7 @@ export function CommandRail() {
                 title={driveEnabled ? 'Reverse (S)' : `Disabled — ${driveGateReason}`}
               >
                 ▼
-              </button>
+              </motion.button>
               <span className="blank bg-transparent" />
             </div>
 

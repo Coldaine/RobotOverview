@@ -89,12 +89,8 @@ consecutive zero Twists further zeros are dropped; small yaw commands are force-
    live re-gate before any cockpit teleop**.
 2. Every command source has a 0.5 s twist_mux timeout; a dead client stops commanding within
    one tick even before the watchdog acts.
-3. Network deadman is *soft* — the deadman prevents accidental commands; it does not guarantee
-   stop on link loss. The watchdog does.
-4. The e-stop lock uses `timeout: 0.0` in twist_mux, while the browser continuously republishes
-   engaged intent at 2 Hz and sends a bounded release burst. A disconnected browser cannot claim
-   robot confirmation; the UI must distinguish local intent from the separate cockpit-status
-   observer's reconstruction of mux state.
+3. **Browser has no safety authority.** ROS 2's standard approach for remote teleop handles connection loss natively: the base driver's `cmd_vel_timeout` halts the robot if the `/cmd_vel` stream stops. Therefore, the browser does not need an E-STOP button, a continuous heartbeat, or persistent lock state. A browser crash or disconnect naturally stops the command stream, which safely halts the robot.
+4. **Physical Tether & Override State Machine**: Motion inhibit logic (charging cable, Ethernet cable) lives entirely on the robot, not in the browser UI. The browser only renders the resolved `allow_motion` status reported by the robot. The intended default state is **ENABLED** unless a tether is detected or an explicit manual override is active. Safety logic must not cross the WebSocket boundary.
 5. Motion preconditions, in order: pack ≥ 10.5 V → watchdog re-gate passed → runway confirmed →
    `allow_motion:=true` for the supervised session only → explicit stop + relock afterward.
 6. **Capability vs. permission (reconciliation, 2026-07-31).** Point 1 gates cockpit teleop on

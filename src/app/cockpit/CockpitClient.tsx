@@ -24,28 +24,8 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
     // connect() re-arms subscriptions on an already-open socket, which is the
     // path taken when we return to the cockpit with an e-stop still held.
     rosClient.connect(wsUrl);
-    // Only one tab may command the e-stop; this joins the election.
-    const releaseWriter = rosClient.claimEstopWriter();
 
     return () => {
-      // Safe to call unconditionally: the election teardown is itself a no-op
-      // while a stop is held, because a tab that is still publishing the
-      // heartbeat must stay reachable by the election. That invariant lives in
-      // client.ts next to the heartbeat's own lifetime, rather than depending
-      // on every call site remembering to check first.
-      releaseWriter();
-      if (rosClient.isEstopEngaged()) {
-        // An engaged e-stop keeps the socket — and therefore its >= 1 Hz
-        // republish — alive past this unmount. twist_mux drops the lock if it
-        // restarts, so the heartbeat has to outlive a route change or a Strict
-        // Mode double-invoke; tearing the socket down here would silently mute
-        // the only thing holding the robot stopped.
-        //
-        // The video and LiDAR streams have no such claim on the link, so drop
-        // them: nobody is looking at the page, and they are the bandwidth.
-        rosClient.releaseHeavyStreams();
-        return;
-      }
       rosClient.disconnect();
     };
   }, [wsUrl]);

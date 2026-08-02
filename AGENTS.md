@@ -86,8 +86,9 @@ Hardware sessions happen outside this repo's loop, so `docs/beast-ops.md` **drif
 Status claims in that doc are hypotheses, not facts. Before asserting anything about
 BEAST-01's live state (what's running, what's connected, what's possible):
 
-1. Reach the robot: `ssh beast-01` (LAN) or `ssh beast-01-ts` (Tailscale) — key and details
-   in the **Quick connect** block at the top of `docs/beast-ops.md`.
+1. Reach the robot: `ssh beast-01` (mDNS/Wi-Fi) or `ssh beast-01-ts` (Tailscale) — current
+   paths, fallback state, and the Doppler credential map are in the **Quick connect** block at
+   the top of `docs/beast-ops.md`.
 2. Run the ground-truth check commands in that block; answer from their output.
 3. If the robot is unreachable, say so and label doc-derived claims with their
    last-verified date — never present them as current.

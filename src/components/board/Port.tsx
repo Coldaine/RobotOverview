@@ -36,6 +36,16 @@ export function Port({
   const opacity = dimmed ? 0.25 : 1;
   const label = terminal?.connector ?? terminal?.name ?? port.terminalId;
 
+  // Infer ownership for the badge
+  let badge: string | null = null;
+  const tid = port.terminalId;
+  const uid = terminal?.unitId;
+  if (uid === 'pi5' || tid.includes('pi') || tid === 'gdb-5v-host' || tid === 'gdb-host-uart') {
+    badge = 'π';
+  } else if (uid === 'orin-nano' || tid.includes('orin') || tid === 'gdb-usb-esp32' || tid === 'gdb-lidar-uart') {
+    badge = 'Σ';
+  }
+
   // Label sits just outside the module edge, aligned to the outward normal.
   const lx = port.x + port.nx * 12;
   const ly = port.y + port.ny * 12;
@@ -81,6 +91,23 @@ export function Port({
         strokeWidth={1.6}
         style={emphasize ? { filter: `drop-shadow(0 0 6px ${color})` } : undefined}
       />
+
+      {badge && (
+        <g transform={`translate(${port.x + 6}, ${port.y - 6})`}>
+          <circle cx={0} cy={0} r={5.5} fill="var(--color-void)" stroke={color} strokeWidth={1} />
+          <text
+            x={0}
+            y={0.5}
+            textAnchor="middle"
+            alignmentBaseline="middle"
+            fill="var(--color-ink)"
+            fontSize={8}
+            className="font-sans font-bold"
+          >
+            {badge}
+          </text>
+        </g>
+      )}
 
       {showLabel && (
         <text

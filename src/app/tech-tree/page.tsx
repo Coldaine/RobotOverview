@@ -24,12 +24,13 @@ export default function TechTree() {
       </header>
 
       <SectionTitle code="CAP"><span className="inline-flex items-center gap-2"><GitBranchPlus className="h-3.5 w-3.5 text-cyan" /> Capability Nodes</span></SectionTitle>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" onMouseLeave={() => setSpotlightId(null)}>
+      <div className="flex flex-col gap-4 md:w-5/6 xl:w-2/3" onMouseLeave={() => setSpotlightId(null)}>
         {data.capabilities.map((c, i) => {
           const unlockers = c.unlockedBy
             .map((id) => unit(id) ?? wish(id))
             .filter(Boolean);
 
+          const hasDependencies = c.dependsOn && c.dependsOn.length > 0;
           const isActive = spotlightId === c.id;
           const isDependency = spotlightCapability?.dependsOn?.includes(c.id) ?? false;
           const isDependent = spotlightId ? c.dependsOn?.includes(spotlightId) : false;
@@ -68,6 +69,7 @@ export default function TechTree() {
                 'group panel relative overflow-hidden p-4 transition-all duration-300 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cyan/50',
                 c.unlocked ? 'border-signal-ok/40 bg-signal-ok/5' : 'border-rim',
                 isActive && 'border-amber/60 shadow-hud-amber ring-1 ring-amber/20',
+                hasDependencies && 'ml-6 md:ml-12 border-l-2 md:border-l-4 border-l-cyan/30'
               )}
             >
               <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-panel-sheen" />
