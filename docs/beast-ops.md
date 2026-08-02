@@ -5,7 +5,7 @@ read its telemetry, and program it. The catalog entry for the unit lives in
 `src/data/hangar.ts` (`id: 'beast'`). Facts below carry the date they were last verified;
 re-verify against the live robot before relying on anything stale.
 
-## Quick connect (verified 2026-08-02)
+## Quick connect (verified 2026-07-31)
 
 Turn on the chassis switch (it powers the Jetson too), wait ~2 minutes for boot, then:
 
@@ -16,7 +16,7 @@ ssh beast-01-ts     # Tailscale: 100.107.16.72
 ssh -i ~/.ssh/hephastus_ed25519 -o HostKeyAlias=beast-01 beast@192.168.0.187
 ```
 
-**All documented paths (verified 2026-08-02):**
+**All documented paths (verified 2026-07-31):**
 
 | # | Path | Address | Notes |
 |---|---|---|---|

@@ -25,3 +25,6 @@ keyArtifactstosort/reference/*.zip
 
 # machine-local agent settings stay out of git (frozenSkillz project-agent-config convention)
 .claude/settings.local.json
+.kilo/
+.playwright-mcp/
+_ppp/
