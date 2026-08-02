@@ -550,239 +550,9 @@ export const ESTOP_CONFIRM_GRACE_MS = 2000;
 export const ESTOP_MUX_SOURCE = 'E-STOP lock';
 
 let operatorEngaged = false;
-let estopHeartbeatTimer: ReturnType<typeof setInterval> | null = null;
 
 function publishEstopLock(value: boolean): boolean {
   return rosClient.publish(ESTOP_TOPIC, { data: value });
-}
-
-function stopEstopHeartbeat() {
-  if (estopHeartbeatTimer) {
-    clearInterval(estopHeartbeatTimer);
-    estopHeartbeatTimer = null;
-  }
-}
-
-function stopEstopTimers() {
-  stopEstopHeartbeat();
-}
-
-function startEstopHeartbeat(): boolean {
-  if (!publishEstopLock(true)) {
-    stopEstopHeartbeat();
-    return false;
-  }
-  if (!estopHeartbeatTimer) {
-    estopHeartbeatTimer = setInterval(() => {
-      if (!publishEstopLock(true)) stopEstopHeartbeat();
-    }, 500);
-  }
-  return true;
-}
-
-// ── SINGLE-WRITER ELECTION ──────────────────────────────────────────────────
-// Two cockpit tabs both holding an e-stop heartbeat is a hazard: tab A releases,
-// tab B is still republishing `true`, and the operator watches a lock they just
-// cleared refuse to clear. Elect one writer per browser via BroadcastChannel.
-//
-// RANKING, HIGHEST FIRST:
-//   1. A tab that is actively HOLDING a stop. It never yields, whatever its id.
-//   2. Lowest tab id.
-//
-// Rule 1 exists because demoting the holder is worse than the collision it
-// prevents. Demotion only gates *new* commands — it cannot stop the running
-// heartbeat — so a demoted holder keeps publishing `true` while its own UI shows
-// a disabled control it cannot use, and the new writer's release burst is
-// overwritten within 500 ms. The robot ends up locked with no tab able to clear
-// it. Holding a live stop therefore outranks id.
-//
-// A tab claims the role immediately and yields the moment it hears a peer that
-// outranks it; convergence is one message hop. The deliberate trade: a newly
-// opened tab is briefly a writer before it hears an incumbent. The alternative —
-// start read-only and promote after a quiet window — leaves the E-STOP BUTTON
-// DEAD for a quarter second on every mount. A momentary double-assert is
-// harmless (both tabs assert *stop*); an unavailable stop button is not.
-const ESTOP_CHANNEL_NAME = 'beast-cockpit-estop-writer';
-// How long a re-probe waits for an incumbent to answer before self-promoting.
-const ESTOP_PROBE_GRACE_MS = 300;
-// How often a non-writer re-probes. Without this, a writer tab that is CLOSED
-// (rather than unmounted) strands every survivor as a permanent non-writer with
-// a dead e-stop button, captioned with a tab that no longer exists.
-const ESTOP_PROBE_INTERVAL_MS = 1000;
-
-let estopChannel: BroadcastChannel | null = null;
-let estopPageHideHandler: (() => void) | null = null;
-let estopProbeTimer: ReturnType<typeof setInterval> | null = null;
-let estopProbeGraceTimer: ReturnType<typeof setTimeout> | null = null;
-let estopProbeAnswered = false;
-const estopTabId =
-  typeof crypto !== 'undefined' && 'randomUUID' in crypto
-    ? crypto.randomUUID()
-    : `tab-${Math.random().toString(36).slice(2, 11)}`;
-
-type EstopElectionMsg = {
-  k: 'hello' | 'mine' | 'yield';
-  from: string;
-  /** True when the sender is actively holding a stop. Outranks `from`. */
-  engaged?: boolean;
-};
-
-function postElection(k: EstopElectionMsg['k']) {
-  estopChannel?.postMessage({
-    k,
-    from: estopTabId,
-    engaged: operatorEngaged,
-  } satisfies EstopElectionMsg);
-}
-
-function stopWriterProbe() {
-  if (estopProbeTimer) {
-    clearInterval(estopProbeTimer);
-    estopProbeTimer = null;
-  }
-  if (estopProbeGraceTimer) {
-    clearTimeout(estopProbeGraceTimer);
-    estopProbeGraceTimer = null;
-  }
-}
-
-/**
- * While this tab is a non-writer, keep asking whether the incumbent still
- * exists. An unanswered probe means it does not, so promote. This is what makes
- * a closed writer tab recoverable without the operator reloading anything.
- */
-function startWriterProbe() {
-  if (estopProbeTimer || !estopChannel) return;
-  estopProbeTimer = setInterval(() => {
-    if (getEstopState().writer) {
-      stopWriterProbe();
-      return;
-    }
-    estopProbeAnswered = false;
-    postElection('hello');
-    if (estopProbeGraceTimer) clearTimeout(estopProbeGraceTimer);
-    estopProbeGraceTimer = setTimeout(() => {
-      estopProbeGraceTimer = null;
-      if (!estopProbeAnswered && !getEstopState().writer) setWriter(true);
-    }, ESTOP_PROBE_GRACE_MS);
-  }, ESTOP_PROBE_INTERVAL_MS);
-}
-
-/** Single place that flips writer status, so the probe can't drift out of sync. */
-function setWriter(next: boolean) {
-  if (getEstopState().writer !== next) setEstopState({ writer: next });
-  if (next) stopWriterProbe();
-  else startWriterProbe();
-}
-
-/**
- * Re-probe on demand. The UI calls this when the operator reaches for a stop
- * button that is disabled, so a stale "held by another tab" can never be the
- * last word between the operator and an e-stop.
- */
-function probeEstopWriter() {
-  if (!estopChannel || getEstopState().writer) return;
-  estopProbeAnswered = false;
-  postElection('hello');
-  if (estopProbeGraceTimer) clearTimeout(estopProbeGraceTimer);
-  estopProbeGraceTimer = setTimeout(() => {
-    estopProbeGraceTimer = null;
-    if (!estopProbeAnswered && !getEstopState().writer) setWriter(true);
-  }, ESTOP_PROBE_GRACE_MS);
-}
-
-/** Hand the role back. Safe to call from unmount and from pagehide alike. */
-function yieldEstopWriter() {
-  if (getEstopState().writer && !operatorEngaged) postElection('yield');
-}
-
-function handleElectionMessage(ev: MessageEvent<EstopElectionMsg>) {
-  const m = ev.data;
-  if (!m || m.from === estopTabId) return;
-
-  if (m.k === 'hello') {
-    // Rule 1: never stand down while holding a live stop.
-    if (operatorEngaged) {
-      postElection('mine');
-      return;
-    }
-    // Rule 1 applied to the peer: a holder outranks us regardless of id.
-    // Rule 2: otherwise lowest id wins.
-    if (m.engaged || m.from < estopTabId) {
-      setWriter(false);
-    } else if (getEstopState().writer) {
-      postElection('mine');
-    }
-  } else if (m.k === 'mine') {
-    // Someone answered a probe, so an incumbent exists — do not self-promote.
-    estopProbeAnswered = true;
-    // …but a holder still does not stand down. `mine` is never replied to, so
-    // two holders (only reachable via the startup race, and safe because both
-    // assert *stop*) settle without a message loop.
-    if (!operatorEngaged) setWriter(false);
-  } else if (m.k === 'yield') {
-    // The incumbent left. Re-announce; ranking settles any tie between the
-    // remaining tabs without another timer.
-    setWriter(true);
-    postElection('hello');
-  }
-}
-
-/** Fully leave the election: no channel, no probe, no page-teardown listener. */
-function leaveEstopElection() {
-  if (estopPageHideHandler) {
-    window.removeEventListener('pagehide', estopPageHideHandler);
-    estopPageHideHandler = null;
-  }
-  stopWriterProbe();
-  estopChannel?.close();
-  estopChannel = null;
-}
-
-/**
- * Join the single-writer election for this browser. Returns a teardown that
- * hands the role back so another open tab can take it. When BroadcastChannel is
- * unavailable there is nothing to coordinate with, so this tab is the writer.
- *
- * ── INVARIANT ──────────────────────────────────────────────────────────────
- * A TAB THAT IS PUBLISHING THE HEARTBEAT IS ALWAYS REACHABLE BY THE ELECTION.
- *
- * The socket and the 2 Hz `true` deliberately outlive an unmount, so the
- * channel has to outlive it too. If a holder leaves the election while still
- * heartbeating, a peer's `hello` goes unanswered, the peer self-promotes after
- * 300 ms with `operatorEngaged === false`, and its 1.2 s release burst is
- * overwritten by the holder's next heartbeat within 500 ms — an unclearable
- * lock in the second tab. That is N1's failure shape re-entered through
- * teardown, so the teardown checks the same condition rule 1 does.
- */
-function claimEstopWriter(): () => void {
-  if (typeof window === 'undefined' || typeof BroadcastChannel === 'undefined') {
-    setEstopState({ writer: true });
-    return () => {};
-  }
-
-  if (!estopChannel) {
-    estopChannel = new BroadcastChannel(ESTOP_CHANNEL_NAME);
-    estopChannel.onmessage = handleElectionMessage;
-    // A closed tab never runs React teardown, and `beforeunload` is not fired
-    // reliably for it. `pagehide` is, including on mobile Safari.
-    estopPageHideHandler = () => yieldEstopWriter();
-    window.addEventListener('pagehide', estopPageHideHandler);
-    setWriter(true);
-  }
-  // Re-announce on every claim. On a first claim this is the opening bid; on a
-  // remount (we never left, because a held stop keeps us in) it re-asserts our
-  // rank. Either way the id/holder comparison settles it — no timer, and no
-  // stub teardown that would strand the role on a tab that has gone away.
-  postElection('hello');
-
-  return () => {
-    if (operatorEngaged) return; // see INVARIANT above
-    yieldEstopWriter();
-    leaveEstopElection();
-    // Nothing left to coordinate with from this tab's perspective.
-    setEstopState({ writer: true });
-  };
 }
 
 // ── ROSBRIDGE STATUS FRAMES ─────────────────────────────────────────────────
@@ -964,10 +734,6 @@ export const rosClient = {
       clearTimeout(reconnectTimer);
       reconnectTimer = null;
     }
-    // Timers die with the socket — publishing into a closed socket is a no-op
-    // and a spinning interval with nowhere to send is a leak. Operator intent
-    // is deliberately preserved: reconnecting re-asserts the lock.
-    stopEstopTimers();
     this.stopStalenessTicker();
     releaseImageUrls();
     if (socket) {
@@ -1031,9 +797,6 @@ export const rosClient = {
 
     socket.onclose = () => {
       connectionState = 'disconnected';
-      // Hold the timers while the socket is down so the UI stops claiming a
-      // live heartbeat; advertiseAndSubscribe restarts it on the next open.
-      stopEstopTimers();
       this.stopStalenessTicker();
       markAllStale();
       notify('connection');
@@ -1042,9 +805,6 @@ export const rosClient = {
 
     socket.onerror = () => {
       connectionState = 'disconnected';
-      // Same reasoning as onclose: a socket in error is not carrying a
-      // heartbeat, so stop claiming one.
-      stopEstopTimers();
       this.stopStalenessTicker();
       markAllStale();
       notify('connection');
@@ -1118,7 +878,7 @@ export const rosClient = {
     // lock RELEASED. This runs after the advertise above so the publisher
     // exists before the first message.
     if (operatorEngaged) {
-      startEstopHeartbeat();
+      publishEstopLock(true);
     }
   },
 
@@ -1176,7 +936,7 @@ export const rosClient = {
   setEstopLock(engaged: boolean): boolean {
     if (typeof window === 'undefined') return false;
     operatorEngaged = engaged;
-    setEstopState({ engaged, engagedAt: engaged ? Date.now() : null, writer: true });
+    setEstopState({ engaged, engagedAt: engaged ? Date.now() : null });
     if (socket && socket.readyState === WebSocket.OPEN) {
       publishEstopLock(engaged);
       return true;
@@ -1188,15 +948,6 @@ export const rosClient = {
   isEstopEngaged(): boolean {
     return operatorEngaged;
   },
-
-  claimEstopWriter,
-
-  /**
-   * Ask again whether the incumbent writer still exists. Called when the
-   * operator reaches for a disabled stop button: a tab that closed without
-   * yielding must never be the last word between the operator and an e-stop.
-   */
-  probeEstopWriter,
 
   /**
    * Drop operator intent and every timer WITHOUT telling the robot. Teardown
@@ -1210,19 +961,11 @@ export const rosClient = {
    */
   clearEstopIntent() {
     operatorEngaged = false;
-    stopEstopTimers();
     setEstopState({ engaged: false, engagedAt: null });
   },
 
-  /**
-   * Leave the election and reset writer status. Teardown seam — the normal path
-   * is the disposer returned by `claimEstopWriter`.
-   */
   resetEstopElection() {
-    // Unconditional, unlike the teardown from `claimEstopWriter` — this is the
-    // seam that has to work even when a test left a stop engaged.
-    leaveEstopElection();
-    setEstopState({ writer: true });
+    // No-op for test teardown compatibility
   },
 
   registerImageCallback(topic: string, callback: (frame: ImageFrame) => void) {

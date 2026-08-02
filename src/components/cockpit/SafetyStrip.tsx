@@ -83,25 +83,35 @@ export function SafetyStrip() {
       {/* ── MOTION STATE ────────────────────────── */}
       <div className="flex flex-col justify-center min-w-0 z-10">
         <span className="hud-label text-[10px]">Motion state</span>
-        {status.isCharging === true ? (
-          <span className="font-mono text-lg font-bold tracking-wide flex items-center gap-1.5 mt-0.5 text-amber-400 text-glow-amber">
-            <ShieldAlert className="h-4 w-4 animate-pulse" /> CHARGING LOCK
+        {status.allowMotion === null ? (
+          <span className="font-mono text-lg font-bold tracking-wide mt-0.5 flex items-center gap-1.5">
+            <Unknown reason="no allow_motion publisher" />
           </span>
-        ) : status.isEthernetConnected === true ? (
-          <span className="font-mono text-lg font-bold tracking-wide flex items-center gap-1.5 mt-0.5 text-amber-400 text-glow-amber">
-            <ShieldAlert className="h-4 w-4 animate-pulse" /> ETHERNET LOCK
+        ) : status.allowMotion ? (
+          <span
+            className={clsx(
+              'font-mono text-lg font-bold tracking-wide flex items-center gap-1.5 mt-0.5',
+              status.stale ? 'text-ink-dim line-through' : 'text-emerald-400 text-glow-emerald',
+            )}
+          >
+            <ShieldCheck className="h-4 w-4" /> ARMED
           </span>
         ) : (
-          <span className="font-mono text-lg font-bold tracking-wide flex items-center gap-1.5 mt-0.5 text-emerald-400 text-glow-emerald">
-            <ShieldCheck className="h-4 w-4" /> ARMED
+          <span
+            className={clsx(
+              'font-mono text-lg font-bold tracking-wide flex items-center gap-1.5 mt-0.5',
+              status.stale ? 'text-ink-dim line-through' : 'text-amber-400 text-glow-amber',
+            )}
+          >
+            <ShieldAlert className="h-4 w-4 animate-pulse" /> LOCKED
           </span>
         )}
         <span className="font-mono text-[10px] text-ink-dim truncate mt-1">
-          {status.isCharging === true
-            ? 'Plugged into power'
-            : status.isEthernetConnected === true
-              ? 'Ethernet cable attached'
-              : 'Untethered · Battery & Wi-Fi'}
+          {status.allowMotion === null
+            ? '/ugv/allow_motion not deployed'
+            : status.allowMotion
+              ? 'Live operation active'
+              : 're-gate: beast-paces Ph.2 pending'}
         </span>
       </div>
 
