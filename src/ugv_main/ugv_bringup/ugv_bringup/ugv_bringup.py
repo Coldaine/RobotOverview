@@ -19,8 +19,11 @@ Hangar (RobotOverview) never deploys to the robot.
 
 import rclpy
 from rclpy.node import Node
+from rclpy.parameter import Parameter
 from rclpy.qos import DurabilityPolicy, HistoryPolicy, QoSProfile
+from rcl_interfaces.msg import SetParametersResult
 from std_msgs.msg import Header, Bool, Float32MultiArray
+from std_srvs.srv import SetBool
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu, MagneticField, JointState, BatteryState
 from diagnostic_msgs.msg import DiagnosticStatus, KeyValue
@@ -110,7 +113,7 @@ class ugv_bringup(Node):
         baud_rate = self.get_parameter('baud_rate').value
         self.wifi_interface = self.get_parameter('wifi_interface').value
         self.ethernet_interface = self.get_parameter('ethernet_interface').value
-        self.allow_motion = self.get_parameter('allow_motion').value
+        self.allow_motion = bool(self.get_parameter('allow_motion').value)
         self.cmd_vel_timeout = float(self.get_parameter('cmd_vel_timeout').value)
         self._motion_reject_warned = False
         self._last_cmd_vel_time = None
@@ -120,6 +123,7 @@ class ugv_bringup(Node):
         # observe it — the stop it sends is byte-identical to an operator's, so
         # no outside watcher could tell them apart from /cmd_vel.
         self._cmd_vel_watchdog_fired = False
+        self._applying_allow_motion = False
 
         # Initialize the base controller with the UART port and baud rate
         self.base_controller = BaseController(serial_port_name, baud_rate)
@@ -153,6 +157,10 @@ class ugv_bringup(Node):
         self.watchdog_state_publisher_ = self.create_publisher(
             DiagnosticStatus, '/ugv/watchdog_state', safety_qos
         )
+        self.create_service(
+            SetBool, '/ugv/set_allow_motion', self._set_allow_motion_cb
+        )
+        self.add_on_set_parameters_callback(self._on_set_parameters)
 
         # Timer to periodically execute the feedback loop
         self.feedback_thread = threading.Thread(target=self.feedback_loop_thread, daemon=True)
@@ -167,6 +175,63 @@ class ugv_bringup(Node):
         self._publish_safety_state()
 
         self.set_ugv_version()
+
+    def apply_allow_motion(self, allow, source='unknown'):
+        """Flip the enforced motion gate and stop immediately when disabling."""
+        desired = bool(allow)
+        previous = bool(self.allow_motion)
+        if desired == previous:
+            self._publish_safety_state()
+            return previous, desired
+
+        self.allow_motion = desired
+        if previous and not desired:
+            self.send_stop_command()
+            self._cmd_vel_watchdog_armed = False
+            self._motion_reject_warned = False
+            self.get_logger().warning(
+                f'allow_motion disabled via {source}; stop sent immediately'
+            )
+        elif not previous and desired:
+            self._motion_reject_warned = False
+            self.get_logger().warning(f'allow_motion enabled via {source}')
+        self._publish_safety_state()
+        return previous, desired
+
+    def _set_allow_motion_cb(self, request, response):
+        previous, desired = self.apply_allow_motion(
+            request.data, source='service:/ugv/set_allow_motion'
+        )
+        if previous != desired:
+            self._applying_allow_motion = True
+            try:
+                self.set_parameters([
+                    Parameter('allow_motion', Parameter.Type.BOOL, desired)
+                ])
+            finally:
+                self._applying_allow_motion = False
+        response.success = True
+        response.message = (
+            f'allow_motion={str(desired).lower()} '
+            f'(was {str(previous).lower()})'
+        )
+        return response
+
+    def _on_set_parameters(self, params):
+        result = SetParametersResult(successful=True)
+        if self._applying_allow_motion:
+            return result
+        for param in params:
+            if param.name != 'allow_motion':
+                continue
+            if param.type_ != Parameter.Type.BOOL:
+                result.successful = False
+                result.reason = 'allow_motion must be a bool'
+                return result
+            self.apply_allow_motion(
+                param.value, source='parameter:allow_motion'
+            )
+        return result
 
     def _publish_safety_state(self):
         """Publish the arming gate and the cmd_vel watchdog state.

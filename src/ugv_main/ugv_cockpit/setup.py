@@ -28,6 +28,7 @@ setup(
             'overhead_clearance = ugv_cockpit.overhead_clearance:main',
             'cockpit_status = ugv_cockpit.cockpit_status:main',
             'cockpit_rosbridge = ugv_cockpit.cockpit_rosbridge:main',
+            'ugv_safety_monitor = ugv_cockpit.safety_monitor:main',
         ],
     },
 )

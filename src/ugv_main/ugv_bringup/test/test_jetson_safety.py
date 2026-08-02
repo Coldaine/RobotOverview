@@ -57,6 +57,8 @@ def motion_harness(allow_motion, cmd_vel_timeout=0.5):
         _motion_reject_warned=False,
         _last_cmd_vel_time=None,
         _cmd_vel_watchdog_armed=False,
+        _cmd_vel_watchdog_fired=False,
+        _applying_allow_motion=False,
         base_controller=RecordingController(),
         zero_vel_count=0,
         zero_vel_limit=5,
@@ -72,6 +74,9 @@ def motion_harness(allow_motion, cmd_vel_timeout=0.5):
     )
     harness._cmd_vel_watchdog_tick = MethodType(
         ugv_bringup._cmd_vel_watchdog_tick, harness
+    )
+    harness.apply_allow_motion = MethodType(
+        ugv_bringup.apply_allow_motion, harness
     )
     return harness
 
@@ -136,6 +141,7 @@ def test_cmd_vel_watchdog_sends_one_stop_after_timeout(monkeypatch):
         {'T': '13', 'X': 0.0, 'Z': 0.0},
     ]
     assert harness._cmd_vel_watchdog_armed is False
+    assert harness._cmd_vel_watchdog_fired is True
     assert harness.safety_publish_count == 1
 
     clock['now'] = 1001.5
@@ -160,6 +166,44 @@ def test_cmd_vel_watchdog_resets_timer_on_fresh_command(monkeypatch):
         {'T': '13', 'X': 0.02, 'Z': 0.0},
         {'T': '13', 'X': 0.02, 'Z': 0.0},
     ]
+
+
+def test_disable_allow_motion_stops_immediately():
+    harness = motion_harness(allow_motion=True)
+    harness._cmd_vel_watchdog_armed = True
+
+    previous, desired = harness.apply_allow_motion(False, source='test')
+
+    assert previous is True
+    assert desired is False
+    assert harness.allow_motion is False
+    assert harness._cmd_vel_watchdog_armed is False
+    assert harness.base_controller.commands == [
+        {'T': '13', 'X': 0.0, 'Z': 0.0}
+    ]
+    assert any('disabled via test' in message
+               for message in harness.get_logger().warnings)
+
+
+def test_enable_allow_motion_does_not_send_stop():
+    harness = motion_harness(allow_motion=False)
+
+    previous, desired = harness.apply_allow_motion(True, source='test')
+
+    assert previous is False
+    assert desired is True
+    assert harness.allow_motion is True
+    assert harness.base_controller.commands == []
+    assert any('enabled via test' in message
+               for message in harness.get_logger().warnings)
+
+
+def test_idempotent_allow_motion_flip_sends_no_extra_stop():
+    harness = motion_harness(allow_motion=False)
+
+    harness.apply_allow_motion(False, source='test')
+
+    assert harness.base_controller.commands == []
 
 
 def test_watchdog_stop_survives_a_failing_safety_publish(monkeypatch):

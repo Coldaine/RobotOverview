@@ -75,7 +75,16 @@ def generate_launch_description():
         'allow_motion', default_value='false',
         description=(
             'Permit non-zero cmd_vel commands; keep false until physical '
-            'safety validation passes'
+            'safety validation passes. Runtime flips go through '
+            '/ugv/set_allow_motion (ugv_bringup) — never default this true.'
+        )
+    )
+
+    use_safety_monitor_arg = DeclareLaunchArgument(
+        'use_safety_monitor', default_value='true',
+        description=(
+            'Start ugv_safety_monitor (ethernet/charging interlocks as a '
+            'client of /ugv/set_allow_motion). Does not auto-arm.'
         )
     )
 
@@ -148,6 +157,17 @@ def generate_launch_description():
             ),
         }]
     )
+    # Client of /ugv/set_allow_motion — never a second motion authority.
+    safety_monitor_node = Node(
+        package='ugv_cockpit',
+        executable='ugv_safety_monitor',
+        name='ugv_safety_monitor',
+        output='screen',
+        parameters=[{
+            'ethernet_interface': LaunchConfiguration('ethernet_interface'),
+        }],
+        condition=IfCondition(LaunchConfiguration('use_safety_monitor')),
+    )
     # Define the nodes to be launched
     base_node = Node(
         package='ugv_bringup',
@@ -180,12 +200,14 @@ def generate_launch_description():
         wifi_interface_arg,
         ethernet_interface_arg,
         allow_motion_arg,
+        use_safety_monitor_arg,
         use_lidar_arg,
         robot_state_launch,
         laser_bringup_launch,
         rf2o_laser_odometry_launch,
         twist_mux_launch,
         bringup_node,
+        safety_monitor_node,
         base_node,
-        ekf_node,        
+        ekf_node,
     ])

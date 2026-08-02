@@ -23,6 +23,7 @@ def _module(name):
 if importlib.util.find_spec('rclpy') is None:
     rclpy = _module('rclpy')
     rclpy_node = _module('rclpy.node')
+    rclpy_parameter = _module('rclpy.parameter')
     rclpy_qos = _module('rclpy.qos')
 
     class _Placeholder:
@@ -49,7 +50,17 @@ if importlib.util.find_spec('rclpy') is None:
         ERROR = 2
         STALE = 3
 
+    class _Parameter:
+        class Type:
+            BOOL = 1
+
+        def __init__(self, name, type_=None, value=None):
+            self.name = name
+            self.type_ = type_
+            self.value = value
+
     rclpy_node.Node = _Placeholder
+    rclpy_parameter.Parameter = _Parameter
     rclpy_qos.DurabilityPolicy = _Placeholder
     rclpy_qos.HistoryPolicy = _Placeholder
     rclpy_qos.QoSProfile = _Placeholder
@@ -63,6 +74,7 @@ if importlib.util.find_spec('rclpy') is None:
             'Imu', 'MagneticField', 'JointState', 'BatteryState'
         ),
         'diagnostic_msgs.msg': ('DiagnosticStatus', 'KeyValue'),
+        'rcl_interfaces.msg': ('SetParametersResult',),
     }.items():
         parent_name, _separator, _child = package.partition('.')
         parent = sys.modules.get(parent_name) or _module(parent_name)
@@ -70,6 +82,16 @@ if importlib.util.find_spec('rclpy') is None:
         parent.msg = messages
         for name in names:
             setattr(messages, name, _TYPED.get(name, _Message))
+
+    std_srvs = _module('std_srvs')
+    std_srvs_srv = _module('std_srvs.srv')
+    std_srvs.srv = std_srvs_srv
+    std_srvs_srv.SetBool = type(
+        'SetBool', (), {
+            'Request': type('Request', (_Message,), {}),
+            'Response': type('Response', (_Message,), {}),
+        }
+    )
 
 if importlib.util.find_spec('serial') is None:
     serial = _module('serial')

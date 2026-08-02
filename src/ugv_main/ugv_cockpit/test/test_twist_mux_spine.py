@@ -986,3 +986,5 @@ def test_bringup_quirks_are_preserved_not_fixed():
 def test_bringup_launch_still_defaults_allow_motion_false():
     source = read('src/ugv_main/ugv_bringup/launch/bringup_lidar.launch.py')
     assert "'allow_motion', default_value='false'" in source
+    assert 'ugv_safety_monitor' in source
+
