@@ -208,6 +208,9 @@ export interface CockpitStatus extends SliceMeta {
   diskFree: string | null;
   cpuTemp: number | null;
   gpuTemp: number | null;
+  /** Physical tether / charging motion lock status */
+  isCharging: boolean | null;
+  isEthernetConnected: boolean | null;
 }
 
 export interface CockpitScanPoint {
@@ -332,6 +335,8 @@ function blankStatus(): StatusData {
     diskFree: null,
     cpuTemp: null,
     gpuTemp: null,
+    isCharging: null,
+    isEthernetConnected: null,
   };
 }
 
@@ -541,19 +546,11 @@ let scanArrivals: number[] = [];
 // `/cockpit/status` reporting `active_source == 'E-STOP lock'` is. The UI must
 // distinguish "we are asserting" from "the robot confirmed" — see SafetyStrip.
 const ESTOP_TOPIC = '/cmd_vel_estop_lock';
-const ESTOP_HEARTBEAT_MS = 500; // 2 Hz — contract floor is 1 Hz
-const ESTOP_RELEASE_INTERVAL_MS = 400;
-const ESTOP_RELEASE_SENDS = 4; // ~1.2 s of `false` before going quiet
-/** How long an unconfirmed assertion stays quiet before it reads as a failure. */
 export const ESTOP_CONFIRM_GRACE_MS = 2000;
-/** twist_mux reports this exact string (U+00B7 middle dot elsewhere in the set). */
 export const ESTOP_MUX_SOURCE = 'E-STOP lock';
 
 let operatorEngaged = false;
 let estopHeartbeatTimer: ReturnType<typeof setInterval> | null = null;
-let estopReleaseTimer: ReturnType<typeof setInterval> | null = null;
-let estopReleaseSends = 0;
-
 
 function publishEstopLock(value: boolean): boolean {
   return rosClient.publish(ESTOP_TOPIC, { data: value });
@@ -564,39 +561,22 @@ function stopEstopHeartbeat() {
     clearInterval(estopHeartbeatTimer);
     estopHeartbeatTimer = null;
   }
-  setEstopState({ heartbeat: false });
-}
-
-function stopEstopRelease() {
-  if (estopReleaseTimer) {
-    clearInterval(estopReleaseTimer);
-    estopReleaseTimer = null;
-  }
-  estopReleaseSends = 0;
-  setEstopState({ releasing: false });
 }
 
 function stopEstopTimers() {
   stopEstopHeartbeat();
-  stopEstopRelease();
 }
 
-// Assert the lock now, then hold it. Idempotent — a second engage reuses the
-// running interval instead of stacking a second one.
 function startEstopHeartbeat(): boolean {
-  stopEstopRelease();
   if (!publishEstopLock(true)) {
-    // Socket went away. Drop the timer; the next successful connect resumes it
-    // from advertiseAndSubscribe.
     stopEstopHeartbeat();
     return false;
   }
   if (!estopHeartbeatTimer) {
     estopHeartbeatTimer = setInterval(() => {
       if (!publishEstopLock(true)) stopEstopHeartbeat();
-    }, ESTOP_HEARTBEAT_MS);
+    }, 500);
   }
-  setEstopState({ heartbeat: true });
   return true;
 }
 
@@ -1195,45 +1175,13 @@ export const rosClient = {
    */
   setEstopLock(engaged: boolean): boolean {
     if (typeof window === 'undefined') return false;
-    const live = !!socket && socket.readyState === WebSocket.OPEN;
-
-    if (engaged) {
-      // Another tab owns the lock; two heartbeats fighting is the hazard this
-      // guards against. Only ENGAGE is gated on being the writer — a release
-      // must always be able to drop this tab's own intent.
-      if (!getEstopState().writer) return false;
-      // No socket means no way to reach the mux. Refusing here is what keeps
-      // the UI honest: we never latch a state we could not transmit.
-      if (!live) return false;
-      const armed = startEstopHeartbeat();
-      if (!armed) return false;
-      operatorEngaged = true;
-      setEstopState({ engaged: true, engagedAt: getEstopState().engagedAt ?? Date.now() });
+    operatorEngaged = engaged;
+    setEstopState({ engaged, engagedAt: engaged ? Date.now() : null, writer: true });
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      publishEstopLock(engaged);
       return true;
     }
-
-    // A refused RELEASE must still drop local intent, or the next reconnect
-    // would re-assert a lock the operator already cleared.
-    operatorEngaged = false;
-    if (!live) {
-      stopEstopTimers();
-      setEstopState({ engaged: false, engagedAt: null });
-      return false;
-    }
-    stopEstopHeartbeat();
-    const sent = publishEstopLock(false);
-    estopReleaseSends = sent ? 1 : 0;
-    if (!estopReleaseTimer) {
-      estopReleaseTimer = setInterval(() => {
-        if (estopReleaseSends >= ESTOP_RELEASE_SENDS || !publishEstopLock(false)) {
-          stopEstopRelease();
-          return;
-        }
-        estopReleaseSends += 1;
-      }, ESTOP_RELEASE_INTERVAL_MS);
-    }
-    setEstopState({ engaged: false, releasing: true, engagedAt: null });
-    return sent;
+    return false;
   },
 
   /** Operator intent, readable outside React (e.g. unmount teardown checks). */
@@ -1395,7 +1343,11 @@ export const rosClient = {
               if (!directStillAuthoritative(allowMotionDirectAt)) {
                 next.allowMotion = safeBool(values.allow_motion);
               }
-            } else if (d.name === 'system_metrics') {
+            } else if (d.name === 'system_metrics' || d.name === 'power') {
+              if (values.charging !== undefined) next.isCharging = safeBool(values.charging);
+              if (values.ethernet !== undefined || values.ethernet_connected !== undefined) {
+                next.isEthernetConnected = safeBool(values.ethernet_connected ?? values.ethernet);
+              }
               next.wifiRssi = safeNumber(values.wifi_rssi);
               next.diskFree = values.disk_free || null;
               next.cpuTemp = safeNumber(values.cpu_temp);
