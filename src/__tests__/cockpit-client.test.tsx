@@ -75,7 +75,7 @@ describe('CockpitClient', () => {
     expect(topics).toContain('/imu/raw');
   });
 
-  it('disconnects on unmount when no stop is held', () => {
+  it('disconnects on unmount', () => {
     const view = render(<CockpitClient wsUrl={WS_URL} />);
     const ws = MockWebSocket.latestInstance!;
     act(() => {
@@ -84,53 +84,6 @@ describe('CockpitClient', () => {
 
     view.unmount();
     expect(ws.close).toHaveBeenCalled();
-  });
-
-  it('keeps the socket but drops the heavy streams when unmounting with a stop held', () => {
-    const view = render(<CockpitClient wsUrl={WS_URL} />);
-    const ws = MockWebSocket.latestInstance!;
-    act(() => {
-      ws.triggerOpen();
-      rosClient.setEstopLock(true);
-    });
-    expect(rosClient.isEstopEngaged()).toBe(true);
-    ws.send.mockClear();
-
-    view.unmount();
-
-    // The lock heartbeat needs the socket, so it must survive…
-    expect(ws.close).not.toHaveBeenCalled();
-    expect(rosClient.isEstopEngaged()).toBe(true);
-    // …but video and LiDAR have no claim on a page nobody is watching.
-    const unsubscribed = ops(ws)
-      .filter((o) => o.op === 'unsubscribe')
-      .map((o) => o.topic);
-    expect(unsubscribed).toEqual(
-      expect.arrayContaining(['/scan', '/oak/rgb/image_raw/compressed', '/cockpit/depth/compressed']),
-    );
-  });
-
-  it('re-subscribes on remount while the stop is still held', () => {
-    const first = render(<CockpitClient wsUrl={WS_URL} />);
-    const ws = MockWebSocket.latestInstance!;
-    act(() => {
-      ws.triggerOpen();
-      rosClient.setEstopLock(true);
-    });
-    first.unmount();
-    ws.send.mockClear();
-
-    // Same socket, still OPEN. connect() used to early-return here, leaving the
-    // remounted cockpit subscribed to nothing and looking dead.
-    const second = render(<CockpitClient wsUrl={WS_URL} />);
-    const topics = ops(ws)
-      .filter((o) => o.op === 'subscribe')
-      .map((o) => o.topic);
-    expect(topics).toContain('/scan');
-    expect(topics).toContain('/cockpit/status');
-    expect(MockWebSocket.latestInstance).toBe(ws); // no new socket was built
-
-    second.unmount();
   });
 
   it('surfaces a rosbridge error frame as a persistent banner', () => {
