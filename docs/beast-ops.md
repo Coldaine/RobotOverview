@@ -23,12 +23,13 @@ ssh -i ~/.ssh/hephastus_ed25519 -o HostKeyAlias=beast-01 beast@192.168.0.187
 | 1 | `ssh beast-01` | `beast-01.local` → `192.168.0.187` (mDNS/Wi-Fi) | **Verified working**; Windows may fail to resolve `.local` |
 | 2 | Direct Wi-Fi | `192.168.0.187` (`wlP1p1s0`) | **Verified working**; DHCP address and may drift |
 | 3 | `ssh beast-01-ts` | `100.107.16.72` (`tailscale0`) | **Verified working**; Tailscale daemon is up |
-| 4 | Direct Ethernet | `192.168.0.166` (`enP8p1s0`) | **Not reachable now**; interface is down and has no address |
+| 4 | Direct Ethernet | `192.168.0.166` (`enP8p1s0`) | **Verified working**; current wired fallback and preferred route when cable is connected |
 | 5 | USB gadget fallback | `192.168.55.1` (`usb0`) | **Not reachable now**; USB gadget interface is down |
 
 The current Wi-Fi association is SSID **`CastleMooseGoose`**. Wi-Fi power save is **disabled**
 (persistent, set 2026-07-31 — it caused laggy/flaky Wi-Fi SSH). The old
-`beast-staging-wifi` / `MooseGooseIOT` wording is stale.
+`beast-staging-wifi` / `MooseGooseIOT` profile remains installed for historical recovery but has
+autoconnect **disabled**; it must not be selected.
 
 Rebuild the SSH aliases on any machine (key: `hephastus_ed25519`; this workstation's matching
 public half is in Doppler as `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY_DESKTOP`):
@@ -67,12 +68,33 @@ Do not copy their values into this repository, shell history, or chat.
 | Tailnet administration/re-enrollment | `TAILSCALE_API_TOKEN` | Not needed for routine `ssh beast-01-ts`; only for Tailscale API or re-enrollment work |
 | Existing Beast access record | `BEAST_JETSON_SSH_ACCESS` | Present as an opaque provisioning/access record; not needed by the verified key-based paths |
 
-No token is required for the Ethernet or USB paths themselves. They are currently unavailable
-because the corresponding Beast interfaces are down, not because SSH credentials are missing.
+No token is required for the Ethernet or USB paths themselves. Ethernet is currently working;
+the USB path is unavailable because its Beast interface is down, not because SSH credentials are
+missing.
 
 If neither working alias answers, the robot is off, still booting, Tailscale is down, or Wi-Fi
 received a new DHCP lease. Resolve the current Wi-Fi address with `ping beast-01.local` or the
 current router lease. Full detail: [Network](#network).
+
+### Wi-Fi failure diagnosis (verified 2026-08-02)
+
+- The retained NetworkManager/syslog history shows the prior Wi-Fi failures were attempts to
+  activate the obsolete `beast-staging-wifi` profile for SSID `MooseGooseIOT` on the retired
+  `192.168.20.x` network. The access point rejected associations, the supplicant timed out,
+  DHCP lost its lease, and NetworkManager retried the same profile.
+- The active `CastleMooseGoose` profile is the corrected profile: autoconnect is enabled, no BSSID
+  is pinned, and `802-11-wireless.powersave=2` (disabled). It currently uses an Intel AX210 with
+  `iwlwifi`, 5 GHz channel 100, and a strong approximately `-31 dBm` signal.
+- A Wi-Fi-only test while Ethernet was connected sent 20 gateway pings and 20 workstation pings
+  with **0% packet loss**. No current-boot Wi-Fi disconnect, association reject, DHCP loss, or
+  firmware reset was observed.
+- When both links are up, NetworkManager prefers Ethernet (`enP8p1s0`, route metric 100) over
+  Wi-Fi (`wlP1p1s0`, route metric 600). This is intentional and does not disable Wi-Fi; unplugging
+  Ethernet leaves Wi-Fi as the default route.
+- The obsolete profile could not be deleted during this verification because the Doppler
+  `BEAST_JETSON_ADMIN_PASSWORD` record was rejected by live `sudo`. Key-only SSH remains healthy;
+  repair the admin credential before attempting privileged cleanup. Until then, the stale profile
+  is harmless while its autoconnect setting remains `no`.
 
 **Ground-truth check — run this before trusting any status claim in this file** (per the
 "Robot ground truth" rule in `AGENTS.md`; this doc drifts because hardware sessions happen
@@ -541,7 +563,7 @@ against them:**
 | Wi-Fi IP (Orin) | `192.168.0.187` (`wlP1p1s0`, DHCP; currently SSID `CastleMooseGoose`) | ✅ SSH 2026-08-02; address may drift |
 | Tailscale IP (Orin) | `100.107.16.72` (`tailscale0`), tailnet hostname `beast-01` | ✅ SSH 2026-08-02; alias `beast-01-ts` |
 | mDNS path | `beast-01.local` → `192.168.0.187` | ✅ SSH 2026-08-02 |
-| Ethernet fallback | `192.168.0.166` (`enP8p1s0`) | ❌ TCP/22 failed 2026-08-02; interface is down with no address |
+| Ethernet fallback | `192.168.0.166` (`enP8p1s0`) | ✅ SSH and ICMP working 2026-08-02; route metric 100 |
 | USB gadget fallback | `192.168.55.1` (`usb0`) | ❌ TCP/22 failed 2026-08-02; interface is down |
 | SSH access | `ssh beast-01`, direct Wi-Fi IP, or `ssh beast-01-ts` | ✅ key-only with local `hephastus_ed25519` |
 | Hostname (former Pi) | `beast.local` | Historical — Pi retired |
@@ -967,7 +989,8 @@ Audited after the successful flash on 2026-07-11:
   routine SSH uses the local private key. `TAILSCALE_API_TOKEN` is for API/re-enrollment work,
   not routine tailnet SSH.
 - Current live network state (verified 2026-08-02): `wlP1p1s0` is up at `192.168.0.187`,
-  `tailscale0` is up at `100.107.16.72`, `enP8p1s0` is down, and `usb0` is down. The normal
+  `tailscale0` is up at `100.107.16.72`, `enP8p1s0` is up at `192.168.0.166`, and `usb0` is down.
+  The normal
   L4T USB gadget address remains the historical fallback `192.168.55.1`, but it was not reachable
   in this boot. The network-map identity `beast` / `192.168.20.184` still belongs to the retired
   Pi-hosted BEAST-01. **Do not** move that VLAN identity onto the Orin — operator policy (2026-07-30)
