@@ -59,7 +59,9 @@
 #                                windows can never think they hold the floor
 #                                at different priorities.
 #    10  cmd_vel_nav            everything that drives itself: nav2's
-#                                collision_monitor output, ugv_tools
+#                                collision_monitor output, the standalone
+#                                ugv_cockpit behavior_server.launch.py
+#                                (PR-4a Hangar agent primitives), ugv_tools
 #                                behavior_ctrl, the ugv_slam lidar demos, and
 #                                the ugv_vision tracking demos. Lowest —
 #                                a human always wins. These are mutually

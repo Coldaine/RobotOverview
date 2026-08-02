@@ -5,7 +5,8 @@
   <version>0.1.0</version>
   <description>
     BEAST-01 Command Deck cockpit: depth colorizer, overhead-clearance measure,
-    status aggregator, and the twist_mux orchestration layer.
+    status aggregator, the twist_mux orchestration layer, and the standalone
+    Nav2 behavior_server launch (PR-4a agent primitives on cmd_vel_nav).
   </description>
   <maintainer email="pmaclyman@gmail.com">Coldaine</maintainer>
   <license>Apache-2.0</license>
@@ -34,6 +35,10 @@
   <exec_depend>depthai_ros_driver</exec_depend>
   <exec_depend>ugv_vision</exec_depend>
   <exec_depend>twist_mux</exec_depend>
+  <!-- Standalone agent primitives (PR-4a). Install on Jetson:
+       sudo apt-get install -y ros-humble-nav2-behaviors -->
+  <exec_depend>nav2_behaviors</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
 

@@ -1,0 +1,80 @@
+# behavior_server.yaml — BEAST-01 standalone Nav2 behaviors (PR-4a).
+#
+# Stock ros-humble-nav2-behaviors action servers for the Hangar agent path:
+#   /spin, /backup, /drive_on_heading (+ /wait).
+# No map, no bt_navigator, no planner — odom-frame primitives only.
+#
+# ---------------------------------------------------------------------------
+# COSTMAP DECISION (v1): BLIND PRIMITIVES — deliberate, not a half-wire
+# ---------------------------------------------------------------------------
+# This file does NOT launch a local costmap. Collision checks still call
+# CostmapTopicCollisionChecker against costmap_topic / footprint_topic below;
+# with nobody publishing those topics the checker has no OccupancyGrid and
+# DriveOnHeading / Spin / BackUp will fail closed on the first simulate-ahead
+# cycle ("Collision Ahead" / costmap fetch error) rather than driving into
+# furniture. That is acceptable for v1 scaffolding and for disarmed
+# acceptance (wheels stay still either way — ugv_bringup allow_motion drops
+# actuation).
+#
+# FOLLOW-UP (ticket / next PR after Set 3a /scan is trusted): add a minimal
+# standalone nav2_costmap_2d (rolling local window, obstacle_layer on /scan)
+# that publishes local_costmap/costmap_raw + published_footprint, then drop
+# the blind-primitives note. Do not silently point these topics at a ghost
+# publisher without launching that costmap.
+#
+# ---------------------------------------------------------------------------
+# SPEED POLICY (Beast)
+# ---------------------------------------------------------------------------
+# Linear goal speeds from Hangar / clients MUST be ≤ 0.15 m/s. Nav2 puts
+# DriveOnHeading / BackUp speed on the action goal, not a server-wide clamp,
+# so the agent Zod tools (PR-4b) enforce the ceiling. Accel/decel limits here
+# keep ramps gentle when a goal is within policy.
+#
+# Remap: launch/behavior_server.launch.py remaps this node's cmd_vel →
+# /cmd_vel_nav (twist_mux priority 10). Never publish /cmd_vel from here.
+#
+# APT (Jetson): sudo apt install ros-humble-nav2-behaviors
+# (also pulls nav2_msgs / lifecycle pieces used by this launch).
+#
+# Params match ros-humble-nav2-behaviors 1.1.x on-robot
+# (/opt/ros/humble/share/nav2_bringup/params/nav2_params.yaml): singular
+# costmap_topic / footprint_topic and plugin strings with "/".
+
+behavior_server:
+  ros__parameters:
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    behavior_plugins: ["spin", "backup", "drive_on_heading", "wait"]
+    spin:
+      plugin: "nav2_behaviors/Spin"
+    backup:
+      plugin: "nav2_behaviors/BackUp"
+      # Gentle ramps; goal speed still capped by Hangar ≤ 0.15 m/s.
+      acceleration_limit: 0.2
+      deceleration_limit: -0.2
+      minimum_speed: 0.05
+    drive_on_heading:
+      plugin: "nav2_behaviors/DriveOnHeading"
+      acceleration_limit: 0.2
+      deceleration_limit: -0.2
+      minimum_speed: 0.05
+    wait:
+      plugin: "nav2_behaviors/Wait"
+    # Plan / Hangar agent: odom only — no map frame required.
+    global_frame: odom
+    robot_base_frame: base_link
+    transform_tolerance: 0.1
+    use_sim_time: false
+    simulate_ahead_time: 2.0
+    # Conservative yaw rates for indoor Beast teleop-adjacent skills.
+    max_rotational_vel: 0.5
+    min_rotational_vel: 0.1
+    rotational_acc_lim: 1.0
+
+lifecycle_manager_behavior:
+  ros__parameters:
+    use_sim_time: false
+    autostart: true
+    bond_timeout: 4.0
+    node_names: ['behavior_server']

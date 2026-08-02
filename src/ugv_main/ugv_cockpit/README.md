@@ -137,8 +137,28 @@ Then run the commissioning check in
 a broken whitelist is invisible from the browser, so this is the only thing that
 distinguishes "enforced" from "looks enforced".
 
+## Standalone behavior_server (PR-4a)
+
+Opt-in Hangar agent primitives — **not** started by `cockpit.launch.py` or
+`beast-ros-base`:
+
+```bash
+# Jetson once:
+ sudo apt-get install -y ros-humble-nav2-behaviors ros-humble-nav2-lifecycle-manager
+
+ros2 launch ugv_cockpit behavior_server.launch.py
+ros2 action list   # /spin /backup /drive_on_heading /wait
+```
+
+Params: `config/behavior_server.yaml` (odom frames, Beast ≤0.15 m/s policy for
+clients). Remap: `cmd_vel` → `cmd_vel_nav` (twist_mux prio 10). v1 is **blind**
+(no local costmap) — see the YAML/launch headers for the Set 3a follow-up.
+ Does not touch `allow_motion`.
+
 ## Dependencies
 
 `rosbridge_server` is an apt package (`ros-humble-rosbridge-suite`) pulled by
 `build_first.sh` — confirm it is installed (`ros2 pkg list | grep rosbridge`).
 `cv_bridge`, `depthai_ros_driver`, OpenCV, and NumPy are already on the robot.
+`nav2_behaviors` / `nav2_lifecycle_manager` are required only for the
+standalone behavior_server launch above.
