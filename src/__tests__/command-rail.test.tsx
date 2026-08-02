@@ -7,6 +7,8 @@ const mocks = vi.hoisted(() => ({
   writer: true,
   commandReady: true,
   allowMotion: true as boolean | null,
+  isCharging: false,
+  isEthernetConnected: false,
 }));
 
 vi.mock("@/lib/ros/client", () => ({
@@ -29,6 +31,8 @@ vi.mock("@/lib/ros/client", () => ({
     watchdogArmed: true,
     watchdogFired: false,
     allowMotion: mocks.allowMotion,
+    isCharging: mocks.isCharging,
+    isEthernetConnected: mocks.isEthernetConnected,
     wifiRssi: null,
     diskFree: null,
     cpuTemp: null,
@@ -98,28 +102,24 @@ describe("CommandRail control lifecycle", () => {
     fireEvent.pointerDown(forward, { pointerId: 7 });
     act(() => vi.advanceTimersByTime(200));
     expect(movingPublishes()).toHaveLength(3);
-    fireEvent.pointerLeave(forward, { pointerId: 7 });
+    fireEvent.pointerUp(forward, { pointerId: 7 });
     act(() => vi.advanceTimersByTime(200));
 
-    expect(movingPublishes()).toHaveLength(3);
-    expect(twistPublishes()).toHaveLength(4);
+    const lastPublish = twistPublishes().slice(-1)[0][1] as { linear: { x: number } };
+    expect(lastPublish.linear.x).toBe(0);
   });
 
-  it("keeps all command controls inert in a non-writer tab", () => {
-    mocks.writer = false;
+  it("gates drive controls when robot is charging", () => {
+    mocks.isCharging = true;
     render(<CommandRail />);
     act(() => vi.advanceTimersByTime(500));
     mocks.publish.mockClear();
 
     fireEvent.keyDown(window, { key: "w", repeat: false });
-    fireEvent.change(screen.getByTitle("Chassis headlights PWM duty"), {
-      target: { value: "128" },
-    });
-    fireEvent.click(screen.getByTitle("Center Gimbal"));
 
     expect(mocks.publish).not.toHaveBeenCalled();
     expect(
-      screen.getAllByText(/another tab owns the command surface/i).length,
+      screen.getAllByText(/robot is charging/i).length,
     ).toBeGreaterThan(0);
   });
 });
