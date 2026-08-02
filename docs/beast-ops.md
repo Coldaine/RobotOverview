@@ -28,8 +28,8 @@ ssh -i ~/.ssh/hephastus_ed25519 -o HostKeyAlias=beast-01 beast@192.168.0.187
 
 The current Wi-Fi association is SSID **`CastleMooseGoose`**. Wi-Fi power save is **disabled**
 (persistent, set 2026-07-31 — it caused laggy/flaky Wi-Fi SSH). The old
-`beast-staging-wifi` / `MooseGooseIOT` profile remains installed for historical recovery but has
-autoconnect **disabled**; it must not be selected.
+`beast-staging-wifi` / `MooseGooseIOT` profile was deleted from NetworkManager on 2026-08-02
+through the verified Docker-root recovery path; only the corrected profile remains.
 
 Rebuild the SSH aliases on any machine (key: `hephastus_ed25519`; this workstation's matching
 public half is in Doppler as `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY_DESKTOP`):
@@ -63,10 +63,10 @@ Do not copy their values into this repository, shell history, or chat.
 |---|---|---|
 | Routine SSH from this workstation | `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY_DESKTOP` | Matching public half for local `~/.ssh/hephastus_ed25519`; this is the key that authenticated successfully |
 | Alternate operator key | `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY` | Separate operator-key record; it is not this workstation's key, and its installation was not needed for this verification |
-| `sudo` and recovery login | `BEAST_JETSON_ADMIN_PASSWORD` | Required for privileged commands and recovery workflows; not needed for key-only SSH |
+| `sudo` and recovery login | `BEAST_JETSON_ADMIN_PASSWORD` | Current password for the Jetson `beast` account; reset and live-verified 2026-08-02; not needed for key-only SSH |
 | Current Wi-Fi association | `CASTLEMOOSEGOOSE_WIFI_PSK` | PSK for the live `CastleMooseGoose` SSID |
 | Tailnet administration/re-enrollment | `TAILSCALE_API_TOKEN` | Not needed for routine `ssh beast-01-ts`; only for Tailscale API or re-enrollment work |
-| Existing Beast access record | `BEAST_JETSON_SSH_ACCESS` | Present as an opaque provisioning/access record; not needed by the verified key-based paths |
+| Existing Beast access record | `BEAST_JETSON_SSH_ACCESS` | Connection and credential-name reference; not needed by the verified key-based paths |
 
 No token is required for the Ethernet or USB paths themselves. Ethernet is currently working;
 the USB path is unavailable because its Beast interface is down, not because SSH credentials are
@@ -91,10 +91,13 @@ current router lease. Full detail: [Network](#network).
 - When both links are up, NetworkManager prefers Ethernet (`enP8p1s0`, route metric 100) over
   Wi-Fi (`wlP1p1s0`, route metric 600). This is intentional and does not disable Wi-Fi; unplugging
   Ethernet leaves Wi-Fi as the default route.
-- The obsolete profile could not be deleted during this verification because the Doppler
-  `BEAST_JETSON_ADMIN_PASSWORD` record was rejected by live `sudo`. Key-only SSH remains healthy;
-  repair the admin credential before attempting privileged cleanup. Until then, the stale profile
-  is harmless while its autoconnect setting remains `no`.
+- The Doppler `BEAST_JETSON_ADMIN_PASSWORD` value was reset and live-verified through the existing
+  Docker-root path after the old value failed. The new value is synchronized in both
+  `homelab/dev` and `homelab/dev_personal`; `sudo` now succeeds without changing key-only SSH.
+- A global Doppler audit covered 10 projects and 15 configs. No other secret name containing
+  `JETSON`, `ORIN`, `UGV`, `WAVESHARE`, or `NVIDIA` represented an administrator password. The
+  only Beast-specific password record is `homelab/dev:BEAST_JETSON_ADMIN_PASSWORD` (mirrored in
+  `homelab/dev_personal`). Operator public-key and access-reference records are documented above.
 
 **Ground-truth check — run this before trusting any status claim in this file** (per the
 "Robot ground truth" rule in `AGENTS.md`; this doc drifts because hardware sessions happen
@@ -985,9 +988,9 @@ Audited after the successful flash on 2026-07-11:
   `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY`, `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY_DESKTOP`,
   `BEAST_JETSON_SSH_ACCESS`, and `TAILSCALE_API_TOKEN`. The live Wi-Fi PSK is
   `CASTLEMOOSEGOOSE_WIFI_PSK` for SSID `CastleMooseGoose`. No secret value belongs in this runbook,
-  logs, shell history, or process output. `BEAST_JETSON_ADMIN_PASSWORD` is for sudo/recovery;
-  routine SSH uses the local private key. `TAILSCALE_API_TOKEN` is for API/re-enrollment work,
-  not routine tailnet SSH.
+  logs, shell history, or process output. `BEAST_JETSON_ADMIN_PASSWORD` is the current
+  `beast`-account sudo/recovery password, reset and verified 2026-08-02; routine SSH uses the
+  local private key. `TAILSCALE_API_TOKEN` is for API/re-enrollment work, not routine tailnet SSH.
 - Current live network state (verified 2026-08-02): `wlP1p1s0` is up at `192.168.0.187`,
   `tailscale0` is up at `100.107.16.72`, `enP8p1s0` is up at `192.168.0.166`, and `usb0` is down.
   The normal
