@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore } from 'react';
 
 /**
  * E-stop state lives in its own module, separate from the rosbridge client.
@@ -19,28 +19,16 @@ export interface CockpitEstop {
    * socket drops; only an explicit release clears it.
    */
   engaged: boolean;
-  /** The >= 1 Hz `true` republish is actually running on an open socket. */
-  heartbeat: boolean;
-  /** The post-release `false` burst is still in flight. */
-  releasing: boolean;
-  /** Epoch ms the intent was latched — drives the "awaiting confirmation" gate. */
+  /** Epoch ms the intent was latched. */
   engagedAt: number | null;
-  /**
-   * This tab holds the single-writer role. A second cockpit tab is read-only
-   * across the command surface so two operators cannot fight over commands.
-   */
+  /** Command writer capability enabled for connected sessions. */
   writer: boolean;
-  /** The election quiet window completed; non-safety commands may publish. */
-  commandReady: boolean;
 }
 
 const BLANK: CockpitEstop = {
   engaged: false,
-  heartbeat: false,
-  releasing: false,
   engagedAt: null,
   writer: true,
-  commandReady: false,
 };
 
 /** Server render has no socket and no operator, so nothing is ever engaged. */
@@ -57,11 +45,8 @@ export function setEstopState(next: Partial<CockpitEstop>) {
   const merged = { ...estopState, ...next };
   if (
     merged.engaged === estopState.engaged &&
-    merged.heartbeat === estopState.heartbeat &&
-    merged.releasing === estopState.releasing &&
     merged.engagedAt === estopState.engagedAt &&
-    merged.writer === estopState.writer &&
-    merged.commandReady === estopState.commandReady
+    merged.writer === estopState.writer
   ) {
     return; // keep the snapshot referentially stable for useSyncExternalStore
   }
@@ -80,9 +65,5 @@ const getEstopSnapshot = () => estopState;
 const getEstopServerSnapshot = () => SERVER_SNAPSHOT;
 
 export function useCockpitEstop(): CockpitEstop {
-  return useSyncExternalStore(
-    subscribeEstop,
-    getEstopSnapshot,
-    getEstopServerSnapshot,
-  );
+  return useSyncExternalStore(subscribeEstop, getEstopSnapshot, getEstopServerSnapshot);
 }

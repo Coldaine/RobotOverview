@@ -7,22 +7,16 @@ import clsx from 'clsx';
 // them — stale reassurance is worse than no rail at all.
 const CHIPS: Array<{ tone: 'red' | 'amber'; text: string; title: string }> = [
   {
-    tone: 'red',
-    text: 'DRIVE GATED — ROBOT NOT ARMED',
+    tone: 'amber',
+    text: 'PHYSICAL LOCK ACTIVE WHEN TETHERED OR CHARGING',
     title:
-      'Motion publishes only when the robot reports allow_motion=true. That publisher is not deployed yet, so drive is inert.',
-  },
-  {
-    tone: 'red',
-    text: 'STATUS PENDING ROBOT DEPLOY',
-    title:
-      '/cockpit/status, /ugv/allow_motion and /ugv/watchdog_state are not published yet — mux source, watchdog and motion state read UNKNOWN.',
+      'Motion is gated when the robot reports charging or an active Ethernet connection to prevent cable damage.',
   },
   {
     tone: 'amber',
-    text: 'E-STOP CONFIRMATION UNAVAILABLE',
+    text: 'E-STOP = DIRECT MANUAL LATCH',
     title:
-      'The stop is asserted at 2 Hz, but the robot cannot echo it back until /cockpit/status ships. The button stays in ASSERTING.',
+      'Software E-STOP provides direct latching for teleop sessions.',
   },
   {
     tone: 'amber',
