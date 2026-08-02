@@ -6,6 +6,7 @@ import {
   useCockpitStatus,
   useConnectionState
 } from '@/lib/ros/client';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import clsx from 'clsx';
 import { ShieldAlert, ShieldCheck } from 'lucide-react';
@@ -39,9 +40,11 @@ export function SafetyStrip() {
   const isLowVoltage = voltage > 0 && voltage < 10.5;
 
   return (
-    <section 
+    <motion.section 
       className="panel border-rim bg-panel/85 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5 p-4 items-stretch shadow-md relative overflow-hidden" 
       aria-label="Safety strip"
+      animate={estopEngaged ? { borderColor: ["#404040", "#ef4444", "#404040"] } : {}}
+      transition={estopEngaged ? { repeat: Infinity, duration: 1.5 } : {}}
     >
       {/* SCANLINE SHEEN EFFECT */}
       <div className="pointer-events-none absolute inset-0 z-0 bg-[repeating-linear-gradient(0deg,rgba(255,255,255,0.015)_0_1px,transparent_1px_3px)] opacity-50" />
@@ -149,6 +152,6 @@ export function SafetyStrip() {
           <span className="text-[8px] opacity-70">SOC%: NOT DERIVABLE FROM VOLTS</span>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

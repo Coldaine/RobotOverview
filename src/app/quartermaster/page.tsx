@@ -56,6 +56,16 @@ export default function Quartermaster() {
   const buyNextTotalUs = buyNextItems.reduce((s, w) => s + sourcePriceOrZero(w.price, 'us'), 0);
   const buyNextTotalImp = buyNextItems.reduce((s, w) => s + sourcePriceOrZero(w.price, 'import'), 0);
 
+  const pipelineCounts = useMemo(() => {
+    const counts = Object.fromEntries(ACQUISITION_PIPELINE_STATUSES.map((s) => [s, 0]));
+    wishlist.forEach((w) => {
+      if (counts[w.status] !== undefined) {
+        counts[w.status]++;
+      }
+    });
+    return counts;
+  }, [wishlist]);
+
   function stepStatus(w: WishlistItem, dir: 1 | -1) {
     const idx = ACQUISITION_PIPELINE_STATUSES.indexOf(w.status);
     // Out-of-band statuses (e.g. 'rejected') are not part of the pipeline — don't let
@@ -93,6 +103,35 @@ export default function Quartermaster() {
         </div>
       </header>
 
+      {/* Pipeline Flow Diagram */}
+      <div className="flex w-full items-stretch gap-1 overflow-x-auto rounded-lg border border-rim bg-panel/30 p-1">
+        {ACQUISITION_PIPELINE_STATUSES.map((status, index) => {
+          const st = WISHLIST_STATUS_META[status];
+          const count = pipelineCounts[status];
+          const isLast = index === ACQUISITION_PIPELINE_STATUSES.length - 1;
+          
+          return (
+            <div
+              key={status}
+              className="relative flex min-w-[120px] flex-1 flex-col items-center justify-center gap-1 rounded bg-panel-2/40 px-3 py-3"
+            >
+              <div className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider text-ink-dim">
+                <span className={clsx('h-1.5 w-1.5 rounded-full', st.cls.match(/bg-[a-z-]+/)?.[0].replace(/\/.*$/, '') ?? 'bg-ink-dim')} />
+                {st.label}
+              </div>
+              <div className={clsx('font-display text-xl', count > 0 ? 'text-ink' : 'text-ink-dim/40')}>
+                {count}
+              </div>
+              {!isLast && (
+                <div className="absolute -right-3 top-1/2 z-10 -translate-y-1/2 text-rim">
+                  <ChevronRight className="h-5 w-5 opacity-50" />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
       <div className="grid grid-cols-3 gap-3">
         <StatReadout label="Items" value={wishlist.length} accent="cyan" />
         <StatReadout label="Buy Next" value={buyNext} accent="amber" />
@@ -115,19 +154,35 @@ export default function Quartermaster() {
             </span>
           </SectionTitle>
           <div className="grid gap-2 sm:grid-cols-2">
-            {upgradePath.map((g) => (
+            {upgradePath.map((g) => {
+              const cm = mission(g.key);
+              const costConstraint = cm?.constraints?.find(c => c.unit === '$');
+              const hypotheticalBudget = costConstraint?.budget ?? 250;
+              const cost = g[source];
+              const pct = Math.min(100, Math.max(0, (cost / hypotheticalBudget) * 100));
+              const over = cost > hypotheticalBudget;
+
+              return (
               <div key={g.key} className="panel-inset px-3 py-2">
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-[11px] uppercase tracking-wider text-ink">{g.label}</span>
-                  <span className="font-mono text-[10px] tabular-nums text-amber">
-                    {money(g[source])}
+                  <span className={clsx("font-mono text-[10px] tabular-nums", over ? "text-signal-crit" : "text-amber")}>
+                    {money(cost)} <span className="text-ink-dim/50">/ {money(hypotheticalBudget)}</span>
                   </span>
+                </div>
+                <div className="mt-2 mb-1.5 h-1 w-full overflow-hidden rounded bg-panel-2 shadow-inner">
+                  <motion.div 
+                    className={clsx("h-full", over ? "bg-signal-crit" : "bg-cyan")} 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 1, ease: 'easeOut' }}
+                  />
                 </div>
                 <div className="mt-1 font-mono text-[10px] text-ink-dim">
                   {g.items.map((it) => it.name).join(' · ')}
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         </section>
       )}

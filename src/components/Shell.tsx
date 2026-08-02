@@ -221,6 +221,7 @@ function MobileNav() {
   const { data } = useHangar();
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-rim/70 bg-hull/95 px-3 pb-3 pt-2 backdrop-blur-md lg:hidden">
+      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-hull to-transparent pointer-events-none lg:hidden" />
       <div className="no-scrollbar overflow-x-auto">
         <div className="flex min-w-max items-center gap-1.5">
           {NAV.map((n) => {
@@ -228,7 +229,8 @@ function MobileNav() {
             return (
               <NavItem key={n.to} href={n.to} end={n.end} activePrefixes={n.activePrefixes}>
                 {(isActive) => (
-                  <span
+                  <motion.div
+                    whileTap={{ scale: 0.9 }}
                     className={clsx(
                       'flex h-14 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
                       isActive
@@ -238,7 +240,7 @@ function MobileNav() {
                   >
                     <Icon className="h-4 w-4" />
                     <span className="max-w-full truncate px-1">{n.code}</span>
-                  </span>
+                  </motion.div>
                 )}
               </NavItem>
             );
@@ -252,7 +254,8 @@ function MobileNav() {
             return (
               <NavItem key={b.id} href={`/bay/${b.id}`}>
                 {(isActive) => (
-                  <span
+                  <motion.div
+                    whileTap={{ scale: 0.9 }}
                     className={clsx(
                       'flex h-14 w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-md border font-mono text-[9px] uppercase tracking-[0.08em] transition-all',
                       isActive ? accentClasses.activeNav : 'border-rim/60 bg-panel-2/40 text-ink-dim hover:text-ink',
@@ -260,7 +263,7 @@ function MobileNav() {
                   >
                     <Icon className={clsx('h-4 w-4', accentClasses.text)} />
                     <span className="max-w-full truncate px-1">{b.code}</span>
-                  </span>
+                  </motion.div>
                 )}
               </NavItem>
             );

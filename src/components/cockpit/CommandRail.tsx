@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { rosClient, useCockpitStatus } from '@/lib/ros/client';
 import { 
@@ -177,49 +178,54 @@ export function CommandRail() {
           <div className="flex flex-col justify-between">
             <div className="grid grid-cols-3 grid-rows-3 gap-1.5 justify-center max-w-[120px] mx-auto">
               <span className="blank bg-transparent" />
-              <button 
+              <motion.button 
+                whileTap={{ scale: 0.9, y: 2 }}
                 onMouseDown={() => drive(0.20, 0.0)}
                 onMouseUp={stopDrive}
                 className="btn border border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2 rounded-lg aspect-square text-md flex items-center justify-center select-none"
                 title="Forward (W)"
               >
                 ▲
-              </button>
+              </motion.button>
               <span className="blank bg-transparent" />
 
-              <button 
+              <motion.button 
+                whileTap={{ scale: 0.9, y: 2 }}
                 onMouseDown={() => drive(0.0, 0.40)}
                 onMouseUp={stopDrive}
                 className="btn border border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2 rounded-lg aspect-square text-md flex items-center justify-center select-none"
                 title="Left (A)"
               >
                 ◀
-              </button>
-              <button 
+              </motion.button>
+              <motion.button 
+                whileTap={{ scale: 0.9, y: 2 }}
                 onClick={stopDrive}
                 className="btn border border-red-500/50 text-red-500 hover:bg-red-500/10 rounded-lg aspect-square text-sm flex items-center justify-center font-bold select-none"
                 title="Stop (Space)"
               >
                 ■
-              </button>
-              <button 
+              </motion.button>
+              <motion.button 
+                whileTap={{ scale: 0.9, y: 2 }}
                 onMouseDown={() => drive(0.0, -0.40)}
                 onMouseUp={stopDrive}
                 className="btn border border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2 rounded-lg aspect-square text-md flex items-center justify-center select-none"
                 title="Right (D)"
               >
                 ▶
-              </button>
+              </motion.button>
 
               <span className="blank bg-transparent" />
-              <button 
+              <motion.button 
+                whileTap={{ scale: 0.9, y: 2 }}
                 onMouseDown={() => drive(-0.20, 0.0)}
                 onMouseUp={stopDrive}
                 className="btn border border-rim hover:border-cyan/50 hover:text-cyan bg-panel-2 rounded-lg aspect-square text-md flex items-center justify-center select-none"
                 title="Reverse (S)"
               >
                 ▼
-              </button>
+              </motion.button>
               <span className="blank bg-transparent" />
             </div>
 

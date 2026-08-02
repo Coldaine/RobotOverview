@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { rosClient, useCockpitOverheadClearance } from '@/lib/ros/client';
 import { Eye, Video } from 'lucide-react';
+import { motion } from 'framer-motion';
 import clsx from 'clsx';
 
 export function OpticsWall() {
@@ -98,6 +99,17 @@ export function OpticsWall() {
             alt="RGB Video Feed" 
             className={clsx("absolute inset-0 w-full h-full object-cover z-10", !rgbActive && "hidden")}
           />
+          
+          {rgbActive && (
+            <motion.svg
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 pointer-events-none z-20 text-emerald-500/50 mix-blend-screen"
+              viewBox="0 0 100 100"
+              animate={{ opacity: [0.3, 0.8, 0.3] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <path d="M 30 20 L 20 20 L 20 30 M 70 20 L 80 20 L 80 30 M 20 70 L 20 80 L 30 80 M 80 70 L 80 80 L 70 80 M 50 40 L 50 60 M 40 50 L 60 50" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </motion.svg>
+          )}
 
           {/* OAK RGB Tags */}
           <span className="absolute left-3 top-3 z-30 chip border-rim/70 bg-hull/80 text-ink-dim py-0.5 px-2 rounded-full font-mono text-[9px] tracking-wider uppercase flex items-center gap-1">
@@ -139,6 +151,17 @@ export function OpticsWall() {
             alt="Colorized Depth Feed" 
             className={clsx("absolute inset-0 w-full h-full object-cover z-10", !depthActive && "hidden")}
           />
+
+          {depthActive && (
+            <motion.svg
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 pointer-events-none z-20 text-emerald-500/50 mix-blend-screen"
+              viewBox="0 0 100 100"
+              animate={{ opacity: [0.3, 0.8, 0.3] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <path d="M 30 20 L 20 20 L 20 30 M 70 20 L 80 20 L 80 30 M 20 70 L 20 80 L 30 80 M 80 70 L 80 80 L 70 80 M 50 40 L 50 60 M 40 50 L 60 50" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </motion.svg>
+          )}
 
           <span className="absolute left-3 top-3 z-30 chip border-rim/70 bg-hull/80 text-ink-dim py-0.5 px-2 rounded-full font-mono text-[9px] tracking-wider uppercase flex items-center gap-1">
             <span className={clsx("h-1 w-1 rounded-full", depthActive ? "bg-emerald-500 shadow-[0_0_4px_#34d399]" : "bg-zinc-600")} /> OAK DEPTH
