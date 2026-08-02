@@ -1,7 +1,7 @@
 'use client';
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
-import { AlertTriangle, ChevronRight, Star } from 'lucide-react';
+import { AlertTriangle, ChevronRight, Star, Cpu } from 'lucide-react';
 import Link from 'next/link';
 import type { Mission, Unit, WishlistItem } from '@/data/types';
 import { money } from '@/lib/format';
@@ -65,10 +65,23 @@ export function UnitCard({
     .filter(Boolean)
     .join(' | ');
 
+  const isCompute = unit.bay === 'compute';
+  let computeLabel = 'High Compute';
+  if (isCompute) {
+    const classLower = unit.class.toLowerCase();
+    if (classLower.includes('workstation')) {
+      computeLabel = 'Workstation';
+    } else if (classLower.includes('edge ai')) {
+      computeLabel = 'Edge AI';
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: dim ? 0.35 : 1, y: 0 }}
+      whileHover={{ scale: 1.025, y: -6 }}
+      whileTap={{ scale: 0.98 }}
       transition={{ delay: index * 0.04, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
     >
       <Link
@@ -102,7 +115,7 @@ export function UnitCard({
 
         <p className="mt-2 line-clamp-2 font-mono text-[11px] leading-relaxed text-ink-dim">{unit.summary}</p>
 
-        {(highDraw || hasRequirementGap) && (
+        {(highDraw || hasRequirementGap || isCompute) && (
           <div className="mt-3 flex flex-wrap gap-2">
             {highDraw && (
               <span
@@ -119,6 +132,15 @@ export function UnitCard({
                 title={requirementGapSummary || 'Required loadout has open slots'}
               >
                 Req Missing
+              </span>
+            )}
+            {isCompute && (
+              <span
+                className="chip inline-flex items-center gap-1 border-cyan/40 bg-cyan/10 text-cyan"
+                title={`${computeLabel} Unit`}
+              >
+                <Cpu className="h-3 w-3" />
+                {computeLabel}
               </span>
             )}
           </div>

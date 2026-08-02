@@ -1,5 +1,6 @@
 'use client';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Boxes, Package, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import clsx from 'clsx';
@@ -23,9 +24,12 @@ function ItemStatusChip({ status }: { status: InventoryItem['status'] }) {
 
 export default function Items() {
   const { items, unit, mission, capability, insight, bay } = useHangar();
+  const [activeFilter, setActiveFilter] = useState('All');
 
   const ownedCount = items.filter((it) => it.status === 'owned' || it.status === 'deployed').length;
   const onOrderCount = items.filter((it) => it.status === 'on-order').length;
+
+  const mockFilters = ['All', 'Owned', 'On Order', 'Wishlist', 'Components'];
 
   return (
     <div className="space-y-6">
@@ -45,6 +49,32 @@ export default function Items() {
         <StatReadout label="On Order" value={onOrderCount} accent="amber" />
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        {mockFilters.map((f) => {
+          const isActive = activeFilter === f;
+          return (
+            <button
+              key={f}
+              onClick={() => setActiveFilter(f)}
+              className={clsx(
+                'relative flex items-center justify-center rounded px-3 py-1.5 font-mono text-[11px] uppercase tracking-wider outline-none transition-colors duration-200 hover:cursor-pointer',
+                isActive ? 'text-black' : 'text-ink-dim hover:text-ink hover:bg-panel'
+              )}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="active-items-filter"
+                  className="absolute inset-0 rounded bg-cyan"
+                  initial={false}
+                  transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
+                />
+              )}
+              <span className="relative z-10">{f}</span>
+            </button>
+          );
+        })}
+      </div>
+
       <SectionTitle code="INV">
         <span className="inline-flex items-center gap-2">
           <Boxes className="h-3.5 w-3.5 text-cyan" /> Item Catalog
@@ -58,24 +88,26 @@ export default function Items() {
         </div>
       ) : (
         <div className="space-y-3">
-          {items.map((it, i) => {
-            const b = bay(it.bay);
-            const us = it.price?.us ?? null;
-            const imp = it.price?.import ?? null;
-            const relUnits = (it.relatedUnits ?? []).map(unit).filter(Boolean);
-            const relMissions = (it.relatedMissions ?? []).map(mission).filter(Boolean);
-            const relCaps = (it.relatedCapabilities ?? []).map(capability).filter(Boolean);
-            const relInsights = (it.relatedInsights ?? []).map(insight).filter(Boolean);
+          <AnimatePresence>
+            {items.map((it, i) => {
+              const b = bay(it.bay);
+              const us = it.price?.us ?? null;
+              const imp = it.price?.import ?? null;
+              const relUnits = (it.relatedUnits ?? []).map(unit).filter(Boolean);
+              const relMissions = (it.relatedMissions ?? []).map(mission).filter(Boolean);
+              const relCaps = (it.relatedCapabilities ?? []).map(capability).filter(Boolean);
+              const relInsights = (it.relatedInsights ?? []).map(insight).filter(Boolean);
 
-            return (
-              <motion.div
-                key={it.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
-                className="panel overflow-hidden p-4"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
+              return (
+                <motion.div
+                  layout
+                  key={it.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04 }}
+                  className="panel overflow-hidden p-4"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <Package className="h-4 w-4 shrink-0 text-cyan" />
@@ -174,6 +206,7 @@ export default function Items() {
               </motion.div>
             );
           })}
+          </AnimatePresence>
         </div>
       )}
     </div>

@@ -9,6 +9,7 @@ import {
   ESTOP_CONFIRM_GRACE_MS,
   ESTOP_MUX_SOURCE,
 } from "@/lib/ros/client";
+import { motion } from 'framer-motion';
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { ShieldAlert, ShieldCheck, HelpCircle } from "lucide-react";
@@ -142,9 +143,11 @@ export function SafetyStrip() {
   const voltStale = volts.stale && volts.hasReceived;
 
   return (
-    <section
-      className="panel border-rim bg-panel/85 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5 p-4 items-stretch shadow-md relative overflow-hidden"
+    <motion.section 
+      className="panel border-rim bg-panel/85 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5 p-4 items-stretch shadow-md relative overflow-hidden" 
       aria-label="Safety strip"
+      animate={intentLatched || robotConfirmed ? { borderColor: ["#404040", "#ef4444", "#404040"] } : {}}
+      transition={intentLatched || robotConfirmed ? { repeat: Infinity, duration: 1.5 } : {}}
     >
       {/* SCANLINE SHEEN EFFECT */}
       <div className="pointer-events-none absolute inset-0 z-0 bg-[repeating-linear-gradient(0deg,rgba(255,255,255,0.015)_0_1px,transparent_1px_3px)] opacity-50" />
@@ -336,6 +339,6 @@ export function SafetyStrip() {
           </span>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }

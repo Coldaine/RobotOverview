@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   rosClient,
@@ -453,7 +454,8 @@ export function CommandRail() {
           <div className="flex flex-col justify-between">
             <div className="grid grid-cols-3 grid-rows-3 gap-1.5 justify-center max-w-[120px] mx-auto">
               <span className="blank bg-transparent" />
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9, y: 2 }}
                 {...holdProps(LINEAR_STEP, 0)}
                 disabled={!driveEnabled}
                 className={clsx(
@@ -467,10 +469,11 @@ export function CommandRail() {
                 }
               >
                 ▲
-              </button>
+              </motion.button>
               <span className="blank bg-transparent" />
 
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9, y: 2 }}
                 {...holdProps(0, ANGULAR_STEP)}
                 disabled={!driveEnabled}
                 className={clsx(
@@ -484,15 +487,17 @@ export function CommandRail() {
                 }
               >
                 ◀
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9, y: 2 }}
                 onClick={() => clearDriveIntent()}
                 className="btn border border-red-500/50 text-red-500 hover:bg-red-500/10 rounded-lg aspect-square text-sm flex items-center justify-center font-bold select-none"
                 title="Stop (Space) — releases intent; the robot's 0.5 s watchdog is the guarantee"
               >
                 ■
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9, y: 2 }}
                 {...holdProps(0, -ANGULAR_STEP)}
                 disabled={!driveEnabled}
                 className={clsx(
@@ -506,10 +511,11 @@ export function CommandRail() {
                 }
               >
                 ▶
-              </button>
+              </motion.button>
 
               <span className="blank bg-transparent" />
-              <button
+              <motion.button
+                whileTap={{ scale: 0.9, y: 2 }}
                 {...holdProps(-LINEAR_STEP, 0)}
                 disabled={!driveEnabled}
                 className={clsx(
@@ -523,7 +529,7 @@ export function CommandRail() {
                 }
               >
                 ▼
-              </button>
+              </motion.button>
               <span className="blank bg-transparent" />
             </div>
 

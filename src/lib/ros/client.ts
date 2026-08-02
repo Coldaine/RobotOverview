@@ -1120,6 +1120,7 @@ export const rosClient = {
     this.stopStalenessTicker();
     releaseImageUrls();
     if (socket) {
+      socket.onopen = null;
       socket.onclose = null;
       socket.onerror = null;
       socket.onmessage = null;
@@ -1132,6 +1133,14 @@ export const rosClient = {
       markAllStale();
       notify("connection");
     }
+
+    notify('voltage');
+    notify('odom');
+    notify('imu');
+    notify('clearance');
+    notify('status');
+    notify('diagnostics');
+    notify('scan');
   },
 
   startStalenessTicker() {
@@ -1309,6 +1318,18 @@ export const rosClient = {
       }),
     );
     return true;
+  },
+
+  callService(serviceName: string, args: unknown) {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    const callId = `call_${Math.random().toString(36).slice(2, 11)}`;
+    const triggerMsg = JSON.stringify({
+      op: 'call_service',
+      service: serviceName,
+      args,
+      id: callId,
+    });
+    socket.send(triggerMsg);
   },
 
   /**

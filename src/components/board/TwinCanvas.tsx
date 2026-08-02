@@ -148,6 +148,21 @@ export function TwinCanvas(props: CanvasProps) {
         <rect x={0} y={0} width={layout.width} height={layout.height} fill="transparent" data-drag-surface="true" />
 
         <g transform={`translate(${t.x} ${t.y}) scale(${t.k})`}>
+          {/* Legend */}
+          <g transform={`translate(20 20)`}>
+            <rect width={160} height={90} fill="var(--color-hull)" stroke="var(--color-rim)" rx={6} fillOpacity={0.8} />
+            <text x={12} y={24} fill="var(--color-fg-muted)" fontSize={12} fontFamily="monospace" fontWeight="bold">
+              LEGEND
+            </text>
+            <circle cx={22} cy={46} r={7} fill="var(--color-void)" stroke="var(--color-cyan)" strokeWidth={1.5} />
+            <path d="M 15 46 H 29 M 22 39 V 53" stroke="var(--color-cyan)" strokeWidth={1.5} />
+            <text x={38} y={50} fill="var(--color-fg)" fontSize={12} fontFamily="monospace">Junction (⊕)</text>
+
+            <rect x={15} y={62} width={14} height={14} fill="var(--color-indigo)" rx={3} />
+            <text x={22} y={73} fill="white" fontSize={11} fontFamily="monospace" fontWeight="bold" textAnchor="middle">π</text>
+            <text x={38} y={74} fill="var(--color-fg)" fontSize={12} fontFamily="monospace">Ownership (π/Σ)</text>
+          </g>
+
           {/* wires under the cards */}
           {layout.wires.map((w) => (
               <Wire
@@ -166,6 +181,17 @@ export function TwinCanvas(props: CanvasProps) {
                 onSelect={props.onSelectNet}
               />
           ))}
+
+          {/* wire junctions (⊕) for nets with > 2 terminals */}
+          {layout.wires.filter(w => w.terminalIds.length > 2 && layerEnabled.has(w.kind)).map(w => {
+            const strokeColor = w.kind === 'power' ? 'var(--color-amber)' : 'var(--color-cyan)';
+            return (
+              <g key={`${w.netId}-junction`} transform={`translate(${w.midX} ${w.midY})`}>
+                <circle cx={0} cy={0} r={5} fill="var(--color-void)" stroke={strokeColor} strokeWidth={1.5} />
+                <path d="M -5 0 H 5 M 0 -5 V 5" stroke={strokeColor} strokeWidth={1.5} />
+              </g>
+            );
+          })}
 
           {/* module cards */}
           {layout.modules.map((m) => (
