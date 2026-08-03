@@ -2,7 +2,7 @@
 
 Standalone UPS Module 3S power telemetry for BEAST-01 (PR-2a).
 
-Vendors/adapts LeoRover’s INA219 `charging_monitor` ([LeoRover/leo_robot-ros2](https://github.com/LeoRover/leo_robot-ros2), 9 stars) into an ament_python package that publishes:
+This package vendors and adapts LeoRover’s INA219 `charging_monitor` ([LeoRover/leo_robot-ros2](https://github.com/LeoRover/leo_robot-ros2)) into an ament_python package that publishes:
 
 | Topic | Type | Meaning |
 | --- | --- | --- |

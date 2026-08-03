@@ -8,6 +8,7 @@
 
 from __future__ import annotations
 
+import time
 from typing import Callable, Optional
 
 import rclpy
@@ -44,6 +45,7 @@ class PowerNode(Node):
         self.declare_parameter('i2c_bus_nr', 7)
         self.declare_parameter('sensor_address', 0x40)
         self.declare_parameter('data_publish_rate', 1.0)
+        self.declare_parameter('reconnect_interval_sec', 5.0)
         self.declare_parameter('current_sign', 1.0)
         self.declare_parameter('charging_current_threshold_a', 0.05)
         self.declare_parameter('voltage_topic', '/ugv/voltage')
@@ -60,6 +62,11 @@ class PowerNode(Node):
         )
         self._rate_hz = (
             self.get_parameter('data_publish_rate')
+            .get_parameter_value()
+            .double_value
+        )
+        self._reconnect_interval_sec = (
+            self.get_parameter('reconnect_interval_sec')
             .get_parameter_value()
             .double_value
         )
@@ -87,6 +94,8 @@ class PowerNode(Node):
 
         if self._rate_hz <= 0:
             raise ValueError('data_publish_rate must be positive')
+        if self._reconnect_interval_sec <= 0:
+            raise ValueError('reconnect_interval_sec must be positive')
         if self._charge_threshold < 0:
             raise ValueError('charging_current_threshold_a must be >= 0')
 
@@ -98,6 +107,7 @@ class PowerNode(Node):
             current_sign=self._current_sign,
         )
         self._sensor_ok = False
+        self._next_open_attempt = 0.0
 
         self._voltage_pub = self.create_publisher(BatteryState, voltage_topic, 10)
         self._charging_pub = self.create_publisher(Bool, charging_topic, 10)
@@ -105,22 +115,32 @@ class PowerNode(Node):
         self._timer = None
 
     def start(self) -> None:
+        self._try_open_sensor()
+        self._timer = self.create_timer(1.0 / self._rate_hz, self._publish_once)
+
+    def _try_open_sensor(self) -> bool:
+        now = time.monotonic()
+        if now < self._next_open_attempt:
+            return False
+        self._next_open_attempt = now + self._reconnect_interval_sec
         try:
             self._sensor.open(self._i2c_bus_nr)
-            self._sensor_ok = True
-            self.get_logger().info(
-                f'INA219 ready on i2c-{self._i2c_bus_nr} '
-                f'addr=0x{self._sensor_address:02x}; publishing at '
-                f'{self._rate_hz:.1f} Hz'
-            )
-        except Exception as exc:  # noqa: BLE001 — surface any open failure
+        except OSError as exc:
             self._sensor_ok = False
             self.get_logger().error(
-                f'INA219 open failed ({exc}); publishing absent-sensor status '
-                f'at {self._rate_hz:.1f} Hz (not garbage SOC)'
+                f'INA219 open failed ({exc}); retrying in '
+                f'{self._reconnect_interval_sec:.1f}s and publishing '
+                'absent-sensor status'
             )
+            return False
 
-        self._timer = self.create_timer(1.0 / self._rate_hz, self._publish_once)
+        self._sensor_ok = True
+        self.get_logger().info(
+            f'INA219 ready on i2c-{self._i2c_bus_nr} '
+            f'addr=0x{self._sensor_address:02x}; publishing at '
+            f'{self._rate_hz:.1f} Hz'
+        )
+        return True
 
     def shutdown(self) -> None:
         if self._timer is not None:
@@ -136,7 +156,7 @@ class PowerNode(Node):
         self._charging_pub.publish(charging)
 
     def _sample(self) -> BatteryTelemetry:
-        if not self._sensor_ok:
+        if not self._sensor_ok and not self._try_open_sensor():
             return build_telemetry(
                 None,
                 present=False,
@@ -144,8 +164,13 @@ class PowerNode(Node):
             )
 
         if not self._sensor.ensure_ready():
+            self._sensor.close()
+            self._sensor_ok = False
+            self._next_open_attempt = (
+                time.monotonic() + self._reconnect_interval_sec
+            )
             self.get_logger().warning(
-                'I2C not responding; publishing absent-sensor BatteryState'
+                'I2C not responding; connection closed and retry scheduled'
             )
             return build_telemetry(
                 None,
@@ -191,15 +216,17 @@ class PowerNode(Node):
 
 def main(args=None) -> None:
     rclpy.init(args=args)
-    node = PowerNode()
+    node = None
     try:
+        node = PowerNode()
         node.start()
         rclpy.spin(node)
     except KeyboardInterrupt:
         pass
     finally:
-        node.shutdown()
-        node.destroy_node()
+        if node is not None:
+            node.shutdown()
+            node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
 

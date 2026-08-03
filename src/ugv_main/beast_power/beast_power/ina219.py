@@ -18,13 +18,13 @@ from typing import Optional, Protocol, Sequence
 CONFIG_VOLTAGE_RANGE_32V = 0b1
 CONFIG_GAIN_DIV_8_320MV = 0b11
 CONFIG_ADCRES_12BIT_128S = 0b1111
-CONFIG_SANDBVOLT_CONTINUOUS = 0x07
+CONFIG_SHUNT_BUS_CONTINUOUS = 0x07
 CONFIG_REG_VALUE = (
     (CONFIG_VOLTAGE_RANGE_32V << 13)
     | (CONFIG_GAIN_DIV_8_320MV << 11)
     | (CONFIG_ADCRES_12BIT_128S << 7)
     | (CONFIG_ADCRES_12BIT_128S << 3)
-    | CONFIG_SANDBVOLT_CONTINUOUS
+    | CONFIG_SHUNT_BUS_CONTINUOUS
 )
 
 SHUNT_VOLTAGE_LSB = 0.00001  # 10 uV / bit
@@ -92,8 +92,12 @@ class Ina219:
     def open(self, bus_nr: int) -> None:
         self._bus.open(bus_nr)
         self._opened = True
-        self._write_reg16(REG_CONFIG, CONFIG_REG_VALUE)
-        self._write_reg16(REG_CALIBRATION, CALIBRATION_REG_VALUE)
+        try:
+            self._write_reg16(REG_CONFIG, CONFIG_REG_VALUE)
+            self._write_reg16(REG_CALIBRATION, CALIBRATION_REG_VALUE)
+        except OSError:
+            self.close()
+            raise
 
     def close(self) -> None:
         if self._opened:

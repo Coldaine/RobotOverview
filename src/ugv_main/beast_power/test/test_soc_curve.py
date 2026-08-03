@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import math
 import pytest
 
 from beast_power.soc import legacy_fake_percentage, voltage_to_soc
@@ -34,3 +35,7 @@ def test_brownout_voltage_is_low_soc_not_fake_percent():
     fake = legacy_fake_percentage(v)
     assert fake == pytest.approx(8.8 / 12.6, abs=1e-6)
     assert fake > 0.6  # the lie that HonestyRail calls out
+
+
+def test_nan_voltage_never_reports_full_soc():
+    assert math.isnan(voltage_to_soc(math.nan))

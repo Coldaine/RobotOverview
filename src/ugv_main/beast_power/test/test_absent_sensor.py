@@ -5,10 +5,12 @@
 from __future__ import annotations
 
 import math
+from types import SimpleNamespace
 
 import pytest
 
 from beast_power.ina219 import FakeSMBus, Ina219
+from beast_power.power_node import PowerNode
 from beast_power.telemetry import (
     POWER_SUPPLY_STATUS_UNKNOWN,
     build_telemetry,
@@ -53,3 +55,31 @@ def test_absent_never_uses_zero_volts_as_empty_pack_soc():
     # Callers must gate on present / isnan — not treat percentage as 0.0.
     assert not (tel.present is False and tel.percentage == 0.0)
     assert math.isnan(tel.percentage)
+
+
+def test_power_node_retries_initial_open_after_backoff(monkeypatch):
+    clock = {'now': 100.0}
+    monkeypatch.setattr(
+        'beast_power.power_node.time.monotonic', lambda: clock['now']
+    )
+    bus = FakeSMBus(absent=True)
+    node = object.__new__(PowerNode)
+    node._sensor = Ina219(bus, 0x40)
+    node._sensor_ok = False
+    node._i2c_bus_nr = 7
+    node._sensor_address = 0x40
+    node._rate_hz = 1.0
+    node._reconnect_interval_sec = 5.0
+    node._next_open_attempt = 0.0
+    node.get_logger = lambda: SimpleNamespace(
+        error=lambda *_args, **_kwargs: None,
+        info=lambda *_args, **_kwargs: None,
+    )
+
+    assert node._try_open_sensor() is False
+    bus.absent = False
+    clock['now'] = 104.9
+    assert node._try_open_sensor() is False
+    clock['now'] = 105.0
+    assert node._try_open_sensor() is True
+    assert node._sensor_ok is True

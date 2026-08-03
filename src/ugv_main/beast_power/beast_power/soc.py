@@ -17,6 +17,8 @@ exercise it without ROS.
 
 from __future__ import annotations
 
+import math
+
 # (pack_voltage_V, soc_fraction 0..1), sorted ascending by voltage.
 # Cell × 3: 3.00 → 9.00 V … 4.20 → 12.60 V.
 _3S_OCV_SOC: tuple[tuple[float, float], ...] = (
@@ -46,6 +48,8 @@ def voltage_to_soc(voltage_v: float) -> float:
     knots. Does not invent a reading for a missing sensor — callers must not
     call this when ``present`` is false.
     """
+    if math.isnan(voltage_v):
+        return math.nan
     if voltage_v <= _3S_OCV_SOC[0][0]:
         return 0.0
     if voltage_v >= _3S_OCV_SOC[-1][0]:
