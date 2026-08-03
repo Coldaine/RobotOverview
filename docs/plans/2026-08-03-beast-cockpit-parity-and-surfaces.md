@@ -4,12 +4,13 @@
 Deploy the cockpit bridge end-to-end (the one blocker between the finished Hangar cockpit
 and a drivable robot), reach verified functional parity with the stock Waveshare web UI
 (drive, lights, gimbal, cameras, voltage), rewire the e-stop onto the robot-side latched
-authority (`/ugv/set_allow_motion`) and delete the browser heartbeat theater, then extend
+authority (`/ugv/set_allow_motion`) — replacing the one-shot volatile-lock publish that can
+silently no-op — then extend
 the surfaces: light presets, speed control, PT cam feed, snapshots, gamepad, and the OAK-D
-spatial overlays. No LLM/agent layer, no Nav2 goals, no local LLM — this plan is the
+spatial overlays. No LLM/agent feature work, no Nav2 goals, no local LLM — this plan is the
 human-driven command deck done right.
 
-## Ground truth (refreshed 2026-08-03, second pass — supersedes all earlier session notes)
+## Ground truth (refreshed 2026-08-03, third pass — verified against `origin/main` @ `87062a7`)
 
 **Repo topology changed: it is a monorepo now.** PR #153 merged the ROS workspace into
 RobotOverview at `robot/beast/ros2_ws/`. The old `Coldaine/ugv_ws` repo is archived
@@ -37,26 +38,48 @@ the sole motion authority in `ugv_bringup`. `interlock_override` exists as a sta
 maintenance escape hatch (never a service, never default true). **There is no boot-ARM gate
 to design around — the earlier "boots disarmed" assumption is dead.**
 
-**Hangar cockpit (on main):** all surfaces built (`SafetyStrip`, `CommandRail`, `SpatialView`,
-`OpticsWall`, `TelemetryRow`, `HonestyRail`), none verified end-to-end. `src/lib/ros/client.ts`
-on main carries the 2 Hz e-stop heartbeat + intent machinery (the BroadcastChannel election
-exists only on the stale PR #152 branch — it never merged, and this plan deletes the problem
-it was solving). `/ugv/set_allow_motion` is already the robot-side authority the rewire needs.
+**The agent path is already on main (PR #157, merged 2026-08-03).** `/agent` surface +
+`api/agent/chat` route, `src/server/beast/ros-singleton.ts` (server-side rosbridge client —
+subscribes `/ugv/allow_motion`, `/ugv/watchdog_state`, `/ugv/voltage`, `/scan`; action clients
+for the stock Nav2 behaviors `/drive_on_heading`, `/spin`, `/backup`), `motion-gate.ts`
+(refuses motion intents unless `allow_motion === true` — "physical enforcement stays on the
+robot"), model = `BEAST_AGENT_MODEL` via the OpenAI-compatible `beast-ollama` provider. So
+there are now TWO rosbridge clients on main — browser (`src/lib/ros/client.ts`, cockpit) and
+server (`ros-singleton.ts`, agent) — and **both already anchor on `/ugv/allow_motion` as the
+authority. This plan's e-stop rewire aligns the cockpit with the authority the agent and the
+robot already share.** Agent feature work itself stays out of scope here.
 
-**PR #152 (`feat/beast-immobile-agent-session`):** open, CONFLICTING, 77 behind / 13 ahead of
-main, CodeRabbit changes requested. Its useful payload (plan deletions, this plan's first
-draft at `f136157`) is preserved in history; this branch carries the corrected plan forward.
-Do not rebase #152 — mine it, then close it.
+**Hangar cockpit (on main):** all surfaces built (`SafetyStrip`, `CommandRail`, `SpatialView`,
+`OpticsWall`, `TelemetryRow`; note `HonestyRail` exists only on the stale #152 branch), none
+verified end-to-end. `src/lib/ros/client.ts` on main has a **one-shot** e-stop publish into
+the volatile twist_mux lock (`setEstopLock`/`operatorEngaged`/`/cmd_vel_estop_lock`) — no
+heartbeat, no election. That is exactly the silent-failure pattern `twist_mux.yaml` warns
+about: a single publish into a VOLATILE subscription can lose the discovery race and the
+e-stop does nothing. `/ugv/set_allow_motion` is the latched authority that fixes it.
+
+**Bridge lockdown is already authored on main.** `rosbridge.launch.py` sets `topics_pub_glob`,
+`topics_sub_glob`, `services_glob`, `actions_glob`; `cockpit_rosbridge.py` restricts
+capabilities. What remains is verification (does `services_glob` cover
+`/ugv/set_allow_motion`?) and exposure. `beast-cockpit.service` exists at
+`robot/beast/ros2_ws/deploy/systemd/` (ExecStart: `cockpit.launch.py use_camera:=true
+use_bridge:=true`, sourcing `/home/beast/beast/RobotOverview/robot/beast/ros2_ws`) — written
+for the monorepo layout, not yet enabled on the robot.
+
+**PR #152 (`feat/beast-immobile-agent-session`):** mined by #157 (agent path, topology docs,
+probe scripts). What remains on it (plan deletions, BroadcastChannel election, this plan's
+first draft at `f136157`) is either superseded or preserved in history. **Close it.**
 
 ## Locked decisions
 
 1. **E-stop = robot-side latched service.** The cockpit DISARM button calls
    `/ugv/set_allow_motion` (`{data: false}`); re-arm calls `{data: true}`. Rendered state comes
    only from `/ugv/allow_motion` + `/cockpit/status` interlock fields — never from local
-   intent. The 2 Hz heartbeat, intent latching, beforeunload trap, and keep-socket-alive
-   machinery in `client.ts` are deleted. Rationale: twist_mux lock topics are VOLATILE and
-   don't survive mux restart (documented in `twist_mux.yaml`); the service flag lives in
-   `ugv_bringup` below the mux, gates the serial write itself, and covers every command source.
+   intent. Main's one-shot publish into the volatile mux lock goes away. Rationale: a single
+   publish into a VOLATILE subscription can lose the discovery race (e-stop does nothing) and
+   lock state doesn't survive a mux restart (documented in `twist_mux.yaml`); the service flag
+   lives in `ugv_bringup` below the mux, gates the serial write itself, and covers every
+   command source. It is also the same authority `motion-gate.ts` already enforces for the
+   agent — one gate, one truth, every client.
 2. **Motion states shown in the UI:** ARMED (default at boot) / DISARMED (operator or
    interlock) / LOCKED (hardware interlock observed: Ethernet or charging). No ARM-from-boot
    flow exists — PR #155 removed it. DISARM is one click, immediate; RE-ARM requires a 2 s
@@ -84,25 +107,34 @@ Robot guarantees that do NOT depend on the UI:
 ## Phase 0 — Monorepo cutover deploy & bridge bring-up (prerequisite to everything)
 
 **Robot deploy (from this repo, `robot/beast/ros2_ws/`):**
-1. Cut the Jetson over from legacy `~/beast/ugv_ws` (@ `2d1eab7`) to the monorepo workspace:
-   sync `robot/beast/ros2_ws/src` to the robot, `colcon build` changed packages, restart
-   `beast-ros-base.service`. Keep the legacy checkout on disk as rollback.
+1. Cut the Jetson over from legacy `~/beast/ugv_ws` (@ `2d1eab7`) to the monorepo workspace.
+   Mechanics are already documented (`docs/beast-control-topology.md`): push here → pull on the
+   Jetson (`~/beast/RobotOverview`) → `colcon build` changed packages → restart named units →
+   prove → dated beast-ops note. The deployed unit file
+   (`robot/beast/ros2_ws/deploy/systemd/beast-cockpit.service`) already sources
+   `/home/beast/beast/RobotOverview/robot/beast/ros2_ws/install/setup.bash`. Keep the legacy
+   checkout on disk as rollback.
    **Check the systemd unit's launch args during cutover** — it currently passes
    `allow_motion:=false`; the new code defaults `true`. Decide the unit's args deliberately
    (recommend: let the new default stand; interlocks still disarm).
 2. Verify ground truth post-cutover: `/scan` ~10 Hz / 480 ranges, `/ugv/allow_motion` true,
    watchdog armed, `ETHERNET_LOCK` appears on `/ugv/safety/status` when the cable is in.
-3. Enable + start `beast-cockpit.service`; verify `Rosbridge WebSocket server started on
-   port 9090` and loopback `ws://127.0.0.1:9090` answers.
-4. Author the rosbridge glob whitelist in `rosbridge.launch.py`: exactly the topics/services in
-   `client.ts` `ROS_SUBSCRIPTIONS`/`ROS_PUBLICATIONS` plus service `/ugv/set_allow_motion`
-   (`services_glob`). The bridge fault rail in the UI will confirm refusals.
+3. Enable + start `beast-cockpit.service` (ExecStart: `cockpit.launch.py use_camera:=true
+   use_bridge:=true`); verify `Rosbridge WebSocket server started on port 9090` and loopback
+   `ws://127.0.0.1:9090` answers.
+4. Verify the bridge lockdown covers the cockpit contract: `rosbridge.launch.py` already sets
+   `topics_pub_glob` / `topics_sub_glob` / `services_glob` / `actions_glob`. Confirm
+   `services_glob` includes `/ugv/set_allow_motion` and the topic globs cover every entry in
+   `client.ts` `ROS_SUBSCRIPTIONS`/`ROS_PUBLICATIONS`; extend the lists if anything is missing.
+   The bridge fault rail in the UI will confirm refusals.
 5. Tailscale Serve: proxy HTTPS:443 → `localhost:9090` on `beast-01`; verify
    `wss://beast-01.<tailnet>.ts.net` upgrades a WebSocket from the workstation.
 
 **Hangar:**
 6. Doppler `homelab`/`dev` (+`prd`): `BEAST_COCKPIT_WS_URL=wss://beast-01.<tailnet>.ts.net`.
-   Keep a documented LAN fallback (`ws://192.168.0.187:9090`) for bench bring-up.
+   This one variable now feeds BOTH clients — the browser cockpit and the server-side agent
+   (`ros-singleton.ts` idles with "bridge_unavailable" without it). Keep a documented LAN
+   fallback (`ws://192.168.0.187:9090`) for bench bring-up.
 7. Smoke: cockpit loads, connection badge CONNECTED, zero entries in the bridge-fault rail,
    `/scan` points painting, voltage live.
 
@@ -129,13 +161,15 @@ Robot guarantees that do NOT depend on the UI:
    `/cockpit/status` interlocks (CHARGING/ETHERNET render as LOCKED, overriding ARMED).
 7. Extend `rosClient.callService` to track `service_response` by id (today it fire-and-forgets);
    a failed/timeout call renders "DISARM UNCONFIRMED" — never silent.
-8. Delete from `client.ts` (main's version): e-stop heartbeat timers, `ESTOP_*` constants,
-   operator-intent latching, `CockpitClient` beforeunload trap + keep-socket-alive +
-   `releaseHeavyStreams`. Remove the `/cmd_vel_estop_lock` publication and the 255 "E-STOP
-   Lock" rung from the ladder UI (robot-side mux config stays for CLI operators); the ladder
-   gains an `allow_motion` ARMED/DISARMED/LOCKED banner instead.
-9. Update `src/__tests__/ros-client.test.ts` + `cockpit-client.test.tsx`: delete heartbeat
-   tests, add service-call + confirmation-state tests. `HonestyRail` copy updated to match.
+8. Delete from `client.ts` (main's version): the one-shot `/cmd_vel_estop_lock` publication,
+   `ESTOP_*` constants, `operatorEngaged` intent latching, `CockpitClient` beforeunload trap,
+   and `releaseHeavyStreams`. Remove the 255 "E-STOP Lock" rung from the ladder UI (robot-side
+   mux config stays for CLI operators); the ladder gains an `allow_motion`
+   ARMED/DISARMED/LOCKED banner instead.
+9. Update `src/__tests__/ros-client.test.ts` + `cockpit-client.test.tsx`: replace one-shot
+   e-stop assertions with service-call + confirmation-state tests. Update the cockpit footer /
+   honesty copy to match (no `HonestyRail` component on main — fold the copy into whatever
+   footer main's cockpit renders).
 
 ## Phase 2 — Control surface extensions (UI-only, no new robot capability)
 
@@ -173,13 +207,14 @@ UI side:
 
 ## Out of scope (explicit)
 
-- LLM/agent runtime, tool vocabulary, Nav2 action goals (`behavior_server` is merged and
-  launchable — its wiring into an agent is the next plan, not this one).
+- LLM/agent feature work — the scaffolding is already on main (#157: `/agent` surface,
+  `ros-singleton.ts`, `motion-gate.ts`, stock-behavior action clients). Extending it is the
+  next plan; this one only keeps the cockpit compatible with the same `allow_motion` authority.
 - SLAM mapping / `slam_toolbox` / EKF fusion.
 - UPS INA219 I2C bench session (`beast_power` cutover) — separate bench session; until then
   `isCharging` stays UNKNOWN-capable and the UI must not fake it.
 - Any on-robot LLM/VLM — abandoned.
-- Rebase/rescue of PR #152 — mine it (plan deletions, session docs), then close it.
+- PR #152 — mined by #157; close it, do not rebase.
 
 ## Risks & mitigations
 
@@ -190,8 +225,9 @@ UI side:
 - **Boot motion-enabled (PR #155) means the robot is armed at boot** unless an interlock
   fires. The cockpit must surface ARMED unambiguously; low voltage is NOT an interlock —
   keep the ≥ 10.5 V session floor as operator discipline in `docs/beast-ops.md`.
-- **Tailscale Serve + WSS + globs** is the documented blocker. Mitigate: prove LAN `ws://`
-  first (Phase 0.7 fallback), then serve; the bridge-fault rail surfaces glob refusals loudly.
+- **Tailscale Serve + WSS** is the remaining exposure blocker (globs are already authored —
+  Phase 0.4 is verification, not authoring). Mitigate: prove LAN `ws://` first (Phase 0.7
+  fallback), then serve; the bridge-fault rail surfaces any glob refusals loudly.
 - **Service-call disarm depends on the same socket as everything else.** If the socket dies
   mid-disarm the robot keeps its own guarantees (0.5 s watchdog, safety_monitor interlocks).
   The UI must render UNCONFIRMED, not assume (Phase 1.7).
@@ -205,7 +241,7 @@ UI side:
 - Robot (post-cutover): `ros2 topic hz /scan` (~10 Hz, 480 ranges),
   `ros2 topic echo /ugv/allow_motion --once`,
   `ros2 service call /ugv/set_allow_motion std_srvs/srv/SetBool "{data: false}"` round-trip,
-  `ros2 param get /rosbridge_websocket topics_glob` shows the whitelist.
+  `ros2 param get /rosbridge_websocket services_glob` covers `/ugv/set_allow_motion`.
 - End-to-end (untethered, ≥ 10.5 V, supervised): drive, lights, gimbal, PT feed,
   DISARM/RE-ARM with confirmation, Ethernet-plug → ETHERNET_LOCK auto-disarm visible in UI.
 - Repo: `npm run lint`, `npm run typecheck`, updated test suite green
@@ -216,9 +252,7 @@ UI side:
 
 ## Open questions (resolve during implementation, not blocking)
 
-- Exact rosbridge glob syntax for service whitelist on the deployed rosbridge version
-  (`ros2 param get /rosbridge_websocket services_glob` after first enable).
+- Whether `services_glob` in `rosbridge.launch.py` already covers `/ugv/set_allow_motion`
+  (read the file; if not, add it — one line).
 - `/camera/scan` crop angles for the OAK forward arc (tune against the live scan, same
   discipline as the LD19 wedge — verify with `ros2 topic echo`, then trust).
-- Cutover mechanics: rsync vs `git clone` of this repo on the Jetson (decide at deploy time;
-  the legacy checkout stays either way).
