@@ -9,8 +9,9 @@ Interlocks (Set 1c):
     absent topic → no charging lock
   * interlock_override launch parameter → startup-only maintenance override
 
-Does NOT auto-arm when locks clear. Default stays disarmed until the crawl+kill
-re-gate (see docs/plans/2026-08-02-beast-agent-pr1-safety-spine.md).
+Normal bringup starts motion-enabled. When Ethernet or charging is observed,
+this monitor asks ugv_bringup to disable motion. It does not auto-arm when an
+interlock later clears; ugv_bringup remains the sole motion authority.
 """
 
 from __future__ import annotations
@@ -104,7 +105,7 @@ class SafetyMonitor(Node):
 
         self.get_logger().info(
             f'ugv_safety_monitor: iface={self._iface} path={self._carrier_path} '
-            f'(client of {self._set_service_name}; default stays disarmed)'
+            f'(client of {self._set_service_name}; disables only active locks)'
         )
         if self._state.override_active:
             self.get_logger().warning(

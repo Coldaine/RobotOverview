@@ -163,9 +163,9 @@ def generate_launch_description():
         DeclareLaunchArgument('use_rviz', default_value='false',description='Whether to launch RViz2'),
         DeclareLaunchArgument(
             'allow_motion',
-            default_value='false',
+            default_value='true',
             description=(
-                'Forwarded to bringup_lidar; keep false until Set 1 motion re-gate. '
+                'Forwarded to bringup_lidar; active interlocks may disable motion. '
                 'Never stack this launch on a live beast-ros-base (second twist_mux) — '
                 'stop the service first.'
             ),

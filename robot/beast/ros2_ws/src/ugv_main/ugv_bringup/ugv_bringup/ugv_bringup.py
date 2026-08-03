@@ -110,7 +110,7 @@ class ugv_bringup(Node):
         self.declare_parameter('baud_rate', 115200)
         self.declare_parameter('wifi_interface', '')
         self.declare_parameter('ethernet_interface', '')
-        self.declare_parameter('allow_motion', False)
+        self.declare_parameter('allow_motion', True)
         self.declare_parameter('cmd_vel_timeout', 0.5)
         serial_port_name = self.get_parameter('serial_port').value
         baud_rate = self.get_parameter('baud_rate').value

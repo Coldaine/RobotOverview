@@ -960,8 +960,8 @@ def test_joy_node_autorepeats_fast_enough_to_hold_its_rung():
 # --------------------------------------------------------------------------
 def test_motion_gate_and_watchdog_are_untouched():
     source = read('src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py')
-    assert "self.declare_parameter('allow_motion', False)" in source, (
-        'allow_motion must stay default-off'
+    assert "self.declare_parameter('allow_motion', True)" in source, (
+        'allow_motion must default on; the interlock monitor disables active locks'
     )
     assert "self.declare_parameter('cmd_vel_timeout', 0.5)" in source
     assert 'Rejected non-zero cmd_vel while allow_motion is false' in source
@@ -983,8 +983,7 @@ def test_bringup_quirks_are_preserved_not_fixed():
     assert 'angular_velocity = -0.2' in source
 
 
-def test_bringup_launch_still_defaults_allow_motion_false():
+def test_bringup_launch_defaults_allow_motion_true():
     source = read('src/ugv_main/ugv_bringup/launch/bringup_lidar.launch.py')
-    assert "'allow_motion', default_value='false'" in source
+    assert "'allow_motion', default_value='true'" in source
     assert 'ugv_safety_monitor' in source
-
