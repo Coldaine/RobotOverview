@@ -12,9 +12,9 @@ disagree, the code is right and the plan is stale.
 
 | Plan | What it covers | Blocking? |
 | --- | --- | --- |
-| [BEAST-01 Command Deck + sensor fusion](2026-07-31-beast-command-deck-plan.md) | Standalone cockpit (foxglove_bridge + interchangeable clients) and the twist_mux safety spine, sequenced into per-repo PRs. Approved direction is the companion [cockpit spec](2026-07-31-beast-command-deck-spec.md); staging configs in [`beast-command-deck-drafts/`](beast-command-deck-drafts/) land in `ugv_ws` PRs, then get deleted. | Phase D gates on the beast-paces Phase 2 watchdog re-gate; motion stays software-locked until it passes |
+| [BEAST-01 Command Deck + sensor fusion](2026-07-31-beast-command-deck-plan.md) | In-app cockpit and robot-side safety spine, sequenced into focused PRs across two deployable surfaces in this monorepo. Approved direction is the companion [cockpit spec](2026-07-31-beast-command-deck-spec.md). | Phase D gates on the beast-paces Phase 2 watchdog re-gate; motion stays software-locked until it passes |
 | [Finish the wiring model](2026-07-30-wiring-model-completion.md) | One spine, two eyes: The Board consumes `wiring.ts`, corpus extraction (schematics, firmware, photos, CAD), facts landed with zone citations, operator answers on screen. Merges the 2026-07-27 unification, extraction, and CAD plans. | Q1/Q2 safety-relevant (wrong 40-pin numbering puts 5 V into a Jetson UART pin); X1 gates drilling |
-| [BEAST NVMe storage — implementation](2026-07-11-beast-nvme-storage-implementation.md) | Command-level storage utility + systemd units for the Jetson. **NOT APPLIED** — targets the robot's `ugv_ws`, not this repo; do not provision until `docs/beast-ops.md` says otherwise. The design decision is folded into `docs/beast-ops.md` (NVMe storage policy). | Parked behind the physical Orin host swap |
+| [BEAST NVMe storage — implementation](2026-07-11-beast-nvme-storage-implementation.md) | Command-level storage utility + systemd units under `robot/beast/ros2_ws`. **NOT APPLIED** — do not provision until `docs/beast-ops.md` says otherwise. The design decision is folded into `docs/beast-ops.md` (NVMe storage policy). | Parked behind the physical Orin host swap |
 
 ## Related, outside this directory
 

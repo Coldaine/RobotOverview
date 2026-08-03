@@ -1,0 +1,43 @@
+name: Beast storage tests
+
+on:
+  pull_request:
+    paths:
+      - 'robot/beast/ros2_ws/deploy/storage/**'
+      - 'robot/beast/ros2_ws/deploy/systemd/**'
+      - '.github/workflows/beast-storage-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'robot/beast/ros2_ws/deploy/storage/**'
+      - 'robot/beast/ros2_ws/deploy/systemd/**'
+      - '.github/workflows/beast-storage-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.repository }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  storage:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: robot/beast/ros2_ws
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - run: python -m unittest discover -s deploy/storage/tests -v
+      - run: systemd-analyze verify deploy/systemd/beast-*.service deploy/systemd/beast-*.timer

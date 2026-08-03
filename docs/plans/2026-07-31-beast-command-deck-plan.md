@@ -1,10 +1,10 @@
 # BEAST-01 Command Deck + sensor fusion — implementation plan
 
-**Status:** ACTIVE — 2026-07-31. Companion to the approved
+**Status:** ACTIVE — repository topology updated 2026-08-03. Companion to the approved
 [cockpit spec](2026-07-31-beast-command-deck-spec.md). This plan sequences the work into
-PR-sized chunks across **two repos** — `Coldaine/ugv_ws` (robot-side, safety-relevant) and this
-repo (the in-app `/cockpit` command surface and docs). The owner will split phases into per-PR plan
-docs as they are picked up.
+PR-sized chunks across two independently deployed surfaces in **one RobotOverview
+repository**: `robot/beast/ros2_ws` (robot-side, safety-relevant) and the in-app `/cockpit`
+surface. The owner will split phases into per-PR plan docs as they are picked up.
 
 ## Current workstream done condition
 
@@ -33,20 +33,20 @@ Repository status is reflected by the PR series below.
 
 ## Recommended PR series
 
-Split so each safety-relevant change is reviewable alone and no PR mixes repos:
+Split so each safety-relevant change is reviewable alone and no PR casually mixes deployable surfaces:
 
-| # | Repo | Contents | Merge gate |
+| # | Surface | Contents | Merge gate |
 | --- | --- | --- | --- |
 | PR-0 | RobotOverview | This plan + spec + drafts dir + beast-ops updates (already in working tree) | docs review only |
-| PR-1 | ugv_ws | **Safety spine:** twist_mux + config, all existing publishers rerouted (`ugv_tools` keyboard/joy/behavior → mux inputs), tests proving direct `/cmd_vel` is unreachable from clients | unit tests on-robot; no cockpit yet |
-| PR-2 | ugv_ws | **Cockpit bridge:** loopback-only `rosbridge_websocket` with exact publish/subscribe globs and no service/action operations, `beast-cockpit.service` (disabled by default), firewall notes | bridge commissioning with motion locked; publish rejected outside the exact globs; services/actions unavailable |
-| PR-3 | ugv_ws | **OAK productization:** `beast-oak.yaml` (RGBD, sync, 480P, fps per USB tier), optional-camera arg in bringup or sibling service, IMU probe recorded | one-frame check via the new launch; USB tier recorded |
-| PR-4 | ugv_ws | **Phase E — SLAM:** slam_toolbox crawl tuning (min travel 0.10–0.15 m), map save workflow to the storage layout | map of one space saved + reloads in localization mode |
-| PR-5 | ugv_ws | **Phase F — nav2:** Beast velocity retune (≤0.15 m/s, replaces generic 0.26), depth scan via depthimage_to_laserscan as second obstacle source, collision monitor | supervised runs only; ESP32 heartbeat still absent |
+| PR-1 | `robot/beast/ros2_ws` | **Safety spine:** twist_mux + config, all existing publishers rerouted (`ugv_tools` keyboard/joy/behavior → mux inputs), tests proving direct `/cmd_vel` is unreachable from clients | unit tests on-robot; no cockpit yet |
+| PR-2 | `robot/beast/ros2_ws` | **Cockpit bridge:** loopback-only `rosbridge_websocket` with exact publish/subscribe globs and no service/action operations, `beast-cockpit.service` (disabled by default), firewall notes | bridge commissioning with motion locked; publish rejected outside the exact globs; services/actions unavailable |
+| PR-3 | `robot/beast/ros2_ws` | **OAK productization:** `beast-oak.yaml` (RGBD, sync, 480P, fps per USB tier), optional-camera arg in bringup or sibling service, IMU probe recorded | one-frame check via the new launch; USB tier recorded |
+| PR-4 | `robot/beast/ros2_ws` | **Phase E — SLAM:** slam_toolbox crawl tuning (min travel 0.10–0.15 m), map save workflow to the storage layout | map of one space saved + reloads in localization mode |
+| PR-5 | `robot/beast/ros2_ws` | **Phase F — nav2:** Beast velocity retune (≤0.15 m/s, replaces generic 0.26), depth scan via depthimage_to_laserscan as second obstacle source, collision monitor | supervised runs only; ESP32 heartbeat still absent |
 | PR-6 | RobotOverview | **Superseded:** the command surface landed directly in the Hangar as `/cockpit`; no separate link-out or Foxglove layout is planned | complete in-app implementation, then deploy only after PR-2 and the physical safety gates |
 
 Deferred portal gaps are **not** hidden inside PR-3 through PR-5: TF/map rendering in the browser,
-browser gamepad transport, and goal/cancel/initial-pose controls need separate cross-repo design and
+browser gamepad transport, and goal/cancel/initial-pose controls need separate cross-surface design and
 review. The current topic-only bridge intentionally removes rosbridge action/service operations and
 does not admit those topics. They are not current-workstream done conditions.
 

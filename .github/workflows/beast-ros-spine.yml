@@ -1,0 +1,57 @@
+name: Beast ROS command spine
+
+on:
+  pull_request:
+    paths:
+      - 'robot/beast/ros2_ws/**'
+      - '.github/workflows/beast-ros-spine.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'robot/beast/ros2_ws/**'
+      - '.github/workflows/beast-ros-spine.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.repository }}-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  spine:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: robot/beast/ros2_ws
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.10'
+
+      - name: Install test dependencies
+        run: pip install pytest pyyaml numpy opencv-python-headless
+
+      - name: Safety gate
+        env:
+          PYTHONPATH: src/ugv_main/ugv_bringup
+        run: >-
+          python -m pytest -q
+          src/ugv_main/ugv_cockpit/test/test_twist_mux_spine.py
+          src/ugv_main/ugv_cockpit/test/test_cockpit_bridge.py
+          src/ugv_main/ugv_cockpit/test/test_cockpit_status_contract.py
+          src/ugv_main/ugv_bringup/test/test_jetson_safety.py
+
+      - name: Remaining cockpit tests
+        env:
+          PYTHONPATH: src/ugv_main/ugv_bringup
+        run: >-
+          python -m pytest -q src/ugv_main/ugv_cockpit/test
+          --ignore=src/ugv_main/ugv_cockpit/test/test_twist_mux_spine.py
+          --ignore=src/ugv_main/ugv_cockpit/test/test_cockpit_bridge.py
+          --ignore=src/ugv_main/ugv_cockpit/test/test_cockpit_status_contract.py

@@ -16,17 +16,25 @@ Tailwind 4). Flagship unit: BEAST-01, a Waveshare UGV Beast. **The UI is the pro
    from normalized tables; Datacore briefings render from the `briefings` table.
 2. **Types / fixture.** `src/data/hangar.ts` is a CI fixture and loud offline fallback.
    `db/hangar/` owns schema and migrations ([`db/hangar/standup.md`](db/hangar/standup.md)).
-3. **Runtime.** Cluster manifests live in **`coldaine-homelab`**
+3. **Robot source.** BEAST-01's ROS 2 Humble workspace lives in
+   [`robot/beast/ros2_ws`](robot/beast/ros2_ws). It shares this Git repository but remains a
+   separate deployable surface from the Hangar web app.
+4. **Runtime.** Cluster manifests live in **`coldaine-homelab`**
    (`infra/k8s/apps/hangar/`), reconciled by Flux.
 
 ## Where things live
 
 `src/app` routes · `src/components` UI · `src/data` types + fixture · `src/server/hangar`
-Postgres/Drizzle · `db/hangar` schema/migrations · `docs` owner docs.
+Postgres/Drizzle · `db/hangar` schema/migrations · `docs` owner docs ·
+`robot/beast/ros2_ws` robot-side ROS workspace.
 
 Not here: cluster/runtime manifests (`coldaine-homelab`) and bulk vendor archives
 (object storage; indexed in `keyArtifactstosort/reference/INDEX.md`). Research bodies
 live in Postgres, not the repo.
+
+There is one source repository and two deployments: the Hangar app deploys to the cluster;
+only `robot/beast/ros2_ws` is built and run on the Jetson. Never deploy the Next.js app to
+BEAST-01.
 
 ## Run it
 

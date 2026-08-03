@@ -5,6 +5,16 @@ want list, and a live portal to the robots it tracks — styled as a base-builde
 (Next.js 16 / React 19 / Tailwind 4). Flagship unit: BEAST-01, a Waveshare UGV Beast.
 **The UI is the product** — work that doesn't reach the screen isn't finished.
 
+This is one monorepo with two independently deployed surfaces:
+
+- Hangar web app: repository root (`src`, `db`, `public`), deployed through the cluster.
+- BEAST-01 robot brain: `robot/beast/ros2_ws`, built on the Jetson with ROS 2 Humble.
+
+Robot changes are made, reviewed, and merged here. Do not recreate a `Coldaine/ugv_ws`
+fork or a second local clone. Fetch vendor changes directly from
+`waveshareteam/ugv_ws` and integrate them into the subtree. Never deploy the Hangar web
+app to the Jetson; sharing a repository does not collapse the runtime safety boundary.
+
 Start here: [`README.md`](README.md) — what this repo is and where everything lives.
 Intent: [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) — a statement of intent, nearly frozen.
 Read it; do not edit it casually. Tactical state belongs in the owner docs below.
@@ -103,6 +113,7 @@ Update the owner doc, not wherever is convenient:
 - repo structure ("where does X live") -> `README.md`
 - verified deploy/runtime facts and gaps -> `docs/deploy.md`
 - BEAST operating facts -> `docs/beast-ops.md`
+- BEAST ROS source, launch, service, and package docs -> `robot/beast/ros2_ws`
 - data/backend shape, migrations, corpus + cutover status -> `db/hangar/standup.md`
 - rich UI reasoning rubric -> `docs/rich-ui.md`
 - agent/process rules -> this file

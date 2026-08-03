@@ -1,0 +1,16 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    pt_joint_position_controller:
+      type: position_controllers/JointGroupPositionController
+
+pt_joint_position_controller:
+  ros__parameters:
+    joints:
+      - pt_base_link_to_pt_link1
+      - pt_link1_to_pt_link2
+    interface_name: position   

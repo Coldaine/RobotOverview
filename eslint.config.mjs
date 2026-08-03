@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     "build/**",
     "dist/**",
     "next-env.d.ts",
+    // Independently tested ROS/Python/C++ workspace with vendored browser assets.
+    "robot/beast/ros2_ws/**",
   ]),
 ]);
 

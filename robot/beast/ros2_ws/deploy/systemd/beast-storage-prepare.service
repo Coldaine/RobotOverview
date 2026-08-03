@@ -1,0 +1,12 @@
+[Unit]
+Description=Prepare BEAST storage roots
+Before=beast-storage-maintenance.service beast-blackbox-record.service beast-mission-record@.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/python3 /usr/local/lib/beast-storage/beast_storage.py prepare
+ProtectSystem=strict
+ReadWritePaths=/data/beast /var/lib/beast/storage
+NoNewPrivileges=true
+PrivateTmp=true

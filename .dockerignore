@@ -5,6 +5,7 @@ coverage
 node_modules
 npm-debug.log*
 README.md
+robot/
 .env*
 .npmrc
 .letta
