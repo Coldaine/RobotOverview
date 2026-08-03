@@ -37,10 +37,10 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
           <Activity className="mx-auto h-12 w-12 text-crit animate-pulse mb-4" />
           <h1 className="font-display text-xl uppercase tracking-widest text-crit mb-3">COCKPIT DEGRADED</h1>
           <p className="font-mono text-sm text-ink-dim leading-relaxed">
-            The environment variable <code className="text-crit">BEAST_COCKPIT_WS_URL</code> is not configured.
+            No bridge URL configured — the Command Deck has nothing to connect to.
           </p>
           <p className="font-mono text-xs text-ink-dim mt-4">
-            Add this secret in Doppler or your local environment to enable the live Command Deck.
+            BEAST_COCKPIT_WS_URL can override the default tailnet endpoint.
           </p>
         </div>
       </div>

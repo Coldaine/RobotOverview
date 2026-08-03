@@ -1,3 +1,4 @@
+import { resolveBeastCockpitWsUrl } from '@/lib/beast-constants';
 import type {
   BackUpInput,
   BeastConnectionState,
@@ -48,7 +49,7 @@ export type RosLibLike = {
 };
 
 export type BeastRosClientOptions = {
-  /** Override env; empty/undefined → unconfigured (no connect). */
+  /** Override env; null → unconfigured (no connect). Undefined → default tailnet URL. */
   url?: string | null;
   /** Injected roslib (or a mock). Defaults to dynamic import of `roslib`. */
   roslib?: RosLibLike;
@@ -76,8 +77,7 @@ const ACTION_NAMES = {
 } as const;
 
 function envBridgeUrl(): string | null {
-  const raw = process.env.BEAST_COCKPIT_WS_URL?.trim();
-  return raw ? raw : null;
+  return resolveBeastCockpitWsUrl();
 }
 
 function kvFromDiagnostic(msg: Record<string, unknown>): Record<string, string> {

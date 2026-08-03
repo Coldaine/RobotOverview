@@ -50,19 +50,19 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
 
 ## Cockpit deployment state
 
-- **Hangar transport support (unconfigured):** `BEAST_COCKPIT_WS_URL` is absent from the current
-  `coldaine-homelab` deployment. When configured, the `/cockpit` route serializes it into client
+- **Hangar transport (defaulted):** `BEAST_COCKPIT_WS_URL` defaults to
+  `wss://beast-01.tyrannosaurus-magellanic.ts.net/` in `src/lib/beast-constants.ts`; the env var
+  is an override, not a requirement. The `/cockpit` and `/agent` routes serialize it into client
   props. This avoids build-time inlining but is **not a secret or an authentication boundary**;
   browser users can inspect it. The actual access control is (a) tailnet reachability — the
   `wss://` endpoint only resolves and only accepts connections from inside the tailnet — and
   (b) the robot-side rosbridge topic glob whitelist, which bounds what a connected client may
-  publish. **Treat the URL as public and the tailnet as the perimeter.** If unset or offline,
+  publish. **Treat the URL as public and the tailnet as the perimeter.** If the robot is offline,
   the Cockpit shows a loud disconnected state.
-- **Robot-side service (source ready, not deployed):** `beast-cockpit.service` and its
-  loopback-only rosbridge configuration are being landed in `ugv_ws` PR #10. They have not been
-  deliberately installed/enabled on BEAST-01, and Tailscale Serve has not been configured for
-  them. Deployment requires an explicit robot-side build/install, service enable, and WSS proxy
-  step after the safety prerequisites; repository code alone does not make the cockpit live.
+- **Robot-side service (live):** `beast-cockpit.service` is enabled and active on BEAST-01
+  (verified 2026-08-03); the loopback-only rosbridge binds `127.0.0.1:9090`, and Tailscale Serve
+  fronts it as `wss://beast-01.tyrannosaurus-magellanic.ts.net/` on the tailnet only.
+  `COCKPIT_ALLOWED_ORIGINS=https://hangar.moosegoose.xyz` is set in `/etc/beast/ugv.env`.
 
 ## Shipping a change
 
