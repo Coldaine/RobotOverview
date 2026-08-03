@@ -23,11 +23,19 @@ last fully verified 2026-07-31 unless marked newer.
 Turn on the chassis switch (it powers the Jetson too), wait ~2 minutes for boot, then:
 
 ```bash
-ssh beast-01        # mDNS: beast-01.local; currently resolves to Wi-Fi 192.168.0.187
-ssh beast-01-ts     # Tailscale: 100.107.16.72
+ssh beast-01        # mDNS: beast-01.local; CURRENTLY resolves to Ethernet 192.168.0.166 (both ifaces up)
+ssh beast-01-ts     # Tailscale: 100.107.16.72 — STABLE, use this for automation
 # Direct Wi-Fi fallback when mDNS fails:
 ssh -i ~/.ssh/hephastus_ed25519 -o HostKeyAlias=beast-01 beast@192.168.0.187
 ```
+
+!!! warning "LAN IPs drift — use the Tailscale path for automation"
+    As of 2026-08-03 the robot has **both** `enP8p1s0` (Ethernet, `192.168.0.166`) and
+    `wlP1p1s0` (Wi-Fi, `192.168.0.187`) up, and `beast-01.local` mDNS resolves to whichever
+    interface the OS prefers — currently the **Ethernet** IP, not the Wi-Fi IP older docs
+    list. Both are DHCP and can change. `ssh beast-01-ts` and the bridge URL
+    `wss://beast-01.tyrannosaurus-magellanic.ts.net/` are stable regardless of interface;
+    agents/automation should use those, never a hardcoded `192.168.0.x`.
 
 **All documented paths (verified 2026-07-31):**
 
