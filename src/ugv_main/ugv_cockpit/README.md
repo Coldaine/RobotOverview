@@ -144,21 +144,23 @@ Opt-in Hangar agent primitives — **not** started by `cockpit.launch.py` or
 
 ```bash
 # Jetson once:
- sudo apt-get install -y ros-humble-nav2-behaviors ros-humble-nav2-lifecycle-manager
+sudo apt-get install -y ros-humble-nav2-behaviors \
+  ros-humble-nav2-lifecycle-manager ros-humble-nav2-costmap-2d \
+  ros-humble-nav2-velocity-smoother
 
 ros2 launch ugv_cockpit behavior_server.launch.py
 ros2 action list   # /spin /backup /drive_on_heading /wait
 ```
 
-Params: `config/behavior_server.yaml` (odom frames, Beast ≤0.15 m/s policy for
-clients). Remap: `cmd_vel` → `cmd_vel_nav` (twist_mux prio 10). v1 is **blind**
-(no local costmap) — see the YAML/launch headers for the Set 3a follow-up.
- Does not touch `allow_motion`.
+Params: `config/behavior_server.yaml`. The odom-frame rolling local costmap
+consumes `/scan`; the behavior output passes through a robot-side 0.15 m/s
+velocity clamp before `cmd_vel_nav` (twist_mux priority 10). It does not touch
+`allow_motion`.
 
 ## Dependencies
 
 `rosbridge_server` is an apt package (`ros-humble-rosbridge-suite`) pulled by
 `build_first.sh` — confirm it is installed (`ros2 pkg list | grep rosbridge`).
 `cv_bridge`, `depthai_ros_driver`, OpenCV, and NumPy are already on the robot.
-`nav2_behaviors` / `nav2_lifecycle_manager` are required only for the
-standalone behavior_server launch above.
+`nav2_behaviors`, `nav2_lifecycle_manager`, `nav2_costmap_2d`, and
+`nav2_velocity_smoother` are required only for the standalone behavior stack.

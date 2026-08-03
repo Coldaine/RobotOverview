@@ -11,13 +11,12 @@ the safety contracts the Hangar agent path depends on.
 On-robot verify (not automated here — needs Jetson + bringup):
 
   ros2 launch ugv_cockpit behavior_server.launch.py
-  ros2 action list   # /spin /backup /drive_on_heading
+  ros2 action list   # /spin /backup /drive_on_heading /wait
   # disarmed Spin goal → wheels stay still (allow_motion false)
 """
 
 import ast
 import os
-import re
 
 import pytest
 import yaml
@@ -53,6 +52,11 @@ def behavior_params():
     return document['behavior_server']['ros__parameters']
 
 
+@pytest.fixture(scope='module')
+def params_document():
+    return yaml.safe_load(read(PARAMS_REL))
+
+
 PLUGIN_TYPES = {
     'spin': 'nav2_behaviors/Spin',
     'backup': 'nav2_behaviors/BackUp',
@@ -82,14 +86,23 @@ def test_humble_costmap_topic_keys(behavior_params):
     assert behavior_params['footprint_topic'] == 'local_costmap/published_footprint'
 
 
-def test_blind_primitives_documented_in_yaml_header():
-    text = read(PARAMS_REL)
-    assert 'BLIND PRIMITIVES' in text
-    assert 'FOLLOW-UP' in text
-    assert '/scan' in text
+def test_local_costmap_is_live_and_scan_backed(params_document):
+    costmap = params_document['local_costmap']['local_costmap']['ros__parameters']
+    assert costmap['global_frame'] == 'odom'
+    assert costmap['robot_base_frame'] == 'base_link'
+    assert costmap['rolling_window'] is True
+    assert costmap['robot_radius'] == pytest.approx(0.15)
+    assert costmap['plugins'] == ['obstacle_layer', 'inflation_layer']
+    obstacle = costmap['obstacle_layer']
+    assert obstacle['plugin'] == 'nav2_costmap_2d::ObstacleLayer'
+    assert obstacle['observation_sources'] == 'scan'
+    assert obstacle['scan']['topic'] == '/scan'
+    assert obstacle['scan']['data_type'] == 'LaserScan'
+    assert obstacle['scan']['clearing'] is True
+    assert obstacle['scan']['marking'] is True
 
 
-def test_beast_speed_policy_documented(behavior_params):
+def test_beast_speed_policy_enforced_on_robot(behavior_params, params_document):
     text = read(PARAMS_REL)
     assert '0.15' in text
     assert '≤ 0.15' in text or '<= 0.15' in text or '≤0.15' in text
@@ -98,21 +111,27 @@ def test_beast_speed_policy_documented(behavior_params):
         assert behavior_params[key]['minimum_speed'] <= BEAST_MAX_LINEAR_M_S
         assert behavior_params[key]['acceleration_limit'] > 0.0
         assert behavior_params[key]['deceleration_limit'] < 0.0
+    smoother = params_document['velocity_smoother']['ros__parameters']
+    assert smoother['feedback'] == 'OPEN_LOOP'
+    assert smoother['max_velocity'][0] == pytest.approx(BEAST_MAX_LINEAR_M_S)
+    assert smoother['min_velocity'][0] == pytest.approx(-BEAST_MAX_LINEAR_M_S)
+    assert smoother['velocity_timeout'] > 0.0
 
 
 def test_launch_uses_nav2_behaviors_and_lifecycle():
     source = read(LAUNCH_REL)
     assert "package='nav2_behaviors'" in source
     assert "executable='behavior_server'" in source
+    assert "package='nav2_costmap_2d'" in source
+    assert "executable='nav2_costmap_2d'" in source
+    assert "package='nav2_velocity_smoother'" in source
+    assert "executable='velocity_smoother'" in source
     assert "package='nav2_lifecycle_manager'" in source
     assert "'behavior_server.yaml'" in source
     assert "get_package_share_directory('ugv_cockpit')" in source
 
 
-def test_launch_remaps_cmd_vel_onto_mux_nav_rung():
-    """The test that would have caught an unmapped standalone behavior_server."""
-    tree = ast.parse(read(LAUNCH_REL), filename=LAUNCH_REL)
-    remapped = False
+def _node_remappings(tree, package):
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
@@ -122,29 +141,39 @@ def test_launch_remaps_cmd_vel_onto_mux_nav_rung():
             continue
         kwargs = {kw.arg: kw.value for kw in node.keywords if kw.arg}
         pkg = kwargs.get('package')
-        if pkg is None or ast.literal_eval(ast.unparse(pkg)) != 'nav2_behaviors':
+        if pkg is None or ast.literal_eval(ast.unparse(pkg)) != package:
             continue
         remappings = kwargs.get('remappings')
-        assert remappings is not None, 'behavior_server Node needs remappings'
-        text = ast.unparse(remappings)
-        targets = re.findall(
-            r"\(\s*['\"]/?cmd_vel['\"]\s*,\s*['\"]/?([A-Za-z0-9_/]+)['\"]\s*\)",
-            text,
-        )
-        assert targets, (
-            'behavior_server must remap cmd_vel -> cmd_vel_nav so timed_behavior '
-            'does not publish /cmd_vel past twist_mux'
-        )
-        for target in targets:
-            assert target.lstrip('/') == 'cmd_vel_nav', target
-        remapped = True
-    assert remapped, 'no nav2_behaviors Node found in %s' % LAUNCH_REL
+        assert remappings is not None, '%s Node needs remappings' % package
+        return ast.literal_eval(remappings)
+    raise AssertionError('no %s Node found in %s' % (package, LAUNCH_REL))
 
 
-def test_launch_header_documents_apt_and_blind_costmap():
+def test_launch_routes_behavior_through_clamp_onto_mux_nav_rung():
+    """No behavior path may bypass the robot-side clamp or twist_mux."""
+    tree = ast.parse(read(LAUNCH_REL), filename=LAUNCH_REL)
+    behavior_remaps = dict(_node_remappings(tree, 'nav2_behaviors'))
+    smoother_remaps = dict(_node_remappings(tree, 'nav2_velocity_smoother'))
+    assert behavior_remaps['cmd_vel'] == 'cmd_vel_behavior_raw'
+    assert smoother_remaps['cmd_vel'] == 'cmd_vel_behavior_raw'
+    assert smoother_remaps['smoothed_cmd_vel'] == 'cmd_vel_nav'
+
+
+def test_lifecycle_manager_owns_complete_behavior_stack(params_document):
+    manager = params_document['lifecycle_manager_behavior']['ros__parameters']
+    assert manager['autostart'] is True
+    assert manager['node_names'] == [
+        'local_costmap',
+        'behavior_server',
+        'velocity_smoother',
+    ]
+
+
+def test_launch_header_documents_required_stack():
     source = read(LAUNCH_REL)
     assert 'ros-humble-nav2-behaviors' in source
-    assert 'BLIND PRIMITIVES' in source
+    assert 'ros-humble-nav2-costmap-2d' in source
+    assert 'ros-humble-nav2-velocity-smoother' in source
     assert 'allow_motion' in source
     assert 'cmd_vel_nav' in source
 

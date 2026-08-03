@@ -2,39 +2,25 @@
 #
 # Stock ros-humble-nav2-behaviors action servers for the Hangar agent path:
 #   /spin, /backup, /drive_on_heading (+ /wait).
-# No map, no bt_navigator, no planner — odom-frame primitives only.
-#
-# ---------------------------------------------------------------------------
-# COSTMAP DECISION (v1): BLIND PRIMITIVES — deliberate, not a half-wire
-# ---------------------------------------------------------------------------
-# This file does NOT launch a local costmap. Collision checks still call
-# CostmapTopicCollisionChecker against costmap_topic / footprint_topic below;
-# with nobody publishing those topics the checker has no OccupancyGrid and
-# DriveOnHeading / Spin / BackUp will fail closed on the first simulate-ahead
-# cycle ("Collision Ahead" / costmap fetch error) rather than driving into
-# furniture. That is acceptable for v1 scaffolding and for disarmed
-# acceptance (wheels stay still either way — ugv_bringup allow_motion drops
-# actuation).
-#
-# FOLLOW-UP (ticket / next PR after Set 3a /scan is trusted): add a minimal
-# standalone nav2_costmap_2d (rolling local window, obstacle_layer on /scan)
-# that publishes local_costmap/costmap_raw + published_footprint, then drop
-# the blind-primitives note. Do not silently point these topics at a ghost
-# publisher without launching that costmap.
+# No map, no bt_navigator, no planner — odom-frame primitives only. A rolling
+# local costmap consumes /scan so the behavior collision checker has live
+# obstacle data and the robot footprint used by the rest of the Beast Nav2
+# configuration.
 #
 # ---------------------------------------------------------------------------
 # SPEED POLICY (Beast)
 # ---------------------------------------------------------------------------
-# Linear goal speeds from Hangar / clients MUST be ≤ 0.15 m/s. Nav2 puts
-# DriveOnHeading / BackUp speed on the action goal, not a server-wide clamp,
-# so the agent Zod tools (PR-4b) enforce the ceiling. Accel/decel limits here
-# keep ramps gentle when a goal is within policy.
+# Linear goal speeds from Hangar / clients MUST be ≤ 0.15 m/s. Because Nav2
+# puts DriveOnHeading / BackUp speed on the action goal, the robot-side
+# velocity_smoother below enforces the ceiling independently of every client.
 #
-# Remap: launch/behavior_server.launch.py remaps this node's cmd_vel →
-# /cmd_vel_nav (twist_mux priority 10). Never publish /cmd_vel from here.
+# Remap chain: behavior_server cmd_vel → cmd_vel_behavior_raw →
+# velocity_smoother smoothed_cmd_vel → cmd_vel_nav (twist_mux priority 10).
+# Never publish /cmd_vel from this stack.
 #
-# APT (Jetson): sudo apt install ros-humble-nav2-behaviors
-# (also pulls nav2_msgs / lifecycle pieces used by this launch).
+# APT (Jetson): sudo apt install ros-humble-nav2-behaviors \
+#   ros-humble-nav2-lifecycle-manager ros-humble-nav2-costmap-2d \
+#   ros-humble-nav2-velocity-smoother
 #
 # Params match ros-humble-nav2-behaviors 1.1.x on-robot
 # (/opt/ros/humble/share/nav2_bringup/params/nav2_params.yaml): singular
@@ -72,9 +58,58 @@ behavior_server:
     min_rotational_vel: 0.1
     rotational_acc_lim: 1.0
 
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_link
+      use_sim_time: false
+      rolling_window: true
+      width: 3.0
+      height: 3.0
+      resolution: 0.05
+      robot_radius: 0.15
+      plugins: ["obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: true
+        observation_sources: scan
+        footprint_clearing_enabled: true
+        scan:
+          topic: /scan
+          data_type: "LaserScan"
+          clearing: true
+          marking: true
+          obstacle_max_range: 2.5
+          obstacle_min_range: 0.0
+          raytrace_max_range: 3.0
+          raytrace_min_range: 0.0
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 5.0
+        inflation_radius: 0.2
+      always_send_full_costmap: true
+
+velocity_smoother:
+  ros__parameters:
+    use_sim_time: false
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.15, 0.0, 0.5]
+    min_velocity: [-0.15, 0.0, -0.5]
+    max_accel: [0.2, 0.0, 1.0]
+    max_decel: [-0.2, 0.0, -1.0]
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 0.5
+    odom_topic: odom
+    odom_duration: 0.1
+
 lifecycle_manager_behavior:
   ros__parameters:
     use_sim_time: false
     autostart: true
     bond_timeout: 4.0
-    node_names: ['behavior_server']
+    node_names: ['local_costmap', 'behavior_server', 'velocity_smoother']

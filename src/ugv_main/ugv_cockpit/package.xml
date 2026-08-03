@@ -35,10 +35,11 @@
   <exec_depend>depthai_ros_driver</exec_depend>
   <exec_depend>ugv_vision</exec_depend>
   <exec_depend>twist_mux</exec_depend>
-  <!-- Standalone agent primitives (PR-4a). Install on Jetson:
-       sudo apt-get install -y ros-humble-nav2-behaviors -->
+  <!-- Standalone agent primitives and their robot-side collision/speed gates. -->
   <exec_depend>nav2_behaviors</exec_depend>
+  <exec_depend>nav2_costmap_2d</exec_depend>
   <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_velocity_smoother</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
 

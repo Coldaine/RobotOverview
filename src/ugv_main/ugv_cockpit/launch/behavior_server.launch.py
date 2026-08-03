@@ -8,26 +8,21 @@ command path without bringing up bt_navigator, planner, or a map:
   * /drive_on_heading
   * /wait
 
-Frames are odom-only (see config/behavior_server.yaml). Velocity leaves this
-node on the default ``cmd_vel`` publisher from timed_behavior.hpp — we remap
-that onto twist_mux's ``/cmd_vel_nav`` input (priority 10). Human teleop on
-higher mux rungs still wins.
-
----------------------------------------------------------------------------
-COSTMAP DECISION (v1): BLIND PRIMITIVES
----------------------------------------------------------------------------
-This launch does NOT start a local costmap. Collision simulate-ahead still
-subscribes to ``local_costmap/costmap_raw`` (params YAML); with no publisher
-those checks fail closed. Follow-up: minimal standalone ``nav2_costmap_2d``
-fed by ``/scan`` (Set 3a) — do not half-wire a topic name without the node.
+Frames are odom-only (see config/behavior_server.yaml). A rolling local
+costmap consumes ``/scan`` for collision checking. Velocity flows through a
+robot-side smoother that clamps linear motion to 0.15 m/s before publishing
+onto twist_mux's ``/cmd_vel_nav`` input (priority 10). Human teleop on higher
+mux rungs still wins.
 
 ---------------------------------------------------------------------------
 INSTALL (Jetson) — required apt package
 ---------------------------------------------------------------------------
   sudo apt-get update
-  sudo apt-get install -y ros-humble-nav2-behaviors
+  sudo apt-get install -y ros-humble-nav2-behaviors \
+    ros-humble-nav2-lifecycle-manager ros-humble-nav2-costmap-2d \
+    ros-humble-nav2-velocity-smoother
 
-Verified present on beast-01 (2026-08-02, read-only): 
+Verified present on beast-01 (2026-08-02, read-only):
   ros-humble-nav2-behaviors 1.1.20-1jammy (arm64).
 
 ---------------------------------------------------------------------------
@@ -40,9 +35,8 @@ What this launch deliberately does NOT do
 On-robot verify (motion locked — allow_motion false / default):
 
   ros2 launch ugv_cockpit behavior_server.launch.py
-  ros2 action list   # expect /spin /backup /drive_on_heading
-  # send a small Spin goal while disarmed — action may run or fail closed
-  # on missing costmap; wheels must not move either way.
+  ros2 action list   # expect /spin /backup /drive_on_heading /wait
+  # Send a small Spin goal while disarmed; wheels must not move.
 """
 
 import os
@@ -80,14 +74,13 @@ def generate_launch_description():
     autostart_arg = DeclareLaunchArgument(
         'autostart',
         default_value='true',
-        description='Lifecycle manager transitions behavior_server to active.',
+        description='Lifecycle manager transitions the behavior stack to active.',
     )
 
-    # Remap timed_behavior.hpp's Twist publisher onto the mux nav rung.
+    # Remap timed_behavior.hpp's Twist publisher into the robot-side clamp.
     # Same reason as ugv_nav/launch/nav_bringup/navigation_launch.py —
     # without this remap, spin/backup/drive_on_heading drive /cmd_vel and
-    # bypass twist_mux entirely. Keep the ('cmd_vel', 'cmd_vel_nav') pair
-    # inline so ugv_cockpit/test/test_behavior_server_config.py can AST-scan it.
+    # bypass both the clamp and twist_mux entirely.
     behavior_server_node = Node(
         package='nav2_behaviors',
         executable='behavior_server',
@@ -104,7 +97,45 @@ def generate_launch_description():
         remappings=[
             ('/tf', 'tf'),
             ('/tf_static', 'tf_static'),
-            ('cmd_vel', 'cmd_vel_nav'),
+            ('cmd_vel', 'cmd_vel_behavior_raw'),
+        ],
+    )
+
+    local_costmap_node = Node(
+        package='nav2_costmap_2d',
+        executable='nav2_costmap_2d',
+        name='local_costmap',
+        output='screen',
+        parameters=[
+            LaunchConfiguration('params_file'),
+            {
+                'use_sim_time': ParameterValue(
+                    LaunchConfiguration('use_sim_time'), value_type=bool
+                ),
+            },
+        ],
+        remappings=[
+            ('/tf', 'tf'),
+            ('/tf_static', 'tf_static'),
+        ],
+    )
+
+    velocity_smoother_node = Node(
+        package='nav2_velocity_smoother',
+        executable='velocity_smoother',
+        name='velocity_smoother',
+        output='screen',
+        parameters=[
+            LaunchConfiguration('params_file'),
+            {
+                'use_sim_time': ParameterValue(
+                    LaunchConfiguration('use_sim_time'), value_type=bool
+                ),
+            },
+        ],
+        remappings=[
+            ('cmd_vel', 'cmd_vel_behavior_raw'),
+            ('smoothed_cmd_vel', 'cmd_vel_nav'),
         ],
     )
 
@@ -122,7 +153,11 @@ def generate_launch_description():
                 'autostart': ParameterValue(
                     LaunchConfiguration('autostart'), value_type=bool
                 ),
-                'node_names': ['behavior_server'],
+                'node_names': [
+                    'local_costmap',
+                    'behavior_server',
+                    'velocity_smoother',
+                ],
             },
         ],
     )
@@ -131,6 +166,8 @@ def generate_launch_description():
         params_file_arg,
         use_sim_time_arg,
         autostart_arg,
+        local_costmap_node,
         behavior_server_node,
+        velocity_smoother_node,
         lifecycle_manager_node,
     ])
