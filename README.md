@@ -5,20 +5,21 @@
 # ROS2 for WaveShare UGV
 
 > **Coldaine / BEAST-01:** This clone is the Jetson robot brain
-> (`D:\_projects\ugv_ws`, on-robot `~/beast/ugv_ws`). It is **not** inside the Hangar
-> app repo. Hangar lives at `D:\_projects\RobotOverview`. Cross-repo map and sync:
-> [`docs/BEAST.md`](docs/BEAST.md). Live operating facts are stamped in Hangar
-> `docs/beast-ops.md`, not here.
+> (D:\_projects\ugv_ws, on-robot ~/beast/ugv_ws). It is **not** inside the Hangar
+> app repo. Hangar lives at D:\_projects\RobotOverview. Cross-repo map and sync:
+> [docs/BEAST.md](docs/BEAST.md). Live operating facts are stamped in Hangar
+> docs/beast-ops.md, not here.
+
 
 **ugv_ws** is a **ROS2 Humble** colcon workspace for **WaveShare UGV**. It connects **RViz2**, **SLAM**, and **Nav2** to real hardware over serial, with optional vision, voice, web UI, and Gazebo simulation.
 
 ## Documentation
 
-Tutorials live in [`docs/`](docs/). On GitHub, open any `.md` file to read the rendered preview ΓÇö no Wiki required.
+Tutorials live in [`docs/`](docs/). On GitHub, open any `.md` file to read the rendered preview — no Wiki required.
 
 | | |
 |---|---|
-| **Browse on GitHub** | [docs/](https://github.com/waveshareteam/ugv_ws/tree/ros2-humble-develop-251125/docs) ΓÇö start with [index.md](https://github.com/waveshareteam/ugv_ws/blob/ros2-humble-develop-251125/docs/index.md) |
+| **Browse on GitHub** | [docs/](https://github.com/waveshareteam/ugv_ws/tree/ros2-humble-develop-251125/docs) — start with [index.md](https://github.com/waveshareteam/ugv_ws/blob/ros2-humble-develop-251125/docs/index.md) |
 | **Online site** | [https://waveshareteam.github.io/ugv_ws](https://waveshareteam.github.io/ugv_ws) |
 | **Optional local site** | `pip install -r docs/requirements.txt` then `mkdocs serve` (sidebar nav + copy buttons; same source files) |
 
@@ -48,7 +49,7 @@ Tutorials live in [`docs/`](docs/). On GitHub, open any `.md` file to read the r
 
 Package layout: [docs/packages.md](docs/packages.md)
 
-Suggested order: [docs/index.md ΓÇö Suggested reading order](docs/index.md#suggested-reading-order).
+Suggested order: [docs/index.md — Suggested reading order](docs/index.md#suggested-reading-order).
 
 **Factory image:** Docker + SSH port **23** (`root`/`ws`). **Camera:** `:8889/cam/`. **Web AI (experimental):** `:5000`.
 
@@ -76,12 +77,12 @@ See [UGV Basics](docs/ugv_basics.md) for AI Kit vs ROS2 Kit naming.
 
 ### Typical real-robot workflow
 
-1. **T0** ΓÇö robot stack: bringup, SLAM, or Nav2 (each is one launch ΓÇö see [Typical paths](docs/index.md#typical-paths))
-2. **T1** ΓÇö teleop while mapping (`keyboard_ctrl` / gamepad), Web App, or **`explore_lite`** ΓÇö only when the workflow needs a second terminal
+1. **T0** — robot stack: bringup, SLAM, or Nav2 (each is one launch — see [Typical paths](docs/index.md#typical-paths))
+2. **T1** — teleop while mapping (`keyboard_ctrl` / gamepad), Web App, or **`explore_lite`** — only when the workflow needs a second terminal
 
-Example ΓÇö teleop only: **T0** `bringup_lidar.launch.py` ┬╖ **T1** `keyboard_ctrl`. Example ΓÇö mapping: **T0** `slam_toolbox.launch.py` ┬╖ **T1** `keyboard_ctrl`.
+Example — teleop only: **T0** `bringup_lidar.launch.py` · **T1** `keyboard_ctrl`. Example — mapping: **T0** `slam_toolbox.launch.py` · **T1** `keyboard_ctrl`.
 
-Simulation: **VM or desktop only** ΓÇö see [Gazebo](docs/gazebo.md); add `use_sim_time:=true` on SLAM/Nav launches.
+Simulation: **VM or desktop only** — see [Gazebo](docs/gazebo.md); add `use_sim_time:=true` on SLAM/Nav launches.
 
 ## Useful resources
 
