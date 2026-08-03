@@ -62,7 +62,8 @@ manifests, secrets (via Doppler/ESO), Gateway listeners, and Flux reconciliation
 - **Robot-side service (live):** `beast-cockpit.service` is enabled and active on BEAST-01
   (verified 2026-08-03); the loopback-only rosbridge binds `127.0.0.1:9090`, and Tailscale Serve
   fronts it as `wss://beast-01.tyrannosaurus-magellanic.ts.net/` on the tailnet only.
-  `COCKPIT_ALLOWED_ORIGINS=https://hangar.moosegoose.xyz` is set in `/etc/beast/ugv.env`.
+  `COCKPIT_ALLOWED_ORIGINS` is **unset**, so the bridge accepts any browser origin (tailnet is
+  the perimeter); set it in `/etc/beast/ugv.env` only if origins should be restricted.
 
 ## Shipping a change
 
