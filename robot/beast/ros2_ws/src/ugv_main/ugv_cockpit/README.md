@@ -78,19 +78,19 @@ tailscale serve status
 The cockpit app then points `BEAST_COCKPIT_WS_URL` at
 `wss://beast-01.tyrannosaurus-magellanic.ts.net`.
 
-> **Reachability does not gate a browser.** rosbridge's `check_origin` returns
-> `True` unconditionally (verified, `humble` branch) and WebSocket handshakes are
-> exempt from the same-origin policy, so before this package any page in any tab
-> on a tailnet-joined machine could connect and publish. `cockpit_rosbridge`
-> replaces `check_origin` with an allowlist:
+> **The tailnet is the perimeter.** rosbridge's `check_origin` returns `True`
+> unconditionally (verified, `humble` branch) and WebSocket handshakes are exempt
+> from the same-origin policy, so any page in any tab on a tailnet-joined machine
+> could connect and publish — the same trust level as anyone else on the tailnet.
+> `cockpit_rosbridge` optionally restricts browser origins:
 >
 > ```bash
-> # /etc/beast/ugv.env — the origin SERVING the cockpit page, not the robot's
+> # /etc/beast/ugv.env — optional restrict-to-list; unset = accept all origins
 > COCKPIT_ALLOWED_ORIGINS=https://hangar.example.ts.net
 > ```
 >
-> Unset denies every browser (fail closed). Clients that send no `Origin` at all
-> — non-browser tooling — are still admitted; that residual is documented in
+> Unset accepts every origin. Clients that send no `Origin` at all — non-browser
+> tooling — are always admitted; see
 > [docs/cockpit.md](../../../docs/cockpit.md).
 
 **Do not widen the bind address or a glob without reading

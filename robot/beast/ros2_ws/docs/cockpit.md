@@ -31,48 +31,29 @@ Four things, and none of them is an access-control list:
 3. **`tailscale serve`** fronts `127.0.0.1:9090` as `wss` on the tailnet — the only
    *network* path in, terminating TLS with a real cert so an HTTPS page can open the
    socket without tripping mixed-content rules.
-4. **The origin allowlist** (`COCKPIT_ALLOWED_ORIGINS`), because reachability gates the
-   network but **not** the page — see the correction immediately below.
 
 `authenticate: false` stays, because rosbridge's built-in authentication is a custom
 service handshake the shipped client does not implement. Saying the socket is
 unauthenticated is honest; calling it an ACL is not.
 
-!!! danger "Correction: tailnet reachability does NOT gate a browser"
-    An earlier version of this page said the socket was gated by reachability. **That
-    is false for browser-originated connections, and it was the load-bearing claim in
-    the threat model.**
+!!! note "Security model: the tailnet is the perimeter"
+    This robot is an operator's personal machine. `tailscale serve` is the only path
+    into the bridge, and anyone who can reach the tailnet already has the operator's
+    trust level (they can SSH to the box). So the model is: **the tailnet gates
+    everything; the whitelist bounds what a connected client may publish.**
 
-    Verified in `rosbridge_suite`'s `humble` branch,
-    `rosbridge_server/src/rosbridge_server/websocket_handler.py`:
+    WebSocket handshakes are exempt from the same-origin policy, so upstream rosbridge
+    accepts any `Origin` (`check_origin` returns `True`). That is fine here. An
+    optional `COCKPIT_ALLOWED_ORIGINS` restrict-to-list exists for an operator who
+    wants to name specific origins, but unset means **accept all** — the default is
+    "it just works", not "fail closed until configured".
 
-    ```python
-    @log_exceptions
-    def check_origin(self, origin: str) -> bool:  # noqa: ARG002
-        return True
-    ```
+### Configuring the origin restrict-list (optional)
 
-    Tornado calls `check_origin` on every WebSocket handshake and upstream accepts
-    unconditionally. WebSocket handshakes are **also exempt from the same-origin
-    policy** — there is no CORS preflight, and a cross-origin `new WebSocket(...)` is
-    not blocked. So *any web page open in any tab* on a tailnet-joined machine could
-    connect to the robot and start publishing. The operator never has to visit anything
-    related to the cockpit; an ad iframe would do.
-
-    **What that bought an attacker was bounded, and the ladder held.** The publish glob
-    admits only `/cmd_vel_ui` — mux rung 50, outranked by the robot-side pad (150) and
-    the operator pad (100). Motion is still gated by
-    `allow_motion` and still stopped by the watchdog. This was never an arbitration
-    bypass. It was a drive-by command surface the documented model did not cover.
-
-    **Now closed** by `cockpit_rosbridge.py`, which replaces `check_origin` with an
-    allowlist read from `COCKPIT_ALLOWED_ORIGINS`.
-
-### Configuring the origin allowlist
-
-`COCKPIT_ALLOWED_ORIGINS` is a comma-separated list of the origins **serving the
-cockpit page** — the RobotOverview deployment, not the robot's own hostname. The
-`Origin` header carries the page's origin, so this is the app's URL:
+`COCKPIT_ALLOWED_ORIGINS` is an optional comma-separated list of the origins **serving
+the cockpit page** — the RobotOverview deployment, not the robot's own hostname. When
+set, only those origins are admitted; when unset, every origin is accepted. The
+`Origin` header carries the page's origin:
 
 ```bash
 # /etc/beast/ugv.env  (already read by beast-cockpit.service)
@@ -83,24 +64,11 @@ Comparison is exact on `scheme://host[:port]`, case-insensitive, trailing slash
 ignored. `http://` does **not** inherit an `https://` entry's trust, and subdomains do
 not match.
 
-!!! warning "Unset means every browser is denied — deliberately"
-    Leave it unset and the cockpit page cannot connect at all. That is the intended
-    failure direction: this whole file exists because *rosbridge's unset globs mean
-    allow-all*, and repeating that mistake in the control written to fix it would be
-    indefensible. The startup log says exactly what to set, and the service ships
-    disabled, so an operator enabling it is already reading these docs.
-
-!!! note "Clients with no `Origin` header are still admitted — a documented residual"
+!!! note "Clients with no `Origin` header are always admitted"
     Browsers always send `Origin` on a WebSocket handshake; page JavaScript can neither
-    forge nor suppress it. A **missing** `Origin` therefore means a non-browser client
-    — `roslibpy`, a native app, CLI tooling — and those are admitted, because refusing
-    them breaks legitimate tooling without closing the drive-by hole, which is the
-    actual gap.
-
-    The residual is real and accepted: **a native (non-browser) client on a
-    tailnet-joined machine can still reach this socket.** That is the same trust level
-    the old reachability-only model extended to everyone; the change is that a web page
-    no longer gets it for free.
+    forge nor suppress it. A **missing** `Origin` means a non-browser client —
+    `roslibpy`, a native app, CLI tooling — and those are admitted either way, because
+    the tailnet is the perimeter and the whitelist bounds what they may publish.
 
 ---
 

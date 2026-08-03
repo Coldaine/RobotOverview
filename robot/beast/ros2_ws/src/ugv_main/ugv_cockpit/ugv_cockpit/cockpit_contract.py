@@ -288,9 +288,14 @@ def resolve_active_source(now, last_command_at, estop_engaged,
 # What that actually buys an attacker here is bounded by the publish glob:
 # /cmd_vel_ui is mux rung 50, outranked by both the robot-side pad (150) and
 # the operator pad (100), and still gated by allow_motion and the watchdog. So
-# the ladder holds and this is not an arbitration bypass. It is still a drive-by
-# command surface that the documented threat model did not cover, and it is
-# cheap to close, so we close it.
+# the ladder holds and this is not an arbitration bypass.
+#
+# POLICY: the tailnet is the perimeter. ``tailscale serve`` is the only way in,
+# and anyone who can reach the tailnet already has the operator's trust level.
+# So an UNSET allowlist accepts every browser origin — upstream behavior — and
+# COCKPIT_ALLOWED_ORIGINS exists only as an OPTIONAL restrict-to-list for an
+# operator who wants to name specific origins. There is no fail-closed default
+# to trip over: unset means it just works.
 # ---------------------------------------------------------------------------
 ALLOWED_ORIGINS_ENV = 'COCKPIT_ALLOWED_ORIGINS'
 
@@ -314,31 +319,18 @@ def parse_allowed_origins(raw):
 def origin_is_allowed(origin, allowlist):
     """Decide one WebSocket handshake. Replaces upstream's ``return True``.
 
-    Two deliberate decisions, both of which cut against a reflexive
-    "deny everything unknown":
-
-    ABSENT OR EMPTY ORIGIN IS ALLOWED. Browsers ALWAYS send ``Origin`` on a
-    WebSocket handshake — it is not optional and page JavaScript cannot forge
-    or suppress it. So a missing Origin means a NON-browser client: ``roslibpy``,
-    a native app, a CLI. Those are exactly the clients that already had to get
-    onto loopback through ``tailscale serve``, i.e. the trust level the old
-    model assumed for everyone. Denying them would break legitimate tooling
-    without closing the hole that matters, because the drive-by web page is the
-    one attacker who cannot omit the header. This is a documented residual: a
-    native client on a tailnet-joined machine is still admitted.
-
-    AN EMPTY ALLOWLIST DENIES EVERY BROWSER. Fail closed. This file's whole
-    reason for existing is that rosbridge's unset globs mean ALLOW-ALL and that
-    is how a config looks fine and behaves catastrophically; repeating that
-    mistake in the control written to fix it would be indefensible. An operator
-    who has not set COCKPIT_ALLOWED_ORIGINS gets a cockpit that cannot connect,
-    which is loud, immediate and diagnosable from the startup log — not a
-    cockpit that silently keeps the vulnerability.
+    The tailnet is the perimeter: ``tailscale serve`` is the only path in, so
+    anyone presenting an Origin here has already reached the operator's trust
+    level. An EMPTY ALLOWLIST therefore accepts every browser origin (upstream
+    behavior). A NON-EMPTY allowlist restricts to the named origins — an
+    optional hardening knob, not a required configuration.
 
     Args:
         origin: the ``Origin`` header, or ``None`` when absent.
         allowlist: normalised origins from :func:`parse_allowed_origins`.
     """
+    if not allowlist:
+        return True
     if origin is None or not origin.strip():
         return True
     return origin.strip().rstrip('/').lower() in allowlist

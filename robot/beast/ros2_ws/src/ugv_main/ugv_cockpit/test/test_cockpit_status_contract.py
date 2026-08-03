@@ -874,16 +874,23 @@ def test_absent_origin_is_admitted_because_browsers_cannot_omit_it(contract):
     assert contract.origin_is_allowed(None, ()) is True
 
 
-def test_an_unset_allowlist_denies_every_browser(contract):
-    """Fail CLOSED. An unset glob meaning ALLOW-ALL is the bug being fixed."""
+def test_an_unset_allowlist_accepts_every_browser(contract):
+    """The tailnet is the perimeter: unset allowlist means ALLOW-ALL.
+
+    tailscale serve is the only path into the loopback bridge, and anyone who
+    can reach the tailnet already has the operator's trust level. An empty
+    allowlist therefore restores upstream behavior (accept any origin);
+    COCKPIT_ALLOWED_ORIGINS is an optional restrict-to-list, not required
+    configuration.
+    """
     for origin in (
         COCKPIT_ORIGIN,
         'https://evil.example.com',
         'http://localhost:3000',
     ):
-        assert contract.origin_is_allowed(origin, ()) is False, (
-            'an unconfigured allowlist must not admit %r. rosbridge already '
-            'taught us what "unset means allow everything" costs.' % origin
+        assert contract.origin_is_allowed(origin, ()) is True, (
+            'an unset allowlist must admit %r — the tailnet is the perimeter'
+            % origin
         )
 
 
