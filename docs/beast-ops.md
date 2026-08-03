@@ -8,9 +8,14 @@ re-verify against the live robot before relying on anything stale.
 ## Quick connect
 
 Live repository/service check (2026-08-03): `beast-01` is reachable; the legacy
-`~/beast/ugv_ws` checkout is at `2d1eab7`; `beast-ros-base.service` is active and
-`beast-cockpit.service` is inactive. The monorepo cutover described below has not yet been
-deployed. Network-path details below were last fully verified 2026-07-31 unless marked newer.
+`~/beast/ugv_ws` checkout is gone and the monorepo cutover is deployed (workspace at
+`~/beast/RobotOverview/robot/beast/ros2_ws`). `beast-ros-base.service` and
+`beast-cockpit.service` are both **enabled and active**. `beast-cockpit` serves the
+rosbridge on `127.0.0.1:9090`, fronted over the tailnet by
+`sudo tailscale serve --https=443 http://127.0.0.1:9090` → `https://beast-01.tyrannosaurus-magellanic.ts.net/`.
+The DISARM/RE-ARM round trip over that bridge via `/ugv/set_allow_motion` was verified live
+(2026-08-03) and `allow_motion` was left `true` (armed). Network-path details below were
+last fully verified 2026-07-31 unless marked newer.
 
 Turn on the chassis switch (it powers the Jetson too), wait ~2 minutes for boot, then:
 
