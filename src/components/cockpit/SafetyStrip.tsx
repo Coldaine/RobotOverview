@@ -98,48 +98,48 @@ export function SafetyStrip() {
   };
 
   const disarmed = status.allowMotion === false;
+  const unconfirmed = !awaitingEcho && (armFault !== null || echoTimedOut);
+  const rearmBlocked = disarmed && interlocked;
 
   const armLabel = !connected
     ? 'OFFLINE'
     : awaitingEcho
-      ? request?.target === false
-        ? 'DISARMING…'
-        : 'RE-ARMING…'
-      : interlocked
-        ? 'LOCKED'
-        : status.allowMotion === null
-          ? 'UNKNOWN'
-          : status.allowMotion
-            ? 'DISARM'
-            : holding
-              ? 'KEEP HOLDING…'
-              : 'RE-ARM · HOLD 2S';
+        ? request?.target === false
+          ? 'DISARMING…'
+          : 'RE-ARMING…'
+      : status.allowMotion === false
+        ? interlocked
+          ? 'LOCKED'
+          : holding
+            ? 'KEEP HOLDING…'
+            : 'RE-ARM · HOLD 2S'
+        : 'DISARM';
   const armCaption = !connected
     ? 'offline'
-    : armFault !== null || echoTimedOut
-      ? 'UNCONFIRMED'
+      : unconfirmed
+        ? 'UNCONFIRMED'
       : awaitingEcho
         ? 'awaiting robot echo'
         : interlocked
           ? (interlockReason ?? 'interlock')
-          : status.allowMotion === null
-            ? 'no allow_motion echo'
+             : status.allowMotion === null
+             ? 'state unknown — disarm to be safe'
             : status.allowMotion
               ? 'one click — stops all motion'
               : 'hold to re-enable motion';
   const armDisabled =
-    !connected || awaitingEcho || interlocked || status.allowMotion === null;
-  const armBtnCls = !connected || status.allowMotion === null
+    !connected || awaitingEcho || unconfirmed || rearmBlocked;
+  const armBtnCls = !connected
     ? 'border-zinc-600 bg-zinc-900/40 text-zinc-500 cursor-not-allowed'
-    : armFault !== null || echoTimedOut
+    : unconfirmed
       ? 'border-red-500 bg-red-950/60 text-red-300 shadow-hud-red text-glow-red'
-      : interlocked
+      : rearmBlocked
         ? 'border-amber-500/60 bg-amber-950/30 text-amber-400 cursor-not-allowed'
         : disarmed
           ? 'border-emerald-500/50 bg-panel-2/40 text-emerald-400 hover:bg-emerald-950/30'
           : 'border-red-500/50 bg-panel-2/40 text-red-400 hover:bg-red-950/30';
   const armCaptionCls =
-    !connected ? 'text-zinc-500' : armFault !== null || echoTimedOut ? 'text-red-300' : 'text-ink-dim';
+    !connected ? 'text-zinc-500' : unconfirmed ? 'text-red-300' : 'text-ink-dim';
 
   // Calculate voltage slider progress (range 8.8V - 12.6V)
   const minVolts = 8.8;
@@ -163,7 +163,7 @@ export function SafetyStrip() {
       {/* ── MOTION AUTHORITY (DISARM / RE-ARM) ──── */}
       <button
         onClick={() => {
-          if (status.allowMotion === true) void requestMotion(false);
+          if (status.allowMotion !== false) void requestMotion(false);
         }}
         onPointerDown={() => {
           if (status.allowMotion === false) startRearmHold();
@@ -195,9 +195,17 @@ export function SafetyStrip() {
       {/* ── MOTION STATE ────────────────────────── */}
       <div className="flex flex-col justify-center min-w-0 z-10">
         <span className="hud-label text-[10px]">Motion state</span>
-        {status.allowMotion === null ? (
+        {unconfirmed ? (
+          <span className="font-mono text-lg font-bold tracking-wide mt-0.5 flex items-center gap-1.5 text-red-300 text-glow-red">
+            <ShieldAlert className="h-4 w-4" /> UNCONFIRMED
+          </span>
+        ) : status.allowMotion === null ? (
           <span className="font-mono text-lg font-bold tracking-wide mt-0.5 flex items-center gap-1.5">
             <Unknown reason="no allow_motion publisher" />
+          </span>
+        ) : interlocked ? (
+          <span className="font-mono text-lg font-bold tracking-wide flex items-center gap-1.5 mt-0.5 text-amber-400 text-glow-amber">
+            <ShieldAlert className="h-4 w-4 animate-pulse" /> LOCKED
           </span>
         ) : status.allowMotion ? (
           <span
@@ -215,7 +223,7 @@ export function SafetyStrip() {
               status.stale ? 'text-ink-dim line-through' : 'text-amber-400 text-glow-amber',
             )}
           >
-            <ShieldAlert className="h-4 w-4 animate-pulse" /> {interlocked ? 'LOCKED' : 'DISARMED'}
+            <ShieldAlert className="h-4 w-4 animate-pulse" /> DISARMED
           </span>
         )}
         <span className="font-mono text-[10px] text-ink-dim truncate mt-1">
