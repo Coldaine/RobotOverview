@@ -94,14 +94,13 @@ def _announce(allowlist):
     for capability in RosbridgeProtocol.rosbridge_capabilities:
         print(' -', capability.__name__)
     if allowlist:
-        print('cockpit_rosbridge: browser origins allowed: %s'
+        print('cockpit_rosbridge: browser origins restricted to: %s'
               % ', '.join(allowlist))
     else:
-        print('cockpit_rosbridge: %s is unset — DENYING EVERY BROWSER ORIGIN. '
-              'The cockpit page will fail to connect until this names the '
-              'origin serving it (e.g. https://hangar.example.ts.net). '
-              'Non-browser clients, which send no Origin header, are still '
-              'admitted.' % ALLOWED_ORIGINS_ENV)
+        print('cockpit_rosbridge: %s unset — accepting ALL browser origins. '
+              'The tailnet is the perimeter (tailscale serve is the only path '
+              'in); set %s to restrict to specific origins.'
+              % (ALLOWED_ORIGINS_ENV, ALLOWED_ORIGINS_ENV))
 
 
 def upstream_executable():
