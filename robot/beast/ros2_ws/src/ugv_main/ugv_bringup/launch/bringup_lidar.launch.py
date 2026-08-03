@@ -72,11 +72,10 @@ def generate_launch_description():
     )
 
     allow_motion_arg = DeclareLaunchArgument(
-        'allow_motion', default_value='false',
+        'allow_motion', default_value='true',
         description=(
-            'Permit non-zero cmd_vel commands; keep false until physical '
-            'safety validation passes. Runtime flips go through '
-            '/ugv/set_allow_motion (ugv_bringup) — never default this true.'
+            'Permit non-zero cmd_vel commands by default. Active Ethernet or '
+            'charging interlocks may disable it through /ugv/set_allow_motion.'
         )
     )
 
@@ -84,7 +83,8 @@ def generate_launch_description():
         'use_safety_monitor', default_value='true',
         description=(
             'Start ugv_safety_monitor (ethernet/charging interlocks as a '
-            'client of /ugv/set_allow_motion). Does not auto-arm.'
+            'client of /ugv/set_allow_motion). It disables motion only when '
+            'an interlock is observed.'
         )
     )
 

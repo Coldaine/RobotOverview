@@ -143,7 +143,7 @@ def test_allow_motion_callback_reenforces_current_lock_immediately():
     assert 'self._enforce(decision)' in callback
 
 
-def test_bringup_launch_defaults_disarmed_and_wires_monitor():
+def test_bringup_launch_defaults_motion_enabled_and_wires_monitor():
     launch = (
         Path(__file__).resolve().parents[2]
         / 'ugv_bringup'
@@ -151,7 +151,7 @@ def test_bringup_launch_defaults_disarmed_and_wires_monitor():
         / 'bringup_lidar.launch.py'
     )
     text = launch.read_text(encoding='utf-8')
-    assert "'allow_motion', default_value='false'" in text
+    assert "'allow_motion', default_value='true'" in text
     assert 'ugv_safety_monitor' in text
     assert 'use_safety_monitor' in text
     assert "'interlock_override', default_value='false'" in text

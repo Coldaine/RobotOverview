@@ -173,7 +173,7 @@ git pull --ff-only origin main
 cd robot/beast/ros2_ws
 source /opt/ros/humble/setup.bash
 colcon build --packages-select ugv_bringup --symlink-install   # or full workspace
-sudo systemctl restart beast-ros-base.service                 # stays allow_motion:=false
+sudo systemctl restart beast-ros-base.service                 # starts motion-enabled; active Ethernet/charging locks disable it
 git -C ~/beast/RobotOverview rev-parse --short HEAD            # record in Quick connect
 ```
 
@@ -181,9 +181,10 @@ There is no automatic deployment to the robot. If a PR does not change
 `robot/beast/ros2_ws`, the Jetson does not change.
 
 - **What's on it (repository/service state live-verified 2026-08-03; hardware details
-  last verified 2026-07-31):** JetPack 6.2.2 (R36.5), ROS 2 Humble, legacy `ugv_ws`
-  checkout at `2d1eab7`. `beast-ros-base.service` is **active**
-  with `use_lidar:=true`, `allow_motion:=false`: base driver, LD19 LiDAR, pan-tilt
+  last verified 2026-07-31):** JetPack 6.2.2 (R36.5), ROS 2 Humble, and
+  `beast-ros-base.service` is **active** from the RobotOverview workspace. It starts with
+  `use_lidar:=true`, `allow_motion:=true`; the active `ugv_safety_monitor` disables motion
+  only after detecting Ethernet or charging. Base driver, LD19 LiDAR, pan-tilt
   `ros2_control`, wheel + rf2o odometry, and EKF are all up; battery/IMU telemetry flows.
 - **ESP32 link is USB, not GPIO jumpers:** the driver board talks to the Orin over
   `/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00` (→ `ttyACM0`); the LiDAR is
@@ -215,10 +216,9 @@ There is no automatic deployment to the robot. If a PR does not change
 - **cmd_vel-timeout watchdog DEPLOYED (2026-07-31), not yet live re-tested:** `ugv_bringup`
   now has `cmd_vel_timeout` (default 0.5 s) — on silence while `allow_motion` is true it
   sends stop once. Unit tests passed on-robot; supervised crawl+kill re-gate is still
-  required before trusting it. Motion stays software-locked (`allow_motion:=false`).
-  **Do not enable `allow_motion:=true` without an active, independent operator stop path
-  already staged and running. Do not enable motion while charging / tethered, or below
-  ~10.5 V.**
+  required before trusting it. Normal startup is motion-enabled; the interlock monitor disables
+  motion when charging or Ethernet is detected. Do not command motion while charging / tethered,
+  or below ~10.5 V.
 - **Brownout 2026-07-31:** pack hit ~8.8 V; Jetson went offline (Tailscale last-seen gap).
   After charger plug-in + chassis power, Wi-Fi SSH at `.187` returned (~2 min uptime).
   Charge before any motion session.
@@ -267,8 +267,8 @@ There is no automatic deployment to the robot. If a PR does not change
 > executed and is **retired** (kept below only as an alternative path). `beast-ros-base.service`
 > is enabled and brings up the full stack at boot: base driver, LD19 LiDAR (`/dev/ttyACM1`,
 > ~10 Hz scans), pan-tilt `ros2_control`, wheel + rf2o odometry, EKF. Battery/IMU telemetry
-> verified flowing. Motion is software-locked (`allow_motion:=false`; `ugv_bringup.py` rejects
-> non-zero `/cmd_vel`). Remaining for full cutover: supervised lifted-track heartbeat-stop test,
+> verified flowing. Normal boot is motion-enabled; the Ethernet/charging monitor disables motion
+> when either physical interlock is observed. Remaining for full cutover: supervised lifted-track heartbeat-stop test,
 > one-frame verification of the 5 MP camera and OAK-D Lite, and the missing host mounting strut.
 >
 > *Power (2026-07-28, still current):* Orin is powered from the pack through the barrel-jack
@@ -1751,7 +1751,7 @@ sudo install -m 0644 deploy/systemd/ugv.env.example /etc/beast/ugv.env
 sudo install -m 0644 deploy/systemd/beast-ros-base.service \
   /etc/systemd/system/beast-ros-base.service
 sudo systemctl daemon-reload
-# LIVE ROBOT: do NOT disable — service is enabled at boot with allow_motion:=false
+# LIVE ROBOT: do NOT disable — service is enabled at boot and starts motion-enabled.
 # sudo systemctl disable --now beast-ros-base.service
 systemd-analyze verify /etc/systemd/system/beast-ros-base.service
 # After a blank-image install only:

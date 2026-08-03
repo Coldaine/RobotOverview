@@ -25,9 +25,9 @@ def generate_launch_description():
                                      description='which slam to launch')
 
     allow_motion_arg = DeclareLaunchArgument(
-        'allow_motion', default_value='false',
+        'allow_motion', default_value='true',
         description=(
-            'Forwarded to bringup_lidar; keep false until Set 1 motion re-gate'
+            'Forwarded to bringup_lidar; active interlocks may disable motion'
         ),
     )
 
