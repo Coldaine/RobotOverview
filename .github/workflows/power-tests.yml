@@ -1,0 +1,33 @@
+name: Beast Power Tests
+
+# Pure-logic + fake-bus suite for beast_power (PR-2a). No rclpy, no I²C
+# hardware, no colcon — same cheap gate pattern as the command spine tests.
+
+on:
+  pull_request:
+  push:
+    branches:
+      - ros2-humble-develop
+      - main
+      - 'beast/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  power:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install test dependencies
+        run: pip install pytest
+
+      - name: Run beast_power fake-bus tests
+        run: python -m pytest src/ugv_main/beast_power/test -q

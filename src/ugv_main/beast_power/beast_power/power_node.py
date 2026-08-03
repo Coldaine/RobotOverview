@@ -1,0 +1,208 @@
+# Copyright 2026 Coldaine
+# SPDX-License-Identifier: Apache-2.0
+#
+# Node structure adapted from LeoRover leo_robot-ros2 charging_monitor
+# (MIT, https://github.com/LeoRover/leo_robot-ros2). Publishes
+# sensor_msgs/BatteryState + std_msgs/Bool instead of leo_msgs.
+"""ROS 2 node: INA219 → /ugv/voltage + /ugv/charging_active."""
+
+from __future__ import annotations
+
+from typing import Callable, Optional
+
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import BatteryState
+from std_msgs.msg import Bool
+
+from beast_power.ina219 import Ina219, SMBusLike
+from beast_power.telemetry import BatteryTelemetry, build_telemetry
+
+
+def _default_bus_factory() -> SMBusLike:
+    import smbus2
+
+    return smbus2.SMBus()
+
+
+class PowerNode(Node):
+    """Publish honest BatteryState and charging_active from the UPS INA219.
+
+    Coexistence (Wave 1 / PR-2a): this node is **not** started by stock
+    ugv_bringup. Bringup still owns ``/ugv/voltage`` with fake SOC. Do not
+    launch both publishers on the same topic — dual writers are undefined.
+    PR-2b makes ``beast_power`` the sole owner and stops inventing BatteryState
+    fields in ugv_bringup (see package README).
+    """
+
+    def __init__(
+        self,
+        bus_factory: Optional[Callable[[], SMBusLike]] = None,
+    ) -> None:
+        super().__init__('beast_power')
+
+        self.declare_parameter('i2c_bus_nr', 7)
+        self.declare_parameter('sensor_address', 0x40)
+        self.declare_parameter('data_publish_rate', 1.0)
+        self.declare_parameter('current_sign', 1.0)
+        self.declare_parameter('charging_current_threshold_a', 0.05)
+        self.declare_parameter('voltage_topic', '/ugv/voltage')
+        self.declare_parameter('charging_topic', '/ugv/charging_active')
+        self.declare_parameter('frame_id', 'base_link')
+
+        self._i2c_bus_nr = (
+            self.get_parameter('i2c_bus_nr').get_parameter_value().integer_value
+        )
+        self._sensor_address = (
+            self.get_parameter('sensor_address')
+            .get_parameter_value()
+            .integer_value
+        )
+        self._rate_hz = (
+            self.get_parameter('data_publish_rate')
+            .get_parameter_value()
+            .double_value
+        )
+        self._current_sign = (
+            self.get_parameter('current_sign').get_parameter_value().double_value
+        )
+        self._charge_threshold = (
+            self.get_parameter('charging_current_threshold_a')
+            .get_parameter_value()
+            .double_value
+        )
+        voltage_topic = (
+            self.get_parameter('voltage_topic')
+            .get_parameter_value()
+            .string_value
+        )
+        charging_topic = (
+            self.get_parameter('charging_topic')
+            .get_parameter_value()
+            .string_value
+        )
+        self._frame_id = (
+            self.get_parameter('frame_id').get_parameter_value().string_value
+        )
+
+        if self._rate_hz <= 0:
+            raise ValueError('data_publish_rate must be positive')
+        if self._charge_threshold < 0:
+            raise ValueError('charging_current_threshold_a must be >= 0')
+
+        factory = bus_factory or _default_bus_factory
+        self._bus = factory()
+        self._sensor = Ina219(
+            self._bus,
+            self._sensor_address,
+            current_sign=self._current_sign,
+        )
+        self._sensor_ok = False
+
+        self._voltage_pub = self.create_publisher(BatteryState, voltage_topic, 10)
+        self._charging_pub = self.create_publisher(Bool, charging_topic, 10)
+
+        self._timer = None
+
+    def start(self) -> None:
+        try:
+            self._sensor.open(self._i2c_bus_nr)
+            self._sensor_ok = True
+            self.get_logger().info(
+                f'INA219 ready on i2c-{self._i2c_bus_nr} '
+                f'addr=0x{self._sensor_address:02x}; publishing at '
+                f'{self._rate_hz:.1f} Hz'
+            )
+        except Exception as exc:  # noqa: BLE001 — surface any open failure
+            self._sensor_ok = False
+            self.get_logger().error(
+                f'INA219 open failed ({exc}); publishing absent-sensor status '
+                f'at {self._rate_hz:.1f} Hz (not garbage SOC)'
+            )
+
+        self._timer = self.create_timer(1.0 / self._rate_hz, self._publish_once)
+
+    def shutdown(self) -> None:
+        if self._timer is not None:
+            self._timer.cancel()
+            self._timer = None
+        self._sensor.close()
+
+    def _publish_once(self) -> None:
+        telemetry = self._sample()
+        self._voltage_pub.publish(self._to_battery_msg(telemetry))
+        charging = Bool()
+        charging.data = telemetry.charging_active
+        self._charging_pub.publish(charging)
+
+    def _sample(self) -> BatteryTelemetry:
+        if not self._sensor_ok:
+            return build_telemetry(
+                None,
+                present=False,
+                charging_current_threshold_a=self._charge_threshold,
+            )
+
+        if not self._sensor.ensure_ready():
+            self.get_logger().warning(
+                'I2C not responding; publishing absent-sensor BatteryState'
+            )
+            return build_telemetry(
+                None,
+                present=False,
+                charging_current_threshold_a=self._charge_threshold,
+            )
+
+        try:
+            reading = self._sensor.read()
+        except OSError as exc:
+            self.get_logger().error(f'I2C read failed: {exc}')
+            return build_telemetry(
+                None,
+                present=False,
+                charging_current_threshold_a=self._charge_threshold,
+            )
+
+        return build_telemetry(
+            reading,
+            present=True,
+            charging_current_threshold_a=self._charge_threshold,
+        )
+
+    def _to_battery_msg(self, telemetry: BatteryTelemetry) -> BatteryState:
+        msg = BatteryState()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = self._frame_id
+        msg.voltage = telemetry.voltage
+        msg.current = telemetry.current
+        msg.charge = telemetry.charge
+        msg.capacity = telemetry.capacity
+        msg.design_capacity = telemetry.design_capacity
+        msg.percentage = telemetry.percentage
+        msg.power_supply_status = telemetry.power_supply_status
+        msg.power_supply_health = telemetry.power_supply_health
+        msg.power_supply_technology = telemetry.power_supply_technology
+        msg.present = telemetry.present
+        msg.temperature = telemetry.temperature
+        msg.location = telemetry.location
+        msg.serial_number = telemetry.serial_number
+        return msg
+
+
+def main(args=None) -> None:
+    rclpy.init(args=args)
+    node = PowerNode()
+    try:
+        node.start()
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.shutdown()
+        node.destroy_node()
+        if rclpy.ok():
+            rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
