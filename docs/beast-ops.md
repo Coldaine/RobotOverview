@@ -5,7 +5,7 @@ read its telemetry, and program it. The catalog entry for the unit lives in
 `src/data/hangar.ts` (`id: 'beast'`). Facts below carry the date they were last verified;
 re-verify against the live robot before relying on anything stale.
 
-## Quick connect (verified 2026-08-02)
+## Quick connect (verified 2026-08-02 Wave 3 session close)
 
 Turn on the chassis switch (it powers the Jetson too), wait ~2 minutes for boot, then:
 
@@ -14,45 +14,108 @@ ssh beast-01        # mDNS: beast-01.local; currently resolves to Wi-Fi 192.168.
 ssh beast-01-ts     # Tailscale: 100.107.16.72
 # Direct Wi-Fi fallback when mDNS fails:
 ssh -i ~/.ssh/hephastus_ed25519 -o HostKeyAlias=beast-01 beast@192.168.0.187
+# Direct Ethernet when cable is connected:
+ssh -i ~/.ssh/hephastus_ed25519 -o HostKeyAlias=beast-01 beast@192.168.0.166
 ```
 
-**All documented paths (verified 2026-08-02):**
+**All documented paths (re-probed Wave 0, 2026-08-02 ~15:57 CT):**
 
 | # | Path | Address | Notes |
 |---|---|---|---|
-| 1 | `ssh beast-01` | `beast-01.local` → `192.168.0.187` (mDNS/Wi-Fi) | **Verified working**; Windows may fail to resolve `.local` |
+| 1 | `ssh beast-01` | `beast-01.local` → `192.168.0.187` (mDNS/Wi-Fi) | **Verified working** this probe |
 | 2 | Direct Wi-Fi | `192.168.0.187` (`wlP1p1s0`) | **Verified working**; DHCP address and may drift |
 | 3 | `ssh beast-01-ts` | `100.107.16.72` (`tailscale0`) | **Verified working**; Tailscale daemon is up |
-| 4 | Direct Ethernet | `192.168.0.166` (`enP8p1s0`) | **Verified working**; current wired fallback and preferred route when cable is connected |
-| 5 | USB gadget fallback | `192.168.55.1` (`usb0`) | **Not reachable now**; USB gadget interface is down |
+| 4 | Direct Ethernet | `192.168.0.166` (`enP8p1s0`) | **Verified working**; **preferred default route** (metric 100) while cable connected |
+| 5 | USB gadget fallback | `192.168.55.1` (`usb0`) | **Not reachable**; `usb0` interface DOWN |
 
-The current Wi-Fi association is SSID **`CastleMooseGoose`**. Wi-Fi power save is **disabled**
-(persistent, set 2026-07-31 — it caused laggy/flaky Wi-Fi SSH). The old
-`beast-staging-wifi` / `MooseGooseIOT` profile was deleted from NetworkManager on 2026-08-02
-through the verified Docker-root recovery path; only the corrected profile remains.
+### Wave 0 ground-truth stamp (live 2026-08-02 ~15:57 CT)
 
-Rebuild the SSH aliases on any machine (key: `hephastus_ed25519`; this workstation's matching
-public half is in Doppler as `BEAST_JETSON_OPERATOR_SSH_PUBLIC_KEY_DESKTOP`):
+Frozen from live SSH/`ros2` output only (immobile session; no arming):
 
-```text
-Host beast-01
-    HostName beast-01.local
-    HostKeyAlias beast-01
-    User beast
-    IdentityFile ~/.ssh/hephastus_ed25519
-    IdentitiesOnly yes
+| Fact | Live value |
+|---|---|
+| Uptime | `up 1:44` (load ~4.9) |
+| Default route | `default via 192.168.0.1 dev enP8p1s0 metric 100` (Wi-Fi also up, metric 600) |
+| Wi-Fi | SSID `CastleMooseGoose` on `wlP1p1s0`; power save **off** |
+| `beast-ros-base.service` | **active**; ExecStart launch args: `bringup_lidar.launch.py use_lidar:=true use_rviz:=false allow_motion:=false` |
+| `allow_motion` (`/ugv_bringup`) | **False** |
+| `/cmd_vel` | Publisher count **0**; Subscription count **1** (`ugv_bringup`) |
+| `/ugv/voltage` | **10.30 V** then **10.27 V** (`percentage` field is fake V/12.6 ≈ 0.82; `power_supply_status` dummy 0 — charge state unknown) |
+| LiDAR by-id | Driver `…5B5E130201-if00` → `ttyACM0`; LiDAR `…5970075705-if00` → `ttyACM1` (both present; set in `/etc/beast/ugv.env`) |
+| `/scan` | Node `/LDLiDAR_LD19` publishing ~**10 Hz**; `ranges` length **480**; `frame_id` `base_lidar_link` |
+| Robot `ugv_ws` | `7d7fe3d` on `beast/jetson-orin-nano-adaptation` (clean vs origin) |
+| Workstation `D:/_projects/ugv_ws` | Diverged: `b8fad1f` on `beast/cockpit-bridge-nodes` — not what the robot is running |
+| `beast-cockpit.service` / `:9090` | **Absent** (no unit file; no listener on 9090) |
 
-Host beast-01-ts
-    HostName 100.107.16.72
-    User beast
-    IdentityFile ~/.ssh/hephastus_ed25519
-    IdentitiesOnly yes
-```
+**Gate A (Wave 0):** reachable = **YES** (all four LAN/Tailscale paths). Motion locked = **YES** (`allow_motion:=false`, `/cmd_vel` pubs=0). Voltage OK = **MARGINAL / FAIL soft gate** — bus **~10.3 V** is below the ~10.5 V motion-session floor in this doc; robot remains plugged/immobile and must not be armed. Keep charging / watch brownout history (~8.8 V on 2026-07-31).
 
-Both aliases use the `hephastus_ed25519` key. The live Beast accepts this key in
-`~/.ssh/authorized_keys` (fingerprint `SHA256:JO1fqfONgHgr5JUCdL1pyN6qHjaRc4dR+v7DDVMEZ6A`),
-so no key installation was needed during the 2026-08-02 verification. Host-key fingerprint:
-`SHA256:S5qCj4JsuBRSxfXgB//sAyNmDKWNSIOJtA6vUcu1XkI`.
+
+
+### Wave 2 integrate stamp (live 2026-08-02 ~16:13 CT)
+
+Applied `beast/pr1-safety-spine` @ `bebb86e` (safety spine + lidar hygiene rebase). Immobile; **never armed**.
+
+| Fact | Live value |
+|---|---|
+| Robot `ugv_ws` | `bebb86e` on `beast/pr1-safety-spine` |
+| Apt dep added | `ros-humble-twist-mux` (required by safety-spine `bringup_lidar` include; missing package caused crash-loop until installed) |
+| `beast-ros-base.service` | **active**; `use_lidar:=true use_rviz:=false allow_motion:=false` |
+| `/ugv/allow_motion` | publishes **`false`**; param `/ugv_bringup allow_motion` = **False** |
+| `/ugv/watchdog_state` | present (`cmd_vel_watchdog`; message includes motion locked) |
+| `/scan` | ~**10 Hz**; `len(ranges)==480` twice; `angle_min=0`, `angle_max≈6.270`, `angle_increment≈0.01309`; `frame_id=base_lidar_link` |
+| `/imu/data` | landed from `ugv_bringup` (`base_link`, `orientation_covariance[0]=-1`); **also** published by `rf2o_laser_odometry` (dual publishers — hygiene follow-up) |
+| `/ugv/safety/status` | `ETHERNET_LOCK` while `enP8p1s0` carrier=1 (`should_disarm=true`); motion stayed false |
+| `/ugv/voltage` | **~10.32–10.40 V** through build/restart (still below ~10.5 V floor; no arming) |
+| `beast-cockpit.service` | unit **installed**, **disabled** by default; loopback `:9090` commissioned once (`Rosbridge WebSocket server started on port 9090`, TCP 127.0.0.1:9090 OK) then **stopped** |
+| Tailscale Serve / Hangar pad | **blocked**: `tailscale serve status` = No serve config; WSS globs not verified — leave Serve off; Hangar motion pad stays disabled |
+| `beast_power` / UPS I2C | **not** cut over this session |
+
+**Gate B (Wave 2):** `/scan` live at boot = **YES**. Motion locked = **YES**. Bridge = **commissioned loopback then disabled** (Hangar live pad blocked pending Tailscale Serve globs). Docs contradiction (lidar boot) fixed from live facts above.
+
+
+### Wave 3 + session close (live 2026-08-02 ~16:20 CT)
+
+Immobile; **never armed**. Voltage soft-floor still fail (~10.4-10.5 V) - do not arm.
+
+| Fact | Live value |
+|---|---|
+| Robot `ugv_ws` | `2d1eab7` on `beast/pr4-agent-behaviors` (rebased on `bebb86e` / pr1-safety-spine) |
+| Remote branch | `origin/beast/pr4-agent-behaviors` pushed from workstation worktree |
+| `beast-ros-base.service` | **active**; `allow_motion:=false` unchanged |
+| `/ugv/allow_motion` | **`false`** throughout; param `/ugv_bringup allow_motion` = **False** |
+| `/ugv/safety/status` | `ETHERNET_LOCK` (`enP8p1s0` up; `should_disarm=true`) |
+| `/ugv/voltage` | **~10.41-10.47 V** (still at/below ~10.5 V floor; no arming) |
+| `/scan` | ~**10 Hz**; angle math => **480** bins; `frame_id=base_lidar_link` (Wave 0/2 length proof retained) |
+| Apt | `ros-humble-nav2-behaviors` **1.1.20** already installed |
+| `behavior_server` | Opt-in `ros2 launch ugv_cockpit behavior_server.launch.py` (separate from `beast-ros-base`); lifecycle **active**; actions `/spin` `/backup` `/drive_on_heading` `/wait`; remaps `cmd_vel`->`cmd_vel_nav` |
+| Disarmed smoke | Tiny `/spin` (0.1 rad) + `/drive_on_heading` (0.05 m @ 0.05 m/s) while locked: goals **accepted then ABORTED** (blind costmap fail-closed); brief nonzero on `/cmd_vel_nav` (and mux `/cmd_vel`) for Spin; **`allow_motion` stayed false** - no arming; launch **stopped** after proof |
+| `beast-cockpit.service` | **disabled** / **inactive** (loopback `:9090` not left up) |
+| Tailscale Serve / Hangar pad | **blocked**: `tailscale serve status` = No serve config - Hangar UI live `get_status` via rosbridge **not** smoked this session |
+| Hangar-relevant topics (SSH) | Proved live: `/ugv/allow_motion`, `/ugv/safety/status`, `/ugv/voltage` (option 2 path) |
+| Hangar agent tests | `agent-model` + `agent-tools` vitest **passed** (mocked); live UI `get_status` **blocked** pending Serve |
+
+**Gate C (Wave 3):** behavior_server launchable disarmed = **YES**. Hangar live bridge `get_status` = **BLOCKED** (no Tailscale Serve; intentionally not opening pad to the world). Motion locked = **YES**.
+
+#### Session scorecard (must-pass)
+
+| # | Criterion | Result |
+|---|---|---|
+| 1 | Quick connect updated (dated) | **YES** - this stamp |
+| 2 | `/scan` at boot, 480 bins | **YES** - Wave 0/2 + angle math this close |
+| 3 | Dynamic `allow_motion` + status | **YES** - topic `false` + `ETHERNET_LOCK` + param False |
+| 4 | Cockpit bridge reachable OR blocked | **BLOCKED** - Serve unset; cockpit unit disabled/inactive; prefer SSH topic proof |
+| 5 | Hangar agent mocked + live `get_status` | **PARTIAL** - mocked tests pass; live Hangar `get_status` blocked on Serve |
+| 6 | `behavior_server` launchable disarmed | **YES** - actions listed; disarmed goals abort; allow_motion false |
+
+#### Explicitly deferred (next session)
+
+- crawl+kill <=1 s (floor + unplugged)
+- armed-by-default-when-untethered
+- UPS I2C / live INA219
+- SLAM map + Nav2 retune
+- `navigate_to` / armed skill demo
+- Set 5 package deletions on the robot
+
 
 ### Credential map (Doppler)
 
@@ -143,38 +206,42 @@ Source: module docstring + inline `FAKE` / `DUMMY` / `ASSUMED` / `HACK` in
 
 ### Syncing robot code (`ugv_ws`) to BEAST-01
 
-Hangar ([RobotOverview](.)) **never** deploys to the Jetson. Robot brain code lives in a
-separate repo and is synced by hand:
+Hangar ([RobotOverview](.)) **never** deploys to the Jetson. Robot brain code is a
+**separate GitHub repo** — not a subfolder of this project. Layout and ownership:
+[`docs/beast-control-topology.md`](beast-control-topology.md#where-the-repos-live-read-this-first).
 
 | Piece | Where |
 |---|---|
 | Fork | [Coldaine/ugv_ws](https://github.com/Coldaine/ugv_ws) |
-| Edit on PC | `D:\_projects\ugv_ws` (branch `beast/jetson-orin-nano-adaptation`) |
+| Main clone on PC | `D:\_projects\ugv_ws` |
+| Feature worktrees on PC | `D:\_projects\.worktrees\ugv_ws-*` (`git -C D:\_projects\ugv_ws worktree list`) |
 | On robot | `~/beast/ugv_ws` (same remote) |
+| Branch the robot runs | **Only** Quick connect above (re-probe; do not trust this paragraph) |
 
 ```bash
-# On PC (after commit)
-cd D:/_projects/ugv_ws
-git push origin beast/jetson-orin-nano-adaptation
+# On PC — use the worktree/branch you actually edited (example: pr4)
+cd D:/_projects/.worktrees/ugv_ws-pr4-behaviors   # or D:/_projects/ugv_ws
+git push -u origin HEAD
 
 # On beast-01 (Wi-Fi: often beast@192.168.0.187 if mDNS fails)
 cd ~/beast/ugv_ws
 git fetch origin
-git checkout beast/jetson-orin-nano-adaptation
-git pull --ff-only origin beast/jetson-orin-nano-adaptation
+git checkout <branch-from-Quick-connect>          # e.g. beast/pr4-agent-behaviors
+git pull --ff-only origin <same-branch>
 source /opt/ros/humble/setup.bash
-colcon build --packages-select ugv_bringup --symlink-install   # or full workspace
-sudo systemctl restart beast-ros-base.service                 # stays allow_motion:=false
-git rev-parse --short HEAD   # record in Quick connect when it changes
+colcon build --packages-select ugv_bringup ugv_cockpit --symlink-install   # or as needed
+sudo systemctl restart beast-ros-base.service     # stays allow_motion:=false
+git rev-parse --short HEAD && git branch --show-current   # stamp Quick connect
 ```
 
 No CI/CD to the robot. If you only edited Hangar docs/UI, the Jetson does not change.
 
-- **What's on it (live-verified 2026-07-31):** JetPack 6.2.2 (R36.5), ROS 2 Humble,
+- **What's on it (re-verified Wave 0, 2026-08-02):** JetPack 6.2.2 (R36.5), ROS 2 Humble,
   `ugv_ws` at `7d7fe3d` on `beast/jetson-orin-nano-adaptation` (watchdog + telemetry honesty
-  annotations; was `a1b2822` / earlier `b709bfd`). `beast-ros-base.service` is **enabled and runs at boot**
-  with `use_lidar:=true`, `allow_motion:=false`: base driver, LD19 LiDAR, pan-tilt
+  annotations; was `a1b2822` / earlier `b709bfd`). `beast-ros-base.service` is **enabled and active**
+  with `use_lidar:=true`, `allow_motion:=false`: base driver, LD19 LiDAR (~10 Hz `/scan`), pan-tilt
   `ros2_control`, wheel + rf2o odometry, and EKF are all up; battery/IMU telemetry flows.
+  Pack bus ~10.3 V this probe (below ~10.5 V soft floor; do not arm).
 - **ESP32 link is USB, not GPIO jumpers:** the driver board talks to the Orin over
   `/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00` (→ `ttyACM0`); the LiDAR is
   the `…5970075705` sibling (→ `ttyACM1`). Both set in `/etc/beast/ugv.env`. The pins-8/10
@@ -221,12 +288,11 @@ No CI/CD to the robot. If you only edited Hangar docs/UI, the Jetson does not ch
   `tailscale serve` step will expose WSS only after install/build and the safety prerequisites.
   Existing separate surfaces remain Vizanti `:5100`/`:5001`, `ugv_chat_ai` `:5000`, and
   MediaMTX `:8554`/`:8889`; verify them live before relying on them.
-- **LiDAR is off in the boot service (2026-07-31, source-verified):** `beast-ros-base.service`
-  runs `bringup_lidar.launch.py use_lidar:=false use_rviz:=false allow_motion:=false`, so `/scan`
-  has no publisher until someone relaunches by hand. Any cockpit spatial view — and the Phase 0
-  `/scan` ground-truth check — is empty on a stock boot for that reason, not because the LD19
-  failed. (An earlier revision of this doc attributed this to `beast-cockpit.service`; that was
-  wrong, and that service is not installed at all.)
+- **LiDAR is ON in the boot service (live-verified Wave 0, 2026-08-02):** `beast-ros-base.service`
+  runs `bringup_lidar.launch.py use_lidar:=true use_rviz:=false allow_motion:=false`. `/scan` is
+  live at ~10 Hz with 480 ranges (`/LDLiDAR_LD19`, `base_lidar_link`). `/etc/beast/ugv.env` still
+  carries a stale comment claiming `use_lidar=false`; trust the systemd ExecStart + `/scan` proof.
+  `beast-cockpit.service` remains not installed.
 - **Robot-reported status is not deployed:** `/cockpit/status`, `/ugv/allow_motion` and
   `/ugv/watchdog_state` land with `ugv_ws` PR #10 and are not on the robot yet. Until they are,
   the cockpit's safety strip reads UNKNOWN, drive stays gated (unknown is not permission), and
@@ -730,7 +796,7 @@ policy has a smaller blast radius). Offload selected missions and recovery artif
 destructive device work; a future separate-volume mount at `/data/beast` requires a reviewed
 maintenance window and a tested rollback.
 
-Do not provision or enable storage units from this section yet. Follow the [command-level implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md). Once that implementation plan is approved and its dry-run checks pass, only `beast-storage-maintenance.timer` may be enabled. Keep black-box, mission, and motion storage units disabled until the documentation PR is merged, the stacked workspace change is reviewed, and physical recording/replay validation succeeds. An interactive [storage dossier](../design/beast-storage/index.html) walks the same policy visually.
+Do not provision or enable storage units from this section yet. The storage utility now lives in `ugv_ws` at `deploy/storage/` (`beast_storage.py`, `beast_record`, `install.sh` — dry-run by default, `--apply` required). Once `install.sh` dry-run checks pass and the workspace change is reviewed, only `beast-storage-maintenance.timer` may be enabled. Keep black-box, mission, and motion storage units disabled until physical recording/replay validation succeeds. An interactive [storage dossier](../design/beast-storage/index.html) walks the same policy visually.
 
 ### `ugv_ws` workspace provenance (verified 2026-07-31)
 
@@ -746,7 +812,7 @@ Sync recipe: [Syncing robot code](#syncing-robot-code-ugv_ws-to-beast-01) above.
 | Last live-checked | **`7d7fe3d`** (telemetry honesty comments on bringup) — re-verify with `git -C ~/beast/ugv_ws rev-parse --short HEAD` |
 
 Hangar docs are not proof of on-robot state. Always check the robot before asserting commit or
-behavior. Before applying the [NVMe storage implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md),
+behavior. Before applying the storage utility (`ugv_ws` `deploy/storage/install.sh`),
 reconcile against the **live on-robot** tree.
 
 ## Jetson migration and flash runbook — OP-JETSON-FLASH

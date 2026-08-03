@@ -2002,7 +2002,7 @@ coordinates are login-walled (X1 is the other route).
   `db/hangar/standup.md`), into `OPEN_ITEMS`, or on screen — not into new docs.
 - Nothing in `keyArtifactstosort/` may be deleted — see `keyArtifactstosort/agents.md`. Copy and
   extract freely.
-$b_wiring_model_completion$,'docs/plans/2026-07-30-wiring-model-completion.md');
+$b_wiring_model_completion$,'docs/plans/archived/2026-07-30-wiring-model-completion.md');
 INSERT INTO briefings(id,title,kind,summary,tags,aliases,pack_id,captured_at,href,body_markdown,repo_path) VALUES ('cad-assets','CAD Assets — Where They Live and What They Are For','plan','Seven Waveshare CAD archives on the data/hardware-cad-assets LFS branch, three filename traps that send agents to the wrong file, and fetch commands. The X1–X6 exploration work moved into the wiring-model plan.',ARRAY['cad','beast','mounting','jetson']::text[],ARRAY['step','stl','mounting pattern','x1']::text[],NULL,'2026-07-27','/datacore/briefing/cad-assets',$b_cad_assets$# Hardware Library
 
 The source-of-truth CAD, schematics, datasheets, firmware, and captured wiki pages for the

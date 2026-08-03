@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import {
   Boxes,
+  Bot,
   CircuitBoard,
   Cpu,
   Hexagon,
@@ -48,6 +49,7 @@ const NAV: NavStation[] = [
   { to: '/tech-tree', label: 'Tech Tree', code: 'CAP', icon: Network },
   { to: '/datacore', label: 'Datacore', code: 'CORE', icon: ScrollText, activePrefixes: ['/datacore'] },
   { to: '/cockpit', label: 'Cockpit', code: 'DECK', icon: Activity, activePrefixes: ['/cockpit'] },
+  { to: '/agent', label: 'Agent', code: 'CMD', icon: Bot, activePrefixes: ['/agent'] },
 ];
 
 function NavItem({

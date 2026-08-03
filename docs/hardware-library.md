@@ -94,4 +94,4 @@ are also at `D:\_projects\_artifact-backups\RobotOverview-keyArtifactstosort-202
 (same-volume deletion protection, **not** an off-volume backup).
 
 What the CAD is *for* (mounting holes, mast planning, URDF, twin geometry) is tracked as work in
-[`docs/plans/2026-07-30-wiring-model-completion.md`](./plans/2026-07-30-wiring-model-completion.md).
+[`docs/plans/archived/2026-07-30-wiring-model-completion.md`](./plans/archived/2026-07-30-wiring-model-completion.md).

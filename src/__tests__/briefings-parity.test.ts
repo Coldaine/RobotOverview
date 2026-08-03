@@ -81,7 +81,7 @@ const FIXTURE_RESEARCH: DatacoreBriefingRow = {
   repoPath: 'artifactIntake/00-MASTER-beast-vision.md',
 };
 
-const PLAN_REPO_PATH = 'docs/plans/2026-07-30-wiring-model-completion.md';
+const PLAN_REPO_PATH = 'docs/plans/archived/2026-07-30-wiring-model-completion.md';
 
 const FIXTURE_PLAN: DatacoreBriefingRow = {
   id: 'wiring-model-completion',

@@ -10,6 +10,25 @@ Intent: [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) — a statement of intent, ne
 Read it; do not edit it casually. Tactical state belongs in the owner docs below.
 Working on UI? Follow [`docs/rich-ui.md`](docs/rich-ui.md) — enrich surfaces, never flatten.
 
+## Always commit and open a PR
+
+Finished work is not done until it is **committed, pushed, and in a GitHub PR**
+(each repo that changed). Do not leave session deliverables as an uncommitted
+tree or an unpushed branch. Cross-repo Beast work → PR in RobotOverview **and**
+`Coldaine/ugv_ws` when both changed. Only skip when the user explicitly says not
+to commit / not to open a PR. (Also enforced by `.cursor/rules/always-commit-and-pr.mdc`.)
+
+## Two repos for BEAST-01 (do not look for `ugv_ws` in this tree)
+
+| Repo | On-disk (this PC) | Role |
+| --- | --- | --- |
+| **This repo** (`RobotOverview`) | `D:\_projects\RobotOverview` | Hangar UI, `/cockpit`, `/agent`, plans, beast-ops |
+| **`Coldaine/ugv_ws`** | `D:\_projects\ugv_ws` (+ `.worktrees\ugv_ws-*`) | ROS 2 Humble robot brain; runs at `~/beast/ugv_ws` on the Jetson |
+
+Hangar **never** deploys to the Jetson. Cross-repo map:
+[`docs/beast-control-topology.md`](docs/beast-control-topology.md). Live robot HEAD /
+boot args: [`docs/beast-ops.md`](docs/beast-ops.md) Quick connect only.
+
 ## Content workflow
 
 Facts and research persist to Postgres via `POST /api/hangar/ingest` (Bearer

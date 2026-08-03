@@ -96,7 +96,7 @@ export const CORPUS_BRIEFINGS: CorpusBriefingMeta[] = [
     id: 'wiring-model-completion',
     title: 'Finish the Wiring Model — One Spine, Two Eyes',
     href: '/datacore/briefing/wiring-model-completion',
-    source: 'docs/plans/2026-07-30-wiring-model-completion.md',
+    source: 'docs/plans/archived/2026-07-30-wiring-model-completion.md',
     kind: 'plan',
     summary:
       'The single wiring work order: close the half-fed spine so The Board and the console project from wiring.ts, extract the corpus (schematics, firmware, photos, CAD), land facts with zone citations, and put operator-critical answers on screen.',

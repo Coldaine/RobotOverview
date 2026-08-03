@@ -18,15 +18,27 @@ Tailwind 4). Flagship unit: BEAST-01, a Waveshare UGV Beast. **The UI is the pro
    `db/hangar/` owns schema and migrations ([`db/hangar/standup.md`](db/hangar/standup.md)).
 3. **Runtime.** Cluster manifests live in **`coldaine-homelab`**
    (`infra/k8s/apps/hangar/`), reconciled by Flux.
+4. **Beast control.** Hangar proposes; the Jetson disposes. Dual-repo map, authority
+   stack, topic map, and machine topology:
+   [`docs/beast-control-topology.md`](docs/beast-control-topology.md). Live SSH /
+   boot / voltage facts stay in [`docs/beast-ops.md`](docs/beast-ops.md).
 
 ## Where things live
 
 `src/app` routes · `src/components` UI · `src/data` types + fixture · `src/server/hangar`
 Postgres/Drizzle · `db/hangar` schema/migrations · `docs` owner docs.
 
-Not here: cluster/runtime manifests (`coldaine-homelab`) and bulk vendor archives
-(object storage; indexed in `keyArtifactstosort/reference/INDEX.md`). Research bodies
-live in Postgres, not the repo.
+**Not in this folder (sibling / other repos):**
+
+| What | Where |
+| --- | --- |
+| Robot ROS brain (`ugv_ws`) | `D:\_projects\ugv_ws` + worktrees `D:\_projects\.worktrees\ugv_ws-*` → [Coldaine/ugv_ws](https://github.com/Coldaine/ugv_ws) |
+| On-robot checkout | `beast@beast-01:~/beast/ugv_ws` (same GitHub remote) |
+| Cluster / Flux manifests | `coldaine-homelab` |
+| Bulk vendor archives | object storage; index in `keyArtifactstosort/reference/INDEX.md` |
+
+Research bodies live in Postgres, not the repo. Full dual-repo map:
+[`docs/beast-control-topology.md`](docs/beast-control-topology.md).
 
 ## Run it
 

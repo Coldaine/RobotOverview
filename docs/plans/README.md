@@ -12,9 +12,15 @@ disagree, the code is right and the plan is stale.
 
 | Plan | What it covers | Blocking? |
 | --- | --- | --- |
-| [BEAST-01 Command Deck + sensor fusion](2026-07-31-beast-command-deck-plan.md) | Standalone cockpit (foxglove_bridge + interchangeable clients) and the twist_mux safety spine, sequenced into per-repo PRs. Approved direction is the companion [cockpit spec](2026-07-31-beast-command-deck-spec.md); staging configs in [`beast-command-deck-drafts/`](beast-command-deck-drafts/) land in `ugv_ws` PRs, then get deleted. | Phase D gates on the beast-paces Phase 2 watchdog re-gate; motion stays software-locked until it passes |
-| [Finish the wiring model](2026-07-30-wiring-model-completion.md) | One spine, two eyes: The Board consumes `wiring.ts`, corpus extraction (schematics, firmware, photos, CAD), facts landed with zone citations, operator answers on screen. Merges the 2026-07-27 unification, extraction, and CAD plans. | Q1/Q2 safety-relevant (wrong 40-pin numbering puts 5 V into a Jetson UART pin); X1 gates drilling |
-| [BEAST NVMe storage — implementation](2026-07-11-beast-nvme-storage-implementation.md) | Command-level storage utility + systemd units for the Jetson. **NOT APPLIED** — targets the robot's `ugv_ws`, not this repo; do not provision until `docs/beast-ops.md` says otherwise. The design decision is folded into `docs/beast-ops.md` (NVMe storage policy). | Parked behind the physical Orin host swap |
+| [BEAST immobile-session execution](2026-08-02-beast-immobile-execution.md) | Session work order while BEAST-01 is powered/plugged/immobile: Wave 0 ground truth → parallel motion-locked landings → on-robot prove (`/scan`, dynamic gate, bridge) → disarmed agent path. Hard-bans arming, crawl+kill, UPS I²C. | Gate A (reachable + motion locked) blocks Waves 1–3; crawl+kill remains deferred |
+| [BEAST-01 Agent Architecture (master)](2026-08-02-beast-agent-architecture.md) | Typed NL → offboard LLM → bounded Jetson skills; consolidated architecture + sequencing ladder. Subplans: [safety spine](2026-08-02-beast-agent-pr1-safety-spine.md) · [power](2026-08-02-beast-agent-pr2-power-telemetry.md) · [lidar/slam/nav](2026-08-02-beast-agent-pr3-lidar-slam-nav.md) · [agent command](2026-08-02-beast-agent-pr4-agent-command.md) · [hygiene](2026-08-02-beast-agent-pr5-hygiene.md). Absorbs the Command Deck workstream's remaining ugv_ws phases; its [cockpit spec](archived/2026-07-31-beast-command-deck-spec.md) stays the approved contract (archived, pending extraction). | Set 1 watchdog re-gate blocks all motion-bearing work |
+
+## Archived (pending extraction, then deletion)
+
+Everything not in the accepted 2026-08-02 set was moved to [`archived/`](archived/) on
+2026-08-02 — currently the Command Deck cockpit spec and the wiring-model plan. See
+[`archived/README.md`](archived/README.md) for what still matters in each and where it
+gets extracted to. They are not live work orders and will be deleted after extraction.
 
 ## Related, outside this directory
 
@@ -25,3 +31,7 @@ disagree, the code is right and the plan is stale.
 - `keyArtifactstosort/agents.md` — binaries-only retention for that tree
 - Robot-control LLM research (RND-ROBOT-LLM) lives as a Datacore briefing in Postgres,
   not as repo markdown
+- Cockpit future enhancements (optics / spatial / teleop idea bank) —
+  Datacore [`/datacore/briefing/beast-cockpit-future-roadmap`](/datacore/briefing/beast-cockpit-future-roadmap);
+  thin pointer [`docs/beast-cockpit-future-roadmap.md`](../beast-cockpit-future-roadmap.md)
+  (not a live work order under this directory)

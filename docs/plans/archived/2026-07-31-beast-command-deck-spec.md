@@ -1,9 +1,9 @@
 # BEAST-01 Command Deck — cockpit specification
 
 **Status:** SPEC (approved direction) — 2026-07-31. The visual direction was signed off by the
-owner against the design-study mockup (see [Visual language](#visual-language)). Implementation
-is sequenced in the companion plan:
-[`2026-07-31-beast-command-deck-plan.md`](2026-07-31-beast-command-deck-plan.md).
+owner against the design-study mockup (see [Visual language](#visual-language)). The companion
+plan was absorbed and deleted; remaining work is sequenced in the
+[2026-08-02 master plan](../2026-08-02-beast-agent-architecture.md) (Set 1b bridge deploy).
 
 **Scope decision (owner, 2026-07-31 - Updated):** The Command Deck is a route inside the
 Hangar app (`/cockpit`) with on-screen teleop controls implemented in its initial release. The
@@ -123,7 +123,7 @@ rejected for this 8 GB board.
 The cockpit uses the Hangar's Engineering-HUD system verbatim (`src/app/globals.css` tokens):
 void/hull/panel grounds, cyan `#36e0e0` telemetry accent, amber `#ffb020` command/warning
 accent, signal ok/warn/crit, JetBrains Mono labels, blueprint grid. Approved design study:
-mockup file at [`beast-command-deck-drafts/beast-command-deck.html`](beast-command-deck-drafts/beast-command-deck.html)
+mockup file `beast-command-deck-drafts/beast-command-deck.html` (staging drafts since deleted; recoverable from git history)
 (artifact: <https://claude.ai/code/artifact/2876c73f-4e76-44ca-8d41-e32458aefd04>). The mockup
 is the blueprint for the in-app `/cockpit` surface.
 

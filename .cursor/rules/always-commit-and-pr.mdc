@@ -1,0 +1,16 @@
+---
+description: Always commit finished work and open a GitHub PR — never leave session deliverables only local
+alwaysApply: true
+---
+
+# Always commit and open a PR
+
+When you finish a coherent unit of work (feature, fix, docs, robot sync, plan set):
+
+1. **Commit** it on a named branch (create one if needed). Do not leave the only copy as an uncommitted working tree or an unpushed worktree tip “for later.”
+2. **Push** with `-u` if the branch has no upstream.
+3. **Open a PR** with `gh pr create` (or stacked PRs across repos). Include summary + test plan. Return the PR URL(s) in your reply.
+4. **Cross-repo work** (Hangar + `ugv_ws`): open a PR in **each** repo that changed. Robot-only or Hangar-only still gets a PR in that repo.
+5. **Do not** treat “commit locally / don’t push / don’t open a PR” as the default for multitask or subagents — that default is forbidden unless the user explicitly says not to commit or not to open a PR.
+
+Exceptions only when the user explicitly says: do not commit, do not push, or do not open a PR.
