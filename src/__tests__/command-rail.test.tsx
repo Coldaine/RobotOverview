@@ -4,26 +4,15 @@ import { CommandRail } from "@/components/cockpit/CommandRail";
 
 const mocks = vi.hoisted(() => ({
   publish: vi.fn<(topic: string, message: unknown) => boolean>(() => true),
-  writer: true,
-  commandReady: true,
   allowMotion: true as boolean | null,
   isCharging: false,
   isEthernetConnected: false,
 }));
 
 vi.mock("@/lib/ros/client", () => ({
-  ESTOP_MUX_SOURCE: "E-STOP lock",
   rosClient: { publish: mocks.publish },
   useConnectionState: () => "connected",
   useCockpitBridge: () => ({ faults: [], deadTopics: [] }),
-  useCockpitEstop: () => ({
-    engaged: false,
-    heartbeat: false,
-    releasing: false,
-    engagedAt: null,
-    writer: mocks.writer,
-    commandReady: mocks.commandReady,
-  }),
   useCockpitStatus: () => ({
     muxSource: "NONE",
     commandAge: null,
@@ -61,9 +50,9 @@ describe("CommandRail control lifecycle", () => {
     vi.useFakeTimers();
     mocks.publish.mockClear();
     mocks.publish.mockReturnValue(true);
-    mocks.writer = true;
-    mocks.commandReady = true;
     mocks.allowMotion = true;
+    mocks.isCharging = false;
+    mocks.isEthernetConnected = false;
   });
 
   afterEach(() => {
@@ -120,6 +109,34 @@ describe("CommandRail control lifecycle", () => {
     expect(mocks.publish).not.toHaveBeenCalled();
     expect(
       screen.getAllByText(/robot is charging/i).length,
+    ).toBeGreaterThan(0);
+  });
+
+  it("gates drive controls when motion is disarmed", () => {
+    mocks.allowMotion = false;
+    render(<CommandRail />);
+    act(() => vi.advanceTimersByTime(500));
+    mocks.publish.mockClear();
+
+    fireEvent.keyDown(window, { key: "w", repeat: false });
+
+    expect(mocks.publish).not.toHaveBeenCalled();
+    expect(
+      screen.getAllByText(/motion disarmed/i).length,
+    ).toBeGreaterThan(0);
+  });
+
+  it("gates drive controls on a hardware interlock even while armed", () => {
+    mocks.isEthernetConnected = true;
+    render(<CommandRail />);
+    act(() => vi.advanceTimersByTime(500));
+    mocks.publish.mockClear();
+
+    fireEvent.keyDown(window, { key: "w", repeat: false });
+
+    expect(mocks.publish).not.toHaveBeenCalled();
+    expect(
+      screen.getAllByText(/Ethernet tether connected/i).length,
     ).toBeGreaterThan(0);
   });
 });

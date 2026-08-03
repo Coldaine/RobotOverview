@@ -1,12 +1,11 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import {
   rosClient,
   useCockpitVoltage,
   useCockpitStatus,
-  useCockpitEstop,
   useConnectionState,
-  ESTOP_MUX_SOURCE,
 } from '@/lib/ros/client';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
@@ -22,29 +21,125 @@ function Unknown({ reason = 'no publisher' }: { readonly reason?: string }) {
   );
 }
 
+/** RE-ARM requires the operator to hold the button this long. DISARM does not. */
+const REARM_HOLD_MS = 2000;
+/** How long after a successful service call we wait for the topic echo before
+ * rendering UNCONFIRMED. The status slices re-render this component on every
+ * aggregator tick, so the grace check re-evaluates without a timer. */
+const ECHO_GRACE_MS = 4000;
+
 export function SafetyStrip() {
   const volts = useCockpitVoltage();
   const status = useCockpitStatus();
   const connection = useConnectionState();
-  const estop = useCockpitEstop();
 
   const connected = connection === 'connected';
 
-  const estopEngaged = estop.engaged || status.muxSource === ESTOP_MUX_SOURCE;
+  // A hardware interlock (charging / Ethernet) means ugv_safety_monitor will
+  // re-disarm any re-arm attempt, so offering RE-ARM then is a lie.
+  const interlocked = status.isCharging === true || status.isEthernetConnected === true;
+  const interlockReason = status.isCharging === true
+    ? 'charging interlock'
+    : status.isEthernetConnected === true
+      ? 'ethernet interlock'
+      : null;
 
-  const handleEstop = () => {
-    if (!connected) return;
-    rosClient.setEstopLock(!estopEngaged);
+  // The last service call we made: its TARGET allow_motion and when. Rendered
+  // state is derived, never synced by an effect. "Now" comes from the status
+  // slice's own receivedAt — pure store state that advances on every aggregator
+  // tick, so a silent bridge reads as UNCONFIRMED, not as "still waiting".
+  //   target unmet + inside grace → "awaiting robot echo"
+  //   target unmet + past grace   → UNCONFIRMED (the robot never echoed)
+  //   target met                  → confirmed; the request is history
+  const [request, setRequest] = useState<{ target: boolean; at: number } | null>(null);
+  const [armFault, setArmFault] = useState<string | null>(null);
+  const [holding, setHolding] = useState(false);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const targetMet = request !== null && status.allowMotion === request.target;
+  const now = status.receivedAt ?? request?.at ?? 0;
+  const awaitingEcho =
+    request !== null && !targetMet && now - request.at < ECHO_GRACE_MS;
+  const echoTimedOut =
+    request !== null && !targetMet && !awaitingEcho;
+
+  useEffect(() => () => {
+    if (holdTimer.current) clearTimeout(holdTimer.current);
+  }, []);
+
+  const requestMotion = async (allow: boolean) => {
+    setArmFault(null);
+    setRequest({ target: allow, at: Date.now() });
+    const result = await rosClient.setMotionAllowed(allow);
+    if (!result.ok) {
+      setRequest(null);
+      setArmFault(
+        `${allow ? 'RE-ARM' : 'DISARM'} UNCONFIRMED — ${result.message ?? 'service call failed'}. Robot state unknown; check /ugv/allow_motion.`,
+      );
+    }
   };
 
-  const estopLabel = !connected ? 'OFFLINE' : estopEngaged ? 'ESTOP ENGAGED' : 'E-STOP';
-  const estopCaption = !connected ? 'offline' : estopEngaged ? 'software lock active' : 'click to latch stop';
-  const estopBtnCls = !connected
+  const startRearmHold = () => {
+    if (holdTimer.current || awaitingEcho) return;
+    setHolding(true);
+    holdTimer.current = setTimeout(() => {
+      holdTimer.current = null;
+      setHolding(false);
+      void requestMotion(true);
+    }, REARM_HOLD_MS);
+  };
+
+  const cancelRearmHold = () => {
+    if (holdTimer.current) {
+      clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+    setHolding(false);
+  };
+
+  const disarmed = status.allowMotion === false;
+  const unconfirmed = !awaitingEcho && (armFault !== null || echoTimedOut);
+  const rearmBlocked = disarmed && interlocked;
+
+  const armLabel = !connected
+    ? 'OFFLINE'
+    : awaitingEcho
+        ? request?.target === false
+          ? 'DISARMING…'
+          : 'RE-ARMING…'
+      : status.allowMotion === false
+        ? interlocked
+          ? 'LOCKED'
+          : holding
+            ? 'KEEP HOLDING…'
+            : 'RE-ARM · HOLD 2S'
+        : 'DISARM';
+  const armCaption = !connected
+    ? 'offline'
+      : unconfirmed
+        ? 'UNCONFIRMED'
+      : awaitingEcho
+        ? 'awaiting robot echo'
+        : interlocked
+          ? (interlockReason ?? 'interlock')
+             : status.allowMotion === null
+             ? 'state unknown — disarm to be safe'
+            : status.allowMotion
+              ? 'one click — stops all motion'
+              : 'hold to re-enable motion';
+  const armDisabled =
+    !connected || awaitingEcho || unconfirmed || rearmBlocked;
+  const armBtnCls = !connected
     ? 'border-zinc-600 bg-zinc-900/40 text-zinc-500 cursor-not-allowed'
-    : estopEngaged
-      ? 'border-red-500 bg-red-950/60 text-red-300 shadow-hud-red text-glow-red animate-pulse'
-      : 'border-red-500/50 bg-panel-2/40 text-red-400 hover:bg-red-950/30';
-  const estopCaptionCls = !connected ? 'text-zinc-500' : estopEngaged ? 'text-red-300' : 'text-ink-dim';
+    : unconfirmed
+      ? 'border-red-500 bg-red-950/60 text-red-300 shadow-hud-red text-glow-red'
+      : rearmBlocked
+        ? 'border-amber-500/60 bg-amber-950/30 text-amber-400 cursor-not-allowed'
+        : disarmed
+          ? 'border-emerald-500/50 bg-panel-2/40 text-emerald-400 hover:bg-emerald-950/30'
+          : 'border-red-500/50 bg-panel-2/40 text-red-400 hover:bg-red-950/30';
+  const armCaptionCls =
+    !connected ? 'text-zinc-500' : unconfirmed ? 'text-red-300' : 'text-ink-dim';
 
   // Calculate voltage slider progress (range 8.8V - 12.6V)
   const minVolts = 8.8;
@@ -56,36 +151,61 @@ export function SafetyStrip() {
   const voltStale = volts.stale && volts.hasReceived;
 
   return (
-    <motion.section 
-      className="panel border-rim bg-panel/85 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5 p-4 items-stretch shadow-md relative overflow-hidden" 
+    <motion.section
+      className="panel border-rim bg-panel/85 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5 p-4 items-stretch shadow-md relative overflow-hidden"
       aria-label="Safety strip"
-      animate={estopEngaged ? { borderColor: ["#404040", "#ef4444", "#404040"] } : {}}
-      transition={estopEngaged ? { repeat: Infinity, duration: 1.5 } : {}}
+      animate={disarmed ? { borderColor: ["#404040", "#f59e0b", "#404040"] } : {}}
+      transition={disarmed ? { repeat: Infinity, duration: 1.5 } : {}}
     >
       {/* SCANLINE SHEEN EFFECT */}
       <div className="pointer-events-none absolute inset-0 z-0 bg-[repeating-linear-gradient(0deg,rgba(255,255,255,0.015)_0_1px,transparent_1px_3px)] opacity-50" />
 
-      {/* ── E-STOP BUTTON ───────────────────────── */}
+      {/* ── MOTION AUTHORITY (DISARM / RE-ARM) ──── */}
       <button
-        onClick={handleEstop}
-        disabled={!connected}
+        onClick={() => {
+          if (status.allowMotion !== false) void requestMotion(false);
+        }}
+        onPointerDown={() => {
+          if (status.allowMotion === false) startRearmHold();
+        }}
+        onPointerUp={cancelRearmHold}
+        onPointerLeave={cancelRearmHold}
+        onPointerCancel={cancelRearmHold}
+        disabled={armDisabled}
         className={clsx(
-          'relative z-10 flex flex-col items-center justify-center gap-1.5 rounded-lg border px-4 py-3 font-display font-black tracking-widest text-sm transition-all shadow-inner select-none',
-          estopBtnCls,
+          'relative z-10 flex flex-col items-center justify-center gap-1.5 rounded-lg border px-4 py-3 font-display font-black tracking-widest text-sm transition-all shadow-inner select-none overflow-hidden',
+          armBtnCls,
         )}
       >
-        <span>{estopLabel}</span>
-        <small className={clsx('font-mono text-[9px] uppercase tracking-wider font-bold', estopCaptionCls)}>
-          {estopCaption}
+        {/* Hold-to-confirm progress fill behind the RE-ARM label */}
+        {holding && (
+          <motion.div
+            className="absolute inset-y-0 left-0 bg-emerald-500/25"
+            initial={{ width: '0%' }}
+            animate={{ width: '100%' }}
+            transition={{ duration: REARM_HOLD_MS / 1000, ease: 'linear' }}
+          />
+        )}
+        <span className="relative">{armLabel}</span>
+        <small className={clsx('relative font-mono text-[9px] uppercase tracking-wider font-bold', armCaptionCls)}>
+          {armCaption}
         </small>
       </button>
 
       {/* ── MOTION STATE ────────────────────────── */}
       <div className="flex flex-col justify-center min-w-0 z-10">
         <span className="hud-label text-[10px]">Motion state</span>
-        {status.allowMotion === null ? (
+        {unconfirmed ? (
+          <span className="font-mono text-lg font-bold tracking-wide mt-0.5 flex items-center gap-1.5 text-red-300 text-glow-red">
+            <ShieldAlert className="h-4 w-4" /> UNCONFIRMED
+          </span>
+        ) : status.allowMotion === null ? (
           <span className="font-mono text-lg font-bold tracking-wide mt-0.5 flex items-center gap-1.5">
             <Unknown reason="no allow_motion publisher" />
+          </span>
+        ) : interlocked ? (
+          <span className="font-mono text-lg font-bold tracking-wide flex items-center gap-1.5 mt-0.5 text-amber-400 text-glow-amber">
+            <ShieldAlert className="h-4 w-4 animate-pulse" /> LOCKED
           </span>
         ) : status.allowMotion ? (
           <span
@@ -103,16 +223,25 @@ export function SafetyStrip() {
               status.stale ? 'text-ink-dim line-through' : 'text-amber-400 text-glow-amber',
             )}
           >
-            <ShieldAlert className="h-4 w-4 animate-pulse" /> LOCKED
+            <ShieldAlert className="h-4 w-4 animate-pulse" /> DISARMED
           </span>
         )}
         <span className="font-mono text-[10px] text-ink-dim truncate mt-1">
           {status.allowMotion === null
-            ? '/ugv/allow_motion not deployed'
+            ? '/ugv/allow_motion silent'
             : status.allowMotion
-              ? 'Live operation active'
-              : 're-gate: beast-paces Ph.2 pending'}
+              ? 'motion permitted — ugv_bringup gate open'
+              : (interlockReason ?? 'disarmed via /ugv/set_allow_motion')}
         </span>
+        {armFault && (
+          <span className="font-mono text-[9.5px] text-red-400 leading-tight mt-1">{armFault}</span>
+        )}
+        {echoTimedOut && !armFault && (
+          <span className="font-mono text-[9.5px] text-red-400 leading-tight mt-1">
+            {request?.target === false ? 'DISARM' : 'RE-ARM'} UNCONFIRMED — service answered
+            but no /ugv/allow_motion echo within {ECHO_GRACE_MS / 1000}s.
+          </span>
+        )}
       </div>
 
       {/* ── WATCHDOG ────────────────────────────── */}

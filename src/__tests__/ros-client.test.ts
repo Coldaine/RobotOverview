@@ -7,11 +7,11 @@ import {
   useCockpitOverheadClearance,
   useCockpitScan,
   useCockpitStatus,
-  useCockpitEstop,
   useCockpitBridge,
   useCockpitDiagnostics,
   ROS_SUBSCRIPTIONS,
   ROS_PUBLICATIONS,
+  SET_ALLOW_MOTION_SERVICE,
   LIDAR_CROP_SECTOR_DEG,
 } from '@/lib/ros/client';
 import { renderHook, act } from '@testing-library/react';
@@ -63,16 +63,6 @@ class MockWebSocket {
   }
 }
 
-const ESTOP_TOPIC = '/cmd_vel_estop_lock';
-
-// Every `{data: …}` value this client has put on the lock topic, in order.
-function estopPublishes(ws: MockWebSocket): boolean[] {
-  return ws.send.mock.calls
-    .map((c) => JSON.parse(c[0]))
-    .filter((m) => m.op === 'publish' && m.topic === ESTOP_TOPIC)
-    .map((m) => m.msg.data as boolean);
-}
-
 function wireOps(ws: MockWebSocket): Array<{ op: string; topic?: string; type?: string; id?: string }> {
   return ws.send.mock.calls.map((c) => JSON.parse(c[0]));
 }
@@ -93,9 +83,6 @@ describe('rosClient and hooks', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    // Operator intent is module state that deliberately outlives the socket, so
-    // it has to be cleared explicitly or it bleeds into the next test.
-    rosClient.clearEstopIntent();
     rosClient.disconnect();
     MockWebSocket.latestInstance = null;
   });
@@ -188,7 +175,8 @@ describe('rosClient and hooks', () => {
       // Float32 topic above; they are different robot-side subscribers.
       '/pt_joint_position_controller/commands': 'std_msgs/msg/Float64MultiArray',
       '/ugv/pt_steady_ctrl': 'std_msgs/msg/Float32MultiArray',
-      '/cmd_vel_estop_lock': 'std_msgs/msg/Bool',
+      // No /cmd_vel_estop_lock: the cockpit never publishes mux locks. Motion
+      // authority is the /ugv/set_allow_motion SERVICE call.
     };
 
     it('declares exactly the robot-side topic set', () => {
@@ -668,52 +656,114 @@ describe('rosClient and hooks', () => {
     });
   });
 
-  // ── E-STOP LOCK REPUBLISH CONTRACT ────────────────────────────────────────
-  // twist_mux takes lock topics with VOLATILE durability at `timeout: 0.0`, so
-  // a one-shot publish can lose the discovery race and the lock does not
-  // survive a mux restart. The client must hold the lock at >= 1 Hz.
-  describe('e-stop lock republish contract', () => {
-    it('republishes `true` at >= 1 Hz for as long as the stop is engaged', () => {
+  // ── SERVICE CALL CONTRACT (/ugv/set_allow_motion) ─────────────────────────
+  // The cockpit never publishes mux locks. Disarm/re-arm is a SetBool service
+  // call, and the Promise answers only "did the service call complete" — the
+  // /ugv/allow_motion topic echo is the confirmation.
+  describe('service call tracking', () => {
+    function lastServiceCall(ws: MockWebSocket): { service: string; args: { data: boolean }; id: string } {
+      const calls = wireOps(ws).filter((o) => o.op === 'call_service');
+      expect(calls).toHaveLength(1);
+      return calls[0] as unknown as { service: string; args: { data: boolean }; id: string };
+    }
+
+    it('sends SetBool to /ugv/set_allow_motion and resolves ok on service_response', async () => {
       const ws = openSocket();
       ws.send.mockClear();
 
+      let result: Awaited<ReturnType<typeof rosClient.setMotionAllowed>> | null = null;
       act(() => {
-        expect(rosClient.setEstopLock(true)).toBe(true);
+        void rosClient.setMotionAllowed(false).then((r) => { result = r; });
       });
 
-      // The stop must land on the wire on the click.
-      expect(estopPublishes(ws)).toEqual([true]);
-      expect(rosClient.isEstopEngaged()).toBe(true);
+      const call = lastServiceCall(ws);
+      expect(call.service).toBe(SET_ALLOW_MOTION_SERVICE);
+      expect(call.args).toEqual({ data: false });
+      expect(call.id).toMatch(/^call_/);
+
+      await act(async () => {
+        ws.triggerMessage({
+          op: 'service_response',
+          service: SET_ALLOW_MOTION_SERVICE,
+          id: call.id,
+          result: true,
+          values: { success: true, message: 'motion disabled' },
+        });
+      });
+
+      expect(result).toEqual({ ok: true, message: 'motion disabled' });
     });
 
-    it('publishes `false` on release', () => {
+    it('resolves not-ok when the service answers success:false', async () => {
       const ws = openSocket();
-      act(() => {
-        rosClient.setEstopLock(true);
-      });
       ws.send.mockClear();
 
+      let result: Awaited<ReturnType<typeof rosClient.setMotionAllowed>> | null = null;
       act(() => {
-        rosClient.setEstopLock(false);
+        void rosClient.setMotionAllowed(true).then((r) => { result = r; });
       });
-      expect(estopPublishes(ws)).toEqual([false]);
-      expect(rosClient.isEstopEngaged()).toBe(false);
+      const call = lastServiceCall(ws);
+
+      await act(async () => {
+        ws.triggerMessage({
+          op: 'service_response',
+          service: SET_ALLOW_MOTION_SERVICE,
+          id: call.id,
+          result: true,
+          values: { success: false, message: 'refused: ethernet interlock active' },
+        });
+      });
+
+      expect(result).toEqual({ ok: false, message: 'refused: ethernet interlock active' });
     });
 
-    it('stamps when intent latched', () => {
-      openSocket();
-      const hook = renderHook(() => useCockpitEstop());
+    it('resolves not-ok on timeout instead of hanging', async () => {
+      const ws = openSocket();
+      ws.send.mockClear();
 
-      expect(hook.result.current.engagedAt).toBeNull();
+      const results: Array<Awaited<ReturnType<typeof rosClient.setMotionAllowed>>> = [];
       act(() => {
-        rosClient.setEstopLock(true);
+        void rosClient.setMotionAllowed(false).then((r) => { results.push(r); });
       });
-      expect(hook.result.current.engagedAt).toBeTypeOf('number');
+      lastServiceCall(ws);
 
-      act(() => {
-        rosClient.setEstopLock(false);
+      await act(async () => {
+        vi.advanceTimersByTime(3500);
       });
-      expect(hook.result.current.engagedAt).toBeNull();
+
+      expect(results[0]?.ok).toBe(false);
+      expect(results[0]?.message).toMatch(/no service_response/);
+    });
+
+    it('resolves not-ok for in-flight calls when the socket closes', async () => {
+      const ws = openSocket();
+      ws.send.mockClear();
+
+      const results: Array<Awaited<ReturnType<typeof rosClient.setMotionAllowed>>> = [];
+      act(() => {
+        void rosClient.setMotionAllowed(false).then((r) => { results.push(r); });
+      });
+      lastServiceCall(ws);
+
+      await act(async () => {
+        ws.triggerClose();
+      });
+
+      expect(results[0]?.ok).toBe(false);
+      expect(results[0]?.message).toMatch(/socket/);
+    });
+
+    it('resolves not-ok immediately when the socket is not open', async () => {
+      const result = await rosClient.setMotionAllowed(false);
+      expect(result).toEqual({ ok: false, message: 'socket not open' });
+    });
+
+    it('ignores a service_response with an unknown id', () => {
+      const ws = openSocket();
+      // Must not throw, and must not touch any other pending call.
+      act(() => {
+        ws.triggerMessage({ op: 'service_response', service: '/whatever', id: 'call_stale', result: true });
+      });
     });
   });
 
@@ -724,7 +774,7 @@ describe('rosClient and hooks', () => {
       ws.send.mockClear();
 
       // Same URL, socket still OPEN — the path taken when the operator returns
-      // to the cockpit with an e-stop held. Previously this returned bare and
+      // to the cockpit after a route change. Previously this returned bare and
       // left the remounted page with no subscriptions.
       act(() => {
         rosClient.connect('wss://beast-test-url:9090');
@@ -735,23 +785,6 @@ describe('rosClient and hooks', () => {
         .map((o) => o.topic);
       expect(topics).toContain('/scan');
       expect(topics).toContain('/cockpit/status');
-    });
-
-    it('unsubscribes the heavy streams without dropping the socket', () => {
-      const ws = openSocket();
-      ws.send.mockClear();
-
-      act(() => {
-        rosClient.releaseHeavyStreams();
-      });
-
-      const unsubscribed = wireOps(ws)
-        .filter((o) => o.op === 'unsubscribe')
-        .map((o) => o.topic);
-      expect(unsubscribed).toEqual(
-        expect.arrayContaining(['/scan', '/oak/rgb/image_raw/compressed', '/cockpit/depth/compressed']),
-      );
-      expect(ws.close).not.toHaveBeenCalled();
     });
   });
 });

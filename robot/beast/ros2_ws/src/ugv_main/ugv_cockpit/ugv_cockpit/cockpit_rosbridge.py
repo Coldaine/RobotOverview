@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
-"""Run rosbridge with only the topic operations the cockpit uses, and only for
+"""Run rosbridge with only the operations the cockpit uses, and only for
 origins the operator has named.
 
 Two monkeypatches, applied in :func:`main` BEFORE the upstream server is
 executed. Both are the whole security control, not hardening on top of one:
 
 1. ``RosbridgeProtocol.rosbridge_capabilities`` is narrowed to the four topic
-   opcodes. Upstream registers 13, including CallService, AdvertiseService,
-   AdvertiseAction and SendActionGoal, and force-adds ``/rosapi/*`` to any
-   non-``None`` ``services_glob`` — so ``services_glob:='[]'`` cannot refuse
-   rosapi if another launch starts it in the same ROS domain. Removing the
-   opcodes is what makes the denial real, and it also closes
-   ``advertise_action``, which upstream does not glob-check at all.
+   opcodes plus CallService. Upstream registers 13; the ones still removed here
+   are AdvertiseService, AdvertiseAction and SendActionGoal — closing
+   ``advertise_action`` matters because upstream does not glob-check it at all.
+   CallService stays because the cockpit's DISARM/RE-ARM control is a
+   ``std_srvs/SetBool`` call to ``/ugv/set_allow_motion``, and it is gated by
+   the closed ``services_glob`` in launch/rosbridge.launch.py, which names
+   exactly that one service. rosbridge force-adds ``/rosapi/*`` to any
+   non-``None`` ``services_glob``; rosapi is not launched anywhere in this
+   workspace, so the forced append matches no live service.
 
 2. ``RosbridgeWebSocket.check_origin`` is replaced. Upstream is
    ``return True`` (humble branch, websocket_handler.py), and WebSocket
@@ -48,6 +51,7 @@ import sys
 
 from ament_index_python.packages import get_package_prefix
 from rosbridge_library.capabilities.advertise import Advertise
+from rosbridge_library.capabilities.call_service import CallService
 from rosbridge_library.capabilities.defragmentation import Defragment
 from rosbridge_library.capabilities.publish import Publish
 from rosbridge_library.capabilities.subscribe import Subscribe
@@ -60,7 +64,7 @@ from ugv_cockpit.cockpit_contract import (
     parse_allowed_origins,
 )
 
-TOPIC_ONLY_CAPABILITIES = (Advertise, Publish, Subscribe, Defragment)
+COCKPIT_CAPABILITIES = (Advertise, Publish, Subscribe, Defragment, CallService)
 
 
 def _check_origin(self, origin):
@@ -119,7 +123,7 @@ def upstream_executable():
 
 def main():
     """Patch the upstream protocol and transport, then run its server."""
-    RosbridgeProtocol.rosbridge_capabilities = TOPIC_ONLY_CAPABILITIES
+    RosbridgeProtocol.rosbridge_capabilities = COCKPIT_CAPABILITIES
     RosbridgeWebSocket.check_origin = _check_origin
 
     _announce(parse_allowed_origins(os.environ.get(ALLOWED_ORIGINS_ENV, '')))

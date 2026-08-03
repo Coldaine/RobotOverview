@@ -21,26 +21,14 @@ export function CockpitClient({ wsUrl }: CockpitClientProps) {
 
   useEffect(() => {
     if (!wsUrl) return;
-    // connect() re-arms subscriptions on an already-open socket, which is the
-    // path taken when we return to the cockpit with an e-stop still held.
+    // connect() re-arms subscriptions on an already-open socket — the path
+    // taken when the cockpit remounts while the socket is still up.
     rosClient.connect(wsUrl);
 
     return () => {
       rosClient.disconnect();
     };
   }, [wsUrl]);
-
-  // Leaving the page entirely with a stop held means nothing will ever publish
-  // the release — the robot stays locked until someone comes back.
-  useEffect(() => {
-    const warn = (e: BeforeUnloadEvent) => {
-      if (!rosClient.isEstopEngaged()) return;
-      e.preventDefault();
-      e.returnValue = '';
-    };
-    window.addEventListener('beforeunload', warn);
-    return () => window.removeEventListener('beforeunload', warn);
-  }, []);
 
   if (!wsUrl) {
     return (

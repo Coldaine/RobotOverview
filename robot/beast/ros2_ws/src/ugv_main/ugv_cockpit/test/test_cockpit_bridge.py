@@ -44,14 +44,21 @@ COCKPIT_DOC = 'docs/cockpit.md'
 # ---------------------------------------------------------------------------
 # The contract, restated independently of the launch file. Extracted from the
 # shipped cockpit client (Coldaine/RobotOverview src/lib/ros/client.ts): the
-# ONLY topics a browser may publish to.
+# ONLY topics a browser may publish to. /cmd_vel_estop_lock is NOT one of them:
+# browser motion authority is the /ugv/set_allow_motion service, not a volatile
+# mux lock publish (the lock topic stays for CLI operators over SSH only).
 # ---------------------------------------------------------------------------
 EXPECTED_PUB_TOPICS = [
     '/cmd_vel_ui',
     '/ugv/led_ctrl',
     '/pt_joint_position_controller/commands',
     '/ugv/pt_steady_ctrl',
-    '/cmd_vel_estop_lock',
+]
+
+# The only service a browser may call: the latched motion authority in
+# ugv_bringup. The cockpit's DISARM/RE-ARM control is a SetBool to this.
+EXPECTED_SERVICES = [
+    '/ugv/set_allow_motion',
 ]
 
 # /imu/raw, not /imu/data: ugv_bringup publishes Imu on "imu/raw" and nothing
@@ -211,7 +218,7 @@ def parse_glob(value):
 def test_publish_glob_is_exactly_the_client_contract(rosbridge_parameters):
     entries = parse_glob(rosbridge_parameters['topics_pub_glob'])
     assert entries == EXPECTED_PUB_TOPICS, (
-        'the publish whitelist must be exactly the five topics the shipped '
+        'the publish whitelist must be exactly the four topics the shipped '
         'cockpit advertises. Adding one is a new control surface on the robot '
         'and needs the same review as a new velocity source.'
     )
@@ -234,8 +241,12 @@ def test_every_twist_mux_rung_is_covered_by_the_forbidden_list():
     rungs = {'/' + entry['topic'].lstrip('/') for entry in params['topics'].values()}
     lock = '/' + params['locks']['estop']['topic'].lstrip('/')
 
-    assert lock in EXPECTED_PUB_TOPICS, (
-        'the e-stop lock must stay publishable for explicit remote assert and release'
+    assert lock not in EXPECTED_PUB_TOPICS, (
+        'the e-stop mux lock must NOT be publishable from the browser. A '
+        'one-shot publish into a VOLATILE lock subscription can lose the '
+        'discovery race (the stop silently does nothing) and lock state does '
+        'not survive a mux restart. Browser disarm goes through the latched '
+        '/ugv/set_allow_motion service; the lock topic is for CLI operators.'
     )
     # The UI rung is the one drive input a browser is allowed to reach.
     unguarded = rungs - set(FORBIDDEN_PUB_TOPICS) - {'/cmd_vel_ui'}
@@ -319,8 +330,16 @@ def test_legacy_topics_glob_is_never_set(rosbridge_parameters):
     )
 
 
-def test_services_and_actions_are_denied(rosbridge_parameters):
-    assert parse_glob(rosbridge_parameters['services_glob']) == []
+def test_services_glob_is_exactly_the_motion_authority(rosbridge_parameters):
+    """One callable service, by exact name — everything else is refused."""
+    assert parse_glob(rosbridge_parameters['services_glob']) == EXPECTED_SERVICES, (
+        'services_glob must name exactly /ugv/set_allow_motion. Any wider and '
+        'the browser gains a new control surface; empty and the DISARM control '
+        'silently dies (denials are invisible to the client).'
+    )
+
+
+def test_actions_are_denied(rosbridge_parameters):
     assert parse_glob(rosbridge_parameters['actions_glob']) == []
 
 
@@ -328,12 +347,13 @@ def test_services_and_actions_are_denied(rosbridge_parameters):
 # (d) no rosapi — the mitigation for rosbridge's forced '/rosapi/*' append
 # --------------------------------------------------------------------------
 def test_no_rosapi_node_is_launched(launch_tree):
-    """``services_glob:='[]'`` is not enough on its own.
+    """Not launching rosapi is what keeps the forced append matching nothing.
 
-    rosbridge force-appends '/rosapi/*' to any non-None services_glob, so an
-    empty services list still admits rosapi's introspection AND
-    /rosapi/set_param — which would let a browser flip allow_motion. Not
-    launching the node is what makes the denial real.
+    rosbridge force-appends '/rosapi/*' to any non-None services_glob — and
+    ours is non-None now, naming /ugv/set_allow_motion. If a rosapi node ran
+    in this ROS domain, the browser would gain its introspection AND
+    /rosapi/set_param, which configuration cannot deny. Not launching the node
+    is the only real refusal.
     """
     packages = {
         literal(kwargs['package']) for kwargs in node_calls(launch_tree)
@@ -356,7 +376,6 @@ def test_no_rosapi_node_is_launched(launch_tree):
 
 
 FORBIDDEN_CAPABILITIES = (
-    'CallService',
     'AdvertiseService',
     'SendActionGoal',
     'AdvertiseAction',
@@ -414,16 +433,16 @@ def patch_assignment_line(main_node, receiver, attribute, expected_value):
     return None
 
 
-def test_bridge_registers_topic_operations_only(wrapper_tree):
+def test_bridge_registers_the_cockpit_capability_set(wrapper_tree):
     """The tuple's CONTENTS. test_the_capability_patch_is_executed does the rest."""
     assignment = next(
         node for node in wrapper_tree.body
         if isinstance(node, ast.Assign)
-        and any(isinstance(target, ast.Name) and target.id == 'TOPIC_ONLY_CAPABILITIES'
+        and any(isinstance(target, ast.Name) and target.id == 'COCKPIT_CAPABILITIES'
                 for target in node.targets)
     )
     names = [elt.id for elt in assignment.value.elts]
-    assert names == ['Advertise', 'Publish', 'Subscribe', 'Defragment']
+    assert names == ['Advertise', 'Publish', 'Subscribe', 'Defragment', 'CallService']
 
     # Identifiers, not raw text: the module's prose names the opcodes it
     # removes, and explaining a security control must not break the test for it.
@@ -442,26 +461,26 @@ def test_bridge_registers_topic_operations_only(wrapper_tree):
 
 
 def test_the_capability_patch_is_executed_before_upstream_runs(wrapper_tree):
-    """A correct TOPIC_ONLY_CAPABILITIES that is never assigned is decoration.
+    """A correct COCKPIT_CAPABILITIES that is never assigned is decoration.
 
     Deleting the single line
-    ``RosbridgeProtocol.rosbridge_capabilities = TOPIC_ONLY_CAPABILITIES``
+    ``RosbridgeProtocol.rosbridge_capabilities = COCKPIT_CAPABILITIES``
     leaves the tuple, the imports and every other assertion in this file intact
     and green, while the bridge silently degrades to stock rosbridge with all 13
-    upstream capabilities — CallService, AdvertiseService, SendActionGoal and
+    upstream capabilities — AdvertiseService, SendActionGoal and
     AdvertiseAction included. That is the entire service/action boundary gone,
     with nothing to see in a diff review but one absent line.
     """
     main_node = wrapper_main(wrapper_tree)
     line = patch_assignment_line(
         main_node, 'RosbridgeProtocol', 'rosbridge_capabilities',
-        'TOPIC_ONLY_CAPABILITIES',
+        'COCKPIT_CAPABILITIES',
     )
     assert line is not None, (
         '%s: main() must contain the statement RosbridgeProtocol.'
-        'rosbridge_capabilities = TOPIC_ONLY_CAPABILITIES. Without it the '
-        'topic-only protocol is never installed and the bridge runs stock, '
-        'with the service and action opcodes registered.' % PROTOCOL_WRAPPER
+        'rosbridge_capabilities = COCKPIT_CAPABILITIES. Without it the '
+        'narrowed protocol is never installed and the bridge runs stock, '
+        'with the service-advertising and action opcodes registered.' % PROTOCOL_WRAPPER
     )
     assert line < upstream_invocation_line(main_node), (
         '%s: the capability patch must run BEFORE control passes to upstream. '
