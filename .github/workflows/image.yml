@@ -19,7 +19,7 @@ concurrency:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: coldaine/robot-overview
+  IMAGE_NAME: moosegooseconsulting/robot-overview
 
 jobs:
   image:
