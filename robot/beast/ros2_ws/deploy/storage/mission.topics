@@ -1,0 +1,21 @@
+# Merge this explicit list with blackbox.topics before activation. Confirm each OAK alias from
+# `ros2 topic list` on BEAST-01; do not enable recording while an alias is unverified.
+/cmd_vel
+/ugv/voltage
+/imu/raw
+/imu/mag
+/odom/odom_raw
+/odom_wheel
+/odom
+/joint_states
+/tf
+/tf_static
+/scan
+/rosout
+/image_raw
+/camera_info
+/oak/rgb/preview/image_raw
+/oak/rgb/preview/camera_info
+/oak/stereo/image_raw
+/oak/stereo/camera_info
+/oak/stereo/imu

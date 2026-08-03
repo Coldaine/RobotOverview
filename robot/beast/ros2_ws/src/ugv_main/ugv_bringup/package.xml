@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ugv_bringup</name>
+  <version>0.0.1</version>
+  <description>This package provides UGV driving functionality and wheel odometry.</description>
+  <maintainer email="dudulrx@todo.todo">dudulrx</maintainer>
+  <license>Apache-2.0</license>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>rcl_interfaces</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf2_ros</depend>
+  <!-- /ugv/watchdog_state is a DiagnosticStatus: the cockpit's safety strip
+       reads armed/fired from it (see ugv_cockpit/cockpit_status.py). -->
+  <depend>diagnostic_msgs</depend>
+  <!-- Command spine: bringup_lidar.launch.py includes ugv_cockpit's
+       twist_mux.launch.py, which owns the only /cmd_vel publisher. -->
+  <exec_depend>ugv_cockpit</exec_depend>
+  <exec_depend>python3-netifaces</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-serial</exec_depend>
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

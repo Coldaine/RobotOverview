@@ -1,0 +1,13 @@
+# Stable base-state context only. Do not replace this allowlist with --all.
+/cmd_vel
+/ugv/voltage
+/imu/raw
+/imu/mag
+/odom/odom_raw
+/odom_wheel
+/odom
+/joint_states
+/tf
+/tf_static
+/scan
+/rosout

@@ -1,0 +1,21 @@
+<package format="2">
+  <name>ugv_description</name>
+  <version>0.0.1</version>
+  <description>This package provides the Xacro description model and mesh file for UGV.</description>
+  <maintainer email="dudulrx@todo.todo">dudulrx</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>controller_manager</depend>
+  <depend>position_controllers</depend>
+  <depend>joint_state_broadcaster</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>rviz2</depend>
+  <depend>joint_state_publisher_gui</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>depthai_descriptions</depend>
+  <depend>xacro</depend>
+  <export>
+    <architecture_independent />
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

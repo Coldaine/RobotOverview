@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<robot name="ugv_rover" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:macro name="use_gazebo" params="use_gazebo"></xacro:macro>
+<xacro:arg name="use_gazebo" default="false"/>
+<xacro:property name="use_gazebo" value="$(arg use_gazebo)"/>
+
+<xacro:macro name="GZ_VERSION" params="GZ_VERSION"></xacro:macro>
+<xacro:arg name="GZ_VERSION" default="classic"/>
+<xacro:property name="GZ_VERSION" value="$(arg GZ_VERSION)"/>
+
+<xacro:macro name="add_pt" params="add_pt"></xacro:macro>
+<xacro:arg name="add_pt" default="true"/>
+<xacro:property name="add_pt" value="$(arg add_pt)"/>
+
+<xacro:macro name="add_depth_camera" params="add_depth_camera"></xacro:macro>
+<xacro:arg name="add_depth_camera" default="false"/>
+<xacro:property name="add_depth_camera" value="$(arg add_depth_camera)"/>
+
+<xacro:arg name="robot_namespace" default="/" />
+<xacro:arg name="urdf_extras" default="empty.urdf" />
+
+<xacro:include filename="$(find ugv_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find ugv_description)/urdf/wheels/rover_wheel.xacro" />
+<xacro:include filename="$(find ugv_description)/urdf/sensors/lidar.xacro" />
+<xacro:property name="lidar_joint_pose">
+  <origin xyz="0.03170 -0.00102 0.04" rpy="0 0 1.5708"/>
+</xacro:property>
+<xacro:lidar> 
+<xacro:insert_block name="lidar_joint_pose" />
+</xacro:lidar>
+
+<xacro:unless value="${add_depth_camera}">
+<xacro:include filename="$(find ugv_description)/urdf/sensors/3d_camera.xacro" />
+<xacro:oak use_gazebo="$(arg use_gazebo)">
+  <origin xyz="0.06531 0 0.021953" rpy="0 0 0" />
+</xacro:oak>
+</xacro:unless>
+
+<xacro:if value="${add_pt}">
+<xacro:include filename="$(find ugv_description)/urdf/sensors/pt.xacro"/>
+<xacro:pt use_gazebo="$(arg use_gazebo)" GZ_VERSION="$(arg GZ_VERSION)" pt_base_link_joint_pose_z="0.04" initial_positions_file="$(find ugv_description)/config/initial_positions.yaml"/>
+</xacro:if>
+
+<xacro:if value="${use_gazebo}">
+<xacro:include filename="$(find ugv_description)/urdf/gazebo/ugv_rover.gazebo"/>
+<xacro:gazebo GZ_VERSION="$(arg GZ_VERSION)"/>
+</xacro:if>
+
+<xacro:property name="base_inertial">
+  <inertial>
+    <origin xyz="0.0 0 -0.0205" rpy="0 0 0" />
+    <mass value="2.1852443" />
+    <inertia ixx="0.012344031" ixy="0" ixz="0" iyy="0.01362398" iyz="0" izz="0.020616949" />
+  </inertial>
+</xacro:property>
+
+<xacro:property name="base_pose">
+  <origin xyz="0 0 0" rpy="0 0 0" />
+</xacro:property>
+
+<xacro:property name="base_joint_pose">
+  <origin xyz="0 0 0.081" rpy="0 0 0"/>
+</xacro:property>
+    
+<link name="base_footprint"></link>
+
+<link name="base_link">
+  <xacro:insert_block name="base_inertial" />
+  <visual>
+    <xacro:insert_block name="base_pose"/>
+    <geometry>
+      <mesh filename="file://$(find ugv_description)/meshes/bases/ugv_rover_base.stl" scale="1.0 1.0 1.0"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <xacro:insert_block name="base_pose"/>
+    <geometry>
+      <mesh filename="file://$(find ugv_description)/meshes/bases/ugv_rover_base.stl" scale="1.0 1.0 1.0"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="base_joint" type="fixed">
+  <parent link="base_footprint"/>
+  <child link="base_link"/>
+  <xacro:insert_block name="base_joint_pose" />
+</joint>
+
+<xacro:property name="wheel_joint_pose_x" value="0.0855"/>
+<xacro:property name="wheel_joint_pose_y" value="0.08725"/>
+<xacro:property name="wheel_joint_pose_z" value="-0.041212"/>
+
+<xacro:wheel wheel_prefix="left_up">
+  <origin xyz="${wheel_joint_pose_x} ${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="0 0 0" />
+</xacro:wheel>
+
+<xacro:wheel wheel_prefix="left_down">
+  <origin xyz="-${wheel_joint_pose_x} ${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="0 0 0" />
+</xacro:wheel>
+
+<xacro:wheel wheel_prefix="right_up">
+  <origin xyz="${wheel_joint_pose_x} -${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="0 0 0" />
+</xacro:wheel>
+
+<xacro:wheel wheel_prefix="right_down">
+  <origin xyz="-${wheel_joint_pose_x} -${wheel_joint_pose_y} ${wheel_joint_pose_z}" rpy="0 0 0" />
+</xacro:wheel>  
+
+<xacro:include filename="$(arg urdf_extras)" />
+
+</robot>

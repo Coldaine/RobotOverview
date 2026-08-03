@@ -1,0 +1,15 @@
+[Unit]
+Description=BEAST recording retention and NVMe status
+Requires=beast-storage-prepare.service
+After=beast-storage-prepare.service
+
+[Service]
+Type=oneshot
+User=root
+Group=beast
+UMask=0027
+ExecStart=/usr/bin/python3 /usr/local/lib/beast-storage/beast_storage.py maintain
+ProtectSystem=strict
+ReadWritePaths=/data/beast /var/lib/beast/storage
+NoNewPrivileges=true
+PrivateTmp=true

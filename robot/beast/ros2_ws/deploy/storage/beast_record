@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""Start a guarded BEAST rosbag recorder and relay SIGINT to ros2 bag."""
+import argparse
+import fcntl
+import os
+from pathlib import Path
+import signal
+import subprocess
+import sys
+from datetime import datetime, timezone
+
+from beast_storage import (GIB, active_lock_path, maintain, parse_env_file,
+                           safe_recording_path, sanitize_label)
+
+
+def topics(path: Path):
+    return [line.strip() for line in path.read_text(encoding="utf8").splitlines()
+            if line.strip() and not line.lstrip().startswith("#")]
+
+
+def open_lock(path: Path):
+    descriptor = os.open(path, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o640)
+    return os.fdopen(descriptor, "a+")
+
+
+def release_lock(path: Path) -> None:
+    try:
+        path.unlink()
+    except OSError:
+        pass
+
+
+def recording_is_allowed(config) -> bool:
+    """Apply retention policy and return its authoritative admission decision."""
+    return bool(maintain(config, dry_run=False)["recording_allowed"])
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("kind", choices=("blackbox", "mission"))
+    parser.add_argument("label", nargs="?", default="mission")
+    parser.add_argument("--env", type=Path, default=Path("/etc/beast/storage.env"))
+    parser.add_argument("--topics-dir", type=Path, default=Path("/etc/beast/recording"))
+    parser.add_argument("--data-root", type=Path, default=Path("/data/beast"))
+    parser.add_argument("--state-dir", type=Path, default=Path("/var/lib/beast/storage"))
+    args = parser.parse_args()
+    process = None
+    interrupted = False
+
+    def stop(_signal, _frame):
+        nonlocal interrupted
+        interrupted = True
+        if process is not None and process.poll() is None:
+            process.send_signal(signal.SIGINT)
+
+    signal.signal(signal.SIGINT, stop)
+    signal.signal(signal.SIGTERM, stop)
+    config = parse_env_file(args.env, args.data_root, args.state_dir)
+    if not recording_is_allowed(config):
+        parser.error("recording rejected: storage recovery target is unavailable")
+    category = "blackbox" if args.kind == "blackbox" else "missions"
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    name = stamp if args.kind == "blackbox" else "%s-%s" % (stamp, sanitize_label(args.label))
+    output = safe_recording_path(config.data_root, category, name)
+    if output.exists():
+        parser.error("recording rejected: output already exists")
+    lock_path = active_lock_path(output)
+    try:
+        lock = open_lock(lock_path)
+    except OSError as error:
+        parser.error("recording rejected: cannot reserve output (%s)" % error)
+    try:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        lock.close()
+        parser.error("recording rejected: output is already active")
+    topic_file = args.topics_dir / ("blackbox.topics" if args.kind == "blackbox" else "mission.topics")
+    command = ["ros2", "bag", "record", "--storage", "sqlite3", "--output", str(output),
+               "--max-bag-duration", str(config.blackbox_session_seconds if args.kind == "blackbox" else config.mission_split_seconds)]
+    if args.kind == "blackbox":
+        command += ["--compression-mode", "message", "--compression-format", "zstd", "--compression-threads", "2"]
+    else:
+        command += ["--max-bag-size", str(config.mission_split_gib * GIB)]
+    try:
+        if interrupted:
+            return 0
+        process = subprocess.Popen(command + topics(topic_file))
+        if interrupted and process.poll() is None:
+            process.send_signal(signal.SIGINT)
+        return process.wait()
+    finally:
+        lock.close()
+        release_lock(lock_path)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

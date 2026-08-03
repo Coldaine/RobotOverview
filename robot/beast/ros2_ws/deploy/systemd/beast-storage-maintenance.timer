@@ -1,0 +1,12 @@
+[Unit]
+Description=Run BEAST storage maintenance every five minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+RandomizedDelaySec=30s
+Persistent=true
+Unit=beast-storage-maintenance.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,78 @@
+name: Command Spine Tests
+
+# The ugv_cockpit suite is the merge gate for the BEAST-01 command spine and
+# the cockpit bridge that sits in front of it. It proves the twist_mux priority
+# ladder is exactly as specified, that the e-stop lock is 255/manual, that every
+# nav2 node capable of emitting velocity is routed off /cmd_vel, that no file in
+# the tree reintroduces a direct /cmd_vel publisher, that the rosbridge topic
+# whitelist admits exactly the shipped cockpit's topics and binds loopback only,
+# that the /cockpit/status strings still match what the cockpit renders, and
+# that the robot-side motion gate/watchdog sends exactly one stop on timeout.
+#
+# It never starts a node. The watchdog harness supplies minimal import stubs on
+# runners without ROS, while the cockpit tests parse source, YAML and launch
+# files and exercise pure logic directly. No colcon or container is required.
+
+on:
+  pull_request:
+  push:
+    branches:
+      # The integration branches, so the gate keeps running after a merge and
+      # not only on the feature branch that introduced it.
+      - ros2-humble-develop
+      - main
+      - feat/safety-spine-twist-mux
+      - 'beast/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  spine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          # Matches Humble / Ubuntu 22.04 on the robot, so a syntax or stdlib
+          # difference shows up here rather than during colcon test on BEAST-01.
+          python-version: '3.10'
+
+      - name: Install test dependencies
+        # numpy + opencv are what ugv_cockpit/depth_ops.py needs. They are
+        # installed rather than skipped so the depth NaN/zero-pixel tests
+        # actually RUN here instead of reporting green as a skip;
+        # opencv-python-headless is the no-GUI build, ~40 s of install for six
+        # real assertions. Still no ROS, no rclpy, no cv_bridge.
+        run: pip install pytest pyyaml numpy opencv-python-headless
+
+      # Two invocations, deliberately. pytest aborts the whole run on a
+      # COLLECTION error — an unimportable module anywhere in the paths it is
+      # given takes down every test in them, including these four, which is
+      # exactly what happened when test_cockpit_nodes.py could not import numpy
+      # and left this gate red for reasons unrelated to the gate. Naming the
+      # safety files explicitly means the merge-blocking check depends only on
+      # its own modules importing.
+      - name: Safety gate — mux ladder, bridge whitelist, status contract, watchdog
+        env:
+          PYTHONPATH: src/ugv_main/ugv_bringup
+        run: >-
+          python -m pytest -q
+          src/ugv_main/ugv_cockpit/test/test_twist_mux_spine.py
+          src/ugv_main/ugv_cockpit/test/test_cockpit_bridge.py
+          src/ugv_main/ugv_cockpit/test/test_cockpit_status_contract.py
+          src/ugv_main/ugv_bringup/test/test_jetson_safety.py
+
+      # Everything else in the suite (depth maths, lint shims). Still required
+      # to pass; it just cannot take the gate above down with it.
+      - name: Remaining cockpit tests
+        env:
+          PYTHONPATH: src/ugv_main/ugv_bringup
+        run: >-
+          python -m pytest -q src/ugv_main/ugv_cockpit/test
+          --ignore=src/ugv_main/ugv_cockpit/test/test_twist_mux_spine.py
+          --ignore=src/ugv_main/ugv_cockpit/test/test_cockpit_bridge.py
+          --ignore=src/ugv_main/ugv_cockpit/test/test_cockpit_status_contract.py

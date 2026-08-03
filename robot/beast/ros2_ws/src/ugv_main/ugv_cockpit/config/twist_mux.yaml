@@ -1,0 +1,179 @@
+# twist_mux.yaml — BEAST-01 command spine.
+#
+# Arbitrates every velocity source that wants to drive BEAST-01 down to one
+# /cmd_vel stream, which is exactly what ugv_bringup (ugv_bringup.py) already
+# subscribes to. This file only holds the `twist_mux` node's ros__parameters;
+# the node itself and the cmd_vel_out -> /cmd_vel remap live in
+# launch/twist_mux.launch.py, which ugv_bringup's bringup_lidar.launch.py
+# includes unconditionally.
+#
+# Schema confirmed against ros-teleop/twist_mux, `humble` branch (the source
+# the ROS build farm compiles `ros-humble-twist-mux` from):
+#   - github.com/ros-teleop/twist_mux/blob/humble/config/twist_mux_topics.yaml
+#   - github.com/ros-teleop/twist_mux/blob/humble/config/twist_mux_locks.yaml
+#   - github.com/ros-teleop/twist_mux/blob/humble/include/twist_mux/topic_handle.hpp
+# Package: twist_mux  Executable: twist_mux  Output topic (fixed, not a
+# param): "cmd_vel_out" — the launch file remaps this to /cmd_vel.
+#
+# ---------------------------------------------------------------------------
+# How arbitration works (read this before changing priorities)
+# ---------------------------------------------------------------------------
+# Every entry under `topics` is a geometry_msgs/Twist source. On every
+# message received on a source's topic, twist_mux re-publishes it to
+# cmd_vel_out ONLY IF that source is currently the highest-priority source
+# that is neither expired (no message within `timeout` seconds) nor masked
+# by an active lock (see below). This is push-driven, not a polling loop:
+# there is no periodic re-publish, so if the winning source goes silent,
+# twist_mux simply stops emitting anything at all until (a) that source
+# publishes again, or (b) it expires past `timeout` and a lower-priority
+# source's next message takes over. Silence is NOT the same as "stop" —
+# nothing here sends a zero Twist on timeout. That job belongs entirely to
+# ugv_bringup's own 0.5 s `cmd_vel_timeout` watchdog on the robot side
+# (ugv_bringup.py::_cmd_vel_watchdog_tick). This twist_mux layer only decides
+# WHOSE command gets through; the Jetson-side watchdog is what guarantees the
+# robot actually stops when nobody is driving. Keep both — they cover
+# different failure modes (arbitration vs. dead link).
+#
+# ---------------------------------------------------------------------------
+# Priority ladder (255 = absolute max; higher always wins over lower,
+# subject to the expiry rule above)
+# ---------------------------------------------------------------------------
+#   255  emergency lock (see `locks.estop` below — not a Twist source)
+#   150  cmd_vel_joy_robot      gamepad wired/paired DIRECTLY to the Jetson
+#                                (ugv_tools joy_ctrl, launched by
+#                                ugv_tools/launch/teleop_twist_joy.launch.py
+#                                alongside joy_node). Trusted, in-person,
+#                                lowest latency, can override a distracted
+#                                remote operator.
+#   100  cmd_vel_joy_operator   the remote operator's direct teleop:
+#                                ugv_tools keyboard_ctrl over SSH today, and
+#                                (PR-2) teleop_twist_joy fed by the cockpit's
+#                                /joy_operator. Named for the gamepad path in
+#                                the spec; keyboard_ctrl shares the rung
+#                                because it is the same human at the same
+#                                distance — it must outrank a UI panel and
+#                                yield to someone standing at the robot.
+#    50  cmd_vel_ui             on-screen teleop — Foxglove Teleop panel
+#                                (PR-2) and Vizanti's teleop widget. Both UI
+#                                surfaces deliberately share one rung so two
+#                                windows can never think they hold the floor
+#                                at different priorities.
+#    10  cmd_vel_nav            everything that drives itself: nav2's
+#                                collision_monitor output, the standalone
+#                                ugv_cockpit behavior_server.launch.py
+#                                (PR-4a Hangar agent primitives), ugv_tools
+#                                behavior_ctrl, the ugv_slam lidar demos, and
+#                                the ugv_vision tracking demos. Lowest —
+#                                a human always wins. These are mutually
+#                                exclusive workflows in practice; sharing the
+#                                rung is deliberate so no autonomy source can
+#                                outrank another autonomy source by accident.
+#
+# Every source uses the same 0.5 s timeout as ugv_bringup's own watchdog, so
+# a stale command gets excluded from arbitration on the same cadence the
+# robot itself uses to decide "nobody is talking to me."
+#
+# These names, topics, timeouts and priorities are asserted verbatim by
+# ugv_cockpit/test/test_twist_mux_spine.py. Changing any of them is a
+# deliberate safety change and must move the test in the same commit.
+twist_mux:
+  ros__parameters:
+    topics:
+      joy_robot:
+        topic: cmd_vel_joy_robot
+        timeout: 0.5
+        priority: 150
+      joy_operator:
+        topic: cmd_vel_joy_operator
+        timeout: 0.5
+        priority: 100
+      ui:
+        topic: cmd_vel_ui
+        timeout: 0.5
+        priority: 50
+      nav:
+        topic: cmd_vel_nav
+        timeout: 0.5
+        priority: 10
+
+    # -------------------------------------------------------------------
+    # Emergency lock — NOT a Twist source. `locks.*` entries subscribe to
+    # std_msgs/Bool. When a lock is "locked", every `topics` entry whose
+    # priority is LOWER than the lock's priority is masked (excluded from
+    # arbitration) regardless of how recently it published. Priority 255
+    # here is deliberately higher than every source above (max is 150), so
+    # an engaged lock silences all of them — a true emergency stop for the
+    # arbitration layer.
+    #
+    # A lock is "locked" (LockTopicHandle::isLocked(), topic_handle.hpp) if
+    # EITHER:
+    #   (a) the last message received on the lock topic had data: true, OR
+    #   (b) the lock has "expired" — i.e. `timeout > 0` and no message has
+    #       arrived within the last `timeout` seconds.
+    #
+    # VERIFY on-robot (read from source, not official docs — behavior is
+    # consistent across the humble branch history but re-confirm with
+    # `ros2 param describe /twist_mux locks.estop.timeout` before trusting
+    # blindly): the lock's internal "last received" stamp initializes to
+    # time zero (epoch) at node startup, BEFORE any message has ever
+    # arrived. That means if `timeout` here is > 0.0, the lock is ALREADY
+    # "expired" (== locked) the instant twist_mux starts, and stays locked
+    # until something publishes a heartbeat. That is a legitimate
+    # fail-locked design (no e-stop heartbeat present -> no motion at all),
+    # but nothing in this workspace publishes that heartbeat yet, so it
+    # would leave /cmd_vel permanently silent out of the box.
+    #
+    # Chosen here: timeout: 0.0 ("not used" per twist_mux's own config
+    # comments) — the lock is then a pure manual toggle. Publishing
+    # `std_msgs/Bool true` on cmd_vel_estop_lock engages it; publishing
+    # `false` releases it; nothing auto-engages it on silence. This keeps
+    # the spine drivable immediately without a separate heartbeat-publisher
+    # node. Once a real "operator client is alive" heartbeat exists (e.g.
+    # published by whatever runs the cockpit teleop panel), switch this to
+    # timeout: 0.5 to get the fail-locked behavior above for free — no code
+    # change needed, just this value.
+    #
+    # -------------------------------------------------------------------
+    # CLIENT CONTRACT — an e-stop client MUST publish periodically.
+    # -------------------------------------------------------------------
+    # twist_mux subscribes to lock topics with VOLATILE durability and a
+    # small depth (LockTopicHandle, topic_handle.hpp — it uses plain
+    # rclcpp subscription defaults, not TRANSIENT_LOCAL). That is upstream
+    # behaviour we do not control, and it has two consequences that any
+    # client engaging this lock has to design around:
+    #
+    #   1. A single `ros2 topic pub --once ... true` is NOT reliable.
+    #      With volatile durability the message is only delivered to
+    #      subscriptions that are already matched at the instant it is
+    #      sent. A publisher that connects and immediately publishes can
+    #      lose the race with discovery/matching, and the e-stop silently
+    #      does nothing — the worst possible failure for this control.
+    #   2. The lock state does NOT survive a twist_mux restart. There is
+    #      no latched/transient-local value for a restarting twist_mux to
+    #      pick up, so a mux that crashes and comes back (or is relaunched
+    #      with bringup) starts with the lock RELEASED, regardless of what
+    #      was published before. An engaged e-stop can therefore quietly
+    #      un-engage itself under the operator.
+    #
+    # THEREFORE: e-stop clients MUST re-publish the lock state periodically
+    # (at least 1 Hz) for the whole time the stop is engaged — not once on
+    # the button press. The periodic publish is what makes engagement
+    # robust against both the matching race and a mux restart. Releasing
+    # should likewise publish `false` repeatedly (or simply stop the engaged
+    # stream only after a confirmed release).
+    #
+    # This is a contract on the CLIENT because it cannot be enforced here:
+    # `timeout: 0.0` means twist_mux itself never treats silence on this
+    # topic as engagement (see the epoch-zero discussion above). Documented
+    # in docs/command_arbitration.md#emergency-lock.
+    #
+    # The cockpit bridge's client-publish whitelist admits this topic
+    # (launch/rosbridge.launch.py, TOPICS_PUB_GLOB), so the web cockpit's
+    # e-stop control is a real publisher of it. No node in THIS workspace
+    # publishes it: the client is a browser, and the ">= 1 Hz while engaged"
+    # contract above is on that client, not on anything here.
+    locks:
+      estop:
+        topic: cmd_vel_estop_lock
+        timeout: 0.0
+        priority: 255
