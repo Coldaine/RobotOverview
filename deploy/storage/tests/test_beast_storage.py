@@ -105,6 +105,16 @@ class StorageTests(unittest.TestCase):
         self.assertTrue(mission.exists())
         self.assertFalse(result["recording_allowed"])
 
+    def test_maintenance_does_not_walk_recording_contents_without_deletion(self):
+        self.recording("blackbox", "blackbox")
+        self.recording("missions", "mission")
+
+        with mock.patch.object(storage, "directory_size") as directory_size:
+            result = storage.maintain(self.config, free_bytes=10 * storage.GIB, dry_run=False)
+
+        directory_size.assert_not_called()
+        self.assertTrue(result["recording_allowed"])
+
     def test_rejects_traversal_and_never_counts_symlink_recordings(self):
         outside = Path(self.temp.name) / "outside"
         outside.mkdir(); (outside / "bag.db3").write_bytes(b"x" * 100)
@@ -161,7 +171,7 @@ class StorageTests(unittest.TestCase):
 
     def test_status_reuses_a_maintenance_result_that_was_already_computed(self):
         maintenance = {"dry_run": False, "deleted": [], "deleted_bytes": 0,
-                       "free_after_bytes": 10 * storage.GIB, "category_sizes": {},
+                       "free_after_bytes": 10 * storage.GIB,
                        "recording_allowed": True}
         with mock.patch.object(storage, "maintain") as maintain, \
                 mock.patch.object(storage, "read_smart", return_value=None):
@@ -172,7 +182,7 @@ class StorageTests(unittest.TestCase):
 
     def test_status_prepares_storage_before_using_a_supplied_maintenance_result(self):
         maintenance = {"dry_run": False, "deleted": [], "deleted_bytes": 0,
-                       "free_after_bytes": 10 * storage.GIB, "category_sizes": {},
+                       "free_after_bytes": 10 * storage.GIB,
                        "recording_allowed": True}
         with mock.patch.object(storage, "prepare") as prepare, \
                 mock.patch.object(storage, "read_smart", return_value=None):
@@ -202,6 +212,24 @@ class StorageTests(unittest.TestCase):
         recorder.release_lock(lock_path)
 
         self.assertTrue(lock_path.is_dir())
+
+    def test_recorder_uses_maintenance_admission_decision(self):
+        with mock.patch.object(recorder, "maintain",
+                               return_value={"recording_allowed": False}) as maintain:
+            self.assertFalse(recorder.recording_is_allowed(self.config))
+
+        maintain.assert_called_once_with(self.config, dry_run=False)
+
+    def test_status_does_not_walk_recording_contents_for_category_totals(self):
+        maintenance = {"dry_run": False, "deleted": [], "deleted_bytes": 0,
+                       "free_after_bytes": 10 * storage.GIB,
+                       "recording_allowed": True}
+        with mock.patch.object(storage, "directory_size") as directory_size, \
+                mock.patch.object(storage, "read_smart", return_value=None):
+            result = storage.status(self.config, maintenance=maintenance)
+
+        directory_size.assert_not_called()
+        self.assertEqual(result["categories"]["blackbox"], {"count": 0})
 
     def test_missing_and_malformed_smart_are_unknown(self):
         self.assertEqual(storage.smart_health(None, {} )["state"], "unknown")

@@ -227,16 +227,12 @@ def maintain(config: Config, free_bytes: Optional[int] = None, dry_run: bool = T
     free = filesystem_free_bytes(config.data_root) if free_bytes is None else free_bytes
     deleted: List[str] = []
     deleted_bytes = 0
-    sizes = {category: sum(directory_size(entry) for entry in category_entries(config.data_root, category))
-             for category in RECORDING_CATEGORIES}
-
     def prune_blackbox(required: int) -> None:
         nonlocal free, deleted_bytes
         for entry in eligible_entries(config.data_root, "blackbox"):
             if free >= required:
                 break
             size = _delete(entry, dry_run)
-            sizes["blackbox"] -= size
             free += size
             deleted_bytes += size
             deleted.append(str(entry))
@@ -247,8 +243,7 @@ def maintain(config: Config, free_bytes: Optional[int] = None, dry_run: bool = T
     recording_allowed = free >= config.min_free_gib * GIB and (
         not emergency or free >= config.target_free_gib * GIB)
     return {"dry_run": dry_run, "deleted": deleted, "deleted_bytes": deleted_bytes,
-            "free_after_bytes": free, "category_sizes": sizes,
-            "recording_allowed": recording_allowed}
+            "free_after_bytes": free, "recording_allowed": recording_allowed}
 
 
 def smart_health(raw: Optional[str], baseline: Dict[str, int], config: Optional[Config] = None) -> Dict[str, object]:
@@ -332,8 +327,7 @@ def status(config: Config, dry_run: bool = True,
     return {"schema_version": 1, "generated_at": datetime.now(timezone.utc).isoformat(), "health": aggregate,
             "filesystem": {"total_bytes": stats.f_blocks * stats.f_frsize, "free_bytes": stats.f_bavail * stats.f_frsize},
             "thresholds": {key: value for key, value in asdict(config).items() if key not in ("data_root", "state_dir")},
-            "categories": {category: {"count": len(category_entries(config.data_root, category)),
-                                         "bytes": sum(directory_size(item) for item in category_entries(config.data_root, category))}
+            "categories": {category: {"count": len(category_entries(config.data_root, category))}
                            for category in RECORDING_CATEGORIES},
             "active_recorders": [str(item) for category in RECORDING_CATEGORIES for item in category_entries(config.data_root, category)
                                  if lock_is_active(item)], "smart": smart, "last_maintenance": maintenance}

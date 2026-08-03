@@ -9,8 +9,8 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 
-from beast_storage import (GIB, active_lock_path, filesystem_free_bytes,
-                           parse_env_file, safe_recording_path, sanitize_label)
+from beast_storage import (GIB, active_lock_path, maintain, parse_env_file,
+                           safe_recording_path, sanitize_label)
 
 
 def topics(path: Path):
@@ -28,6 +28,11 @@ def release_lock(path: Path) -> None:
         path.unlink()
     except OSError:
         pass
+
+
+def recording_is_allowed(config) -> bool:
+    """Apply retention policy and return its authoritative admission decision."""
+    return bool(maintain(config, dry_run=False)["recording_allowed"])
 
 
 def main() -> int:
@@ -51,8 +56,8 @@ def main() -> int:
     signal.signal(signal.SIGINT, stop)
     signal.signal(signal.SIGTERM, stop)
     config = parse_env_file(args.env, args.data_root, args.state_dir)
-    if filesystem_free_bytes(config.data_root) < config.min_free_gib * GIB:
-        parser.error("recording rejected: less than MIN_FREE_GIB remains")
+    if not recording_is_allowed(config):
+        parser.error("recording rejected: storage recovery target is unavailable")
     category = "blackbox" if args.kind == "blackbox" else "missions"
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
     name = stamp if args.kind == "blackbox" else "%s-%s" % (stamp, sanitize_label(args.label))
