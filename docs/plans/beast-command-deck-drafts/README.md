@@ -1,7 +1,8 @@
 # BEAST-01 cockpit — draft launch set
 
-**Status: DRAFT for review.** Nothing here is wired into `D:\_projects\ugv_ws` or any
-installed ROS package, nothing has been run, and nothing has touched the robot. This is
+**Status: SUPERSEDED DRAFT.** The reviewed implementation lives under
+`robot/beast/ros2_ws`; do not deploy these scratch files. Nothing in this directory is
+wired into an installed ROS package. This is
 five files in a scratch folder: `twist_mux.yaml`, `teleop_joy_operator.yaml`,
 `foxglove_bridge.launch.py`, `cockpit_robot.launch.py`, and this README. Read the inline
 `# VERIFY:` comments in each file before trusting a param name blindly — a few things

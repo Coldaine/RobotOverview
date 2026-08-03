@@ -12,9 +12,9 @@ Calibration: do not "tune" FAKE/DUMMY fields. Vendor IMU scales are fine to star
 (spot-check 1 g at rest). Calibrate wheel odom / EKF before mapping. Mag only if
 using compass. Wire UPS I²C before trusting charge/% .
 
-Deploy to beast-01: edit in D:\\_projects\\ugv_ws → push Coldaine/ugv_ws →
-ssh → git pull in ~/beast/ugv_ws → colcon build → restart beast-ros-base.service.
-Hangar (RobotOverview) never deploys to the robot.
+Deploy to beast-01: edit RobotOverview/robot/beast/ros2_ws → merge the
+RobotOverview PR → pull ~/beast/RobotOverview → build the ROS subtree → restart
+beast-ros-base.service. The Hangar web app never deploys to the robot.
 """
 
 import rclpy

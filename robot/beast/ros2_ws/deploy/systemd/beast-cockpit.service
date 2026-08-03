@@ -14,7 +14,7 @@
 Description=BEAST-01 Command Deck cockpit (OAK + rosbridge + cockpit nodes)
 Wants=network-online.target beast-ros-base.service
 After=network-online.target beast-ros-base.service
-ConditionPathExists=/home/beast/beast/ugv_ws/install/setup.bash
+ConditionPathExists=/home/beast/beast/RobotOverview/robot/beast/ros2_ws/install/setup.bash
 
 [Service]
 Type=simple
@@ -24,7 +24,7 @@ Group=beast
 # plugdev are for the OAK-D over USB. The bridge does admit the reviewed remote
 # command topics, but this process needs no direct serial-device access.
 SupplementaryGroups=video render plugdev
-WorkingDirectory=/home/beast/beast/ugv_ws
+WorkingDirectory=/home/beast/beast/RobotOverview/robot/beast/ros2_ws
 # COCKPIT_ALLOWED_ORIGINS lives here. It is the origin SERVING the cockpit page
 # (the RobotOverview deployment), not this robot's hostname — the Origin header
 # carries the page's origin. Unset denies every browser, on purpose: rosbridge's
@@ -35,7 +35,7 @@ EnvironmentFile=/etc/beast/ugv.env
 Environment=PYTHONUNBUFFERED=1
 # Cockpit telemetry + camera + a reviewed remote command ingress through the
 # existing mux/gate/watchdog path. No direct /cmd_vel or serial bypass.
-ExecStart=/bin/bash -lc 'source /opt/ros/humble/setup.bash && source /home/beast/beast/ugv_ws/install/setup.bash && exec ros2 launch ugv_cockpit cockpit.launch.py use_camera:=true use_bridge:=true'
+ExecStart=/bin/bash -lc 'source /opt/ros/humble/setup.bash && source /home/beast/beast/RobotOverview/robot/beast/ros2_ws/install/setup.bash && exec ros2 launch ugv_cockpit cockpit.launch.py use_camera:=true use_bridge:=true'
 KillSignal=SIGINT
 TimeoutStopSec=15
 Restart=on-failure

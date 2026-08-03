@@ -5,7 +5,12 @@ read its telemetry, and program it. The catalog entry for the unit lives in
 `src/data/hangar.ts` (`id: 'beast'`). Facts below carry the date they were last verified;
 re-verify against the live robot before relying on anything stale.
 
-## Quick connect (verified 2026-07-31)
+## Quick connect
+
+Live repository/service check (2026-08-03): `beast-01` is reachable; the legacy
+`~/beast/ugv_ws` checkout is at `2d1eab7`; `beast-ros-base.service` is active and
+`beast-cockpit.service` is inactive. The monorepo cutover described below has not yet been
+deployed. Network-path details below were last fully verified 2026-07-31 unless marked newer.
 
 Turn on the chassis switch (it powers the Jetson too), wait ~2 minutes for boot, then:
 
@@ -130,7 +135,7 @@ publishing drive commands. Update this block, dated, whenever a session learns a
 | Charging / true SOC | **Missing** | Needs UPS Module 3S I²C telemetry header → Orin (not wired) |
 
 Source: module docstring + inline `FAKE` / `DUMMY` / `ASSUMED` / `HACK` in
-`ugv_ws` → `src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py`.
+[`robot/beast/ros2_ws/src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py`](../robot/beast/ros2_ws/src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py).
 
 **Do we calibrate these?**
 
@@ -141,38 +146,43 @@ Source: module docstring + inline `FAKE` / `DUMMY` / `ASSUMED` / `HACK` in
 | Wheel odom / EKF | **Calibrate before mapping/autonomy** if distance/turns disagree with reality |
 | Angular deadband / zero-cmd hacks | Behavior quirks — leave or remove; not calibration |
 
-### Syncing robot code (`ugv_ws`) to BEAST-01
+### Syncing robot code to BEAST-01
 
-Hangar ([RobotOverview](.)) **never** deploys to the Jetson. Robot brain code lives in a
-separate repo and is synced by hand:
+RobotOverview is one source repository with two deployment targets. The Hangar web app
+never deploys to the Jetson; only the sparse-checked-out ROS workspace is built there:
 
 | Piece | Where |
 |---|---|
-| Fork | [Coldaine/ugv_ws](https://github.com/Coldaine/ugv_ws) |
-| Edit on PC | `D:\_projects\ugv_ws` (branch `beast/jetson-orin-nano-adaptation`) |
-| On robot | `~/beast/ugv_ws` (same remote) |
+| Source repository | [Coldaine/RobotOverview](https://github.com/Coldaine/RobotOverview) |
+| Edit on PC | `D:\_projects\RobotOverview\robot\beast\ros2_ws` |
+| On robot after cutover | `~/beast/RobotOverview/robot/beast/ros2_ws` |
+| Vendor upstream | [waveshareteam/ugv_ws](https://github.com/waveshareteam/ugv_ws) (fetch directly; no retained fork) |
 
 ```bash
-# On PC (after commit)
-cd D:/_projects/ugv_ws
-git push origin beast/jetson-orin-nano-adaptation
+# On PC: edit on a RobotOverview branch and merge its PR.
+cd D:/_projects/RobotOverview
+git switch -c beast/<change>
+# edit robot/beast/ros2_ws/...
+git push -u origin beast/<change>
 
-# On beast-01 (Wi-Fi: often beast@192.168.0.187 if mDNS fails)
-cd ~/beast/ugv_ws
+# On beast-01 after merge and after the one-time sparse-checkout cutover:
+cd ~/beast/RobotOverview
 git fetch origin
-git checkout beast/jetson-orin-nano-adaptation
-git pull --ff-only origin beast/jetson-orin-nano-adaptation
+git checkout main
+git pull --ff-only origin main
+cd robot/beast/ros2_ws
 source /opt/ros/humble/setup.bash
 colcon build --packages-select ugv_bringup --symlink-install   # or full workspace
 sudo systemctl restart beast-ros-base.service                 # stays allow_motion:=false
-git rev-parse --short HEAD   # record in Quick connect when it changes
+git -C ~/beast/RobotOverview rev-parse --short HEAD            # record in Quick connect
 ```
 
-No CI/CD to the robot. If you only edited Hangar docs/UI, the Jetson does not change.
+There is no automatic deployment to the robot. If a PR does not change
+`robot/beast/ros2_ws`, the Jetson does not change.
 
-- **What's on it (live-verified 2026-07-31):** JetPack 6.2.2 (R36.5), ROS 2 Humble,
-  `ugv_ws` at `7d7fe3d` on `beast/jetson-orin-nano-adaptation` (watchdog + telemetry honesty
-  annotations; was `a1b2822` / earlier `b709bfd`). `beast-ros-base.service` is **enabled and runs at boot**
+- **What's on it (repository/service state live-verified 2026-08-03; hardware details
+  last verified 2026-07-31):** JetPack 6.2.2 (R36.5), ROS 2 Humble, legacy `ugv_ws`
+  checkout at `2d1eab7`. `beast-ros-base.service` is **active**
   with `use_lidar:=true`, `allow_motion:=false`: base driver, LD19 LiDAR, pan-tilt
   `ros2_control`, wheel + rf2o odometry, and EKF are all up; battery/IMU telemetry flows.
 - **ESP32 link is USB, not GPIO jumpers:** the driver board talks to the Orin over
@@ -732,18 +742,20 @@ maintenance window and a tested rollback.
 
 Do not provision or enable storage units from this section yet. Follow the [command-level implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md). Once that implementation plan is approved and its dry-run checks pass, only `beast-storage-maintenance.timer` may be enabled. Keep black-box, mission, and motion storage units disabled until the documentation PR is merged, the stacked workspace change is reviewed, and physical recording/replay validation succeeds. An interactive [storage dossier](../design/beast-storage/index.html) walks the same policy visually.
 
-### `ugv_ws` workspace provenance (verified 2026-07-31)
+### ROS workspace provenance
 
-Robot code is git on the Jetson; Hangar only *records* the last-checked commit in Quick connect.
-Sync recipe: [Syncing robot code](#syncing-robot-code-ugv_ws-to-beast-01) above.
+Robot source and Hangar source share one Git history. The Jetson uses a sparse checkout so
+it receives the ROS subtree without checking out the web application. Sync recipe:
+[Syncing robot code](#syncing-robot-code-to-beast-01) above.
 
 | Fact | Value |
 |---|---|
-| Fork | [Coldaine/ugv_ws](https://github.com/Coldaine/ugv_ws) (fork of [waveshareteam/ugv_ws](https://github.com/waveshareteam/ugv_ws)) |
-| Branch | `beast/jetson-orin-nano-adaptation` |
-| Local clone | `D:\_projects\ugv_ws` |
-| On-robot path | `~/beast/ugv_ws` |
-| Last live-checked | **`7d7fe3d`** (telemetry honesty comments on bringup) — re-verify with `git -C ~/beast/ugv_ws rev-parse --short HEAD` |
+| Source of record | [Coldaine/RobotOverview](https://github.com/Coldaine/RobotOverview), `robot/beast/ros2_ws` |
+| Vendor upstream | [waveshareteam/ugv_ws](https://github.com/waveshareteam/ugv_ws) |
+| Branch | `main` after reviewed RobotOverview PRs |
+| Local clone | `D:\_projects\RobotOverview` |
+| On-robot path after cutover | `~/beast/RobotOverview/robot/beast/ros2_ws` |
+| Last live-checked | **`2d1eab7` in legacy `~/beast/ugv_ws` (2026-08-03)** — monorepo cutover pending |
 
 Hangar docs are not proof of on-robot state. Always check the robot before asserting commit or
 behavior. Before applying the [NVMe storage implementation plan](plans/2026-07-11-beast-nvme-storage-implementation.md),
@@ -1686,12 +1698,12 @@ sudo apt install -y git git-lfs ros-humble-ros-base ros-dev-tools \
 
 mkdir -p ~/beast
 cd ~/beast
-UGV_WS_COMMIT=ad274d6371195da7181df406e4ca19660eb522fc
-git clone --no-checkout https://github.com/Coldaine/ugv_ws.git
-cd ugv_ws
-git fetch origin "$UGV_WS_COMMIT"
-git checkout --detach "$UGV_WS_COMMIT"
-test "$(git rev-parse HEAD)" = "$UGV_WS_COMMIT"
+git clone --filter=blob:none --sparse https://github.com/Coldaine/RobotOverview.git
+cd RobotOverview
+git sparse-checkout set robot/beast/ros2_ws
+git checkout main
+ROBOTOVERVIEW_COMMIT="$(git rev-parse HEAD)"
+cd robot/beast/ros2_ws
 
 source /opt/ros/humble/setup.bash
 export GZ_VERSION=fortress
@@ -1755,7 +1767,7 @@ and start only base bring-up:
 export UGV_MODEL=ugv_beast
 export LDLIDAR_MODEL=ld19
 source /opt/ros/humble/setup.bash
-source ~/beast/ugv_ws/install/setup.bash
+source ~/beast/RobotOverview/robot/beast/ros2_ws/install/setup.bash
 ros2 launch ugv_bringup bringup_lidar.launch.py \
   serial_port:=/dev/ttyTHS1 use_lidar:=false use_rviz:=false allow_motion:=false
 ```
@@ -1806,7 +1818,7 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
 ```
 
 **Status (2026-07-31):** The Jetson-side `cmd_vel_timeout` watchdog is implemented in `ugv_bringup`
-([Coldaine/ugv_ws#7](https://github.com/Coldaine/ugv_ws/pull/7)), but a physical crawl+kill
+(historical commit `a1b2822`, preserved in this repository), but a physical crawl+kill
 safety check has not yet been witnessed by the operator. Motion is currently disabled 
 by default until the owner confirms a live shakedown.
 
@@ -1852,7 +1864,7 @@ robot-VLAN address `192.168.20.184`.
 - Docker Engine on Ubuntu — https://docs.docker.com/engine/install/ubuntu/
 - ROS 2 Humble Ubuntu packages — https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
 - Waveshare UGV Beast Jetson Orin ROS 2 — https://www.waveshare.com/wiki/UGV_Beast_Jetson_Orin_ROS2
-- Prepared Jetson `ugv_ws` PR — https://github.com/Coldaine/ugv_ws/pull/1
+- Imported Jetson adaptation head — `3dd122e` (preserved in this repository's history)
 - Reddit: recovery-mode jumper and cable lessons — https://www.reddit.com/r/JetsonNano/comments/1lqzjhu
 - Reddit: NVMe model compatibility report — https://www.reddit.com/r/JetsonNano/comments/1hth1vo/booting_jetson_orin_nano_super_from_ssd/
 

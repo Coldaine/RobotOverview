@@ -4,13 +4,12 @@
 no authentication on it, and its topic whitelist is the only thing that keeps a
 browser off `/cmd_vel`.**
 
-The cockpit itself lives in a different repository
-([Coldaine/RobotOverview](https://github.com/Coldaine/RobotOverview), route `/cockpit`).
-It speaks the **rosbridge protocol** over a WebSocket. This page is the robot side:
-what it admits, why, and how to prove the boundary is real.
+The cockpit lives in this monorepo's web surface (route `/cockpit`). It speaks the
+**rosbridge protocol** over a WebSocket. This page is the independently deployed robot
+side: what it admits, why, and how to prove the boundary is real.
 
 Package layout, node parameters and day-to-day operation:
-[`src/ugv_main/ugv_cockpit/README.md`](https://github.com/Coldaine/ugv_ws/blob/beast/jetson-orin-nano-adaptation/src/ugv_main/ugv_cockpit/README.md).
+[`src/ugv_main/ugv_cockpit/README.md`](../src/ugv_main/ugv_cockpit/README.md).
 
 !!! danger "Disabled by default — enabling it is an operator decision"
     `beast-cockpit.service` ships **not enabled**. Bringing the robot up does not open

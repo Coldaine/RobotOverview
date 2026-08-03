@@ -4,11 +4,12 @@
 
 # ROS2 for WaveShare UGV
 
-> **Coldaine / BEAST-01:** This clone is the Jetson robot brain
-> (D:\_projects\ugv_ws, on-robot ~/beast/ugv_ws). It is **not** inside the Hangar
-> app repo. Hangar lives at D:\_projects\RobotOverview. Cross-repo map and sync:
-> [docs/BEAST.md](docs/BEAST.md). Live operating facts are stamped in Hangar
-> docs/beast-ops.md, not here.
+> **Coldaine / BEAST-01:** This directory is the Jetson robot brain inside the
+> RobotOverview monorepo. Edit it at
+> `D:\_projects\RobotOverview\robot\beast\ros2_ws`; build it on the robot at
+> `~/beast/RobotOverview/robot/beast/ros2_ws`. Deployment and vendor-sync commands:
+> [docs/BEAST.md](docs/BEAST.md). Live operating facts are stamped in the monorepo's
+> [`docs/beast-ops.md`](../../../docs/beast-ops.md), not here.
 
 
 **ugv_ws** is a **ROS2 Humble** colcon workspace for **WaveShare UGV**. It connects **RViz2**, **SLAM**, and **Nav2** to real hardware over serial, with optional vision, voice, web UI, and Gazebo simulation.
