@@ -190,8 +190,9 @@ void  ToLaserscanMessagePublish(ldlidar::Points2D& src,  double lidar_spin_freq,
   static int expected_bins = 0;
 
   int beam_size = 0;
+  const bool fixed_bin_count = setting.bins > 0;
 
-  if (setting.bins > 0) {
+  if (fixed_bin_count) {
     beam_size = setting.bins;
   } else {
     beam_size = static_cast<int>(src.size());
@@ -213,6 +214,14 @@ void  ToLaserscanMessagePublish(ldlidar::Points2D& src,  double lidar_spin_freq,
     return;
   }
 
+  if (scan_time <= 0.0) {
+    RCLCPP_WARN_THROTTLE(
+      node->get_logger(), *node->get_clock(), 5000,
+      "LaserScan clock moved backwards or did not advance; resetting timing");
+    end_scan_time = start_scan_time;
+    return;
+  }
+
   // Publish [0, 2π): N equal bins, angle_increment = 2π/N, no duplicated 0/360 sample.
   // (Previously used 2π/(N-1) with angle_max = 2π, which slam_toolbox rejects.)
   constexpr float kTwoPi = static_cast<float>(2.0 * M_PI);
@@ -220,13 +229,13 @@ void  ToLaserscanMessagePublish(ldlidar::Points2D& src,  double lidar_spin_freq,
   angle_increment = kTwoPi / static_cast<float>(beam_size);
   angle_max = angle_min + static_cast<float>(beam_size - 1) * angle_increment;
 
-  if (expected_bins == 0) {
+  if (fixed_bin_count && expected_bins == 0) {
     expected_bins = beam_size;
     RCLCPP_INFO(
       node->get_logger(),
       "Fixed LaserScan bin count: %d (angle_increment=2π/bins, range [0, 2π))",
       expected_bins);
-  } else if (beam_size != expected_bins) {
+  } else if (fixed_bin_count && beam_size != expected_bins) {
     RCLCPP_ERROR_THROTTLE(
       node->get_logger(), *node->get_clock(), 2000,
       "LaserScan bin count changed: expected %d, got %d", expected_bins, beam_size);
@@ -290,7 +299,7 @@ void  ToLaserscanMessagePublish(ldlidar::Points2D& src,  double lidar_spin_freq,
       }
 
       if (setting.laser_scan_dir) {
-        int index_anticlockwise = beam_size - index - 1;
+        int index_anticlockwise = (beam_size - index) % beam_size;
         // If the current content is Nan, it is assigned directly
         if (std::isnan(output.ranges[index_anticlockwise])) {
           output.ranges[index_anticlockwise] = range;
@@ -315,7 +324,8 @@ void  ToLaserscanMessagePublish(ldlidar::Points2D& src,  double lidar_spin_freq,
       }
     }
 
-    if (static_cast<int>(output.ranges.size()) != expected_bins) {
+    if (fixed_bin_count &&
+        static_cast<int>(output.ranges.size()) != expected_bins) {
       RCLCPP_ERROR(
         node->get_logger(),
         "Refusing to publish LaserScan with %zu ranges (expected %d bins)",

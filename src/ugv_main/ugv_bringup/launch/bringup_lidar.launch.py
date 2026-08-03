@@ -88,6 +88,15 @@ def generate_launch_description():
         )
     )
 
+    interlock_override_arg = DeclareLaunchArgument(
+        'interlock_override', default_value='false',
+        description=(
+            'Startup-only maintenance override for ethernet/charging '
+            'interlocks. Requires a process restart; never expose as a ROS '
+            'service and never default true.'
+        )
+    )
+
     use_lidar_arg = DeclareLaunchArgument(
         'use_lidar', default_value='true',
         description='Whether to launch the LiDAR and laser odometry nodes'
@@ -165,6 +174,9 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'ethernet_interface': LaunchConfiguration('ethernet_interface'),
+            'interlock_override': ParameterValue(
+                LaunchConfiguration('interlock_override'), value_type=bool
+            ),
         }],
         condition=IfCondition(LaunchConfiguration('use_safety_monitor')),
     )
@@ -201,6 +213,7 @@ def generate_launch_description():
         ethernet_interface_arg,
         allow_motion_arg,
         use_safety_monitor_arg,
+        interlock_override_arg,
         use_lidar_arg,
         robot_state_launch,
         laser_bringup_launch,

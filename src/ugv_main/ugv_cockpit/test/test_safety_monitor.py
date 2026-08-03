@@ -47,6 +47,15 @@ def test_ethernet_carrier_requests_disarm():
     assert decision.locks == (LOCK_ETHERNET,)
 
 
+def test_unknown_ethernet_carrier_fails_closed():
+    state = SafetyState(ethernet_carrier=None)
+
+    decision = state.evaluate()
+
+    assert decision.should_disarm is True
+    assert decision.primary_reason == LOCK_ETHERNET
+
+
 def test_absent_charging_topic_does_not_lock():
     state = SafetyState(ethernet_carrier=False)
     decision = state.evaluate()
@@ -56,7 +65,7 @@ def test_absent_charging_topic_does_not_lock():
 
 
 def test_charging_active_locks_when_topic_seen():
-    state = SafetyState()
+    state = SafetyState(ethernet_carrier=False)
     state.note_charging(True)
     decision = state.evaluate()
     assert decision.should_disarm is True
@@ -64,7 +73,7 @@ def test_charging_active_locks_when_topic_seen():
 
 
 def test_charging_false_clears_lock():
-    state = SafetyState()
+    state = SafetyState(ethernet_carrier=False)
     state.note_charging(True)
     state.note_charging(False)
     decision = state.evaluate()
@@ -120,6 +129,18 @@ def test_safety_monitor_is_client_not_authority():
     assert 'allow_motion' not in text or 'allow_motion=false' in text.lower() or \
         'client of' in text
     assert 'Does NOT auto-arm' in text or 'does not auto-arm' in text.lower()
+    assert '/ugv/safety/override' not in text
+    assert "self.declare_parameter('interlock_override', False)" in text
+
+
+def test_allow_motion_callback_reenforces_current_lock_immediately():
+    monitor_src = Path(__file__).resolve().parents[1] / 'ugv_cockpit' / 'safety_monitor.py'
+    text = monitor_src.read_text(encoding='utf-8')
+    callback = text.split('def _on_allow_motion', 1)[1].split(
+        'def _on_charging', 1
+    )[0]
+    assert 'self._state.evaluate()' in callback
+    assert 'self._enforce(decision)' in callback
 
 
 def test_bringup_launch_defaults_disarmed_and_wires_monitor():
@@ -133,3 +154,4 @@ def test_bringup_launch_defaults_disarmed_and_wires_monitor():
     assert "'allow_motion', default_value='false'" in text
     assert 'ugv_safety_monitor' in text
     assert 'use_safety_monitor' in text
+    assert "'interlock_override', default_value='false'" in text

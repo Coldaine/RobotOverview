@@ -9,6 +9,7 @@ Windows/desktop can catch a regression before an on-robot rebuild.
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
 
 def laserscan_angles(bins: int) -> tuple[float, float, float]:
@@ -37,6 +38,11 @@ def angle_to_index(angle_rad: float, bins: int) -> int:
     return index
 
 
+def reverse_scan_index(index: int, bins: int) -> int:
+    """Reverse scan direction while keeping physical 0 degrees in bin zero."""
+    return (bins - index) % bins
+
+
 def test_angle_increment_is_two_pi_over_bins():
     bins = 480
     angle_min, angle_max, angle_increment = laserscan_angles(bins)
@@ -59,6 +65,26 @@ def test_constant_bin_count_indices_cover_full_circle():
     assert angle_to_index(0.0, bins) == 0
     assert angle_to_index(2.0 * math.pi - 1e-9, bins) == bins - 1
     assert angle_to_index(2.0 * math.pi, bins) == 0
+
+
+def test_reverse_direction_keeps_zero_degree_sample_in_bin_zero():
+    bins = 480
+    assert reverse_scan_index(0, bins) == 0
+    assert reverse_scan_index(1, bins) == bins - 1
+
+
+def test_driver_guards_dynamic_bins_and_clock_discontinuity():
+    driver = (
+        Path(__file__).resolve().parents[3]
+        / 'ugv_else'
+        / 'ldlidar'
+        / 'src'
+        / 'demo.cpp'
+    ).read_text(encoding='utf-8')
+    assert 'const bool fixed_bin_count = setting.bins > 0;' in driver
+    assert 'fixed_bin_count && beam_size != expected_bins' in driver
+    assert 'if (scan_time <= 0.0)' in driver
+    assert '(beam_size - index) % beam_size' in driver
 
 
 def test_bins_env_default_matches_fork():

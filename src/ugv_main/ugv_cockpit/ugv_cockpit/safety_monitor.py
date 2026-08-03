@@ -4,9 +4,10 @@
 
 Interlocks (Set 1c):
   * Ethernet carrier up  → ask bringup to disarm (ETHERNET_LOCK)
+  * Ethernet carrier unknown/unreadable → disarm (fail closed)
   * /ugv/charging_active → ask bringup to disarm (CHARGING_LOCK) when present;
     absent topic → no charging lock
-  * /ugv/safety/override SetBool → logged, latches until reboot; skips disarm
+  * interlock_override launch parameter → startup-only maintenance override
 
 Does NOT auto-arm when locks clear. Default stays disarmed until the crawl+kill
 re-gate (see docs/plans/2026-08-02-beast-agent-pr1-safety-spine.md).
@@ -42,6 +43,7 @@ class SafetyMonitor(Node):
         self.declare_parameter('ethernet_interface', '')
         self.declare_parameter('carrier_poll_hz', 2.0)
         self.declare_parameter('charging_topic', '/ugv/charging_active')
+        self.declare_parameter('interlock_override', False)
         self.declare_parameter(
             'set_allow_motion_service', '/ugv/set_allow_motion'
         )
@@ -61,7 +63,11 @@ class SafetyMonitor(Node):
             'set_allow_motion_service'
         ).value
 
-        self._state = SafetyState()
+        self._state = SafetyState(
+            override_active=bool(
+                self.get_parameter('interlock_override').value
+            )
+        )
         self._last_disarm_reason: Optional[str] = None
         self._disarm_in_flight = False
 
@@ -87,13 +93,6 @@ class SafetyMonitor(Node):
             Bool, self._charging_topic, self._on_charging, 10
         )
 
-        self.create_service(
-            SetBool,
-            '/ugv/safety/override',
-            self._on_override,
-            callback_group=self._cb_group,
-        )
-
         self._set_client = self.create_client(
             SetBool,
             self._set_service_name,
@@ -107,27 +106,20 @@ class SafetyMonitor(Node):
             f'ugv_safety_monitor: iface={self._iface} path={self._carrier_path} '
             f'(client of {self._set_service_name}; default stays disarmed)'
         )
+        if self._state.override_active:
+            self.get_logger().warning(
+                'interlock_override=true at process startup; physical '
+                'ethernet/charging locks will be reported but not enforced'
+            )
 
     def _on_allow_motion(self, msg: Bool):
         self._state.allow_motion = bool(msg.data)
+        decision = self._state.evaluate()
+        self._publish_status(decision)
+        self._enforce(decision)
 
     def _on_charging(self, msg: Bool):
         self._state.note_charging(bool(msg.data))
-
-    def _on_override(self, request, response):
-        self._state.override_active = bool(request.data)
-        level = 'ENABLED' if self._state.override_active else 'CLEARED'
-        self.get_logger().warning(
-            f'safety override {level} via /ugv/safety/override '
-            '(latches until reboot)'
-        )
-        decision = self._state.evaluate()
-        self._publish_status(decision)
-        # Re-evaluate immediately so a cleared override re-applies locks.
-        self._enforce(decision)
-        response.success = True
-        response.message = f'override={str(self._state.override_active).lower()}'
-        return response
 
     def _tick(self):
         carrier = read_carrier_file(self._carrier_path)
@@ -200,6 +192,10 @@ class SafetyMonitor(Node):
             KeyValue(
                 key='ethernet_connected',
                 value=str(self._state.ethernet_carrier is True).lower(),
+            ),
+            KeyValue(
+                key='ethernet_verified',
+                value=str(self._state.ethernet_carrier is not None).lower(),
             ),
             KeyValue(
                 key='charging',

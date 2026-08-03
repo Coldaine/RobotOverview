@@ -69,7 +69,7 @@ class SafetyDecision:
 
 @dataclass
 class SafetyState:
-    """Latched interlock inputs. Default: no locks, no override, disarmed."""
+    """Latched interlock inputs. Unknown carrier is unsafe; default disarmed."""
 
     ethernet_carrier: Optional[bool] = None
     charging_active: Optional[bool] = None
@@ -84,7 +84,9 @@ class SafetyState:
 
     def evaluate(self) -> SafetyDecision:
         locks = []
-        if self.ethernet_carrier is True:
+        # Missing interface, unreadable sysfs, and malformed carrier values are
+        # all uncertainty about a physical interlock and therefore fail closed.
+        if self.ethernet_carrier is not False:
             locks.append(LOCK_ETHERNET)
         # Absent charging topic → no lock (fail-open; default disarmed is the guard).
         if self._seen_charging_topic and self.charging_active is True:
