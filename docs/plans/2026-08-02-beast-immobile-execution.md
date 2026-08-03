@@ -34,10 +34,10 @@ Immobile session complete under hard bans (never `allow_motion:=true`; no crawl+
 
 | Artifact | Repo | Branch | PR |
 | --- | --- | --- | --- |
-| Hangar plans, topology, `/agent`, beast-ops, commit-and-PR rule | RobotOverview | `feat/beast-immobile-agent-session` | (fill after `gh pr create`) |
-| Safety spine + lidar hygiene (on robot lineage) | ugv_ws | `beast/pr1-safety-spine` @ `bebb86e` | (fill after create) |
-| behavior_server (on robot @ `2d1eab7`) | ugv_ws | `beast/pr4-agent-behaviors` | (fill after create) |
-| `beast_power` offline scaffold | ugv_ws | `beast/power-telemetry` | (fill after create) |
+| Hangar plans, topology, `/agent`, beast-ops, commit-and-PR rule | RobotOverview | `feat/beast-immobile-agent-session` @ `1c7b75b` | https://github.com/Coldaine/RobotOverview/pull/152 |
+| Safety spine + lidar hygiene (on robot lineage) | ugv_ws | `beast/pr1-safety-spine` @ `bebb86e` | https://github.com/Coldaine/ugv_ws/pull/11 |
+| behavior_server (on robot @ `2d1eab7`) | ugv_ws | `beast/pr4-agent-behaviors` | https://github.com/Coldaine/ugv_ws/pull/12 (into pr1) |
+| `beast_power` offline scaffold | ugv_ws | `beast/power-telemetry-on-cockpit` (prefer) / `beast/power-telemetry` | https://github.com/Coldaine/ugv_ws/pull/14 (Beast line); https://github.com/Coldaine/ugv_ws/pull/13 (develop sibling) |
 
 **Master-plan progress (honest):** immobile session scorecard above ≠ Sets 1–5 complete.
 Roughly: Set 1a/1c + lidar boot/hygiene + Set 4a on robot; Hangar Set 4b/4c scaffold;
