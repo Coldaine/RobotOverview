@@ -11,6 +11,7 @@ import {
   ScrollText,
   Target,
   Activity,
+  Bot,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -48,6 +49,7 @@ const NAV: NavStation[] = [
   { to: '/tech-tree', label: 'Tech Tree', code: 'CAP', icon: Network },
   { to: '/datacore', label: 'Datacore', code: 'CORE', icon: ScrollText, activePrefixes: ['/datacore'] },
   { to: '/cockpit', label: 'Cockpit', code: 'DECK', icon: Activity, activePrefixes: ['/cockpit'] },
+  { to: '/agent', label: 'Agent', code: 'BOT', icon: Bot, activePrefixes: ['/agent'] },
 ];
 
 function NavItem({
