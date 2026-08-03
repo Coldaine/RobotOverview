@@ -61,7 +61,7 @@ unauthenticated is honest; calling it an ACL is not.
 
     **What that bought an attacker was bounded, and the ladder held.** The publish glob
     admits only `/cmd_vel_ui` — mux rung 50, outranked by the robot-side pad (150) and
-    the operator pad (100) — plus `/cmd_vel_estop_lock`. Motion is still gated by
+    the operator pad (100). Motion is still gated by
     `allow_motion` and still stopped by the watchdog. This was never an arbitration
     bypass. It was a drive-by command surface the documented model did not cover.
 
@@ -116,15 +116,18 @@ mux unbypassable from a browser.**
 | Topic | Type | Why it is admitted |
 |---|---|---|
 | `/cmd_vel_ui` | `geometry_msgs/Twist` | The mux's **priority-50 rung**. A pad at the robot (150) or an operator pad (100) always outranks it |
-| `/cmd_vel_estop_lock` | `std_msgs/Bool` | Remote priority-255 lock control: `true` stops; `false` releases the lock and may expose the next live source |
 | `/ugv/led_ctrl` | `std_msgs/Float32MultiArray` | Lights |
 | `/pt_joint_position_controller/commands` | `std_msgs/Float64MultiArray` | Pan-tilt |
 | `/ugv/pt_steady_ctrl` | `std_msgs/Float32MultiArray` | Pan-tilt levelling |
 
 **Not admitted, deliberately:** `/cmd_vel` (the mux output), `/cmd_vel_joy_robot`,
-`/cmd_vel_joy_operator`, `/cmd_vel_nav`, `/cmd_vel_nav_raw`, `/cmd_vel_smoothed`. A
-client that could reach any of those could bypass the ladder or impersonate a source
-that outranks the person standing next to the robot.
+`/cmd_vel_joy_operator`, `/cmd_vel_nav`, `/cmd_vel_nav_raw`, `/cmd_vel_smoothed` — and
+`/cmd_vel_estop_lock`. A client that could reach the velocity topics could bypass the
+ladder or impersonate a source that outranks the person standing next to the robot. The
+mux lock is excluded because a one-shot publish into a **volatile** lock subscription can
+lose the discovery race — the stop silently does nothing — and lock state does not
+survive a mux restart. Browser motion authority is the `/ugv/set_allow_motion` **service**
+below; the lock topic remains configured for CLI operators over SSH.
 
 ### Robot → client (`topics_sub_glob`)
 
@@ -146,16 +149,18 @@ the list stays closed so a client cannot enumerate and read whatever a later PR 
 
 ### Services and actions
 
-Both are `[]`. The `cockpit_rosbridge` wrapper also removes service and action
-capabilities from the protocol entirely, and `rosapi_node` is **not launched**.
-rosbridge 2.0.7 force-appends `/rosapi/*` to any non-empty `services_glob`, so
-refusing rosapi by configuration alone is impossible; that append would otherwise
-admit graph and parameter services outside this cockpit's required surface. The
-topic-only wrapper is the real denial, while omitting rosapi avoids publishing an
-unneeded sensitive service surface in the first place. This closes the service and
-action API; it does **not** make the bridge read-only. The reviewed topic-publish globs
-remain an intentional remote command ingress through the existing mux/gate/watchdog
-path. The shipped cockpit uses only advertise / publish / subscribe, so nothing is lost.
+`services_glob` names exactly one service — **`/ugv/set_allow_motion`**, the cockpit's
+DISARM/RE-ARM authority (a `std_srvs/SetBool` whose latched flag lives in `ugv_bringup`
+and gates the ESP32 serial write below the mux). `actions_glob` is `[]`. The
+`cockpit_rosbridge` wrapper removes the service-advertising and both action capabilities
+from the protocol, leaving `CallService` as the only service opcode, gated by that
+one-entry glob. `rosapi_node` is **not launched**: rosbridge 2.0.7 force-appends
+`/rosapi/*` to any non-empty `services_glob`, so refusing rosapi by configuration alone
+is impossible — with ours now non-empty, rosapi staying unlaunched is what keeps the
+forced append matching no live service. This closes every service except the motion
+authority and the whole action API; it does **not** make the bridge read-only. The
+reviewed topic-publish globs and the single SetBool service remain an intentional remote
+command ingress through the existing mux/gate/watchdog path.
 
 ---
 
@@ -242,16 +247,19 @@ just as broken as one that denies nothing, and only this second half catches it.
 
 ---
 
-## E-stop: the client must republish at ≥ 1 Hz
+## Motion authority: the browser calls a service, never the mux lock
 
-The lock ships with `timeout: 0.0`, so `twist_mux` never treats silence on
-`cmd_vel_estop_lock` as engagement — and it subscribes with **volatile** durability, so
-a single `--once` publish can be lost to the discovery race and the lock does not
-survive a `twist_mux` restart.
+The cockpit's DISARM/RE-ARM control is a `std_srvs/SetBool` call to
+**`/ugv/set_allow_motion`** — the only entry in `services_glob`. The latched flag lives
+in `ugv_bringup`, gates the ESP32 serial write below the mux, and survives `twist_mux`
+restarts because it does not live in the mux at all. The UI renders ARMED/DISARMED from
+the latched `/ugv/allow_motion` echo, never from what it last asked for.
 
-**An e-stop client MUST re-publish `true` at least once per second for as long as the
-stop is engaged**, and publish `false` repeatedly to release. This is a contract on the
-client because it cannot be enforced in config. Full reasoning:
+The `/cmd_vel_estop_lock` mux lock stays configured for **CLI operators over SSH**, with
+the same caveat as before: `twist_mux` subscribes to it with **volatile** durability, so
+a single `--once` publish can be lost to the discovery race and the lock does not survive
+a `twist_mux` restart. A CLI operator engaging it must re-publish `true` at ≥ 1 Hz for as
+long as the stop is held. Full reasoning:
 [Command Arbitration → Emergency lock](command_arbitration.md#emergency-lock).
 
 ---

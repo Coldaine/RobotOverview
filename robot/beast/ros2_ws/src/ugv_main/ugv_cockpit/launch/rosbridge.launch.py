@@ -65,13 +65,15 @@ VERIFIED ROSBRIDGE 2.0.7 BEHAVIOUR (read from source, not the docs)
     to work. docs/cockpit.md carries the commissioning check that proves the
     boundary is live — run it after any change to these strings.
 
-rosapi_node is NOT launched, deliberately. More importantly, the
-``cockpit_rosbridge`` wrapper removes every service and action capability from
-the upstream protocol. rosbridge 2.0.7 force-appends ``/rosapi/*`` to any
-non-``None`` ``services_glob``, so configuration alone cannot refuse it if
-another launch starts rosapi in the same ROS domain. With no ``call_service``
-operation registered, that graph coexistence cannot widen this socket. The
-shipped cockpit uses only advertise / publish / subscribe, so nothing is lost.
+rosapi_node is NOT launched, deliberately. The ``cockpit_rosbridge`` wrapper
+removes the action capabilities and the service-ADVERTISING capability from
+the upstream protocol, leaving CallService as the only service opcode — gated
+by the closed ``services_glob`` below, which names exactly
+``/ugv/set_allow_motion``. rosbridge 2.0.7 force-appends ``/rosapi/*`` to any
+non-``None`` ``services_glob``, so rosapi staying unlaunched is what keeps
+that forced append matching nothing real if another launch started it in the
+same ROS domain. The shipped cockpit uses advertise / publish / subscribe plus
+exactly one service call (the motion authority); everything else is refused.
 
 Every constant below is asserted by test/test_cockpit_bridge.py.
 """
@@ -85,15 +87,19 @@ from launch_ros.actions import Node
 ROSBRIDGE_ADDRESS = '127.0.0.1'
 ROSBRIDGE_PORT = 9090
 
-# Client -> robot. Exhaustively the five topics the shipped cockpit advertises
+# Client -> robot. Exhaustively the four topics the shipped cockpit advertises
 # (Coldaine/RobotOverview src/lib/ros/client.ts). Each is either the mux's
-# priority-50 UI rung, remote e-stop lock assert/release, or a non-velocity
-# actuator. The mux OUTPUT /cmd_vel and the higher rungs
-# cmd_vel_joy_robot / cmd_vel_joy_operator / cmd_vel_nav are absent, so a
-# browser can neither bypass arbitration nor outrank the human at the robot.
+# priority-50 UI rung or a non-velocity actuator. The mux OUTPUT /cmd_vel and
+# the higher rungs cmd_vel_joy_robot / cmd_vel_joy_operator / cmd_vel_nav are
+# absent, so a browser can neither bypass arbitration nor outrank the human at
+# the robot. /cmd_vel_estop_lock is deliberately absent too: the cockpit's
+# motion authority is the /ugv/set_allow_motion SERVICE (below), whose latched
+# flag lives in ugv_bringup and gates the serial write itself — a stronger and
+# restart-surviving stop than a volatile mux lock publish. The mux lock topic
+# stays configured for CLI operators over SSH, never for the browser.
 TOPICS_PUB_GLOB = (
     '[/cmd_vel_ui, /ugv/led_ctrl, /pt_joint_position_controller/commands, '
-    '/ugv/pt_steady_ctrl, /cmd_vel_estop_lock]'
+    '/ugv/pt_steady_ctrl]'
 )
 
 # Robot -> client. Telemetry only; nothing here can move anything. The list
@@ -114,8 +120,11 @@ TOPICS_SUB_GLOB = (
     '/oak/rgb/image_raw/compressed, /cockpit/depth/compressed]'
 )
 
-# Empty LIST, not empty string: "" parses to None, which means allow-all.
-SERVICES_GLOB = '[]'
+# Exactly one service: the motion authority in ugv_bringup. The cockpit's
+# DISARM/RE-ARM control calls it; nothing else is callable from the socket.
+# Bracketed, single-entry, never "" — an empty STRING parses to None, which
+# rosbridge reads as allow-all.
+SERVICES_GLOB = '[/ugv/set_allow_motion]'
 ACTIONS_GLOB = '[]'
 
 

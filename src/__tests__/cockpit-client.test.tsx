@@ -3,9 +3,9 @@ import { render, screen, act } from '@testing-library/react';
 import { CockpitClient } from '@/app/cockpit/CockpitClient';
 import { rosClient } from '@/lib/ros/client';
 
-// The real component, not just the hook: the unmount behaviour that keeps an
-// engaged e-stop alive lives in CockpitClient's effect cleanup, and a hook-only
-// test cannot see it.
+// The real component, not just the hook: the socket lifecycle (connect on
+// mount, disconnect on unmount) lives in CockpitClient's effect cleanup, and a
+// hook-only test cannot see it.
 class MockWebSocket {
   url: string;
   readyState = 0;
@@ -46,7 +46,6 @@ describe('CockpitClient', () => {
   });
 
   afterEach(() => {
-    rosClient.clearEstopIntent();
     rosClient.disconnect();
     MockWebSocket.latestInstance = null;
     vi.useRealTimers();

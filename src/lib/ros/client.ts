@@ -1,16 +1,6 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
-import {
-  getEstopState,
-  setEstopState,
-  useCockpitEstop,
-  type CockpitEstop,
-} from './estop-store';
-
-// Re-exported so cockpit components keep importing everything from one place.
-export { useCockpitEstop };
-export type { CockpitEstop };
 
 export type ConnectionState = 'connecting' | 'connected' | 'disconnected';
 
@@ -36,9 +26,9 @@ export const ROS_SUBSCRIPTIONS = [
   { topic: '/cockpit/overhead_clearance', type: 'std_msgs/msg/Float32' },
   { topic: '/cockpit/status', type: 'diagnostic_msgs/msg/DiagnosticArray' },
   { topic: '/diagnostics', type: 'diagnostic_msgs/msg/DiagnosticArray' },
-  // Dedicated safety topics. NOT YET DEPLOYED on the robot (robot-side PR in
-  // flight) — until then these produce nothing and every field they feed must
-  // render UNKNOWN, never a cleared/false default.
+  // Dedicated safety topics, latched robot-side. `/ugv/allow_motion` is the
+  // rendered motion authority (see SET_ALLOW_MOTION_SERVICE below); a field it
+  // feeds must render UNKNOWN when silent, never a cleared/false default.
   { topic: '/ugv/allow_motion', type: 'std_msgs/msg/Bool' },
   { topic: '/ugv/watchdog_state', type: 'diagnostic_msgs/msg/DiagnosticStatus' },
   { topic: '/oak/rgb/image_raw/compressed', type: 'sensor_msgs/msg/CompressedImage' },
@@ -50,17 +40,12 @@ export const ROS_PUBLICATIONS = [
   { topic: '/ugv/led_ctrl', type: 'std_msgs/msg/Float32MultiArray' },
   { topic: '/pt_joint_position_controller/commands', type: 'std_msgs/msg/Float64MultiArray' },
   { topic: '/ugv/pt_steady_ctrl', type: 'std_msgs/msg/Float32MultiArray' },
-  { topic: '/cmd_vel_estop_lock', type: 'std_msgs/msg/Bool' },
 ] as const;
 
 export const IMAGE_TOPICS = [
   '/oak/rgb/image_raw/compressed',
   '/cockpit/depth/compressed',
 ] as const;
-
-// Streams worth silencing when the cockpit is not on screen but the socket has
-// to stay open (an engaged e-stop). Bandwidth, not safety.
-export const HEAVY_TOPICS = ['/scan', ...IMAGE_TOPICS] as const;
 
 // ── LiDAR BLIND-SECTOR CROP ─────────────────────────────────────────────────
 // The single source of truth for the cropped sector. The scan parser deletes
@@ -500,59 +485,41 @@ let stalenessTimer: ReturnType<typeof setInterval> | null = null;
 let reconnectDelay = 1000;
 const MAX_RECONNECT_DELAY = 10000;
 let lastWsUrl = '';
-let heavyStreamsPaused = false;
 let scanArrivals: number[] = [];
 
-// ── E-STOP LOCK REPUBLISH CONTRACT ──────────────────────────────────────────
-// The robot arbitrates motion with twist_mux. `/cmd_vel_estop_lock` is a lock
-// topic at priority 255 configured `timeout: 0.0` (manual toggle), and
-// twist_mux subscribes to lock topics with VOLATILE durability and a shallow
-// queue. That imposes a hard client contract, because a one-shot publish is
-// not sufficient:
-//
-//   1. MATCHING RACE — a volatile message only reaches subscriptions that are
-//      already matched at the instant it is sent. A publisher that advertises
-//      and immediately publishes can lose the race with discovery, and the
-//      e-stop silently does nothing. That is the worst possible failure for
-//      this control. (Over rosbridge the ROS-side publisher lives in the
-//      long-lived rosbridge_websocket node, so the exposure is narrowed to the
-//      first publish after an `advertise` — but it is not eliminated.)
-//   2. MUX RESTART — lock state does not survive a twist_mux restart. A mux
-//      that crashes and comes back starts RELEASED regardless of what was
-//      published before, so an engaged e-stop can quietly un-engage itself
-//      under the operator.
-//
-// THEREFORE: republish `{data: true}` at >= 1 Hz for the whole time the stop is
-// held, and publish `{data: false}` repeatedly on release. We run 2 Hz for
-// margin.
-//
-// LIFETIME — WHY THIS LIVES HERE AND NOT IN A REACT EFFECT:
-// A safety heartbeat must not stop because a component unmounted. A
-// `useEffect` interval dies on route change, Strict Mode's double invoke, or
-// any remount, which would mute an engaged stop with no operator-visible
-// signal. So the machine is module state in the ros client and the invariant
-// is:
-//
-//     the heartbeat timer runs exactly while (operatorEngaged && socket OPEN)
-//
-// `operatorEngaged` outlives both the React tree and the socket. Reconnect
-// re-advertises and resumes the heartbeat immediately (see
-// advertiseAndSubscribe) because the mux may have restarted while we were
-// gone. Only an explicit release clears the intent — and CockpitClient keeps
-// the socket open on unmount while the stop is engaged, so navigating away
-// cannot silence it either.
-//
-// CONFIRMATION: latching intent is NOT proof the robot is stopped. Only
-// `/cockpit/status` reporting `active_source == 'E-STOP lock'` is. The UI must
-// distinguish "we are asserting" from "the robot confirmed" — see SafetyStrip.
-const ESTOP_TOPIC = '/cmd_vel_estop_lock';
-export const ESTOP_CONFIRM_GRACE_MS = 2000;
-export const ESTOP_MUX_SOURCE = 'E-STOP lock';
+// ── MOTION AUTHORITY: /ugv/set_allow_motion ─────────────────────────────────
+// The cockpit never publishes a mux lock. Motion authority is the latched
+// `allow_motion` flag inside ugv_bringup, flipped through the
+// `std_srvs/SetBool` service below. That flag gates the serial write to the
+// ESP32 below the mux, so it covers every command source (UI, pads, nav), and
+// it survives twist_mux restarts because it does not live in the mux at all.
+// The UI renders ARMED/DISARMED from the latched `/ugv/allow_motion` topic —
+// never from what it last asked for.
+export const SET_ALLOW_MOTION_SERVICE = '/ugv/set_allow_motion';
 
-let operatorEngaged = false;
+export interface ServiceResult {
+  /** True only when the bridge delivered the call AND the service answered success. */
+  ok: boolean;
+  /** Service's own message (SetBool.message) or a local failure reason. */
+  message: string | null;
+}
 
-function publishEstopLock(value: boolean): boolean {
-  return rosClient.publish(ESTOP_TOPIC, { data: value });
+const SERVICE_CALL_TIMEOUT_MS = 3000;
+
+interface PendingServiceCall {
+  resolve: (result: ServiceResult) => void;
+  timer: ReturnType<typeof setTimeout>;
+}
+
+const pendingServiceCalls = new Map<string, PendingServiceCall>();
+
+/** Every in-flight call fails when the socket goes away — resolve, don't hang. */
+function failPendingServiceCalls(reason: string) {
+  pendingServiceCalls.forEach((pending) => {
+    clearTimeout(pending.timer);
+    pending.resolve({ ok: false, message: reason });
+  });
+  pendingServiceCalls.clear();
 }
 
 // ── ROSBRIDGE STATUS FRAMES ─────────────────────────────────────────────────
@@ -713,12 +680,9 @@ export const rosClient = {
     if (typeof window === 'undefined') return;
     if (socket && lastWsUrl === url) {
       if (socket.readyState === WebSocket.OPEN) {
-        // The socket outlived the component (an engaged e-stop keeps it up).
-        // Returning bare here is what left a remounted cockpit with no
-        // subscriptions and a dead-looking screen — re-arm the wire instead.
-        // Someone is looking at the page again, so the streams we shed on the
-        // way out come back too.
-        heavyStreamsPaused = false;
+        // The socket outlived the component (a route change with the socket
+        // still open). Returning bare here is what left a remounted cockpit
+        // with no subscriptions and a dead-looking screen — re-arm the wire.
         this.advertiseAndSubscribe();
         return;
       }
@@ -735,6 +699,7 @@ export const rosClient = {
       reconnectTimer = null;
     }
     this.stopStalenessTicker();
+    failPendingServiceCalls('socket disconnected');
     releaseImageUrls();
     if (socket) {
       socket.onopen = null;
@@ -744,7 +709,6 @@ export const rosClient = {
       socket.close();
       socket = null;
     }
-    heavyStreamsPaused = false;
     if (connectionState !== 'disconnected') {
       connectionState = 'disconnected';
       markAllStale();
@@ -788,7 +752,6 @@ export const rosClient = {
     socket.onopen = () => {
       connectionState = 'connected';
       reconnectDelay = 1000;
-      heavyStreamsPaused = false;
       resetSlicesForNewConnection();
       notify('connection');
       this.advertiseAndSubscribe();
@@ -798,6 +761,7 @@ export const rosClient = {
     socket.onclose = () => {
       connectionState = 'disconnected';
       this.stopStalenessTicker();
+      failPendingServiceCalls('socket closed');
       markAllStale();
       notify('connection');
       this.handleScheduleReconnect(url);
@@ -806,6 +770,7 @@ export const rosClient = {
     socket.onerror = () => {
       connectionState = 'disconnected';
       this.stopStalenessTicker();
+      failPendingServiceCalls('socket error');
       markAllStale();
       notify('connection');
     };
@@ -818,9 +783,19 @@ export const rosClient = {
           msg?: InboundMsg;
           level?: string;
           id?: string;
+          result?: boolean;
+          values?: { success?: boolean; message?: string };
         };
         if (data.op === 'publish' && data.topic) {
           this.handleInboundPublish(data.topic, data.msg as InboundMsg);
+        } else if (data.op === 'service_response' && data.id) {
+          const pending = pendingServiceCalls.get(data.id);
+          if (pending) {
+            pendingServiceCalls.delete(data.id);
+            clearTimeout(pending.timer);
+            const success = data.values?.success ?? data.result === true;
+            pending.resolve({ ok: success, message: data.values?.message ?? null });
+          }
         } else if (data.op === 'status') {
           const level = data.level === 'error' ? 'error' : data.level === 'warning' ? 'warning' : null;
           if (level) {
@@ -850,7 +825,6 @@ export const rosClient = {
     socket.send(JSON.stringify({ op: 'set_level', level: 'warning' }));
 
     ROS_SUBSCRIPTIONS.forEach(({ topic, type }) => {
-      if (heavyStreamsPaused && (HEAVY_TOPICS as readonly string[]).includes(topic)) return;
       const isImage = (IMAGE_TOPICS as readonly string[]).includes(topic);
       socket?.send(JSON.stringify({
         op: 'subscribe',
@@ -872,29 +846,6 @@ export const rosClient = {
         type,
       }));
     });
-
-    // Contract: every (re)connect must re-assert a held stop immediately. The
-    // mux may have restarted while we were disconnected and come back with the
-    // lock RELEASED. This runs after the advertise above so the publisher
-    // exists before the first message.
-    if (operatorEngaged) {
-      publishEstopLock(true);
-    }
-  },
-
-  /**
-   * Silence the bandwidth-heavy streams without dropping the socket. Used when
-   * the cockpit unmounts while an e-stop is held: the lock heartbeat has to keep
-   * running, but there is no reason to keep pulling video and LiDAR into a page
-   * nobody is looking at.
-   */
-  releaseHeavyStreams() {
-    heavyStreamsPaused = true;
-    releaseImageUrls();
-    if (!socket || socket.readyState !== WebSocket.OPEN) return;
-    HEAVY_TOPICS.forEach((topic) => {
-      socket?.send(JSON.stringify({ op: 'unsubscribe', id: opId('unsub', topic), topic }));
-    });
   },
 
   publish(topic: string, msg: unknown): boolean {
@@ -908,64 +859,42 @@ export const rosClient = {
     return true;
   },
 
-  callService(serviceName: string, args: unknown) {
-    if (!socket || socket.readyState !== WebSocket.OPEN) return;
-    const callId = `call_${Math.random().toString(36).slice(2, 11)}`;
-    const triggerMsg = JSON.stringify({
-      op: 'call_service',
-      service: serviceName,
-      args,
-      id: callId,
+  /**
+   * Call a ROS service and await the bridge's `service_response`. Resolves
+   * `{ok: false, message}` on a closed socket, a timeout, or a bridge-level
+   * failure — it never throws and never hangs, because the caller renders a
+   * motion-authority state from the answer.
+   */
+  callService(serviceName: string, args: unknown): Promise<ServiceResult> {
+    return new Promise((resolve) => {
+      if (!socket || socket.readyState !== WebSocket.OPEN) {
+        resolve({ ok: false, message: 'socket not open' });
+        return;
+      }
+      const callId = `call_${Math.random().toString(36).slice(2, 11)}`;
+      const timer = setTimeout(() => {
+        if (pendingServiceCalls.delete(callId)) {
+          resolve({ ok: false, message: `no service_response within ${SERVICE_CALL_TIMEOUT_MS} ms` });
+        }
+      }, SERVICE_CALL_TIMEOUT_MS);
+      pendingServiceCalls.set(callId, { resolve, timer });
+      socket.send(JSON.stringify({
+        op: 'call_service',
+        service: serviceName,
+        args,
+        id: callId,
+      }));
     });
-    socket.send(triggerMsg);
   },
 
   /**
-   * Engage or release the twist_mux e-stop lock under the republish contract
-   * documented above. Returns whether the command actually left the socket —
-   * callers must not render "LOCKED" on a `false`, and must not render it on a
-   * `true` either: only a robot echo confirms the lock.
-   *
-   * Engage latches operator intent and starts the 2 Hz `true` heartbeat.
-   * Release stops the heartbeat and fires a short burst of `false`, then goes
-   * quiet; a release that never lands leaves the robot STOPPED, which is the
-   * safe direction to fail. Release always publishes even when we hold no
-   * intent, so the operator can clear a lock the robot reports but we did not
-   * set. Both directions are idempotent.
+   * The cockpit's ONLY motion-authority operation. `false` disarms (one click,
+   * immediate); `true` re-arms (behind the SafetyStrip hold-to-confirm). The
+   * answer to "did it work" comes from the latched `/ugv/allow_motion` topic
+   * echo — this Promise only answers "did the service call complete".
    */
-  setEstopLock(engaged: boolean): boolean {
-    if (typeof window === 'undefined') return false;
-    operatorEngaged = engaged;
-    setEstopState({ engaged, engagedAt: engaged ? Date.now() : null });
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      publishEstopLock(engaged);
-      return true;
-    }
-    return false;
-  },
-
-  /** Operator intent, readable outside React (e.g. unmount teardown checks). */
-  isEstopEngaged(): boolean {
-    return operatorEngaged;
-  },
-
-  /**
-   * Drop operator intent and every timer WITHOUT telling the robot. Teardown
-   * and test hygiene only — never use this to release a live stop, because the
-   * mux would keep holding the lock with nothing left to clear it. Use
-   * `setEstopLock(false)` for that.
-   *
-   * Deliberately does NOT touch writer status: clearing local intent is not a
-   * claim on the role, and silently promoting this tab would let a teardown win
-   * an election it never stood in.
-   */
-  clearEstopIntent() {
-    operatorEngaged = false;
-    setEstopState({ engaged: false, engagedAt: null });
-  },
-
-  resetEstopElection() {
-    // No-op for test teardown compatibility
+  setMotionAllowed(allowed: boolean): Promise<ServiceResult> {
+    return this.callService(SET_ALLOW_MOTION_SERVICE, { data: allowed });
   },
 
   registerImageCallback(topic: string, callback: (frame: ImageFrame) => void) {

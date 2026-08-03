@@ -5,10 +5,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   rosClient,
   useCockpitStatus,
-  useCockpitEstop,
   useCockpitBridge,
   useConnectionState,
-  ESTOP_MUX_SOURCE,
 } from '@/lib/ros/client';
 import {
   Sliders,
@@ -42,7 +40,6 @@ type DriveIntent = { linearX: number; angularZ: number };
 
 export function CommandRail() {
   const status = useCockpitStatus();
-  const estop = useCockpitEstop();
   const bridge = useCockpitBridge();
   const connection = useConnectionState();
 
@@ -66,15 +63,16 @@ export function CommandRail() {
   const driveTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const connected = connection === 'connected';
-  const estopHolding = estop.engaged || status.muxSource === ESTOP_MUX_SOURCE;
 
-  // ── MOTION GATE: PHYSICAL TETHER & CHARGING LOCK ─────────────────────────
-  // Motion is disabled ONLY if the robot is charging or plugged into Ethernet
-  // (to prevent tearing cables out), or if software E-STOP is engaged.
+  // ── MOTION GATE: DISARM STATE & HARDWARE INTERLOCKS ──────────────────────
+  // Motion is disabled when the robot is disarmed (via /ugv/set_allow_motion,
+  // whether by an operator here or by ugv_safety_monitor), when a hardware
+  // interlock is observed (charging / Ethernet — to prevent tearing cables
+  // out), or when the bridge refuses the drive topic.
   const driveGateReason: string | null = !connected
     ? 'robot unreachable'
-    : estopHolding
-      ? 'E-STOP engaged'
+    : status.allowMotion === false
+      ? 'motion disarmed — RE-ARM in the safety strip'
       : status.isCharging === true
         ? 'motion locked — robot is charging'
         : status.isEthernetConnected === true
@@ -288,7 +286,6 @@ export function CommandRail() {
   };
 
   const rungs = [
-    { pri: 255, name: 'E-STOP Lock', source: ESTOP_MUX_SOURCE, tone: 'red' as const },
     { pri: 150, name: 'BT Pad · Robot', source: 'BT pad · robot', tone: 'cyan' as const },
     { pri: 100, name: 'Operator Pad', source: 'Operator pad', tone: 'cyan' as const },
     { pri: 50, name: 'UI Teleop (WASD)', source: 'UI teleop', tone: 'emerald' as const },
@@ -313,9 +310,6 @@ export function CommandRail() {
                 className={clsx(
                   'grid grid-cols-[36px_1fr_auto] gap-2 items-center border border-rim/60 rounded-md px-3 py-1.5 bg-hull/40 font-mono text-xs',
                   state.active &&
-                    r.tone === 'red' &&
-                    'border-red-500/50 bg-red-950/20 text-glow-red text-red-400',
-                  state.active &&
                     r.tone === 'cyan' &&
                     'border-cyan-500/50 bg-cyan-950/20 text-glow-cyan text-cyan-400 font-bold',
                   state.active &&
@@ -331,11 +325,9 @@ export function CommandRail() {
                     state.unknown
                       ? 'text-ink-dim/50'
                       : state.active
-                        ? r.tone === 'red'
-                          ? 'text-red-500 animate-pulse'
-                          : r.tone === 'emerald'
-                            ? 'text-emerald-400'
-                            : 'text-cyan'
+                        ? r.tone === 'emerald'
+                          ? 'text-emerald-400'
+                          : 'text-cyan'
                         : 'text-zinc-600',
                   )}
                   title={state.unknown ? '/cockpit/status has no publisher yet' : undefined}
