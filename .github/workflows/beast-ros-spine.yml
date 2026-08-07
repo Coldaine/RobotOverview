@@ -39,17 +39,19 @@ jobs:
 
       - name: Safety gate
         env:
-          PYTHONPATH: src/ugv_main/ugv_bringup
+          # beast_base holds the ESP32 bridge node + its safety tests (Phase 1
+          # extraction); ugv_bringup keeps odom_publisher + launch/config.
+          PYTHONPATH: src/ugv_main/beast_base:src/ugv_main/ugv_bringup
         run: >-
           python -m pytest -q
           src/ugv_main/ugv_cockpit/test/test_twist_mux_spine.py
           src/ugv_main/ugv_cockpit/test/test_cockpit_bridge.py
           src/ugv_main/ugv_cockpit/test/test_cockpit_status_contract.py
-          src/ugv_main/ugv_bringup/test/test_jetson_safety.py
+          src/ugv_main/beast_base/test
 
       - name: Remaining cockpit tests
         env:
-          PYTHONPATH: src/ugv_main/ugv_bringup
+          PYTHONPATH: src/ugv_main/beast_base:src/ugv_main/ugv_bringup
         run: >-
           python -m pytest -q src/ugv_main/ugv_cockpit/test
           --ignore=src/ugv_main/ugv_cockpit/test/test_twist_mux_spine.py

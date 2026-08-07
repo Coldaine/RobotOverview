@@ -1,11 +1,11 @@
 # Copyright 2026 Coldaine
 # SPDX-License-Identifier: Apache-2.0
 
-"""Minimal ROS import stubs for the bare-Python watchdog merge gate.
+"""Minimal ROS import stubs for the bare-Python beast_base merge gate.
 
-The behavioral tests bind selected ``ugv_bringup`` methods onto a tiny harness;
+The behavioral tests bind selected ``beast_base`` methods onto a tiny harness;
 they never construct a ROS node or message.  CI intentionally has no ROS install,
-so provide only the names needed to import the production module.  On a real ROS
+so provide only the names needed to import the production modules.  On a real ROS
 Humble system these stubs are not installed and the actual packages are used.
 """
 
@@ -26,6 +26,8 @@ if importlib.util.find_spec('rclpy') is None:
     rclpy_parameter = _module('rclpy.parameter')
     rclpy_qos = _module('rclpy.qos')
 
+    rclpy.ok = lambda: True
+
     class _Placeholder:
         """Accept-anything stub for rclpy classes the tests never introspect."""
 
@@ -37,7 +39,7 @@ if importlib.util.find_spec('rclpy') is None:
 
         Tests monkeypatch ``Node.__init__``; when QoSProfile/DurabilityPolicy/
         HistoryPolicy aliased the Node stub class, that patch clobbered QoS
-        construction in ``ugv_bringup.__init__`` with a lambda that rejects
+        construction in ``BeastBaseNode.__init__`` with a lambda that rejects
         kwargs. Separate class, carries the enum attributes the node reads and
         swallows ``QoSProfile(depth=..., durability=..., history=...)``.
         """
@@ -52,7 +54,7 @@ if importlib.util.find_spec('rclpy') is None:
         """Enough of a generated message to be built and have fields set.
 
         ``rclpy`` messages take keyword field values and allow attribute
-        assignment afterwards; both forms appear in ugv_bringup. Nothing here
+        assignment afterwards; both forms appear in base_node. Nothing here
         validates types — these tests assert what the node PUTS in a message,
         not that rosidl would accept it.
         """
@@ -61,13 +63,31 @@ if importlib.util.find_spec('rclpy') is None:
             for name, value in fields.items():
                 setattr(self, name, value)
 
-    class _DiagnosticStatus(_Message):
-        # The real constants, so a test can tell OK from WARN from ERROR.
-        # Values match diagnostic_msgs/msg/DiagnosticStatus.
-        OK = 0
-        WARN = 1
-        ERROR = 2
-        STALE = 3
+    class _Vec3:
+        """x/y/z sub-message (Vector3 / Vector3Stamped fields)."""
+
+        def __init__(self):
+            self.x = 0.0
+            self.y = 0.0
+            self.z = 0.0
+
+    class _Imu(_Message):
+        """Imu: the sub-fields and covariance arrays base_node writes to."""
+
+        def __init__(self, **fields):
+            super().__init__(**fields)
+            self.linear_acceleration = _Vec3()
+            self.angular_velocity = _Vec3()
+            self.orientation_covariance = [0.0] * 9
+            self.angular_velocity_covariance = [0.0] * 9
+            self.linear_acceleration_covariance = [0.0] * 9
+
+    class _MagneticField(_Message):
+        """MagneticField: the Vector3 base_node writes to."""
+
+        def __init__(self, **fields):
+            super().__init__(**fields)
+            self.magnetic_field = _Vec3()
 
     class _Parameter:
         class Type:
@@ -84,23 +104,26 @@ if importlib.util.find_spec('rclpy') is None:
     rclpy_qos.HistoryPolicy = _QoS
     rclpy_qos.QoSProfile = _QoS
 
-    _TYPED = {'DiagnosticStatus': _DiagnosticStatus}
-
     for package, names in {
         'std_msgs.msg': ('Header', 'Bool', 'Float32MultiArray'),
         'geometry_msgs.msg': ('Twist',),
-        'sensor_msgs.msg': (
-            'Imu', 'MagneticField', 'JointState', 'BatteryState'
-        ),
-        'diagnostic_msgs.msg': ('DiagnosticStatus', 'KeyValue'),
+        'sensor_msgs.msg': {
+            'Imu': _Imu,
+            'MagneticField': _MagneticField,
+            'JointState': _Message,
+        },
         'rcl_interfaces.msg': ('SetParametersResult',),
     }.items():
         parent_name, _separator, _child = package.partition('.')
         parent = sys.modules.get(parent_name) or _module(parent_name)
         messages = _module(package)
         parent.msg = messages
-        for name in names:
-            setattr(messages, name, _TYPED.get(name, _Message))
+        if isinstance(names, dict):
+            for name, cls in names.items():
+                setattr(messages, name, cls)
+        else:
+            for name in names:
+                setattr(messages, name, _Message)
 
     std_srvs = _module('std_srvs')
     std_srvs_srv = _module('std_srvs.srv')

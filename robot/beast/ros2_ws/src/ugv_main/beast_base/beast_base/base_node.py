@@ -1,4 +1,8 @@
-"""UGV bringup — ESP32 serial bridge + sensor republish (runs on the Jetson).
+"""BEAST-01 base node — ESP32 serial bridge + sensor republish (runs on the Jetson).
+
+Extracted from ``ugv_bringup`` in Phase 1 of the ROS strip-down work order
+(docs/plans/2026-08-07-beast-ros-drift-inventory-and-stripdown.md); behaviour is
+preserved, not rewritten.
 
 No AI-added cmd_vel silence watchdog: the ESP32 is trusted to latch/zero the last
 velocity as stock firmware does, and this node sends an unconditional T:13 stop
@@ -33,13 +37,12 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu, MagneticField, JointState
 
 import os
-import time
 import json
 import threading
-import subprocess
 import netifaces
 
 from .base_ctrl import BaseController
+from .beast_audio import LowBatteryVoice
 
 def get_all_ips():
     ip_dict = {}
@@ -78,14 +81,17 @@ def default_serial_port():
     if configured:
         return configured
     if os.path.exists('/etc/nv_tegra_release'):
-        return '/dev/ttyTHS1'
+        # cp210x re-enumeration lands on the by-id path, not ttyTHS1 (verified
+        # live 2026-08-07). The deployed truth is UGV_SERIAL_PORT in
+        # deploy/systemd/ugv.env.example; this is only the no-env fallback.
+        return '/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00'
     return '/dev/ttyAMA0'
 
 
 # ROS node class for bringing up the UGV system and publishing sensor data
-class ugv_bringup(Node):
+class BeastBaseNode(Node):
     def __init__(self):
-        super().__init__('ugv_bringup')
+        super().__init__('beast_base')
         # Publishers for IMU data, magnetic field data, odometry, and voltage
         # self.imu_data_raw_publisher_ = self.create_publisher(Imu, "imu/data_raw", 20)
         # Canonical topic is imu/data (EKF / rf2o / odom_publisher / cockpit).
@@ -96,8 +102,6 @@ class ugv_bringup(Node):
         self.odom_publisher_ = self.create_publisher(Float32MultiArray, "odom/odom_raw", 20)
         # /ugv/voltage is beast_power's (sole owner since 2026-08-07). The ESP32
         # "v" field is still consumed below, but only for the voice warning.
-        self._low_battery_warn_interval = 5.0
-        self._last_low_battery_warn = 0.0
 
         # Subscribe to velocity commands (cmd_vel topic)
         self.cmd_vel_sub_ = self.create_subscription(Twist, "cmd_vel", self.cmd_vel_callback, 20)
@@ -123,6 +127,9 @@ class ugv_bringup(Node):
 
         # Initialize the base controller with the UART port and baud rate
         self.base_controller = BaseController(serial_port_name, baud_rate)
+        self._voice = LowBatteryVoice(
+            self.base_controller.send_command, self.get_logger
+        )
         request_data = json.dumps({"T":131,"cmd":1}) + "\n"
         self.base_controller.send_command(request_data.encode())
         # Unconditional stop at startup: clear any velocity the ESP32 may be
@@ -238,7 +245,7 @@ class ugv_bringup(Node):
                 if data and data["T"] == 1001:
                     self.publish_imu_mag()
                     self.publish_odom_raw()
-                    self.check_low_battery()
+                    self._voice.check(data)
                     self.publish_imu_data_raw()
 
             except Exception as e:
@@ -325,38 +332,6 @@ class ugv_bringup(Node):
         array = [odom_raw_data["odl"]/100, odom_raw_data["odr"]/100,odom_raw_data["L"], odom_raw_data["R"]]
         msg = Float32MultiArray(data=array)
         self.odom_publisher_.publish(msg)  # Publish the odometry data
-
-    def _maybe_low_battery_warning(self, voltage_value: float):
-        if not (0.1 < voltage_value < 9):
-            return
-        now = time.monotonic()
-        if now - self._last_low_battery_warn < self._low_battery_warn_interval:
-            return
-        self._last_low_battery_warn = now
-        threading.Thread(
-            target=self._low_battery_warn_worker,
-            args=(voltage_value,),
-            daemon=True,
-        ).start()
-
-    def _low_battery_warn_worker(self, voltage_value: float):
-        try:
-            subprocess.run(
-                ['spd-say', 'low battery'],
-                check=False,
-                timeout=10,
-            )
-            data = json.dumps({'T': '3', 'lineNum': 2, 'Text': f"V:{voltage_value}"}) + "\n"
-            self.base_controller.send_command(data.encode())
-        except Exception as e:
-            self.get_logger().error(f"Failed low battery warning: {e}")
-
-    # ESP32 "v" (centivolts) drives only the low-battery voice warning now.
-    # BatteryState publishing moved to beast_power (2026-08-07 cutover) — the
-    # INA219 there measures the same rail plus real signed current.
-    def check_low_battery(self):
-        voltage_data = self.base_controller.base_data
-        self._maybe_low_battery_warning(float(voltage_data["v"] / 100))
 
     # Callback for processing velocity commands m/s
     def cmd_vel_callback(self, msg):
@@ -475,7 +450,7 @@ class ugv_bringup(Node):
 # Main function to initialize the ROS node and start spinning
 def main(args=None):
     rclpy.init(args=args)  # Initialize ROS
-    node = ugv_bringup()  # Create the UGV bringup node
+    node = BeastBaseNode()  # Create the BEAST-01 base node
     try:
         rclpy.spin(node)  # Keep the node running
     except Exception as exc:

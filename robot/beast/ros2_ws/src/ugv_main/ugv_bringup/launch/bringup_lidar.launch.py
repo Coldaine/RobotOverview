@@ -44,7 +44,12 @@ def generate_launch_description():
     serial_port_arg = DeclareLaunchArgument(
         'serial_port',
         default_value=EnvironmentVariable(
-            'UGV_SERIAL_PORT', default_value='/dev/ttyTHS1'
+            'UGV_SERIAL_PORT',
+            # cp210x by-id path (verified live 2026-08-07) — cp210x
+            # re-enumeration lands here, not ttyTHS1. The env file in
+            # deploy/systemd/ugv.env.example is the deployed truth; this is
+            # only the no-env fallback.
+            default_value='/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00'
         ),
         description='Serial port connected to the UGV ESP32 controller'
     )
@@ -146,10 +151,13 @@ def generate_launch_description():
             os.path.join(get_package_share_directory('ugv_cockpit'), 'launch', 'twist_mux.launch.py')
         ),
     )
-    # Define the nodes to be launched                                     
+    # Define the nodes to be launched
+    # The ESP32 bridge node moved to the beast_base package (Phase 1 of the
+    # strip-down work order); ugv_bringup keeps the launch, configs, and
+    # odom_publisher below.
     bringup_node = Node(
-        package='ugv_bringup',
-        executable='ugv_bringup',
+        package='beast_base',
+        executable='beast_base',
         parameters=[{
             'serial_port': LaunchConfiguration('serial_port'),
             'baud_rate': 115200,
