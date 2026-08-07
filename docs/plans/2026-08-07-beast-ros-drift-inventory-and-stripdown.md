@@ -217,7 +217,7 @@ preserved; they are the *entire* keep-set):
 | T:3 OLED thread | `ip_thread_func` — Wi-Fi/eth IP lines (`lineNum` 1/0) + low-battery `V:` line (`lineNum` 2) |
 | Low-battery voice | `check_low_battery` / `_maybe_low_battery_warning` — ESP32 `v` (centivolts, ~1.2 % low) gates `spd-say 'low battery'` + OLED line. **Do not publish BatteryState** — `/ugv/voltage` is beast_power's. |
 | `allow_motion` param + `/ugv/set_allow_motion` SetBool | Default armed; **stop-on-disable** (stop sent immediately on the true→false edge); **idempotent** (no-op flip, no duplicate stop); both service and `parameter:allow_motion` paths apply it |
-| `/ugv/allow_motion` Bool TRANSIENT_LOCAL | **Published AFTER the unconditional boot stop — the ordering is load-bearing** (a publisher create can raise; telemetry must never precede safing). Re-publish at ~1 Hz as a liveness heartbeat. |
+| `/ugv/allow_motion` Bool TRANSIENT_LOCAL | **Published AFTER the unconditional boot stop — the ordering is load-bearing** (a publisher create can raise; telemetry must never precede safing). TRANSIENT_LOCAL latch only — there is no re-publish timer in the code; late subscribers get the latched value. |
 | Malformed-input-proof callbacks | All callbacks warn+drop instead of raising (H1). |
 | Guarded `main()` | `try: rclpy.spin` / `finally: destroy_node + shutdown`. |
 
