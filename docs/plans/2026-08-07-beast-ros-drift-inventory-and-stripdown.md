@@ -106,8 +106,10 @@ Carry-across or kill-list for execution. Full detail in the session record; comp
   `allow_motion` is false. Crash while driving → ESP32 keeps last velocity; restart comes up
   armed and never clears it. `/ugv/led_ctrl` is browser-reachable, so this is remotely
   triggerable.
-- **H2 — vizanti landmine.** `vizanti_server.launch.py` starts stock rosbridge on
-  `0.0.0.0:5001` with no globs + `rosapi_node`. One launch bypasses every cockpit control.
+- **H2 — vizanti landmine.** `vizanti_server.launch.py` (and `vizanti_rws.launch.py`)
+  started stock rosbridge / rws on `0.0.0.0:5001` with no globs + `rosapi_node`. **Fixed
+  2026-08-07:** both launch files are now no-ops that log a deprecation warning, and
+  `ugv_web_app/launch/bringup.launch.py` no longer includes them.
 - **H3 — interlocks are fail-open.** `ugv_safety_monitor` is a client-side request with no
   respawn, no heartbeat; bringup neither knows nor cares if it exists.
 - **M4 — CHARGING_LOCK untrustworthy** (facts 4–5 above; threshold `0.05 A` is a guess).
