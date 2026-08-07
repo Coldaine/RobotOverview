@@ -33,6 +33,16 @@ re-verify against the live robot before relying on anything stale.
 - Thermals fine all session: 49–54 °C under build + drive load, fan pwm
   70–86 — the 2026-08-07 morning lid/fan blockage (86–87 °C idle) did NOT
   reproduce this session; treat as resolved unless it recurs.
+- **ESP32 latch CONFIRMED live (evening session, odometry-proven AND
+  owner-witnessed):** crawl at 0.15 m/s, publisher killed mid-crawl (no zero
+  burst; mux timed out, base sent nothing) → wheels accumulated **+0.81 m
+  during 5 s of command silence**, and the owner physically watched the robot
+  keep driving forward into a wall until the stop burst halted it (final
+  wheel rates 0.0). The ESP32 executes its last T:13 forever; an explicit
+  stop is the ONLY halt. This settles the long-open `[doc-claim-unverified]`
+  hardware fact and is the standing justification for the unconditional boot
+  stop + the disarm gate. Test script: `.tmp/beast_latch_test.py` (scratch,
+  rerun any time).
 
 **Hardware identity + power path (verified live 2026-08-07):**
 
@@ -178,7 +188,11 @@ this block SUPERSEDES the charging conclusions in the two blocks below.**
   2026-08-07 was never deployed.
 - `/ugv/charging_active` has **0 publishers**, 1 subscriber (`ugv_safety_monitor`) — the
   charging interlock is waiting on a topic nobody feeds.
-- **Latch test — inconclusive.** The robot was re-armed via `/ugv/set_allow_motion` and a
+- **Latch test — inconclusive at the time; SUPERSEDED 2026-08-07 evening.** The
+  hardware question this block left open is now answered: the ESP32 **does**
+  latch (Quick connect, top block — +0.81 m of wheel travel during 5 s of
+  command silence, odometry-proven). Original note follows.
+  The robot was re-armed via `/ugv/set_allow_motion` and a
   slow rotation command (`/cmd_vel_ui` angular.z = 0.2 rad/s) was injected for 2 s.
   `/cmd_vel` carried the command and returned to zero when publishing stopped, showing the
   current `twist_mux` + `cmd_vel_timeout` stack does stop sending commands. However, no
