@@ -11,8 +11,6 @@ export type BeastRobotStatus = {
   connection: BeastConnectionState;
   bridgeUrl: string | null;
   allowMotion: boolean | null;
-  watchdogArmed: boolean | null;
-  watchdogFired: boolean | null;
   voltage: number | null;
   scanAlive: boolean | null;
   /** Human-readable reason motion is gated, when known. */

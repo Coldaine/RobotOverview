@@ -26,8 +26,6 @@ vi.mock('@/lib/ros/client', () => ({
     cmdAge: null,
     pubCount: null,
     allowMotion: mocks.allowMotion,
-    watchdogArmed: null,
-    watchdogFired: null,
     wifiRssi: null,
     diskFree: null,
     cpuTemp: null,

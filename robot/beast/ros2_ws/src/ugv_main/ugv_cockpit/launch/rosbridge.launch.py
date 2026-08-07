@@ -106,17 +106,17 @@ TOPICS_PUB_GLOB = (
 # stays closed anyway so a client cannot enumerate and read whatever a later PR
 # adds to the graph.
 #
-# /imu/raw, not /imu/data: ugv_bringup publishes Imu on "imu/raw" (its
-# imu/data_raw publisher is commented out and no filter node republishes as
-# imu/data), so /imu/data does not exist on this robot.
+# /imu/raw: beast_base publishes Imu on "imu/data" (canonical, EKF / rf2o /
+# odom_publisher) and "imu/raw" (same-payload alias for acceptance scripts
+# that still echo it). The web client subscribes /imu/raw.
 #
-# CROSS-REPO: RobotOverview #148 now subscribes /imu/raw plus the two dedicated
-# safety topics below. Keep this exhaustive list in lockstep with its
+# CROSS-REPO: RobotOverview #148 now subscribes /imu/raw plus the dedicated
+# safety topic below. Keep this exhaustive list in lockstep with its
 # ROS_SUBSCRIPTIONS contract; denying a safety subscription would force the UI
 # onto the slower aggregator and surface a bridge fault.
 TOPICS_SUB_GLOB = (
     '[/ugv/voltage, /scan, /odom, /imu/raw, /cockpit/overhead_clearance, '
-    '/cockpit/status, /diagnostics, /ugv/allow_motion, /ugv/watchdog_state, '
+    '/cockpit/status, /diagnostics, /ugv/allow_motion, '
     '/oak/rgb/image_raw/compressed, /cockpit/depth/compressed]'
 )
 

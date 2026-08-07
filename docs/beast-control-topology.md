@@ -90,13 +90,13 @@ flowchart TB
   KBD["operator keyboard (SSH)"] -->|"prio 100"| MUX
   JPD["on-robot gamepad"] -->|"prio 150"| MUX
   ES["CLI e-stop lock"] -.->|"prio 255 masks everything"| MUX
-  MUX --> BR["ugv_bringup: allow_motion gate + 0.5 s watchdog"]
+  MUX --> BR["ugv_bringup: allow_motion gate"]
   BR --> ESP["ESP32 (JSON T:13 @115200)"]
   ESP --> TRK["tracks"]
 ```
 
-Invariant: browser/LLM propose; Jetson/ESP32 dispose — manual `allow_motion`, 0.5 s
-`cmd_vel_timeout` watchdog, mux priorities, Nav2 collision monitor. There is no automatic
+Invariant: browser/LLM propose; Jetson/ESP32 dispose — manual `allow_motion`,
+mux priorities, Nav2 collision monitor. There is no automatic
 Ethernet/charging interlock on the current branch. A human always outranks autonomy;
 someone at the robot outranks everyone; e-stop outranks the humans; `ugv_bringup` can refuse them all.
 
@@ -147,7 +147,7 @@ flowchart LR
   subgraph ros ["Jetson ROS graph"]
     LD["ldlidar → /scan"]
     PWR["beast_power → /ugv/voltage + /ugv/charging_active (observability)"]
-    BRB["ugv_bringup → /imu/raw + /ugv/allow_motion + /ugv/watchdog_state (Set 1a)"]
+    BRB["ugv_bringup → /imu/raw + /ugv/allow_motion (Set 1a)"]
     EKF["EKF → /odom"]
     BSV["behavior_server ⇄ nav2 actions (Set 4a)"]
   end
@@ -176,7 +176,7 @@ bridge; the robot sees topics, not clients. Closed-glob contract:
 | Never | Why |
 | --- | --- |
 | Deploy or `colcon build` on the Jetson | Robot brain is `ugv_ws` only; Hangar is the portal |
-| Own safety authority (`allow_motion`, watchdog, mux) | Jetson disposes; Hangar proposes |
+| Own safety authority (`allow_motion`, mux) | Jetson disposes; Hangar proposes |
 | Stream LLM `cmd_vel` or unbounded odom loops | Skills are stock nav2 behaviors with `time_allowance` |
 | Bypass rosbridge globs / invent a FastAPI motion API | One bridge; Zod tools + glob allowlist are the intent contract |
 | Arm motion from CI, seed data, or offline fixtures | Arming is a supervised on-robot procedure after crawl+kill |

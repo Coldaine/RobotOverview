@@ -27,13 +27,11 @@ import math
 # ---------------------------------------------------------------------------
 STATUS_TOPIC = '/cockpit/status'
 
-DIAG_WATCHDOG = 'cockpit_safety_watchdog'
 DIAG_TWIST_MUX = 'twist_mux'
 DIAG_BRINGUP = 'bringup'
 DIAG_SYSTEM_METRICS = 'system_metrics'
 
 DIAG_NAMES = (
-    DIAG_WATCHDOG,
     DIAG_TWIST_MUX,
     DIAG_BRINGUP,
     DIAG_SYSTEM_METRICS,
@@ -42,9 +40,6 @@ DIAG_NAMES = (
 # ---------------------------------------------------------------------------
 # KeyValue keys, per entry. Every value crosses the wire as a string.
 # ---------------------------------------------------------------------------
-KEY_ARMED = 'armed'
-KEY_FIRED = 'fired'
-
 KEY_ACTIVE_SOURCE = 'active_source'
 KEY_COMMAND_AGE = 'command_age'
 KEY_PUBLISHER_COUNT = 'publisher_count'
@@ -57,7 +52,6 @@ KEY_CPU_TEMP = 'cpu_temp'
 KEY_GPU_TEMP = 'gpu_temp'
 
 DIAG_KEYS = {
-    DIAG_WATCHDOG: (KEY_ARMED, KEY_FIRED),
     DIAG_TWIST_MUX: (KEY_ACTIVE_SOURCE, KEY_COMMAND_AGE, KEY_PUBLISHER_COUNT),
     DIAG_BRINGUP: (KEY_ALLOW_MOTION,),
     DIAG_SYSTEM_METRICS: (KEY_WIFI_RSSI, KEY_DISK_FREE, KEY_CPU_TEMP, KEY_GPU_TEMP),
@@ -68,10 +62,9 @@ DIAG_KEYS = {
 TRUE = 'true'
 FALSE = 'false'
 
-# Topics ugv_bringup publishes so this node can report armed / fired /
-# allow_motion honestly instead of guessing from the outside.
+# Topics ugv_bringup publishes so this node can report allow_motion honestly
+# instead of guessing from the outside.
 ALLOW_MOTION_TOPIC = '/ugv/allow_motion'
-WATCHDOG_STATE_TOPIC = '/ugv/watchdog_state'
 
 
 def boolean(value):
@@ -113,11 +106,11 @@ MUX_SOURCES = (
 ESTOP_LOCK_TOPIC = 'cmd_vel_estop_lock'
 ESTOP_LOCK_PRIORITY = 255
 
-# twist_mux's per-source expiry, and ugv_bringup's watchdog period. The same
-# number on purpose — see config/twist_mux.yaml.
+# twist_mux's per-source expiry — the same number on purpose for all rungs,
+# see config/twist_mux.yaml.
 SOURCE_TIMEOUT_S = 0.5
 
-# An arming/watchdog message older than this is treated as no message at all.
+# An arming message older than this is treated as no message at all.
 # Long enough to ride out a missed tick at ugv_bringup's 2 Hz, short enough that
 # a dead bringup shows up on the safety strip within a few seconds. Lives here
 # rather than in cockpit_status so the decay rule can be exercised with an
@@ -137,8 +130,8 @@ def is_fresh(now, stamp, stale_s=BRINGUP_STALE_S):
 
 
 # ---------------------------------------------------------------------------
-# ABSENCE IS A VALUE. The two builders below return NO PAIRS AT ALL until a
-# real message has been mirrored, and go back to returning none once that
+# ABSENCE IS A VALUE. The builder below returns NO PAIRS AT ALL until a
+# real message has been mirrored, and goes back to returning none once that
 # message ages past BRINGUP_STALE_S.
 #
 # This is a wire-level distinction, not a cosmetic one. The client renders a
@@ -163,16 +156,6 @@ def bringup_key_values(now, stamp, allow_motion, stale_s=BRINGUP_STALE_S):
         return ()
     return ((KEY_ALLOW_MOTION, boolean(allow_motion)),)
 
-
-def watchdog_key_values(now, stamp, armed, fired, stale_s=BRINGUP_STALE_S):
-    """(key, value) pairs for the watchdog entry. Empty when not fresh.
-
-    Both keys appear together or not at all: they come from one message, so
-    there is no state in which one is known and the other is not.
-    """
-    if not is_fresh(now, stamp, stale_s):
-        return ()
-    return ((KEY_ARMED, boolean(armed)), (KEY_FIRED, boolean(fired)))
 
 # The topic twist_mux publishes on, i.e. the one whose publisher count the
 # cockpit renders as "/cmd_vel publishers". Exactly 1 is healthy.
@@ -287,7 +270,7 @@ def resolve_active_source(now, last_command_at, estop_engaged,
 #
 # What that actually buys an attacker here is bounded by the publish glob:
 # /cmd_vel_ui is mux rung 50, outranked by both the robot-side pad (150) and
-# the operator pad (100), and still gated by allow_motion and the watchdog. So
+# the operator pad (100), and still gated by allow_motion. So
 # the ladder holds and this is not an arbitration bypass.
 #
 # POLICY: the tailnet is the perimeter. ``tailscale serve`` is the only way in,

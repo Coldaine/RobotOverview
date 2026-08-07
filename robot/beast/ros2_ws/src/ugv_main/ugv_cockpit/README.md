@@ -9,13 +9,12 @@ This package adds a **remote command ingress**, by design: it stands up the
 rosbridge WebSocket the cockpit uses to *publish* command topics (`/cmd_vel_ui`,
 gimbal, LED, e-stop lock) — so it owns the boundary that keeps a browser on the
 existing priority-50 mux rung and off `/cmd_vel` entirely. It adds no bypass
-around the existing mux, motion gate, or watchdog. There is no authentication on
-that socket. Motion safety rests on four things, in order:
+around the existing mux or motion gate. There is no authentication on
+that socket. Motion safety rests on three things, in order:
 
 1. the **loopback bind + topic whitelist** in `launch/rosbridge.launch.py`,
 2. `twist_mux` arbitration ([Command Arbitration](../../../docs/command_arbitration.md)),
-3. `ugv_bringup`'s `allow_motion` gate, and
-4. `ugv_bringup`'s 0.5 s `cmd_vel` timeout watchdog.
+3. `ugv_bringup`'s `allow_motion` gate.
 
 The full security model, the rosbridge enforcement details, and the
 commissioning check that proves the whitelist is live are in
@@ -28,10 +27,10 @@ every way of getting one wrong fails **silently**.
 |---|---|---|
 | `depth_colorizer` | `/cockpit/depth/compressed` (`CompressedImage`, JPEG ~6 Hz) | Raw 16UC1 depth (~614 KB/frame) is unusable in a browser; clip → TURBO colormap → JPEG. |
 | `overhead_clearance` | `/cockpit/overhead_clearance` (`Float32`, m) | "Will I fit under this duct?" — image-space min on the top depth band. Mission Undercroft's defining question. |
-| `cockpit_status` | `/cockpit/status` (`DiagnosticArray`) | Active mux source and command age, `/cmd_vel` publisher count, arming + watchdog state, disk free, Jetson temps, Wi-Fi RSSI. |
+| `cockpit_status` | `/cockpit/status` (`DiagnosticArray`) | Active mux source and command age, `/cmd_vel` publisher count, arming state, disk free, Jetson temps, Wi-Fi RSSI. |
 
 `/scan`, `/odom`, `/ugv/voltage`, `/imu/raw`, `/diagnostics`,
-`/ugv/allow_motion`, `/ugv/watchdog_state`, and
+`/ugv/allow_motion`, and
 `/oak/rgb/image_raw/compressed` come from `beast-ros-base` + the OAK launch and
 are simply carried on the same bridge.
 
@@ -41,15 +40,14 @@ are simply carried on the same bridge.
 > cockpit client's matching change (`/imu/data` → `/imu/raw`) is **merged** on
 > RobotOverview main (#148), so this glob entry is simply correct as it stands.
 
-`cockpit_status` also consumes two topics `ugv_bringup` publishes at 2 Hz —
-`/ugv/allow_motion` (`Bool`) and `/ugv/watchdog_state` (`DiagnosticStatus`, keys
-`armed` / `fired` / `watching` / `timeout`) — so the cockpit's drive gate reflects
-what the robot enforces rather than what the UI last sent. Both are subscribed
-`TRANSIENT_LOCAL` to match the publishers, and both are aged out after 3 s.
+`cockpit_status` also consumes the `/ugv/allow_motion` (`Bool`) topic
+`ugv_bringup` publishes, so the cockpit's drive gate reflects
+what the robot enforces rather than what the UI last sent. It is subscribed
+`TRANSIENT_LOCAL` to match the publisher, and aged out after 3 s.
 
 > **Aged out means the key is omitted, not published as `false`.** Before the
-> first message and after 3 s of silence, `allow_motion` / `armed` / `fired` are
-> absent from `/cockpit/status` entirely; the entries stay, at WARN, naming the
+> first message and after 3 s of silence, `allow_motion` is
+> absent from `/cockpit/status` entirely; the entry stays, at WARN, naming the
 > silent topic. A published `false` would render in the cockpit as a confident
 > LOCKED / OFF-LINE rather than "no publisher" — conservative-looking, and
 > therefore never investigated. See [docs/cockpit.md](../../../docs/cockpit.md).

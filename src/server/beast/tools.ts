@@ -18,7 +18,7 @@ export function createAgentTools(bridge: BeastRobotBridge): ToolSet {
   return {
     get_status: tool({
       description:
-        'Read BEAST-01 safety/telemetry snapshot: allow_motion, watchdog, voltage, scan-alive, bridge connection. Call this before proposing motion.',
+        'Read BEAST-01 safety/telemetry snapshot: allow_motion, voltage, scan-alive, bridge connection. Call this before proposing motion.',
       inputSchema: emptyToolSchema,
       execute: async () => {
         const status = await bridge.getStatus();
@@ -97,8 +97,6 @@ function noopBridge(): BeastRobotBridge {
       connection: 'unconfigured',
       bridgeUrl: null,
       allowMotion: null,
-      watchdogArmed: null,
-      watchdogFired: null,
       voltage: null,
       scanAlive: null,
       lockReason: 'noop',

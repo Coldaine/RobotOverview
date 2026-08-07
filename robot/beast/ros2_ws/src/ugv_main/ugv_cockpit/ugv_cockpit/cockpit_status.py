@@ -2,8 +2,8 @@
 """Aggregate cockpit health that no single ROS topic exposes.
 
 Publishes ``/cockpit/status`` (diagnostic_msgs/DiagnosticArray) carrying the
-active twist_mux source, the live ``/cmd_vel`` publisher count, the arming and
-watchdog state, disk headroom, Jetson temperatures, and Wi-Fi RSSI. Using
+active twist_mux source, the live ``/cmd_vel`` publisher count, the arming
+state, disk headroom, Jetson temperatures, and Wi-Fi RSSI. Using
 DiagnosticArray avoids shipping a custom interface package just for a handful
 of scalars.
 
@@ -28,12 +28,11 @@ WHERE EACH FACT COMES FROM
     to the same messages, but it is a separate DDS subscriber, so its arrival
     stamps can differ from twist_mux's by delivery jitter.
 
-``allow_motion``, ``armed``, ``fired``
-    Mirrored from ``/ugv/allow_motion`` (std_msgs/Bool) and
-    ``/ugv/watchdog_state`` (diagnostic_msgs/DiagnosticStatus), both published
-    by ugv_bringup, which is the only process that can observe them.
+``allow_motion``
+    Mirrored from ``/ugv/allow_motion`` (std_msgs/Bool), published
+    by ugv_bringup, which is the only process that can observe it.
 
-    These three keys are OMITTED ENTIRELY until the first real message arrives,
+    This key is OMITTED ENTIRELY until the first real message arrives,
     and omitted again once the last one ages past :data:`BRINGUP_STALE_S`. The
     client renders a missing key as "unknown" and a present one as a reading it
     can trust, so publishing ``false`` before ugv_bringup has ever spoken would
@@ -74,15 +73,12 @@ from ugv_cockpit.cockpit_contract import (
     DIAG_BRINGUP,
     DIAG_SYSTEM_METRICS,
     DIAG_TWIST_MUX,
-    DIAG_WATCHDOG,
     ESTOP_LOCK_TOPIC,
     EXPECTED_MUX_PUBLISHERS,
     KEY_ACTIVE_SOURCE,
-    KEY_ARMED,
     KEY_COMMAND_AGE,
     KEY_CPU_TEMP,
     KEY_DISK_FREE,
-    KEY_FIRED,
     KEY_GPU_TEMP,
     KEY_PUBLISHER_COUNT,
     KEY_WIFI_RSSI,
@@ -90,12 +86,10 @@ from ugv_cockpit.cockpit_contract import (
     MUX_SOURCES,
     SOURCE_TIMEOUT_S,
     STATUS_TOPIC,
-    WATCHDOG_STATE_TOPIC,
     bringup_key_values,
     format_command_age,
     is_fresh,
     resolve_active_source,
-    watchdog_key_values,
 )
 
 # The values the cockpit client falls back to when a metric key is missing.
@@ -160,9 +154,6 @@ class CockpitStatus(Node):
 
         self._allow_motion = False
         self._allow_motion_at = None
-        self._watchdog_armed = False
-        self._watchdog_fired = False
-        self._watchdog_at = None
 
         # Mux rung observation uses this node's ROS clock, because these stamps
         # are compared against twist_mux's own expiry and twist_mux stamps with
@@ -179,9 +170,6 @@ class CockpitStatus(Node):
         )
         self.create_subscription(
             Bool, ALLOW_MOTION_TOPIC, self._on_allow, safety_qos
-        )
-        self.create_subscription(
-            DiagnosticStatus, WATCHDOG_STATE_TOPIC, self._on_watchdog, safety_qos
         )
 
         # Read-only taps on the arbitration inputs. Depth 10 and default
@@ -217,12 +205,6 @@ class CockpitStatus(Node):
     def _on_allow(self, msg: Bool):
         self._allow_motion = bool(msg.data)
         self._allow_motion_at = self._liveness_now_s()
-
-    def _on_watchdog(self, msg: DiagnosticStatus):
-        values = {kv.key: kv.value for kv in msg.values}
-        self._watchdog_armed = values.get(KEY_ARMED, 'false') == 'true'
-        self._watchdog_fired = values.get(KEY_FIRED, 'false') == 'true'
-        self._watchdog_at = self._liveness_now_s()
 
     def _now_s(self):
         """ROS clock — for the arbitration mirror ONLY.
@@ -260,7 +242,6 @@ class CockpitStatus(Node):
         arr.status = [
             self._mux_status(),
             self._bringup_status(),
-            self._watchdog_status(),
             self._metrics_status(),
         ]
         self._pub.publish(arr)
@@ -332,35 +313,6 @@ class CockpitStatus(Node):
             )
         ]
         return bringup
-
-    def _watchdog_status(self):
-        now = self._liveness_now_s()
-        fresh = is_fresh(now, self._watchdog_at)
-        armed = fresh and self._watchdog_armed
-        fired = fresh and self._watchdog_fired
-
-        watchdog = DiagnosticStatus(
-            name=DIAG_WATCHDOG, hardware_id='cmd_vel_timeout'
-        )
-        if fired:
-            watchdog.level = DiagnosticStatus.ERROR
-            watchdog.message = 'cmd_vel watchdog stopped the robot'
-        elif not fresh:
-            watchdog.level = DiagnosticStatus.WARN
-            watchdog.message = (
-                f'no {WATCHDOG_STATE_TOPIC} in {BRINGUP_STALE_S:.0f}s — '
-                'armed/fired UNKNOWN, keys omitted'
-            )
-        else:
-            watchdog.level = DiagnosticStatus.OK
-            watchdog.message = 'watchdog armed' if armed else 'no live command to watch'
-        watchdog.values = [
-            KeyValue(key=key, value=value)
-            for key, value in watchdog_key_values(
-                now, self._watchdog_at, self._watchdog_armed, self._watchdog_fired
-            )
-        ]
-        return watchdog
 
     def _metrics_status(self):
         rssi = _read_wifi_rssi()

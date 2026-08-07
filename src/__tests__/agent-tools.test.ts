@@ -18,8 +18,6 @@ function status(partial: Partial<BeastRobotStatus> = {}): BeastRobotStatus {
     connection: 'connected',
     bridgeUrl: 'wss://beast-test:9090',
     allowMotion: false,
-    watchdogArmed: true,
-    watchdogFired: false,
     voltage: 11.2,
     scanAlive: true,
     lockReason: null,
