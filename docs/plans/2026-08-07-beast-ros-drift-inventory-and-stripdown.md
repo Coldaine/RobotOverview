@@ -81,14 +81,17 @@ Tagged `[code-verified]` if supported by source/config in this repository or ven
 upstream, `[doc-claim-unverified]` if inherited from documentation or stale observations and
 still needs live verification. Only `[code-verified]` items are ground truth.
 
-1. `[doc-claim-unverified]` **ESP32 latches its last velocity; no firmware timeout.** The
-   live test 2026-08-07 re-armed the robot, sent `/cmd_vel_ui` angular.z = 0.2 rad/s for 2 s,
-   and watched `/cmd_vel` return to zero — but no encoder feedback was observable remotely
-   (`/odom/odom_raw`, `/odom_wheel`, `/joint_states` wheel positions stayed silent/zero),
-   so the hardware question remains unresolved. **This no longer blocks anything**: D8
-   decided to return to the stock latch behavior, and the robot's protection is the
-   unconditional boot stop + the manual `allow_motion` gate. A physical, wheels-up
-   observation is still worth one session for the record (Phase 3 bench, optional).
+1. `[live-verified]` **ESP32 latches its last velocity; no firmware timeout.**
+   Proven 2026-08-07 evening (`.tmp/beast_latch_test.py`): crawl at 0.15 m/s,
+   publisher killed mid-crawl with no zero burst (mux timed out, `beast_base`
+   sent nothing) → `/odom/odom_raw` accumulated **+0.81 m during 5 s of command
+   silence**, and the owner physically watched the robot keep driving into a
+   wall until an explicit zero burst stopped it. An earlier same-day test was
+   inconclusive (no encoder feedback remotely observable); the evening test had
+   a live odom stream, which was the difference. **Consequence:** an explicit
+   T:13 stop is the only halt — the unconditional boot stop, stop-on-disarm,
+   and explicit zero bursts after any drive burst are all load-bearing, and
+   killing a publisher is never a stop.
 2. `[code-verified]` **ESP32 JSON `T:13` velocity, `T:13 0,0` stop; `T:900` model select
    (`ugv_beast`→3); `T:1001` feedback with IMU LSB scales (ICM-20948: 8192 LSB/g,
    16.4 LSB/dps, 0.15 µT/LSB), `odl/odr` in cm, `v` in centivolts (~1.2 % low vs INA219).**
