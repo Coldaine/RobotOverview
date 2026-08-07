@@ -16,7 +16,12 @@ Do not delete source artifacts from `keyArtifactstosort/`.
 - `UPS-Power-Module-C-1.jpg` — original 540×405 product image.
 - `UPS-Power-Module-C-1-preview.jpg` — 360 px product preview as rendered by the wiki.
 - `UPS-Power-Module-C-2.png` — demo output image.
-- `UPS-Power-Module-C-4.jpg`, `UPS-Power-Module-C-5.jpg` — battery/installation precaution diagrams.
+- `UPS-Power-Module-C-4.jpg` — rear face, straight-on: the three 21700 bays with ⊕/⊖
+  polarity marks printed per bay. Cells alternate orientation (bay 1 ⊖-left, bay 2 ⊕-left,
+  bay 3 ⊖-left). This is the battery-installation diagram.
+- `UPS-Power-Module-C-5.jpg` — front face, straight-on product view. Bottom-edge silkscreen
+  reads `OUTPUT · PWR ACT · BOOT · ON/OFF · PWR · CHRG DONE · 15V-19V`. Not a precaution
+  diagram (corrected 2026-08-06).
 
 ## Browser-verified page facts
 
