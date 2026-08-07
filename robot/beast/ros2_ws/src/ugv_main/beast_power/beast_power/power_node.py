@@ -183,7 +183,15 @@ class PowerNode(Node):
         if not self._sensor_ok and not self._try_open_sensor():
             return self._absent_telemetry()
 
-        if not self._sensor.ensure_ready():
+        try:
+            sensor_ready = self._sensor.ensure_ready()
+        except (OSError, struct.error) as exc:
+            self._drop_sensor(
+                f'I2C config probe failed ({exc}); connection closed and retry scheduled'
+            )
+            return self._absent_telemetry()
+
+        if not sensor_ready:
             self._drop_sensor(
                 'I2C not responding; connection closed and retry scheduled'
             )
