@@ -27,10 +27,9 @@ field only for its low-battery voice warning.
   (2026-08-07) — it's published for observability only. The charging threshold
   is **provisional** until set from logged charge data
   (`deploy/diagnostics/power_log.py`).
-- Deploy note: `beast_power` is included in the build scripts; a targeted rebuild is:
-  with `colcon build --packages-select beast_power ugv_bringup --symlink-install`
-  (or the full workspace), then `sudo install` the updated service unit and
-  `systemctl daemon-reload`.
+- Deploy: `robot/beast/ros2_ws/deploy/deploy-to-beast.sh` is **the** path —
+  it fast-forwards the robot checkout, rebuilds, reinstalls the service unit,
+  restarts, and verifies the live graph (see `deploy/README.md`).
 
 ## Parameters
 

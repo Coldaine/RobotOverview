@@ -43,7 +43,8 @@ an unverified 0.1 Ω `RSHUNT` (LeoRover default) — treat amps as provisional.
   `bringup_lidar.launch.py` starts `beast_power` (`use_power`, default true) as sole owner
   of `/ugv/voltage`, `ugv_bringup`'s BatteryState publisher removed, `i2c` added to the
   service unit's groups — **not yet deployed to the robot** (it was shut down overnight to
-  charge; deploy steps in `beast_power/README.md`).
+  charge; deploy via `robot/beast/ros2_ws/deploy/deploy-to-beast.sh`, see
+  `robot/beast/ros2_ws/deploy/README.md`).
 - **Dual-source logger running:** `power_log.py` → `/home/beast/power-log.csv`, 5 s cadence,
   INA219 registers + `/ugv/voltage` (ESP32) on one timeline. Open observation for the
   morning readout: with the 12.6 V charger connected, **both** sources drift slowly down
