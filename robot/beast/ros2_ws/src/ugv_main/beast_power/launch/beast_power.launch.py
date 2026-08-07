@@ -13,6 +13,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
+from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -30,6 +31,15 @@ def generate_launch_description():
         description='YAML with i2c_bus_nr, sensor_address, rate, topics.',
     )
 
+    # Default off here: a bench run should not append to the robot's
+    # production discharge series unless asked. The normal path
+    # (bringup_lidar.launch.py) logs unconditionally under use_power.
+    log_arg = DeclareLaunchArgument(
+        'log_to_csv',
+        default_value='false',
+        description='Also run beast_power_logger writing the durable CSV.',
+    )
+
     node = Node(
         package='beast_power',
         executable='power_node',
@@ -38,4 +48,13 @@ def generate_launch_description():
         parameters=[LaunchConfiguration('beast_power_config')],
     )
 
-    return LaunchDescription([config_arg, node])
+    logger_node = Node(
+        package='beast_power',
+        executable='power_logger',
+        name='beast_power_logger',
+        output='screen',
+        parameters=[LaunchConfiguration('beast_power_config')],
+        condition=IfCondition(LaunchConfiguration('log_to_csv')),
+    )
+
+    return LaunchDescription([config_arg, log_arg, node, logger_node])

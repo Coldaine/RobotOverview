@@ -14,8 +14,32 @@ beast_power:
     # positive = charging holds and 1.0 is correct for this board.
     current_sign: 1.0
     # PROVISIONAL — inherited guess, not measured. Set from logged charge data
-    # (power_log.py runs) before using it as anything beyond observability.
+    # (beast_power_logger CSV) before using it as anything beyond observability.
     charging_current_threshold_a: 0.05
     voltage_topic: /ugv/voltage
     charging_topic: /ugv/charging_active
     frame_id: base_link
+
+# Durable CSV of the above, for offline capacity/discharge analysis. Subscribes
+# to the topics rather than opening a second I²C handle — beast_power owns the
+# sensor, and the log should record what the stack acted on.
+beast_power_logger:
+  ros__parameters:
+    # /data/beast is the storage root prepared by beast-storage-prepare.service.
+    output_path: /data/beast/power/power-log.csv
+    voltage_topic: /ugv/voltage
+    charging_topic: /ugv/charging_active
+    # 64 MiB × 6 files ≈ 384 MiB worst case. At 1 Hz a row is ~120 B, so one
+    # file holds roughly six days of continuous logging.
+    max_bytes: 67108864
+    backup_count: 5
+    # 1 = fsync every row. The measurement of interest is the moment the pack
+    # stops delivering, so buffered tail loss defeats the purpose. At 1 Hz on
+    # NVMe this is free.
+    fsync_every_n: 1
+    # Clamp for integration gaps (suspend, stalled sensor). Must exceed the
+    # normal sample period (1 s at data_publish_rate 1.0) with margin.
+    max_gap_s: 10.0
+    # Absence is data: keep rows when the sensor drops so a bus fault is
+    # visible in the series instead of looking like a clean gap.
+    log_absent_samples: true
