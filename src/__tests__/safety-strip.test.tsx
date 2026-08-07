@@ -60,13 +60,13 @@ describe('SafetyStrip motion authority', () => {
     vi.useRealTimers();
   });
 
-  it('shows LOCKED when charging even if motion is currently allowed', () => {
+  it('stays ARMED while charging — no automatic interlock (ugv_safety_monitor removed 2026-08-07)', () => {
     mocks.isCharging = true;
 
     render(<SafetyStrip />);
 
-    expect(within(motionState()).getByText('LOCKED')).toBeInTheDocument();
-    expect(within(motionState()).queryByText('ARMED')).not.toBeInTheDocument();
+    expect(within(motionState()).getByText('ARMED')).toBeInTheDocument();
+    expect(within(motionState()).queryByText('LOCKED')).not.toBeInTheDocument();
   });
 
   it('shows UNCONFIRMED as the primary state after a failed service call', async () => {
