@@ -13,14 +13,12 @@ disagree, the code is right and the plan is stale.
 | Plan | What it covers | Blocking? |
 | --- | --- | --- |
 | [BEAST-01 Command Deck + sensor fusion](2026-07-31-beast-command-deck-plan.md) | Historical cockpit context. Its robot-side safety-spine work is superseded by the 2026-08-07 strip-down; the Hangar cockpit remains product scope. | Superseded for robot-side work |
+| [BEAST ROS 2 strip-down](2026-08-07-beast-ros-drift-inventory-and-stripdown.md) | Remaining BEAST ROS 2 custom-drift strip after #174: Phase 1 extracts `beast_base` from the vendor `ugv_bringup.py` and removes `/ugv/watchdog_state` consumers; Phase 2 deletes vizanti + `ugv_web_app` and reverts the 12 demo retargets; Phase 3 drift audit + robot ground truth, then the plan is deleted. | Phase 2 partial (H2 neutralized, not deleted); Phase 1 extraction open |
 | [Finish the wiring model](2026-07-30-wiring-model-completion.md) | One spine, two eyes: The Board consumes `wiring.ts`, corpus extraction (schematics, firmware, photos, CAD), facts landed with zone citations, operator answers on screen. Merges the 2026-07-27 unification, extraction, and CAD plans. | Q1/Q2 safety-relevant (wrong 40-pin numbering puts 5 V into a Jetson UART pin); X1 gates drilling |
 | [BEAST NVMe storage — implementation](2026-07-11-beast-nvme-storage-implementation.md) | Command-level storage utility + systemd units under `robot/beast/ros2_ws`. **NOT APPLIED** — do not provision until `docs/beast-ops.md` says otherwise. The design decision is folded into `docs/beast-ops.md` (NVMe storage policy). | Parked behind the physical Orin host swap |
 
 ## Related, outside this directory
 
-- [`2026-08-07-beast-ros-drift-inventory-and-stripdown.md`](2026-08-07-beast-ros-drift-inventory-and-stripdown.md) —
-  working notepad for the BEAST ROS 2 custom-drift review: inventory, defects, owner decisions,
-  and strip-down sequence. Not an executable work order; research reasoning, not a plan.
 - Datacore briefings `artifact-intake` / `beast-evidence-manifest` — identity index and
   evidence register for `keyArtifactstosort/` (formerly markdown registers; read in Datacore)
 - Datacore briefing `beast-ros2-stack-review-2026-08-07` — BEAST-01 ROS 2 stack map and
