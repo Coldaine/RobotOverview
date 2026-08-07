@@ -104,6 +104,8 @@ def motion_harness(allow_motion):
     harness = SimpleNamespace(
         allow_motion=allow_motion,
         _applying_allow_motion=False,
+        _disarmed_cmd_warn_interval=5.0,
+        _last_disarmed_cmd_warn=0.0,
         base_controller=RecordingController(),
         get_logger=lambda: logger,
     )
@@ -235,6 +237,24 @@ def test_motion_gate_allows_command_after_explicit_enable():
     assert harness.base_controller.commands == [{'T': '13', 'X': 0.05, 'Z': 0.25}]
 
 
+def test_motion_gate_throttles_repeated_disarmed_warnings(monkeypatch):
+    harness = motion_harness(allow_motion=False)
+    clock = {'now': 10.0}
+    monkeypatch.setattr(
+        'beast_base.base_node.time.monotonic', lambda: clock['now']
+    )
+
+    BeastBaseNode.cmd_vel_callback(harness, velocity(0.25, 0.0))
+    BeastBaseNode.cmd_vel_callback(harness, velocity(0.25, 0.0))
+
+    message = 'Rejected non-zero cmd_vel while allow_motion is false'
+    assert harness.get_logger().warnings == [message]
+
+    clock['now'] = 15.0
+    BeastBaseNode.cmd_vel_callback(harness, velocity(0.25, 0.0))
+    assert harness.get_logger().warnings == [message, message]
+
+
 def test_disable_allow_motion_stops_immediately():
     harness = motion_harness(allow_motion=True)
 
@@ -345,8 +365,11 @@ def test_boot_stop_is_unconditional_and_precedes_allow_motion_publisher(
         {'T': 131, 'cmd': 1},
         {'T': '13', 'X': 0.0, 'Z': 0.0},
     ]
-    # The node latches the enforced gate value it read from parameters.
+    # The node latches and publishes the enforced gate value it read from parameters.
     assert node.allow_motion is allow_motion_param
+    assert [message.data for message in node.allow_motion_publisher_.published] == [
+        allow_motion_param
+    ]
     # Ordering: the stop precedes the allow_motion publisher, and no other
     # publisher is created after the stop — no telemetry path can beat safing.
     assert timeline.index('stop') < timeline.index('publisher:/ugv/allow_motion')
