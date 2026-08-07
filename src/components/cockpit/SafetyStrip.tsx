@@ -94,9 +94,9 @@ export function SafetyStrip() {
   const armLabel = !connected
     ? 'OFFLINE'
     : awaitingEcho
-        ? request?.target === false
-          ? 'DISARMING…'
-          : 'RE-ARMING…'
+      ? request?.target === false
+        ? 'DISARMING…'
+        : 'RE-ARMING…'
       : unconfirmed || status.allowMotion !== false
         ? 'DISARM'
         : holding
@@ -104,15 +104,15 @@ export function SafetyStrip() {
           : 'RE-ARM · HOLD 2S';
   const armCaption = !connected
     ? 'offline'
-      : unconfirmed
-        ? 'UNCONFIRMED — click to disarm'
+    : unconfirmed
+      ? 'UNCONFIRMED — click to disarm'
       : awaitingEcho
         ? 'awaiting robot echo'
-      : status.allowMotion === null
-        ? 'state unknown — disarm to be safe'
-        : status.allowMotion
-          ? 'one click — stops all motion'
-          : 'hold to re-enable motion';
+        : status.allowMotion === null
+          ? 'state unknown — disarm to be safe'
+          : status.allowMotion
+            ? 'one click — stops all motion'
+            : 'hold to re-enable motion';
   // UNCONFIRMED never disables the button: the handlers force clicks to DISARM
   // and suppress the RE-ARM hold while unconfirmed, so the safe direction can
   // be retried; RE-ARM still requires the existing two-second hold.
