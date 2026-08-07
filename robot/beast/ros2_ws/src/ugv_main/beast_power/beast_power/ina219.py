@@ -30,7 +30,24 @@ CONFIG_REG_VALUE = (
 SHUNT_VOLTAGE_LSB = 0.00001  # 10 uV / bit
 BUS_VOLTAGE_LSB = 0.004  # 4 mV / bit
 
-RSHUNT = 0.1  # ohms — UNVERIFIED LeoRover default; confirm against the driver board's shunt
+# 0.010 ohms — VERIFIED 2026-08-07 from the board itself: the sense resistor
+# beside the INA219 at the DC 9-12.6 V input is marked "R010" (= 0.010 ohm).
+# See public/datacore/beast-driver-board-callouts.png callout 4 and the source
+# photo keyArtifactstosort/rawDriverBoardshot.jpg.
+#
+# The previous value, 0.1, was an inherited LeoRover default and was wrong by
+# exactly 10x, so every current, mAh and Wh this driver ever reported was one
+# tenth of the truth. It was caught by an energy-balance contradiction: the
+# INA219 claimed the pack delivered 1.36 W while tegrastats showed the Jetson
+# alone drawing VDD_IN 4.74 W on battery, with no other source connected.
+# Bus voltage is unaffected — it uses the chip-fixed 4 mV/bit LSB and never
+# passes through the shunt.
+RSHUNT = 0.01
+# 95 uA/bit gives a signed-16-bit full scale of only +/-3.11 A. That covers the
+# ~1.4 A idle draw measured on 2026-08-07 with headroom, but drive loads on this
+# chassis may exceed it and would saturate the current register rather than read
+# high. Raise this (0.0002 -> +/-6.55 A) before trusting current during motion;
+# left as-is for now so the idle/discharge numbers keep their resolution.
 CURRENT_LSB_TARGET = 0.000095
 CALIBRATION_REG_VALUE = int(0.04096 / (CURRENT_LSB_TARGET * RSHUNT)) & 0xFFFE
 CURRENT_LSB = 0.04096 / (CALIBRATION_REG_VALUE * RSHUNT)
