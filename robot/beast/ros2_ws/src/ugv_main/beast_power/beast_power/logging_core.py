@@ -81,6 +81,14 @@ class ChargeIntegrator:
     energy_wh: float = 0.0
     _gaps_clamped: int = 0
 
+    def __post_init__(self) -> None:
+        # NaN/inf pass a naive `<= 0` check (both comparisons are False) and
+        # would disable gap clamping entirely: `dt_s > NaN` is never True, so
+        # one stale sample could integrate an unbounded interval and fabricate
+        # charge. Same rejection rule the INA219 threshold validation uses.
+        if not math.isfinite(self.max_gap_s) or self.max_gap_s <= 0.0:
+            raise ValueError('max_gap_s must be positive and finite')
+
     def add(self, current_a: Optional[float], voltage_v: Optional[float],
             dt_s: float) -> None:
         """Integrate one sample over ``dt_s`` seconds.

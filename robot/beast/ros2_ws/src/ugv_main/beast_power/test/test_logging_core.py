@@ -68,6 +68,12 @@ class TestChargeIntegrator:
         assert acc.charge_mah == 0.0
         assert acc.energy_wh == 0.0
 
+    @pytest.mark.parametrize('bad_gap', [0.0, -1.0, math.nan, math.inf])
+    def test_bad_max_gap_s_rejected(self, bad_gap):
+        """NaN/inf slip past a naive `<= 0` check and disable clamping."""
+        with pytest.raises(ValueError):
+            ChargeIntegrator(max_gap_s=bad_gap)
+
     def test_absent_current_contributes_nothing(self):
         acc = ChargeIntegrator()
         acc.add(None, 12.0, 1.0)
