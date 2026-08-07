@@ -138,8 +138,9 @@ def generate_launch_description():
     # spine has no path to the motors at all. That is the fail-closed direction.
     # Ladder + timeouts: ugv_cockpit/config/twist_mux.yaml.
     #
-    # This does not weaken allow_motion or the cmd_vel_timeout watchdog below —
-    # both still sit downstream of the mux and are unchanged.
+    # This does not weaken the allow_motion gate below — it still sits
+    # downstream of the mux, as does the unconditional startup stop. (The
+    # cmd_vel silence watchdog was removed 2026-08-07 per owner decision D8.)
     twist_mux_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(get_package_share_directory('ugv_cockpit'), 'launch', 'twist_mux.launch.py')

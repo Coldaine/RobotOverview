@@ -17,9 +17,11 @@ Scope honesty: this is a *source* property, not a runtime guarantee. ROS 2 does
 not let a node reserve a topic, so ``ros2 topic pub /cmd_vel ...`` from a shell
 still reaches ugv_bringup. What PR-1 buys is that no code in the tree does it,
 and that a future PR reintroducing one fails here. Making it unreachable *from a
-cockpit client* is the bridge whitelist's job (PR-2); making the robot stop when
-commands go silent is ugv_bringup's 0.5 s watchdog, which is untouched and has
-its own tests in ugv_bringup/test/test_jetson_safety.py.
+cockpit client* is the bridge whitelist's job (PR-2); stopping the robot is
+ugv_bringup's job — the unconditional stop at startup, the allow_motion gate
+(parameter + /ugv/set_allow_motion service), and the ESP32's trusted stock
+latch/zero behaviour — and has its own tests in
+ugv_bringup/test/test_jetson_safety.py.
 
 Run: ``colcon test --packages-select ugv_cockpit`` on the robot, or
 ``python3 -m pytest src/ugv_main/ugv_cockpit/test`` from the workspace root.
@@ -222,8 +224,7 @@ def test_config_declares_the_exact_priority_ladder(twist_mux_params):
 def test_every_command_source_expires_after_half_a_second(twist_mux_params):
     for name, entry in twist_mux_params['topics'].items():
         assert entry['timeout'] == SOURCE_TIMEOUT_S, (
-            'source %r must expire on the same 0.5 s cadence as ugv_bringup\'s '
-            'cmd_vel watchdog' % name
+            'source %r must expire on the Command Deck\'s 0.5 s cadence' % name
         )
 
 
@@ -634,7 +635,10 @@ ZERO_TAIL_SOURCES = (
     'src/ugv_main/ugv_tools/ugv_tools/joy_ctrl.py',
 )
 
-# Same number as ugv_bringup's own `zero_vel_limit = 5`, asserted below.
+# Teleop-side decision: both nodes send the same bounded zero tail. This is
+# deliberately NOT tied to ugv_bringup any more — the bringup zero-drop quirk
+# that used to mirror it was removed — so it is pinned here and against
+# ZERO_TAIL_SOURCES only.
 EXPECTED_ZERO_TAIL_LIMIT = 5
 
 JOY_LAUNCH_FILE = 'src/ugv_main/ugv_tools/launch/teleop_twist_joy.launch.py'
@@ -662,7 +666,9 @@ def test_teleop_declares_a_named_zero_tail_limit(relative_path):
         '(UI 50, nav 10) is starved.' % relative_path
     )
     assert int(match.group(1)) == EXPECTED_ZERO_TAIL_LIMIT, (
-        '%s: keep ZERO_TAIL_LIMIT at %d, matching ugv_bringup\'s zero_vel_limit'
+        '%s: keep ZERO_TAIL_LIMIT at %d — the two teleop nodes must agree, '
+        'and the bound must be long enough that the robot stops by command '
+        'before the source goes silent'
         % (relative_path, EXPECTED_ZERO_TAIL_LIMIT)
     )
 
@@ -683,13 +689,82 @@ def test_teleop_actually_uses_the_zero_tail_limit(relative_path):
     )
 
 
-def test_zero_tail_limit_matches_bringup_zero_vel_limit():
-    source = read('src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py')
-    match = re.search(r'self\.zero_vel_limit\s*=\s*(\d+)', source)
-    assert match, 'ugv_bringup no longer declares zero_vel_limit'
-    assert int(match.group(1)) == EXPECTED_ZERO_TAIL_LIMIT, (
-        'ugv_bringup changed zero_vel_limit; the teleop zero tails mirror it '
-        'deliberately, so move ZERO_TAIL_LIMIT in the same commit'
+def _zero_tail_counter_assignments(tree):
+    """Every assignment to the zero-tail counter, in source order.
+
+    joy_ctrl keeps the counter on ``self`` (``self.zero_tail``), keyboard_ctrl
+    as a local (``zero_tail``) — both names resolve to the same thing.
+    """
+    found = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign):
+            continue
+        if not any(
+            (isinstance(target, ast.Name) and target.id == 'zero_tail')
+            or (
+                isinstance(target, ast.Attribute)
+                and target.attr == 'zero_tail'
+                and isinstance(target.value, ast.Name)
+                and target.value.id == 'self'
+            )
+            for target in node.targets
+        ):
+            continue
+        found.append(node)
+    return found
+
+
+def _nearest_if_test(node, tree):
+    """The test of the innermost ``if`` enclosing ``node``, or None."""
+    parents = {}
+    for parent in ast.walk(tree):
+        for child in ast.iter_child_nodes(parent):
+            parents[child] = parent
+    current = node
+    while current is not None:
+        if isinstance(current, ast.If):
+            return ast.unparse(current.test)
+        current = parents.get(current)
+    return None
+
+
+@pytest.mark.parametrize('relative_path', ZERO_TAIL_SOURCES)
+def test_zero_tail_starts_spent_and_rearms_on_a_command(relative_path):
+    """An untouched teleop node is already silent; a real command re-arms it.
+
+    The zero tail exists so the robot stops *by command* and the source then
+    goes silent, letting its twist_mux rung expire (asserted above). This test
+    pins the two halves of that contract on the ugv_tools side — deliberately
+    independent of ugv_bringup, whose zero-drop quirk that used to mirror this
+    value has been removed:
+
+      * the counter STARTS at ``ZERO_TAIL_LIMIT`` — a joy pad / keyboard that
+        nobody has touched publishes nothing, so an idle teleop node does not
+        mask the UI (50) and nav (10) rungs just by being running;
+      * a real command resets it to 0 under ``if commanding:`` — without the
+        reset the trailing zero burst can never fire once the node has gone
+        silent, so the operator's stop never reaches the wire.
+    """
+    tree = ast.parse(read(relative_path), filename=relative_path)
+    assignments = _zero_tail_counter_assignments(tree)
+
+    assert any(
+        ast.unparse(node.value) == 'ZERO_TAIL_LIMIT'
+        for node in assignments
+    ), (
+        '%s: the zero-tail counter must START at ZERO_TAIL_LIMIT so an idle '
+        'node is already silent and does not claim its rung' % relative_path
+    )
+
+    commanding_resets = [
+        node for node in assignments
+        if ast.unparse(node.value) == '0'
+        and _nearest_if_test(node, tree) == 'commanding'
+    ]
+    assert commanding_resets, (
+        '%s: a real command must reset the counter to 0 under `if '
+        'commanding:`; without it the trailing zero burst never fires after '
+        'the node has gone silent' % relative_path
     )
 
 
@@ -911,9 +986,9 @@ def test_joy_node_autorepeats_fast_enough_to_hold_its_rung():
         driver only emits /joy on a state change, and a stick pinned at full
         deflection is not a change — SDL reports nothing more. joy_ctrl
         therefore publishes once, twist_mux expires cmd_vel_joy_robot 0.5 s
-        later, and ugv_bringup's cmd_vel watchdog stops the robot while the
-        operator is still pushing. The gimbal freezes for the same reason:
-        joy_ctrl integrates pan/tilt once per /joy message.
+        later, and the robot stops mid-command while the operator is still
+        pushing. The gimbal freezes for the same reason: joy_ctrl integrates
+        pan/tilt once per /joy message.
       * Any rate at or below 2 Hz has the same effect more slowly — the source
         has to refresh faster than the mux's 0.5 s per-source timeout to stay
         the winner. MIN_JOY_AUTOREPEAT_HZ keeps a margin above that floor.
@@ -958,29 +1033,28 @@ def test_joy_node_autorepeats_fast_enough_to_hold_its_rung():
 # Guard rails: PR-1 changes routing only. These fail if a later change starts
 # "simplifying" the downstream safety layers the spine depends on.
 # --------------------------------------------------------------------------
-def test_motion_gate_and_watchdog_are_untouched():
+def test_motion_gate_is_untouched():
+    """The allow_motion gate survives the watchdog removal.
+
+    The cmd_vel silence watchdog was deliberately deleted, so this gate — plus
+    the unconditional startup stop — is now the whole software stop story: the
+    parameter defaults on, the cockpit can flip it at runtime via the SetBool
+    service, and disabling it stops the robot immediately and rejects further
+    non-zero commands.
+    """
     source = read('src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py')
     assert "self.declare_parameter('allow_motion', True)" in source, (
         'allow_motion must default on; the cockpit retains the manual gate'
     )
-    assert "self.declare_parameter('cmd_vel_timeout', 0.5)" in source
+    assert "SetBool, '/ugv/set_allow_motion'" in source, (
+        '/ugv/set_allow_motion must exist so the cockpit can flip the gate at '
+        'runtime'
+    )
     assert 'Rejected non-zero cmd_vel while allow_motion is false' in source
-    assert '_cmd_vel_watchdog_tick' in source
     assert 'def send_stop_command' in source
-
-
-def test_bringup_quirks_are_preserved_not_fixed():
-    """The zero-drop and yaw-floor hacks are routed around, never edited.
-
-    ugv_bringup drops zero Twists after 5 consecutive zeros and forces a tiny
-    yaw command up to +/-0.2 rad/s. Both are documented quirks the cockpit has
-    to respect; "fixing" them here would change ESP32 behaviour under a PR whose
-    whole claim is that it only changes routing.
-    """
-    source = read('src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py')
-    assert 'self.zero_vel_limit = 5' in source
-    assert 'angular_velocity = 0.2' in source
-    assert 'angular_velocity = -0.2' in source
+    # Disabling the gate stops the robot immediately, before anything else.
+    assert 'def apply_allow_motion' in source
+    assert 'if previous and not desired:' in source
 
 
 def test_bringup_launch_defaults_allow_motion_true():

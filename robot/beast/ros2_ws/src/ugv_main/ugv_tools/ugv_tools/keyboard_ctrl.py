@@ -89,8 +89,9 @@ LOOP_PERIOD = 0.02
 # floor back down the ladder.
 #
 # The tail is not decoration: it is the command that actually stops the robot
-# (5 x 20 ms = 100 ms, well inside the 0.5 s watchdog). ugv_bringup's cmd_vel
-# watchdog is the backstop if even the tail is lost.
+# (5 x 20 ms = 100 ms of zeros). There is no software watchdog backstop
+# (removed 2026-08-07) — if even the tail is lost, the ESP32 keeps latching
+# its last command until a fresh one arrives or a reboot's startup stop.
 ZERO_TAIL_LIMIT = 5
 
 # Keys that re-arm the zero tail — i.e. the ones that are a drive command or an

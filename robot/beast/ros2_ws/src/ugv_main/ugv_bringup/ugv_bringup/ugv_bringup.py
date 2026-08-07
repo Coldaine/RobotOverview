@@ -1,5 +1,10 @@
 """UGV bringup — ESP32 serial bridge + sensor republish (runs on the Jetson).
 
+No AI-added cmd_vel silence watchdog: the ESP32 is trusted to latch/zero the last
+velocity as stock firmware does, and this node sends an unconditional T:13 stop
+during startup before any other work. The only software motion gate is
+`allow_motion` (parameter + `/ugv/set_allow_motion` service).
+
 Telemetry honesty (see also RobotOverview docs/beast-ops.md Quick connect):
   MOVED    /ugv/voltage is owned by beast_power (driver-board INA219, real volts
            + signed current + status) since the 2026-08-07 cutover. This node no
@@ -7,7 +12,6 @@ Telemetry honesty (see also RobotOverview docs/beast-ops.md Quick connect):
   REAL     ESP32 JSON "v" is still read here, but only to gate the low-battery
            voice warning (its ADC reads ~1.2% low vs the INA219).
   ASSUMED  IMU/mag LSB scales (vendor ICM-20948); odom odl/odr ÷100 as cm→m
-  HACK     cmd_vel zero-drop after N zeros; ±0.2 yaw deadband boost
 
 Calibration: do not "tune" ASSUMED fields. Vendor IMU scales are fine to start
 (spot-check 1 g at rest). Calibrate wheel odom / EKF before mapping. Mag only if
@@ -27,7 +31,6 @@ from std_msgs.msg import Header, Bool, Float32MultiArray
 from std_srvs.srv import SetBool
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu, MagneticField, JointState
-from diagnostic_msgs.msg import DiagnosticStatus, KeyValue
 
 import os
 import time
@@ -98,59 +101,45 @@ class ugv_bringup(Node):
 
         # Subscribe to velocity commands (cmd_vel topic)
         self.cmd_vel_sub_ = self.create_subscription(Twist, "cmd_vel", self.cmd_vel_callback, 20)
-        self.zero_vel_count = 0
-        self.zero_vel_limit = 5
         # Subscribe to joint states (joint_states topic)
         self.joint_states_sub = self.create_subscription(JointState, 'joint_states', self.joint_states_callback, 20)
         self.last_pt_sent_data = None
         # Subscribe to LED control data (ugv/led_ctrl topic)
         self.led_ctrl_sub = self.create_subscription(Float32MultiArray, 'ugv/led_ctrl', self.led_ctrl_callback, 20)
-        
+
         self.pt_steady_ctrl_sub = self.create_subscription(Float32MultiArray, 'ugv/pt_steady_ctrl', self.pt_steady_ctrl_callback, 20)
-        
+
         self.declare_parameter('serial_port', default_serial_port())
         self.declare_parameter('baud_rate', 115200)
         self.declare_parameter('wifi_interface', '')
         self.declare_parameter('ethernet_interface', '')
         self.declare_parameter('allow_motion', True)
-        self.declare_parameter('cmd_vel_timeout', 0.5)
         serial_port_name = self.get_parameter('serial_port').value
         baud_rate = self.get_parameter('baud_rate').value
         self.wifi_interface = self.get_parameter('wifi_interface').value
         self.ethernet_interface = self.get_parameter('ethernet_interface').value
         self.allow_motion = bool(self.get_parameter('allow_motion').value)
-        self.cmd_vel_timeout = float(self.get_parameter('cmd_vel_timeout').value)
-        self._motion_reject_warned = False
-        self._last_cmd_vel_time = None
-        self._cmd_vel_watchdog_armed = False
-        # Latched: the watchdog issued a stop and nothing has driven since.
-        # Cleared when a fresh non-zero command is accepted. Only this node can
-        # observe it — the stop it sends is byte-identical to an operator's, so
-        # no outside watcher could tell them apart from /cmd_vel.
-        self._cmd_vel_watchdog_fired = False
         self._applying_allow_motion = False
 
         # Initialize the base controller with the UART port and baud rate
         self.base_controller = BaseController(serial_port_name, baud_rate)
         request_data = json.dumps({"T":131,"cmd":1}) + "\n"
         self.base_controller.send_command(request_data.encode())
-        if not self.allow_motion:
-            self.send_stop_command()
+        # Unconditional stop at startup: clear any velocity the ESP32 may be
+        # latching from before this node started, regardless of allow_motion.
+        self.send_stop_command()
 
-        # Safety state for the cockpit. These two topics exist so the browser
-        # cockpit can gate its drive controls on what the ROBOT reports rather
-        # than on what the UI last sent — see ugv_cockpit/cockpit_status.py and
-        # docs/cockpit.md. TRANSIENT_LOCAL with depth 1 so a client that
-        # connects between ticks gets the current state immediately instead of
-        # rendering "unknown" for up to half a second; the periodic republish
-        # below is what lets a consumer detect that this node has died.
+        # Safety state for the cockpit. /ugv/allow_motion is the enforced gate
+        # value this node latched at startup — not the parameter server's current
+        # value, which nothing re-reads. Publishing the enforced value makes the
+        # cockpit's gate honest.
         #
-        # ORDERING IS LOAD-BEARING: these two create_publisher calls come AFTER
-        # the serial port is open and the startup stop has been sent. Creating a
-        # publisher can raise (QoS/RMW/name errors), and a raise here before the
-        # stop would leave a robot whose ESP32 is still latching whatever
-        # velocity it held at power-on, with no node alive to stop it. Telemetry
-        # for the cockpit is never allowed to precede the robot's own safing.
+        # ORDERING IS LOAD-BEARING: this publisher is created AFTER the serial
+        # port is open and the startup stop has been sent. Creating a publisher
+        # can raise (QoS/RMW/name errors), and a raise here before the stop would
+        # leave a robot whose ESP32 is still latching whatever velocity it held
+        # at power-on, with no node alive to stop it. Telemetry for the cockpit
+        # is never allowed to precede the robot's own safing.
         safety_qos = QoSProfile(
             depth=1,
             durability=DurabilityPolicy.TRANSIENT_LOCAL,
@@ -158,9 +147,6 @@ class ugv_bringup(Node):
         )
         self.allow_motion_publisher_ = self.create_publisher(
             Bool, '/ugv/allow_motion', safety_qos
-        )
-        self.watchdog_state_publisher_ = self.create_publisher(
-            DiagnosticStatus, '/ugv/watchdog_state', safety_qos
         )
         self.create_service(
             SetBool, '/ugv/set_allow_motion', self._set_allow_motion_cb
@@ -172,12 +158,6 @@ class ugv_bringup(Node):
         self.feedback_thread.start()
         self.ip_thread = threading.Thread(target=self.ip_thread_func, daemon=True)
         self.ip_thread.start()
-        # Stale-cmd_vel watchdog: ESP32 latches last velocity with no firmware timeout
-        self._cmd_vel_watchdog_timer = self.create_timer(0.1, self._cmd_vel_watchdog_tick)
-        # 2 Hz safety heartbeat. Deliberately faster than the cockpit's 3 s
-        # staleness window, so one dropped tick never reads as "bringup is gone".
-        self._safety_state_timer = self.create_timer(0.5, self._publish_safety_state)
-        self._publish_safety_state()
 
         self.set_ugv_version()
 
@@ -186,21 +166,16 @@ class ugv_bringup(Node):
         desired = bool(allow)
         previous = bool(self.allow_motion)
         if desired == previous:
-            self._publish_safety_state()
             return previous, desired
 
         self.allow_motion = desired
         if previous and not desired:
             self.send_stop_command()
-            self._cmd_vel_watchdog_armed = False
-            self._motion_reject_warned = False
             self.get_logger().warning(
                 f'allow_motion disabled via {source}; stop sent immediately'
             )
         elif not previous and desired:
-            self._motion_reject_warned = False
             self.get_logger().warning(f'allow_motion enabled via {source}')
-        self._publish_safety_state()
         return previous, desired
 
     def _set_allow_motion_cb(self, request, response):
@@ -238,83 +213,6 @@ class ugv_bringup(Node):
             )
         return result
 
-    def _publish_safety_state(self):
-        """Publish the arming gate and the cmd_vel watchdog state.
-
-        Both values are read from this node's own state, which is the only
-        place either one exists:
-
-          * `allow_motion` is the parameter this node latched at startup and
-            actually enforces in cmd_vel_callback — not the parameter server's
-            current value, which nothing re-reads. Publishing the enforced
-            value is what makes the cockpit's gate honest.
-          * `armed` means exactly "the automatic stop-on-silence WILL happen":
-            the watchdog timer exists, is not cancelled, and has a positive
-            timeout. Deliberately INDEPENDENT of allow_motion. The old
-            definition ANDed in allow_motion, which made amber "not armed" the
-            normal resting state of a parked robot — and a state an operator
-            sees every day is a state they stop reading, so a real watchdog
-            failure would have arrived looking exactly like Tuesday. The UI
-            renders allow_motion separately from its own entry; this key
-            answers one question only, and false must always mean "nothing will
-            stop this robot automatically".
-          * `watching` is the transient internal flag: a non-zero command is in
-            flight and the next tick will time it. It flips on every zero
-            command, which is why `armed` is the stable value the UI reads.
-          * `fired` latches the watchdog's own stop until something drives
-            again.
-
-        The whole body is wrapped: this runs on the same single-threaded
-        executor as _cmd_vel_watchdog_tick, and main() is a bare rclpy.spin, so
-        an exception escaping here would kill the process and take the only
-        automatic stop on the robot down with it. Losing a telemetry tick is
-        survivable; losing the watchdog is not.
-        """
-        try:
-            self.allow_motion_publisher_.publish(
-                Bool(data=bool(self.allow_motion))
-            )
-
-            status = DiagnosticStatus()
-            status.name = 'cmd_vel_watchdog'
-            status.hardware_id = 'ugv_bringup'
-            armed = (
-                self.cmd_vel_timeout > 0.0
-                and self._cmd_vel_watchdog_timer is not None
-                and not self._cmd_vel_watchdog_timer.is_canceled()
-            )
-            if self._cmd_vel_watchdog_fired:
-                status.level = DiagnosticStatus.ERROR
-                status.message = 'watchdog stopped the robot; no command since'
-            elif armed:
-                # OK whether or not motion is allowed: a parked robot with a
-                # live watchdog is healthy, not a warning. WARN is reserved for
-                # the one case that is genuinely wrong — no automatic stop.
-                status.level = DiagnosticStatus.OK
-                status.message = (
-                    'armed; motion allowed' if self.allow_motion
-                    else 'armed; motion locked'
-                )
-            else:
-                status.level = DiagnosticStatus.WARN
-                status.message = 'NOT armed — no automatic stop on cmd_vel silence'
-            status.values = [
-                KeyValue(key='armed', value=str(armed).lower()),
-                KeyValue(
-                    key='fired', value=str(self._cmd_vel_watchdog_fired).lower()
-                ),
-                KeyValue(
-                    key='watching', value=str(self._cmd_vel_watchdog_armed).lower()
-                ),
-                KeyValue(key='timeout', value=f'{self.cmd_vel_timeout:.2f}'),
-            ]
-            self.watchdog_state_publisher_.publish(status)
-        except Exception as exc:
-            self.get_logger().warning(
-                f'safety state publish failed: {exc}',
-                throttle_duration_sec=5.0,
-            )
-
     def set_ugv_version(self):
         model = os.getenv("UGV_MODEL", "ugv_rover")
         ugv_main = 2
@@ -329,8 +227,8 @@ class ugv_bringup(Node):
             ugv_main = 2
 
         version_data = json.dumps({"T":900,"main":ugv_main,"module":"0"}) + "\n"
-        self.base_controller.send_command(version_data.encode())   
-        
+        self.base_controller.send_command(version_data.encode())
+
     def feedback_loop_thread(self):
         rate = self.create_rate(20)
         while rclpy.ok():
@@ -342,7 +240,7 @@ class ugv_bringup(Node):
                     self.publish_odom_raw()
                     self.check_low_battery()
                     self.publish_imu_data_raw()
-                
+
             except Exception as e:
                 self.get_logger().error(f"[feedback_loop_thread] error: {e}")
             rate.sleep()
@@ -378,17 +276,17 @@ class ugv_bringup(Node):
         # ASSUMED: sensor is not at the chassis origin; covariances left at msg defaults (0).
         msg.header.frame_id = "base_link"
         imu_raw_data = self.base_controller.base_data
-                
+
         # ASSUMED vendor scale (ICM-20948 ±4g / 8192 LSB/g) — not calibrated on this robot.
         msg.linear_acceleration.x = 9.8 * float(imu_raw_data["ax"]) / 8192
         msg.linear_acceleration.y = 9.8 * float(imu_raw_data["ay"]) / 8192
         msg.linear_acceleration.z = 9.8 * float(imu_raw_data["az"]) / 8192
-        
+
         # ASSUMED vendor scale (±2000 dps / 16.4 LSB/dps) — not calibrated on this robot.
         msg.angular_velocity.x = 3.1415926 * float(imu_raw_data["gx"]) / (16.4 * 180)
         msg.angular_velocity.y = 3.1415926 * float(imu_raw_data["gy"]) / (16.4 * 180)
         msg.angular_velocity.z = 3.1415926 * float(imu_raw_data["gz"]) / (16.4 * 180)
-                   
+
         # REP-145: orientation_covariance[0] < 0 means orientation is not provided.
         msg.orientation_covariance[0] = -1.0
         # Conservative diagonal cov so EKF does not treat gyros as perfect.
@@ -402,7 +300,7 @@ class ugv_bringup(Node):
         if hasattr(self, "imu_data_publisher_"):
             self.imu_data_publisher_.publish(msg)
         self.imu_data_raw_publisher_.publish(msg)
-        
+
     # Publish magnetic field data to the ROS topic "imu/mag"
     def publish_imu_mag(self):
         msg = MagneticField()
@@ -416,7 +314,7 @@ class ugv_bringup(Node):
         msg.magnetic_field.x = float(imu_raw_data["mx"]) * 0.15
         msg.magnetic_field.y = float(imu_raw_data["my"]) * 0.15
         msg.magnetic_field.z = float(imu_raw_data["mz"]) * 0.15
-              
+
         self.imu_mag_publisher_.publish(msg)  # Publish the magnetic field data
 
     # Publish odometry data to the ROS topic "odom/odom_raw" m
@@ -467,89 +365,34 @@ class ugv_bringup(Node):
 
         if not self.allow_motion:
             if linear_velocity != 0.0 or angular_velocity != 0.0:
-                if not self._motion_reject_warned:
-                    self.get_logger().warning(
-                        'Rejected non-zero cmd_vel while allow_motion is false'
-                    )
-                    self._motion_reject_warned = True
+                self.get_logger().warning(
+                    'Rejected non-zero cmd_vel while allow_motion is false'
+                )
                 self.send_stop_command()
             return
-
-        self._last_cmd_vel_time = time.monotonic()
-
-        # HACK: after zero_vel_limit consecutive zeros, drop further zero cmds (silent).
-        if linear_velocity == 0.0 and angular_velocity == 0.0:
-            self.zero_vel_count += 1
-            if self.zero_vel_count > self.zero_vel_limit:
-                return  
-        else:
-            self.zero_vel_count = 0  
-
-        # HACK: deadband boost — tiny yaw when not translating is forced to ±0.2.
-        if linear_velocity == 0.0:
-            if 0 < angular_velocity < 0.2:
-                angular_velocity = 0.2
-            elif -0.2 < angular_velocity < 0:
-                angular_velocity = -0.2
 
         # Send the velocity data to the UGV as a JSON string
         data = json.dumps({'T': '13', 'X': linear_velocity, 'Z': angular_velocity}) + "\n"
         self.base_controller.send_command(data.encode())
-        self._cmd_vel_watchdog_armed = not (
-            linear_velocity == 0.0 and angular_velocity == 0.0
-        )
-        if self._cmd_vel_watchdog_armed:
-            # Something is driving again, so the previous watchdog stop is
-            # history rather than the current state of the robot.
-            self._cmd_vel_watchdog_fired = False
-
-    def _cmd_vel_watchdog_tick(self):
-        """Stop the robot when nobody has driven it for cmd_vel_timeout.
-
-        This is the ONLY automatic stop on BEAST-01 — the ESP32 latches the
-        last velocity it was given and has no firmware timeout of its own. Two
-        rules follow from that and are not negotiable:
-
-          1. send_stop_command() runs FIRST, before any bookkeeping, logging or
-             publishing. Everything after it is reporting; the stop itself must
-             not sit behind a line that can raise.
-          2. Nothing propagates out of here. main() is a bare rclpy.spin on a
-             single-threaded executor with no exception handling, so an
-             exception escaping this callback would tear down the process and
-             with it the only thing that stops this robot.
-        """
-        try:
-            if not self.allow_motion or not self._cmd_vel_watchdog_armed:
-                return
-            if self._last_cmd_vel_time is None:
-                return
-            if (time.monotonic() - self._last_cmd_vel_time) < self.cmd_vel_timeout:
-                return
-            self.send_stop_command()
-            self._cmd_vel_watchdog_armed = False
-            self._cmd_vel_watchdog_fired = True
-            self.get_logger().warning(
-                f'cmd_vel watchdog stop after {self.cmd_vel_timeout:.2f}s silence'
-            )
-            # Report it immediately rather than waiting up to 0.5 s for the next
-            # heartbeat: this is the one transition the cockpit must not lag on.
-            # Last, and after the log line: the forensic record of the stop is
-            # worth more than the cockpit's half-second head start, and
-            # _publish_safety_state touches the DDS stack, which is the part of
-            # this sequence most likely to fail.
-            self._publish_safety_state()
-        except Exception as exc:
-            self.get_logger().error(
-                f'cmd_vel watchdog tick failed: {exc}',
-                throttle_duration_sec=5.0,
-            )
-            return
 
     def send_stop_command(self):
         data = json.dumps({'T': '13', 'X': 0.0, 'Z': 0.0}) + "\n"
         self.base_controller.send_command(data.encode())
 
     def joint_states_callback(self, msg):
+        if len(msg.name) != len(msg.position):
+            self.get_logger().warning(
+                'Malformed joint_states: name/position length mismatch; ignoring'
+            )
+            return
+
+        required = ('pt_base_link_to_pt_link1', 'pt_link1_to_pt_link2')
+        if not all(joint in msg.name for joint in required):
+            self.get_logger().warning(
+                f'Malformed joint_states: missing one of {required}; ignoring'
+            )
+            return
+
         header = {
             'stamp': {
                 'sec': msg.header.stamp.sec,
@@ -570,60 +413,76 @@ class ugv_bringup(Node):
 
         # Send the joint data as a JSON string to the UGV
         joint_data = json.dumps({
-            'T': 133, 
-            'X': -x_degree, 
-            'Y': y_degree, 
+            'T': 133,
+            'X': -x_degree,
+            'Y': y_degree,
             "SPD": 0,
             "ACC": 0,
         }) + "\n"
 
         if joint_data == self.last_pt_sent_data:
-            return  
+            return
 
         self.last_pt_sent_data = joint_data
-                
+
         self.base_controller.send_command(joint_data.encode())
 
     # Callback for processing LED control commands 0-255
     def led_ctrl_callback(self, msg):
+        if len(msg.data) < 2:
+            self.get_logger().warning(
+                'Malformed led_ctrl: expected at least 2 values; ignoring'
+            )
+            return
+
         IO4 = msg.data[0]
         IO5 = msg.data[1]
 
         IO4 = max(0, min(IO4, 255))
-        IO5 = max(0, min(IO5, 255))     
-                
+        IO5 = max(0, min(IO5, 255))
+
         # Send LED control data as a JSON string to the UGV
         led_ctrl_data = json.dumps({
-            'T': 132, 
+            'T': 132,
             "IO4": IO4,
             "IO5": IO5,
         }) + "\n"
-           
+
         self.base_controller.send_command(led_ctrl_data.encode())
 
-
     def pt_steady_ctrl_callback(self, msg):
+        if len(msg.data) < 2:
+            self.get_logger().warning(
+                'Malformed pt_steady_ctrl: expected at least 2 values; ignoring'
+            )
+            return
+
         mode = int(msg.data[0])
         y_value = msg.data[1]
 
-        mode = max(0, min(mode, 1)) 
-                
+        mode = max(0, min(mode, 1))
+
         # Send LED control data as a JSON string to the UGV
         pt_steady_ctrl_data = json.dumps({
-            'T': 137, 
+            'T': 137,
             "s": mode,
             "y": y_value,
         }) + "\n"
-           
+
         self.base_controller.send_command(pt_steady_ctrl_data.encode())
+
 
 # Main function to initialize the ROS node and start spinning
 def main(args=None):
     rclpy.init(args=args)  # Initialize ROS
     node = ugv_bringup()  # Create the UGV bringup node
-    rclpy.spin(node)  # Keep the node running
-    #node.destroy_node()  # (optional) Shutdown the node
-    rclpy.shutdown()  # Shutdown ROS
+    try:
+        rclpy.spin(node)  # Keep the node running
+    except Exception as exc:
+        node.get_logger().error(f'Unhandled exception in spin: {exc}')
+    finally:
+        node.destroy_node()  # Shutdown the node
+        rclpy.shutdown()  # Shutdown ROS
 
 if __name__ == '__main__':
     main()

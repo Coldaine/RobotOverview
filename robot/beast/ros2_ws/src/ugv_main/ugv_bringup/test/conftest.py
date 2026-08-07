@@ -27,7 +27,26 @@ if importlib.util.find_spec('rclpy') is None:
     rclpy_qos = _module('rclpy.qos')
 
     class _Placeholder:
-        pass
+        """Accept-anything stub for rclpy classes the tests never introspect."""
+
+        def __init__(self, *args, **kwargs):
+            pass
+
+    class _QoS:
+        """QoS stand-ins, deliberately NOT the same class as the Node stub.
+
+        Tests monkeypatch ``Node.__init__``; when QoSProfile/DurabilityPolicy/
+        HistoryPolicy aliased the Node stub class, that patch clobbered QoS
+        construction in ``ugv_bringup.__init__`` with a lambda that rejects
+        kwargs. Separate class, carries the enum attributes the node reads and
+        swallows ``QoSProfile(depth=..., durability=..., history=...)``.
+        """
+
+        TRANSIENT_LOCAL = 'transient_local'
+        KEEP_LAST = 'keep_last'
+
+        def __init__(self, *args, **kwargs):
+            pass
 
     class _Message:
         """Enough of a generated message to be built and have fields set.
@@ -61,9 +80,9 @@ if importlib.util.find_spec('rclpy') is None:
 
     rclpy_node.Node = _Placeholder
     rclpy_parameter.Parameter = _Parameter
-    rclpy_qos.DurabilityPolicy = _Placeholder
-    rclpy_qos.HistoryPolicy = _Placeholder
-    rclpy_qos.QoSProfile = _Placeholder
+    rclpy_qos.DurabilityPolicy = _QoS
+    rclpy_qos.HistoryPolicy = _QoS
+    rclpy_qos.QoSProfile = _QoS
 
     _TYPED = {'DiagnosticStatus': _DiagnosticStatus}
 

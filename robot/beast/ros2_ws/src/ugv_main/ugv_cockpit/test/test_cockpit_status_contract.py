@@ -336,8 +336,18 @@ def test_the_arbitration_mirror_reads_the_same_clock_as_twist_mux():
     assert "DeclareLaunchArgument(\n        'use_sim_time'" not in launch_source
 
 
-def test_bringup_publishes_the_safety_state_the_cockpit_gates_on():
-    """The arming link: the robot reports what it enforces, not what the UI sent."""
+def test_bringup_publishes_the_allow_motion_state_the_cockpit_gates_on(
+    bringup_tree,
+):
+    """The arming link: the robot reports the gate value it actually enforces.
+
+    ugv_bringup publishes /ugv/allow_motion (std_msgs/Bool) so the cockpit can
+    gate its drive controls on the robot-reported value rather than whatever
+    the UI last sent. The publisher is TRANSIENT_LOCAL — a cockpit that joins
+    after bringup started still receives the latched value — and it is created
+    only after the unconditional startup stop, because ``create_publisher``
+    can raise and a raise must never precede the robot's own safing.
+    """
     source = read(BRINGUP_NODE)
     assert "create_publisher(\n            Bool, '/ugv/allow_motion'" in source or \
         "Bool, '/ugv/allow_motion'" in source, (
@@ -345,15 +355,31 @@ def test_bringup_publishes_the_safety_state_the_cockpit_gates_on():
             'can gate its drive controls on the robot-reported value'
             % BRINGUP_NODE
         )
-    assert "'/ugv/watchdog_state'" in source, (
-        '%s must publish /ugv/watchdog_state (DiagnosticStatus with armed/fired)'
-        % BRINGUP_NODE
+    assert 'DurabilityPolicy.TRANSIENT_LOCAL' in source, (
+        '%s: the allow_motion publisher must be TRANSIENT_LOCAL so a late-'
+        'joining cockpit still sees the latched gate value' % BRINGUP_NODE
     )
-    assert '_publish_safety_state' in source
-    assert 'self._cmd_vel_watchdog_fired = True' in source, (
-        "%s must latch 'fired' where the watchdog actually stops the robot — "
-        'nothing outside this process can observe that transition, because the '
-        'stop it sends is byte-identical to an operator stop' % BRINGUP_NODE
+
+    init = function_def(bringup_tree, '__init__')
+    calls = self_calls_in_source_order(init)
+    names = [attr for _lineno, attr in calls]
+    assert 'send_stop_command' in names, (
+        '%s: __init__ must send the unconditional startup stop' % BRINGUP_NODE
+    )
+    stop_line = calls[names.index('send_stop_command')][0]
+    allow_motion_line = next(
+        node.lineno for node in ast.walk(init)
+        if isinstance(node, ast.Assign)
+        and isinstance(node.value, ast.Call)
+        and isinstance(node.value.func, ast.Attribute)
+        and node.value.func.attr == 'create_publisher'
+        and len(node.value.args) >= 2
+        and isinstance(node.value.args[1], ast.Constant)
+        and node.value.args[1].value == '/ugv/allow_motion'
+    )
+    assert allow_motion_line > stop_line, (
+        '%s: the allow_motion publisher (line %d) must be created after the '
+        'startup stop (line %d)' % (BRINGUP_NODE, allow_motion_line, stop_line)
     )
 
 
@@ -385,16 +411,14 @@ def test_status_node_lets_stale_safety_state_decay_out_of_the_message():
 
 
 # --------------------------------------------------------------------------
-# (4) both ends of the safety wire, read out of ugv_bringup's own syntax
+# (4) the arming link, read out of ugv_bringup's own syntax
 #
-# test_jetson_safety.py exercises the watchdog's BEHAVIOUR against a harness.
+# test_jetson_safety.py exercises the gate's BEHAVIOUR against a harness.
 # These check the structural invariants that a behavioural test cannot see:
-# that the topic strings on the two ends of the wire agree, that the stop is
-# ordered ahead of everything that can raise, that the callback cannot take the
-# process down, and that a timer actually fires the tick.
+# that the topic strings on the two ends of the wire agree, and that the gate
+# publisher is created only after the unconditional startup stop — a raise in
+# create_publisher must never precede the robot's own safing.
 # --------------------------------------------------------------------------
-WATCHDOG_TICK = '_cmd_vel_watchdog_tick'
-WATCHDOG_TIMER_PERIOD_S = 0.1
 
 
 @pytest.fixture(scope='module')
@@ -433,35 +457,18 @@ def function_def(tree, name):
     raise AssertionError('%s defines no %s()' % (BRINGUP_NODE, name))
 
 
-def statements(function_node):
-    """A function's statements with a leading docstring dropped."""
-    body = list(function_node.body)
-    if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant):
-        body = body[1:]
-    return body
-
-
-def executable_body(function_node):
-    """The statements that really run, seeing through a whole-body ``try:``."""
-    body = statements(function_node)
-    if len(body) == 1 and isinstance(body[0], ast.Try):
-        return list(body[0].body)
-    return body
-
-
 # (a) ------------------------------------------------------------------
-def test_bringup_publishes_on_exactly_the_topics_the_contract_names(
+def test_bringup_publishes_allow_motion_on_the_topic_the_contract_names(
     bringup_tree, contract
 ):
     """Both ends of the wire, compared to each other rather than to a literal.
 
-    cockpit_status subscribes ALLOW_MOTION_TOPIC / WATCHDOG_STATE_TOPIC.
-    ugv_bringup names its topics in its own ``create_publisher`` calls. Nothing
-    in the build connects those two facts: rename one side and the cockpit
-    subscribes a topic that has no publisher, which looks exactly like a
-    ugv_bringup that has died — the safety strip decays to "motion locked /
-    watchdog unknown" and reports a healthy robot as a dead one, forever, with
-    no error anywhere.
+    cockpit_status subscribes ALLOW_MOTION_TOPIC. ugv_bringup names its topic
+    in its own ``create_publisher`` call. Nothing in the build connects those
+    two facts: rename one side and the cockpit subscribes a topic that has no
+    publisher, which looks exactly like a ugv_bringup that has died — the
+    safety strip decays to "motion locked" and reports a healthy robot as a
+    dead one, forever, with no error anywhere.
     """
     published = {}
     for node in ast.walk(bringup_tree):
@@ -481,7 +488,6 @@ def test_bringup_publishes_on_exactly_the_topics_the_contract_names(
 
     for attribute, expected in (
         ('allow_motion_publisher_', contract.ALLOW_MOTION_TOPIC),
-        ('watchdog_state_publisher_', contract.WATCHDOG_STATE_TOPIC),
     ):
         assert attribute in published, (
             '%s no longer assigns self.%s from a create_publisher call with a '
@@ -498,147 +504,44 @@ def test_bringup_publishes_on_exactly_the_topics_the_contract_names(
         )
 
 
-# (b) ------------------------------------------------------------------
-def test_watchdog_stop_precedes_every_other_statement_in_the_tick(bringup_tree):
-    """The stop goes out first. Everything after it is only reporting.
-
-    This is the robot's ONLY automatic stop — the ESP32 latches the last
-    velocity it was given and has no timeout of its own. So the ordering inside
-    the tick is a safety property, not a style preference:
-
-      * the cheap guards run first, or the robot is stopped on every tick;
-      * ``send_stop_command()`` is the first thing after them, so no line that
-        can raise (logging, DDS publishing) sits between deciding to stop and
-        actually stopping;
-      * ``_publish_safety_state()`` — which touches the DDS stack and is the
-        most failure-prone step here — comes last.
-    """
-    tick = function_def(bringup_tree, WATCHDOG_TICK)
-    calls = self_calls_in_source_order(tick)
-    names = [attr for _lineno, attr in calls]
-
-    assert 'send_stop_command' in names, (
-        '%s() no longer calls send_stop_command(). Nothing else on this robot '
-        'stops it when cmd_vel goes silent.' % WATCHDOG_TICK
-    )
-    assert names[0] == 'send_stop_command', (
-        '%s(): send_stop_command() must be the FIRST call in the tick, not %r. '
-        'Anything ahead of it is a statement that can raise between deciding to '
-        'stop and stopping.' % (WATCHDOG_TICK, names[0])
-    )
-
-    assert '_publish_safety_state' in names, (
-        '%s() must report the stop it just issued — the fired latch is not '
-        'observable from outside this process' % WATCHDOG_TICK
-    )
-    assert names.index('send_stop_command') < names.index('_publish_safety_state'), (
-        '%s(): the robot must be stopped before the cockpit is told about it. '
-        'Publishing first puts a DDS call on the path to the stop.' % WATCHDOG_TICK
-    )
-
-    # The guards must still come first, or the tick stops the robot every 0.1 s.
-    bare_return_guards = [
-        node for node in executable_body(tick) if isinstance(node, ast.If)
-        if len(node.body) == 1
-        and isinstance(node.body[0], ast.Return)
-        and node.body[0].value is None
-    ]
-    assert len(bare_return_guards) >= 3, (
-        '%s() should keep its early-out guards (motion allowed, watchdog armed, '
-        'a command seen, timeout not yet elapsed); found %d'
-        % (WATCHDOG_TICK, len(bare_return_guards))
-    )
-    stop_line = next(line for line, attr in calls if attr == 'send_stop_command')
-    assert max(node.lineno for node in bare_return_guards) < stop_line, (
-        '%s(): send_stop_command() sits above the guards, so the tick would '
-        'stop the robot on every fire of a 0.1 s timer' % WATCHDOG_TICK
-    )
-
-
-def test_watchdog_tick_cannot_take_the_process_down(bringup_tree):
-    """An exception escaping this callback kills the watchdog with the process.
-
-    ``main()`` is a bare ``rclpy.spin`` on a single-threaded executor with no
-    exception handling, so there is nothing above this frame to catch anything.
-    """
-    tick = function_def(bringup_tree, WATCHDOG_TICK)
-    body = statements(tick)
-    assert len(body) == 1 and isinstance(body[0], ast.Try), (
-        '%s() must wrap its whole body in try/except: rclpy.spin is '
-        'single-threaded with no handler above it, so anything that escapes '
-        'here takes down the only automatic stop the robot has' % WATCHDOG_TICK
-    )
-    assert any(
-        handler.type is None
-        or (isinstance(handler.type, ast.Name) and handler.type.id == 'Exception')
-        for handler in body[0].handlers
-    ), (
-        '%s(): the handler must catch Exception, not a narrow subclass'
-        % WATCHDOG_TICK
-    )
-
-
-# (c) ------------------------------------------------------------------
-def test_the_watchdog_timer_is_actually_created(bringup_tree):
-    """Correct tick logic that nothing calls is not a watchdog.
-
-    A 0.1 s period against the 0.5 s ``cmd_vel_timeout`` bounds the overshoot
-    past the timeout to one tick. Slowing the timer silently widens the window
-    in which a robot that has lost its operator keeps driving.
-    """
-    periods = []
-    for node in ast.walk(bringup_tree):
-        if not isinstance(node, ast.Call):
-            continue
-        func = node.func
-        if not (isinstance(func, ast.Attribute) and func.attr == 'create_timer'):
-            continue
-        if len(node.args) < 2:
-            continue
-        callback = node.args[1]
-        if not isinstance(callback, ast.Attribute) or callback.attr != WATCHDOG_TICK:
-            continue
-        if not (isinstance(callback.value, ast.Name) and callback.value.id == 'self'):
-            continue
-        if isinstance(node.args[0], ast.Constant):
-            periods.append(node.args[0].value)
-
-    assert periods, (
-        '%s never calls create_timer(..., self.%s). The tick can be perfect and '
-        'the robot still never stops, because nothing fires it.'
-        % (BRINGUP_NODE, WATCHDOG_TICK)
-    )
-    assert periods == [WATCHDOG_TIMER_PERIOD_S], (
-        'the cmd_vel watchdog must be driven by exactly one %ss timer, found '
-        '%s. The period bounds how far past cmd_vel_timeout the robot keeps '
-        'the last velocity.' % (WATCHDOG_TIMER_PERIOD_S, periods)
-    )
-
-
-def test_safety_publishers_come_after_the_startup_stop(bringup_tree):
+def test_allow_motion_publisher_comes_after_the_startup_stop(bringup_tree):
     """Telemetry must never be created ahead of the robot's own safing.
 
     ``create_publisher`` can raise — a bad QoS combination, an RMW error, an
     invalid name. If it raises before the startup ``send_stop_command()``, the
     node dies with the ESP32 still latching whatever velocity it held at
-    power-on and nothing alive to clear it.
+    power-on and nothing alive to clear it. The startup stop is unconditional;
+    the cockpit gate publisher is the ONLY publisher created after it.
     """
     init = function_def(bringup_tree, '__init__')
     calls = self_calls_in_source_order(init)
     names = [attr for _lineno, attr in calls]
 
     assert 'send_stop_command' in names and 'create_publisher' in names
-    first_stop = names.index('send_stop_command')
-    safety_publisher_lines = [
-        line for line, attr in calls if attr == 'create_publisher'
+    stop_line = calls[names.index('send_stop_command')][0]
+    publishers_after_stop = [
+        line for line, attr in calls
+        if attr == 'create_publisher' and line > stop_line
     ]
-    stop_line = calls[first_stop][0]
-    late = [line for line in safety_publisher_lines if line > stop_line]
-    assert len(late) >= 2, (
-        '__init__ must create the two cockpit safety publishers AFTER the '
-        'startup stop. create_publisher can raise, and a raise ahead of the '
-        'stop leaves the ESP32 latching its power-on velocity with no node '
-        'alive to stop it.'
+    assert len(publishers_after_stop) == 1, (
+        'exactly one publisher may be created after the startup stop: the '
+        '/ugv/allow_motion gate publisher. create_publisher can raise, and a '
+        'raise ahead of the stop leaves the ESP32 latching its power-on '
+        'velocity with no node alive to stop it. Found publishers after the '
+        'stop at lines %s.' % publishers_after_stop
+    )
+    allow_motion_line = next(
+        node.lineno for node in ast.walk(init)
+        if isinstance(node, ast.Assign)
+        and isinstance(node.value, ast.Call)
+        and isinstance(node.value.func, ast.Attribute)
+        and node.value.func.attr == 'create_publisher'
+        and len(node.value.args) >= 2
+        and isinstance(node.value.args[1], ast.Constant)
+        and node.value.args[1].value == '/ugv/allow_motion'
+    )
+    assert allow_motion_line == publishers_after_stop[0], (
+        'the publisher created after the startup stop must be /ugv/allow_motion'
     )
 
 
