@@ -57,9 +57,12 @@ verification. Only `[code-verified]` items can be treated as ground truth; the r
 hypotheses to be checked before demolition.
 
 1. `[doc-claim-unverified]` **ESP32 latches its last velocity; no firmware timeout.**
-   This is the central claim behind the AI-added `cmd_vel` silence watchdog, but it has
-   not been live-tested in this session. The only honest status is: *unknown*. A wheels-up
-   floor test is required before any strip decision uses this as justification.
+   This is the central claim behind the AI-added `cmd_vel` silence watchdog. The live
+   test 2026-08-07 re-armed the robot, sent `/cmd_vel_ui` angular.z = 0.2 rad/s for 2 s,
+   and watched `/cmd_vel` return to zero — but no encoder feedback was observable remotely
+   (`/odom/odom_raw`, `/odom_wheel`, and `/joint_states` wheel positions stayed silent/zero),
+   so **the underlying hardware question remains unresolved.** A physical, wheels-up
+   observation is still required.
 2. `[code-verified]` **ESP32 JSON `T:13` velocity, `T:13 0,0` stop; `T:900` model select
    (`ugv_beast`→3); `T:1001` feedback with IMU LSB scales (ICM-20948: 8192 LSB/g,
    16.4 LSB/dps, 0.15 µT/LSB), `odl/odr` in cm, `v` in centivolts (~1.2 % low vs INA219).**
@@ -69,11 +72,13 @@ hypotheses to be checked before demolition.
    @ 115200 on Jetson** (env `UGV_SERIAL_PORT`). **LiDAR: LD19 on the by-id CP2102 symlink**
    (`ugv.env.example` carries the exact path). Both paths are checked into repo configuration;
    live path presence should still be confirmed before relying on them.
-4. `[doc-claim-unverified]` **INA219 at `0x41` on `/dev/i2c-7`** (`0x40` is the LeoRover
+4. `[code-verified]` **INA219 at `0x41` on `/dev/i2c-7`** (`0x40` is the LeoRover
    default and wrong). Config reset value `0x399F`. **`RSHUNT = 0.1 Ω` is UNVERIFIED** —
-   all current/charging values are provisional until measured. The previous note claimed this
-   was verified live 2026-08-07, but that is not trustworthy; `smbus2` availability and whether
-   `/ugv/voltage` is publishing are live contradictions that must be resolved on `beast-01-ts`.
+   all current/charging values are provisional until measured. Live probe 2026-08-07 confirmed
+   the part responds (`i2cdetect -y -r 7` shows `0x41`, config register reads `0x399F`), and
+   `smbus2` imports cleanly for the `beast` user. `/ugv/voltage` is currently published by
+   `ugv_bringup` (a fixed-ish BatteryState); `beast_power` is installed but not running because
+   the cutover prepared 2026-08-07 was never deployed.
 5. `[doc-claim-unverified]` **Two power rails disagree**: ESP32-side and INA219-side sit
    ~0.14 V apart and moved in opposite directions during one charging session (see
    `power_log.py` docstring). Charging detection is not yet trustworthy. This is a stale
@@ -106,7 +111,9 @@ Carry-across or kill-list for execution. Full detail in the session record; comp
 - **H3 — interlocks are fail-open.** `ugv_safety_monitor` is a client-side request with no
   respawn, no heartbeat; bringup neither knows nor cares if it exists.
 - **M4 — CHARGING_LOCK untrustworthy** (facts 4–5 above; threshold `0.05 A` is a guess).
-- **M5 — smbus2 contradiction** (fact 4).
+- **M5 — smbus2 contradiction** (fact 4). **Resolved live 2026-08-07:** `smbus2`
+  imports cleanly for the `beast` user (`/home/beast/.local/lib/python3.10/site-packages/smbus2`).
+  The contradiction was stale doc drift, not a real dependency gap.
 - **M6 — stale safety comments** in `twist_mux.yaml` (claims estop lock still
   browser-admitted), `rosbridge.launch.py` ("five topics", "`/imu/data` does not exist" —
   both false), `beast-ros-base.service` description ("zero-motion staging" on an armed boot),
@@ -122,7 +129,7 @@ Carry-across or kill-list for execution. Full detail in the session record; comp
 | D1 | **Hangar UI driving.** Stripping `ugv_cockpit`'s rosbridge removes the browser's only path to the robot. | **Keep the rich cockpit and restricted bridge** | decided |
 | D2 | **twist_mux spine.** Keep the 4-rung mux, or collapse to a single `/cmd_vel` input on the new bridge node? | keep / collapse | collapse (fewer moving parts) |
 | D3 | **`allow_motion` kill-switch.** Keep any software disarm, or is "no commands sent" + watchdog enough? | **Keep simple SetBool** | decided |
-| D4 | **beast_power.** Keep (telemetry, standalone) or drop with the apparatus? | Keep (telemetry, standalone) | keep after M5 verification |
+| D4 | **beast_power.** Keep (telemetry, standalone) or drop with the apparatus? | Keep (telemetry, standalone) | **keep and deploy** (M5 verified; INA219 live-confirmed) |
 | D5 | **Storage stack** (4 units + tests, `#2–#5` fork PRs) and blackbox/mission record units. In scope of this strip? | keep / strip / separate plan | separate plan (out of scope here) |
 | D6 | **vizanti + vendor web app.** Delete from tree, or quarantine behind a wrapper with cockpit-equivalent globs? | **Delete Vizanti launch entry points; keep package only if a consumer requires it** | decided |
 | D7 | **Vendor demo retargets** (`/cmd_vel_nav` repoints, joy/keyboard autorepeat). Needed at all, or revert with the vendor files? | keep teleop only / revert all | open |

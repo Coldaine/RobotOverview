@@ -88,6 +88,36 @@ an unverified 0.1 Ω `RSHUNT` (LeoRover default) — treat amps as provisional.
   `https://beast-01.tyrannosaurus-magellanic.ts.net/` → HTTP 400 "Can only Upgrade to
   WebSocket" — rosbridge alive behind `tailscale serve` (443 on `100.107.16.72`).
 
+**Live probe 2026-08-07 ~18:50 UTC (robot up 1 h 24 min, charger connected):**
+
+- `beast-ros-base.service` is active and launches `bringup_lidar.launch.py
+  allow_motion:=true`, but `ugv_safety_monitor` has forced `/ugv/allow_motion` to `false`
+  via `ETHERNET_LOCK` (`/ugv/safety/status` reports `ethernet_connected: true`,
+  `ethernet_verified: true`, yet the lock is engaged). This is a live demonstration of the
+  interlock fail-open/false-positive problem — the robot cannot be driven until the service
+  is called or the monitor is removed.
+- On-robot checkout is still `6ef4a48` (three commits behind `main`). The *installed* tree
+  still contains `ugv_safety_monitor`; the source tree on `main` has already had the safety
+  monitor stripped, but that strip has **not been deployed** to the robot yet.
+- INA219 direct reads on `i2c-7` address `0x41`: config register `0x9f39` (== `0x399F`
+  little-endian, the reset value), bus-voltage raw `0x7a5e` (~12.09 V decoded), shunt-voltage
+  raw `0x04ff`. The part is present and responding; `smbus2` imports cleanly for the `beast`
+  user (`/home/beast/.local/lib/python3.10/site-packages/smbus2`).
+- `/ugv/voltage` is published by `ugv_bringup` at ~20 Hz (11.95 V, percentage 0.948,
+  status/health/technology UNKNOWN). `beast_power` is **not running**; the cutover prepared
+  2026-08-07 was never deployed.
+- `/ugv/charging_active` has **0 publishers**, 1 subscriber (`ugv_safety_monitor`) — the
+  charging interlock is waiting on a topic nobody feeds.
+- **Latch test — inconclusive.** The robot was re-armed via `/ugv/set_allow_motion` and a
+  slow rotation command (`/cmd_vel_ui` angular.z = 0.2 rad/s) was injected for 2 s.
+  `/cmd_vel` carried the command and returned to zero when publishing stopped, showing the
+  current `twist_mux` + `cmd_vel_timeout` stack does stop sending commands. However, no
+  encoder feedback was observable remotely (`/odom/odom_raw` and `/odom_wheel` stayed silent,
+  `/joint_states` wheel positions stayed at 0.0), so **we cannot confirm from this session
+  whether the ESP32 itself latches velocity** — only that the current ROS-side watchdogs
+  prevent it from mattering. A physical, wheels-up observation is still required to answer
+  the underlying hardware question.
+
 Live repository/service check (2026-08-03): `beast-01` is reachable; the legacy
 `~/beast/ugv_ws` checkout is gone and the monorepo cutover is deployed (workspace at
 `~/beast/RobotOverview/robot/beast/ros2_ws`). `beast-ros-base.service` and
