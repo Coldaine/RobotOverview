@@ -30,6 +30,7 @@ setup(
     entry_points={
         'console_scripts': [
             'power_node = beast_power.power_node:main',
+            'power_logger = beast_power.logger_node:main',
         ],
     },
 )

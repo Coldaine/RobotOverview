@@ -44,7 +44,12 @@
 # (stale daemon view, undelivered echoes).
 #
 # Honest limits: build runs on the Jetson (~minutes); the restart is a brief
-# stack outage — run parked. sudo on the robot needs the beast password once.
+# stack outage — run parked.
+#
+# sudo: step 3 needs root on the robot. The password is resolved from
+# $BEAST_SUDO_PASSWORD, else Doppler homelab/dev BEAST_JETSON_ADMIN_PASSWORD
+# (docs/beast-ops.md "Credential map"), else an interactive prompt. It is
+# passed over stdin, never on a command line.
 
 set -euo pipefail
 
@@ -69,6 +74,24 @@ done
 say() { printf '\n\033[1m== %s ==\033[0m\n' "$*"; }
 
 ssh_opts=(-o ConnectTimeout=10 -o BatchMode=yes)
+
+# --- sudo credential ---------------------------------------------------------
+# Step 3 needs root on the robot. Resolve the password up front, before the
+# long build, so a missing credential fails in seconds rather than after
+# minutes of colcon. Order: explicit env override, then Doppler
+# (homelab/dev BEAST_JETSON_ADMIN_PASSWORD — see docs/beast-ops.md "Credential
+# map"), then an interactive prompt. The Doppler path is what lets an agent or
+# CI run this end to end; a human at a terminal still gets the old behaviour.
+sudo_pw=""
+sudo_pw_source=""
+if [ -n "${BEAST_SUDO_PASSWORD:-}" ]; then
+  sudo_pw="$BEAST_SUDO_PASSWORD"
+  sudo_pw_source="\$BEAST_SUDO_PASSWORD"
+elif command -v doppler >/dev/null 2>&1; then
+  sudo_pw="$(doppler secrets get BEAST_JETSON_ADMIN_PASSWORD \
+    --project homelab --config dev --plain 2>/dev/null || true)"
+  [ -n "$sudo_pw" ] && sudo_pw_source="Doppler homelab/dev"
+fi
 
 run_verify() {
   say "verify live graph on $HOST"
@@ -226,16 +249,27 @@ ssh "${ssh_opts[@]}" "$HOST" "bash -lc 'cd \"$WS_DIR\" \
   && source /opt/ros/humble/setup.bash \
   && colcon build --packages-select $PACKAGES --symlink-install'"
 
-say "3/4 install storage/systemd units + restart (sudo password prompt)"
+say "3/4 install storage/systemd units + restart"
 # One ssh session so a single sudo timestamp covers install, reload, restart.
-ssh -t "$HOST" "sudo -v \
-  && sudo install -m 0644 '$WS_DIR'/deploy/systemd/*.service /etc/systemd/system/ \
+remote_privileged="sudo install -m 0644 '$WS_DIR'/deploy/systemd/*.service /etc/systemd/system/ \
   && sudo install -m 0644 '$WS_DIR'/deploy/systemd/*.timer /etc/systemd/system/ \
   && sudo '$WS_DIR'/deploy/storage/install.sh --apply \
   && sudo systemctl daemon-reload \
   && sudo systemctl restart beast-ros-base \
   && sudo systemctl try-restart beast-cockpit \
   && sleep 20"
+
+if [ -n "$sudo_pw" ]; then
+  echo "sudo: using $sudo_pw_source"
+  # Password goes over stdin, never argv — argv is world-readable in ps on the
+  # robot. The leading `sudo -S -v` consumes it and caches the timestamp, so
+  # every later sudo in this same session needs no password.
+  printf '%s\n' "$sudo_pw" \
+    | ssh "${ssh_opts[@]}" "$HOST" "sudo -S -p '' -v && $remote_privileged"
+else
+  echo "sudo: no stored credential found — prompting interactively"
+  ssh -t "$HOST" "sudo -v && $remote_privileged"
+fi
 
 say "4/4 post-deploy verification"
 if run_verify; then

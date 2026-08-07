@@ -209,6 +209,22 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('use_power')),
     )
 
+    # Durable CSV of what power_node publishes. Subscriber-only, so it adds no
+    # I²C contention and records exactly the telemetry the stack acted on.
+    # Gated on use_power too: logging a topic nobody publishes is dead weight.
+    power_logger_node = Node(
+        package='beast_power',
+        executable='power_logger',
+        name='beast_power_logger',
+        output='screen',
+        parameters=[PathJoinSubstitution([
+            FindPackageShare('beast_power'),
+            'config',
+            'beast_power.yaml',
+        ])],
+        condition=IfCondition(LaunchConfiguration('use_power')),
+    )
+
     return LaunchDescription([
         pub_odom_tf_arg,
         use_ekf_arg,
@@ -229,4 +245,5 @@ def generate_launch_description():
         base_node,
         ekf_node,
         power_node,
+        power_logger_node,
     ])
