@@ -17,12 +17,13 @@ robot/beast/ros2_ws/deploy/deploy-to-beast.sh --verify-only   # drift check, rea
 LAN IPs) through four steps: fast-forward the on-robot checkout (refuses a
 dirty tree), `colcon build --symlink-install` the base service packages
 (`beast_power beast_base ugv_bringup ugv_cockpit`, override with `--packages`), install
-`deploy/systemd/` service and timer units + `daemon-reload` + restart (one sudo prompt), then
-verify the live graph and exit non-zero on any broken contract.
+`deploy/storage/` payloads and `deploy/systemd/` service/timer units + `daemon-reload`,
+restart `beast-ros-base`, and `try-restart beast-cockpit` without activating an intentionally
+disabled cockpit, then verify the live graph and exit non-zero on any broken contract.
 
 The verification contract is what "landed" means:
 
-- `beast-ros-base` + `beast-cockpit` active
+- `beast-ros-base` active; `beast-cockpit` active unless intentionally disabled
 - `beast_power` running and the **sole** publisher of `/ugv/voltage`
 - `/ugv/charging_active` has a publisher
 - `ugv_safety_monitor` absent (stripped 2026-08-07)
@@ -40,7 +41,7 @@ check. Run it *before* assuming any doc claim about the robot is current.
 - After a deploy, paste the script's dated verification output into the
   `docs/beast-ops.md` **Quick connect** block.
 - The restart is a brief stack outage — deploy parked, never mid-mission.
-- First-time prerequisites live in `build_first.sh`; this script assumes the
+- First-time Jetson setup follows the [Jetson UART gate and Beast software runbook](../../../../docs/beast-jetson-flash-runbook.md#jetson-uart-gate-and-beast-software). Use its `rosdep` procedure; this deploy script assumes the
   workspace already builds.
 
 Future option (not built): a GitHub Actions runner on the tailnet running

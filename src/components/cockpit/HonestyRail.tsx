@@ -6,13 +6,7 @@ import clsx from 'clsx';
 // It is only worth anything if it tracks the real gaps, so it is updated with
 // them — stale reassurance is worse than no rail at all.
 const CHIPS: Array<{ tone: 'red' | 'amber'; text: string; title: string }> = [
-  {
-    tone: 'amber',
-    text: 'PHYSICAL LOCK ACTIVE WHEN TETHERED OR CHARGING',
-    title:
-      'Motion is gated when the robot reports charging or an active Ethernet connection to prevent cable damage.',
-  },
-  {
+              {
     tone: 'amber',
     text: 'E-STOP = DIRECT MANUAL LATCH',
     title:

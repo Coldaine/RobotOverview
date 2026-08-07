@@ -4,10 +4,10 @@ Extracted from ``ugv_bringup`` in Phase 1 of the ROS strip-down work order
 (docs/plans/2026-08-07-beast-ros-drift-inventory-and-stripdown.md); behaviour is
 preserved, not rewritten.
 
-No AI-added cmd_vel silence watchdog: the ESP32 is trusted to latch/zero the last
-velocity as stock firmware does, and this node sends an unconditional T:13 stop
-during startup before any other work. The only software motion gate is
-`allow_motion` (parameter + `/ugv/set_allow_motion` service).
+No AI-added cmd_vel silence watchdog: the ESP32 may retain its last command when a
+source goes silent, so command-source zero tails and the manual gate matter. This node
+sends an unconditional T:13 stop during startup before any other work. The only software
+motion gate is `allow_motion` (parameter + `/ugv/set_allow_motion` service).
 
 Telemetry honesty (see also RobotOverview docs/beast-ops.md Quick connect):
   MOVED    /ugv/voltage is owned by beast_power (driver-board INA219, real volts
@@ -39,6 +39,7 @@ from sensor_msgs.msg import Imu, MagneticField, JointState
 import os
 import json
 import threading
+import time
 import netifaces
 
 from .base_ctrl import BaseController
@@ -130,6 +131,8 @@ class BeastBaseNode(Node):
         self._voice = LowBatteryVoice(
             self.base_controller.send_command, self.get_logger
         )
+        self._disarmed_cmd_warn_interval = 5.0
+        self._last_disarmed_cmd_warn = 0.0
         request_data = json.dumps({"T":131,"cmd":1}) + "\n"
         self.base_controller.send_command(request_data.encode())
         # Unconditional stop at startup: clear any velocity the ESP32 may be
@@ -155,6 +158,7 @@ class BeastBaseNode(Node):
         self.allow_motion_publisher_ = self.create_publisher(
             Bool, '/ugv/allow_motion', safety_qos
         )
+        self.publish_allow_motion()
         self.create_service(
             SetBool, '/ugv/set_allow_motion', self._set_allow_motion_cb
         )
@@ -167,6 +171,11 @@ class BeastBaseNode(Node):
         self.ip_thread.start()
 
         self.set_ugv_version()
+
+    def publish_allow_motion(self):
+        msg = Bool()
+        msg.data = bool(self.allow_motion)
+        self.allow_motion_publisher_.publish(msg)
 
     def apply_allow_motion(self, allow, source='unknown'):
         """Flip the enforced motion gate and stop immediately when disabling."""
@@ -183,6 +192,8 @@ class BeastBaseNode(Node):
             )
         elif not previous and desired:
             self.get_logger().warning(f'allow_motion enabled via {source}')
+        if getattr(self, 'allow_motion_publisher_', None) is not None:
+            self.publish_allow_motion()
         return previous, desired
 
     def _set_allow_motion_cb(self, request, response):
@@ -340,9 +351,12 @@ class BeastBaseNode(Node):
 
         if not self.allow_motion:
             if linear_velocity != 0.0 or angular_velocity != 0.0:
-                self.get_logger().warning(
-                    'Rejected non-zero cmd_vel while allow_motion is false'
-                )
+                now = time.monotonic()
+                if now - self._last_disarmed_cmd_warn >= self._disarmed_cmd_warn_interval:
+                    self._last_disarmed_cmd_warn = now
+                    self.get_logger().warning(
+                        'Rejected non-zero cmd_vel while allow_motion is false'
+                    )
                 self.send_stop_command()
             return
 
@@ -455,9 +469,17 @@ def main(args=None):
         rclpy.spin(node)  # Keep the node running
     except Exception as exc:
         node.get_logger().error(f'Unhandled exception in spin: {exc}')
+        try:
+            node.send_stop_command()
+        except Exception as stop_exc:
+            node.get_logger().error(
+                f'Failed to send stop after spin failure: {stop_exc}'
+            )
+        raise
     finally:
-        node.destroy_node()  # Shutdown the node
-        rclpy.shutdown()  # Shutdown ROS
+        node.destroy_node()  # Shutdown ROS
+        if rclpy.ok():
+            rclpy.shutdown()  # Shutdown ROS
 
 if __name__ == '__main__':
     main()

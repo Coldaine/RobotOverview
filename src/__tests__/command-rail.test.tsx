@@ -108,6 +108,18 @@ describe("CommandRail control lifecycle", () => {
     expect(screen.queryByText(/drive disabled/i)).not.toBeInTheDocument();
   });
 
+  it("fails closed when motion state is unknown", () => {
+    mocks.allowMotion = null;
+    render(<CommandRail />);
+    act(() => vi.advanceTimersByTime(500));
+    mocks.publish.mockClear();
+
+    fireEvent.keyDown(window, { key: "w", repeat: false });
+
+    expect(mocks.publish).not.toHaveBeenCalled();
+    expect(screen.getAllByText(/motion state unknown/i).length).toBeGreaterThan(0);
+  });
+
   it("gates drive controls when motion is disarmed", () => {
     mocks.allowMotion = false;
     render(<CommandRail />);

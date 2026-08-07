@@ -90,15 +90,18 @@ flowchart TB
   KBD["operator keyboard (SSH)"] -->|"prio 100"| MUX
   JPD["on-robot gamepad"] -->|"prio 150"| MUX
   ES["CLI e-stop lock"] -.->|"prio 255 masks everything"| MUX
-  MUX --> BR["ugv_bringup: allow_motion gate"]
+  MUX --> BR["beast_base: allow_motion gate + startup stop"]
   BR --> ESP["ESP32 (JSON T:13 @115200)"]
   ESP --> TRK["tracks"]
 ```
 
 Invariant: browser/LLM propose; Jetson/ESP32 dispose — manual `allow_motion`,
-mux priorities, Nav2 collision monitor. There is no automatic
-Ethernet/charging interlock on the current branch. A human always outranks autonomy;
-someone at the robot outranks everyone; e-stop outranks the humans; `ugv_bringup` can refuse them all.
+mux priorities, Nav2 collision monitor, and an unconditional startup stop. There is no
+automatic Ethernet/charging interlock and no Jetson-side `cmd_vel` silence watchdog
+on the current branch. Command sources send a zero on release; if a source disappears
+without one, the ESP32 may retain its last command until another command or reboot.
+A human always outranks autonomy; someone at the robot outranks everyone; e-stop
+outranks the humans; `beast_base` can refuse them all.
 
 The current service default is motion-enabled; operators must use the manual `/ugv/set_allow_motion` gate. Live state and publisher counts: [beast-ops Quick connect](beast-ops.md#quick-connect).
 
@@ -147,7 +150,7 @@ flowchart LR
   subgraph ros ["Jetson ROS graph"]
     LD["ldlidar → /scan"]
     PWR["beast_power → /ugv/voltage + /ugv/charging_active (observability)"]
-    BRB["ugv_bringup → /imu/raw + /ugv/allow_motion (Set 1a)"]
+    BRB["beast_base → /imu/raw + /ugv/allow_motion (Set 1a)"]
     EKF["EKF → /odom"]
     BSV["behavior_server ⇄ nav2 actions (Set 4a)"]
   end
