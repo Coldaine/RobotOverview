@@ -49,35 +49,47 @@ Total custom surface ≈ **10.5k lines**. Composition:
 
 ## 2. Hardware facts that must survive any strip
 
-These are verified-on-robot or verified-against-source facts. They are the only
-irreplaceable output of the 45 commits. Whatever is re-implemented must carry them;
-whatever documents the robot must state them.
+These are claims extracted from the custom commits. They are **not all verified**:
+each item is tagged `[code-verified]` if it is supported by source/config in this
+repository or vendored upstream source, or `[doc-claim-unverified]` if it is inherited
+from documentation, prior-session notes, or stale observations and still needs live
+verification. Only `[code-verified]` items can be treated as ground truth; the rest are
+hypotheses to be checked before demolition.
 
-1. **ESP32 latches its last velocity; no firmware timeout.** Any command path needs a
-   sender-side silence watchdog, or a dead client = runaway. (ugv_bringup watchdog, 0.5 s.)
-2. **ESP32 JSON `T:13` velocity, `T:13 0,0` stop; `T:900` model select (`ugv_beast`→3);
-   `T:1001` feedback with IMU LSB scales (ICM-20948: 8192 LSB/g, 16.4 LSB/dps, 0.15 µT/LSB),
-   `odl/odr` in cm, `v` in centivolts (~1.2 % low vs INA219).**
-3. **Serial: `/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00` @ 115200 on
-   Jetson** (env `UGV_SERIAL_PORT`; verified ESP32 path). **LiDAR: LD19 on the by-id CP2102
-   symlink** (`ugv.env.example` carries the exact path).
-4. **INA219 at `0x41` on `/dev/i2c-7`** (verified live 2026-08-07; `0x40` is the LeoRover
+1. `[doc-claim-unverified]` **ESP32 latches its last velocity; no firmware timeout.**
+   This is the central claim behind the AI-added `cmd_vel` silence watchdog, but it has
+   not been live-tested in this session. The only honest status is: *unknown*. A wheels-up
+   floor test is required before any strip decision uses this as justification.
+2. `[code-verified]` **ESP32 JSON `T:13` velocity, `T:13 0,0` stop; `T:900` model select
+   (`ugv_beast`→3); `T:1001` feedback with IMU LSB scales (ICM-20948: 8192 LSB/g,
+   16.4 LSB/dps, 0.15 µT/LSB), `odl/odr` in cm, `v` in centivolts (~1.2 % low vs INA219).**
+   Verified by reading the ESP32 firmware source and the `ugv_bringup` parsing code; the
+   ~1.2 % INA219-vs-centivolts discrepancy is a live observation that needs retesting.
+3. `[code-verified]` **Serial: `/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00`
+   @ 115200 on Jetson** (env `UGV_SERIAL_PORT`). **LiDAR: LD19 on the by-id CP2102 symlink**
+   (`ugv.env.example` carries the exact path). Both paths are checked into repo configuration;
+   live path presence should still be confirmed before relying on them.
+4. `[doc-claim-unverified]` **INA219 at `0x41` on `/dev/i2c-7`** (`0x40` is the LeoRover
    default and wrong). Config reset value `0x399F`. **`RSHUNT = 0.1 Ω` is UNVERIFIED** —
-   all current/charging values are provisional until measured. `smbus2` was pip-installed
-   for the `beast` user 2026-08-07, but `power_log.py` claims it absent — **contradiction,
-   verify live before trusting `beast_power` in systemd.**
-5. **Two power rails disagree**: ESP32-side and INA219-side sit ~0.14 V apart and moved in
-   opposite directions during one charging session (see `power_log.py` docstring). Charging
-   detection is not yet trustworthy.
-6. **rosbridge 2.0.7 behaviors** (source-verified): unset glob = allow-all; force-appends
+   all current/charging values are provisional until measured. The previous note claimed this
+   was verified live 2026-08-07, but that is not trustworthy; `smbus2` availability and whether
+   `/ugv/voltage` is publishing are live contradictions that must be resolved on `beast-01-ts`.
+5. `[doc-claim-unverified]` **Two power rails disagree**: ESP32-side and INA219-side sit
+   ~0.14 V apart and moved in opposite directions during one charging session (see
+   `power_log.py` docstring). Charging detection is not yet trustworthy. This is a stale
+   observation embedded in a code comment, not a current measurement.
+6. `[code-verified]` **rosbridge 2.0.7 behaviors**: unset glob = allow-all; force-appends
    `/rosapi/*` to any non-`None` `services_glob`; glob strings must be bracketed,
-   single-quoted-or-bare, one string; denials are silent to the client.
-7. **twist_mux behaviors** (source-verified): output topic is hard-coded `cmd_vel_out`;
-   lock topics subscribe VOLATILE (one-shot publishes can lose the discovery race; lock does
-   not survive restart); `timeout: 0.0` = manual toggle only.
-8. **TF topology**: EKF (`robot_localization`) owns `odom→base_footprint`
+   single-quoted-or-bare, one string; denials are silent to the client. Verified by reading
+   `rosbridge_server` source.
+7. `[code-verified]` **twist_mux behaviors**: output topic is hard-coded `cmd_vel_out`; lock
+   topics subscribe VOLATILE (one-shot publishes can lose the discovery race; lock does not
+   survive restart); `timeout: 0.0` = manual toggle only. Verified by reading `twist_mux`
+   source.
+8. `[code-verified]` **TF topology**: EKF (`robot_localization`) owns `odom→base_footprint`
    (`publish_tf: true`); rf2o has `publish_tf: false`; `odom_publisher` `pub_odom_tf`
-   defaults false. Do not let two nodes publish the same transform.
+   defaults false. Do not let two nodes publish the same transform. Verified from launch and
+   parameter files in the workspace.
 
 ## 3. Defects found in the 2026-08-07 review
 
