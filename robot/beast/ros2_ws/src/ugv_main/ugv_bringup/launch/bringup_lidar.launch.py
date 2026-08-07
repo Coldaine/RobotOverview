@@ -7,6 +7,7 @@ from launch.substitutions import (
     Command,
     EnvironmentVariable,
     LaunchConfiguration,
+    PathJoinSubstitution,
     PythonExpression,
 )
 
@@ -215,16 +216,20 @@ def generate_launch_description():
 
     # Sole owner of /ugv/voltage (INA219 on i2c-7). Requires the service user
     # in the `i2c` group — see deploy/systemd/beast-ros-base.service.
+    # PathJoinSubstitution + FindPackageShare resolve lazily at node launch, so
+    # a workspace without beast_power built still boots the rest of the stack
+    # (get_package_share_directory here would crash the whole launch at import,
+    # even with use_power:=false).
     power_node = Node(
         package='beast_power',
         executable='power_node',
         name='beast_power',
         output='screen',
-        parameters=[os.path.join(
-            get_package_share_directory('beast_power'),
+        parameters=[PathJoinSubstitution([
+            FindPackageShare('beast_power'),
             'config',
             'beast_power.yaml',
-        )],
+        ])],
         condition=IfCondition(LaunchConfiguration('use_power')),
     )
 

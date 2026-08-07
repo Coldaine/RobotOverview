@@ -5,7 +5,7 @@ Telemetry honesty (see also RobotOverview docs/beast-ops.md Quick connect):
            + signed current + status) since the 2026-08-07 cutover. This node no
            longer publishes BatteryState — its old percentage was a fake V/12.6.
   REAL     ESP32 JSON "v" is still read here, but only to gate the low-battery
-           voice warning (its ADC reads ~1.2%% low vs the INA219).
+           voice warning (its ADC reads ~1.2% low vs the INA219).
   ASSUMED  IMU/mag LSB scales (vendor ICM-20948); odom odl/odr ÷100 as cm→m
   HACK     cmd_vel zero-drop after N zeros; ±0.2 yaw deadband boost
 

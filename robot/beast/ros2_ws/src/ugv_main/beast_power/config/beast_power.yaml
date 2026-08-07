@@ -5,7 +5,10 @@
 beast_power:
   ros__parameters:
     i2c_bus_nr: 7
-    sensor_address: 0x41
+    # Decimal 65 = 0x41. Written decimal because rcl's YAML param parser has
+    # never been exercised with hex here — the bench run used CLI overrides —
+    # and a string-parsed "0x41" would kill the node on declared-type mismatch.
+    sensor_address: 65
     data_publish_rate: 1.0
     # Verified 2026-08-07: connecting the charger stepped current +108 mA, so
     # positive = charging holds and 1.0 is correct for this board.
