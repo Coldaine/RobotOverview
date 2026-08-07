@@ -208,7 +208,6 @@ describe('rosClient and hooks', () => {
       '/cockpit/status': 'diagnostic_msgs/msg/DiagnosticArray',
       '/diagnostics': 'diagnostic_msgs/msg/DiagnosticArray',
       '/ugv/allow_motion': 'std_msgs/msg/Bool',
-      '/ugv/watchdog_state': 'diagnostic_msgs/msg/DiagnosticStatus',
       '/oak/rgb/image_raw/compressed': 'sensor_msgs/msg/CompressedImage',
       '/cockpit/depth/compressed': 'sensor_msgs/msg/CompressedImage',
     };
@@ -489,7 +488,6 @@ describe('rosClient and hooks', () => {
       // It has said nothing at all.
       expect(statusHook.result.current.allowMotion).toBeNull();
       expect(statusHook.result.current.muxSource).toBeNull();
-      expect(statusHook.result.current.watchdogArmed).toBeNull();
     });
 
     it('clears has-received when a new connection opens', () => {
@@ -514,28 +512,15 @@ describe('rosClient and hooks', () => {
 
   // ── ROBOT-REPORTED SAFETY STATE ───────────────────────────────────────────
   describe('status parsing', () => {
-    it('reads allow_motion and the watchdog from their dedicated topics', () => {
+    it('reads allow_motion from its dedicated topic', () => {
       const ws = openSocket();
       const statusHook = renderHook(() => useCockpitStatus());
 
       act(() => {
         ws.triggerMessage({ op: 'publish', topic: '/ugv/allow_motion', msg: { data: true } });
-        ws.triggerMessage({
-          op: 'publish',
-          topic: '/ugv/watchdog_state',
-          msg: {
-            name: 'cockpit_safety_watchdog',
-            values: [
-              { key: 'armed', value: 'true' },
-              { key: 'fired', value: 'false' },
-            ],
-          },
-        });
       });
 
       expect(statusHook.result.current.allowMotion).toBe(true);
-      expect(statusHook.result.current.watchdogArmed).toBe(true);
-      expect(statusHook.result.current.watchdogFired).toBe(false);
     });
 
     // ── N4: the 1 Hz roll-up must not clobber the dedicated topics ──────────
@@ -559,36 +544,6 @@ describe('rosClient and hooks', () => {
         });
       });
       expect(statusHook.result.current.allowMotion).toBe(true);
-    });
-
-    it('keeps a fresh direct watchdog state over an aggregator placeholder', () => {
-      const ws = openSocket();
-      const statusHook = renderHook(() => useCockpitStatus());
-
-      act(() => {
-        ws.triggerMessage({
-          op: 'publish',
-          topic: '/ugv/watchdog_state',
-          msg: { values: [{ key: 'armed', value: 'true' }, { key: 'fired', value: 'false' }] },
-        });
-      });
-      expect(statusHook.result.current.watchdogArmed).toBe(true);
-
-      act(() => {
-        ws.triggerMessage({
-          op: 'publish',
-          topic: '/cockpit/status',
-          msg: {
-            status: [
-              {
-                name: 'cockpit_safety_watchdog',
-                values: [{ key: 'armed', value: 'false' }, { key: 'fired', value: 'false' }],
-              },
-            ],
-          },
-        });
-      });
-      expect(statusHook.result.current.watchdogArmed).toBe(true);
     });
 
     it('lets the aggregator fill in once the direct topic has gone stale', () => {

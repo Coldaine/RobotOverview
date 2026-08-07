@@ -149,7 +149,7 @@ export function SafetyStrip() {
 
   return (
     <motion.section
-      className="panel border-rim bg-panel/85 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-5 p-4 items-stretch shadow-md relative overflow-hidden"
+      className="panel border-rim bg-panel/85 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4 p-4 items-stretch shadow-md relative overflow-hidden"
       aria-label="Safety strip"
       animate={disarmed ? { borderColor: ["#404040", "#f59e0b", "#404040"] } : {}}
       transition={disarmed ? { repeat: Infinity, duration: 1.5 } : {}}
@@ -235,34 +235,6 @@ export function SafetyStrip() {
             but no /ugv/allow_motion echo within {ECHO_GRACE_MS / 1000}s.
           </span>
         )}
-      </div>
-
-      {/* ── WATCHDOG ────────────────────────────── */}
-      <div className="flex flex-col justify-center min-w-0 z-10">
-        <span className="hud-label text-[10px]">cmd_vel watchdog</span>
-        <span
-          className={clsx(
-            'font-mono text-lg font-bold tracking-wide mt-0.5',
-            status.watchdogArmed === null
-              ? ''
-              : status.stale
-                ? 'text-ink-dim line-through'
-                : status.watchdogArmed
-                  ? 'text-emerald-400 text-glow-emerald'
-                  : 'text-amber-500',
-          )}
-        >
-          {status.watchdogArmed === null ? (
-            <Unknown reason="no watchdog publisher" />
-          ) : status.watchdogArmed ? (
-            'ARMED · 0.5 s'
-          ) : (
-            'OFF-LINE'
-          )}
-        </span>
-        <span className="font-mono text-[10px] text-ink-dim truncate mt-1">
-          {status.watchdogFired === true ? 'WATCHDOG TRIGGERED' : 'test: pending · ESP32 no FW HB'}
-        </span>
       </div>
 
       {/* ── ACTIVE SOURCE ───────────────────────── */}

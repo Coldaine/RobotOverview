@@ -42,9 +42,9 @@ const CHIPS: Array<{ tone: 'red' | 'amber'; text: string; title: string }> = [
   },
   {
     tone: 'red',
-    text: 'ESP32: NO HEARTBEAT — WATCHDOG ONLY',
+    text: 'ESP32: NO HEARTBEAT',
     title:
-      'The ESP32 has no firmware heartbeat. The Jetson-side 0.5 s cmd_vel watchdog is the only lower backstop, and its live re-gate has not been run.',
+      'The ESP32 has no firmware heartbeat and latches the last /cmd_vel; motion is stopped by the allow_motion gate and the unconditional boot stop.',
   },
 ];
 

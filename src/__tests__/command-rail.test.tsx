@@ -17,8 +17,6 @@ vi.mock("@/lib/ros/client", () => ({
     muxSource: "NONE",
     commandAge: null,
     publisherCount: 1,
-    watchdogArmed: true,
-    watchdogFired: false,
     allowMotion: mocks.allowMotion,
     isCharging: mocks.isCharging,
     isEthernetConnected: mocks.isEthernetConnected,

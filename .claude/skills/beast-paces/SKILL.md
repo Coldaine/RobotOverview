@@ -23,10 +23,11 @@ timeout, and the "3-second stale-command watchdog" does not exist in the flashed
 **Assume there is NO automatic stop.**
 
 Phase 2 is the gate that proves a Jetson-side `cmd_vel_timeout` watchdog — but only once one
-has actually been added to `ugv_bringup`. Confirm in Phase 0 that such a watchdog is really
-implemented before you run Phase 2. If it is not, **stop: do not enable `allow_motion:=true`**
-— there is nothing to prove and nothing to catch a runaway. Never enable motion without an
-independent operator stop path already staged and running.
+has actually been added to `ugv_bringup` (the cmd_vel watchdog was removed in RobotOverview
+#174, 2026-08-07, so as of now there is no watchdog to prove). Confirm in Phase 0 that such
+a watchdog is really implemented before you run Phase 2. If it is not, **stop: do not enable
+`allow_motion:=true`** — there is nothing to prove and nothing to catch a runaway. Never
+enable motion without an independent operator stop path already staged and running.
 
 Prefer running these commands directly over treating this skill as a slash-command ritual.
 

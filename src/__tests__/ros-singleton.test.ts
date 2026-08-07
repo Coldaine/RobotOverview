@@ -123,7 +123,6 @@ describe('BeastRosClient singleton', () => {
     expect(mock.topics.map((t) => t.name)).toEqual(
       expect.arrayContaining([
         '/ugv/allow_motion',
-        '/ugv/watchdog_state',
         '/ugv/voltage',
         '/scan',
       ]),
@@ -152,19 +151,11 @@ describe('BeastRosClient singleton', () => {
     client.__ingestTopicForTests('/ugv/allow_motion', { data: false });
     client.__ingestTopicForTests('/ugv/voltage', { voltage: 10.8 });
     client.__ingestTopicForTests('/scan', { ranges: [1, 2, 3] });
-    client.__ingestTopicForTests('/ugv/watchdog_state', {
-      values: [
-        { key: 'armed', value: 'true' },
-        { key: 'fired', value: 'false' },
-      ],
-    });
 
     const snap = await client.getStatus();
     expect(snap.allowMotion).toBe(false);
     expect(snap.voltage).toBe(10.8);
     expect(snap.scanAlive).toBe(true);
-    expect(snap.watchdogArmed).toBe(true);
-    expect(snap.watchdogFired).toBe(false);
   });
 
   it('refuses action dispatch when disconnected; sends when connected', async () => {

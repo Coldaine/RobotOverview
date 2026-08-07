@@ -65,7 +65,6 @@ export type BeastRosClientOptions = {
 
 const STATUS_TOPICS = [
   { name: '/ugv/allow_motion', messageType: 'std_msgs/msg/Bool' },
-  { name: '/ugv/watchdog_state', messageType: 'diagnostic_msgs/msg/DiagnosticStatus' },
   { name: '/ugv/voltage', messageType: 'sensor_msgs/msg/BatteryState' },
   { name: '/scan', messageType: 'sensor_msgs/msg/LaserScan' },
 ] as const;
@@ -78,24 +77,6 @@ const ACTION_NAMES = {
 
 function envBridgeUrl(): string | null {
   return resolveBeastCockpitWsUrl();
-}
-
-function kvFromDiagnostic(msg: Record<string, unknown>): Record<string, string> {
-  const values = Array.isArray(msg.values) ? msg.values : [];
-  const out: Record<string, string> = {};
-  for (const row of values) {
-    if (!row || typeof row !== 'object') continue;
-    const r = row as { key?: unknown; value?: unknown };
-    if (typeof r.key === 'string') out[r.key] = String(r.value ?? '');
-  }
-  return out;
-}
-
-function parseBoolLoose(v: string | undefined): boolean | null {
-  if (v === undefined) return null;
-  if (v === 'true' || v === '1') return true;
-  if (v === 'false' || v === '0') return false;
-  return null;
 }
 
 function durationFromSeconds(seconds: number): { sec: number; nanosec: number } {
@@ -128,13 +109,9 @@ export class BeastRosClient implements BeastRobotBridge {
   private lastError: string | null = null;
 
   private allowMotion: boolean | null = null;
-  private watchdogArmed: boolean | null = null;
-  private watchdogFired: boolean | null = null;
   private voltage: number | null = null;
   private lastScanAt: number | null = null;
   private updatedAt: number | null = null;
-  private lockReason: string | null = null;
-
   private onConnection = () => {
     this.state = 'connected';
     this.lastError = null;
@@ -225,7 +202,7 @@ export class BeastRosClient implements BeastRobotBridge {
     const scanAlive =
       this.lastScanAt === null ? null : this.now() - this.lastScanAt <= this.scanFreshMs;
 
-    let lockReason = this.lockReason;
+    let lockReason: string | null = null;
     if (this.state === 'unconfigured') {
       lockReason = 'BEAST_COCKPIT_WS_URL unset — server rosbridge client idle';
     } else if (this.state !== 'connected') {
@@ -242,8 +219,6 @@ export class BeastRosClient implements BeastRobotBridge {
       connection: this.state,
       bridgeUrl: this.url,
       allowMotion: this.allowMotion,
-      watchdogArmed: this.watchdogArmed,
-      watchdogFired: this.watchdogFired,
       voltage: this.voltage,
       scanAlive,
       lockReason,
@@ -428,13 +403,6 @@ export class BeastRosClient implements BeastRobotBridge {
     switch (name) {
       case '/ugv/allow_motion': {
         this.allowMotion = typeof msg.data === 'boolean' ? msg.data : null;
-        break;
-      }
-      case '/ugv/watchdog_state': {
-        const values = kvFromDiagnostic(msg);
-        this.watchdogArmed = parseBoolLoose(values.armed);
-        this.watchdogFired = parseBoolLoose(values.fired);
-        if (values.lock_reason) this.lockReason = values.lock_reason;
         break;
       }
       case '/ugv/voltage': {

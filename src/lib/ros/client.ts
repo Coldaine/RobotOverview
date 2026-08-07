@@ -30,7 +30,6 @@ export const ROS_SUBSCRIPTIONS = [
   // rendered motion authority (see SET_ALLOW_MOTION_SERVICE below); a field it
   // feeds must render UNKNOWN when silent, never a cleared/false default.
   { topic: '/ugv/allow_motion', type: 'std_msgs/msg/Bool' },
-  { topic: '/ugv/watchdog_state', type: 'diagnostic_msgs/msg/DiagnosticStatus' },
   { topic: '/oak/rgb/image_raw/compressed', type: 'sensor_msgs/msg/CompressedImage' },
   { topic: '/cockpit/depth/compressed', type: 'sensor_msgs/msg/CompressedImage' },
 ] as const;
@@ -193,7 +192,7 @@ export interface CockpitClearance extends SliceMeta {
 /**
  * Every field is `null` until the robot actually reports it. `null` means
  * UNKNOWN and must render as such — it is NOT "false", "clear", or "NONE".
- * The topics behind `allowMotion` / `watchdog*` / `muxSource` are not deployed
+ * The topics behind `allowMotion` / `muxSource` are not deployed
  * on the robot yet, so `null` is the expected steady state today.
  */
 export interface CockpitStatus extends SliceMeta {
@@ -202,8 +201,6 @@ export interface CockpitStatus extends SliceMeta {
   cmdAge: number | null;
   pubCount: number | null;
   allowMotion: boolean | null;
-  watchdogArmed: boolean | null;
-  watchdogFired: boolean | null;
   wifiRssi: number | null;
   diskFree: string | null;
   cpuTemp: number | null;
@@ -329,8 +326,6 @@ function blankStatus(): StatusData {
     cmdAge: null,
     pubCount: null,
     allowMotion: null,
-    watchdogArmed: null,
-    watchdogFired: null,
     wifiRssi: null,
     diskFree: null,
     cpuTemp: null,
@@ -363,17 +358,16 @@ let clearanceData: ClearanceData = { meters: null };
 let statusData: StatusData = blankStatus();
 
 // ── DIRECT TOPIC vs AGGREGATOR PROVENANCE ───────────────────────────────────
-// `/cockpit/status` is a 1 Hz roll-up that also reports allow_motion and the
-// watchdog. When the robot has nothing real to put there it emits placeholders,
-// and those would overwrite the dedicated `/ugv/allow_motion` and
-// `/ugv/watchdog_state` topics we subscribe to precisely so we do not depend on
-// the roll-up — the aggregator would defeat its own hedge, once a second.
+// `/cockpit/status` is a 1 Hz roll-up that also reports allow_motion. When the
+// robot has nothing real to put there it emits placeholders, and those would
+// overwrite the dedicated `/ugv/allow_motion` topic we subscribe to precisely
+// so we do not depend on the roll-up — the aggregator would defeat its own
+// hedge, once a second.
 //
 // So the dedicated topic wins while it is fresh, and the aggregator fills in
 // only where the dedicated topic has never published or has gone stale.
 const DIRECT_TOPIC_AUTHORITY_MS = 2000;
 let allowMotionDirectAt: number | null = null;
-let watchdogDirectAt: number | null = null;
 
 function directStillAuthoritative(at: number | null): boolean {
   return at !== null && Date.now() - at <= DIRECT_TOPIC_AUTHORITY_MS;
@@ -484,7 +478,6 @@ function resetSlicesForNewConnection() {
   diagnosticsData = { items: [] };
   scanArrivals = [];
   allowMotionDirectAt = null;
-  watchdogDirectAt = null;
   (Object.keys(meta) as SliceKey[]).forEach((key) => {
     meta[key] = blankMeta();
     rebuild[key]();
@@ -1007,20 +1000,6 @@ export const rosClient = {
         commit('status');
         break;
       }
-      case '/ugv/watchdog_state': {
-        const values: Record<string, string> = {};
-        (msg.values ?? []).forEach((kv) => {
-          values[kv.key] = kv.value;
-        });
-        statusData = {
-          ...statusData,
-          watchdogArmed: safeBool(values.armed),
-          watchdogFired: safeBool(values.fired),
-        };
-        watchdogDirectAt = Date.now();
-        commit('status');
-        break;
-      }
       case '/cockpit/status': {
         const next: StatusData = { ...statusData };
         const diagArray = msg.status;
@@ -1033,13 +1012,7 @@ export const rosClient = {
               });
             }
 
-            if (d.name === 'cockpit_safety_watchdog') {
-              // Aggregator fills in only where the dedicated topic is silent.
-              if (!directStillAuthoritative(watchdogDirectAt)) {
-                next.watchdogArmed = safeBool(values.armed);
-                next.watchdogFired = safeBool(values.fired);
-              }
-            } else if (d.name === 'twist_mux') {
+            if (d.name === 'twist_mux') {
               // No fallback to 'NONE': absent means unknown, and "NONE" reads
               // as a positive report that nothing holds the mux.
               next.muxSource = values.active_source ?? null;

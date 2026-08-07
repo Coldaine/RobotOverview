@@ -96,8 +96,7 @@ export function CommandRail() {
    * consecutive zeros (documented robot-side quirk), so spamming zeros is not a
    * stop guarantee — it is a stop *request* the robot will start ignoring.
    * Silence is the real mechanism: twist_mux expires this source after 0.5 s
-   * with no message, and the robot's own 0.5 s cmd_vel watchdog is the only
-   * actual stop guarantee. The single zero is a courtesy for the fast path.
+   * with no message. The single zero is a courtesy for the fast path.
    */
   const clearDriveIntent = useCallback(() => {
     if (driveTimerRef.current !== null) {
@@ -401,7 +400,7 @@ export function CommandRail() {
                 whileTap={{ scale: 0.9, y: 2 }}
                 onClick={() => clearDriveIntent()}
                 className="btn border border-red-500/50 text-red-500 hover:bg-red-500/10 rounded-lg aspect-square text-sm flex items-center justify-center font-bold select-none"
-                title="Stop (Space) — releases intent; the robot's 0.5 s watchdog is the guarantee"
+                title="Stop (Space) — releases intent"
               >
                 ■
               </motion.button>

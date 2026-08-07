@@ -51,7 +51,6 @@ UI_ACTIVE_SOURCES = {
 
 # DiagnosticStatus.name -> the KeyValue keys client.ts reads out of it.
 UI_DIAGNOSTIC_ENTRIES = {
-    'cockpit_safety_watchdog': ('armed', 'fired'),
     'twist_mux': ('active_source', 'command_age', 'publisher_count'),
     'bringup': ('allow_motion',),
     'system_metrics': ('wifi_rssi', 'disk_free', 'cpu_temp', 'gpu_temp'),
@@ -326,7 +325,7 @@ def test_the_arbitration_mirror_reads_the_same_clock_as_twist_mux():
     )
 
     # ...and the bringup liveness checks are not.
-    for name in ('_bringup_status', '_watchdog_status', '_is_fresh'):
+    for name in ('_bringup_status', '_is_fresh'):
         assert '_now_s' not in calls_in(method(name)), (
             '%s: %s() must use _liveness_now_s(), not the steppable ROS clock'
             % (STATUS_NODE, name)
@@ -383,9 +382,9 @@ def test_bringup_publishes_the_allow_motion_state_the_cockpit_gates_on(
     )
 
 
-def test_status_node_consumes_the_bringup_safety_topics():
+def test_status_node_consumes_the_bringup_safety_topic():
     source = read(STATUS_NODE)
-    assert 'ALLOW_MOTION_TOPIC' in source and 'WATCHDOG_STATE_TOPIC' in source
+    assert 'ALLOW_MOTION_TOPIC' in source
     assert 'DurabilityPolicy.TRANSIENT_LOCAL' in source, (
         '%s must receive the latest latched safety state when it joins late'
         % STATUS_NODE
@@ -396,15 +395,15 @@ def test_status_node_lets_stale_safety_state_decay_out_of_the_message():
     """A dead bringup must not leave 'motion armed' latched on the safety strip."""
     source = read(STATUS_NODE)
     assert 'BRINGUP_STALE_S' in source, (
-        '%s must age out /ugv/allow_motion and /ugv/watchdog_state rather than '
+        '%s must age out /ugv/allow_motion rather than '
         'holding the last value forever' % STATUS_NODE
     )
     assert re.search(r'_is_fresh', source), (
         '%s: the staleness check must gate the published values' % STATUS_NODE
     )
-    assert 'bringup_key_values' in source and 'watchdog_key_values' in source, (
-        '%s must build allow_motion / armed / fired through the contract '
-        'builders, which OMIT the keys when there is nothing to report. '
+    assert 'bringup_key_values' in source, (
+        '%s must build allow_motion through the contract '
+        'builder, which OMITS the key when there is nothing to report. '
         'Constructing KeyValue directly reintroduces a confident "false" for '
         'state the node has never received.' % STATUS_NODE
     )
@@ -652,10 +651,6 @@ def test_safety_state_decays_to_the_safe_default_after_bringup_stale_s(contract)
     assert contract.is_fresh(clock.now(), stamp) is False
     assert (contract.is_fresh(clock.now(), stamp) and reported_allow_motion) is False
 
-    # Same rule, same window, for the watchdog's armed/fired pair.
-    for reported in (True, False):
-        assert (contract.is_fresh(clock.now(), stamp) and reported) is False
-
 
 def test_safety_keys_are_absent_until_bringup_has_actually_spoken(contract):
     """Unknown must cross the wire as a MISSING key, never as ``'false'``.
@@ -672,8 +667,6 @@ def test_safety_keys_are_absent_until_bringup_has_actually_spoken(contract):
 
     assert contract.bringup_key_values(clock.now(), None, False) == ()
     assert contract.bringup_key_values(clock.now(), None, True) == ()
-    assert contract.watchdog_key_values(clock.now(), None, False, False) == ()
-    assert contract.watchdog_key_values(clock.now(), None, True, True) == ()
 
 
 def test_safety_keys_appear_on_receipt_and_disappear_again_when_stale(contract):
@@ -687,9 +680,6 @@ def test_safety_keys_appear_on_receipt_and_disappear_again_when_stale(contract):
     assert contract.bringup_key_values(clock.now(), stamp, False) == (
         ('allow_motion', 'false'),
     )
-    assert contract.watchdog_key_values(clock.now(), stamp, True, False) == (
-        ('armed', 'true'), ('fired', 'false'),
-    )
 
     # Inside the window, boundary included: one missed 2 Hz tick must not blank
     # a strip that is being read while the robot drives.
@@ -697,20 +687,17 @@ def test_safety_keys_appear_on_receipt_and_disappear_again_when_stale(contract):
     assert contract.bringup_key_values(clock.now(), stamp, True) == (
         ('allow_motion', 'true'),
     )
-    assert len(contract.watchdog_key_values(clock.now(), stamp, True, True)) == 2
 
     # Past it, the keys GO AWAY. Not 'false' — away. A reading the node can no
     # longer justify must stop being on the wire at all.
     clock.advance(0.001)
     assert contract.bringup_key_values(clock.now(), stamp, True) == ()
-    assert contract.watchdog_key_values(clock.now(), stamp, True, True) == ()
 
     # A fresh message brings them straight back.
     stamp = clock.now()
     assert contract.bringup_key_values(clock.now(), stamp, True) == (
         ('allow_motion', 'true'),
     )
-    assert len(contract.watchdog_key_values(clock.now(), stamp, False, True)) == 2
 
 
 def test_safety_key_names_are_the_ones_the_client_reads(contract):
@@ -720,11 +707,6 @@ def test_safety_key_names_are_the_ones_the_client_reads(contract):
 
     emitted = [key for key, _ in contract.bringup_key_values(clock.now(), stamp, True)]
     assert emitted == list(contract.DIAG_KEYS[contract.DIAG_BRINGUP])
-
-    emitted = [
-        key for key, _ in contract.watchdog_key_values(clock.now(), stamp, True, True)
-    ]
-    assert emitted == list(contract.DIAG_KEYS[contract.DIAG_WATCHDOG])
 
 
 def test_status_node_keeps_the_entry_even_when_the_keys_are_gone():
@@ -737,9 +719,6 @@ def test_status_node_keeps_the_entry_even_when_the_keys_are_gone():
     assert re.search(r'DiagnosticStatus\(name=DIAG_BRINGUP', source), (
         '%s must always emit the bringup entry, whether or not it has data for '
         'its keys' % STATUS_NODE
-    )
-    assert re.search(r'DiagnosticStatus\(\s*name=DIAG_WATCHDOG', source), (
-        '%s must always emit the watchdog entry' % STATUS_NODE
     )
     assert re.search(r'UNKNOWN, key[s]? omitted', source), (
         "%s: the not-fresh branches must say the keys were omitted, so the gap "
