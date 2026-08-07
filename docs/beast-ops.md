@@ -7,6 +7,27 @@ re-verify against the live robot before relying on anything stale.
 
 ## Quick connect
 
+**Hardware identity + power path (verified live 2026-08-07):**
+
+| Fact | Value | How verified |
+|---|---|---|
+| Jetson | `NVIDIA Jetson Orin Nano Engineering Reference Developer Kit Super` | `cat /proc/device-tree/model` |
+| L4T | R36 rev 5.0 (JetPack 6.2 line), built 2026-01-16 | `/etc/nv_tegra_release` |
+| Power mode | 15 W (`nvpmodel` id 0) | `nvpmodel -q` |
+| Battery telemetry | **INA219 live on `i2c-7` at `0x41`**, responds to reads | `i2cdetect -y -r 7`, `i2cget -y 7 0x41 0x02 w` |
+| Other I2C | `i2c-0`: `0x50`/`0x57` (EEPROMs, kernel-claimed) · `i2c-1`: `0x25`, `0x40` (kernel-claimed) · `i2c-4`: `0x3c` | `i2cdetect`, `/sys/bus/i2c/devices/` |
+
+The `0x41` INA219 is the ROS Driver board's battery-voltage sensor (callout 4 on
+`public/datacore/beast-driver-board-callouts.png`). Power reaches the Jetson from the
+chassis pack via that board's MP8759GD 5 V/5 A buck and the 40-pin header — **not** from any
+add-on UPS. The Waveshare **UPS Power Module (C) is not fitted and is not planned**: it
+mounts only by Pogo pins against the carrier, which is not how this Jetson is mounted, and
+its I2C telemetry would duplicate the INA219 above. Verdict and evidence:
+[`keyArtifactstosort/reference/waveshare-ups-power-module-c/README.md`](../keyArtifactstosort/reference/waveshare-ups-power-module-c/README.md).
+
+Raw `0x41` register reads are **not** decoded to volts here — the driver board's divider and
+INA219 calibration have not been confirmed, so a raw word is not a voltage claim yet.
+
 Live repository/service check (2026-08-03): `beast-01` is reachable; the legacy
 `~/beast/ugv_ws` checkout is gone and the monorepo cutover is deployed (workspace at
 `~/beast/RobotOverview/robot/beast/ros2_ws`). `beast-ros-base.service` and
