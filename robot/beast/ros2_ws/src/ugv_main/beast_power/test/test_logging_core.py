@@ -13,7 +13,9 @@ from beast_power.logging_core import (
     COLUMNS,
     ChargeIntegrator,
     DurableCsvWriter,
+    LogAlreadyActive,
     build_row,
+    fcntl,
 )
 
 
@@ -173,3 +175,53 @@ class TestDurableCsvWriter:
     def test_rejects_invalid_config(self, tmp_path, kwargs):
         with pytest.raises(ValueError):
             DurableCsvWriter(str(tmp_path / 'p.csv'), **kwargs)
+
+
+@pytest.mark.skipif(fcntl is None, reason='POSIX file locking only')
+class TestExclusiveLock:
+    """Two writers on one path interleave two charge integrals — observed live
+    on 2026-08-07 and the reason this lock exists."""
+
+    def test_second_writer_is_refused(self, tmp_path):
+        path = str(tmp_path / 'p.csv')
+        first = DurableCsvWriter(path)
+        try:
+            with pytest.raises(LogAlreadyActive):
+                DurableCsvWriter(path)
+        finally:
+            first.close()
+
+    def test_lock_released_on_close(self, tmp_path):
+        path = str(tmp_path / 'p.csv')
+        DurableCsvWriter(path).close()
+        DurableCsvWriter(path).close()  # must not raise
+
+    def test_refused_writer_leaves_data_untouched(self, tmp_path):
+        path = str(tmp_path / 'p.csv')
+        first = DurableCsvWriter(path)
+        first.write_row(_row())
+        try:
+            with pytest.raises(LogAlreadyActive):
+                DurableCsvWriter(path)
+        finally:
+            first.close()
+        assert len(open(path).read().strip().split('\n')) == 2
+
+    def test_rotation_keeps_the_lock(self, tmp_path):
+        """Rotation reopens the data file; the sidecar lock must survive it."""
+        path = str(tmp_path / 'p.csv')
+        first = DurableCsvWriter(path, max_bytes=400, backup_count=1)
+        try:
+            for _ in range(40):
+                first.write_row(_row())
+            with pytest.raises(LogAlreadyActive):
+                DurableCsvWriter(path)
+        finally:
+            first.close()
+
+    def test_exclusive_false_allows_second_writer(self, tmp_path):
+        path = str(tmp_path / 'p.csv')
+        a = DurableCsvWriter(path, exclusive=False)
+        b = DurableCsvWriter(path, exclusive=False)
+        a.close()
+        b.close()
