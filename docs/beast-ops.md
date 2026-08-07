@@ -18,10 +18,19 @@ dropout. **It will not answer `ssh` until it is charged and powered back on.**
 - **The inherited 9.0 V "0 %" is wrong — pessimistically so.** The robot ran a
   further **6 minutes and 0.7 V** below it. `soc.py`'s `PACK_EMPTY_V = 9.0` is
   a generic 3S table value, not this pack.
-- **Nothing protects the pack.** It ran to **2.79 V/cell**, well under the
-  3.0 V/cell floor, with no cutoff intervening. Consistent with the power path
-  above (chassis pack → MP8759GD buck → 40-pin header; no UPS module, so no
-  BMS in line). Expect some permanent capacity loss from this run.
+- **The shutdown was probably the pack's own protection doing its job**
+  (`[inference-not-verified]`). Two reasons: the MP8759GD is a *step-down* to
+  5 V and would keep regulating far below 8.3 V input, so the converter did not
+  give up; and 8.368 V ÷ 3 = 2.79 V/cell lands in the usual Li-ion protection
+  trip window (2.5–2.8 V/cell). Note 8.368 V was measured **under ~7–9 W of
+  load** — resting voltage is higher, likely ~2.9–3.0 V/cell, so this is the
+  normal bottom of the range rather than a damaging over-discharge. **Absence
+  of the UPS module does not imply absence of a pack BMS** — the power-path
+  note below describes wiring, not pack internals, and no pack datasheet,
+  model, or capacity rating exists anywhere in this repo yet.
+  **To confirm:** if the pack needed charger voltage applied before it would
+  power on again, that is a latching protection board, and 8.3 V is a real
+  floor rather than a coincidence.
 - **Discharge rate accelerated ~17× over the run** (voltage is shunt-independent,
   so these are trustworthy):
 
