@@ -1,6 +1,8 @@
 # beast_power
 
-Standalone UPS Module 3S power telemetry for BEAST-01 (PR-2a).
+Standalone driver-board INA219 power telemetry for BEAST-01 (PR-2a). The sensor is the
+ROS driver board's battery monitor at `0x41` on `i2c-7` (verified live 2026-08-07) —
+an earlier framing of it as a separate "UPS Module 3S" sensor was a guess.
 
 This package vendors and adapts LeoRover’s INA219 `charging_monitor` ([LeoRover/leo_robot-ros2](https://github.com/LeoRover/leo_robot-ros2)) into an ament_python package that publishes:
 
@@ -9,19 +11,25 @@ This package vendors and adapts LeoRover’s INA219 `charging_monitor` ([LeoRove
 | `/ugv/voltage` | `sensor_msgs/BatteryState` | Pack bus V, signed current (A), OCV SOC in `percentage`, status |
 | `/ugv/charging_active` | `std_msgs/Bool` | `true` when current ≥ charging threshold (positive = charging) |
 
-## Coexistence with `ugv_bringup` (locked for Wave 1)
+## Ownership (cut over 2026-08-07)
 
-**Choice: eventual sole owner = `beast_power`. Not switched this session.**
+**`beast_power` is the sole owner of `/ugv/voltage`.** `ugv_bringup` no longer
+publishes BatteryState — its old `percentage` was a fake `V/12.6` and its
+current/status fields were dummy zeros. Bringup keeps reading the ESP32 `v`
+field only for its low-battery voice warning.
 
-- Today (and until PR-2b): `ugv_bringup` remains the live publisher of
-  `/ugv/voltage` (real volts from ESP32 `v`, **fake** `percentage = V/12.6`,
-  dummy current/status). Stock bringup launch does **not** start this package.
-- This package’s launch file is opt-in for bench/CI. **Do not** run
-  `beast_power` and bringup’s voltage publisher together — two writers on
-  `/ugv/voltage` is undefined.
-- PR-2b: stop inventing BatteryState fields in `ugv_bringup`; start
-  `beast_power` from bringup (or a sibling launch) so it is the sole owner.
-  `ugv_safety_monitor` then consumes `/ugv/charging_active` for `CHARGING_LOCK`.
+- `bringup_lidar.launch.py` starts this node under the `use_power` argument
+  (default `true`).
+- The service user needs the `i2c` group (`/dev/i2c-7` is `root:i2c`) — see
+  `deploy/systemd/beast-ros-base.service` — and `smbus2` must be importable by
+  that user (`pip3 install --user smbus2`, done on beast-01 2026-08-07).
+- `ugv_safety_monitor` consumes `/ugv/charging_active` for `CHARGING_LOCK`.
+  The charging threshold is **provisional** until set from logged charge data
+  (`deploy/diagnostics/power_log.py`).
+- Deploy note: `beast_power` is not in `build_first.sh`'s package lists; build
+  with `colcon build --packages-select beast_power ugv_bringup --symlink-install`
+  (or the full workspace), then `sudo install` the updated service unit and
+  `systemctl daemon-reload`.
 
 ## Parameters
 
@@ -46,8 +54,8 @@ colcon test --packages-select beast_power
 
 ## Wave 2+ hardware prerequisites
 
-1. Wire UPS Module 3S I²C header → Jetson 40-pin (GND/SCL/SDA only).
+1. Wire the driver-board I²C header → Jetson 40-pin (GND/SCL/SDA only). **Done 2026-08-07.**
 2. Verify 3.3 V levels; `i2cdetect` → record bus + address in `docs/beast-ops.md`.
 3. Confirm shunt sign (`current_sign`) so positive amps = charging.
-4. Refine 3S OCV table against logged pack voltage (incl. 2026-07-31 ~8.8 V note).
+4. Refine 3S OCV table against logged pack voltage (`deploy/diagnostics/power_log.py`).
 5. PR-2b sole-owner cutover + safety-monitor `CHARGING_LOCK` plumb.

@@ -20,6 +20,12 @@ const CHIPS: Array<{ tone: 'red' | 'amber'; text: string; title: string }> = [
   },
   {
     tone: 'amber',
+    text: 'BATTERY % = NOT SHOWN, BY DESIGN',
+    title:
+      'Pack volts and signed current are real (driver-board INA219, verified 2026-08-07). No honest state-of-charge exists yet — the OCV table is a generic 3S curve awaiting calibration from logged data, and the old "percentage" was a fake V/12.6. A % appears here only once it is earned.',
+  },
+  {
+    tone: 'amber',
     text: 'IMU = /imu/raw · UNCAL · NOT FUSED',
     title: 'Nothing publishes /imu/data on this robot; the panel reads ugv_bringup /imu/raw.',
   },

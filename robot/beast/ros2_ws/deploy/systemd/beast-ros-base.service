@@ -8,7 +8,8 @@ ConditionPathExists=/home/beast/beast/RobotOverview/robot/beast/ros2_ws/install/
 Type=simple
 User=beast
 Group=beast
-SupplementaryGroups=dialout video render
+# i2c: beast_power reads the driver-board INA219 on /dev/i2c-7 (root:i2c).
+SupplementaryGroups=dialout video render i2c
 WorkingDirectory=/home/beast/beast/RobotOverview/robot/beast/ros2_ws
 EnvironmentFile=/etc/beast/ugv.env
 Environment=PYTHONUNBUFFERED=1

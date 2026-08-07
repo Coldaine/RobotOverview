@@ -52,7 +52,7 @@ Cross-link from the robot side (sibling on disk, not in this git tree):
 Sync path for robot code: edit in `ugv_ws` (or a worktree) → push → pull on Jetson →
 `colcon build` → restart named units → prove → dated beast-ops note. Hangar never
 deploys to the Jetson
-(see [Syncing robot code](beast-ops.md#syncing-robot-code-ugv_ws-to-beast-01)).
+(see [Syncing robot code](beast-ops.md#syncing-robot-code-to-beast-01)).
 
 ```mermaid
 flowchart LR
@@ -102,7 +102,7 @@ outranks autonomy; someone at the robot outranks everyone; e-stop outranks the
 humans; `ugv_bringup` can refuse them all.
 
 Default remains **disarmed** until the Set 1 crawl+kill re-gate passes. Live
-`allow_motion` / publisher counts: [beast-ops Quick connect](beast-ops.md#quick-connect-verified-2026-08-02).
+`allow_motion` / publisher counts: [beast-ops Quick connect](beast-ops.md#quick-connect).
 
 ## Machine topology
 

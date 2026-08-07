@@ -27,13 +27,15 @@ def _default_bus_factory() -> SMBusLike:
 
 
 class PowerNode(Node):
-    """Publish honest BatteryState and charging_active from the UPS INA219.
+    """Publish honest BatteryState and charging_active from the driver-board INA219.
 
-    Coexistence (Wave 1 / PR-2a): this node is **not** started by stock
-    ugv_bringup. Bringup still owns ``/ugv/voltage`` with fake SOC. Do not
-    launch both publishers on the same topic — dual writers are undefined.
-    PR-2b makes ``beast_power`` the sole owner and stops inventing BatteryState
-    fields in ugv_bringup (see package README).
+    The sensor is the ROS driver board's battery monitor at 0x41 on i2c-7,
+    verified live 2026-08-07 (see docs/beast-ops.md Quick connect).
+
+    Sole owner of ``/ugv/voltage`` since the 2026-08-07 cutover: ugv_bringup no
+    longer publishes BatteryState (its percentage was a fake V/12.6), and
+    bringup_lidar.launch.py starts this node under the ``use_power`` argument.
+    The service user must be in the ``i2c`` group.
     """
 
     def __init__(
@@ -43,7 +45,8 @@ class PowerNode(Node):
         super().__init__('beast_power')
 
         self.declare_parameter('i2c_bus_nr', 7)
-        self.declare_parameter('sensor_address', 0x40)
+        # 0x41 verified live on /dev/i2c-7 2026-08-07 (0x40 was a LeoRover default).
+        self.declare_parameter('sensor_address', 0x41)
         self.declare_parameter('data_publish_rate', 1.0)
         self.declare_parameter('reconnect_interval_sec', 5.0)
         self.declare_parameter('current_sign', 1.0)

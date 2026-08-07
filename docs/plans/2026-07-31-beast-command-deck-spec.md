@@ -63,7 +63,7 @@ consecutive zero Twists further zeros are dropped; small yaw commands are force-
 
 | Zone | Contents | Source of truth |
 | --- | --- | --- |
-| Safety strip (always visible, never scrolls) | E-stop; MOTION state; reconstructed active mux source + cmd age + `/cmd_vel` publisher count; watchdog state; pack volts with 10.5 V floor and 8.8 V brownout marks | `/ugv/voltage.voltage` (volts only), `/cockpit/status` observer |
+| Safety strip (always visible, never scrolls) | E-stop; MOTION state; reconstructed active mux source + cmd age + `/cmd_vel` publisher count; watchdog state; pack volts with 10.5 V motion floor and a 9.0 V scale floor (3.0 V/cell, table-derived — the former "8.8 V brownout" mark was unsourced and was removed 2026-08-07) | `/ugv/voltage.voltage` (volts only), `/cockpit/status` observer |
 | Spatial | Current: `/scan` with LD19's real 225–315° rear crop and `/odom` pose trail. Deferred: TF, robot model, wheel-vs-rf2o comparison, map, costmaps, path, goals | current `/scan`, `/odom`; deferred topics are outside the closed bridge contract |
 | Optics | OAK RGB (jpeg-compressed), OAK depth colorized, 5 MP PT cam; FPS + link-speed chips; later NN detections overlay | `/oak/*`, PT cam launch (gap) |
 | Telemetry | Current: voltage sparkline, IMU traces (labeled uncal), diagnostics. Deferred: ops log (`/rosout`) | current `/ugv/voltage`, `/imu/raw`, `/diagnostics`; `/rosout` is outside the closed bridge contract |

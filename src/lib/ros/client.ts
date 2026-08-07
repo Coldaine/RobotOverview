@@ -81,6 +81,9 @@ export interface InboundMsg {
   data?: string | number | boolean | number[];
   format?: string;
   voltage?: number;
+  current?: number;
+  power_supply_status?: number;
+  present?: boolean;
   header?: { stamp?: { sec?: number; nanosec?: number } };
   pose?: {
     pose?: {
@@ -152,6 +155,18 @@ const STALENESS_TICK_MS = 250;
 export interface CockpitVoltage extends SliceMeta {
   /** Pack volts, or null when the robot has not reported a usable number. */
   voltage: number | null;
+  /**
+   * Signed pack amps (positive = charging), or null. Carried only when the
+   * publisher fills power_supply_status — bringup's legacy dummy current
+   * arrives as 0.0 with status UNKNOWN and is nulled at ingest so it can never
+   * render as a real 0.0 A draw. (SOC stays deliberately un-carried: no honest
+   * percentage exists yet — see beast_power/soc.py.)
+   */
+  current: number | null;
+  /** sensor_msgs/BatteryState power_supply_status (1=CHARGING … 4=FULL), null if unreported/UNKNOWN-0. */
+  powerSupplyStatus: number | null;
+  /** BatteryState.present — false is the publisher's own absent-sensor report. */
+  present: boolean | null;
 }
 
 export interface CockpitOdom extends SliceMeta {
@@ -300,7 +315,7 @@ const meta: Record<SliceKey, SliceMeta> = {
   scan: blankMeta(),
 };
 
-type VoltageData = { voltage: number | null };
+type VoltageData = Omit<CockpitVoltage, keyof SliceMeta>;
 type OdomData = Omit<CockpitOdom, keyof SliceMeta>;
 type ImuData = Omit<CockpitImu, keyof SliceMeta>;
 type ClearanceData = { meters: number | null };
@@ -337,7 +352,11 @@ function blankScan(): ScanData {
   };
 }
 
-let voltageData: VoltageData = { voltage: null };
+function blankVoltage(): VoltageData {
+  return { voltage: null, current: null, powerSupplyStatus: null, present: null };
+}
+
+let voltageData: VoltageData = blankVoltage();
 let odomData: OdomData = { x: null, y: null, yaw: null, linearSpeed: null, angularSpeed: null };
 let imuData: ImuData = { ax: null, ay: null, az: null, gx: null, gy: null, gz: null };
 let clearanceData: ClearanceData = { meters: null };
@@ -456,7 +475,7 @@ function markAllStale() {
 
 /** A new connection: "has this topic ever published?" restarts from zero. */
 function resetSlicesForNewConnection() {
-  voltageData = { voltage: null };
+  voltageData = blankVoltage();
   odomData = { x: null, y: null, yaw: null, linearSpeed: null, angularSpeed: null };
   imuData = { ax: null, ay: null, az: null, gx: null, gy: null, gz: null };
   clearanceData = { meters: null };
@@ -665,7 +684,7 @@ function releaseImageUrls() {
 // SSR compatible Server Snapshots (stable references)
 const serverState = {
   connection: 'disconnected' as ConnectionState,
-  voltage: { voltage: null, ...blankMeta() } as CockpitVoltage,
+  voltage: { voltage: null, current: null, powerSupplyStatus: null, present: null, ...blankMeta() } as CockpitVoltage,
   odom: { x: null, y: null, yaw: null, linearSpeed: null, angularSpeed: null, ...blankMeta() } as CockpitOdom,
   imu: { ax: null, ay: null, az: null, gx: null, gy: null, gz: null, ...blankMeta() } as CockpitImu,
   clearance: { meters: null, ...blankMeta() } as CockpitClearance,
@@ -926,7 +945,23 @@ export const rosClient = {
 
     switch (topic) {
       case '/ugv/voltage': {
-        voltageData = { voltage: finite(msg.voltage) };
+        // BatteryState, two honesty gates:
+        //   * present=false is the publisher's own absent-sensor report — its
+        //     voltage/current are filler zeros, never render them as readings.
+        //   * current is only a measurement when the publisher fills
+        //     power_supply_status (beast_power sets 1-4). Bringup's legacy
+        //     dummy current arrives as 0.0 with status UNKNOWN (0) and must
+        //     not surface as a real 0.0 A draw.
+        const present =
+          msg.present === true ? true : msg.present === false ? false : null;
+        const status = finite(msg.power_supply_status);
+        const measured = present !== false && status !== null && status > 0;
+        voltageData = {
+          voltage: present === false ? null : finite(msg.voltage),
+          current: measured ? finite(msg.current) : null,
+          powerSupplyStatus: status !== null && status > 0 ? status : null,
+          present,
+        };
         commit('voltage');
         break;
       }

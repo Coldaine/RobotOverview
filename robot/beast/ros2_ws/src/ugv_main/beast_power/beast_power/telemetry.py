@@ -87,7 +87,7 @@ def build_telemetry(
             charge=float('nan'),
             capacity=float('nan'),
             temperature=float('nan'),
-            location='ups_module_3s',
+            location='driver_board_ina219',
             serial_number='',
         )
 
@@ -116,7 +116,7 @@ def build_telemetry(
         charge=float('nan'),
         capacity=float('nan'),
         temperature=float('nan'),
-        location='ups_module_3s',
+        location='driver_board_ina219',
         serial_number='',
     )
 
