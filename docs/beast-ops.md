@@ -7,6 +7,48 @@ re-verify against the live robot before relying on anything stale.
 
 ## Quick connect
 
+**ROBOT IS DOWN — deliberate run-to-cutoff 2026-08-07 18:19 CDT.** Charger
+unplugged mid-afternoon and the pack run flat on purpose to measure the real
+dropout. **It will not answer `ssh` until it is charged and powered back on.**
+
+- **Hard cutoff measured: ~8.3 V.** Last telemetry `8.368 V` at 18:19:18 CDT
+  (23:19:18Z); unreachable 21 s later; Tailscale offline. The exact final row
+  is on the robot at `/data/beast/power/power-log.csv` (fsynced per row) —
+  **read it on next boot** to pin the number precisely.
+- **The inherited 9.0 V "0 %" is wrong — pessimistically so.** The robot ran a
+  further **6 minutes and 0.7 V** below it. `soc.py`'s `PACK_EMPTY_V = 9.0` is
+  a generic 3S table value, not this pack.
+- **Nothing protects the pack.** It ran to **2.79 V/cell**, well under the
+  3.0 V/cell floor, with no cutoff intervening. Consistent with the power path
+  above (chassis pack → MP8759GD buck → 40-pin header; no UPS module, so no
+  BMS in line). Expect some permanent capacity loss from this run.
+- **Discharge rate accelerated ~17× over the run** (voltage is shunt-independent,
+  so these are trustworthy):
+
+  | Window | Rate |
+  |---|---|
+  | 14:07–17:46 (charger connected, floating) | 0.008 V/min |
+  | 17:58–18:12 | 0.056 V/min |
+  | 18:12–18:15 | 0.077 V/min |
+  | 18:15–18:17 | 0.110 V/min |
+  | 18:17–18:19 (final) | 0.135 V/min |
+
+- **INA219 current is under-reported by ≥3.5×.** At 18:09 it claimed the pack
+  delivered **1.36 W** while `tegrastats VDD_IN` alone was **4.74 W** — and with
+  the charger out, the pack was the only source (lidar, OAK and the driver board
+  are on top of that, so the true factor is likely ~6×). This quantifies the
+  standing `RSHUNT` caveat below: 0.1 Ω is wrong, the real part is likely
+  0.015–0.025 Ω. **Every `charge_mah`/`energy_wh` figure logged so far is
+  under-scaled by that factor** and rescales by a single multiply once the shunt
+  is read off the board. Voltage is unaffected.
+- **Recommended: two thresholds, not one.** Operational 0 % / auto-shutdown at
+  ~9.6 V (3.2 V/cell) leaves ~12 min of runtime and protects the cells; ~8.3 V
+  is the measured hard-dead point, not a target.
+- **Blocked on the charger.** Recovery needs the ~12.08 V-at-the-pack finding
+  fixed (a 3S pack needs 12.6 V) — multimeter at the barrel jack is still the
+  physical next step. Until then a full-charge-to-empty capacity run is not
+  possible, and this run measured only the dropout anchor, not capacity.
+
 **Deploy + first drive paces 2026-08-07 (live, on battery, untethered):**
 
 - Robot runs `724f975` (main tip): strip-down Phase 1 (#174/#176/#178) + the
