@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>beast_base</name>
+  <version>0.1.0</version>
+  <description>
+    BEAST-01 ESP32 serial bridge + sensor republish: the unconditional boot
+    stop, the /ugv/set_allow_motion gate, T:1001 feedback fan-out (imu/odom),
+    LED/gimbal/PT-steady aux subs, OLED, and the low-battery voice warning.
+    Extracted from ugv_bringup (Phase 1 of the ROS strip-down work order).
+  </description>
+  <maintainer email="pmaclyman@gmail.com">Coldaine</maintainer>
+  <license>Apache-2.0</license>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>rcl_interfaces</depend>
+  <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <exec_depend>python3-netifaces</exec_depend>
+  <exec_depend>python3-serial</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

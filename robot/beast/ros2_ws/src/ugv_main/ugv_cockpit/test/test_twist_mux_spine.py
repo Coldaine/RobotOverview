@@ -383,7 +383,7 @@ def test_simulation_uses_the_same_ladder():
 
 def test_ugv_bringup_still_consumes_cmd_vel():
     """The mux output has to land on the topic the ESP32 bridge listens to."""
-    source = read('src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py')
+    source = read('src/ugv_main/beast_base/beast_base/base_node.py')
     assert 'create_subscription(Twist, "cmd_vel"' in source
 
 
@@ -1042,7 +1042,7 @@ def test_motion_gate_is_untouched():
     service, and disabling it stops the robot immediately and rejects further
     non-zero commands.
     """
-    source = read('src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py')
+    source = read('src/ugv_main/beast_base/beast_base/base_node.py')
     assert "self.declare_parameter('allow_motion', True)" in source, (
         'allow_motion must default on; the cockpit retains the manual gate'
     )

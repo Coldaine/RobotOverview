@@ -13,7 +13,8 @@
 #   1. fetch + fast-forward the on-robot checkout to <ref> (default origin/main);
 #      refuses to touch a dirty tree.
 #   2. colcon build --symlink-install the affected packages
-#      (default: beast_power ugv_bringup ugv_cockpit — the base service set).
+#      (default: beast_power beast_base ugv_bringup ugv_cockpit — the base
+#      service set).
 #   3. install deploy/systemd units into /etc/systemd/system, daemon-reload,
 #      restart beast-ros-base + beast-cockpit (one sudo prompt, via `ssh -t`).
 #   4. verify the live graph (see --verify-only below) and print a dated
@@ -36,7 +37,7 @@ set -euo pipefail
 HOST="${BEAST_HOST:-beast-01-ts}"
 REPO_DIR="/home/beast/beast/RobotOverview"
 WS_DIR="$REPO_DIR/robot/beast/ros2_ws"
-PACKAGES="beast_power ugv_bringup ugv_cockpit"
+PACKAGES="beast_power beast_base ugv_bringup ugv_cockpit"
 REF="origin/main"
 VERIFY_ONLY=0
 

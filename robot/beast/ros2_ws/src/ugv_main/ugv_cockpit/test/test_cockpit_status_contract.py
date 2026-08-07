@@ -35,7 +35,7 @@ TWIST_MUX_CONFIG = 'src/ugv_main/ugv_cockpit/config/twist_mux.yaml'
 STATUS_NODE = 'src/ugv_main/ugv_cockpit/ugv_cockpit/cockpit_status.py'
 COCKPIT_LAUNCH = 'src/ugv_main/ugv_cockpit/launch/cockpit.launch.py'
 TWIST_MUX_LAUNCH = 'src/ugv_main/ugv_cockpit/launch/twist_mux.launch.py'
-BRINGUP_NODE = 'src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py'
+BRINGUP_NODE = 'src/ugv_main/beast_base/beast_base/base_node.py'
 
 # The exact strings the UI switches on. Spelled out here as an INDEPENDENT
 # copy: a test that imported them and compared them to themselves would pass

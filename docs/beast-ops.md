@@ -305,7 +305,8 @@ publishing drive commands. Update this block, dated, whenever a session learns a
 | Charging / true SOC | **Provisional** | `beast_power` publishes current and a generic 3S voltage estimate; shunt and SOC curve remain uncalibrated, and charging is observability only |
 
 Source: module docstring + inline `FAKE` / `DUMMY` / `ASSUMED` / `HACK` in
-[`robot/beast/ros2_ws/src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py`](../robot/beast/ros2_ws/src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py).
+[`robot/beast/ros2_ws/src/ugv_main/beast_base/beast_base/base_node.py`](../robot/beast/ros2_ws/src/ugv_main/beast_base/beast_base/base_node.py)
+(the ESP32 bridge node moved from `ugv_bringup` in the Phase 1 extraction).
 
 **Do we calibrate these?**
 
@@ -770,8 +771,8 @@ was removed 2026-07-22 and none of those ports listen on the Orin (checked 2026-
 
 Two facts from those sections remain live and stay here:
 
-- **The ESP32 JSON T-code protocol is still the wire format** — `ugv_bringup` speaks it
-  to the ESP32 over USB serial today (`robot/beast/ros2_ws/.../ugv_bringup/base_ctrl.py`).
+- **The ESP32 JSON T-code protocol is still the wire format** — `beast_base` speaks it
+  to the ESP32 over USB serial today (`robot/beast/ros2_ws/src/ugv_main/beast_base/beast_base/base_ctrl.py`).
   Only the Pi Socket.IO transport around it is dead. `tools/beast-probe.mjs` still speaks
   the protocol but requires an explicit `--host`; there is no default target.
 - **The ESP32 has NO stale-command failsafe** (physically tested 2026-07-31; details in
