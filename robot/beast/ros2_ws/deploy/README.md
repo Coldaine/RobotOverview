@@ -28,6 +28,18 @@ The verification contract is what "landed" means:
 - `/ugv/charging_active` has a publisher
 - `ugv_safety_monitor` absent (stripped 2026-08-07)
 - INA219 config register no longer the `0x399F` factory value
+- **drive path live**: a non-zero twist on `/cmd_vel_ui` while disarmed reaches
+  `beast_base`'s callback (rejection logged) — node presence is not proof of
+  this. 2026-08-07: a deploy restart wedged Fast DDS SHM between `twist_mux`
+  and `beast_base` while every node check passed; the robot could not be
+  driven until the next clean restart. The probe is motion-free (disarm →
+  rejected burst → restores the prior gate state). If it FAILs on a freshly
+  restarted stack, restart `beast-ros-base` once more and re-verify.
+
+All ros2 CLI calls in the verify run under a UDP-only Fast DDS profile
+(written to `/tmp/beast_verify_fastdds_udp.xml` on the robot) — the default
+SHM transport proved unreliable for late-joining CLI participants on this
+host and produced false FAILs.
 
 Run `--verify-only` freely — no sudo, read-only, and it prints PASS/FAIL per
 check. Run it *before* assuming any doc claim about the robot is current.

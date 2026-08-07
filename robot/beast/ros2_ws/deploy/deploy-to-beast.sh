@@ -28,6 +28,20 @@
 #   * /ugv/charging_active has a publisher
 #   * ugv_safety_monitor is gone (strip 2026-08-07)
 #   * INA219 config register is not the 0x399F factory value (soft warn)
+#   * DRIVE PATH live: a non-zero twist on /cmd_vel_ui while disarmed reaches
+#     beast_base's callback (rejection logged in the journal). Node presence
+#     is NOT proof of this: on 2026-08-07 a deploy restart left Fast DDS SHM
+#     wedged between twist_mux and beast_base while every node check passed,
+#     and the robot could not be driven until the next clean restart. The
+#     probe safes the robot briefly (disarm -> rejected burst -> restore the
+#     prior gate state); it never moves the robot. If it FAILs on a freshly
+#     restarted stack, restart beast-ros-base once more and re-verify before
+#     suspecting code.
+#
+# All ros2 CLI calls here run under a UDP-only Fast DDS profile (written to
+# /tmp on the robot): the default SHM transport has proven unreliable for
+# late-joining CLI participants on this host and produced false FAILs
+# (stale daemon view, undelivered echoes).
 #
 # Honest limits: build runs on the Jetson (~minutes); the restart is a brief
 # stack outage — run parked. sudo on the robot needs the beast password once.
@@ -63,6 +77,32 @@ run_verify() {
 source /opt/ros/humble/setup.bash
 source /home/beast/beast/RobotOverview/robot/beast/ros2_ws/install/setup.bash 2>/dev/null || true
 set -u
+
+# UDP-only profile for every CLI call below (see script header).
+cat > /tmp/beast_verify_fastdds_udp.xml <<'XML'
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+  <transport_descriptors>
+    <transport_descriptor>
+      <transport_id>udp_only</transport_id>
+      <type>UDPv4</type>
+    </transport_descriptor>
+  </transport_descriptors>
+  <participant profile_name="udp_only_participant" is_default_profile="true">
+    <rtps>
+      <userTransports>
+        <transport_id>udp_only</transport_id>
+      </userTransports>
+      <useBuiltinTransports>false</useBuiltinTransports>
+    </rtps>
+  </participant>
+</profiles>
+XML
+export FASTRTPS_DEFAULT_PROFILES_FILE=/tmp/beast_verify_fastdds_udp.xml
+# Drop any daemon started under the default (SHM) profile; the next CLI call
+# respawns one under the UDP profile so its cached graph is trustworthy.
+ros2 daemon stop >/dev/null 2>&1 || true
+
 fail=0
 ok()   { printf 'PASS  %s\n' "$*"; }
 bad()  { printf 'FAIL  %s\n' "$*"; fail=1; }
@@ -124,6 +164,31 @@ case "$sample_present" in
     warn "no usable /ugv/voltage sample within 6 s"
     ;;
 esac
+
+# --- drive-path probe: /cmd_vel_ui -> twist_mux -> /cmd_vel -> beast_base ---
+# Motion-free by construction: the gate is disarmed for the burst, so the
+# callback rejects every command and sends stops. PASS requires the reject
+# warning in the journal — proof the mux output reached the base node, which
+# is exactly the link the 2026-08-07 SHM wedge broke silently.
+gate_before="$(timeout 8 ros2 topic echo --once /ugv/allow_motion 2>/dev/null | awk '/^data:/ {print $2; exit}')"
+probe_stamp="$(date '+%Y-%m-%d %H:%M:%S')"
+timeout 15 ros2 service call /ugv/set_allow_motion std_srvs/srv/SetBool '{data: false}' >/dev/null 2>&1 || true
+timeout 8 ros2 topic pub -r 10 /cmd_vel_ui geometry_msgs/msg/Twist \
+  '{linear: {x: 0.3, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}' >/dev/null 2>&1 || true
+sleep 1
+rejections="$(journalctl -u beast-ros-base --since "$probe_stamp" --no-pager 2>/dev/null \
+  | grep -c 'Rejected non-zero cmd_vel' || true)"
+# Always restore the gate to whatever it was before the probe.
+if [ "$gate_before" = "false" ]; then
+  timeout 15 ros2 service call /ugv/set_allow_motion std_srvs/srv/SetBool '{data: false}' >/dev/null 2>&1 || true
+else
+  timeout 15 ros2 service call /ugv/set_allow_motion std_srvs/srv/SetBool '{data: true}' >/dev/null 2>&1 || true
+fi
+if [ "${rejections:-0}" -ge 1 ] 2>/dev/null; then
+  ok "drive path live: /cmd_vel_ui -> twist_mux -> beast_base (reject logged while disarmed)"
+else
+  bad "drive path wedged: mux output not reaching beast_base — restart beast-ros-base once, re-verify"
+fi
 
 exit "$fail"
 REMOTE
