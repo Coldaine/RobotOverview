@@ -9,7 +9,7 @@ Curve source (document in-code per PR-2a):
   fuel-gauge calibration from BEAST-01. Under load the bus sags and SOC will
   read low; under charge it reads high — that is expected for OCV-only SOC
   until the table is refined from logged pack samples
-  (deploy/diagnostics/power_log.py, running since 2026-08-07).
+  (beast_power_logger, /data/beast/power/power-log.csv).
 
 This module is pure Python (no rclpy / smbus) so CI and Windows pytest can
 exercise it without ROS.

@@ -26,7 +26,7 @@ field only for its low-battery voice warning.
 - `/ugv/charging_active` has no consumer since `ugv_safety_monitor` was removed
   (2026-08-07) — it's published for observability only. The charging threshold
   is **provisional** until set from logged charge data
-  (`deploy/diagnostics/power_log.py`).
+  (`beast_power_logger` → `/data/beast/power/power-log.csv`).
 - Deploy: `robot/beast/ros2_ws/deploy/deploy-to-beast.sh` is **the** path —
   it fast-forwards the robot checkout, rebuilds, reinstalls the service unit,
   restarts, and verifies the live graph (see `deploy/README.md`).
@@ -57,6 +57,7 @@ colcon test --packages-select beast_power
 1. Wire the driver-board I²C header → Jetson 40-pin (GND/SCL/SDA only). **Done 2026-08-07.**
 2. Verify 3.3 V levels; `i2cdetect` → record bus + address in `docs/beast-ops.md`.
 3. Confirm shunt sign (`current_sign`) so positive amps = charging.
-4. Refine 3S OCV table against logged pack voltage (`deploy/diagnostics/power_log.py`).
+4. Refine 3S OCV table against logged pack voltage (`beast_power_logger`), and
+   set real capacity from a full-to-cutoff `charge_mah` integral.
 5. Keep `/ugv/charging_active` as observability only until a separately approved
    charging-policy design exists; it is not a motion interlock.

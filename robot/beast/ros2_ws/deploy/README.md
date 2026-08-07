@@ -63,6 +63,13 @@ is already shaped for that.
 ## Other units here
 
 `deploy/systemd/` also carries the cockpit, storage, and blackbox/mission
-record units — installed by the same script step. `deploy/diagnostics/` holds
-`power_log.py` (INA219 + `/ugv/voltage` CSV logger; **manual process, not a
-service** — restart it after every reboot if a charge readout is wanted).
+record units — installed by the same script step.
+
+Power logging is **not** a separate process to remember any more. The
+`beast_power_logger` node runs inside `bringup_lidar.launch.py` under
+`use_power`, writing `/data/beast/power/power-log.csv`. It starts and stops
+with the stack, survives reboots because `beast-ros-base.service` does, and
+fsyncs every row so a brownout log keeps its tail. It replaced
+`deploy/diagnostics/power_log.py`, a manual script that died at its first
+reboot and — after the 2026-08-07 cutover made `/ugv/voltage` the INA219 —
+logged one sensor twice under two column names.
