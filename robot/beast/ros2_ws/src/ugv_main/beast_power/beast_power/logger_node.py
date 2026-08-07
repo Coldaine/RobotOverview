@@ -77,8 +77,8 @@ class PowerLogger(Node):
             .bool_value
         )
 
-        if max_gap_s <= 0:
-            raise ValueError('max_gap_s must be positive')
+        if not math.isfinite(max_gap_s) or max_gap_s <= 0:
+            raise ValueError('max_gap_s must be positive and finite')
 
         self._integrator = ChargeIntegrator(max_gap_s=max_gap_s)
         self._writer = DurableCsvWriter(
