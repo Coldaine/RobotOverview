@@ -1,0 +1,166 @@
+# BEAST ROS 2 custom drift — inventory, strip-down, and controlled re-implementation
+
+Status: **inventory complete; execution blocked on the decisions in §4.**
+Written: 2026-08-07, after a full skeptical review of the ROS 2 stack (findings in §3).
+
+This plan supersedes the robot-side parts of
+[2026-07-31-beast-command-deck-plan.md](2026-07-31-beast-command-deck-plan.md): the cockpit
+safety spine it built is largely *unwanted* (owner decision 2026-08-07) and is scheduled for
+removal here, not further gating.
+
+## 0. What this plan is
+
+The Waveshare vendor workspace (`waveshareteam/ugv_ws`, vendored as a subtree at
+`robot/beast/ros2_ws`) accumulated 45 custom commits before and after its import into this
+monorepo. The owner wants every custom change **documented** (this file), the unwanted ones
+**stripped**, and only the hardware-forced minimum **re-implemented** — in a controlled,
+verifiable sequence, not a bonfire.
+
+## 1. Baseline and how to re-derive the inventory
+
+- Vendor baseline (last Waveshare commit, author DUDULRX): **`037dfca`**
+- Fork tip at subtree import: **`af1dedd3d828ca39d530f4ff7f8e90b5bfb23fd4`** (45 custom
+  commits: `git log --oneline --reverse 037dfca..af1dedd`)
+- Post-import custom commits on `main`: `e9c093f`, `179db1b`, `1e65a91`+`feaaeca`,
+  `6ef4a48`, `53cad7d`+`247e4d5` (squashed as `2b691c2`), `f01fa83` (pip bump)
+
+Drift at import: **132 files, +10,497 / −203 lines** (`git diff --stat 037dfca af1dedd`).
+To audit the drift at any later time:
+
+```bash
+# fork-era drift (tree lived at repo root then — no pathspec):
+git diff --stat 037dfca af1dedd3d828ca39d530f4ff7f8e90b5bfb23fd4
+# post-import drift (subtree path):
+git log --oneline 1e8a167..HEAD -- robot/beast/ros2_ws
+```
+
+Total custom surface ≈ **10.5k lines**. Composition:
+
+| Area | Files | ±Lines | What it is |
+|---|---|---|---|
+| `src/ugv_main/ugv_cockpit` (new package) | 31 | +5,654 | rosbridge wrapper + globs, `twist_mux` spine config/launch, `cockpit_status`, `safety_monitor` interlocks, wire contract, ~2.7k lines of tests |
+| `src/ugv_main/beast_power` (new package) | 18 | +1,175 | INA219 driver/node, SoC curve, telemetry, tests |
+| `ugv_bringup.py` + `base_ctrl.py` (vendor file, modified) | 2 | ~+360 | cmd_vel silence watchdog, `allow_motion` gate + `/ugv/set_allow_motion` service, safety-state publishers, telemetry-honesty docs, vendor hacks (zero-drop, yaw deadband) pinned by tests |
+| Launch plumbing (vendor, modified) | ~10 | ~+250 | `bringup_lidar` includes mux/monitor/power; nav/slam forward `allow_motion`; ldlidar port env knobs; gazebo ros_gz deps |
+| Velocity-source retarget (vendor, modified) | ~16 | ~+200 | ugv_tools joy/keyboard autorepeat + rung topics; 10 ugv_vision/ugv_slam demos repointed `/cmd_vel` → `/cmd_vel_nav`; vizanti teleop JS spine migration |
+| `deploy/` (new) | 15 | +1,071 | 8 systemd units (ros-base, cockpit, storage×4, blackbox/mission record), `ugv.env.example`, storage env + tests, `diagnostics/power_log.py` |
+| `docs/` (ros2_ws) | 13 | +724 | `cockpit.md` (417), `command_arbitration.md` (174), `BEAST.md`, 10 vendor doc edits |
+| CI / build | 6 | +147 | `.github/workflows` ×3, build script + requirements edits |
+
+## 2. Hardware facts that must survive any strip
+
+These are verified-on-robot or verified-against-source facts. They are the only
+irreplaceable output of the 45 commits. Whatever is re-implemented must carry them;
+whatever documents the robot must state them.
+
+1. **ESP32 latches its last velocity; no firmware timeout.** Any command path needs a
+   sender-side silence watchdog, or a dead client = runaway. (ugv_bringup watchdog, 0.5 s.)
+2. **ESP32 JSON `T:13` velocity, `T:13 0,0` stop; `T:900` model select (`ugv_beast`→3);
+   `T:1001` feedback with IMU LSB scales (ICM-20948: 8192 LSB/g, 16.4 LSB/dps, 0.15 µT/LSB),
+   `odl/odr` in cm, `v` in centivolts (~1.2 % low vs INA219).**
+3. **Serial: `/dev/ttyTHS1` @ 115200 on Jetson** (env `UGV_SERIAL_PORT`). **LiDAR: LD19 on
+   the by-id CP2102 symlink** (`ugv.env.example` carries the exact path).
+4. **INA219 at `0x41` on `/dev/i2c-7`** (verified live 2026-08-07; `0x40` is the LeoRover
+   default and wrong). Config reset value `0x399F`. **`RSHUNT = 0.1 Ω` is UNVERIFIED** —
+   all current/charging values are provisional until measured. `smbus2` was pip-installed
+   for the `beast` user 2026-08-07, but `power_log.py` claims it absent — **contradiction,
+   verify live before trusting `beast_power` in systemd.**
+5. **Two power rails disagree**: ESP32-side and INA219-side sit ~0.14 V apart and moved in
+   opposite directions during one charging session (see `power_log.py` docstring). Charging
+   detection is not yet trustworthy.
+6. **rosbridge 2.0.7 behaviors** (source-verified): unset glob = allow-all; force-appends
+   `/rosapi/*` to any non-`None` `services_glob`; glob strings must be bracketed,
+   single-quoted-or-bare, one string; denials are silent to the client.
+7. **twist_mux behaviors** (source-verified): output topic is hard-coded `cmd_vel_out`;
+   lock topics subscribe VOLATILE (one-shot publishes can lose the discovery race; lock does
+   not survive restart); `timeout: 0.0` = manual toggle only.
+8. **TF topology**: EKF (`robot_localization`) owns `odom→base_footprint`
+   (`publish_tf: true`); rf2o has `publish_tf: false`; `odom_publisher` `pub_odom_tf`
+   defaults false. Do not let two nodes publish the same transform.
+
+## 3. Defects found in the 2026-08-07 review
+
+Carry-across or kill-list for execution. Full detail in the session record; compressed here.
+
+- **H1 — crash-runaway.** `ugv_bringup` callbacks raise on malformed input
+  (`led_ctrl_callback`/`pt_steady_ctrl_callback` index unguarded; `joint_states_callback`
+  `name.index`), `main()` has no guard, and since `179db1b` the boot stop only fires when
+  `allow_motion` is false. Crash while driving → ESP32 keeps last velocity; restart comes up
+  armed and never clears it. `/ugv/led_ctrl` is browser-reachable, so this is remotely
+  triggerable.
+- **H2 — vizanti landmine.** `vizanti_server.launch.py` starts stock rosbridge on
+  `0.0.0.0:5001` with no globs + `rosapi_node`. One launch bypasses every cockpit control.
+- **H3 — interlocks are fail-open.** `ugv_safety_monitor` is a client-side request with no
+  respawn, no heartbeat; bringup neither knows nor cares if it exists.
+- **M4 — CHARGING_LOCK untrustworthy** (facts 4–5 above; threshold `0.05 A` is a guess).
+- **M5 — smbus2 contradiction** (fact 4).
+- **M6 — stale safety comments** in `twist_mux.yaml` (claims estop lock still
+  browser-admitted), `rosbridge.launch.py` ("five topics", "`/imu/data` does not exist" —
+  both false), `beast-ros-base.service` description ("zero-motion staging" on an armed boot),
+  `power_log.py` (`/ugv/voltage` "from ugv_bringup").
+- **L7** — origin allowlist accepts missing `Origin` header; `base_ctrl` T:13 writes bypass
+  its own lock; `power_node`/`safety_monitor` have no respawn; mux estop lock's ≥1 Hz client
+  contract is unenforceable docs.
+
+## 4. Decisions required from the owner (execution blockers)
+
+| # | Question | Options | Default if unanswered |
+|---|---|---|---|
+| D1 | **Hangar UI driving.** Stripping `ugv_cockpit`'s rosbridge removes the browser's only path to the robot. Keep a minimal bridge, or is the cockpit read-only / SSH-only driving acceptable? | minimal bridge / read-only / none | — (blocks) |
+| D2 | **twist_mux spine.** Keep the 4-rung mux, or collapse to a single `/cmd_vel` input on the new bridge node? | keep / collapse | collapse (fewer moving parts) |
+| D3 | **`allow_motion` kill-switch.** Keep any software disarm, or is "no commands sent" + watchdog enough? | keep simple SetBool / drop | keep simple SetBool (cheap, useful) |
+| D4 | **beast_power.** Keep (telemetry, standalone) or drop with the apparatus? | keep / drop | keep, after M5 verified |
+| D5 | **Storage stack** (4 units + tests, `#2–#5` fork PRs) and blackbox/mission record units. In scope of this strip? | keep / strip / separate plan | separate plan (out of scope here) |
+| D6 | **vizanti + vendor web app.** Delete from tree, or quarantine behind a wrapper with cockpit-equivalent globs? | delete / quarantine | delete launch entry points, keep package for reference |
+| D7 | **Vendor demo retargets** (`/cmd_vel_nav` repoints, joy/keyboard autorepeat). Needed at all, or revert with the vendor files? | keep teleop only / revert all | keep `ugv_tools` teleop, revert the rest |
+
+## 5. Execution phases
+
+Each phase ends green on CI (`beast-ros-spine`, `beast-power-tests` while those packages
+exist) and, when robot-facing, the ground-truth checks in `docs/beast-ops.md` Quick connect
+— which must be updated, dated, at the end of any phase that touches the robot (AGENTS.md
+rule).
+
+**Phase 0 — Freeze (this doc + tag).**
+- [ ] Commit this plan; `git tag beast-pre-strip` at HEAD.
+- [ ] SSH `beast-01-ts`: record live state (running nodes, `/ugv/voltage` hz, smbus2
+      import as `beast` user — resolves M5) into `docs/beast-ops.md` Quick connect.
+- [ ] Owner answers D1–D7 (edit §4 in place).
+
+**Phase 1 — Minimal bridge node (the only re-implementation).**
+- [ ] New node (working name `beast_base`, ~200 lines, in a new small package or inside a
+      trimmed `ugv_bringup`): serial open (`/dev/ttyTHS1`), `T:13`/`T:900`/`T:1001`
+      handling per fact 2, **unconditional stop at startup**, cmd_vel silence watchdog
+      (0.5 s, stop-first ordering), malformed-input-proof callbacks, guarded `main()`.
+      Carries facts 1–3; fixes H1 by construction. Vendor hacks (zero-drop, yaw deadband)
+      are **deleted, not preserved** — validate driving feel on the bench.
+- [ ] Per D3: `SetBool` motion gate, default armed, stop-on-disable. No interlocks, no
+      monitor, no arming ceremony.
+- [ ] Tests: watchdog fires on silence; stop sent at boot; garbage frames don't raise;
+      gate rejects non-zero when disarmed. Plain pytest, no AST-string pinning.
+- [ ] Bench verify: crawl + kill test (drive, kill the node, confirm stop ≤ 0.5 s + boot
+      stop on restart).
+
+**Phase 2 — Strip.**
+- [ ] Delete per D1–D7: `ugv_cockpit` apparatus (keep only what D1/D2 spare),
+      safety monitor, interlock machinery, vizanti entry points, vendor web app includes.
+- [ ] Revert vendor files to `037dfca` state except the retargets D7 keeps:
+      `git checkout 037dfca -- <path>` per file, then re-apply kept deltas.
+- [ ] Rewrite `deploy/systemd/beast-ros-base.service` against the new node; boot stop
+      implied by Phase 1; description must match behavior (M6).
+- [ ] Update docs: `robot/beast/ros2_ws/docs/*` — delete cockpit/command-arbitration docs
+      that describe removed machinery; `docs/beast-ops.md` Quick connect; README routing.
+
+**Phase 3 — Verify + shrink-proof.**
+- [ ] Drift audit: `git diff --stat 037dfca HEAD` (subtree) shows only the intended keep-set;
+      paste the summary into the PR description.
+- [ ] Robot ground-truth: node list, drive test, kill test, boot test, `/ugv/voltage`
+      present iff D4 kept. Update Quick connect (dated).
+- [ ] This plan is then **deleted** (executed plans are not archived — git is the archive);
+      lasting facts promoted into `docs/beast-ops.md` / `robot/beast/ros2_ws/README.md`.
+
+## 6. Rollback
+
+Everything pre-strip is recoverable: `beast-pre-strip` tag, the full fork history in the
+subtree (`037dfca..af1dedd`), and this doc's inventory. Rollback = revert the strip PR(s),
+restart `beast-ros-base.service` from the previous commit, re-run Phase 3 robot checks.
