@@ -23,20 +23,20 @@ field only for its low-battery voice warning.
 - The service user needs the `i2c` group (`/dev/i2c-7` is `root:i2c`) — see
   `deploy/systemd/beast-ros-base.service` — and `smbus2` must be importable by
   that user (`pip3 install --user smbus2`, done on beast-01 2026-08-07).
-- `ugv_safety_monitor` consumes `/ugv/charging_active` for `CHARGING_LOCK`.
-  The charging threshold is **provisional** until set from logged charge data
+- `/ugv/charging_active` has no consumer since `ugv_safety_monitor` was removed
+  (2026-08-07) — it's published for observability only. The charging threshold
+  is **provisional** until set from logged charge data
   (`deploy/diagnostics/power_log.py`).
-- Deploy note: `beast_power` is not in `build_first.sh`'s package lists; build
-  with `colcon build --packages-select beast_power ugv_bringup --symlink-install`
-  (or the full workspace), then `sudo install` the updated service unit and
-  `systemctl daemon-reload`.
+- Deploy: `robot/beast/ros2_ws/deploy/deploy-to-beast.sh` is **the** path —
+  it fast-forwards the robot checkout, rebuilds, reinstalls the service unit,
+  restarts, and verifies the live graph (see `deploy/README.md`).
 
 ## Parameters
 
-See `config/beast_power.yaml`. Defaults: `i2c_bus_nr:=7`, `sensor_address:=0x40`,
-`data_publish_rate:=1.0`. Wave 2 hardware must confirm bus/address with
-`i2cdetect` after wiring (UPS 3→J12-6 GND, 7→J12-5 SCL, 8→J12-3 SDA; omit UPS
-5 V / 3V3 — no back-feed).
+See `config/beast_power.yaml`. Defaults: `i2c_bus_nr:=7`, `sensor_address:=0x41`,
+`data_publish_rate:=1.0`. Hardware must confirm bus/address with `i2cdetect`
+after wiring the driver-board I²C header to the Jetson (GND/SCL/SDA only; do not
+back-feed 5 V or 3V3).
 
 ## Tests (no hardware)
 
@@ -58,4 +58,5 @@ colcon test --packages-select beast_power
 2. Verify 3.3 V levels; `i2cdetect` → record bus + address in `docs/beast-ops.md`.
 3. Confirm shunt sign (`current_sign`) so positive amps = charging.
 4. Refine 3S OCV table against logged pack voltage (`deploy/diagnostics/power_log.py`).
-5. PR-2b sole-owner cutover + safety-monitor `CHARGING_LOCK` plumb.
+5. Keep `/ugv/charging_active` as observability only until a separately approved
+   charging-policy design exists; it is not a motion interlock.

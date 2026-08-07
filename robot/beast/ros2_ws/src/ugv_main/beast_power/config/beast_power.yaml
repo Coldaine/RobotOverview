@@ -14,7 +14,7 @@ beast_power:
     # positive = charging holds and 1.0 is correct for this board.
     current_sign: 1.0
     # PROVISIONAL — inherited guess, not measured. Set from logged charge data
-    # (power_log.py runs) before trusting CHARGING_LOCK decisions built on it.
+    # (power_log.py runs) before using it as anything beyond observability.
     charging_current_threshold_a: 0.05
     voltage_topic: /ugv/voltage
     charging_topic: /ugv/charging_active

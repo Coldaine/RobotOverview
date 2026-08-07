@@ -65,3 +65,13 @@ def test_ensure_ready_repairs_corrupted_config():
     assert sensor.ensure_ready() is True
     assert bus._regs[REG_CONFIG] == CONFIG_REG_VALUE
     assert bus._regs[REG_CALIBRATION] == CALIBRATION_REG_VALUE
+
+
+def test_reopen_closes_previous_bus_fd():
+    """open() on an already-open driver must close the old fd, not leak it."""
+    bus = FakeSMBus(bus_voltage_v=12.0, current_a=0.0)
+    sensor = Ina219(bus, 0x40)
+    sensor.open(7)
+    sensor.open(7)
+    assert bus.close_count == 1
+    assert sensor.read().bus_voltage_v == pytest.approx(12.0, abs=0.01)

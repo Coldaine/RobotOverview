@@ -90,6 +90,9 @@ class Ina219:
         self._opened = False
 
     def open(self, bus_nr: int) -> None:
+        # Guard against double-open: re-opening without closing first would
+        # leak the previous bus fd (smbus2 does not close on re-open).
+        self.close()
         self._bus.open(bus_nr)
         self._opened = True
         try:
@@ -105,11 +108,16 @@ class Ina219:
             self._opened = False
 
     def ensure_ready(self) -> bool:
-        """Re-apply config/calibration after a soft reset. False on I²C fail."""
+        """Re-apply config/calibration after a soft reset. False on I²C fail.
+
+        A short/garbled read buffer raises ``struct.error`` from the unpack,
+        not ``OSError`` — that is still an I²C failure, so it lands on the
+        same False path instead of crashing the caller's publish tick.
+        """
         try:
             config = self._read_reg16_u(REG_CONFIG)
             calib = self._read_reg16_u(REG_CALIBRATION)
-        except OSError:
+        except (OSError, struct.error):
             return False
 
         if config != CONFIG_REG_VALUE or calib != CALIBRATION_REG_VALUE:
@@ -163,6 +171,7 @@ class FakeSMBus:
         self.absent = absent
         self.opened_bus: Optional[int] = None
         self.closed = False
+        self.close_count = 0
         self._regs: dict[int, int] = {
             REG_CONFIG: 0,
             REG_CALIBRATION: 0,
@@ -181,6 +190,7 @@ class FakeSMBus:
 
     def close(self) -> None:
         self.closed = True
+        self.close_count += 1
 
     def write_i2c_block_data(
         self, address: int, register: int, data: Sequence[int]

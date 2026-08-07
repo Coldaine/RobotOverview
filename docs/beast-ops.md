@@ -43,7 +43,8 @@ an unverified 0.1 Ω `RSHUNT` (LeoRover default) — treat amps as provisional.
   `bringup_lidar.launch.py` starts `beast_power` (`use_power`, default true) as sole owner
   of `/ugv/voltage`, `ugv_bringup`'s BatteryState publisher removed, `i2c` added to the
   service unit's groups — **not yet deployed to the robot** (it was shut down overnight to
-  charge; deploy steps in `beast_power/README.md`).
+  charge; deploy via `robot/beast/ros2_ws/deploy/deploy-to-beast.sh`, see
+  `robot/beast/ros2_ws/deploy/README.md`).
 - **Dual-source logger running:** `power_log.py` → `/home/beast/power-log.csv`, 5 s cadence,
   INA219 registers + `/ugv/voltage` (ESP32) on one timeline. Open observation for the
   morning readout: with the 12.6 V charger connected, **both** sources drift slowly down
@@ -57,14 +58,108 @@ an unverified 0.1 Ω `RSHUNT` (LeoRover default) — treat amps as provisional.
   itself is healthy (verified by hand, uncovered). **Do not run the Orin under sustained
   load until the top is remounted with fan clearance.** After remount, verify:
   `cat /sys/devices/platform/pwm-fan/hwmon/hwmon0/rpm` > 0 and idle CPU < 60 °C.
-- **Robot powered off overnight 2026-08-07 with the 12.6 V charger connected** — the
-  measured conclusion from the evening: the charger cannot charge the pack with the robot
-  running (its whole output feeds the load; shedding software load flipped pack current
-  from −11 mA to only +16 mA). Full-off charging is the test in progress; read the pack's
-  rested voltage at next power-on.
+- **Robot powered off overnight 2026-08-07 with the 12.6 V charger connected.** The
+  evening's conclusion — "the charger's whole output feeds the load, so it cannot charge" —
+  is **disproven**; see the 14:07 block above. Shedding load frees headroom the charger
+  does not use, and with the load fully gone the pack still only takes +15 mA. The charger
+  regulates at ~12.08 V, ~0.5 V below what a 3S pack needs. The +16 mA reading quoted here
+  was real but was misread as "charger at its current limit"; it is the signature of a
+  voltage source sitting at the pack's own terminal voltage.
 - **Retraction:** the `~8.8 V brownout 2026-07-31` previously recorded in this doc was
   unsourced — the battery I²C was not wired until 2026-08-07, so no pack voltage could have
   been logged then. Removed repo-wide; do not calibrate against it.
+
+**Live probe 2026-08-07 14:07 robot clock (booted 12:24, up 1 h 45 m, charger connected) —
+this block SUPERSEDES the charging conclusions in the two blocks below.**
+
+- **The charger is not undersized — it is under-volted.** Measured, not inferred:
+  - Bus **12.069 V**, pack current **−8…−12 mA** with the full ROS stack running. If the
+    charger could not carry the load, the pack would be sourcing amps, not milliamps —
+    Jetson `VDD_IN` alone is 7.3 W. The charger carries **essentially the entire load**.
+  - Overnight CSV (`power-log.csv`, rows to 06:46Z) closes it: after the ROS stack died
+    (`esp32_age_s` 343 s = no load), the pack still only took **+15 mA**, and the bus moved
+    **12.108 → 12.116 V in 37 minutes**. A healthy 12.6 V/2 A charger into a pack at 12.1 V
+    should push amps. With the robot's load removed entirely, it pushes 15 mA.
+  - Load-shed test (deactivate `joint_state_broadcaster`, then restore — done twice):
+    Jetson **7.26 W → 5.49 W** (−1.78 W ≈ 164 mA pack-equivalent), but the bus rose only
+    **12.069 → 12.083 V** (+14 mV) and pack current only **−10 → 0 mA**. Source impedance
+    ≈ 0.085 Ω — a **stiff CV source regulating at ~12.08 V**, not a current-limited one.
+    A current-limited charger would have dumped all 164 mA into the pack; it did not.
+- **Verdict: the pack floats at ~12.07 V (≈82 % on the 3S OCV table) and cannot charge.**
+  A 3S Li-ion pack needs 12.6 V at its terminals; it is seeing ~12.08 V, so charge current
+  is ~0 by construction. It will never reach full and cannot recover charge in operation.
+  **Needs a multimeter at the barrel jack** — this cannot be resolved over SSH. Candidates,
+  best fit first: a series blocking/protection **Schottky diode** (~0.5 V drop: 12.6 − 0.5 =
+  12.1 V, matches almost exactly); the supply is actually a 12 V unit, not the 12.6 V
+  charger; a degraded charger; or IR drop in the DC5521 lead (0.5 V @ 2 A ⇒ 0.25 Ω).
+- **Separate, real software waste: the ros2_control loop free-runs at ~3.2 kHz.**
+  `/joint_states` measures **3219 Hz** and `/dynamic_joint_states` **3884 Hz**, though
+  `controller_manager` `update_rate` is **100** (both the param and
+  `ugv_description/config/ros2_controllers.yaml` say 100; `joint_state_broadcaster`
+  `update_rate` is 0). Cost: load average **5.3**, `ros2_control_node` 230 % CPU,
+  `robot_state_publisher` 88 %, `ugv_bringup` 101 % — and the measured **1.78 W**, i.e.
+  **~24 % of all Jetson power**, burned on message churn. Not a charging fix (the −10 mA
+  gap is not the problem), but worth fixing on its own.
+  - **No servo/serial flood.** `joint_states` positions are constant `0.0`, so
+    `ugv_bringup.joint_states_callback`'s `last_pt_sent_data` dedup holds and nothing is
+    written to `/dev/ttyACM0` at kHz rates. The cost is deserialization only.
+- Fan **2257 RPM** at PWM 96, CPU **58 °C**, `tj` 57.8 °C — top-plate blockage is resolved.
+- Cutover **still not deployed**: on-robot HEAD `6ef4a48`, `beast_power` absent from the
+  node graph, `/ugv/voltage` still published by `ugv_bringup` at 20 Hz (11.93 V, fake
+  percentage 0.9468 = V/12.6, status/health/technology UNKNOWN), INA219 config still
+  `0x399F` (reset value). `ugv_safety_monitor` still running. Robot workspace is
+  `/home/beast/beast/RobotOverview/robot/beast/ros2_ws` (not `/home/beast/ros2_ws`).
+
+**Live probe 2026-08-07 ~18:20 UTC (robot on 52 min, charger connected):**
+
+- INA219 direct reads: **12.15 V bus, −30…−34 mA net discharge** — with the robot running,
+  the charger carries the load but the pack still drains slowly. Rested (off) charge test
+  result not yet read from the CSV (logger dead, below).
+- **Cutover still not deployed.** On-robot checkout `6ef4a48`; `/ugv/voltage` publisher is
+  `ugv_bringup` (fake: exactly 12.0 V, percentage 0.952 = V/12.6, status/health/technology
+  all UNKNOWN); `beast_power` is absent from the node graph; INA219 config register is
+  still `0x399F` (reset value — nothing has configured the chip).
+- `/ugv/charging_active`: **0 publishers**, 1 subscriber — `ugv_safety_monitor` is still
+  running (robot is on the pre-strip deploy), waiting on a topic nobody feeds.
+- `power_log.py` is **dead** (last CSV row 2026-08-07T06:46Z) — it was a manual process,
+  not a service, and did not survive the overnight shutdown. Restart it (or service-ify it)
+  before the next charge readout.
+- Fan tach path on this kernel is `/sys/class/hwmon/hwmon2/rpm` (`pwm_tach`), **not** the
+  `pwm-fan/hwmon0/rpm` path in the older note. Live: **2283 RPM**, CPU 59 °C at load ~5 —
+  the top-plate blockage appears resolved (or the lid is off).
+- Tailnet cockpit endpoint verified end-to-end from off-robot:
+  `https://beast-01.tyrannosaurus-magellanic.ts.net/` → HTTP 400 "Can only Upgrade to
+  WebSocket" — rosbridge alive behind `tailscale serve` (443 on `100.107.16.72`).
+
+**Live probe 2026-08-07 ~18:50 UTC (robot up 1 h 24 min, charger connected):**
+
+- `beast-ros-base.service` is active and launches `bringup_lidar.launch.py
+  allow_motion:=true`, but `ugv_safety_monitor` has forced `/ugv/allow_motion` to `false`
+  via `ETHERNET_LOCK` (`/ugv/safety/status` reports `ethernet_connected: true`,
+  `ethernet_verified: true`, yet the lock is engaged). This is a live demonstration of the
+  interlock fail-open/false-positive problem — the robot cannot be driven until the service
+  is called or the monitor is removed.
+- On-robot checkout is still `6ef4a48` (three commits behind `main`). The *installed* tree
+  still contains `ugv_safety_monitor`; the source tree on `main` has already had the safety
+  monitor stripped, but that strip has **not been deployed** to the robot yet.
+- INA219 direct reads on `i2c-7` address `0x41`: config register `0x9f39` (== `0x399F`
+  little-endian, the reset value), bus-voltage raw `0x7a5e` (~12.09 V decoded), shunt-voltage
+  raw `0x04ff`. The part is present and responding; `smbus2` imports cleanly for the `beast`
+  user (`/home/beast/.local/lib/python3.10/site-packages/smbus2`).
+- `/ugv/voltage` is published by `ugv_bringup` at ~20 Hz (11.95 V, percentage 0.948,
+  status/health/technology UNKNOWN). `beast_power` is **not running**; the cutover prepared
+  2026-08-07 was never deployed.
+- `/ugv/charging_active` has **0 publishers**, 1 subscriber (`ugv_safety_monitor`) — the
+  charging interlock is waiting on a topic nobody feeds.
+- **Latch test — inconclusive.** The robot was re-armed via `/ugv/set_allow_motion` and a
+  slow rotation command (`/cmd_vel_ui` angular.z = 0.2 rad/s) was injected for 2 s.
+  `/cmd_vel` carried the command and returned to zero when publishing stopped, showing the
+  current `twist_mux` + `cmd_vel_timeout` stack does stop sending commands. However, no
+  encoder feedback was observable remotely (`/odom/odom_raw` and `/odom_wheel` stayed silent,
+  `/joint_states` wheel positions stayed at 0.0), so **we cannot confirm from this session
+  whether the ESP32 itself latches velocity** — only that the current ROS-side watchdogs
+  prevent it from mattering. A physical, wheels-up observation is still required to answer
+  the underlying hardware question.
 
 Live repository/service check (2026-08-03): `beast-01` is reachable; the legacy
 `~/beast/ugv_ws` checkout is gone and the monorepo cutover is deployed (workspace at
@@ -204,10 +299,10 @@ publishing drive commands. Update this block, dated, whenever a session learns a
 |---|---|---|
 | `/ugv/voltage` → `voltage` | Real | Pack bus volts from ESP32 `v` |
 | `/ugv/voltage` → `percentage` | **Fake** | `V / 12.6` — not SOC; lies under load / while charging |
-| `/ugv/voltage` → `current`, `charge`, `capacity`, `temperature`, `power_supply_status` | **Dummy** | Left at ROS defaults (zero / unset) |
+| `/ugv/voltage` → `current`, `charge`, `capacity`, `temperature`, `power_supply_status` | **Cutover-dependent** | `beast_power` supplies signed current/status after deployment; charge/capacity/temperature remain NaN |
 | `/imu/raw`, `/imu/mag` scales | Assumed | Waveshare ICM-20948 LSB factors; not calibrated here; `frame_id` is `base_link` (wrong frame) |
 | `/odom/odom_raw` | Partial | `odl`/`odr` ÷100 assumed cm→m; `L`/`R` are ESP32 wheel speeds, not fused pose |
-| Charging / true SOC | **Missing** | Needs UPS Module 3S I²C telemetry header → Orin (not wired) |
+| Charging / true SOC | **Provisional** | `beast_power` publishes current and a generic 3S voltage estimate; shunt and SOC curve remain uncalibrated, and charging is observability only |
 
 Source: module docstring + inline `FAKE` / `DUMMY` / `ASSUMED` / `HACK` in
 [`robot/beast/ros2_ws/src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py`](../robot/beast/ros2_ws/src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py).
@@ -240,27 +335,23 @@ git switch -c beast/<change>
 # edit robot/beast/ros2_ws/...
 git push -u origin beast/<change>
 
-# On beast-01 after merge and after the one-time sparse-checkout cutover:
-cd ~/beast/RobotOverview
-git fetch origin
-git checkout main
-git pull --ff-only origin main
-cd robot/beast/ros2_ws
-source /opt/ros/humble/setup.bash
-colcon build --packages-select ugv_bringup --symlink-install   # or full workspace
-sudo systemctl restart beast-ros-base.service                 # starts motion-enabled; active Ethernet/charging locks disable it
-git -C ~/beast/RobotOverview rev-parse --short HEAD            # record in Quick connect
+# On a PC clone after merge, use the durable deploy path (it builds, installs,
+# restarts, and verifies the robot; run parked):
+cd D:/_projects/RobotOverview
+robot/beast/ros2_ws/deploy/deploy-to-beast.sh --verify-only     # read-only drift check
+robot/beast/ros2_ws/deploy/deploy-to-beast.sh                   # deploy origin/main
 ```
 
-There is no automatic deployment to the robot. If a PR does not change
-`robot/beast/ros2_ws`, the Jetson does not change.
+Merging does not automatically deploy to the robot; the manual deploy script is
+the explicit path. If a PR does not change `robot/beast/ros2_ws`, the Jetson does
+not change.
 
-- **What's on it (repository/service state live-verified 2026-08-03; hardware details
-  last verified 2026-07-31):** JetPack 6.2.2 (R36.5), ROS 2 Humble, and
-  `beast-ros-base.service` is **active** from the RobotOverview workspace. It starts with
-  `use_lidar:=true`, `allow_motion:=true`; the active `ugv_safety_monitor` disables motion
-  only after detecting Ethernet or charging. Base driver, LD19 LiDAR, pan-tilt
-  `ros2_control`, wheel + rf2o odometry, and EKF are all up; battery/IMU telemetry flows.
+- **What's on it (live probe 2026-08-07; branch target is not yet deployed):** JetPack 6.2.2
+  (R36.5), ROS 2 Humble, and `beast-ros-base.service` are active from the RobotOverview
+  workspace at the pre-strip checkout. It starts with `use_lidar:=true`,
+  `allow_motion:=true`; the robot still has `ugv_safety_monitor` and its automatic
+  Ethernet/charging interlock until the durable deploy script is run. Base driver, LD19
+  LiDAR, pan-tilt `ros2_control`, wheel + rf2o odometry, and EKF are all up.
 - **ESP32 link is USB, not GPIO jumpers:** the driver board talks to the Orin over
   `/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00` (→ `ttyACM0`); the LiDAR is
   the `…5970075705` sibling (→ `ttyACM1`). Both set in `/etc/beast/ugv.env`. The pins-8/10
@@ -288,12 +379,12 @@ There is no automatic deployment to the robot. If a PR does not change
   ESP32 kept executing the last command (0.02 m/s) for **minutes** — ~1 m of creep — until an
   explicit zero was sent. The documented "3-second stale-command watchdog" does not exist in
   the flashed firmware's current state.
-- **cmd_vel-timeout watchdog DEPLOYED (2026-07-31), not yet live re-tested:** `ugv_bringup`
+- **cmd_vel-timeout watchdog currently present but scheduled for removal:** `ugv_bringup`
   now has `cmd_vel_timeout` (default 0.5 s) — on silence while `allow_motion` is true it
   sends stop once. Unit tests passed on-robot; supervised crawl+kill re-gate is still
-  required before trusting it. Normal startup is motion-enabled; the interlock monitor disables
-  motion when charging or Ethernet is detected. Do not command motion while charging / tethered,
-  or below ~10.5 V.
+  required before trusting it. Normal startup is motion-enabled; motion is changed only through
+  `/ugv/set_allow_motion` on the current branch. The watchdog removal is a separate planned
+  change; do not treat this current branch as having removed it.
 - **Brownout claim retracted 2026-08-07:** a `~8.8 V brownout on 2026-07-31` was recorded
   here with no measurement source. The UPS I²C was not wired until 2026-08-07, so no pack
   voltage could have been logged, and `reference-data.ts` had already recorded on 2026-07-24
@@ -305,7 +396,7 @@ There is no automatic deployment to the robot. If a PR does not change
   does **not** currently have `beast-cockpit.service` installed/enabled or a Tailscale Serve WSS
   proxy configured for it. Therefore cockpit telemetry and controls are not live. Do not infer
   deployment from repository or image-build state.
-- **Planned cockpit boundary:** rosbridge binds `127.0.0.1:9090`; a deliberate future
+- **Cockpit boundary:** rosbridge binds `127.0.0.1:9090`; a deliberate
   `tailscale serve` step will expose WSS only after install/build and the safety prerequisites.
   Existing separate surfaces remain Vizanti `:5100`/`:5001`, `ugv_chat_ai` `:5000`, and
   MediaMTX `:8554`/`:8889`; verify them live before relying on them.
@@ -330,8 +421,9 @@ There is no automatic deployment to the robot. If a PR does not change
 > **teleop and telemetry cockpit** in addition to an information surface, implementing North Star
 > G7 directly inside the Hangar. The `/cockpit` UI is implemented, but the robot transport is not
 > deployed; driving and telemetry have therefore **not yet moved** from the existing robot-side
-> and terminal surfaces into the Hangar. Onboard fail-safes (stale-command watchdog, explicit
-> stop, motor PID) remain mandatory engineering — they are not a ban on self-driving.
+> and terminal surfaces into the Hangar. The current branch still contains the stale-command
+> watchdog, but the owner has explicitly scheduled that AI-added mitigation for removal; the
+> boot stop and motor PID remain separate engineering behavior.
 > **Dynamics note (operator, 2026-07-22):** the Beast is slow, hard-stops, and **stops in time**
 > for terrain/obstacle reactions. Remote closed-loop from CORE-PRIME is fine. Lightweight
 > on-device Orin inference for terrain alignment / avoidance is fine. Reject “won’t stop in time”
@@ -345,13 +437,13 @@ There is no automatic deployment to the robot. If a PR does not change
 > executed and is **retired** (kept below only as an alternative path). `beast-ros-base.service`
 > is enabled and brings up the full stack at boot: base driver, LD19 LiDAR (`/dev/ttyACM1`,
 > ~10 Hz scans), pan-tilt `ros2_control`, wheel + rf2o odometry, EKF. Battery/IMU telemetry
-> verified flowing. Normal boot is motion-enabled; the Ethernet/charging monitor disables motion
-> when either physical interlock is observed. Remaining for full cutover: supervised lifted-track heartbeat-stop test,
+> verified flowing. Normal boot is motion-enabled; no automatic Ethernet/charging monitor is
+> installed on the current branch. Remaining for full cutover: supervised lifted-track heartbeat-stop test,
 > one-frame verification of the 5 MP camera and OAK-D Lite, and the missing host mounting strut.
 >
-> *Power (2026-07-28, still current):* Orin is powered from the pack through the barrel-jack
-> pigtail wired into the UPS Module 3S board — not through the driver board's USB-C, so the
-> OP-BEAST-BACKFEED path is not in the power loop. Mechanical: one side of the host mounting
+> *Power (2026-08-07, current wiring conclusion):* Orin is powered from the pack through the
+> driver board's regulated rail and its 40-pin path; the UPS Module 3S is not fitted. Mechanical:
+> one side of the host mounting
 > struts is missing; do not drill the Orin carrier board — see "Mounting" under Open questions.
 
 ```
@@ -367,7 +459,7 @@ Browser  ──HTTP/WebSocket──▶  Raspberry Pi 5 + ugv_rpi  ──UART─�
 
 - **Upper computer (current):** Jetson Orin Nano Super — vision, ROS 2, teleop, on-device and/or
   offboard policy inference. **Fitted, networked, and linked to the ESP32 over USB — live-verified
-  2026-07-30** (motion held by `allow_motion:=false` pending the heartbeat-stop test).
+  2026-07-30**; motion state must be re-verified from `/ugv/allow_motion` before operation.
 - **Upper computer (previous):** Raspberry Pi 5 + Waveshare `ugv_rpi` — removed; kept as spare.
 - **Lower computer:** ESP32 — motion (PID), stock pan-tilt servo bus, sensor feedback, stop.
 - **Identifying the ESP32 link on the driver board:** the board has two USB-C ports. The **left**

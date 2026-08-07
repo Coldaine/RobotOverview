@@ -80,8 +80,9 @@ Xbox_360_Controller = {
 
 
 # How many consecutive zero Twists to publish after the sticks return to
-# centre, before going silent. Mirrors ugv_bringup's own `zero_vel_limit = 5`
-# and keyboard_ctrl's ZERO_TAIL_LIMIT — keep all three the same number.
+# centre, before going silent. Mirrors keyboard_ctrl's ZERO_TAIL_LIMIT — keep
+# the two the same number. (ugv_bringup's zero-drop hack this once mirrored was
+# removed 2026-08-07.)
 #
 # WHY THIS EXISTS (twist_mux starvation): twist_mux gives /cmd_vel to the
 # highest-priority source that has not expired, and any message — a zero Twist
@@ -92,8 +93,9 @@ Xbox_360_Controller = {
 # so without this bound an untouched gamepad would hold the floor forever and
 # nav, the UI rung and keyboard teleop would never get a command through.
 #
-# The tail still stops the robot by command; ugv_bringup's 0.5 s cmd_vel
-# watchdog is the backstop.
+# The tail is what stops the robot: there is no software watchdog backstop
+# (removed 2026-08-07) — the ESP32 latches its last command, so a lost tail
+# means a held velocity until the next command or a reboot's startup stop.
 ZERO_TAIL_LIMIT = 5
 
 

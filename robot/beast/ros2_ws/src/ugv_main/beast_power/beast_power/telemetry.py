@@ -53,11 +53,15 @@ class BatteryTelemetry:
 def is_charging(current_a: float, threshold_a: float) -> bool:
     """Sign convention: positive current = charging.
 
-    ``threshold_a`` must be >= 0. Current at or above +threshold is charging;
-    near-zero is not charging (avoids chatter from shunt noise).
+    ``threshold_a`` must be finite and > 0: it is the deadband that keeps
+    shunt noise near 0 A from chattering the flag — at threshold 0, an idle
+    0.0 A sample would read as charging. Current at or above +threshold is
+    charging. A NaN threshold would slip past a bare ``<= 0`` check
+    (``nan <= 0`` is False) and make every comparison False, silently
+    reporting "not charging" forever.
     """
-    if threshold_a < 0:
-        raise ValueError('charging_current_threshold_a must be >= 0')
+    if not math.isfinite(threshold_a) or threshold_a <= 0:
+        raise ValueError('charging_current_threshold_a must be finite and > 0')
     return current_a >= threshold_a
 
 

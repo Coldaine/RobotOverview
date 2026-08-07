@@ -64,22 +64,20 @@ export function CommandRail() {
 
   const connected = connection === 'connected';
 
-  // ── MOTION GATE: DISARM STATE & HARDWARE INTERLOCKS ──────────────────────
+  // ── MOTION GATE: DISARM STATE ─────────────────────────────────────────────
   // Motion is disabled when the robot is disarmed (via /ugv/set_allow_motion,
-  // whether by an operator here or by ugv_safety_monitor), when a hardware
-  // interlock is observed (charging / Ethernet — to prevent tearing cables
-  // out), or when the bridge refuses the drive topic.
+  // an operator action in the safety strip), or when the bridge refuses the
+  // drive topic. No automatic charging/Ethernet interlock — that apparatus
+  // (ugv_safety_monitor) was removed 2026-08-07; charging/Ethernet state
+  // remain telemetry fields when a publisher supplies them, but they never
+  // block driving here.
   const driveGateReason: string | null = !connected
     ? 'robot unreachable'
     : status.allowMotion === false
       ? 'motion disarmed — RE-ARM in the safety strip'
-      : status.isCharging === true
-        ? 'motion locked — robot is charging'
-        : status.isEthernetConnected === true
-          ? 'motion locked — Ethernet tether connected'
-          : bridge.deadTopics.includes('/cmd_vel_ui')
-            ? 'bridge refused /cmd_vel_ui'
-            : null;
+      : bridge.deadTopics.includes('/cmd_vel_ui')
+        ? 'bridge refused /cmd_vel_ui'
+        : null;
   const driveEnabled = driveGateReason === null;
 
   const isDead = (topic: string) => bridge.deadTopics.includes(topic);

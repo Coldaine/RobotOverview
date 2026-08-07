@@ -98,7 +98,7 @@ describe("CommandRail control lifecycle", () => {
     expect(lastPublish.linear.x).toBe(0);
   });
 
-  it("gates drive controls when robot is charging", () => {
+  it("does not gate drive controls while charging — no automatic interlock (ugv_safety_monitor removed 2026-08-07)", () => {
     mocks.isCharging = true;
     render(<CommandRail />);
     act(() => vi.advanceTimersByTime(500));
@@ -106,10 +106,8 @@ describe("CommandRail control lifecycle", () => {
 
     fireEvent.keyDown(window, { key: "w", repeat: false });
 
-    expect(mocks.publish).not.toHaveBeenCalled();
-    expect(
-      screen.getAllByText(/robot is charging/i).length,
-    ).toBeGreaterThan(0);
+    expect(mocks.publish).toHaveBeenCalled();
+    expect(screen.queryByText(/drive disabled/i)).not.toBeInTheDocument();
   });
 
   it("gates drive controls when motion is disarmed", () => {
@@ -126,7 +124,7 @@ describe("CommandRail control lifecycle", () => {
     ).toBeGreaterThan(0);
   });
 
-  it("gates drive controls on a hardware interlock even while armed", () => {
+  it("does not gate drive controls on Ethernet connection — no automatic interlock (ugv_safety_monitor removed 2026-08-07)", () => {
     mocks.isEthernetConnected = true;
     render(<CommandRail />);
     act(() => vi.advanceTimersByTime(500));
@@ -134,9 +132,7 @@ describe("CommandRail control lifecycle", () => {
 
     fireEvent.keyDown(window, { key: "w", repeat: false });
 
-    expect(mocks.publish).not.toHaveBeenCalled();
-    expect(
-      screen.getAllByText(/Ethernet tether connected/i).length,
-    ).toBeGreaterThan(0);
+    expect(mocks.publish).toHaveBeenCalled();
+    expect(screen.queryByText(/drive disabled/i)).not.toBeInTheDocument();
   });
 });

@@ -35,15 +35,6 @@ export function SafetyStrip() {
 
   const connected = connection === 'connected';
 
-  // A hardware interlock (charging / Ethernet) means ugv_safety_monitor will
-  // re-disarm any re-arm attempt, so offering RE-ARM then is a lie.
-  const interlocked = status.isCharging === true || status.isEthernetConnected === true;
-  const interlockReason = status.isCharging === true
-    ? 'charging interlock'
-    : status.isEthernetConnected === true
-      ? 'ethernet interlock'
-      : null;
-
   // The last service call we made: its TARGET allow_motion and when. Rendered
   // state is derived, never synced by an effect. "Now" comes from the status
   // slice's own receivedAt — pure store state that advances on every aggregator
@@ -99,7 +90,6 @@ export function SafetyStrip() {
 
   const disarmed = status.allowMotion === false;
   const unconfirmed = !awaitingEcho && (armFault !== null || echoTimedOut);
-  const rearmBlocked = disarmed && interlocked;
 
   const armLabel = !connected
     ? 'OFFLINE'
@@ -107,35 +97,31 @@ export function SafetyStrip() {
         ? request?.target === false
           ? 'DISARMING…'
           : 'RE-ARMING…'
-      : status.allowMotion === false
-        ? interlocked
-          ? 'LOCKED'
-          : holding
-            ? 'KEEP HOLDING…'
-            : 'RE-ARM · HOLD 2S'
-        : 'DISARM';
+      : unconfirmed || status.allowMotion !== false
+        ? 'DISARM'
+        : holding
+          ? 'KEEP HOLDING…'
+          : 'RE-ARM · HOLD 2S';
   const armCaption = !connected
     ? 'offline'
       : unconfirmed
-        ? 'UNCONFIRMED'
+        ? 'UNCONFIRMED — click to disarm'
       : awaitingEcho
         ? 'awaiting robot echo'
-        : interlocked
-          ? (interlockReason ?? 'interlock')
-             : status.allowMotion === null
-             ? 'state unknown — disarm to be safe'
-            : status.allowMotion
-              ? 'one click — stops all motion'
-              : 'hold to re-enable motion';
-  const armDisabled =
-    !connected || awaitingEcho || unconfirmed || rearmBlocked;
+      : status.allowMotion === null
+        ? 'state unknown — disarm to be safe'
+        : status.allowMotion
+          ? 'one click — stops all motion'
+          : 'hold to re-enable motion';
+  // UNCONFIRMED never disables the button: the handlers force clicks to DISARM
+  // and suppress the RE-ARM hold while unconfirmed, so the safe direction can
+  // be retried; RE-ARM still requires the existing two-second hold.
+  const armDisabled = !connected || awaitingEcho;
   const armBtnCls = !connected
     ? 'border-zinc-600 bg-zinc-900/40 text-zinc-500 cursor-not-allowed'
     : unconfirmed
       ? 'border-red-500 bg-red-950/60 text-red-300 shadow-hud-red text-glow-red'
-      : rearmBlocked
-        ? 'border-amber-500/60 bg-amber-950/30 text-amber-400 cursor-not-allowed'
-        : disarmed
+      : disarmed
           ? 'border-emerald-500/50 bg-panel-2/40 text-emerald-400 hover:bg-emerald-950/30'
           : 'border-red-500/50 bg-panel-2/40 text-red-400 hover:bg-red-950/30';
   const armCaptionCls =
@@ -174,10 +160,10 @@ export function SafetyStrip() {
       {/* ── MOTION AUTHORITY (DISARM / RE-ARM) ──── */}
       <button
         onClick={() => {
-          if (status.allowMotion !== false) void requestMotion(false);
+          if (unconfirmed || status.allowMotion !== false) void requestMotion(false);
         }}
         onPointerDown={() => {
-          if (status.allowMotion === false) startRearmHold();
+          if (!unconfirmed && status.allowMotion === false) startRearmHold();
         }}
         onPointerUp={cancelRearmHold}
         onPointerLeave={cancelRearmHold}
@@ -214,10 +200,6 @@ export function SafetyStrip() {
           <span className="font-mono text-lg font-bold tracking-wide mt-0.5 flex items-center gap-1.5">
             <Unknown reason="no allow_motion publisher" />
           </span>
-        ) : interlocked ? (
-          <span className="font-mono text-lg font-bold tracking-wide flex items-center gap-1.5 mt-0.5 text-amber-400 text-glow-amber">
-            <ShieldAlert className="h-4 w-4 animate-pulse" /> LOCKED
-          </span>
         ) : status.allowMotion ? (
           <span
             className={clsx(
@@ -242,7 +224,7 @@ export function SafetyStrip() {
             ? '/ugv/allow_motion silent'
             : status.allowMotion
               ? 'motion permitted — ugv_bringup gate open'
-              : (interlockReason ?? 'disarmed via /ugv/set_allow_motion')}
+              : 'disarmed via /ugv/set_allow_motion'}
         </span>
         {armFault && (
           <span className="font-mono text-[9.5px] text-red-400 leading-tight mt-1">{armFault}</span>
