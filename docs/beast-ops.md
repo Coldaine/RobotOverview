@@ -7,6 +7,33 @@ re-verify against the live robot before relying on anything stale.
 
 ## Quick connect
 
+**Deploy + first drive paces 2026-08-07 (live, on battery, untethered):**
+
+- Robot runs `724f975` (main tip): strip-down Phase 1 (#174/#176/#178) + the
+  paces follow-ups (#179). `deploy-to-beast.sh --verify-only` = **10/10 PASS**,
+  including the new drive-path probe. `beast_base` + `beast_power` live;
+  `ugv_safety_monitor` gone; cockpit reports `motion armed`
+  (`allow_motion: 'true'` — the 1 Hz heartbeat fixed the permanent UNKNOWN).
+- **First supervised drive, odometry-proven:** forward 0.58/0.57 m (cmd 0.60),
+  pivots correct sign both directions, backward −0.38/−0.42 (cmd −0.40);
+  **disarm mid-crawl: 3 s of 0.15 m/s commands → +0.01 m wheel travel** — dead
+  stop, rejection enforced, re-arm resumed. Voltage sagged 11.38→11.28 under
+  drive load; INA219 sign convention correct on battery (negative = discharging).
+- **SHM wedge lesson (why the verify now probes the drive path):** the first
+  deploy restart left Fast DDS shared memory broken between `twist_mux` and
+  `beast_base` — every node check passed while mux output never reached the
+  base node's callback. A clean `systemctl restart beast-ros-base` fixed it.
+  If the drive-path probe FAILs on a fresh stack, restart once and re-verify
+  before suspecting code. For interactive ros2 CLI on the robot, use the
+  UDP-only profile: `export FASTRTPS_DEFAULT_PROFILES_FILE=/tmp/beast_verify_fastdds_udp.xml`
+  (written by the verify; without it, echo/node-list results are unreliable).
+- Battery watch: 10.97 V at end of session and falling (3S ≈ 3.66 V/cell) —
+  recharge soon; the under-volted charger finding (~12.08 V at the pack)
+  stands, multimeter at the barrel jack is still the physical next step.
+- Thermals fine all session: 49–54 °C under build + drive load, fan pwm
+  70–86 — the 2026-08-07 morning lid/fan blockage (86–87 °C idle) did NOT
+  reproduce this session; treat as resolved unless it recurs.
+
 **Hardware identity + power path (verified live 2026-08-07):**
 
 | Fact | Value | How verified |
