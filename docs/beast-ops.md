@@ -262,27 +262,23 @@ git switch -c beast/<change>
 # edit robot/beast/ros2_ws/...
 git push -u origin beast/<change>
 
-# On beast-01 after merge and after the one-time sparse-checkout cutover:
-cd ~/beast/RobotOverview
-git fetch origin
-git checkout main
-git pull --ff-only origin main
-cd robot/beast/ros2_ws
-source /opt/ros/humble/setup.bash
-colcon build --packages-select ugv_bringup --symlink-install   # or full workspace
-sudo systemctl restart beast-ros-base.service                 # starts motion-enabled; use /ugv/set_allow_motion for the manual gate
-git -C ~/beast/RobotOverview rev-parse --short HEAD            # record in Quick connect
+# On a PC clone after merge, use the durable deploy path (it builds, installs,
+# restarts, and verifies the robot; run parked):
+cd D:/_projects/RobotOverview
+robot/beast/ros2_ws/deploy/deploy-to-beast.sh --verify-only     # read-only drift check
+robot/beast/ros2_ws/deploy/deploy-to-beast.sh                   # deploy origin/main
 ```
 
-There is no automatic deployment to the robot. If a PR does not change
-`robot/beast/ros2_ws`, the Jetson does not change.
+Merging does not automatically deploy to the robot; the manual deploy script is
+the explicit path. If a PR does not change `robot/beast/ros2_ws`, the Jetson does
+not change.
 
-- **What's on it (repository/service state live-verified 2026-08-03; hardware details
-  last verified 2026-07-31):** JetPack 6.2.2 (R36.5), ROS 2 Humble, and
-  `beast-ros-base.service` is **active** from the RobotOverview workspace. It starts with
-  `use_lidar:=true`, `allow_motion:=true`; no automatic Ethernet/charging interlock is
-  installed after the 2026-08-07 safety-monitor removal. Base driver, LD19 LiDAR, pan-tilt
-  `ros2_control`, wheel + rf2o odometry, and EKF are all up; battery/IMU telemetry flows.
+- **What's on it (live probe 2026-08-07; branch target is not yet deployed):** JetPack 6.2.2
+  (R36.5), ROS 2 Humble, and `beast-ros-base.service` are active from the RobotOverview
+  workspace at the pre-strip checkout. It starts with `use_lidar:=true`,
+  `allow_motion:=true`; the robot still has `ugv_safety_monitor` and its automatic
+  Ethernet/charging interlock until the durable deploy script is run. Base driver, LD19
+  LiDAR, pan-tilt `ros2_control`, wheel + rf2o odometry, and EKF are all up.
 - **ESP32 link is USB, not GPIO jumpers:** the driver board talks to the Orin over
   `/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00` (→ `ttyACM0`); the LiDAR is
   the `…5970075705` sibling (→ `ttyACM1`). Both set in `/etc/beast/ugv.env`. The pins-8/10

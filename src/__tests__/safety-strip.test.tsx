@@ -81,6 +81,23 @@ describe('SafetyStrip motion authority', () => {
     expect(within(motionState()).queryByText('ARMED')).not.toBeInTheDocument();
   });
 
+  it('keeps DISARM available so a failed call can be retried', async () => {
+    mocks.setMotionAllowed
+      .mockResolvedValueOnce({ ok: false, message: 'bridge refused' })
+      .mockResolvedValue({ ok: true });
+    render(<SafetyStrip />);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /DISARM/i }));
+    });
+
+    const button = screen.getByRole('button', { name: /DISARM/i });
+    expect(button).toBeEnabled();
+    fireEvent.click(button);
+    expect(mocks.setMotionAllowed).toHaveBeenCalledTimes(2);
+    expect(mocks.setMotionAllowed).toHaveBeenLastCalledWith(false);
+  });
+
   it('shows UNCONFIRMED when the service echo times out', () => {
     const view = render(<SafetyStrip />);
     fireEvent.click(screen.getByRole('button', { name: /DISARM/i }));

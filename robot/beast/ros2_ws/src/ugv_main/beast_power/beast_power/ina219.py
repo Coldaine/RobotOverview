@@ -108,11 +108,16 @@ class Ina219:
             self._opened = False
 
     def ensure_ready(self) -> bool:
-        """Re-apply config/calibration after a soft reset. False on I²C fail."""
+        """Re-apply config/calibration after a soft reset. False on I²C fail.
+
+        A short/garbled read buffer raises ``struct.error`` from the unpack,
+        not ``OSError`` — that is still an I²C failure, so it lands on the
+        same False path instead of crashing the caller's publish tick.
+        """
         try:
             config = self._read_reg16_u(REG_CONFIG)
             calib = self._read_reg16_u(REG_CALIBRATION)
-        except OSError:
+        except (OSError, struct.error):
             return False
 
         if config != CONFIG_REG_VALUE or calib != CALIBRATION_REG_VALUE:

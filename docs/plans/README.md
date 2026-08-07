@@ -19,9 +19,6 @@ disagree, the code is right and the plan is stale.
 
 ## Related, outside this directory
 
-- [BEAST ROS 2 drift notepad](2026-08-07-beast-ros-drift-notepad.md) — scratch inventory of
-  the 45 custom commits over the Waveshare baseline, hardware facts, review defects, and a
-  decisions log for the remaining strip-down. Not a work order.
 - Datacore briefings `artifact-intake` / `beast-evidence-manifest` — identity index and
   evidence register for `keyArtifactstosort/` (formerly markdown registers; read in Datacore)
 - `keyArtifactstosort/Artifacts/ros-driver/` — traced-connectivity extraction outputs

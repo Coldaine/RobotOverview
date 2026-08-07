@@ -108,13 +108,14 @@ export function SafetyStrip() {
         ? 'UNCONFIRMED'
       : awaitingEcho
         ? 'awaiting robot echo'
-             : status.allowMotion === null
-             ? 'state unknown — disarm to be safe'
-            : status.allowMotion
-              ? 'one click — stops all motion'
-              : 'hold to re-enable motion';
-  const armDisabled =
-    !connected || awaitingEcho || unconfirmed;
+      : status.allowMotion === null
+        ? 'state unknown — disarm to be safe'
+        : status.allowMotion
+          ? 'one click — stops all motion'
+          : 'hold to re-enable motion';
+  // Keep DISARM available after an unconfirmed failure so the safe direction
+  // can be retried; RE-ARM still requires the existing two-second hold.
+  const armDisabled = !connected || awaitingEcho;
   const armBtnCls = !connected
     ? 'border-zinc-600 bg-zinc-900/40 text-zinc-500 cursor-not-allowed'
     : unconfirmed

@@ -111,12 +111,17 @@ if [ "$VERIFY_ONLY" = 1 ]; then
 fi
 
 say "1/4 sync robot checkout to $REF"
-ssh "${ssh_opts[@]}" "$HOST" "git -C '$REPO_DIR' fetch origin --prune \
-  && git -C '$REPO_DIR' diff --quiet && git -C '$REPO_DIR' diff --cached --quiet \
-  || { echo 'on-robot tree is dirty; refusing to deploy' >&2; exit 1; }
-git -C '$REPO_DIR' rev-parse --verify '$REF^{commit}' >/dev/null
-git -C '$REPO_DIR' merge --ff-only '$REF'
-git -C '$REPO_DIR' log --oneline -1"
+ssh "${ssh_opts[@]}" "$HOST" "bash -lc '
+  set -euo pipefail
+  git -C \"$REPO_DIR\" fetch origin --prune
+  if [ -n \"\$(git -C \"$REPO_DIR\" status --porcelain)\" ]; then
+    echo \"on-robot tree is dirty; refusing to deploy\" >&2
+    exit 1
+  fi
+  git -C \"$REPO_DIR\" rev-parse --verify \"$REF^{commit}\" >/dev/null
+  git -C \"$REPO_DIR\" merge --ff-only \"$REF\"
+  git -C \"$REPO_DIR\" log --oneline -1
+'"
 
 say "2/4 colcon build: $PACKAGES"
 ssh "${ssh_opts[@]}" "$HOST" "bash -lc 'cd \"$WS_DIR\" \

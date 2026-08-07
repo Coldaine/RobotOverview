@@ -17,7 +17,7 @@ robot/beast/ros2_ws/deploy/deploy-to-beast.sh --verify-only   # drift check, rea
 LAN IPs) through four steps: fast-forward the on-robot checkout (refuses a
 dirty tree), `colcon build --symlink-install` the base service packages
 (`beast_power ugv_bringup ugv_cockpit`, override with `--packages`), install
-`deploy/systemd/` units + `daemon-reload` + restart (one sudo prompt), then
+`deploy/systemd/` service and timer units + `daemon-reload` + restart (one sudo prompt), then
 verify the live graph and exit non-zero on any broken contract.
 
 The verification contract is what "landed" means:

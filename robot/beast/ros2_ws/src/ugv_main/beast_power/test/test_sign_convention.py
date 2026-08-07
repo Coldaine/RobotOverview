@@ -33,6 +33,15 @@ def test_is_charging_rejects_zero_threshold():
         is_charging(0.0, 0.0)
 
 
+def test_is_charging_rejects_nan_threshold():
+    """nan <= 0 is False, so a bare sign check lets NaN through — and then
+    every current comparison is False, silently reporting never-charging."""
+    with pytest.raises(ValueError):
+        is_charging(0.1, float('nan'))
+    with pytest.raises(ValueError):
+        is_charging(0.1, float('inf'))
+
+
 def test_build_telemetry_charging_vs_discharging():
     from beast_power.ina219 import Ina219Reading
 

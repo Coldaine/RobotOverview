@@ -58,8 +58,9 @@ whatever documents the robot must state them.
 2. **ESP32 JSON `T:13` velocity, `T:13 0,0` stop; `T:900` model select (`ugv_beast`→3);
    `T:1001` feedback with IMU LSB scales (ICM-20948: 8192 LSB/g, 16.4 LSB/dps, 0.15 µT/LSB),
    `odl/odr` in cm, `v` in centivolts (~1.2 % low vs INA219).**
-3. **Serial: `/dev/ttyTHS1` @ 115200 on Jetson** (env `UGV_SERIAL_PORT`). **LiDAR: LD19 on
-   the by-id CP2102 symlink** (`ugv.env.example` carries the exact path).
+3. **Serial: `/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00` @ 115200 on
+   Jetson** (env `UGV_SERIAL_PORT`; verified ESP32 path). **LiDAR: LD19 on the by-id CP2102
+   symlink** (`ugv.env.example` carries the exact path).
 4. **INA219 at `0x41` on `/dev/i2c-7`** (verified live 2026-08-07; `0x40` is the LeoRover
    default and wrong). Config reset value `0x399F`. **`RSHUNT = 0.1 Ω` is UNVERIFIED** —
    all current/charging values are provisional until measured. `smbus2` was pip-installed

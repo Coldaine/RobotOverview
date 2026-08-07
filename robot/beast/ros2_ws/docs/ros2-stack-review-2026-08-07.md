@@ -24,7 +24,7 @@ The highest-value reuse work is therefore **convergence and deletion around the 
 2. Keep using upstream `robot_localization`, `twist_mux`, Nav2, `slam_toolbox`, DepthAI ROS, `rosbridge`, `ros_gz`, and standard ROS description tools.
 3. Make one upstream Nav2 controller and one 2D localization path the supported default; demote the legacy alternatives.
 4. Consider `ros2_control`/`diff_drive_controller` only as a measured hardware-interface migration, not as a drop-in replacement for the ESP32 bridge.
-5. Fix deployment coherence before any architectural migration: the current service enables `beast_power`, but both build scripts omit it.
+5. Fix deployment coherence before any architectural migration: the current service enables `beast_power`, but the audited baseline omitted it from both build scripts. This branch adds it to the build path.
 
 Do not install Jazzy or Kilted binaries into this Humble workspace. A distro migration is a separate platform change requiring a dedicated build/test/deployment lane.
 

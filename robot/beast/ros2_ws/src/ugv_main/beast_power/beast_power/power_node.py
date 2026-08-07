@@ -8,6 +8,7 @@
 
 from __future__ import annotations
 
+import math
 import struct
 import time
 from typing import Callable, Optional
@@ -100,8 +101,8 @@ class PowerNode(Node):
             raise ValueError('data_publish_rate must be positive')
         if self._reconnect_interval_sec <= 0:
             raise ValueError('reconnect_interval_sec must be positive')
-        if self._charge_threshold <= 0:
-            raise ValueError('charging_current_threshold_a must be > 0')
+        if not math.isfinite(self._charge_threshold) or self._charge_threshold <= 0:
+            raise ValueError('charging_current_threshold_a must be finite and > 0')
 
         factory = bus_factory or _default_bus_factory
         self._bus = factory()

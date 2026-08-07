@@ -69,8 +69,8 @@ export function CommandRail() {
   // an operator action in the safety strip), or when the bridge refuses the
   // drive topic. No automatic charging/Ethernet interlock — that apparatus
   // (ugv_safety_monitor) was removed 2026-08-07; charging/Ethernet state is
-  // still reported honestly elsewhere in the cockpit, it just doesn't block
-  // driving here.
+  // remain telemetry fields when a publisher supplies them, but they never
+  // block driving here.
   const driveGateReason: string | null = !connected
     ? 'robot unreachable'
     : status.allowMotion === false
