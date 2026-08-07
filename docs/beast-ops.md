@@ -42,14 +42,25 @@ dropout. **It will not answer `ssh` until it is charged and powered back on.**
   | 18:15–18:17 | 0.110 V/min |
   | 18:17–18:19 (final) | 0.135 V/min |
 
-- **INA219 current is under-reported by ≥3.5×.** At 18:09 it claimed the pack
-  delivered **1.36 W** while `tegrastats VDD_IN` alone was **4.74 W** — and with
-  the charger out, the pack was the only source (lidar, OAK and the driver board
-  are on top of that, so the true factor is likely ~6×). This quantifies the
-  standing `RSHUNT` caveat below: 0.1 Ω is wrong, the real part is likely
-  0.015–0.025 Ω. **Every `charge_mah`/`energy_wh` figure logged so far is
-  under-scaled by that factor** and rescales by a single multiply once the shunt
-  is read off the board. Voltage is unaffected.
+- **`RSHUNT` RESOLVED: 0.010 Ω, not 0.1 — currents were 10× low.** The sense
+  resistor beside the INA219 at the `DC 9-12.6V` input is marked **`R010`**,
+  legible in `public/datacore/beast-driver-board-callouts.png` (callout 4) and
+  `keyArtifactstosort/rawDriverBoardshot.jpg`. No meter needed; the long-standing
+  "confirm against the driver board's shunt" TODO is closed. Fixed in
+  `ina219.py` (PR #187) with a regression test, since the fake-bus suite
+  round-trips through whatever value the driver defines and was green for both.
+  - Found by energy balance first: at 18:09 the INA219 claimed the pack
+    delivered **1.36 W** while `tegrastats VDD_IN` alone read **4.74 W**, with
+    the charger out and no other source. Corrected, that sample is **~1.45 A /
+    ~13.4 W**, which reconciles against Jetson 4.7 W + OAK-D + LD19 + driver
+    board + buck losses.
+  - **Every `charge_mah`/`energy_wh` logged before PR #187 is 10× low** — rescale
+    existing `/data/beast/power/power-log.csv` rows by ×10. Voltage is
+    unaffected (chip-fixed 4 mV/bit, never passes through the shunt), so every
+    voltage finding in this block stands.
+  - Open: `CURRENT_LSB_TARGET` 95 µA gives only **±3.11 A** full scale. Fine for
+    the 1.45 A idle draw; drive loads may saturate it, and a saturated register
+    reads wrong rather than high.
 - **Recommended: two thresholds, not one.** Operational 0 % / auto-shutdown at
   ~9.6 V (3.2 V/cell) leaves ~12 min of runtime and protects the cells; ~8.3 V
   is the measured hard-dead point, not a target.
@@ -114,8 +125,11 @@ its I2C telemetry would duplicate the INA219 above. Verdict and evidence:
 [`keyArtifactstosort/reference/waveshare-ups-power-module-c/README.md`](../keyArtifactstosort/reference/waveshare-ups-power-module-c/README.md).
 
 Bus-voltage words from `0x41` decode with the chip-fixed 4 mV/bit LSB (no calibration
-dependency), so those **are** volts. Currents derived from the shunt register still assume
-an unverified 0.1 Ω `RSHUNT` (LeoRover default) — treat amps as provisional.
+dependency), so those **are** volts. Currents derive from the shunt register and
+**`RSHUNT` = 0.010 Ω, read off the board 2026-08-07** (marked `R010` beside the INA219 —
+see Quick connect). The old 0.1 Ω LeoRover default made every amp 10× low; amps recorded
+before PR #187 need ×10. Amps are now scaled correctly but still bounded by a ±3.11 A
+full scale — treat readings during motion as suspect until that ceiling is raised.
 
 **Power session 2026-08-07 (live):**
 
