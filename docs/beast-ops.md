@@ -58,14 +58,57 @@ an unverified 0.1 Ω `RSHUNT` (LeoRover default) — treat amps as provisional.
   itself is healthy (verified by hand, uncovered). **Do not run the Orin under sustained
   load until the top is remounted with fan clearance.** After remount, verify:
   `cat /sys/devices/platform/pwm-fan/hwmon/hwmon0/rpm` > 0 and idle CPU < 60 °C.
-- **Robot powered off overnight 2026-08-07 with the 12.6 V charger connected** — the
-  measured conclusion from the evening: the charger cannot charge the pack with the robot
-  running (its whole output feeds the load; shedding software load flipped pack current
-  from −11 mA to only +16 mA). Full-off charging is the test in progress; read the pack's
-  rested voltage at next power-on.
+- **Robot powered off overnight 2026-08-07 with the 12.6 V charger connected.** The
+  evening's conclusion — "the charger's whole output feeds the load, so it cannot charge" —
+  is **disproven**; see the 14:07 block above. Shedding load frees headroom the charger
+  does not use, and with the load fully gone the pack still only takes +15 mA. The charger
+  regulates at ~12.08 V, ~0.5 V below what a 3S pack needs. The +16 mA reading quoted here
+  was real but was misread as "charger at its current limit"; it is the signature of a
+  voltage source sitting at the pack's own terminal voltage.
 - **Retraction:** the `~8.8 V brownout 2026-07-31` previously recorded in this doc was
   unsourced — the battery I²C was not wired until 2026-08-07, so no pack voltage could have
   been logged then. Removed repo-wide; do not calibrate against it.
+
+**Live probe 2026-08-07 14:07 robot clock (booted 12:24, up 1 h 45 m, charger connected) —
+this block SUPERSEDES the charging conclusions in the two blocks below.**
+
+- **The charger is not undersized — it is under-volted.** Measured, not inferred:
+  - Bus **12.069 V**, pack current **−8…−12 mA** with the full ROS stack running. If the
+    charger could not carry the load, the pack would be sourcing amps, not milliamps —
+    Jetson `VDD_IN` alone is 7.3 W. The charger carries **essentially the entire load**.
+  - Overnight CSV (`power-log.csv`, rows to 06:46Z) closes it: after the ROS stack died
+    (`esp32_age_s` 343 s = no load), the pack still only took **+15 mA**, and the bus moved
+    **12.108 → 12.116 V in 37 minutes**. A healthy 12.6 V/2 A charger into a pack at 12.1 V
+    should push amps. With the robot's load removed entirely, it pushes 15 mA.
+  - Load-shed test (deactivate `joint_state_broadcaster`, then restore — done twice):
+    Jetson **7.26 W → 5.49 W** (−1.78 W ≈ 164 mA pack-equivalent), but the bus rose only
+    **12.069 → 12.083 V** (+14 mV) and pack current only **−10 → 0 mA**. Source impedance
+    ≈ 0.085 Ω — a **stiff CV source regulating at ~12.08 V**, not a current-limited one.
+    A current-limited charger would have dumped all 164 mA into the pack; it did not.
+- **Verdict: the pack floats at ~12.07 V (≈82 % on the 3S OCV table) and cannot charge.**
+  A 3S Li-ion pack needs 12.6 V at its terminals; it is seeing ~12.08 V, so charge current
+  is ~0 by construction. It will never reach full and cannot recover charge in operation.
+  **Needs a multimeter at the barrel jack** — this cannot be resolved over SSH. Candidates,
+  best fit first: a series blocking/protection **Schottky diode** (~0.5 V drop: 12.6 − 0.5 =
+  12.1 V, matches almost exactly); the supply is actually a 12 V unit, not the 12.6 V
+  charger; a degraded charger; or IR drop in the DC5521 lead (0.5 V @ 2 A ⇒ 0.25 Ω).
+- **Separate, real software waste: the ros2_control loop free-runs at ~3.2 kHz.**
+  `/joint_states` measures **3219 Hz** and `/dynamic_joint_states` **3884 Hz**, though
+  `controller_manager` `update_rate` is **100** (both the param and
+  `ugv_description/config/ros2_controllers.yaml` say 100; `joint_state_broadcaster`
+  `update_rate` is 0). Cost: load average **5.3**, `ros2_control_node` 230 % CPU,
+  `robot_state_publisher` 88 %, `ugv_bringup` 101 % — and the measured **1.78 W**, i.e.
+  **~24 % of all Jetson power**, burned on message churn. Not a charging fix (the −10 mA
+  gap is not the problem), but worth fixing on its own.
+  - **No servo/serial flood.** `joint_states` positions are constant `0.0`, so
+    `ugv_bringup.joint_states_callback`'s `last_pt_sent_data` dedup holds and nothing is
+    written to `/dev/ttyACM0` at kHz rates. The cost is deserialization only.
+- Fan **2257 RPM** at PWM 96, CPU **58 °C**, `tj` 57.8 °C — top-plate blockage is resolved.
+- Cutover **still not deployed**: on-robot HEAD `6ef4a48`, `beast_power` absent from the
+  node graph, `/ugv/voltage` still published by `ugv_bringup` at 20 Hz (11.93 V, fake
+  percentage 0.9468 = V/12.6, status/health/technology UNKNOWN), INA219 config still
+  `0x399F` (reset value). `ugv_safety_monitor` still running. Robot workspace is
+  `/home/beast/beast/RobotOverview/robot/beast/ros2_ws` (not `/home/beast/ros2_ws`).
 
 **Live probe 2026-08-07 ~18:20 UTC (robot on 52 min, charger connected):**
 
