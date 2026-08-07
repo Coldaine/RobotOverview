@@ -30,7 +30,7 @@ CONFIG_REG_VALUE = (
 SHUNT_VOLTAGE_LSB = 0.00001  # 10 uV / bit
 BUS_VOLTAGE_LSB = 0.004  # 4 mV / bit
 
-RSHUNT = 0.1  # ohms — LeoRover default; confirm against UPS Module 3S shunt
+RSHUNT = 0.1  # ohms — UNVERIFIED LeoRover default; confirm against the driver board's shunt
 CURRENT_LSB_TARGET = 0.000095
 CALIBRATION_REG_VALUE = int(0.04096 / (CURRENT_LSB_TARGET * RSHUNT)) & 0xFFFE
 CURRENT_LSB = 0.04096 / (CALIBRATION_REG_VALUE * RSHUNT)

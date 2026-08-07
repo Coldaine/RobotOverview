@@ -13,7 +13,14 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@/lib/ros/client', () => ({
   rosClient: { setMotionAllowed: mocks.setMotionAllowed },
   useConnectionState: () => 'connected',
-  useCockpitVoltage: () => ({ voltage: null, stale: false, hasReceived: false }),
+  useCockpitVoltage: () => ({
+    voltage: null,
+    current: null,
+    powerSupplyStatus: null,
+    present: null,
+    stale: false,
+    hasReceived: false,
+  }),
   useCockpitStatus: () => ({
     muxSource: null,
     cmdAge: null,

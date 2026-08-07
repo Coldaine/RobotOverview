@@ -22,7 +22,7 @@ setup(
     maintainer='Coldaine',
     maintainer_email='pmaclyman@gmail.com',
     description=(
-        'BEAST-01 UPS Module 3S INA219 power telemetry '
+        'BEAST-01 driver-board INA219 power telemetry '
         '(BatteryState + charging_active).'
     ),
     license='Apache-2.0',

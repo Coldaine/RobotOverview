@@ -112,7 +112,8 @@ Update the owner doc, not wherever is convenient:
 - intent/goals/anti-goals -> `docs/NORTH_STAR.md` (rare, deliberate changes only)
 - repo structure ("where does X live") -> `README.md`
 - verified deploy/runtime facts and gaps -> `docs/deploy.md`
-- BEAST operating facts -> `docs/beast-ops.md`
+- BEAST operating facts -> `docs/beast-ops.md` (current state only — history belongs elsewhere)
+- completed Pi->Orin migration, reflash procedure -> `docs/beast-jetson-flash-runbook.md`
 - BEAST ROS source, launch, service, and package docs -> `robot/beast/ros2_ws`
 - data/backend shape, migrations, corpus + cutover status -> `db/hangar/standup.md`
 - rich UI reasoning rubric -> `docs/rich-ui.md`

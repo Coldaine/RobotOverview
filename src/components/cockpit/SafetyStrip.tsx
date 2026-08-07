@@ -141,14 +141,25 @@ export function SafetyStrip() {
   const armCaptionCls =
     !connected ? 'text-zinc-500' : unconfirmed ? 'text-red-300' : 'text-ink-dim';
 
-  // Calculate voltage slider progress (range 8.8V - 12.6V)
-  const minVolts = 8.8;
+  // Voltage track bounds: 9.0 V = 3.0 V/cell, the OCV table's floor for a 3S
+  // pack (table-derived, not an observed brownout — the former 8.8 V mark was
+  // an unsourced figure, removed 2026-08-07). 12.6 V = 4.2 V/cell full.
+  const minVolts = 9.0;
   const maxVolts = 12.6;
+  const motionFloorVolts = 10.5;
+  // Derived, never hardcoded: a retyped percentage silently lies when a bound
+  // changes (the old tick was pinned at 44.7% against an 8.8–12.6 span).
+  const motionFloorPct = ((motionFloorVolts - minVolts) / (maxVolts - minVolts)) * 100;
   const voltage = volts.voltage;
   const voltPct =
     voltage === null ? 0 : Math.max(0, Math.min(100, ((voltage - minVolts) / (maxVolts - minVolts)) * 100));
-  const isLowVoltage = voltage !== null && voltage < 10.5;
+  const isLowVoltage = voltage !== null && voltage < motionFloorVolts;
   const voltStale = volts.stale && volts.hasReceived;
+  // Current is pre-gated at ingest: non-null only when the publisher filled
+  // power_supply_status (a real measurement, not bringup's dummy 0.0).
+  const current = voltStale ? null : (volts.current ?? null);
+  const psStatus = volts.powerSupplyStatus ?? null;
+  const isChargingNow = psStatus === 1 || psStatus === 4; // CHARGING | FULL
 
   return (
     <motion.section
@@ -330,14 +341,10 @@ export function SafetyStrip() {
               style={{ width: `${voltPct}%` }}
             />
           )}
-          {/* Brownout @ 8.8V */}
-          <div className="absolute top-[-3px] bottom-[-3px] w-[1px] bg-red-500" style={{ left: '0%' }} title="8.8V Brownout">
-            <span className="absolute top-[-11px] left-[-4px] font-mono text-[6px] text-red-500/80 font-bold scale-[0.8]">8.8</span>
-          </div>
-          {/* Floor @ 10.5V */}
+          {/* Motion floor @ 10.5V — position derived from the track bounds */}
           <div
             className="absolute top-[-3px] bottom-[-3px] w-[1.5px] bg-amber-500 shadow-[0_0_4px_rgba(245,158,11,0.5)]"
-            style={{ left: '44.7%' }}
+            style={{ left: `${motionFloorPct}%` }}
             title="10.5V Motion Floor"
           >
             <span className="absolute top-[-11px] left-[-4px] font-mono text-[6px] text-amber-500 font-bold scale-[0.8]">10.5</span>
@@ -354,6 +361,24 @@ export function SafetyStrip() {
                   ? 'LOW - CHARGE FIRST'
                   : 'Ok'}
           </span>
+          {/* Measured pack current — absent (not 0.0 A) until a publisher
+              fills power_supply_status; positive = charging. */}
+          {current !== null && (
+            <span
+              className={clsx(
+                'font-bold',
+                isChargingNow ? 'text-emerald-400' : 'text-ink-dim',
+              )}
+              title={
+                isChargingNow
+                  ? 'INA219 pack current — charging'
+                  : 'INA219 pack current — discharging/idle'
+              }
+            >
+              {isChargingNow ? 'CHG ' : ''}
+              {(current * 1000).toFixed(0)} mA
+            </span>
+          )}
         </div>
       </div>
     </motion.section>

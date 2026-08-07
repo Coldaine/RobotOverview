@@ -1,4 +1,4 @@
-"""BEAST-01 UPS Module 3S power telemetry package."""
+"""BEAST-01 driver-board INA219 power telemetry package."""
 
 __all__ = [
     'soc',

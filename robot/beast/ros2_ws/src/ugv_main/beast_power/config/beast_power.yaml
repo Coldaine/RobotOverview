@@ -1,13 +1,20 @@
-# BEAST-01 UPS Module 3S → Orin I²C defaults (Wave 1 scaffold).
-# Wave 2 hardware session must confirm bus (/dev/i2c-X) and INA219 address
-# via i2cdetect after wiring UPS header pins 3/7/8 → Jetson J12 6/5/3.
+# BEAST-01 driver-board INA219 → Orin I²C. Verified live 2026-08-07: it answers on
+# /dev/i2c-7 at address 0x41 (config register read 0x399F, the datasheet reset
+# value — a genuine, unconfigured part). 0x40 was a LeoRover default and is wrong
+# for this board.
 beast_power:
   ros__parameters:
     i2c_bus_nr: 7
-    sensor_address: 0x40
+    # Decimal 65 = 0x41. Written decimal because rcl's YAML param parser has
+    # never been exercised with hex here — the bench run used CLI overrides —
+    # and a string-parsed "0x41" would kill the node on declared-type mismatch.
+    sensor_address: 65
     data_publish_rate: 1.0
-    # Flip to -1.0 if shunt orientation reports discharge as positive.
+    # Verified 2026-08-07: connecting the charger stepped current +108 mA, so
+    # positive = charging holds and 1.0 is correct for this board.
     current_sign: 1.0
+    # PROVISIONAL — inherited guess, not measured. Set from logged charge data
+    # (power_log.py runs) before trusting CHARGING_LOCK decisions built on it.
     charging_current_threshold_a: 0.05
     voltage_topic: /ugv/voltage
     charging_topic: /ugv/charging_active

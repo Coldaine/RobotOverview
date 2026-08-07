@@ -1,16 +1,17 @@
 """UGV bringup — ESP32 serial bridge + sensor republish (runs on the Jetson).
 
 Telemetry honesty (see also RobotOverview docs/beast-ops.md Quick connect):
-  REAL     /ugv/voltage.voltage — pack bus volts from ESP32 JSON "v"
-  FAKE     /ugv/voltage.percentage — V/12.6, not state-of-charge
-  DUMMY    BatteryState current/charge/capacity/temperature/power_supply_status
+  MOVED    /ugv/voltage is owned by beast_power (driver-board INA219, real volts
+           + signed current + status) since the 2026-08-07 cutover. This node no
+           longer publishes BatteryState — its old percentage was a fake V/12.6.
+  REAL     ESP32 JSON "v" is still read here, but only to gate the low-battery
+           voice warning (its ADC reads ~1.2% low vs the INA219).
   ASSUMED  IMU/mag LSB scales (vendor ICM-20948); odom odl/odr ÷100 as cm→m
   HACK     cmd_vel zero-drop after N zeros; ±0.2 yaw deadband boost
-  MISSING  true SOC / charging — needs UPS Module 3S I²C telemetry → Orin
 
-Calibration: do not "tune" FAKE/DUMMY fields. Vendor IMU scales are fine to start
+Calibration: do not "tune" ASSUMED fields. Vendor IMU scales are fine to start
 (spot-check 1 g at rest). Calibrate wheel odom / EKF before mapping. Mag only if
-using compass. Wire UPS I²C before trusting charge/% .
+using compass.
 
 Deploy to beast-01: edit RobotOverview/robot/beast/ros2_ws → merge the
 RobotOverview PR → pull ~/beast/RobotOverview → build the ROS subtree → restart
@@ -25,7 +26,7 @@ from rcl_interfaces.msg import SetParametersResult
 from std_msgs.msg import Header, Bool, Float32MultiArray
 from std_srvs.srv import SetBool
 from geometry_msgs.msg import Twist
-from sensor_msgs.msg import Imu, MagneticField, JointState, BatteryState
+from sensor_msgs.msg import Imu, MagneticField, JointState
 from diagnostic_msgs.msg import DiagnosticStatus, KeyValue
 
 import os
@@ -90,7 +91,8 @@ class ugv_bringup(Node):
         self.imu_data_raw_publisher_ = self.create_publisher(Imu, "imu/raw", 20)
         self.imu_mag_publisher_ = self.create_publisher(MagneticField, "imu/mag", 20)
         self.odom_publisher_ = self.create_publisher(Float32MultiArray, "odom/odom_raw", 20)
-        self.voltage_publisher_ = self.create_publisher(BatteryState, "ugv/voltage", 20)
+        # /ugv/voltage is beast_power's (sole owner since 2026-08-07). The ESP32
+        # "v" field is still consumed below, but only for the voice warning.
         self._low_battery_warn_interval = 5.0
         self._last_low_battery_warn = 0.0
 
@@ -338,7 +340,7 @@ class ugv_bringup(Node):
                 if data and data["T"] == 1001:
                     self.publish_imu_mag()
                     self.publish_odom_raw()
-                    self.publish_voltage()
+                    self.check_low_battery()
                     self.publish_imu_data_raw()
                 
             except Exception as e:
@@ -451,24 +453,12 @@ class ugv_bringup(Node):
         except Exception as e:
             self.get_logger().error(f"Failed low battery warning: {e}")
 
-    # Publish voltage data to the ROS topic "ugv/voltage"
-    def publish_voltage(self):
+    # ESP32 "v" (centivolts) drives only the low-battery voice warning now.
+    # BatteryState publishing moved to beast_power (2026-08-07 cutover) — the
+    # INA219 there measures the same rail plus real signed current.
+    def check_low_battery(self):
         voltage_data = self.base_controller.base_data
-        msg = BatteryState()
-        msg.header = Header()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = "base_link"
-        # REAL: pack bus voltage from ESP32 JSON field "v" (centivolts → volts).
-        msg.voltage = float(voltage_data["v"] / 100)
-        # FAKE: not state-of-charge. Linear open-circuit guess V / 12.6 V. Lies under load
-        # and while charging. No fuel gauge / UPS I²C current is wired to the Orin yet.
-        msg.percentage = float(voltage_data["v"] / 1260)
-        # DUMMY: left at BatteryState defaults — current, charge, capacity, temperature,
-        # power_supply_status (charging vs not) are unset/zero. present=True only means
-        # "we got a voltage sample," not "healthy pack."
-        msg.present = True
-        self.voltage_publisher_.publish(msg)
-        self._maybe_low_battery_warning(msg.voltage)
+        self._maybe_low_battery_warning(float(voltage_data["v"] / 100))
 
     # Callback for processing velocity commands m/s
     def cmd_vel_callback(self, msg):
@@ -627,20 +617,6 @@ class ugv_bringup(Node):
            
         self.base_controller.send_command(pt_steady_ctrl_data.encode())
 
-    # Callback for processing voltage data
-    def voltage_callback(self, msg):
-        voltage_value = msg.voltage
-
-        # If voltage drops below a threshold, play a low battery warning sound
-        if 0.1 < voltage_value < 9:
-            try:
-                subprocess.run(['spd-say', 'low battery'], check=True)
-                data = json.dumps({'T': '3', 'lineNum': 2, 'Text': f"V:{voltage_value}"}) + "\n"
-                self.base_controller.send_command(data.encode())
-            except Exception as e:
-                self.get_logger().error(f"Failed to say low battery warning: {e}")
-            time.sleep(5)
-                                    
 # Main function to initialize the ROS node and start spinning
 def main(args=None):
     rclpy.init(args=args)  # Initialize ROS

@@ -147,6 +147,52 @@ describe('rosClient and hooks', () => {
     expect(odomHook.result.current).toBe(initialOdom); // REFERENTIALLY EQUAL
   });
 
+  // BatteryState honesty gates (2026-08-07): current is a measurement only when
+  // the publisher fills power_supply_status; present=false is the publisher's
+  // own absent-sensor report and nulls the filler zeros it arrives with.
+  it('carries BatteryState current/status/present through the honesty gates', () => {
+    openSocket();
+    const voltageHook = renderHook(() => useCockpitVoltage());
+
+    // beast_power-style: real measurement, discharging at 30 mA.
+    act(() => {
+      MockWebSocket.latestInstance?.triggerMessage({
+        op: 'publish',
+        topic: '/ugv/voltage',
+        msg: { voltage: 12.07, current: -0.03, power_supply_status: 2, present: true },
+      });
+    });
+    expect(voltageHook.result.current.voltage).toBe(12.07);
+    expect(voltageHook.result.current.current).toBe(-0.03);
+    expect(voltageHook.result.current.powerSupplyStatus).toBe(2);
+    expect(voltageHook.result.current.present).toBe(true);
+
+    // bringup-style legacy dummy: current 0.0 with status UNKNOWN must NOT
+    // surface as a real 0.0 A draw.
+    act(() => {
+      MockWebSocket.latestInstance?.triggerMessage({
+        op: 'publish',
+        topic: '/ugv/voltage',
+        msg: { voltage: 11.5, current: 0.0, power_supply_status: 0, present: true },
+      });
+    });
+    expect(voltageHook.result.current.voltage).toBe(11.5);
+    expect(voltageHook.result.current.current).toBeNull();
+    expect(voltageHook.result.current.powerSupplyStatus).toBeNull();
+
+    // Absent-sensor report: the publisher's filler zeros never render as readings.
+    act(() => {
+      MockWebSocket.latestInstance?.triggerMessage({
+        op: 'publish',
+        topic: '/ugv/voltage',
+        msg: { voltage: 0.0, current: 0.0, power_supply_status: 0, present: false },
+      });
+    });
+    expect(voltageHook.result.current.voltage).toBeNull();
+    expect(voltageHook.result.current.current).toBeNull();
+    expect(voltageHook.result.current.present).toBe(false);
+  });
+
   // ── ROBOT MESSAGE-TYPE CONTRACT ───────────────────────────────────────────
   // DDS matches by type. A wrong type string means the robot's subscriber never
   // matches and the control is silently dead — the exact failure that left the

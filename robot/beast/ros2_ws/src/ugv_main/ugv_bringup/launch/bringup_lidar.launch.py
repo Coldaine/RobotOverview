@@ -7,6 +7,7 @@ from launch.substitutions import (
     Command,
     EnvironmentVariable,
     LaunchConfiguration,
+    PathJoinSubstitution,
     PythonExpression,
 )
 
@@ -100,6 +101,17 @@ def generate_launch_description():
     use_lidar_arg = DeclareLaunchArgument(
         'use_lidar', default_value='true',
         description='Whether to launch the LiDAR and laser odometry nodes'
+    )
+
+    use_power_arg = DeclareLaunchArgument(
+        'use_power', default_value='true',
+        description=(
+            'Start beast_power, the sole owner of /ugv/voltage since the '
+            '2026-08-07 cutover (driver-board INA219: real volts, signed '
+            'current, charging state). ugv_bringup no longer publishes '
+            'BatteryState. Also publishes /ugv/charging_active, which '
+            'ugv_safety_monitor consumes for CHARGING_LOCK.'
+        )
     )
 
     ekf_config = os.path.join(              
@@ -200,7 +212,26 @@ def generate_launch_description():
         parameters=[ekf_config],
         remappings=[('/odometry/filtered', '/odom')],
         condition=IfCondition(LaunchConfiguration('use_ekf'))
-    )    
+    )
+
+    # Sole owner of /ugv/voltage (INA219 on i2c-7). Requires the service user
+    # in the `i2c` group — see deploy/systemd/beast-ros-base.service.
+    # PathJoinSubstitution + FindPackageShare resolve lazily at node launch, so
+    # a workspace without beast_power built still boots the rest of the stack
+    # (get_package_share_directory here would crash the whole launch at import,
+    # even with use_power:=false).
+    power_node = Node(
+        package='beast_power',
+        executable='power_node',
+        name='beast_power',
+        output='screen',
+        parameters=[PathJoinSubstitution([
+            FindPackageShare('beast_power'),
+            'config',
+            'beast_power.yaml',
+        ])],
+        condition=IfCondition(LaunchConfiguration('use_power')),
+    )
 
     return LaunchDescription([
         pub_odom_tf_arg,
@@ -215,6 +246,7 @@ def generate_launch_description():
         use_safety_monitor_arg,
         interlock_override_arg,
         use_lidar_arg,
+        use_power_arg,
         robot_state_launch,
         laser_bringup_launch,
         rf2o_laser_odometry_launch,
@@ -223,4 +255,5 @@ def generate_launch_description():
         safety_monitor_node,
         base_node,
         ekf_node,
+        power_node,
     ])

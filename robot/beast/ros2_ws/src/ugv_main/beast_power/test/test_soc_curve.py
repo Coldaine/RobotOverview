@@ -28,8 +28,8 @@ def test_interpolation_between_knots():
     assert mid == pytest.approx(0.85, abs=0.02)
 
 
-def test_brownout_voltage_is_low_soc_not_fake_percent():
-    """2026-07-31 ~8.8 V incident: honest SOC is ~0, fake V/12.6 still looks ok."""
+def test_deep_discharge_is_low_soc_not_fake_percent():
+    """A deeply discharged pack: honest SOC ~0 while fake V/12.6 still reads ~70%."""
     v = 8.8
     assert voltage_to_soc(v) == pytest.approx(0.0)
     fake = legacy_fake_percentage(v)

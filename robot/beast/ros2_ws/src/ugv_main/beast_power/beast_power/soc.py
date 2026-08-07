@@ -8,8 +8,8 @@ Curve source (document in-code per PR-2a):
   resting OCV tables (≈4.20 V = 100 % … ≈3.00 V = 0 %), not a pack-specific
   fuel-gauge calibration from BEAST-01. Under load the bus sags and SOC will
   read low; under charge it reads high — that is expected for OCV-only SOC
-  until Wave 2 compares against the 2026-07-31 ~8.8 V brownout and refines
-  the table from logged samples.
+  until the table is refined from logged pack samples
+  (deploy/diagnostics/power_log.py, running since 2026-08-07).
 
 This module is pure Python (no rclpy / smbus) so CI and Windows pytest can
 exercise it without ROS.

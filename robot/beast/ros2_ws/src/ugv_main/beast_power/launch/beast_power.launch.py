@@ -1,10 +1,11 @@
 # Copyright 2026 Coldaine
 # SPDX-License-Identifier: Apache-2.0
-"""Launch beast_power alone — do not co-publish /ugv/voltage with ugv_bringup.
+"""Launch beast_power alone (bench/diagnostic use).
 
-Wave 1 / PR-2a coexistence: stock bringup still invents BatteryState on
-/ugv/voltage. This launch is for offline bench / explicit sole-owner trials.
-PR-2b removes bringup's publisher and wires this into bringup launch.
+Since the 2026-08-07 cutover the normal path is bringup_lidar.launch.py, which
+starts this node under its ``use_power`` argument; ugv_bringup no longer
+publishes BatteryState. Use this standalone launch only when running the power
+node without the rest of the stack.
 """
 
 import os

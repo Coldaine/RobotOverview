@@ -80,7 +80,9 @@ export function TelemetryRow() {
     }
 
     const getValY = (v: number) => {
-      const minV = 8.8;
+      // 9.0 V = 3.0 V/cell OCV-table floor (table-derived; the former 8.8 V
+      // bound was an unsourced brownout figure, removed 2026-08-07).
+      const minV = 9.0;
       const maxV = 12.6;
       return H - ((v - minV) / (maxV - minV)) * H;
     };
