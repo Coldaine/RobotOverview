@@ -75,26 +75,8 @@ def generate_launch_description():
     allow_motion_arg = DeclareLaunchArgument(
         'allow_motion', default_value='true',
         description=(
-            'Permit non-zero cmd_vel commands by default. Active Ethernet or '
-            'charging interlocks may disable it through /ugv/set_allow_motion.'
-        )
-    )
-
-    use_safety_monitor_arg = DeclareLaunchArgument(
-        'use_safety_monitor', default_value='true',
-        description=(
-            'Start ugv_safety_monitor (ethernet/charging interlocks as a '
-            'client of /ugv/set_allow_motion). It disables motion only when '
-            'an interlock is observed.'
-        )
-    )
-
-    interlock_override_arg = DeclareLaunchArgument(
-        'interlock_override', default_value='false',
-        description=(
-            'Startup-only maintenance override for ethernet/charging '
-            'interlocks. Requires a process restart; never expose as a ROS '
-            'service and never default true.'
+            'Permit non-zero cmd_vel commands by default. Toggle at runtime '
+            'via the /ugv/set_allow_motion service (e.g. from the cockpit UI).'
         )
     )
 
@@ -109,8 +91,7 @@ def generate_launch_description():
             'Start beast_power, the sole owner of /ugv/voltage since the '
             '2026-08-07 cutover (driver-board INA219: real volts, signed '
             'current, charging state). ugv_bringup no longer publishes '
-            'BatteryState. Also publishes /ugv/charging_active, which '
-            'ugv_safety_monitor consumes for CHARGING_LOCK.'
+            'BatteryState. Also publishes /ugv/charging_active.'
         )
     )
 
@@ -178,20 +159,6 @@ def generate_launch_description():
             ),
         }]
     )
-    # Client of /ugv/set_allow_motion — never a second motion authority.
-    safety_monitor_node = Node(
-        package='ugv_cockpit',
-        executable='ugv_safety_monitor',
-        name='ugv_safety_monitor',
-        output='screen',
-        parameters=[{
-            'ethernet_interface': LaunchConfiguration('ethernet_interface'),
-            'interlock_override': ParameterValue(
-                LaunchConfiguration('interlock_override'), value_type=bool
-            ),
-        }],
-        condition=IfCondition(LaunchConfiguration('use_safety_monitor')),
-    )
     # Define the nodes to be launched
     base_node = Node(
         package='ugv_bringup',
@@ -243,8 +210,6 @@ def generate_launch_description():
         wifi_interface_arg,
         ethernet_interface_arg,
         allow_motion_arg,
-        use_safety_monitor_arg,
-        interlock_override_arg,
         use_lidar_arg,
         use_power_arg,
         robot_state_launch,
@@ -252,7 +217,6 @@ def generate_launch_description():
         rf2o_laser_odometry_launch,
         twist_mux_launch,
         bringup_node,
-        safety_monitor_node,
         base_node,
         ekf_node,
         power_node,
