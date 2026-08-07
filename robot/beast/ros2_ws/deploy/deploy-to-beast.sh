@@ -15,15 +15,15 @@
 #   2. colcon build --symlink-install the affected packages
 #      (default: beast_power beast_base ugv_bringup ugv_cockpit — the base
 #      service set).
-#   3. install deploy/systemd units into /etc/systemd/system, daemon-reload,
-#      restart beast-ros-base + beast-cockpit (one sudo prompt, via `ssh -t`).
+#   3. install deploy/storage payloads and systemd units, daemon-reload,
+#      restart beast-ros-base and try-restart beast-cockpit (one sudo prompt).
 #   4. verify the live graph (see --verify-only below) and print a dated
 #      evidence block to paste into docs/beast-ops.md "Quick connect".
 #
 # --verify-only runs only step 4 (no sudo, read-only). Use it any time to
 # detect drift between the repo and the robot — the checks below encode the
 # contract the merged code promises:
-#   * beast-ros-base + beast-cockpit active
+#   * beast-ros-base active; beast-cockpit active unless intentionally disabled
 #   * beast_power running and the SOLE publisher of /ugv/voltage
 #   * /ugv/charging_active has a publisher
 #   * ugv_safety_monitor is gone (strip 2026-08-07)
@@ -69,7 +69,16 @@ bad()  { printf 'FAIL  %s\n' "$*"; fail=1; }
 warn() { printf 'WARN  %s\n' "$*"; }
 
 for svc in beast-ros-base beast-cockpit; do
-  [ "$(systemctl is-active "$svc")" = active ] && ok "$svc active" || bad "$svc not active"
+  svc_state="$(systemctl is-active "$svc" 2>/dev/null || true)"
+  if [ "$svc" = beast-cockpit ] \
+      && [ "$svc_state" = inactive ] \
+      && [ "$(systemctl is-enabled "$svc" 2>/dev/null || true)" = disabled ]; then
+    warn "$svc inactive (operator-disabled)"
+  elif [ "$svc_state" = active ]; then
+    ok "$svc active"
+  else
+    bad "$svc ${svc_state:-not active}"
+  fi
 done
 
 nodes="$(ros2 node list 2>/dev/null || true)"
@@ -99,8 +108,22 @@ else
   ok "INA219 configured ($cfg)"
 fi
 
-stamp="$(timeout 6 ros2 topic echo --once /ugv/voltage 2>/dev/null | awk '/^voltage:/ {print $2; exit}')"
-[ -n "$stamp" ] && ok "/ugv/voltage live: ${stamp} V" || warn "no /ugv/voltage sample within 6 s"
+sample="$(timeout 6 ros2 topic echo --once /ugv/voltage 2>/dev/null || true)"
+sample_present="$(printf '%s\n' "$sample" | awk -F': ' '/^[[:space:]]*present:/ {print $2; exit}')"
+sample_voltage="$(printf '%s\n' "$sample" | awk -F': ' '/^[[:space:]]*voltage:/ {print $2; exit}')"
+case "$sample_present" in
+  true)
+    [ -n "$sample_voltage" ] \
+      && ok "/ugv/voltage live: ${sample_voltage} V" \
+      || bad "/ugv/voltage present=true but voltage is missing"
+    ;;
+  false)
+    bad "/ugv/voltage reports INA219 absent"
+    ;;
+  *)
+    warn "no usable /ugv/voltage sample within 6 s"
+    ;;
+esac
 
 exit "$fail"
 REMOTE
@@ -112,30 +135,41 @@ if [ "$VERIFY_ONLY" = 1 ]; then
 fi
 
 say "1/4 sync robot checkout to $REF"
-ssh "${ssh_opts[@]}" "$HOST" "bash -lc '
-  set -euo pipefail
-  git -C \"$REPO_DIR\" fetch origin --prune
-  if [ -n \"\$(git -C \"$REPO_DIR\" status --porcelain)\" ]; then
-    echo \"on-robot tree is dirty; refusing to deploy\" >&2
-    exit 1
-  fi
-  git -C \"$REPO_DIR\" rev-parse --verify \"$REF^{commit}\" >/dev/null
-  git -C \"$REPO_DIR\" merge --ff-only \"$REF\"
-  git -C \"$REPO_DIR\" log --oneline -1
-'"
+ssh "${ssh_opts[@]}" "$HOST" bash -s -- "$REPO_DIR" "$REF" <<'REMOTE'
+set -euo pipefail
+repo_dir="$1"
+ref="$2"
+
+git -C "$repo_dir" fetch origin --prune
+if [ -n "$(git -C "$repo_dir" status --porcelain --untracked-files=all)" ]; then
+  echo "on-robot tree is dirty; refusing to deploy" >&2
+  exit 1
+fi
+
+target_sha="$(git -C "$repo_dir" rev-parse --verify "$ref^{commit}")"
+git -C "$repo_dir" merge --ff-only "$ref"
+actual_sha="$(git -C "$repo_dir" rev-parse HEAD)"
+if [ "$actual_sha" != "$target_sha" ]; then
+  echo "checkout is at $actual_sha, not requested ref $target_sha; refusing to build" >&2
+  exit 1
+fi
+git -C "$repo_dir" log --oneline -1
+REMOTE
 
 say "2/4 colcon build: $PACKAGES"
 ssh "${ssh_opts[@]}" "$HOST" "bash -lc 'cd \"$WS_DIR\" \
   && source /opt/ros/humble/setup.bash \
   && colcon build --packages-select $PACKAGES --symlink-install'"
 
-say "3/4 install systemd units + restart (sudo password prompt)"
+say "3/4 install storage/systemd units + restart (sudo password prompt)"
 # One ssh session so a single sudo timestamp covers install, reload, restart.
 ssh -t "$HOST" "sudo -v \
   && sudo install -m 0644 '$WS_DIR'/deploy/systemd/*.service /etc/systemd/system/ \
   && sudo install -m 0644 '$WS_DIR'/deploy/systemd/*.timer /etc/systemd/system/ \
+  && sudo '$WS_DIR'/deploy/storage/install.sh --apply \
   && sudo systemctl daemon-reload \
-  && sudo systemctl restart beast-ros-base beast-cockpit \
+  && sudo systemctl restart beast-ros-base \
+  && sudo systemctl try-restart beast-cockpit \
   && sleep 20"
 
 say "4/4 post-deploy verification"
