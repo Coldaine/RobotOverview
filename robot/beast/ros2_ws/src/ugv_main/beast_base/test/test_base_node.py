@@ -342,6 +342,10 @@ def test_boot_stop_is_unconditional_and_precedes_allow_motion_publisher(
     node.create_publisher = record_create_publisher
     node.create_subscription = lambda *args, **kwargs: None
     node.create_service = lambda *args, **kwargs: None
+    timers = []
+    node.create_timer = lambda period, cb, *args, **kwargs: timers.append(
+        (period, cb)
+    )
     node.declare_parameter = lambda *args, **kwargs: None
     node.get_parameter = make_param_value
     node.add_on_set_parameters_callback = lambda *args, **kwargs: None
@@ -375,6 +379,14 @@ def test_boot_stop_is_unconditional_and_precedes_allow_motion_publisher(
     assert timeline.index('stop') < timeline.index('publisher:/ugv/allow_motion')
     after_stop = timeline[timeline.index('stop') + 1:]
     assert after_stop == ['publisher:/ugv/allow_motion']
+    # The 1 Hz allow_motion heartbeat exists: cockpit_status judges bringup
+    # liveness by message freshness (BRINGUP_STALE_S = 3 s), so the latched
+    # gate value must be republished or the cockpit reports UNKNOWN forever
+    # (observed live 2026-08-07).
+    assert any(
+        period == 1.0 and callback == node.publish_allow_motion
+        for period, callback in timers
+    )
 
 
 def test_no_watchdog_release_path_can_leave_the_robot_running(monkeypatch):
@@ -422,6 +434,7 @@ def test_no_watchdog_release_path_can_leave_the_robot_running(monkeypatch):
     node.create_publisher = record_create_publisher
     node.create_subscription = lambda *args, **kwargs: None
     node.create_service = lambda *args, **kwargs: None
+    node.create_timer = lambda *args, **kwargs: None
     node.declare_parameter = lambda *args, **kwargs: None
     node.get_parameter = make_param_value
     node.add_on_set_parameters_callback = lambda *args, **kwargs: None

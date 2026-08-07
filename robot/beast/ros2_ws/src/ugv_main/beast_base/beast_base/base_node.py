@@ -159,6 +159,16 @@ class BeastBaseNode(Node):
             Bool, '/ugv/allow_motion', safety_qos
         )
         self.publish_allow_motion()
+
+        # 1 Hz heartbeat of the same latched value. TRANSIENT_LOCAL durability
+        # delivers to LATE subscribers, but cockpit_status judges bringup
+        # liveness by message FRESHNESS (BRINGUP_STALE_S = 3 s): a sample
+        # published once at startup ages out and the cockpit reports
+        # allow_motion UNKNOWN forever — observed live on the robot
+        # 2026-08-07. The heartbeat is that liveness signal, not ceremony.
+        self._allow_motion_heartbeat = self.create_timer(
+            1.0, self.publish_allow_motion
+        )
         self.create_service(
             SetBool, '/ugv/set_allow_motion', self._set_allow_motion_cb
         )
