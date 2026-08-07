@@ -75,7 +75,9 @@ export function CommandRail() {
     ? 'robot unreachable'
     : status.allowMotion === false
       ? 'motion disarmed — RE-ARM in the safety strip'
-      : bridge.deadTopics.includes('/cmd_vel_ui')
+      : status.allowMotion !== true
+        ? 'motion state unknown — waiting for /ugv/allow_motion'
+        : bridge.deadTopics.includes('/cmd_vel_ui')
         ? 'bridge refused /cmd_vel_ui'
         : null;
   const driveEnabled = driveGateReason === null;
@@ -92,11 +94,11 @@ export function CommandRail() {
   /**
    * Release the drive. Publishes exactly ONE zero Twist and then goes silent.
    *
-   * WHY ONE AND NOT A STREAM OF ZEROS: ugv_bringup drops zero-Twists after 5
-   * consecutive zeros (documented robot-side quirk), so spamming zeros is not a
-   * stop guarantee — it is a stop *request* the robot will start ignoring.
-   * Silence is the real mechanism: twist_mux expires this source after 0.5 s
-   * with no message. The single zero is a courtesy for the fast path.
+   * WHY ONE AND NOT A STREAM OF ZEROS: the ESP32 may retain its last command
+   * when this source goes silent, so repeated zeros are not a substitute for
+   * the robot-side allow_motion gate, an operator stop, or the boot stop.
+   * The single zero is the normal stop request; the gate and confirmed stop
+   * paths provide the safety behavior when a command source disappears.
    */
   const clearDriveIntent = useCallback(() => {
     if (driveTimerRef.current !== null) {
