@@ -23,6 +23,9 @@ disagree, the code is right and the plan is stale.
   and strip-down sequence. Not an executable work order; research reasoning, not a plan.
 - Datacore briefings `artifact-intake` / `beast-evidence-manifest` — identity index and
   evidence register for `keyArtifactstosort/` (formerly markdown registers; read in Datacore)
+- Datacore briefing `beast-ros2-stack-review-2026-08-07` — BEAST-01 ROS 2 stack map and
+  reuse review (formerly `robot/beast/ros2_ws/docs/ros2-stack-review-2026-08-07.md`; read in
+  Datacore)
 - `keyArtifactstosort/Artifacts/ros-driver/` — traced-connectivity extraction outputs
   (the executed work of the deleted enumeration plan; Phase 3 of the wiring plan lands it)
 - `keyArtifactstosort/agents.md` — binaries-only retention for that tree

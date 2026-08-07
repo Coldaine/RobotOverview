@@ -68,7 +68,7 @@ export function CommandRail() {
   // Motion is disabled when the robot is disarmed (via /ugv/set_allow_motion,
   // an operator action in the safety strip), or when the bridge refuses the
   // drive topic. No automatic charging/Ethernet interlock — that apparatus
-  // (ugv_safety_monitor) was removed 2026-08-07; charging/Ethernet state is
+  // (ugv_safety_monitor) was removed 2026-08-07; charging/Ethernet state
   // remain telemetry fields when a publisher supplies them, but they never
   // block driving here.
   const driveGateReason: string | null = !connected

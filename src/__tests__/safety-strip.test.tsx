@@ -135,4 +135,35 @@ describe('SafetyStrip motion authority', () => {
     });
     expect(mocks.setMotionAllowed).toHaveBeenCalledWith(true);
   });
+
+  it('suppresses the RE-ARM hold while UNCONFIRMED', async () => {
+    mocks.allowMotion = false;
+    mocks.setMotionAllowed.mockResolvedValue({ ok: false, message: 'bridge refused' });
+    render(<SafetyStrip />);
+    const button = screen.getByRole('button', { name: /RE-ARM/i });
+
+    // A failed RE-ARM (service refused) leaves the robot state unknown.
+    await act(async () => {
+      fireEvent.pointerDown(button);
+      vi.advanceTimersByTime(2_000);
+      fireEvent.pointerUp(button);
+    });
+
+    expect(within(motionState()).getByText('UNCONFIRMED')).toBeInTheDocument();
+
+    // While UNCONFIRMED the button must not re-arm: the hold is suppressed.
+    mocks.setMotionAllowed.mockClear();
+    fireEvent.pointerDown(button);
+    await act(async () => {
+      vi.advanceTimersByTime(2_500);
+    });
+    fireEvent.pointerUp(button);
+    expect(mocks.setMotionAllowed).not.toHaveBeenCalled();
+
+    // The safe direction stays available: a click retries DISARM.
+    await act(async () => {
+      fireEvent.click(button);
+    });
+    expect(mocks.setMotionAllowed).toHaveBeenCalledWith(false);
+  });
 });
