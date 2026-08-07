@@ -4,7 +4,7 @@
   <name>beast_power</name>
   <version>0.1.0</version>
   <description>
-    BEAST-01 UPS Module 3S power telemetry: INA219 over I²C → honest
+    BEAST-01 driver-board INA219 power telemetry: INA219 over I²C → honest
     sensor_msgs/BatteryState on /ugv/voltage and std_msgs/Bool on
     /ugv/charging_active. Vendored/adapted from LeoRover charging_monitor.
   </description>

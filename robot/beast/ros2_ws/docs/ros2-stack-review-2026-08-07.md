@@ -55,8 +55,7 @@ IMU ──> /imu/data (yaw rate only) ──────────────
 
 driver-board INA219 ──> beast_power ──> /ugv/voltage + /ugv/charging_active
                                                                │
-Ethernet carrier ──> ugv_safety_monitor ──┐                    │
-charging topic ───────────────────────────┴──> /ugv/set_allow_motion
+charging topic ────────────────────────────────> /ugv/charging_active (observability only)
 
 OAK-D / USB camera ──> depthai_ros_driver / v4l2_camera ──> cockpit and vision nodes
 rosbridge (loopback) ──> allowlisted Hangar browser topics/services
@@ -68,7 +67,7 @@ rosbridge (loopback) ──> allowlisted Hangar browser topics/services
 |---|---|---|---|
 | `ugv_bringup` | ESP32 serial protocol, JSON `T=13` velocity command, encoder/IMU decoding, motion gate, watchdog, LED and board telemetry | `robot_localization`, `tf2`, standard ROS messages | Keep the hardware boundary. Reduce only the estimator/launch boilerplate after live calibration. |
 | `beast_power` | INA219 register access, signed current interpretation, charging heuristic, SOC model, honest `BatteryState` contract | `sensor_msgs/BatteryState`; `diagnostic_updater` can add health reporting | Keep. No generic package identified that knows this board wiring and semantics. |
-| `ugv_cockpit` | Safety monitor, interlock policy, restricted rosbridge adapter, cockpit status/depth nodes, command-spine launch | `twist_mux`, Nav2 behaviors, collision monitor, velocity smoother, `cv_bridge` | Keep the policy and boundary. Use upstream nodes inside it; do not replace Hangar's operator surface with a generic dashboard. |
+| `ugv_cockpit` | Restricted rosbridge adapter, cockpit status/depth nodes, command-spine launch | `twist_mux`, Nav2 behaviors, collision monitor, velocity smoother, `cv_bridge` | Keep the policy and boundary. Use upstream nodes inside it; do not replace Hangar's operator surface with a generic dashboard. |
 | `ugv_description` | BEAST/Rover URDF, meshes, frames, sensor mounts, pan-tilt model | `xacro`, `robot_state_publisher`, `joint_state_publisher`, `tf2`, `ros2_control` | Keep robot geometry; remove only duplicated description plumbing. |
 | `ugv_gazebo` | Project-specific model/world and sim launch | `ros_gz`, `gz_ros2_control`, `robot_state_publisher`, standard controllers | Keep as a thin project wrapper. Prefer Harmonic path; retain Classic only if a tested use case still needs it. |
 | `ugv_nav` | Nav2 launch/config selection, map and localization wiring, legacy controller options | Nav2/Nav2 Bringup, AMCL, map server, RPP, MPPI, collision monitor, lifecycle manager | Trim wrapper complexity and make one supported default. Do not blindly delete alternatives before checking map/mission users. |
@@ -106,7 +105,7 @@ The report's recommendation is not to create local replacements for these packag
 
 **Already adopted:** [`robot_localization`](https://github.com/cra-ros-pkg/robot_localization) remains the correct estimator. The opportunity is calibration and clean configuration, not replacing it.
 
-**Complement:** [`diagnostic_updater`](https://github.com/ros/diagnostics) and the diagnostics ecosystem can expose serial link, encoder, IMU, watchdog, and battery health. They should complement—not replace—the custom `allow_motion` authority or the hard stop path.
+**Complement:** [`diagnostic_updater`](https://github.com/ros/diagnostics) and the diagnostics ecosystem can expose serial link, encoder, IMU, watchdog, and battery health. They are observability only; they must not become a second motion authority or replace the hard stop path.
 
 ### 2. Safety and command arbitration
 
@@ -115,7 +114,6 @@ The report's recommendation is not to create local replacements for these packag
 The custom safety pieces are not generic mux functionality:
 
 - `ugv_bringup` owns `allow_motion` and the downstream watchdog.
-- `ugv_safety_monitor` converts Ethernet/charging interlocks into a disarm request.
 - Hangar owns the browser/operator confirmation and re-arm UX.
 - The rosbridge adapter restricts publish/service surfaces before commands reach the mux.
 
@@ -174,6 +172,54 @@ Do not swap to `rplidar_ros` or `ydlidar_ros2_driver` unless the physical sensor
 
 **Recommendation:** treat this as a separate firmware project. The existing JSON protocol is a known boundary; replacing it to reduce Python code is not automatically safer or simpler. Do not start micro-ROS work until the current command/encoder contract is documented and tested.
 
+## Correction: `beast_power` is both risky and overbuilt
+
+The first version of this review undercalled this package. `beast_power` is not a large subsystem, but it is large for what it does: one INA219, one `BatteryState`, and one charging boolean.
+
+| Surface | Lines |
+|---|---:|
+| Production Python (`ina219.py`, `power_node.py`, `telemetry.py`, `soc.py`) | 555 |
+| Tests | 233 |
+| Package/config/launch/docs/notices | about 188 |
+| Total package surface excluding caches/bytecode | about 976 |
+
+Some of that is legitimate testability and license documentation. The production shape is still over-factored: a 187-line driver contains an in-production fake bus, a 206-line node duplicates ROS parameter/message plumbing, and a 105-line telemetry adapter duplicates most of `sensor_msgs/BatteryState` only to copy it back into a ROS message. The standalone launch file, four-layer telemetry model, historical fake-SOC helper, and repeated cutover prose add more surface than the hardware boundary warrants.
+
+### Actual correctness issues
+
+1. **The current/power calibration is explicitly unverified.** `ina219.py:33-36` hard-codes `RSHUNT = 0.1` and derives the calibration from that value, while the comment says it is an inherited LeoRover default. Until the physical driver-board shunt is measured or its schematic confirms 0.1 Ω, current and power are estimates—not INA219 ground truth. The code should make shunt resistance a verified configuration value or refuse to call the result calibrated.
+
+2. **Sensor failure is reported as `charging_active=false`.** `telemetry.py:76-92` deliberately converts an absent/failed sensor into `charging_active=False`; `power_node.py:154-159` publishes that value every cycle. The current branch no longer uses this topic as a motion interlock, but consumers can still mistake false for a healthy “not charging” reading. Unknown sensor state needs a distinct validity contract.
+
+3. **The charging signal is only a current threshold, not charger detection.** `telemetry.py:53-61` calls any current at or above 50 mA “charging.” There is no charger-presence input, debounce, hysteresis, or dwell time. Keep this topic observational until those semantics are measured and documented.
+
+4. **The SOC is an uncalibrated voltage guess.** `soc.py:5-12` admits the table is a generic NMC/Li-ion OCV curve and not a BEAST pack calibration. Bus voltage under load and charge is not open-circuit voltage. Publishing that value as `BatteryState.percentage` is acceptable only if every consumer treats it as an estimate; it should not be described as battery ground truth. Removing SOC from the authoritative contract until it is calibrated would make the package more honest and smaller.
+
+5. **Several `BatteryState` fields overclaim what the sensor proves.** A responding INA219 establishes that the monitor is reachable, not necessarily that a battery is present or healthy. `telemetry.py:110-114` sets `present=True` and `power_supply_health=GOOD` whenever a read succeeds. Health should remain `UNKNOWN` unless there is a real health signal; `present` needs a defined electrical criterion or an explicit “sensor present” interpretation outside `BatteryState`.
+
+6. **The failure values are partly indistinguishable from real values.** The absent path publishes `voltage=0.0`, `current=0.0`, and `charging_active=false`, while only percentage/capacity-like fields become NaN. Consumers that do not honor `present` can read “zero current, not charging” rather than “measurement unavailable.” The telemetry contract needs an explicit validity state.
+
+7. **The read exception path is incomplete.** If `ensure_ready()` succeeds and `Ina219.read()` then raises, `power_node.py:188-191` logs and publishes absent status but leaves `_sensor_ok=True` and the bus open. The next cycle may recover through `ensure_ready()`, but the error path should close/invalidate the connection and schedule reconnection immediately. Malformed register buffers can also raise `struct.error`, which is not handled alongside `OSError`.
+
+8. **The fake bus does not test the important bus contract.** `FakeSMBus` ignores the I²C address, allows reads/writes without checking that the bus is open, and always returns correctly sized buffers. The tests prove the model against its own fake, not the address/open/short-read failure modes that matter on the Jetson. That is test scaffolding, not evidence of hardware correctness.
+
+9. **The package documentation had contradicted the active configuration.** Earlier text said `0x40` and “UPS Module 3S” while runtime uses driver-board INA219 at `0x41`; this branch corrects those labels and the build-path note.
+
+### What I would keep and what I would remove
+
+Keep a local driver because no maintained ROS 2 community INA219 package matches this board and contract. The alternatives found are either stale/low-adoption (`Pet-Series` is 2023-era and generic), ROS 1, or only a `ros2_control` BatteryState broadcaster that still requires a hardware sensor interface. Reusing one would not remove the board calibration and failure-policy work.
+
+Strip the package to a direct path:
+
+- one small INA219 adapter with verified bus/address/shunt configuration;
+- one node that reads, validates, publishes voltage/current, and emits an explicit health/validity state;
+- a small optional SOC estimator kept out of safety decisions, or removed until the pack curve is measured;
+- tests for conversion math plus a real Jetson smoke test for address, register values, disconnect, reconnect, and publisher ownership.
+
+Move `FakeSMBus` to test support, remove the legacy fake-percentage helper from runtime code, collapse the duplicate `BatteryTelemetry` field bag where it does not add policy, and avoid making a generic `BatteryState` field look authoritative when the hardware cannot measure it.
+
+**Revised disposition:** keep the package boundary, but do not approve the current implementation as “ground truth” or as finished. Fix calibration/validity semantics first; then reduce the implementation before adding more features.
+
 ## Vendored `ugv_else` assessment
 
 `ugv_else` is a mixed collection of upstream and third-party code, not one coherent BEAST subsystem. The current build scripts compile many packages even when only a subset is on the baseline bringup path.
@@ -210,21 +256,21 @@ Before shipping a combined image or redistributing source/binaries, perform a de
 
 ## Concrete findings that must be resolved before calling the stack coherent
 
-### P0: `beast_power` is enabled by the service but omitted from both build scripts
+### P0 resolved in this branch: `beast_power` was enabled by the service but omitted from both build scripts
 
 `bringup_lidar.launch.py` defaults `use_power:=true` and creates the `beast_power/power_node`. `beast-ros-base.service` launches that bringup with no `use_power:=false` override. However:
 
-- `build_first.sh` does not include `beast_power` in either `colcon build` package list.
-- `build_common.sh` does not include `beast_power` in its selectable package list.
+- Before this branch, `build_first.sh` did not include `beast_power` in either `colcon build` package list.
+- Before this branch, `build_common.sh` did not include `beast_power` in its selectable package list.
 - The documented robot checkout was `6ef4a48`, three commits behind the cutover at audit time.
 
-The INA219 cutover is therefore in the repository but not proven deployed. A fresh build/install can fail to find the package, or a stale install can run without the new node. Add the package to the build/deploy path, rebuild, reinstall the service, and prove the live graph and publisher ownership before treating battery telemetry as current.
+The branch now adds the package and `python3-smbus2` to the build path. A robot rebuild and live publisher-ownership proof are still required before treating the cutover as deployed.
 
-### P1: documentation still contains pre-cutover battery and cockpit claims
+### P1 resolved in this branch: documentation contained pre-cutover battery and cockpit claims
 
 `docs/beast-ops.md` contains old text describing fake `/ugv/voltage` fields and an unwired UPS, despite the newer cutover section describing INA219 ground truth. It also contains cockpit deployment wording that conflicts with the current systemd unit, which is explicitly disabled by default.
 
-The `beast_power/package.xml` description also still calls the package “UPS Module 3S” even though the implementation and cutover are for the driver-board INA219. That label should be corrected with the same documentation pass.
+This branch corrects the package description, README address, build note, and current interlock wording. Older historical sections in `docs/beast-ops.md` remain dated evidence rather than current deployment claims.
 
 The stale passages must be corrected or removed. They are dangerous because they make a future operator either distrust real telemetry or assume that a remote command surface is active when it is not.
 
@@ -271,7 +317,7 @@ These are the right next tests because they cover cross-layer boundaries. More p
    - `beast_power` is running;
    - `/ugv/voltage` has one publisher;
    - `BatteryState.voltage`, signed current, presence, and charging state match INA219 register evidence;
-   - `ugv_safety_monitor` reacts correctly to charging and Ethernet interlocks;
+   - `/ugv/charging_active` is published for observability only and does not control motion;
    - motion remains stopped when the gate is disarmed.
 4. Correct the stale ops documentation and add the deployment result as dated evidence.
 

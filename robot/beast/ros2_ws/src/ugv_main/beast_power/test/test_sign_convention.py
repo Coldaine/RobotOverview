@@ -27,6 +27,12 @@ def test_is_charging_rejects_negative_threshold():
         is_charging(0.1, -0.01)
 
 
+def test_is_charging_rejects_zero_threshold():
+    """threshold=0 would report an idle 0.0 A sample as charging (0.0 >= 0)."""
+    with pytest.raises(ValueError):
+        is_charging(0.0, 0.0)
+
+
 def test_build_telemetry_charging_vs_discharging():
     from beast_power.ina219 import Ina219Reading
 

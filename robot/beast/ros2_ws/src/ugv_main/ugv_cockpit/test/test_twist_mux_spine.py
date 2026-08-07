@@ -961,7 +961,7 @@ def test_joy_node_autorepeats_fast_enough_to_hold_its_rung():
 def test_motion_gate_and_watchdog_are_untouched():
     source = read('src/ugv_main/ugv_bringup/ugv_bringup/ugv_bringup.py')
     assert "self.declare_parameter('allow_motion', True)" in source, (
-        'allow_motion must default on; the interlock monitor disables active locks'
+        'allow_motion must default on; the cockpit retains the manual gate'
     )
     assert "self.declare_parameter('cmd_vel_timeout', 0.5)" in source
     assert 'Rejected non-zero cmd_vel while allow_motion is false' in source

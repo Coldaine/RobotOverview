@@ -165,7 +165,7 @@ def generate_launch_description():
             'allow_motion',
             default_value='true',
             description=(
-                'Forwarded to bringup_lidar; active interlocks may disable motion. '
+                'Forwarded to bringup_lidar; the manual allow_motion gate remains available. '
                 'Never stack this launch on a live beast-ros-base (second twist_mux) — '
                 'stop the service first.'
             ),

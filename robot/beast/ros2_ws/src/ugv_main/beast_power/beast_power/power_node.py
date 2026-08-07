@@ -8,6 +8,7 @@
 
 from __future__ import annotations
 
+import struct
 import time
 from typing import Callable, Optional
 
@@ -99,8 +100,8 @@ class PowerNode(Node):
             raise ValueError('data_publish_rate must be positive')
         if self._reconnect_interval_sec <= 0:
             raise ValueError('reconnect_interval_sec must be positive')
-        if self._charge_threshold < 0:
-            raise ValueError('charging_current_threshold_a must be >= 0')
+        if self._charge_threshold <= 0:
+            raise ValueError('charging_current_threshold_a must be > 0')
 
         factory = bus_factory or _default_bus_factory
         self._bus = factory()
@@ -158,38 +159,42 @@ class PowerNode(Node):
         charging.data = telemetry.charging_active
         self._charging_pub.publish(charging)
 
+    def _absent_telemetry(self) -> BatteryTelemetry:
+        return build_telemetry(
+            None,
+            present=False,
+            charging_current_threshold_a=self._charge_threshold,
+        )
+
+    def _drop_sensor(self, reason: str) -> None:
+        """Close a failed bus and schedule reconnect.
+
+        Any I²C failure — config probe or measurement read — lands here, so a
+        wedged bus fd is reopened after ``reconnect_interval_sec`` instead of
+        failing every publish tick until process restart.
+        """
+        self._sensor.close()
+        self._sensor_ok = False
+        self._next_open_attempt = time.monotonic() + self._reconnect_interval_sec
+        self.get_logger().warning(reason)
+
     def _sample(self) -> BatteryTelemetry:
         if not self._sensor_ok and not self._try_open_sensor():
-            return build_telemetry(
-                None,
-                present=False,
-                charging_current_threshold_a=self._charge_threshold,
-            )
+            return self._absent_telemetry()
 
         if not self._sensor.ensure_ready():
-            self._sensor.close()
-            self._sensor_ok = False
-            self._next_open_attempt = (
-                time.monotonic() + self._reconnect_interval_sec
-            )
-            self.get_logger().warning(
+            self._drop_sensor(
                 'I2C not responding; connection closed and retry scheduled'
             )
-            return build_telemetry(
-                None,
-                present=False,
-                charging_current_threshold_a=self._charge_threshold,
-            )
+            return self._absent_telemetry()
 
         try:
             reading = self._sensor.read()
-        except OSError as exc:
-            self.get_logger().error(f'I2C read failed: {exc}')
-            return build_telemetry(
-                None,
-                present=False,
-                charging_current_threshold_a=self._charge_threshold,
+        except (OSError, struct.error) as exc:
+            self._drop_sensor(
+                f'I2C read failed ({exc}); connection closed and retry scheduled'
             )
+            return self._absent_telemetry()
 
         return build_telemetry(
             reading,

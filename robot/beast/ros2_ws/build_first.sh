@@ -18,6 +18,7 @@ echo "[1/6] Installing basic dependencies..."
 apt-get update
 apt-get install -y \
   python3-pip \
+  python3-smbus2 \
   python3-colcon-argcomplete \
   alsa-utils \
   screen \
@@ -214,7 +215,7 @@ colcon build \
 colcon build \
   --packages-select \
     ugv_bringup ugv_cockpit ugv_chat_ai ugv_description ugv_gazebo \
-    ugv_nav ugv_slam ugv_tools ugv_vision ugv_voice ugv_web_app \
+    beast_power ugv_nav ugv_slam ugv_tools ugv_vision ugv_voice ugv_web_app \
   --symlink-install \
   --executor sequential
 
@@ -240,4 +241,3 @@ echo "✔ LDLIDAR_MODEL=$LDLIDAR_MODEL"
 echo "✔ Gazebo installed: $GAZEBO_INSTALLED"
 echo "✔ GZ_VERSION=$GZ_VERSION"
 echo "=============================="
-

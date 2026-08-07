@@ -89,20 +89,18 @@ flowchart TB
   PAD["browser pad / Vizanti"] -->|"cmd_vel_ui · prio 50"| MUX
   KBD["operator keyboard (SSH)"] -->|"prio 100"| MUX
   JPD["on-robot gamepad"] -->|"prio 150"| MUX
-  ES["e-stop lock"] -.->|"prio 255 · masks everything"| MUX
+  ES["CLI e-stop lock"] -.->|"prio 255 masks everything"| MUX
   MUX --> BR["ugv_bringup: allow_motion gate + 0.5 s watchdog"]
   BR --> ESP["ESP32 (JSON T:13 @115200)"]
   ESP --> TRK["tracks"]
-  SM["ugv_safety_monitor"] -.->|"ethernet / charging interlocks"| BR
 ```
 
-Invariant: browser/LLM *propose*; Jetson/ESP32 *dispose* — `allow_motion`, 0.5 s
-`cmd_vel_timeout` watchdog, mux priorities, Nav2 collision monitor. A human always
-outranks autonomy; someone at the robot outranks everyone; e-stop outranks the
-humans; `ugv_bringup` can refuse them all.
+Invariant: browser/LLM propose; Jetson/ESP32 dispose — manual `allow_motion`, 0.5 s
+`cmd_vel_timeout` watchdog, mux priorities, Nav2 collision monitor. There is no automatic
+Ethernet/charging interlock on the current branch. A human always outranks autonomy;
+someone at the robot outranks everyone; e-stop outranks the humans; `ugv_bringup` can refuse them all.
 
-Default remains **disarmed** until the Set 1 crawl+kill re-gate passes. Live
-`allow_motion` / publisher counts: [beast-ops Quick connect](beast-ops.md#quick-connect).
+The current service default is motion-enabled; operators must use the manual `/ugv/set_allow_motion` gate. Live state and publisher counts: [beast-ops Quick connect](beast-ops.md#quick-connect).
 
 ## Machine topology
 
@@ -126,14 +124,14 @@ flowchart TB
     ESP2["ESP32 driver board"]
     LD2["LD19 LiDAR"]
     OAK2["OAK-D Lite (USB)"]
-    UPS2["UPS Module 3S (I2C after Set 2)"]
+    PWR2["driver-board INA219 (I2C)"]
   end
   K8S -->|"WSS over tailnet"| TSS
   OLL -->|"OpenAI-compatible endpoint"| K8S
   ROSG -->|"USB serial 115200"| ESP2
   LD2 --> ROSG
   OAK2 --> ROSG
-  UPS2 -.->|"J12 pins 3/5/6"| ROSG
+  PWR2 -.->|"/dev/i2c-7 / 0x41"| ROSG
   DEV -.->|"git push + ssh, no CI/CD to robot"| jet
 ```
 
@@ -148,10 +146,9 @@ brings up the ROS graph via `beast-ros-base.service` (LiDAR on when
 flowchart LR
   subgraph ros ["Jetson ROS graph"]
     LD["ldlidar → /scan"]
-    PWR["beast_power → /ugv/voltage + /ugv/charging_active (Set 2)"]
+    PWR["beast_power → /ugv/voltage + /ugv/charging_active (observability)"]
     BRB["ugv_bringup → /imu/raw + /ugv/allow_motion + /ugv/watchdog_state (Set 1a)"]
     EKF["EKF → /odom"]
-    MON["ugv_safety_monitor → /cockpit/status (Set 1c)"]
     BSV["behavior_server ⇄ nav2 actions (Set 4a)"]
   end
   RB["rosbridge :9090<br/>subscribe globs up · publish globs down"]
@@ -163,10 +160,9 @@ flowchart LR
   PWR --> RB
   BRB --> RB
   EKF --> RB
-  MON --> RB
   RB --> UI
   RB --> API
-  UI -->|"cmd_vel_ui · estop_lock · PT/LED"| RB
+  UI -->|"cmd_vel_ui · PT/LED · /ugv/set_allow_motion"| RB
   API -->|"nav2 action goals + cancel"| RB
   RB --> BSV
 ```

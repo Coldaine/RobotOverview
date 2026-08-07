@@ -1,6 +1,6 @@
 # BEAST ROS 2 custom drift — inventory, strip-down, and controlled re-implementation
 
-Status: **inventory complete; execution blocked on the decisions in §4.**
+Status: **inventory complete; safety-monitor strip landed; remaining reduction is still open.**
 Written: 2026-08-07, after a full skeptical review of the ROS 2 stack (findings in §3).
 
 This plan supersedes the robot-side parts of
@@ -106,13 +106,14 @@ Carry-across or kill-list for execution. Full detail in the session record; comp
 
 | # | Question | Options | Default if unanswered |
 |---|---|---|---|
-| D1 | **Hangar UI driving.** Stripping `ugv_cockpit`'s rosbridge removes the browser's only path to the robot. Keep a minimal bridge, or is the cockpit read-only / SSH-only driving acceptable? | minimal bridge / read-only / none | — (blocks) |
+| D1 | **Hangar UI driving.** Stripping `ugv_cockpit`'s rosbridge removes the browser's only path to the robot. | **Keep the rich cockpit and restricted bridge** | decided |
 | D2 | **twist_mux spine.** Keep the 4-rung mux, or collapse to a single `/cmd_vel` input on the new bridge node? | keep / collapse | collapse (fewer moving parts) |
-| D3 | **`allow_motion` kill-switch.** Keep any software disarm, or is "no commands sent" + watchdog enough? | keep simple SetBool / drop | keep simple SetBool (cheap, useful) |
-| D4 | **beast_power.** Keep (telemetry, standalone) or drop with the apparatus? | keep / drop | keep, after M5 verified |
+| D3 | **`allow_motion` kill-switch.** Keep any software disarm, or is "no commands sent" + watchdog enough? | **Keep simple SetBool** | decided |
+| D4 | **beast_power.** Keep (telemetry, standalone) or drop with the apparatus? | Keep (telemetry, standalone) | keep after M5 verification |
 | D5 | **Storage stack** (4 units + tests, `#2–#5` fork PRs) and blackbox/mission record units. In scope of this strip? | keep / strip / separate plan | separate plan (out of scope here) |
-| D6 | **vizanti + vendor web app.** Delete from tree, or quarantine behind a wrapper with cockpit-equivalent globs? | delete / quarantine | delete launch entry points, keep package for reference |
-| D7 | **Vendor demo retargets** (`/cmd_vel_nav` repoints, joy/keyboard autorepeat). Needed at all, or revert with the vendor files? | keep teleop only / revert all | keep `ugv_tools` teleop, revert the rest |
+| D6 | **vizanti + vendor web app.** Delete from tree, or quarantine behind a wrapper with cockpit-equivalent globs? | **Delete Vizanti launch entry points; keep package only if a consumer requires it** | decided |
+| D7 | **Vendor demo retargets** (`/cmd_vel_nav` repoints, joy/keyboard autorepeat). Needed at all, or revert with the vendor files? | keep teleop only / revert all | open |
+| D8 | **`cmd_vel` watchdog.** Keep the AI-added silence watchdog, or return to the stock ESP32 latch behavior? | **Remove watchdog; keep boot stop** | decided |
 
 ## 5. Execution phases
 
@@ -122,34 +123,33 @@ exist) and, when robot-facing, the ground-truth checks in `docs/beast-ops.md` Qu
 rule).
 
 **Phase 0 — Freeze (this doc + tag).**
-- [ ] Commit this plan; `git tag beast-pre-strip` at HEAD.
-- [ ] SSH `beast-01-ts`: record live state (running nodes, `/ugv/voltage` hz, smbus2
-      import as `beast` user — resolves M5) into `docs/beast-ops.md` Quick connect.
-- [ ] Owner answers D1–D7 (edit §4 in place).
+- [x] Commit this plan; `git tag beast-pre-strip` at the pre-strip main tip.
+- [x] Record the live power/telemetry facts and smbus2 state in `docs/beast-ops.md` Quick connect.
+- [x] Record the current owner decisions in §4; D7 remains open.
 
 **Phase 1 — Minimal bridge node (the only re-implementation).**
 - [ ] New node (working name `beast_base`, ~200 lines, in a new small package or inside a
       trimmed `ugv_bringup`): serial open (`/dev/ttyTHS1`), `T:13`/`T:900`/`T:1001`
-      handling per fact 2, **unconditional stop at startup**, cmd_vel silence watchdog
-      (0.5 s, stop-first ordering), malformed-input-proof callbacks, guarded `main()`.
+      handling per fact 2, **unconditional stop at startup**, no AI-added cmd_vel silence
+      watchdog per D8, malformed-input-proof callbacks, guarded `main()`.
       Carries facts 1–3; fixes H1 by construction. Vendor hacks (zero-drop, yaw deadband)
       are **deleted, not preserved** — validate driving feel on the bench.
 - [ ] Per D3: `SetBool` motion gate, default armed, stop-on-disable. No interlocks, no
       monitor, no arming ceremony.
-- [ ] Tests: watchdog fires on silence; stop sent at boot; garbage frames don't raise;
-      gate rejects non-zero when disarmed. Plain pytest, no AST-string pinning.
-- [ ] Bench verify: crawl + kill test (drive, kill the node, confirm stop ≤ 0.5 s + boot
-      stop on restart).
+- [ ] Tests: stop sent at boot; garbage frames don't raise; gate rejects non-zero when
+      disarmed. Plain pytest, no AST-string pinning.
+- [ ] Bench verify: crawl + kill test documents the stock ESP32 latch behavior, and a
+      restart confirms the unconditional boot stop.
 
 **Phase 2 — Strip.**
-- [ ] Delete per D1–D7: `ugv_cockpit` apparatus (keep only what D1/D2 spare),
-      safety monitor, interlock machinery, vizanti entry points, vendor web app includes.
+- [x] Delete the safety monitor and automatic Ethernet/charging interlock machinery; keep
+      the cockpit/bridge and manual SetBool gate per D1/D3.
+- [ ] Delete per D6/D7: Vizanti entry points, unwanted vendor web-app includes, and
+      unapproved vendor retargets.
 - [ ] Revert vendor files to `037dfca` state except the retargets D7 keeps:
       `git checkout 037dfca -- <path>` per file, then re-apply kept deltas.
-- [ ] Rewrite `deploy/systemd/beast-ros-base.service` against the new node; boot stop
-      implied by Phase 1; description must match behavior (M6).
-- [ ] Update docs: `robot/beast/ros2_ws/docs/*` — delete cockpit/command-arbitration docs
-      that describe removed machinery; `docs/beast-ops.md` Quick connect; README routing.
+- [x] Correct the base service description and build path for the retained power package.
+- [ ] Rewrite the remaining deployment/docs surface after D6/D7 and the final bridge decision.
 
 **Phase 3 — Verify + shrink-proof.**
 - [ ] Drift audit: `git diff --stat 037dfca HEAD` (subtree) shows only the intended keep-set;

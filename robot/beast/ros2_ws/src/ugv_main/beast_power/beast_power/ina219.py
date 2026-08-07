@@ -90,6 +90,9 @@ class Ina219:
         self._opened = False
 
     def open(self, bus_nr: int) -> None:
+        # Guard against double-open: re-opening without closing first would
+        # leak the previous bus fd (smbus2 does not close on re-open).
+        self.close()
         self._bus.open(bus_nr)
         self._opened = True
         try:
@@ -163,6 +166,7 @@ class FakeSMBus:
         self.absent = absent
         self.opened_bus: Optional[int] = None
         self.closed = False
+        self.close_count = 0
         self._regs: dict[int, int] = {
             REG_CONFIG: 0,
             REG_CALIBRATION: 0,
@@ -181,6 +185,7 @@ class FakeSMBus:
 
     def close(self) -> None:
         self.closed = True
+        self.close_count += 1
 
     def write_i2c_block_data(
         self, address: int, register: int, data: Sequence[int]

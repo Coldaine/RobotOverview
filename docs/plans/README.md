@@ -12,13 +12,16 @@ disagree, the code is right and the plan is stale.
 
 | Plan | What it covers | Blocking? |
 | --- | --- | --- |
-| [BEAST ROS 2 drift inventory + strip-down](2026-08-07-beast-ros-drift-inventory-and-stripdown.md) | Full inventory of the 45 custom commits over the Waveshare baseline, hardware facts to carry, review defects, then strip the unwanted safety apparatus and re-implement only a ~200-line bridge node. Supersedes the robot-side spine work from the command-deck plan. | Phase 0 blocks on owner decisions D1–D7 (§4) |
-| [BEAST-01 Command Deck + sensor fusion](2026-07-31-beast-command-deck-plan.md) | In-app cockpit and robot-side safety spine, sequenced into focused PRs across two deployable surfaces in this monorepo. Approved direction is the companion [cockpit spec](2026-07-31-beast-command-deck-spec.md). | Phase D gates on the beast-paces Phase 2 watchdog re-gate; motion stays software-locked until it passes |
+| [BEAST ROS 2 drift inventory + strip-down](2026-08-07-beast-ros-drift-inventory-and-stripdown.md) | Inventory of the 45 custom commits over the Waveshare baseline, hardware facts to carry, review defects, and the controlled strip-down. The safety monitor phase is landed; remaining keep/strip decisions stay in the work order. | Phase 2 partial; D4–D7 remain |
+| [BEAST-01 Command Deck + sensor fusion](2026-07-31-beast-command-deck-plan.md) | Historical cockpit context. Its robot-side safety-spine work is superseded by the 2026-08-07 strip-down; the Hangar cockpit remains product scope. | Superseded for robot-side work |
 | [Finish the wiring model](2026-07-30-wiring-model-completion.md) | One spine, two eyes: The Board consumes `wiring.ts`, corpus extraction (schematics, firmware, photos, CAD), facts landed with zone citations, operator answers on screen. Merges the 2026-07-27 unification, extraction, and CAD plans. | Q1/Q2 safety-relevant (wrong 40-pin numbering puts 5 V into a Jetson UART pin); X1 gates drilling |
 | [BEAST NVMe storage — implementation](2026-07-11-beast-nvme-storage-implementation.md) | Command-level storage utility + systemd units under `robot/beast/ros2_ws`. **NOT APPLIED** — do not provision until `docs/beast-ops.md` says otherwise. The design decision is folded into `docs/beast-ops.md` (NVMe storage policy). | Parked behind the physical Orin host swap |
 
 ## Related, outside this directory
 
+- [BEAST ROS 2 drift notepad](2026-08-07-beast-ros-drift-notepad.md) — scratch inventory of
+  the 45 custom commits over the Waveshare baseline, hardware facts, review defects, and a
+  decisions log for the remaining strip-down. Not a work order.
 - Datacore briefings `artifact-intake` / `beast-evidence-manifest` — identity index and
   evidence register for `keyArtifactstosort/` (formerly markdown registers; read in Datacore)
 - `keyArtifactstosort/Artifacts/ros-driver/` — traced-connectivity extraction outputs

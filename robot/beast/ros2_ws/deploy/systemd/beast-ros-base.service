@@ -1,5 +1,5 @@
 [Unit]
-Description=BEAST-01 ROS 2 base bring-up (zero-motion staging)
+Description=BEAST-01 ROS 2 base bring-up (manual motion gate)
 Wants=network-online.target
 After=network-online.target docker.service
 ConditionPathExists=/home/beast/beast/RobotOverview/robot/beast/ros2_ws/install/setup.bash
