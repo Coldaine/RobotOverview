@@ -73,7 +73,10 @@ deploy; the "Robot runs `724f975`" line in the paces block below predates it.)
     `DC_IN` before the shunt. Historical `charge_mah`/`energy_wh` are the
     logic-rail series at 10× low — rescale by ×10 for the rail, but no
     rescaling recovers motor draw: **it was never measured**. Capacity runs
-    are only valid with the drive train idle. Voltage is unaffected
+    are valid only with **every** unmetered branch idle — motors still, bus
+    servos unpowered or holding no torque, switched-IO loads off (all tap
+    `DC_IN` before R21; any energized bypass load understates capacity).
+    Voltage is unaffected
     (chip-fixed 4 mV/bit, never passes through the shunt), so every voltage
     finding in this block stands.
   - Open: `CURRENT_LSB_TARGET` 95 µA gives only **±3.11 A** full scale. The
@@ -82,10 +85,14 @@ deploy; the "Robot runs `724f975`" line in the paces block below predates it.)
 - **Recommended: two thresholds, not one.** Operational 0 % / auto-shutdown at
   ~9.6 V (3.2 V/cell) leaves ~12 min of runtime and protects the cells; ~8.3 V
   is the measured hard-dead point, not a target.
-- **Recovery does NOT need the charger fix.** With the pack at ~8.3 V, the
-  ~12.08 V charger has ~3.8 V of headroom and will charge it back to roughly
-  80 % (it only falls short of the 12.6 V needed for a *full* charge). Plug in
-  and power on. What stays blocked until the ~12.08 V-at-the-pack finding is
+- **Recovery does NOT need the charger fix** (predicted, unverified until the next
+  boot). With the pack at ~8.3 V, the ~12.08 V charger has ~3.8 V of headroom and
+  should charge it back to roughly 80 % (it only falls short of the 12.6 V needed
+  for a *full* charge) — the pack already recovered from ~9.4 V to ~12.1 V on the
+  charger overnight 2026-08-06→07 (CSV rows to 06:46Z), but recovery from *this*
+  8.3 V cutoff has not been observed: the robot is still down. Plug in and power
+  on, then record the post-cutoff rested voltage. What stays blocked until the
+  ~12.08 V-at-the-pack finding is
   resolved (multimeter at the barrel jack) is a **full**-charge-to-empty
   capacity run — this run measured only the dropout anchor, not capacity.
 
@@ -152,7 +159,8 @@ before PR #187 need ×10. **Scope limit, verified in the traced connectivity
 (`keyArtifactstosort/Artifacts/ros-driver/current/ros_driver_traced_connectivity_v1/ros_driver_path_edges.csv`,
 PWR-E003, E013–E020): the shunt sits on the buck/5 V logic rail only — motor, servo, and
 IO loads branch before R21 and are never measured.** Amps are the logic rail's draw, not
-whole-pack draw; capacity runs are valid only with the drive train idle. The 5 V rail
+whole-pack draw; capacity runs are valid only with every unmetered branch idle
+(motors, bus servos holding torque, switched-IO loads — all bypass R21). The 5 V rail
 stays well under the ±3.11 A full scale, so saturation is not a live risk — but any
 spike on that rail (stalled USB peripheral, camera inrush) is what to watch.
 
@@ -227,8 +235,10 @@ this block SUPERSEDES the charging conclusions in the two blocks below.**
   > branch only (PWR-E003) and does not draw where the charge port lands relative to R21,
   > so a shunt reading cannot by itself prove current entered the *pack*. That the pack
   > charges rests on shunt-independent evidence: the sign reversal between charger states
-  > (impossible for a unidirectional buck-leg current) and the rested-voltage recovery
-  > (pack dead at ~8.3 V, back above 12 V after a night on the charger). What fully
+  > (impossible for a unidirectional buck-leg current) and the overnight rested-voltage
+  > recovery already on record (pack from ~9.4 V to ~12.1 V on the charger
+  > 2026-08-06→07, CSV to 06:46Z — predating this cutoff; a post-cutoff recovery
+  > measurement is still owed). What fully
   > survives is the **voltage** finding: the source regulates at ~12.08 V, so the pack
   > charges to roughly **80 % and stops** rather than never charging.
   > The diagnosis below (series diode vs a 12 V supply) is unchanged and still needs the
