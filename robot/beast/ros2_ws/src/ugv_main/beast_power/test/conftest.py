@@ -8,10 +8,16 @@ tests. The message stubs are deliberately STRICTER than real rclpy generated
 messages — only the real field set is accepted, so a typo such as
 ``precentage`` fails a test instead of silently creating an attribute that
 never reaches the wire.
+
+Installation is deterministic, not collection-order dependent: the stubs go
+in only when ``rclpy`` is NOT a genuinely installed package, and a spec-less
+stub injected by another suite is overwritten. Real ROS always wins (see
+``_stubs_required``).
 """
 
 from __future__ import annotations
 
+import importlib
 import sys
 from pathlib import Path
 from types import ModuleType
@@ -245,7 +251,36 @@ def _battery_state_fields() -> dict[str, object]:
     }
 
 
-if 'rclpy' not in sys.modules:
+def _is_real_import(name: str) -> bool:
+    """True when ``name`` is a genuinely installed package, not an injected stub.
+
+    Tries the real import path. An ImportError means not installed. A module
+    that comes back WITHOUT ``__spec__`` is a sys.modules-injected stub from
+    another suite — hand-injected ``ModuleType`` stubs have no spec, real
+    installed packages always do — so report False and let the caller
+    overwrite it.
+    """
+    try:
+        module = importlib.import_module(name)
+    except ImportError:
+        return False
+    return getattr(module, '__spec__', None) is not None
+
+
+def _stubs_required() -> bool:
+    """True when the strict stubs must be installed for this session.
+
+    Real ROS always wins: if rclpy imports as a genuinely installed package
+    (has ``__spec__``), leave ``sys.modules`` alone and run against the real
+    messages. Otherwise — no ROS installed, or a spec-less injected stub from
+    another suite — install/overwrite the strict stubs so collection order
+    cannot decide whether they exist.
+    """
+    return not _is_real_import('rclpy')
+
+
+def _install_stubs() -> None:
+    """Install the strict rclpy / sensor_msgs / std_msgs stand-ins."""
     rclpy = ModuleType('rclpy')
     rclpy.ok = lambda: True
     rclpy.node = ModuleType('rclpy.node')
@@ -263,3 +298,7 @@ if 'rclpy' not in sys.modules:
         parent.msg = child
         sys.modules[package] = parent
         sys.modules[f'{package}.msg'] = child
+
+
+if _stubs_required():
+    _install_stubs()
