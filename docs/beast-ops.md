@@ -159,8 +159,14 @@ spike on that rail (stalled USB peripheral, camera inrush) is what to watch.
 **Power session 2026-08-07 (live):**
 
 - INA219 read end-to-end all session: 12.07–12.17 V. Config register `0x399F` = datasheet
-  reset value (genuine, unconfigured part). **Sign convention verified:** connecting the
-  charger stepped current +108 mA ⇒ positive = charging; `current_sign: 1.0` is correct.
+  reset value (genuine, unconfigured part). **Sign convention verified behaviorally:**
+  connecting the charger stepped current +108 mA (old scale; +1.08 A corrected) ⇒
+  positive = charging; `current_sign: 1.0` is correct. Physical basis is inferred, not
+  traced: the sheet shows R21 in the buck branch only (PWR-E003), so the sign reversal
+  between charger states implies the pack/charge leg crosses R21 — a unidirectional
+  buck-leg current cannot flip sign. The charge port's landing relative to R21 is not in
+  the trace; treat shunt current with the charger connected as pack-charge evidence by
+  behavior, not by traced topology.
 - `beast` user added to the `i2c` group (was missing; `/dev/i2c-7` is `root:i2c` — any
   service running the sensor needs it too). `smbus2` pip-installed `--user`.
 - **`beast_power` ran on hardware for the first time** — bench run via `ros2 run` with
@@ -214,11 +220,17 @@ this block SUPERSEDES the charging conclusions in the two blocks below.**
     A current-limited charger would have dumped all 164 mA into the pack; it did not.
 - **Verdict: the pack floats at ~12.07 V (≈82 % on the 3S OCV table) and cannot charge.**
   > **PARTIALLY SUPERSEDED 2026-08-07 by the `RSHUNT` = 0.010 Ω correction (see Quick
-  > connect).** Every current in this section is **10× low**: the "+15 mA" the pack took
-  > with load shed was **+150 mA**, and the "+108 mA" step on connecting the charger was
-  > **+1.08 A**. So "charge current is ~0" is wrong — the charger pushes real current. What
-  > survives is the **voltage** finding, which is shunt-independent: the source regulates at
-  > ~12.08 V, so the pack charges to roughly **80 % and stops** rather than never charging.
+  > connect).** Every current in this section is **10× low**: the "+15 mA" with load shed
+  > was **+150 mA**, and the "+108 mA" step on connecting the charger was **+1.08 A**. So
+  > "charge current is ~0" is wrong in scale — real current moves when the charger
+  > connects. **Scope caveat (per #186 review):** the trace puts R21 in the buck/5-V
+  > branch only (PWR-E003) and does not draw where the charge port lands relative to R21,
+  > so a shunt reading cannot by itself prove current entered the *pack*. That the pack
+  > charges rests on shunt-independent evidence: the sign reversal between charger states
+  > (impossible for a unidirectional buck-leg current) and the rested-voltage recovery
+  > (pack dead at ~8.3 V, back above 12 V after a night on the charger). What fully
+  > survives is the **voltage** finding: the source regulates at ~12.08 V, so the pack
+  > charges to roughly **80 % and stops** rather than never charging.
   > The diagnosis below (series diode vs a 12 V supply) is unchanged and still needs the
   > multimeter.
 
