@@ -125,6 +125,31 @@ def build_telemetry(
     )
 
 
+def to_battery_fields(telemetry: BatteryTelemetry) -> dict[str, object]:
+    """Map telemetry to ``sensor_msgs/BatteryState`` field values (pure).
+
+    Every field the message carries is named here, so a typo such as
+    ``precentage`` fails loudly against the strict message stub in tests —
+    the node hands this dict to ``BatteryState(**fields)`` unchanged. The
+    header (stamp + frame_id) is node-owned and excluded.
+    """
+    return {
+        'voltage': telemetry.voltage,
+        'current': telemetry.current,
+        'charge': telemetry.charge,
+        'capacity': telemetry.capacity,
+        'design_capacity': telemetry.design_capacity,
+        'percentage': telemetry.percentage,
+        'power_supply_status': telemetry.power_supply_status,
+        'power_supply_health': telemetry.power_supply_health,
+        'power_supply_technology': telemetry.power_supply_technology,
+        'present': telemetry.present,
+        'temperature': telemetry.temperature,
+        'location': telemetry.location,
+        'serial_number': telemetry.serial_number,
+    }
+
+
 def percentage_is_honest_absent(percentage: float) -> bool:
     """True when absent-sensor path left percentage as non-numeric status."""
     return math.isnan(percentage)

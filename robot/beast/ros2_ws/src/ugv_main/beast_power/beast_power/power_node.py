@@ -19,7 +19,11 @@ from sensor_msgs.msg import BatteryState
 from std_msgs.msg import Bool
 
 from beast_power.ina219 import Ina219, SMBusLike
-from beast_power.telemetry import BatteryTelemetry, build_telemetry
+from beast_power.telemetry import (
+    BatteryTelemetry,
+    build_telemetry,
+    to_battery_fields,
+)
 
 
 def _default_bus_factory() -> SMBusLike:
@@ -212,22 +216,9 @@ class PowerNode(Node):
         )
 
     def _to_battery_msg(self, telemetry: BatteryTelemetry) -> BatteryState:
-        msg = BatteryState()
+        msg = BatteryState(**to_battery_fields(telemetry))
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = self._frame_id
-        msg.voltage = telemetry.voltage
-        msg.current = telemetry.current
-        msg.charge = telemetry.charge
-        msg.capacity = telemetry.capacity
-        msg.design_capacity = telemetry.design_capacity
-        msg.percentage = telemetry.percentage
-        msg.power_supply_status = telemetry.power_supply_status
-        msg.power_supply_health = telemetry.power_supply_health
-        msg.power_supply_technology = telemetry.power_supply_technology
-        msg.present = telemetry.present
-        msg.temperature = telemetry.temperature
-        msg.location = telemetry.location
-        msg.serial_number = telemetry.serial_number
         return msg
 
 
