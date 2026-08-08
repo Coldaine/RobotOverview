@@ -92,16 +92,17 @@ def test_signed_shunt_and_current_registers_discharge_case():
     = -0.008 / 0.010 ohm = -0.8 A. The chip derives the current register as
     round(shunt_raw * calibration / 4096) = round(-800 * 0xA86A / 4096)
     = -8421, so decoding the current register must agree with the shunt.
-    The power register carries the magnitude |V_bus * I| = 11.4 * 0.8
-    = 9.12 W -> raw 4800 (0x12C0). Shunt/current raw values are two's
-    complement.
+    Power = V_bus * I = 11.4 * -0.8 = -9.12 W -> raw round(-9.12 /
+    POWER_LSB) = -4800; the chip's power register is unsigned and wraps, so
+    the raw value on the wire is the two's complement 0xED40. Shunt/current
+    raw values are two's complement too.
     """
     bus = _VectorBus(
         {
             REG_SHUNTVOLTAGE: -800,  # 0xFCE0
             REG_BUSVOLTAGE: 0x5910,  # 2850 << 3 = 11.4 V
             REG_CURRENT: -8421,  # 0xDF1B
-            REG_POWER: 4800,  # 0x12C0; |V_bus * I| / POWER_LSB
+            REG_POWER: -4800,  # 0xED40; wrapped two's complement of -9.12 W
         }
     )
     sensor = Ina219(bus, 0x41)
@@ -114,14 +115,37 @@ def test_signed_shunt_and_current_registers_discharge_case():
     assert reading.shunt_voltage_v / 0.010 == pytest.approx(
         reading.current_a, abs=1e-4
     )
-    # Power register = |V_bus * I| magnitude (a real chip reports power
-    # magnitude, and the fake bus mirrors that with abs(v*i)): raw 4800
-    # decodes via POWER_LSB = 20 * CURRENT_LSB to 4800 * 20 *
-    # 9.50039430347451e-05 = 9.1204 W.
-    assert reading.power_w == pytest.approx(9.12, abs=1e-3)
-    # NOTE: the driver currently decodes the power register unsigned — a real
-    # (negative) discharge power reading wraps to a large positive; fix tracked
-    # as a follow-up, do not pin the wrap.
+    # Decode power signed: POWER_LSB = 20 * CURRENT_LSB, and the wrapped raw
+    # -4800 restores the physical sign — -4800 * 20 * 9.50039430347451e-05
+    # = -9.1204 W. An unsigned decode (the old driver behavior) would read
+    # 0xED40 as +115.4 W — this vector fails against that.
+    assert reading.power_w == pytest.approx(-9.12, abs=1e-3)
+    assert reading.power_w < 0
+
+
+def test_power_register_charge_case_decodes_positive():
+    """+0.4 A charge @ 12.3 V: power = +4.92 W, raw 2589 (0x0A1D).
+
+    The positive/charge direction must decode positive — same signed decode
+    path as the discharge vector, mirrored sign. Derivation: 4.92 / POWER_LSB
+    = 4.92 / (20 * 9.50039430347451e-05) = 2589.4... -> 2589 (0x0A1D).
+    """
+    bus = _VectorBus(
+        {
+            REG_SHUNTVOLTAGE: 400,  # 0x0190; +0.4 A * 0.010 ohm = 4 mV
+            REG_BUSVOLTAGE: 0x6018,  # 3075 << 3 = 12.3 V
+            REG_CURRENT: 4210,  # 0x1072; round(0.4 / 9.50039430347451e-05)
+            REG_POWER: 2589,  # 0x0A1D
+        }
+    )
+    sensor = Ina219(bus, 0x41)
+    sensor.open(7)
+    reading = sensor.read()
+
+    assert reading.bus_voltage_v == pytest.approx(12.3, rel=1e-9)
+    assert reading.current_a == pytest.approx(0.4, abs=1e-4)
+    assert reading.power_w > 0
+    assert reading.power_w == pytest.approx(4.92, abs=1e-3)
 
 
 def test_calibration_register_matches_datasheet_formula():

@@ -209,7 +209,10 @@ def _set_measurement(bus, bus_voltage_v: float, current_a: float) -> None:
     shunt_raw = max(-32768, min(32767, shunt_raw))
     bus.regs[REG_SHUNTVOLTAGE] = shunt_raw & 0xFFFF
 
-    power_raw = int(round(abs(bus_voltage_v * current_a) / POWER_LSB))
+    # Power register wraps two's complement on the chip for negative
+    # (discharge) power; emit the same raw value so the driver's signed
+    # decode sees the physical sign.
+    power_raw = int(round(bus_voltage_v * current_a / POWER_LSB))
     bus.regs[REG_POWER] = power_raw & 0xFFFF
 
 

@@ -167,7 +167,11 @@ class Ina219:
         shunt_raw = self._read_reg16_s(REG_SHUNTVOLTAGE)
         bus_reg = self._read_reg16_u(REG_BUSVOLTAGE)
         current_raw = self._read_reg16_s(REG_CURRENT)
-        power_raw = self._read_reg16_u(REG_POWER)
+        # Power register: the datasheet defines it as unsigned, so a discharge's
+        # negative power WRAPS to a large positive on the chip. Decode it signed
+        # (same two's complement as the current register) to restore the
+        # physical sign — negative on discharge, positive on charge.
+        power_raw = self._read_reg16_s(REG_POWER)
 
         return Ina219Reading(
             shunt_voltage_v=shunt_raw * SHUNT_VOLTAGE_LSB,
@@ -268,6 +272,10 @@ class FakeSMBus:
         shunt_raw = max(-32768, min(32767, shunt_raw))
         self._regs[REG_SHUNTVOLTAGE] = shunt_raw & 0xFFFF
 
-        power_w = abs(self.bus_voltage_v * self.current_a)
+        # Power register: the chip's register is unsigned and WRAPS for
+        # negative (discharge) power, so emit the same two's complement the
+        # silicon would — raw = round(power / POWER_LSB) masked to 16 bits.
+        # The driver's signed decode (see read()) then restores the sign.
+        power_w = self.bus_voltage_v * self.current_a
         power_raw = int(round(power_w / POWER_LSB))
         self._regs[REG_POWER] = power_raw & 0xFFFF
