@@ -132,7 +132,20 @@ def build_row(
     charging_active: Optional[bool],
     note: str = '',
 ) -> list[str]:
-    """Render one telemetry sample as CSV cells ordered per ``COLUMNS``."""
+    """Render one telemetry sample as CSV cells ordered per ``COLUMNS``.
+
+    Free-text cells (``utc``, ``note``) are written raw into a comma-joined
+    line, so they must not contain ``,`` ``\\n`` or ``\\r`` — one unescaped
+    comma would shift every column for every downstream parse of the file,
+    and a newline would splice a fake record into the series. Reject them
+    here, at the boundary, rather than corrupt the log quietly.
+    """
+    for label, text in (('utc', utc), ('note', note)):
+        if any(ch in text for ch in (',', '\n', '\r')):
+            raise ValueError(
+                f'{label} must not contain comma or newline: {text!r}'
+            )
+
     if (voltage_v is not None and math.isfinite(voltage_v)
             and current_a is not None and math.isfinite(current_a)):
         power_w: Optional[float] = voltage_v * current_a
@@ -201,6 +214,7 @@ class DurableCsvWriter:
         self._since_sync = 0
         self._handle = None
         self._lock_handle = None
+        self._closed = False
 
         parent = os.path.dirname(os.path.abspath(path))
         if parent:
@@ -297,6 +311,13 @@ class DurableCsvWriter:
         self._open()
 
     def write_row(self, cells: Sequence[str]) -> None:
+        if self._closed:
+            # A closed writer must stay closed. Silently reopening here would
+            # resume writing WITHOUT the exclusive lock (close() released it),
+            # so a second process could then hold the lock legitimately while
+            # this zombie interleaves rows — the exact corruption the lock
+            # exists to prevent.
+            raise ValueError('write_row on a closed DurableCsvWriter')
         if self._handle is None:
             self._open()
         if self._handle.tell() >= self._max_bytes:
@@ -313,3 +334,4 @@ class DurableCsvWriter:
             self._handle.close()
             self._handle = None
         self._release_lock()
+        self._closed = True

@@ -105,6 +105,13 @@ class TestBuildRow:
         assert cells[COLUMNS.index('charging_active')] == ''
         assert _row(charging_active=False)[COLUMNS.index('charging_active')] == '0'
 
+    @pytest.mark.parametrize('field', ['utc', 'note'])
+    @pytest.mark.parametrize('bad', ['a,b', 'a\nb', 'a\rb'])
+    def test_free_text_cells_reject_comma_and_newline(self, field, bad):
+        """One raw comma shifts every column for every downstream parse."""
+        with pytest.raises(ValueError):
+            _row(**{field: bad})
+
 
 class TestDurableCsvWriter:
     def test_writes_header_once_and_appends(self, tmp_path):
@@ -126,14 +133,29 @@ class TestDurableCsvWriter:
         DurableCsvWriter(path).close()
         assert os.path.exists(path)
 
-    def test_row_is_durable_before_next_sample(self, tmp_path):
-        """The brownout guarantee: a row is on disk before the next is taken."""
+    def test_row_is_flushed_and_visible_before_next_sample(self, tmp_path):
+        """Flush, not fsync: a row is readable through a second handle before
+        the next is taken. Power-cut durability itself is not provable from
+        userspace — this pins the half of the guarantee that is."""
         path = str(tmp_path / 'p.csv')
         w = DurableCsvWriter(path, fsync_every_n=1)
         w.write_row(_row())
         # Read through a separate handle without closing the writer.
         assert len(open(path).read().strip().split('\n')) == 2
         w.close()
+
+    def test_write_after_close_raises_and_stays_out_of_the_file(self, tmp_path):
+        """A closed writer must not silently reopen: it would write WITHOUT
+        the exclusive lock close() released, interleaving unlocked rows into
+        a file another process may now legitimately hold."""
+        path = str(tmp_path / 'p.csv')
+        w = DurableCsvWriter(path)
+        w.write_row(_row())
+        w.close()
+        with pytest.raises(ValueError):
+            w.write_row(_row())
+        lines = open(path).read().strip().split('\n')
+        assert len(lines) == 2  # header + one row; the zombie wrote nothing
 
     def test_rotation_keeps_backups(self, tmp_path):
         path = str(tmp_path / 'p.csv')
