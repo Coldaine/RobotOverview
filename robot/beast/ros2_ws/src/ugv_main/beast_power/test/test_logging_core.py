@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import errno
 import math
 import os
 
@@ -253,3 +254,60 @@ class TestExclusiveLock:
         b = DurableCsvWriter(path, exclusive=False)
         a.close()
         b.close()
+
+
+class _FcntlBoom:
+    """fcntl stand-in whose flock always fails the same way."""
+
+    LOCK_EX = 2
+    LOCK_NB = 4
+    LOCK_UN = 8
+
+    def __init__(self, exc):
+        self._exc = exc
+
+    def flock(self, fd, op):
+        raise self._exc
+
+
+class TestLockFailureModes:
+    """The lock must only cry 'already active' for actual contention."""
+
+    def test_contention_errno_maps_to_log_already_active(
+            self, tmp_path, monkeypatch):
+        exc = OSError(errno.EAGAIN, 'resource temporarily unavailable')
+        monkeypatch.setattr('beast_power.logging_core.fcntl', _FcntlBoom(exc))
+        with pytest.raises(LogAlreadyActive):
+            DurableCsvWriter(str(tmp_path / 'p.csv'))
+
+    def test_operational_errno_reraises_as_os_error(
+            self, tmp_path, monkeypatch):
+        """ENOLCK/EOPNOTSUPP/EPERM are not contention — misreporting them
+        sends the operator hunting for a second process that does not exist."""
+        monkeypatch.setattr(
+            'beast_power.logging_core.fcntl',
+            _FcntlBoom(OSError(errno.ENOLCK, 'no locks available')),
+        )
+        with pytest.raises(OSError) as excinfo:
+            DurableCsvWriter(str(tmp_path / 'p.csv'))
+        assert excinfo.type is OSError  # not LogAlreadyActive
+
+    def test_close_with_fsync_failure_still_releases_lock(
+            self, tmp_path, monkeypatch):
+        """A dying disk at close() must not leak the lock into the next boot."""
+        path = str(tmp_path / 'p.csv')
+        w = DurableCsvWriter(path)
+        w.write_row(_row())
+
+        def bad_fsync(fd):
+            raise OSError(errno.EIO, 'disk gone')
+
+        monkeypatch.setattr(os, 'fsync', bad_fsync)
+        with pytest.raises(OSError):
+            w.close()
+        assert w._closed is True
+        assert w._lock_handle is None
+        # Lock really released: a fresh writer acquires it on the same path.
+        w2 = DurableCsvWriter(path)
+        monkeypatch.undo()  # restore fsync before the clean close
+        w2.close()
