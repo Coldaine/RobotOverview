@@ -80,10 +80,15 @@ class ChargeIntegrator:
     discharge run drives ``charge_mah`` negative and observed capacity is its
     magnitude between full and cutoff.
 
-    Absolute scale is only as good as ``RSHUNT`` in ``ina219.py``, which is an
-    unverified LeoRover default. The integral is linear in that constant, so a
-    later bench measurement rescales any logged run by a single multiply — that
-    is why raw samples stay in the CSV.
+    Absolute scale is fixed by ``RSHUNT`` in ``ina219.py`` — 0.010 Ω, verified
+    off the board 2026-08-07 (PR #187). Scope: that shunt sits in the buck/5 V
+    logic branch only (Jetson, LiDAR, ESP32, logic); the motor, bus-servo, and
+    IO-load branches tap DC_IN before R21, so their current never crosses this
+    sensor. ``charge_mah``/``energy_wh`` are therefore logic-rail truth, not
+    whole-pack truth, and a capacity run is only valid while EVERY bypassed
+    branch is idle (motors still, servos holding no torque, IO loads off). The
+    integral is linear in RSHUNT, so any future rescale is one multiply away —
+    that is why raw samples stay in the CSV.
     """
 
     max_gap_s: float = 10.0
@@ -207,12 +212,16 @@ class DurableCsvWriter:
         fsync_every_n: int = 1,
         exclusive: bool = True,
     ) -> None:
-        if max_bytes <= 0:
-            raise ValueError('max_bytes must be positive')
+        # NaN/inf slip past a naive `<= 0` check (both comparisons are False)
+        # and would disable rotation entirely: `tell() >= NaN` is never True,
+        # so an unattended logger fills the disk instead of rotating. Same
+        # rejection rule the INA219 threshold validation uses.
+        if not math.isfinite(max_bytes) or max_bytes <= 0:
+            raise ValueError('max_bytes must be positive and finite')
         if backup_count < 0:
             raise ValueError('backup_count must be >= 0')
-        if fsync_every_n < 1:
-            raise ValueError('fsync_every_n must be >= 1')
+        if not math.isfinite(fsync_every_n) or fsync_every_n < 1:
+            raise ValueError('fsync_every_n must be >= 1 and finite')
 
         self._path = path
         self._columns = list(columns)
@@ -285,10 +294,30 @@ class DurableCsvWriter:
             not os.path.exists(self._path)
             or os.path.getsize(self._path) == 0
         )
+        if not needs_header:
+            self._check_header()
         self._handle = open(self._path, 'a', encoding='utf-8', newline='')
         if needs_header:
             self._handle.write(','.join(self._columns) + '\n')
             self._sync_now()
+
+    def _check_header(self) -> None:
+        """Refuse to append under a truncated or corrupt header.
+
+        A crash mid-header-write leaves a partial first line; appending rows
+        under it would shift every column for every downstream parse of the
+        file, exactly like an unescaped comma in a free-text cell. Fail loudly
+        at startup rather than corrupt the log quietly.
+        """
+        with open(self._path, 'r', encoding='utf-8', newline='') as probe:
+            first_line = probe.readline()
+        expected = ','.join(self._columns)
+        if first_line.rstrip('\r\n') != expected:
+            raise ValueError(
+                f'{self._path} opens with a truncated or corrupt header '
+                f'{first_line.rstrip()!r}, expected {expected!r}; refusing '
+                'to append rows under it'
+            )
 
     def _sync_now(self) -> None:
         if self._handle is None:

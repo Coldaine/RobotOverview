@@ -27,6 +27,15 @@ def _line_count(path):
         return len(handle.read().strip().split('\n'))
 
 
+# The header written to disk, spelled out literally: a wrong COLUMNS constant
+# must fail these tests rather than self-validate against itself.
+_LITERAL_HEADER = (
+    'utc,mono_s,dt_s,voltage_v,current_a,power_w,percentage,'
+    'legacy_fake_pct,charge_mah,energy_wh,power_supply_status,'
+    'power_supply_health,present,charging_active,note'
+)
+
+
 def _row(**overrides):
     base = dict(
         utc='2026-08-07T22:48:17.000Z',
@@ -139,7 +148,7 @@ class TestDurableCsvWriter:
         w2.close()
 
         lines = open(path).read().strip().split('\n')
-        assert lines[0] == ','.join(COLUMNS)
+        assert lines[0] == _LITERAL_HEADER
         assert len(lines) == 3
 
     def test_creates_parent_directory(self, tmp_path):
@@ -188,7 +197,7 @@ class TestDurableCsvWriter:
         for _ in range(40):
             w.write_row(_row())
         w.close()
-        assert open(path).readline().strip() == ','.join(COLUMNS)
+        assert open(path).readline().strip() == _LITERAL_HEADER
 
     def test_zero_backups_truncates_and_cannot_fill_disk(self, tmp_path):
         path = str(tmp_path / 'p.csv')
@@ -199,15 +208,37 @@ class TestDurableCsvWriter:
         assert os.path.getsize(path) < 1200
         assert not os.path.exists(path + '.1')
 
+    def test_truncated_header_refuses_to_append(self, tmp_path):
+        """A crash mid-header-write leaves a partial header line; appending
+        rows under a garbage column list would corrupt every downstream parse,
+        so refuse loudly instead of silently interleaving data."""
+        path = str(tmp_path / 'p.csv')
+        with open(path, 'w', encoding='utf-8') as handle:
+            handle.write('utc,mono_s,dt_s,volta\n')  # header truncated mid-write
+        with pytest.raises(ValueError):
+            DurableCsvWriter(path)
+        # Refusal leaves the file untouched and releases the lock: a second
+        # attempt hits the same refusal, not LogAlreadyActive.
+        assert open(path, encoding='utf-8').read() == 'utc,mono_s,dt_s,volta\n'
+        with pytest.raises(ValueError):
+            DurableCsvWriter(path)
+
     @pytest.mark.parametrize(
         'kwargs',
         [
             {'max_bytes': 0},
+            {'max_bytes': float('nan')},
+            {'max_bytes': float('inf')},
             {'backup_count': -1},
             {'fsync_every_n': 0},
+            {'fsync_every_n': float('nan')},
+            {'fsync_every_n': float('inf')},
         ],
     )
     def test_rejects_invalid_config(self, tmp_path, kwargs):
+        """NaN/inf slip past a bare `<= 0` check (both comparisons are False),
+        and then rotation/fsync never fire — silent disk fill and zero
+        durability. Same rejection rule the threshold validation uses."""
         with pytest.raises(ValueError):
             DurableCsvWriter(str(tmp_path / 'p.csv'), **kwargs)
 
