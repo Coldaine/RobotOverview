@@ -378,15 +378,14 @@ def test_power_logger_writes_real_csv(tmp_path):
     assert all(row[_CI['note']] == '' for row in data[1:])
 
     # Honest absent rows: percentage is an empty cell (NaN on the wire, never
-    # rendered as a number); the deliberate 0.0 volts is disambiguated by
-    # present=0; status is UNKNOWN.
+    # rendered as a number); the deliberate 0.0 volts (and its derived legacy
+    # fake %) are disambiguated by present=0; status is UNKNOWN.
     absent = [r for r in data if r[_CI['present']] == '0']
     present = [r for r in data if r[_CI['present']] == '1']
     assert absent, 'no absent-sensor rows were logged'
     assert present, 'no present-sensor rows were logged'
     for row in absent:
         assert row[_CI['percentage']] == ''
-        assert row[_CI['legacy_fake_pct']] == ''
         assert row[_CI['voltage_v']] == '0.0000'  # deliberate zero, present=0 disambiguates
         assert row[_CI['current_a']] == '0.00000'
         assert row[_CI['power_supply_status']] == '0'  # UNKNOWN
