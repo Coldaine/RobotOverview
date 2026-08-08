@@ -51,6 +51,10 @@ jobs:
       # Nodes discover each other on loopback only — faster, and immune to
       # whatever else is running on the shared runner.
       ROS_LOCALHOST_ONLY: '1'
+    defaults:
+      run:
+        # Container jobs default to `sh`; the ROS setup scripts need bash.
+        shell: bash
     steps:
       # The ros-base image ships neither git (checkout needs it) nor pytest.
       - name: Install git, pip, pytest
