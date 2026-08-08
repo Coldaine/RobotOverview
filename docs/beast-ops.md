@@ -8,16 +8,22 @@ re-verify against the live robot before relying on anything stale.
 ## Quick connect
 
 **ROBOT IS DOWN — deliberate run-to-cutoff 2026-08-07 18:19 CDT.** Charger
-unplugged mid-afternoon and the pack run flat on purpose to measure the real
-dropout. **It will not answer `ssh` until it is charged and powered back on.**
+unplugged mid-afternoon and the pack was run flat on purpose to measure the
+real dropout. **It will not answer `ssh` until it is charged and powered back
+on.** (That evening the robot had already been redeployed to the post-#182
+stack — the `beast_power_logger` CSV referenced below exists because of that
+deploy; the "Robot runs `724f975`" line in the paces block below predates it.)
 
-- **Hard cutoff measured: ~8.3 V.** Last telemetry `8.368 V` at 18:19:18 CDT
-  (23:19:18Z); unreachable 21 s later; Tailscale offline. The exact final row
+- **Cutoff pinned to a last-seen bound: ~8.3 V.** Last telemetry `8.368 V` at
+  18:19:18 CDT (23:19:18Z); unreachable 21 s later; Tailscale offline. The
+  true trip point is at or just below that last sample — the exact final row
   is on the robot at `/data/beast/power/power-log.csv` (fsynced per row) —
   **read it on next boot** to pin the number precisely.
-- **The inherited 9.0 V "0 %" is wrong — pessimistically so.** The robot ran a
-  further **6 minutes and 0.7 V** below it. `soc.py`'s `PACK_EMPTY_V = 9.0` is
-  a generic 3S table value, not this pack.
+- **The inherited 9.0 V "0 %" is wrong as a hard floor — pessimistically so.**
+  The robot ran a further **6 minutes and 0.7 V** below it. `soc.py`'s
+  `PACK_EMPTY_V = 9.0` is a generic 3S table value, not this pack. (It remains
+  a fine *conservative* empty for casual use — the recommendation below is a
+  deliberate two-threshold split, not a license to drain to 8.3 V.)
 - **The shutdown was probably the pack's own protection doing its job**
   (`[inference-not-verified]`). Two reasons: the MP8759GD is a *step-down* to
   5 V and would keep regulating far below 8.3 V input, so the converter did not
@@ -26,21 +32,28 @@ dropout. **It will not answer `ssh` until it is charged and powered back on.**
   load** — resting voltage is higher, likely ~2.9–3.0 V/cell, so this is the
   normal bottom of the range rather than a damaging over-discharge. **Absence
   of the UPS module does not imply absence of a pack BMS** — the power-path
-  note below describes wiring, not pack internals, and no pack datasheet,
-  model, or capacity rating exists anywhere in this repo yet.
+  note below describes wiring, not pack internals. The pack itself **is** on
+  record: 3× Molicel P30B, 3.0 Ah, 30 A continuous, verified from the purchase
+  record 2026-07-24 (`src/components/datacore/beast-console/power-data.ts`) —
+  ≈33 Wh nominal.
   **To confirm:** if the pack needed charger voltage applied before it would
-  power on again, that is a latching protection board, and 8.3 V is a real
-  floor rather than a coincidence.
-- **Discharge rate accelerated ~17× over the run** (voltage is shunt-independent,
-  so these are trustworthy):
+  power on again, that is consistent with a latching protection board (an
+  exhausted high-resistance pack can look similar — treat as indicative, not
+  proof).
+- **Discharge rate accelerated over the run** (voltage is shunt-independent,
+  so these are trustworthy; the charger-connected row is listed for context
+  but is NOT comparable — the charger was carrying the load):
 
   | Window | Rate |
   |---|---|
-  | 14:07–17:46 (charger connected, floating) | 0.008 V/min |
+  | 14:07–17:46 (charger connected, floating — context only) | 0.008 V/min |
   | 17:58–18:12 | 0.056 V/min |
   | 18:12–18:15 | 0.077 V/min |
   | 18:15–18:17 | 0.110 V/min |
   | 18:17–18:19 (final) | 0.135 V/min |
+
+  Over the disconnected windows the rate roughly doubles (~2.4× start to
+  finish) as the pack falls off the flat part of its discharge curve.
 
 - **`RSHUNT` RESOLVED: 0.010 Ω, not 0.1 — currents were 10× low.** The sense
   resistor beside the INA219 at the `DC 9-12.6V` input is marked **`R010`**,
@@ -54,20 +67,27 @@ dropout. **It will not answer `ssh` until it is charged and powered back on.**
     the charger out and no other source. Corrected, that sample is **~1.45 A /
     ~13.4 W**, which reconciles against Jetson 4.7 W + OAK-D + LD19 + driver
     board + buck losses.
-  - **Every `charge_mah`/`energy_wh` logged before PR #187 is 10× low** — rescale
-    existing `/data/beast/power/power-log.csv` rows by ×10. Voltage is
-    unaffected (chip-fixed 4 mV/bit, never passes through the shunt), so every
-    voltage finding in this block stands.
-  - Open: `CURRENT_LSB_TARGET` 95 µA gives only **±3.11 A** full scale. Fine for
-    the 1.45 A idle draw; drive loads may saturate it, and a saturated register
-    reads wrong rather than high.
+  - **SCOPE: the shunt measures only the logic rail, not the pack.** Traced
+    connectivity (`ros_driver_path_edges.csv` PWR-E003, E013–E020) shows R21
+    sits only in the buck/5-V branch; motor, servo and IO-load branches tap
+    `DC_IN` before the shunt. Historical `charge_mah`/`energy_wh` are the
+    logic-rail series at 10× low — rescale by ×10 for the rail, but no
+    rescaling recovers motor draw: **it was never measured**. Capacity runs
+    are only valid with the drive train idle. Voltage is unaffected
+    (chip-fixed 4 mV/bit, never passes through the shunt), so every voltage
+    finding in this block stands.
+  - Open: `CURRENT_LSB_TARGET` 95 µA gives only **±3.11 A** full scale. The
+    motor branches bypass the shunt, so driving is NOT the saturation risk;
+    a spiking 5-V-rail load (Jetson transients + peripherals) is.
 - **Recommended: two thresholds, not one.** Operational 0 % / auto-shutdown at
   ~9.6 V (3.2 V/cell) leaves ~12 min of runtime and protects the cells; ~8.3 V
   is the measured hard-dead point, not a target.
-- **Blocked on the charger.** Recovery needs the ~12.08 V-at-the-pack finding
-  fixed (a 3S pack needs 12.6 V) — multimeter at the barrel jack is still the
-  physical next step. Until then a full-charge-to-empty capacity run is not
-  possible, and this run measured only the dropout anchor, not capacity.
+- **Recovery does NOT need the charger fix.** With the pack at ~8.3 V, the
+  ~12.08 V charger has ~3.8 V of headroom and will charge it back to roughly
+  80 % (it only falls short of the 12.6 V needed for a *full* charge). Plug in
+  and power on. What stays blocked until the ~12.08 V-at-the-pack finding is
+  resolved (multimeter at the barrel jack) is a **full**-charge-to-empty
+  capacity run — this run measured only the dropout anchor, not capacity.
 
 **Deploy + first drive paces 2026-08-07 (live, on battery, untethered):**
 
@@ -128,8 +148,13 @@ Bus-voltage words from `0x41` decode with the chip-fixed 4 mV/bit LSB (no calibr
 dependency), so those **are** volts. Currents derive from the shunt register and
 **`RSHUNT` = 0.010 Ω, read off the board 2026-08-07** (marked `R010` beside the INA219 —
 see Quick connect). The old 0.1 Ω LeoRover default made every amp 10× low; amps recorded
-before PR #187 need ×10. Amps are now scaled correctly but still bounded by a ±3.11 A
-full scale — treat readings during motion as suspect until that ceiling is raised.
+before PR #187 need ×10. **Scope limit, verified in the traced connectivity
+(`keyArtifactstosort/Artifacts/ros-driver/current/ros_driver_traced_connectivity_v1/ros_driver_path_edges.csv`,
+PWR-E003, E013–E020): the shunt sits on the buck/5 V logic rail only — motor, servo, and
+IO loads branch before R21 and are never measured.** Amps are the logic rail's draw, not
+whole-pack draw; capacity runs are valid only with the drive train idle. The 5 V rail
+stays well under the ±3.11 A full scale, so saturation is not a live risk — but any
+spike on that rail (stalled USB peripheral, camera inrush) is what to watch.
 
 **Power session 2026-08-07 (live):**
 
