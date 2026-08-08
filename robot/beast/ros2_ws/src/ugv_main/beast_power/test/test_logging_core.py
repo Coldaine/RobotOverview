@@ -242,16 +242,21 @@ class TestDurableCsvWriter:
             self, tmp_path, caplog):
         """Precedence: a truncated header — possibly the file's only line —
         must refuse loudly, never be silently 'repaired' by tail truncation
-        (truncating it would empty the file and lose provenance)."""
+        (truncating it would empty the file and lose provenance). The tail
+        repair runs first but has no newline to truncate back to, so it
+        leaves the file untouched and the header guard raises."""
         path = str(tmp_path / 'p.csv')
         with open(path, 'w', encoding='utf-8') as handle:
             handle.write(_LITERAL_HEADER)  # no trailing newline
         with caplog.at_level(logging.WARNING, logger='beast_power.logging_core'):
             with pytest.raises(ValueError):
                 DurableCsvWriter(path)
-        # File byte-identical after refusal, and no repair warning ever fired.
-        assert open(path, encoding='utf-8').read() == _LITERAL_HEADER
-        assert caplog.records == []
+        # File byte-identical after refusal; the repair's only warning is its
+        # decline — never a truncation.
+        with open(path, encoding='utf-8') as handle:
+            assert handle.read() == _LITERAL_HEADER
+        assert len(caplog.records) == 1
+        assert 'left untouched' in caplog.records[0].getMessage()
 
     def test_partial_tail_row_is_truncated_on_open(self, tmp_path, caplog):
         """A SIGKILL/power-cut inside the kernel write() persists a partial
@@ -274,7 +279,8 @@ class TestDurableCsvWriter:
             w2.write_row(_row(utc='row-3'))
             w2.close()
 
-        raw = open(path, encoding='utf-8').read()
+        with open(path, encoding='utf-8') as handle:
+            raw = handle.read()
         # The partial tail is gone; every line is complete and newline-ended.
         assert 'PARTIAL_TAIL_MARKER' not in raw
         assert raw.endswith('\n')
@@ -297,14 +303,16 @@ class TestDurableCsvWriter:
         w.write_row(_row(utc='row-1'))
         w.write_row(_row(utc='row-2'))
         w.close()
-        before = open(path, encoding='utf-8').read()
+        with open(path, encoding='utf-8') as handle:
+            before = handle.read()
 
         with caplog.at_level(logging.WARNING, logger='beast_power.logging_core'):
             w2 = DurableCsvWriter(path)
             w2.write_row(_row(utc='row-3'))
             w2.close()
 
-        raw = open(path, encoding='utf-8').read()
+        with open(path, encoding='utf-8') as handle:
+            raw = handle.read()
         assert raw.startswith(before)
         assert raw.count('\n') == before.count('\n') + 1
         assert caplog.records == []
@@ -373,7 +381,8 @@ class TestExclusiveLock:
             handle.write('PARTIAL_TAIL_MARKER,2026-08-07T22:48:17.000Z')
         try:
             first = DurableCsvWriter(path)
-            assert 'PARTIAL_TAIL_MARKER' not in open(path).read()
+            with open(path, encoding='utf-8') as handle:
+                assert 'PARTIAL_TAIL_MARKER' not in handle.read()
             with pytest.raises(LogAlreadyActive):
                 DurableCsvWriter(path)
         finally:

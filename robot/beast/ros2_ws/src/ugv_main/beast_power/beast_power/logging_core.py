@@ -308,15 +308,27 @@ class DurableCsvWriter:
             not os.path.exists(self._path)
             or os.path.getsize(self._path) == 0
         )
-        # 'a+' serves both purposes in one handle: appends always land at EOF
-        # while the header probe is an explicit read, so validation adds no
-        # second open and no permission beyond what the logger already holds
-        # on the file it created.
+        # Repair the tail BEFORE opening the append handle, on one descriptor
+        # (scan + ftruncate + fsync): a pathname-based truncate after the
+        # append handle opened could hit a different inode if an external
+        # process replaced the path mid-open — fd-based repair-then-open
+        # closes that race. _check_header still runs on the append handle
+        # below, so a truncated header refuses loudly after the repair has
+        # already declined to touch it (an unterminated header-only file has
+        # no newline to truncate back to).
+        repaired_ident = (
+            None if needs_header else self._repair_partial_tail()
+        )
         self._handle = open(self._path, 'a+', encoding='utf-8', newline='')
         try:
             if not needs_header:
+                if not self._repair_matches(repaired_ident):
+                    _logger.warning(
+                        f'{self._path}: log file was replaced between tail '
+                        'repair and open; appending to the file now at this '
+                        'path'
+                    )
                 self._check_header()
-                self._repair_partial_tail()
         except Exception:
             self._handle.close()
             self._handle = None
@@ -352,7 +364,7 @@ class DurableCsvWriter:
                 'to append rows under it'
             )
 
-    def _repair_partial_tail(self) -> None:
+    def _repair_partial_tail(self) -> tuple | None:
         """Truncate an unterminated final line left by an interrupted write.
 
         A SIGKILL/power-cut landing inside the kernel's write() persists only
@@ -360,25 +372,32 @@ class DurableCsvWriter:
         3 SIGKILL integration test), so the file ends without a trailing
         newline and an append would merge the first new row into that partial
         line — one corrupt merged record, column shift for every downstream
-        parse. A row is only ever written by a single write() of one complete,
-        newline-terminated line, so an unterminated tail can never be a
-        completed row: dropping it back to the last newline loses nothing
-        durable. The header guard runs first, so a truncated header — which
-        may be the file's only line, and whose truncation would silently
-        destroy provenance — still refuses loudly and is never 'repaired'
-        here. Runs under the writer lock (_open is called after lock
-        acquisition), so no other appender can race the truncate. The scan is
-        byte-level through a binary probe on the same path — the 'a+' handle
-        cannot do end-relative seeks — and the probe needs no permission the
-        append handle does not already hold.
+        parse. Completed rows always end in '\\n' (write_row appends the
+        trailing newline with the row), so an unterminated tail can only ever
+        be an interrupted row: dropping it back to the last newline loses
+        nothing durable.
+
+        The scan and the truncation share ONE descriptor — os.open O_RDWR,
+        os.ftruncate, os.fsync, close — and run before the append handle is
+        opened, so no pathname-based second resolution can ever truncate a
+        different inode than the one the writer appends to. Returns the
+        repaired file's (st_dev, st_ino) so _open can verify the append
+        handle landed on the same file, or None when nothing was truncated.
+
+        A file with no newline anywhere (e.g. an unterminated header-only
+        file) is left untouched: truncating it to zero would silently destroy
+        provenance, and _check_header will refuse it loudly right after.
+        Runs under the writer lock (_open is called after lock acquisition),
+        so no other appender can race the truncate.
         """
-        size = os.path.getsize(self._path)
-        if size == 0:
-            return
-        with open(self._path, 'rb') as probe:
-            probe.seek(-1, os.SEEK_END)
-            if probe.read(1) == b'\n':
-                return  # already ends on a completed line
+        fd = os.open(self._path, os.O_RDWR)
+        try:
+            size = os.fstat(fd).st_size
+            if size == 0:
+                return None
+            os.lseek(fd, size - 1, os.SEEK_SET)
+            if os.read(fd, 1) == b'\n':
+                return None  # already ends on a completed line
 
             # Scan backward for the last newline; the partial tail is at most
             # one row (~200 bytes), so this usually reads a single chunk.
@@ -387,29 +406,50 @@ class DurableCsvWriter:
             keep = None
             while pos > 0:
                 start = max(0, pos - chunk)
-                probe.seek(start)
-                data = probe.read(pos - start)
+                os.lseek(fd, start, os.SEEK_SET)
+                data = os.read(fd, pos - start)
                 idx = data.rfind(b'\n')
                 if idx != -1:
                     keep = start + idx + 1
                     break
                 pos = start
             if keep is None:
-                # Unreachable after a passing header check (the header ends
-                # in '\n'); leave the file untouched rather than guess.
+                # No newline anywhere: a truncated header-only file. Leave it
+                # for _check_header to refuse loudly — never empty it.
                 _logger.warning(
                     f'{self._path}: unterminated tail with no recoverable '
-                    'newline; left untouched'
+                    'newline; left untouched for the header guard'
                 )
-                return
-            os.truncate(self._path, keep)
-        assert self._handle is not None
-        self._handle.seek(0, os.SEEK_END)
-        self._sync_now()  # make the repair durable before appending
+                return None
+            os.ftruncate(fd, keep)
+            os.fsync(fd)
+            st = os.fstat(fd)
+            identity = (st.st_dev, st.st_ino)
+        finally:
+            os.close(fd)
         _logger.warning(
             f'{self._path}: dropped {size - keep} byte(s) of an unterminated '
             'trailing row left by an interrupted write; repaired the log tail'
         )
+        return identity
+
+    def _repair_matches(self, identity: tuple | None) -> bool:
+        """True when the open append handle is the file the repair truncated.
+
+        st_dev/st_ino are stable on POSIX; on Windows st_ino is commonly 0,
+        so the check is skipped rather than trusted. A stat failure also
+        skips — a warning is preferable to refusing a boot over an
+        unverifiable identity.
+        """
+        if identity is None:
+            return True
+        try:
+            st = os.fstat(self._handle.fileno())
+        except OSError:
+            return True
+        if st.st_ino == 0:
+            return True
+        return (st.st_dev, st.st_ino) == identity
 
     def _sync_now(self) -> None:
         if self._handle is None:
