@@ -36,20 +36,37 @@ BUS_VOLTAGE_LSB = 0.004  # 4 mV / bit
 # photo keyArtifactstosort/rawDriverBoardshot.jpg.
 #
 # The previous value, 0.1, was an inherited LeoRover default and was wrong by
-# exactly 10x, so every current, mAh and Wh this driver ever reported was one
-# tenth of the truth. It was caught by an energy-balance contradiction: the
-# INA219 claimed the pack delivered 1.36 W while tegrastats showed the Jetson
-# alone drawing VDD_IN 4.74 W on battery, with no other source connected.
-# Bus voltage is unaffected — it uses the chip-fixed 4 mV/bit LSB and never
+# exactly 10x. It was caught by an energy-balance contradiction: the INA219
+# claimed the pack delivered 1.36 W while tegrastats showed the Jetson alone
+# drawing VDD_IN 4.74 W on battery, with no other source connected. Bus
+# voltage is unaffected — it uses the chip-fixed 4 mV/bit LSB and never
 # passes through the shunt.
+#
+# SCOPE (traced board connectivity, ros_driver_path_edges.csv PWR-E003 +
+# PWR-E013..E020): this shunt sits ONLY in the buck/5-V branch — Jetson,
+# LiDAR, ESP32, logic. The motor (TB1/TB2 VM), bus-servo (H7/H8) and IO-load
+# (J1–J4) branches all tap DC_IN BEFORE R21, so their current never crosses
+# this sensor at any RSHUNT value. Currents/mAh/Wh here are the logic-rail
+# truth, not the whole-pack truth; a capacity run is only valid while the
+# drive train is idle. Motor current has no sensor on this board.
 RSHUNT = 0.01
-# 95 uA/bit gives a signed-16-bit full scale of only +/-3.11 A. That covers the
-# ~1.4 A idle draw measured on 2026-08-07 with headroom, but drive loads on this
-# chassis may exceed it and would saturate the current register rather than read
-# high. Raise this (0.0002 -> +/-6.55 A) before trusting current during motion;
-# left as-is for now so the idle/discharge numbers keep their resolution.
+# 95 uA/bit gives a signed-16-bit full scale of only +/-3.11 A. That covers
+# the ~1.4 A idle logic-rail draw measured 2026-08-07 with headroom; the
+# motor branches bypass the shunt entirely (see scope note), so drive loads
+# are NOT the saturation risk — a spiking 5-V-rail load (Jetson transients +
+# peripherals) is. Raise this (0.0002 -> +/-6.55 A) if rail current ever
+# nears the ceiling; left as-is for resolution on the idle/discharge series.
 CURRENT_LSB_TARGET = 0.000095
-CALIBRATION_REG_VALUE = int(0.04096 / (CURRENT_LSB_TARGET * RSHUNT)) & 0xFFFE
+# Raw calibration must fit 16 bits BEFORE masking (bit 0 is not writable).
+# A future smaller shunt or finer LSB target grows this value; wrapping it
+# silently would corrupt every reading, so fail loudly instead.
+_CALIBRATION_RAW = int(0.04096 / (CURRENT_LSB_TARGET * RSHUNT))
+if _CALIBRATION_RAW > 0xFFFF:
+    raise ValueError(
+        f'INA219 calibration 0x{_CALIBRATION_RAW:X} exceeds 16 bits for '
+        f'RSHUNT={RSHUNT} at CURRENT_LSB_TARGET={CURRENT_LSB_TARGET}'
+    )
+CALIBRATION_REG_VALUE = _CALIBRATION_RAW & 0xFFFE
 CURRENT_LSB = 0.04096 / (CALIBRATION_REG_VALUE * RSHUNT)
 POWER_LSB = CURRENT_LSB * 20
 

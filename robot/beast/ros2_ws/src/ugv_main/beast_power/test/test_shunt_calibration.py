@@ -11,6 +11,8 @@ constant itself.
 
 from __future__ import annotations
 
+import pytest
+
 from beast_power import ina219
 
 
@@ -41,18 +43,18 @@ def test_calibration_register_fits_16_bits():
 
 def test_current_lsb_close_to_target():
     """Quantising the calibration register must not move the LSB much."""
-    assert ina219.CURRENT_LSB == float(
-        f'{0.04096 / (ina219.CALIBRATION_REG_VALUE * ina219.RSHUNT):.17g}'
-    )
+    expected = 0.04096 / (ina219.CALIBRATION_REG_VALUE * ina219.RSHUNT)
+    assert ina219.CURRENT_LSB == pytest.approx(expected, rel=1e-12)
     assert abs(ina219.CURRENT_LSB - ina219.CURRENT_LSB_TARGET) < 1e-6
 
 
 def test_current_full_scale_covers_measured_idle_draw():
-    """Signed 16-bit full scale must exceed the ~1.4 A idle draw.
+    """Signed 16-bit full scale must exceed the ~1.4 A idle logic-rail draw.
 
-    Measured 2026-08-07: ~1.45 A on battery with the full stack up. Drive loads
-    may exceed the resulting +/-3.11 A ceiling — see the CURRENT_LSB_TARGET note
-    in ina219.py — but idle and discharge logging must never saturate.
+    Measured 2026-08-07: ~1.45 A on battery with the full stack up. The motor
+    branches bypass the shunt (ros_driver_path_edges.csv PWR-E013..E020), so
+    drive loads never approach the +/-3.11 A ceiling — a spiking 5-V-rail
+    load would. Idle and discharge logging must never saturate.
     """
     full_scale_a = 32767 * ina219.CURRENT_LSB
     assert full_scale_a > 2.0
