@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import errno
+import logging
 import math
 import os
 
@@ -237,6 +238,85 @@ class TestDurableCsvWriter:
         with pytest.raises(ValueError):
             DurableCsvWriter(path)
 
+    def test_truncated_header_refuses_before_tail_repair_can_run(
+            self, tmp_path, caplog):
+        """Precedence: a truncated header — possibly the file's only line —
+        must refuse loudly, never be silently 'repaired' by tail truncation
+        (truncating it would empty the file and lose provenance). The tail
+        repair runs first but has no newline to truncate back to, so it
+        leaves the file untouched and the header guard raises."""
+        path = str(tmp_path / 'p.csv')
+        with open(path, 'w', encoding='utf-8') as handle:
+            handle.write(_LITERAL_HEADER)  # no trailing newline
+        with caplog.at_level(logging.WARNING, logger='beast_power.logging_core'):
+            with pytest.raises(ValueError):
+                DurableCsvWriter(path)
+        # File byte-identical after refusal; the repair's only warning is its
+        # decline — never a truncation.
+        with open(path, encoding='utf-8') as handle:
+            assert handle.read() == _LITERAL_HEADER
+        assert len(caplog.records) == 1
+        assert 'left untouched' in caplog.records[0].getMessage()
+
+    def test_partial_tail_row_is_truncated_on_open(self, tmp_path, caplog):
+        """A SIGKILL/power-cut inside the kernel write() persists a partial
+        final row (proven by fault injection in the Phase 3 integration test).
+        On open the writer must drop that unterminated tail back to the last
+        newline so the next append starts a clean line — never merge the new
+        row into the partial one."""
+        path = str(tmp_path / 'p.csv')
+        w = DurableCsvWriter(path)
+        w.write_row(_row(utc='row-1'))
+        w.write_row(_row(utc='row-2'))
+        w.close()
+        # Simulate the persisted prefix of an in-flight row (no newline).
+        partial = 'PARTIAL_TAIL_MARKER,2026-08-07T22:48:17.000Z'
+        with open(path, 'a', encoding='utf-8') as handle:
+            handle.write(partial)
+
+        with caplog.at_level(logging.WARNING, logger='beast_power.logging_core'):
+            w2 = DurableCsvWriter(path)
+            w2.write_row(_row(utc='row-3'))
+            w2.close()
+
+        with open(path, encoding='utf-8') as handle:
+            raw = handle.read()
+        # The partial tail is gone; every line is complete and newline-ended.
+        assert 'PARTIAL_TAIL_MARKER' not in raw
+        assert raw.endswith('\n')
+        assert raw.count('\n') == 4  # header + rows 1..3
+        lines = raw.strip().split('\n')
+        assert lines[0] == _LITERAL_HEADER
+        assert lines[3].startswith('row-3')  # new row starts on a clean line
+        # Repair warned once, naming exactly the bytes it dropped.
+        assert len(caplog.records) == 1
+        assert caplog.records[0].levelno == logging.WARNING
+        assert 'unterminated' in caplog.records[0].getMessage()
+        assert f'{len(partial)} byte(s)' in caplog.records[0].getMessage()
+
+    def test_file_ending_exactly_at_newline_is_untouched(
+            self, tmp_path, caplog):
+        """A cleanly terminated log must open without truncation: the original
+        bytes are a byte-identical prefix of the file after reopen."""
+        path = str(tmp_path / 'p.csv')
+        w = DurableCsvWriter(path)
+        w.write_row(_row(utc='row-1'))
+        w.write_row(_row(utc='row-2'))
+        w.close()
+        with open(path, encoding='utf-8') as handle:
+            before = handle.read()
+
+        with caplog.at_level(logging.WARNING, logger='beast_power.logging_core'):
+            w2 = DurableCsvWriter(path)
+            w2.write_row(_row(utc='row-3'))
+            w2.close()
+
+        with open(path, encoding='utf-8') as handle:
+            raw = handle.read()
+        assert raw.startswith(before)
+        assert raw.count('\n') == before.count('\n') + 1
+        assert caplog.records == []
+
     @pytest.mark.parametrize(
         'kwargs',
         [
@@ -284,6 +364,25 @@ class TestExclusiveLock:
         path = str(tmp_path / 'p.csv')
         first = DurableCsvWriter(path)
         try:
+            with pytest.raises(LogAlreadyActive):
+                DurableCsvWriter(path)
+        finally:
+            first.close()
+
+    def test_tail_repair_happens_under_the_lock(self, tmp_path):
+        """_open repairs a partial tail only after lock acquisition: the first
+        writer truncates it and keeps holding the lock, so a second writer is
+        still refused — truncation can never race another appender."""
+        path = str(tmp_path / 'p.csv')
+        first = DurableCsvWriter(path)
+        first.write_row(_row(utc='row-1'))
+        first.close()
+        with open(path, 'a', encoding='utf-8') as handle:
+            handle.write('PARTIAL_TAIL_MARKER,2026-08-07T22:48:17.000Z')
+        try:
+            first = DurableCsvWriter(path)
+            with open(path, encoding='utf-8') as handle:
+                assert 'PARTIAL_TAIL_MARKER' not in handle.read()
             with pytest.raises(LogAlreadyActive):
                 DurableCsvWriter(path)
         finally:
