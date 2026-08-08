@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import math
-from types import SimpleNamespace
 
 import pytest
 
@@ -77,21 +76,9 @@ def test_power_node_survives_garbled_config_probe(monkeypatch):
         'beast_power.power_node.time.monotonic', lambda: clock['now']
     )
     bus = FakeSMBus(bus_voltage_v=12.0, current_a=0.0)
-    node = object.__new__(PowerNode)
-    node._sensor = Ina219(bus, 0x40)
-    node._sensor.open(7)
-    node._sensor_ok = True
-    node._i2c_bus_nr = 7
-    node._sensor_address = 0x40
-    node._rate_hz = 1.0
-    node._reconnect_interval_sec = 5.0
-    node._charge_threshold = 0.05
-    node._next_open_attempt = 0.0
-    node.get_logger = lambda: SimpleNamespace(
-        error=lambda *_args, **_kwargs: None,
-        info=lambda *_args, **_kwargs: None,
-        warning=lambda *_args, **_kwargs: None,
-    )
+    node = PowerNode(bus_factory=lambda: bus)
+    assert node._try_open_sensor() is True
+    assert node._sensor_ok is True
 
     real_read = bus.read_i2c_block_data
     bus.read_i2c_block_data = lambda address, register, length: real_read(
@@ -110,18 +97,7 @@ def test_power_node_retries_initial_open_after_backoff(monkeypatch):
         'beast_power.power_node.time.monotonic', lambda: clock['now']
     )
     bus = FakeSMBus(absent=True)
-    node = object.__new__(PowerNode)
-    node._sensor = Ina219(bus, 0x40)
-    node._sensor_ok = False
-    node._i2c_bus_nr = 7
-    node._sensor_address = 0x40
-    node._rate_hz = 1.0
-    node._reconnect_interval_sec = 5.0
-    node._next_open_attempt = 0.0
-    node.get_logger = lambda: SimpleNamespace(
-        error=lambda *_args, **_kwargs: None,
-        info=lambda *_args, **_kwargs: None,
-    )
+    node = PowerNode(bus_factory=lambda: bus)
 
     assert node._try_open_sensor() is False
     bus.absent = False
@@ -140,21 +116,8 @@ def test_power_node_recovers_after_wedged_read(monkeypatch):
         'beast_power.power_node.time.monotonic', lambda: clock['now']
     )
     bus = FakeSMBus(bus_voltage_v=12.0, current_a=0.0)
-    node = object.__new__(PowerNode)
-    node._sensor = Ina219(bus, 0x40)
-    node._sensor.open(7)
-    node._sensor_ok = True
-    node._i2c_bus_nr = 7
-    node._sensor_address = 0x40
-    node._rate_hz = 1.0
-    node._reconnect_interval_sec = 5.0
-    node._charge_threshold = 0.05
-    node._next_open_attempt = 0.0
-    node.get_logger = lambda: SimpleNamespace(
-        error=lambda *_args, **_kwargs: None,
-        info=lambda *_args, **_kwargs: None,
-        warning=lambda *_args, **_kwargs: None,
-    )
+    node = PowerNode(bus_factory=lambda: bus)
+    assert node._try_open_sensor() is True
 
     # Config probe still passes, but the measurement read wedges once.
     real_read = node._sensor.read
