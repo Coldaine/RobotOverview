@@ -25,6 +25,7 @@ row building, and integration without ROS.
 from __future__ import annotations
 
 import errno
+import logging
 import math
 import os
 from dataclasses import dataclass
@@ -34,6 +35,8 @@ try:  # POSIX only; Windows CI exercises everything except the lock itself.
     import fcntl
 except ImportError:  # pragma: no cover - platform dependent
     fcntl = None
+
+_logger = logging.getLogger(__name__)
 
 
 class LogAlreadyActive(RuntimeError):
@@ -313,6 +316,7 @@ class DurableCsvWriter:
         try:
             if not needs_header:
                 self._check_header()
+                self._repair_partial_tail()
         except Exception:
             self._handle.close()
             self._handle = None
@@ -347,6 +351,65 @@ class DurableCsvWriter:
                 f'{first_line.rstrip()!r}, expected {expected!r}; refusing '
                 'to append rows under it'
             )
+
+    def _repair_partial_tail(self) -> None:
+        """Truncate an unterminated final line left by an interrupted write.
+
+        A SIGKILL/power-cut landing inside the kernel's write() persists only
+        a prefix of the in-flight row (proven by fault injection in the Phase
+        3 SIGKILL integration test), so the file ends without a trailing
+        newline and an append would merge the first new row into that partial
+        line — one corrupt merged record, column shift for every downstream
+        parse. A row is only ever written by a single write() of one complete,
+        newline-terminated line, so an unterminated tail can never be a
+        completed row: dropping it back to the last newline loses nothing
+        durable. The header guard runs first, so a truncated header — which
+        may be the file's only line, and whose truncation would silently
+        destroy provenance — still refuses loudly and is never 'repaired'
+        here. Runs under the writer lock (_open is called after lock
+        acquisition), so no other appender can race the truncate. The scan is
+        byte-level through a binary probe on the same path — the 'a+' handle
+        cannot do end-relative seeks — and the probe needs no permission the
+        append handle does not already hold.
+        """
+        size = os.path.getsize(self._path)
+        if size == 0:
+            return
+        with open(self._path, 'rb') as probe:
+            probe.seek(-1, os.SEEK_END)
+            if probe.read(1) == b'\n':
+                return  # already ends on a completed line
+
+            # Scan backward for the last newline; the partial tail is at most
+            # one row (~200 bytes), so this usually reads a single chunk.
+            chunk = 64 * 1024
+            pos = size
+            keep = None
+            while pos > 0:
+                start = max(0, pos - chunk)
+                probe.seek(start)
+                data = probe.read(pos - start)
+                idx = data.rfind(b'\n')
+                if idx != -1:
+                    keep = start + idx + 1
+                    break
+                pos = start
+            if keep is None:
+                # Unreachable after a passing header check (the header ends
+                # in '\n'); leave the file untouched rather than guess.
+                _logger.warning(
+                    f'{self._path}: unterminated tail with no recoverable '
+                    'newline; left untouched'
+                )
+                return
+            os.truncate(self._path, keep)
+        assert self._handle is not None
+        self._handle.seek(0, os.SEEK_END)
+        self._sync_now()  # make the repair durable before appending
+        _logger.warning(
+            f'{self._path}: dropped {size - keep} byte(s) of an unterminated '
+            'trailing row left by an interrupted write; repaired the log tail'
+        )
 
     def _sync_now(self) -> None:
         if self._handle is None:
