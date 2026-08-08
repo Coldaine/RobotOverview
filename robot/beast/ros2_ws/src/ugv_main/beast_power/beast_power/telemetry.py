@@ -126,12 +126,13 @@ def build_telemetry(
 
 
 def to_battery_fields(telemetry: BatteryTelemetry) -> dict[str, object]:
-    """Map telemetry to ``sensor_msgs/BatteryState`` field values (pure).
+    """Map telemetry to the telemetry-derived ``BatteryState`` fields (pure).
 
-    Every field the message carries is named here, so a typo such as
-    ``precentage`` fails loudly against the strict message stub in tests —
-    the node hands this dict to ``BatteryState(**fields)`` unchanged. The
-    header (stamp + frame_id) is node-owned and excluded.
+    Returns exactly the fields the node fills from a sample: ``header``
+    (stamp + frame_id) is node-owned, and ``cell_voltage`` /
+    ``cell_temperature`` stay at their message defaults by design. Because
+    the dict is fed straight to ``BatteryState(**fields)``, a typo such as
+    ``precentage`` fails loudly against the strict message stub in tests.
     """
     return {
         'voltage': telemetry.voltage,
