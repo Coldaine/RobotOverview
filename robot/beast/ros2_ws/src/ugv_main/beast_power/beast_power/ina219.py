@@ -169,11 +169,25 @@ class Ina219:
         current_raw = self._read_reg16_s(REG_CURRENT)
         power_raw = self._read_reg16_u(REG_POWER)
 
+        # Power register: the datasheet defines it as unsigned, so a
+        # discharge's negative power WRAPS to a large positive (bit 15 set) on
+        # the chip — the chip computes power from the signed current register
+        # (power ∝ bus voltage × current), so ANY negative current yields a
+        # wrapped power ≥ 0x8000. Unwrap it back to negative only in that case.
+        # The ≥ 0x8000 guard keeps a near-zero negative current — whose
+        # integer power computation rounds/truncates to 0 or a small positive
+        # — from being corrupted into a huge negative. With non-negative
+        # current a raw ≥ 0x8000 is a legitimate large positive (full scale at
+        # the 32 V bus range exceeds 0x7FFF) and must stay positive; a plain
+        # signed decode gets exactly that wrong.
+        if current_raw < 0 and power_raw >= 0x8000:
+            power_raw -= 0x10000
+
         return Ina219Reading(
             shunt_voltage_v=shunt_raw * SHUNT_VOLTAGE_LSB,
             bus_voltage_v=(bus_reg >> 3) * BUS_VOLTAGE_LSB,
             current_a=current_raw * CURRENT_LSB * self.current_sign,
-            power_w=power_raw * POWER_LSB,
+            power_w=power_raw * POWER_LSB * self.current_sign,
         )
 
     def _write_reg16(self, register: int, value: int) -> None:
@@ -268,6 +282,10 @@ class FakeSMBus:
         shunt_raw = max(-32768, min(32767, shunt_raw))
         self._regs[REG_SHUNTVOLTAGE] = shunt_raw & 0xFFFF
 
-        power_w = abs(self.bus_voltage_v * self.current_a)
+        # Power register: the chip's register is unsigned and WRAPS for
+        # negative (discharge) power, so emit the same two's complement the
+        # silicon would — raw = round(power / POWER_LSB) masked to 16 bits.
+        # The driver's signed decode (see read()) then restores the sign.
+        power_w = self.bus_voltage_v * self.current_a
         power_raw = int(round(power_w / POWER_LSB))
         self._regs[REG_POWER] = power_raw & 0xFFFF
