@@ -19,6 +19,8 @@ from beast_power.telemetry import (
 
 
 def test_absent_build_telemetry_is_status_not_soc():
+    """0.0 V with present=False must publish UNKNOWN/NaN status — never look
+    like a drained pack at 0 % SOC, and never a fabricated percentage."""
     tel = build_telemetry(None, present=False)
     assert tel.present is False
     assert tel.charging_active is False
@@ -27,6 +29,8 @@ def test_absent_build_telemetry_is_status_not_soc():
     assert tel.current == 0.0
     assert percentage_is_honest_absent(tel.percentage)
     assert math.isnan(tel.percentage)
+    # Callers must gate on present / isnan — not treat percentage as 0.0.
+    assert not (tel.present is False and tel.percentage == 0.0)
 
 
 def test_fake_bus_absent_open_fails_cleanly():
@@ -47,14 +51,6 @@ def test_fake_bus_absent_read_fails_after_force_open_regs():
     assert sensor.ensure_ready() is False
     with pytest.raises(OSError):
         sensor.read()
-
-
-def test_absent_never_uses_zero_volts_as_empty_pack_soc():
-    """0.0 V with present=False must not look like a drained pack at 0 % SOC."""
-    tel = build_telemetry(None, present=False)
-    # Callers must gate on present / isnan — not treat percentage as 0.0.
-    assert not (tel.present is False and tel.percentage == 0.0)
-    assert math.isnan(tel.percentage)
 
 
 def test_ensure_ready_short_buffer_is_i2c_failure_not_crash():
