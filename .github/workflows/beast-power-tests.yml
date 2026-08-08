@@ -20,6 +20,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Host tier (strict stubs, no ROS): runs anywhere, fast, deterministic.
+  # Deselects the integration tier so the two lanes are disjoint — the
+  # integration module also self-skips when rclpy is absent, but the marker
+  # keeps the host lane honest about what it actually exercised.
   power:
     runs-on: ubuntu-latest
     defaults:
@@ -35,4 +39,38 @@ jobs:
           python-version: '3.10'
 
       - run: pip install pytest
-      - run: python -m pytest src/ugv_main/beast_power/test -q
+      - run: python -m pytest src/ugv_main/beast_power/test -q -m "not integration"
+
+  # Integration tier (real rclpy + DDS over loopback) in the ROS 2 Humble
+  # container. Plain pytest + PYTHONPATH: colcon build would install nothing
+  # extra and only slow the lane down.
+  integration:
+    runs-on: ubuntu-latest
+    container: ros:humble-ros-base
+    env:
+      # Nodes discover each other on loopback only — faster, and immune to
+      # whatever else is running on the shared runner.
+      ROS_LOCALHOST_ONLY: '1'
+    defaults:
+      run:
+        # Container jobs default to `sh`; the ROS setup scripts need bash.
+        shell: bash
+    steps:
+      # The ros-base image ships neither git (checkout needs it) nor pytest.
+      - name: Install git, pip, pytest
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git python3-pip
+          pip install --no-cache-dir pytest
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Integration suite (real rclpy over DDS)
+        working-directory: robot/beast/ros2_ws
+        run: |
+          source /opt/ros/humble/setup.bash
+          # Append to the ROS PYTHONPATH (rclpy lives on it) — never replace it.
+          PYTHONPATH="src/ugv_main/beast_power${PYTHONPATH:+:$PYTHONPATH}" \
+            python3 -m pytest -q \
+            -m integration src/ugv_main/beast_power/test/integration

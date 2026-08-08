@@ -14,6 +14,12 @@ on.** (That evening the robot had already been redeployed to the post-#182
 stack — the `beast_power_logger` CSV referenced below exists because of that
 deploy; the "Robot runs `724f975`" line in the paces block below predates it.)
 
+- **Deploy-blocked until the robot returns (2026-08-08):** the Phase-3
+  integration tier added three more `--verify-only` probes —
+  `beast_power_logger` present in `ros2 node list`, `power-log.csv` line count
+  growing over 6 s, and INA219-vs-ESP32 pack volts agreeing within 0.2 V. All
+  written but NOT robot-verified; exercise on first boot after recharge.
+
 - **Cutoff pinned to a last-seen bound: ~8.3 V.** Last telemetry `8.368 V` at
   18:19:18 CDT (23:19:18Z); unreachable 21 s later; Tailscale offline. The
   true trip point is at or just below that last sample — the exact final row
