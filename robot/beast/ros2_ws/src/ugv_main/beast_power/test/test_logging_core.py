@@ -19,6 +19,13 @@ from beast_power.logging_core import (
 )
 
 
+def _line_count(path):
+    """Newline count with the handle deterministically closed (review nit:
+    bare open().read() leaks an fd under ResourceWarning handling)."""
+    with open(path) as handle:
+        return len(handle.read().strip().split('\n'))
+
+
 def _row(**overrides):
     base = dict(
         utc='2026-08-07T22:48:17.000Z',
@@ -154,8 +161,7 @@ class TestDurableCsvWriter:
         w.close()
         with pytest.raises(ValueError):
             w.write_row(_row())
-        lines = open(path).read().strip().split('\n')
-        assert len(lines) == 2  # header + one row; the zombie wrote nothing
+        assert _line_count(path) == 2  # header + one row; the zombie wrote nothing
 
     def test_rotation_keeps_backups(self, tmp_path):
         path = str(tmp_path / 'p.csv')
@@ -227,7 +233,7 @@ class TestExclusiveLock:
                 DurableCsvWriter(path)
         finally:
             first.close()
-        assert len(open(path).read().strip().split('\n')) == 2
+        assert _line_count(path) == 2
 
     def test_rotation_keeps_the_lock(self, tmp_path):
         """Rotation reopens the data file; the sidecar lock must survive it."""

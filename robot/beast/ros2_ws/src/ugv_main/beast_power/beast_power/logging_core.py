@@ -24,6 +24,7 @@ row building, and integration without ROS.
 
 from __future__ import annotations
 
+import errno
 import math
 import os
 from dataclasses import dataclass
@@ -241,13 +242,19 @@ class DurableCsvWriter:
         handle = open(lock_path, 'a+', encoding='utf-8')
         try:
             fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except OSError:
+        except OSError as exc:
             handle.close()
-            raise LogAlreadyActive(
-                f'another process is already logging to {self._path} '
-                f'(lock: {lock_path}); refusing to interleave a second '
-                'charge integral into one file'
-            )
+            if exc.errno in (errno.EACCES, errno.EAGAIN, errno.EWOULDBLOCK):
+                raise LogAlreadyActive(
+                    f'another process is already logging to {self._path} '
+                    f'(lock: {lock_path}); refusing to interleave a second '
+                    'charge integral into one file'
+                ) from exc
+            # Anything else (ENOLCK, EOPNOTSUPP on a non-flock filesystem,
+            # EPERM…) is an operational failure, not contention — misreporting
+            # it as "already active" would send the operator hunting for a
+            # second process that does not exist.
+            raise
         self._lock_handle = handle
 
     def _release_lock(self) -> None:
@@ -329,9 +336,16 @@ class DurableCsvWriter:
             self._sync_now()
 
     def close(self) -> None:
-        if self._handle is not None:
-            self._sync_now()
-            self._handle.close()
-            self._handle = None
-        self._release_lock()
-        self._closed = True
+        # finally layers: a failing fsync must not leak the data fd, and
+        # neither failure may skip releasing the lock or marking the writer
+        # terminal — a leaked lock blocks the next boot's logger.
+        try:
+            if self._handle is not None:
+                try:
+                    self._sync_now()
+                finally:
+                    self._handle.close()
+                    self._handle = None
+        finally:
+            self._release_lock()
+            self._closed = True
