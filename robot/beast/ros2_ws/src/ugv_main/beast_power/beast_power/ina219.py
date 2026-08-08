@@ -167,17 +167,27 @@ class Ina219:
         shunt_raw = self._read_reg16_s(REG_SHUNTVOLTAGE)
         bus_reg = self._read_reg16_u(REG_BUSVOLTAGE)
         current_raw = self._read_reg16_s(REG_CURRENT)
-        # Power register: the datasheet defines it as unsigned, so a discharge's
-        # negative power WRAPS to a large positive on the chip. Decode it signed
-        # (same two's complement as the current register) to restore the
-        # physical sign — negative on discharge, positive on charge.
-        power_raw = self._read_reg16_s(REG_POWER)
+        power_raw = self._read_reg16_u(REG_POWER)
+
+        # Power register: the datasheet defines it as unsigned, so a
+        # discharge's negative power WRAPS to a large positive (bit 15 set) on
+        # the chip — the chip computes power from the signed current register
+        # (power ∝ bus voltage × current), so ANY negative current yields a
+        # wrapped power ≥ 0x8000. Unwrap it back to negative only in that case.
+        # The ≥ 0x8000 guard keeps a near-zero negative current — whose
+        # integer power computation rounds/truncates to 0 or a small positive
+        # — from being corrupted into a huge negative. With non-negative
+        # current a raw ≥ 0x8000 is a legitimate large positive (full scale at
+        # the 32 V bus range exceeds 0x7FFF) and must stay positive; a plain
+        # signed decode gets exactly that wrong.
+        if current_raw < 0 and power_raw >= 0x8000:
+            power_raw -= 0x10000
 
         return Ina219Reading(
             shunt_voltage_v=shunt_raw * SHUNT_VOLTAGE_LSB,
             bus_voltage_v=(bus_reg >> 3) * BUS_VOLTAGE_LSB,
             current_a=current_raw * CURRENT_LSB * self.current_sign,
-            power_w=power_raw * POWER_LSB,
+            power_w=power_raw * POWER_LSB * self.current_sign,
         )
 
     def _write_reg16(self, register: int, value: int) -> None:
