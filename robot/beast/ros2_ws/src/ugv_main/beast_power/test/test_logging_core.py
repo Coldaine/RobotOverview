@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import errno
 import math
 import os
 
@@ -13,8 +14,17 @@ from beast_power.logging_core import (
     COLUMNS,
     ChargeIntegrator,
     DurableCsvWriter,
+    LogAlreadyActive,
     build_row,
+    fcntl,
 )
+
+
+def _line_count(path):
+    """Newline count with the handle deterministically closed (review nit:
+    bare open().read() leaks an fd under ResourceWarning handling)."""
+    with open(path) as handle:
+        return len(handle.read().strip().split('\n'))
 
 
 def _row(**overrides):
@@ -109,6 +119,13 @@ class TestBuildRow:
         assert cells[COLUMNS.index('charging_active')] == ''
         assert _row(charging_active=False)[COLUMNS.index('charging_active')] == '0'
 
+    @pytest.mark.parametrize('field', ['utc', 'note'])
+    @pytest.mark.parametrize('bad', ['a,b', 'a\nb', 'a\rb'])
+    def test_free_text_cells_reject_comma_and_newline(self, field, bad):
+        """One raw comma shifts every column for every downstream parse."""
+        with pytest.raises(ValueError):
+            _row(**{field: bad})
+
 
 class TestDurableCsvWriter:
     def test_writes_header_once_and_appends(self, tmp_path):
@@ -130,14 +147,28 @@ class TestDurableCsvWriter:
         DurableCsvWriter(path).close()
         assert os.path.exists(path)
 
-    def test_row_is_durable_before_next_sample(self, tmp_path):
-        """The brownout guarantee: a row is on disk before the next is taken."""
+    def test_row_is_flushed_and_visible_before_next_sample(self, tmp_path):
+        """Flush, not fsync: a row is readable through a second handle before
+        the next is taken. Power-cut durability itself is not provable from
+        userspace — this pins the half of the guarantee that is."""
         path = str(tmp_path / 'p.csv')
         w = DurableCsvWriter(path, fsync_every_n=1)
         w.write_row(_row())
         # Read through a separate handle without closing the writer.
         assert len(open(path).read().strip().split('\n')) == 2
         w.close()
+
+    def test_write_after_close_raises_and_stays_out_of_the_file(self, tmp_path):
+        """A closed writer must not silently reopen: it would write WITHOUT
+        the exclusive lock close() released, interleaving unlocked rows into
+        a file another process may now legitimately hold."""
+        path = str(tmp_path / 'p.csv')
+        w = DurableCsvWriter(path)
+        w.write_row(_row())
+        w.close()
+        with pytest.raises(ValueError):
+            w.write_row(_row())
+        assert _line_count(path) == 2  # header + one row; the zombie wrote nothing
 
     def test_rotation_keeps_backups(self, tmp_path):
         path = str(tmp_path / 'p.csv')
@@ -179,3 +210,110 @@ class TestDurableCsvWriter:
     def test_rejects_invalid_config(self, tmp_path, kwargs):
         with pytest.raises(ValueError):
             DurableCsvWriter(str(tmp_path / 'p.csv'), **kwargs)
+
+
+@pytest.mark.skipif(fcntl is None, reason='POSIX file locking only')
+class TestExclusiveLock:
+    """Two writers on one path interleave two charge integrals — observed live
+    on 2026-08-07 and the reason this lock exists."""
+
+    def test_second_writer_is_refused(self, tmp_path):
+        path = str(tmp_path / 'p.csv')
+        first = DurableCsvWriter(path)
+        try:
+            with pytest.raises(LogAlreadyActive):
+                DurableCsvWriter(path)
+        finally:
+            first.close()
+
+    def test_lock_released_on_close(self, tmp_path):
+        path = str(tmp_path / 'p.csv')
+        DurableCsvWriter(path).close()
+        DurableCsvWriter(path).close()  # must not raise
+
+    def test_refused_writer_leaves_data_untouched(self, tmp_path):
+        path = str(tmp_path / 'p.csv')
+        first = DurableCsvWriter(path)
+        first.write_row(_row())
+        try:
+            with pytest.raises(LogAlreadyActive):
+                DurableCsvWriter(path)
+        finally:
+            first.close()
+        assert _line_count(path) == 2
+
+    def test_rotation_keeps_the_lock(self, tmp_path):
+        """Rotation reopens the data file; the sidecar lock must survive it."""
+        path = str(tmp_path / 'p.csv')
+        first = DurableCsvWriter(path, max_bytes=400, backup_count=1)
+        try:
+            for _ in range(40):
+                first.write_row(_row())
+            with pytest.raises(LogAlreadyActive):
+                DurableCsvWriter(path)
+        finally:
+            first.close()
+
+    def test_exclusive_false_allows_second_writer(self, tmp_path):
+        path = str(tmp_path / 'p.csv')
+        a = DurableCsvWriter(path, exclusive=False)
+        b = DurableCsvWriter(path, exclusive=False)
+        a.close()
+        b.close()
+
+
+class _FcntlBoom:
+    """fcntl stand-in whose flock always fails the same way."""
+
+    LOCK_EX = 2
+    LOCK_NB = 4
+    LOCK_UN = 8
+
+    def __init__(self, exc):
+        self._exc = exc
+
+    def flock(self, fd, op):
+        raise self._exc
+
+
+class TestLockFailureModes:
+    """The lock must only cry 'already active' for actual contention."""
+
+    def test_contention_errno_maps_to_log_already_active(
+            self, tmp_path, monkeypatch):
+        exc = OSError(errno.EAGAIN, 'resource temporarily unavailable')
+        monkeypatch.setattr('beast_power.logging_core.fcntl', _FcntlBoom(exc))
+        with pytest.raises(LogAlreadyActive):
+            DurableCsvWriter(str(tmp_path / 'p.csv'))
+
+    def test_operational_errno_reraises_as_os_error(
+            self, tmp_path, monkeypatch):
+        """ENOLCK/EOPNOTSUPP/EPERM are not contention — misreporting them
+        sends the operator hunting for a second process that does not exist."""
+        monkeypatch.setattr(
+            'beast_power.logging_core.fcntl',
+            _FcntlBoom(OSError(errno.ENOLCK, 'no locks available')),
+        )
+        with pytest.raises(OSError) as excinfo:
+            DurableCsvWriter(str(tmp_path / 'p.csv'))
+        assert excinfo.type is OSError  # not LogAlreadyActive
+
+    def test_close_with_fsync_failure_still_releases_lock(
+            self, tmp_path, monkeypatch):
+        """A dying disk at close() must not leak the lock into the next boot."""
+        path = str(tmp_path / 'p.csv')
+        w = DurableCsvWriter(path)
+        w.write_row(_row())
+
+        def bad_fsync(fd):
+            raise OSError(errno.EIO, 'disk gone')
+
+        monkeypatch.setattr(os, 'fsync', bad_fsync)
+        with pytest.raises(OSError):
+            w.close()
+        assert w._closed is True
+        assert w._lock_handle is None
+        # Lock really released: a fresh writer acquires it on the same path.
+        w2 = DurableCsvWriter(path)
+        monkeypatch.undo()  # restore fsync before the clean close
+        w2.close()

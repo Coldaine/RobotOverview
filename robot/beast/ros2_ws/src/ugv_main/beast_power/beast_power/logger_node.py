@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import math
+import sys
 import time
 from datetime import datetime, timezone
 from typing import Optional
@@ -18,6 +19,7 @@ from std_msgs.msg import Bool
 from beast_power.logging_core import (
     ChargeIntegrator,
     DurableCsvWriter,
+    LogAlreadyActive,
     build_row,
 )
 from beast_power.soc import legacy_fake_percentage
@@ -182,6 +184,14 @@ def main(args=None) -> None:
     try:
         node = PowerLogger()
         rclpy.spin(node)
+    except LogAlreadyActive as exc:
+        # Exit non-zero and stay out of the file. A hand-started logger
+        # overlapping the launch-managed one interleaves two charge integrals
+        # into one CSV, which is worse than no second logger at all.
+        print(f'beast_power_logger: {exc}', file=sys.stderr)
+        if rclpy.ok():
+            rclpy.shutdown()
+        raise SystemExit(1)
     except KeyboardInterrupt:
         pass
     finally:

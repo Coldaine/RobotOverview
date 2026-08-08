@@ -24,10 +24,20 @@ row building, and integration without ROS.
 
 from __future__ import annotations
 
+import errno
 import math
 import os
 from dataclasses import dataclass
 from typing import Optional, Sequence
+
+try:  # POSIX only; Windows CI exercises everything except the lock itself.
+    import fcntl
+except ImportError:  # pragma: no cover - platform dependent
+    fcntl = None
+
+
+class LogAlreadyActive(RuntimeError):
+    """Another process already holds the write lock for this log path."""
 
 COLUMNS: tuple[str, ...] = (
     'utc',
@@ -131,7 +141,20 @@ def build_row(
     charging_active: Optional[bool],
     note: str = '',
 ) -> list[str]:
-    """Render one telemetry sample as CSV cells ordered per ``COLUMNS``."""
+    """Render one telemetry sample as CSV cells ordered per ``COLUMNS``.
+
+    Free-text cells (``utc``, ``note``) are written raw into a comma-joined
+    line, so they must not contain ``,`` ``\\n`` or ``\\r`` — one unescaped
+    comma would shift every column for every downstream parse of the file,
+    and a newline would splice a fake record into the series. Reject them
+    here, at the boundary, rather than corrupt the log quietly.
+    """
+    for label, text in (('utc', utc), ('note', note)):
+        if any(ch in text for ch in (',', '\n', '\r')):
+            raise ValueError(
+                f'{label} must not contain comma or newline: {text!r}'
+            )
+
     if (voltage_v is not None and math.isfinite(voltage_v)
             and current_a is not None and math.isfinite(current_a)):
         power_w: Optional[float] = voltage_v * current_a
@@ -164,6 +187,14 @@ class DurableCsvWriter:
     before the next one is taken, which is the point: this file has to be
     readable after the pack collapses mid-write, not after a clean shutdown.
     Raise it only if the write rate is high enough for fsync to hurt.
+
+    ``exclusive`` takes a whole-file lock and is on by default. Two writers on
+    one path is not a harmless duplicate: each carries its own
+    ``ChargeIntegrator``, so their rows interleave with two unrelated
+    ``charge_mah`` series and the capacity integral silently becomes garbage.
+    That happened on 2026-08-07 when a hand-started node overlapped the
+    launch-managed one. Failing loudly at startup is much better than
+    discovering it in the data afterwards.
     """
 
     def __init__(
@@ -174,6 +205,7 @@ class DurableCsvWriter:
         max_bytes: int = 64 * 1024 * 1024,
         backup_count: int = 5,
         fsync_every_n: int = 1,
+        exclusive: bool = True,
     ) -> None:
         if max_bytes <= 0:
             raise ValueError('max_bytes must be positive')
@@ -187,13 +219,62 @@ class DurableCsvWriter:
         self._max_bytes = max_bytes
         self._backup_count = backup_count
         self._fsync_every_n = fsync_every_n
+        self._exclusive = exclusive
         self._since_sync = 0
         self._handle = None
+        self._lock_handle = None
+        self._closed = False
 
         parent = os.path.dirname(os.path.abspath(path))
         if parent:
             os.makedirs(parent, exist_ok=True)
-        self._open()
+        if exclusive:
+            self._acquire_lock()
+        try:
+            self._open()
+        except Exception:
+            self._release_lock()
+            raise
+
+    def _acquire_lock(self) -> None:
+        """Take an exclusive lock on a sidecar file, or refuse to start.
+
+        The lock lives beside the CSV rather than on the CSV's own descriptor
+        so that rotation — which closes and reopens the data file — never drops
+        it. The lock is advisory and released automatically if the holder dies,
+        so a brownout does not leave a stale lock blocking the next boot.
+        """
+        if fcntl is None:  # pragma: no cover - platform dependent
+            return
+        lock_path = f'{self._path}.lock'
+        handle = open(lock_path, 'a+', encoding='utf-8')
+        try:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            handle.close()
+            if exc.errno in (errno.EACCES, errno.EAGAIN, errno.EWOULDBLOCK):
+                raise LogAlreadyActive(
+                    f'another process is already logging to {self._path} '
+                    f'(lock: {lock_path}); refusing to interleave a second '
+                    'charge integral into one file'
+                ) from exc
+            # Anything else (ENOLCK, EOPNOTSUPP on a non-flock filesystem,
+            # EPERM…) is an operational failure, not contention — misreporting
+            # it as "already active" would send the operator hunting for a
+            # second process that does not exist.
+            raise
+        self._lock_handle = handle
+
+    def _release_lock(self) -> None:
+        if self._lock_handle is None:
+            return
+        try:
+            if fcntl is not None:  # pragma: no branch
+                fcntl.flock(self._lock_handle.fileno(), fcntl.LOCK_UN)
+        except OSError:
+            pass
+        self._lock_handle.close()
+        self._lock_handle = None
 
     @property
     def path(self) -> str:
@@ -245,6 +326,13 @@ class DurableCsvWriter:
         self._open()
 
     def write_row(self, cells: Sequence[str]) -> None:
+        if self._closed:
+            # A closed writer must stay closed. Silently reopening here would
+            # resume writing WITHOUT the exclusive lock (close() released it),
+            # so a second process could then hold the lock legitimately while
+            # this zombie interleaves rows — the exact corruption the lock
+            # exists to prevent.
+            raise ValueError('write_row on a closed DurableCsvWriter')
         if self._handle is None:
             self._open()
         if self._handle.tell() >= self._max_bytes:
@@ -256,7 +344,16 @@ class DurableCsvWriter:
             self._sync_now()
 
     def close(self) -> None:
-        if self._handle is not None:
-            self._sync_now()
-            self._handle.close()
-            self._handle = None
+        # finally layers: a failing fsync must not leak the data fd, and
+        # neither failure may skip releasing the lock or marking the writer
+        # terminal — a leaked lock blocks the next boot's logger.
+        try:
+            if self._handle is not None:
+                try:
+                    self._sync_now()
+                finally:
+                    self._handle.close()
+                    self._handle = None
+        finally:
+            self._release_lock()
+            self._closed = True
