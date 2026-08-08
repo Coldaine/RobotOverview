@@ -26,6 +26,9 @@
 #   * beast-ros-base active; beast-cockpit active unless intentionally disabled
 #   * beast_power running and the SOLE publisher of /ugv/voltage
 #   * /ugv/charging_active has a publisher
+#   * beast_power_logger running and /data/beast/power/power-log.csv growing
+#   * INA219 pack volts vs ESP32 pack volts agree within 0.2 V (soft warn if
+#     the ESP32 serial frame cannot be read)
 #   * ugv_safety_monitor is gone (strip 2026-08-07)
 #   * INA219 config register is not the 0x399F factory value (soft warn)
 #   * DRIVE PATH live: a non-zero twist on /cmd_vel_ui while disarmed reaches
@@ -150,6 +153,9 @@ echo "$nodes" | grep -qx '/beast_power' \
 echo "$nodes" | grep -qx '/ugv_safety_monitor' \
   && bad "ugv_safety_monitor still running (strip not deployed)" \
   || ok "ugv_safety_monitor absent"
+echo "$nodes" | grep -qx '/beast_power_logger' \
+  && ok "beast_power_logger running" \
+  || bad "beast_power_logger not in node graph (power CSV not being recorded)"
 
 vpubs="$(ros2 topic info /ugv/voltage 2>/dev/null | awk '/Publisher count/ {print $3}')"
 [ "$vpubs" = "1" ] && ok "/ugv/voltage has exactly 1 publisher" \
@@ -187,6 +193,93 @@ case "$sample_present" in
     warn "no usable /ugv/voltage sample within 6 s"
     ;;
 esac
+
+# --- power log: durable CSV must exist and keep growing ---
+# The logger fsyncs every row, so an absent sensor still grows the file
+# (honest empty-cell rows). Flat line count = stalled logger = missing data.
+power_csv="/data/beast/power/power-log.csv"
+if [ -f "$power_csv" ]; then
+  lines1="$(wc -l < "$power_csv" 2>/dev/null || echo 0)"
+  sleep 6
+  lines2="$(wc -l < "$power_csv" 2>/dev/null || echo 0)"
+  if [ "$lines2" -gt "$lines1" ] 2>/dev/null; then
+    ok "power log growing: $lines1 -> $lines2 lines over 6 s"
+  else
+    bad "power log NOT growing ($lines1 -> $lines2 over 6 s) — logger stalled"
+  fi
+else
+  bad "power log missing at $power_csv"
+fi
+
+# --- two-instrument cross-check: driver-board INA219 vs ESP32 pack ADC ---
+# /ugv/voltage is beast_power's (INA219 on i2c-7) since the 2026-08-07
+# cutover; the ESP32's own pack reading ("v", centivolts) rides its T:1001
+# serial frame, not a topic. This taps that stream READ-ONLY (os.open + read,
+# no termios writes, no DTR/RTS toggling) for one frame. Best-effort: if the
+# frame cannot be read the probe WARNS (the voltage-live check above already
+# covers INA219 presence) and FAILs only on real disagreement between the two
+# instruments. The tap briefly consumes a few feedback frames beast_base would
+# have taken; its read-fail recovery path handles that.
+esp32_port="${UGV_SERIAL_PORT:-}"
+if [ -z "$esp32_port" ]; then
+  esp32_port="$(systemctl show -p Environment beast-ros-base 2>/dev/null \
+    | tr ' ' '\n' | sed -n 's/^UGV_SERIAL_PORT=//p' | head -1)"
+fi
+[ -z "$esp32_port" ] && [ -e /dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00 ] \
+  && esp32_port="/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00"
+[ -z "$esp32_port" ] && [ -e /dev/ttyTHS1 ] && esp32_port="/dev/ttyTHS1"
+
+if [ -n "$sample_voltage" ] && [ -n "$esp32_port" ] && [ -e "$esp32_port" ]; then
+  esp32_voltage="$(timeout 8 python3 - "$esp32_port" <<'PY' || true
+import json, os, sys, time
+
+port = sys.argv[1]
+try:
+    fd = os.open(port, os.O_RDONLY | os.O_NOCTTY | os.O_NONBLOCK)
+except OSError:
+    sys.exit(2)
+buf = b''
+deadline = time.monotonic() + 5
+try:
+    while time.monotonic() < deadline:
+        try:
+            chunk = os.read(fd, 4096)
+        except BlockingIOError:
+            chunk = b''
+        if not chunk:
+            time.sleep(0.02)
+            continue
+        buf += chunk
+        while b'\n' in buf:
+            line, buf = buf.split(b'\n', 1)
+            if not line.strip():
+                continue
+            try:
+                frame = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(frame, dict) and 'v' in frame:
+                print(frame['v'] / 100.0)
+                sys.exit(0)
+    sys.exit(3)
+finally:
+    os.close(fd)
+PY
+)"
+  if [ -n "$esp32_voltage" ]; then
+    delta="$(awk -v a="$sample_voltage" -v b="$esp32_voltage" \
+      'BEGIN { d = (a > b) ? a - b : b - a; printf "%.3f", d }')"
+    if awk -v d="$delta" 'BEGIN { exit !(d <= 0.2) }'; then
+      ok "INA219 vs ESP32 volts agree: /ugv/voltage ${sample_voltage} V, ESP32 ${esp32_voltage} V (delta ${delta} V)"
+    else
+      bad "INA219 vs ESP32 volts DISAGREE: /ugv/voltage ${sample_voltage} V, ESP32 ${esp32_voltage} V (delta ${delta} V > 0.2 V)"
+    fi
+  else
+    warn "could not read ESP32 pack voltage (serial tap returned nothing) — cross-check skipped"
+  fi
+elif [ -n "$sample_voltage" ]; then
+  warn "ESP32 serial port not found (${esp32_port:-unknown}) — cross-check skipped"
+fi
 
 # --- drive-path probe: /cmd_vel_ui -> twist_mux -> /cmd_vel -> beast_base ---
 # Motion-free by construction: the gate is disarmed for the burst, so the
