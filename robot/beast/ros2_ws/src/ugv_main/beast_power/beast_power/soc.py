@@ -48,7 +48,10 @@ def voltage_to_soc(voltage_v: float) -> float:
     knots. Does not invent a reading for a missing sensor — callers must not
     call this when ``present`` is false.
     """
-    if math.isnan(voltage_v):
+    if not math.isfinite(voltage_v):
+        # NaN already never clamped; +inf clamped to 1.0 ('100 % battery') and
+        # -inf to 0.0 on garbage input. Any non-finite volts is a failed
+        # measurement, so it stays NaN — never a fabricated SOC.
         return math.nan
     if voltage_v <= _3S_OCV_SOC[0][0]:
         return 0.0
