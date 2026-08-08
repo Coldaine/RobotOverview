@@ -223,24 +223,56 @@ class TestDurableCsvWriter:
         with pytest.raises(ValueError):
             DurableCsvWriter(path)
 
+    def test_terminatorless_header_refuses_to_append(self, tmp_path):
+        """A power loss can persist every header character but not the
+        trailing newline; an 'a' append would then merge the first data row
+        into the header text. An unterminated header must be rejected like
+        any other corrupt one."""
+        path = str(tmp_path / 'p.csv')
+        with open(path, 'w', encoding='utf-8') as handle:
+            handle.write(_LITERAL_HEADER)  # exact header, NO trailing newline
+        with pytest.raises(ValueError):
+            DurableCsvWriter(path)
+        assert open(path, encoding='utf-8').read() == _LITERAL_HEADER
+        with pytest.raises(ValueError):
+            DurableCsvWriter(path)
+
     @pytest.mark.parametrize(
         'kwargs',
         [
             {'max_bytes': 0},
             {'max_bytes': float('nan')},
             {'max_bytes': float('inf')},
+            {'max_bytes': True},
+            {'max_bytes': 1.5},
             {'backup_count': -1},
             {'fsync_every_n': 0},
             {'fsync_every_n': float('nan')},
             {'fsync_every_n': float('inf')},
+            {'fsync_every_n': True},
+            {'fsync_every_n': 1.5},
         ],
     )
     def test_rejects_invalid_config(self, tmp_path, kwargs):
         """NaN/inf slip past a bare `<= 0` check (both comparisons are False),
         and then rotation/fsync never fire — silent disk fill and zero
-        durability. Same rejection rule the threshold validation uses."""
+        durability. Bools and non-integral values make rotation/fsync behavior
+        surprising and are rejected too; integral floats (YAML `5e6`) stay
+        accepted."""
         with pytest.raises(ValueError):
             DurableCsvWriter(str(tmp_path / 'p.csv'), **kwargs)
+
+    def test_integral_float_config_accepted(self, tmp_path):
+        """YAML configs legitimately yield integral floats; they must behave
+        like the ints they stand for (rotation + fsync both fire)."""
+        path = str(tmp_path / 'p.csv')
+        w = DurableCsvWriter(
+            path, max_bytes=400.0, fsync_every_n=2.0, backup_count=1
+        )
+        for _ in range(10):
+            w.write_row(_row())
+        w.close()
+        assert os.path.exists(path)
 
 
 @pytest.mark.skipif(fcntl is None, reason='POSIX file locking only')

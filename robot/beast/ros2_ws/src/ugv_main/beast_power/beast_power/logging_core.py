@@ -215,13 +215,24 @@ class DurableCsvWriter:
         # NaN/inf slip past a naive `<= 0` check (both comparisons are False)
         # and would disable rotation entirely: `tell() >= NaN` is never True,
         # so an unattended logger fills the disk instead of rotating. Same
-        # rejection rule the INA219 threshold validation uses.
+        # rejection rule the INA219 threshold validation uses. Bools are ints
+        # to Python and would silently mean 1; non-integral floats would make
+        # rotation/fsync fire at surprising times — both rejected. Integral
+        # floats stay accepted because YAML configs legitimately produce 5e6.
+        if isinstance(max_bytes, bool):
+            raise ValueError('max_bytes must be a number, not a bool')
         if not math.isfinite(max_bytes) or max_bytes <= 0:
             raise ValueError('max_bytes must be positive and finite')
+        if max_bytes != int(max_bytes):
+            raise ValueError('max_bytes must be an integral number of bytes')
         if backup_count < 0:
             raise ValueError('backup_count must be >= 0')
+        if isinstance(fsync_every_n, bool):
+            raise ValueError('fsync_every_n must be a number, not a bool')
         if not math.isfinite(fsync_every_n) or fsync_every_n < 1:
             raise ValueError('fsync_every_n must be >= 1 and finite')
+        if fsync_every_n != int(fsync_every_n):
+            raise ValueError('fsync_every_n must be an integral count')
 
         self._path = path
         self._columns = list(columns)
@@ -294,25 +305,43 @@ class DurableCsvWriter:
             not os.path.exists(self._path)
             or os.path.getsize(self._path) == 0
         )
-        if not needs_header:
-            self._check_header()
-        self._handle = open(self._path, 'a', encoding='utf-8', newline='')
+        # 'a+' serves both purposes in one handle: appends always land at EOF
+        # while the header probe is an explicit read, so validation adds no
+        # second open and no permission beyond what the logger already holds
+        # on the file it created.
+        self._handle = open(self._path, 'a+', encoding='utf-8', newline='')
+        try:
+            if not needs_header:
+                self._check_header()
+        except Exception:
+            self._handle.close()
+            self._handle = None
+            raise
         if needs_header:
             self._handle.write(','.join(self._columns) + '\n')
             self._sync_now()
+        else:
+            self._handle.seek(0, os.SEEK_END)
 
     def _check_header(self) -> None:
         """Refuse to append under a truncated or corrupt header.
 
-        A crash mid-header-write leaves a partial first line; appending rows
-        under it would shift every column for every downstream parse of the
-        file, exactly like an unescaped comma in a free-text cell. Fail loudly
-        at startup rather than corrupt the log quietly.
+        A crash mid-header-write leaves a partial first line — including a
+        header whose every character persisted but whose trailing newline did
+        not, after which an append would merge the first data row into the
+        header text. Either way appending would shift every column for every
+        downstream parse of the file, so fail loudly at startup rather than
+        corrupt the log quietly.
         """
-        with open(self._path, 'r', encoding='utf-8', newline='') as probe:
-            first_line = probe.readline()
+        assert self._handle is not None
+        self._handle.seek(0)
+        first_line = self._handle.readline()
+        self._handle.seek(0, os.SEEK_END)
         expected = ','.join(self._columns)
-        if first_line.rstrip('\r\n') != expected:
+        # endswith('\n') covers both \n and \r\n; a bare unterminated header
+        # must still be rejected.
+        if (not first_line.endswith('\n')
+                or first_line.rstrip('\r\n') != expected):
             raise ValueError(
                 f'{self._path} opens with a truncated or corrupt header '
                 f'{first_line.rstrip()!r}, expected {expected!r}; refusing '
