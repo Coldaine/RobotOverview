@@ -315,8 +315,11 @@ export function SafetyStrip() {
                   ? 'LOW - CHARGE FIRST'
                   : 'Ok'}
           </span>
-          {/* Measured pack current — absent (not 0.0 A) until a publisher
-              fills power_supply_status; positive = charging. */}
+          {/* Measured logic-rail current — absent (not 0.0 A) until a publisher
+              fills power_supply_status; positive = charging. The INA219 shunt
+              sits in the buck/5 V branch only (ros_driver_path_edges.csv
+              PWR-E003): motor, servo, and IO loads bypass it, so this is never
+              whole-pack draw. */}
           {current !== null && (
             <span
               className={clsx(
@@ -325,8 +328,8 @@ export function SafetyStrip() {
               )}
               title={
                 isChargingNow
-                  ? 'INA219 pack current — charging'
-                  : 'INA219 pack current — discharging/idle'
+                  ? 'INA219 logic-rail current (excludes motors/servos/IO) — charging'
+                  : 'INA219 logic-rail current (excludes motors/servos/IO) — discharging/idle'
               }
             >
               {isChargingNow ? 'CHG ' : ''}
