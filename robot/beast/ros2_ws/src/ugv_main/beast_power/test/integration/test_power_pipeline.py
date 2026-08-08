@@ -37,6 +37,8 @@ from types import ModuleType
 
 import pytest
 
+pytestmark = pytest.mark.integration
+
 try:
     import rclpy
 except ImportError:
