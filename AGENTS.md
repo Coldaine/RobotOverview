@@ -22,8 +22,36 @@ Working on UI? Follow [`docs/rich-ui.md`](docs/rich-ui.md) — enrich surfaces, 
 
 ## Content workflow
 
+### Reading facts — do this before asking the user anything
+
+**Postgres is the record. `grep` will not find it.** Before you ask Patrick for a spec,
+a photo, or a measurement — and before you re-derive a hardware fact — search the live
+database:
+
+```bash
+doppler run --project homelab --config dev -- npx tsx db/hangar/find.ts <term>
+doppler run --project homelab --config dev -- npx tsx db/hangar/find.ts --full <term>
+```
+
+It covers `assets` (including the `specs` JSON, where most hardware detail hides),
+`terminals` (connectors, rails, voltages), `sockets`, `insights`, and `briefings`.
+
+This exists because the write path below was documented in full while the read path was
+not, so agents grepped `src/data/hangar.ts`, found plausible data, and stopped. **That
+file is a CI fixture — it is stale by design and it is the first thing `grep` hits.** On
+2026-08-07 an agent asked the owner to photograph a battery and a charger whose specs
+were both already recorded (`assets.stock-ups`, `terminals.ups-charge-in`). Only ask for
+something after `find.ts` comes back empty, and say where you looked.
+
+Robot *live state* is different — see "Robot ground truth" below. The DB holds what the
+hardware **is**; SSH tells you what it is **doing**.
+
+### Writing facts
+
 Facts and research persist to Postgres via `POST /api/hangar/ingest` (Bearer
-`HANGAR_INGEST_TOKEN` from Doppler `homelab`/`dev`). **Never edit `src/data/hangar.ts`
+`HANGAR_INGEST_TOKEN` from Doppler `homelab`/`dev`). A session that learns something
+durable and writes it only to `docs/` or a commit message has not recorded it where the
+app can surface it — land an `append_insight` too. **Never edit `src/data/hangar.ts`
 or `src/data/datacore-corpus.ts` for live content** — they are CI fixtures and loud
 offline fallbacks only (regenerate corpus with `npx tsx db/hangar/gen-datacore-corpus.ts`).
 Types: `src/data/types.ts`. Schema/migrations: [`db/hangar/standup.md`](db/hangar/standup.md).
