@@ -215,11 +215,21 @@ fi
 # /ugv/voltage is beast_power's (INA219 on i2c-7) since the 2026-08-07
 # cutover; the ESP32's own pack reading ("v", centivolts) rides its T:1001
 # serial frame, not a topic. This taps that stream READ-ONLY (os.open + read,
-# no termios writes, no DTR/RTS toggling) for one frame. Best-effort: if the
-# frame cannot be read the probe WARNS (the voltage-live check above already
-# covers INA219 presence) and FAILs only on real disagreement between the two
-# instruments. The tap briefly consumes a few feedback frames beast_base would
-# have taken; its read-fail recovery path handles that.
+# no termios writes, no DTR/RTS toggling) just long enough for ONE frame.
+#
+# ACCEPTED RISK (single stolen frame): the tap reads the tty beast_base is
+# continuously draining, so it can consume frames the base parser would have
+# taken. Reads are capped small (64 B) and stop at the first 'v' frame, so in
+# the normal case exactly one frame is stolen — the base parser validates and
+# discards a missing/garbled frame (its read-fail recovery is designed for
+# transient serial noise), verify runs on a stationary robot, and the whole
+# tap lasts < 1 s. Unreadable/parse-failure stays WARN-level; only a real
+# disagreement between the two instruments FAILs.
+#
+# The CSV-growth wait has already run by here, so nothing delays this pair:
+# the ESP32 frame is captured first (the variable-wait read), then the INA219
+# sample is echoed immediately after — both readings land within ~1 s of each
+# other instead of straddling the 6 s wait.
 esp32_port="${UGV_SERIAL_PORT:-}"
 if [ -z "$esp32_port" ]; then
   esp32_port="$(systemctl show -p Environment beast-ros-base 2>/dev/null \
@@ -229,7 +239,7 @@ fi
   && esp32_port="/dev/serial/by-id/usb-1a86_USB_Single_Serial_5B5E130201-if00"
 [ -z "$esp32_port" ] && [ -e /dev/ttyTHS1 ] && esp32_port="/dev/ttyTHS1"
 
-if [ -n "$sample_voltage" ] && [ -n "$esp32_port" ] && [ -e "$esp32_port" ]; then
+if [ -n "$esp32_port" ] && [ -e "$esp32_port" ]; then
   esp32_voltage="$(timeout 8 python3 - "$esp32_port" <<'PY' || true
 import json, os, sys, time
 
@@ -243,7 +253,10 @@ deadline = time.monotonic() + 5
 try:
     while time.monotonic() < deadline:
         try:
-            chunk = os.read(fd, 4096)
+            # Small reads (64 B ≈ one frame): stop at the first 'v' frame
+            # instead of draining a 4096-byte buffer that would swallow
+            # several of beast_base's frames in one go.
+            chunk = os.read(fd, 64)
         except BlockingIOError:
             chunk = b''
         if not chunk:
@@ -266,18 +279,23 @@ finally:
     os.close(fd)
 PY
 )"
-  if [ -n "$esp32_voltage" ]; then
-    delta="$(awk -v a="$sample_voltage" -v b="$esp32_voltage" \
+  # INA219 sample taken IMMEDIATELY after the ESP32 frame: same time window.
+  cross_voltage="$(timeout 6 ros2 topic echo --once /ugv/voltage 2>/dev/null \
+    | awk -F': ' '/^[[:space:]]*voltage:/ {print $2; exit}')"
+  if [ -n "$cross_voltage" ] && [ -n "$esp32_voltage" ]; then
+    delta="$(awk -v a="$cross_voltage" -v b="$esp32_voltage" \
       'BEGIN { d = (a > b) ? a - b : b - a; printf "%.3f", d }')"
     if awk -v d="$delta" 'BEGIN { exit !(d <= 0.2) }'; then
-      ok "INA219 vs ESP32 volts agree: /ugv/voltage ${sample_voltage} V, ESP32 ${esp32_voltage} V (delta ${delta} V)"
+      ok "INA219 vs ESP32 volts agree: /ugv/voltage ${cross_voltage} V, ESP32 ${esp32_voltage} V (delta ${delta} V)"
     else
-      bad "INA219 vs ESP32 volts DISAGREE: /ugv/voltage ${sample_voltage} V, ESP32 ${esp32_voltage} V (delta ${delta} V > 0.2 V)"
+      bad "INA219 vs ESP32 volts DISAGREE: /ugv/voltage ${cross_voltage} V, ESP32 ${esp32_voltage} V (delta ${delta} V > 0.2 V)"
     fi
+  elif [ -n "$esp32_voltage" ]; then
+    warn "no /ugv/voltage sample within 6 s — cross-check skipped"
   else
     warn "could not read ESP32 pack voltage (serial tap returned nothing) — cross-check skipped"
   fi
-elif [ -n "$sample_voltage" ]; then
+else
   warn "ESP32 serial port not found (${esp32_port:-unknown}) — cross-check skipped"
 fi
 
