@@ -47,8 +47,9 @@ BUS_VOLTAGE_LSB = 0.004  # 4 mV / bit
 # LiDAR, ESP32, logic. The motor (TB1/TB2 VM), bus-servo (H7/H8) and IO-load
 # (J1–J4) branches all tap DC_IN BEFORE R21, so their current never crosses
 # this sensor at any RSHUNT value. Currents/mAh/Wh here are the logic-rail
-# truth, not the whole-pack truth; a capacity run is only valid while the
-# drive train is idle. Motor current has no sensor on this board.
+# truth, not the whole-pack truth; a capacity run is only valid while EVERY
+# bypassed branch is idle (motors still, servos holding no torque, IO loads
+# off). Motor current has no sensor on this board.
 RSHUNT = 0.01
 # 95 uA/bit gives a signed-16-bit full scale of only +/-3.11 A. That covers
 # the ~1.4 A idle logic-rail draw measured 2026-08-07 with headroom; the
