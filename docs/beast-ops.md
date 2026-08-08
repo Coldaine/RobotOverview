@@ -188,6 +188,15 @@ this block SUPERSEDES the charging conclusions in the two blocks below.**
     ≈ 0.085 Ω — a **stiff CV source regulating at ~12.08 V**, not a current-limited one.
     A current-limited charger would have dumped all 164 mA into the pack; it did not.
 - **Verdict: the pack floats at ~12.07 V (≈82 % on the 3S OCV table) and cannot charge.**
+  > **PARTIALLY SUPERSEDED 2026-08-07 by the `RSHUNT` = 0.010 Ω correction (see Quick
+  > connect).** Every current in this section is **10× low**: the "+15 mA" the pack took
+  > with load shed was **+150 mA**, and the "+108 mA" step on connecting the charger was
+  > **+1.08 A**. So "charge current is ~0" is wrong — the charger pushes real current. What
+  > survives is the **voltage** finding, which is shunt-independent: the source regulates at
+  > ~12.08 V, so the pack charges to roughly **80 % and stops** rather than never charging.
+  > The diagnosis below (series diode vs a 12 V supply) is unchanged and still needs the
+  > multimeter.
+
   A 3S Li-ion pack needs 12.6 V at its terminals; it is seeing ~12.08 V, so charge current
   is ~0 by construction. It will never reach full and cannot recover charge in operation.
   **Needs a multimeter at the barrel jack** — this cannot be resolved over SSH. Candidates,
